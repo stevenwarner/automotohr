@@ -24,7 +24,7 @@ fetchEmployees();
 fetchPolicies();
 
 //
-$(document).on('click', '.jsExpandBalance', function(e) {
+$(document).on('click', '.jsExpandBalance', function (e) {
     e.preventDefault();
     //
     if ($(this).find('i').hasClass('fa-plus-circle')) $(this).find('i').removeClass('fa-plus-circle').addClass('fa-minus-circle');
@@ -59,19 +59,19 @@ $('.jsImportBalance').click((e) => {
 });
 
 //
-$(document).on('click', '.jsStartImport', function(e) {
+$(document).on('click', '.jsStartImport', function (e) {
     //
     e.preventDefault();
     //
     let fileOBJ = $('#jsImportFile').mFileUploader('get');
     //
     if (fileOBJ.name === undefined) {
-        alertify.alert('WARNING!', 'Please, select a file to import.', () => {});
+        alertify.alert('WARNING!', 'Please, select a file to import.', () => { });
         return;
     }
     //
     if (fileOBJ.hasError === true) {
-        alertify.alert('WARNING!', 'Please, use a correct file format to import.', () => {});
+        alertify.alert('WARNING!', 'Please, use a correct file format to import.', () => { });
         return;
     }
     // Read file
@@ -81,7 +81,7 @@ $(document).on('click', '.jsStartImport', function(e) {
 
 // Employees
 function fetchEmployees() {
-    $.post(handlerURL, cmnOBJ.Employees.Main, function(resp) {
+    $.post(handlerURL, cmnOBJ.Employees.Main, function (resp) {
         //
         if (resp.Redirect === true) {
             alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
@@ -93,7 +93,13 @@ function fetchEmployees() {
         if (resp.Status === false) {
             window.timeoff.employees = [];
             console.log('Failed to load employees.');
-            return;
+            return alertify.alert(
+                "Warning!",
+                "No employees found.",
+                function () {
+                    $('.jsIPLoader[data-page="balance"]').hide(0);
+                }
+            );
         }
         //
         window.timeoff.employees = resp.Data;
@@ -102,14 +108,14 @@ function fetchEmployees() {
         //
         rows += '<option value="all">All</option>';
         //
-        window.timeoff.employees.map(function(v) {
+        window.timeoff.employees.map(function (v) {
             rows += '<option value="' + (v.user_id) + '">' + (remakeEmployeeName(v)) + '</option>';
         });
         //
         $('#js-employee-add').html(rows);
         $('#js-employee-add').select2();
         $('#js-employee-add').select2MultiCheckboxes({
-            templateSelection: function(selected, total) {
+            templateSelection: function (selected, total) {
                 total--;
                 return "Selected " + ($.inArray('all', $('#js-employee-add').val()) !== -1 ? total : selected.length) + " of " + total;
             }
@@ -124,7 +130,7 @@ function fetchEmployees() {
 
 // Polciies
 function fetchPolicies() {
-    $.post(handlerURL, cmnOBJ.Policies.Main, function(resp) {
+    $.post(handlerURL, cmnOBJ.Policies.Main, function (resp) {
         //
         if (resp.Redirect === true) {
             alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
@@ -135,15 +141,21 @@ function fetchPolicies() {
         //
         if (resp.Status === false) {
             console.log('Failed to load employees.');
-            return;
+            return alertify.alert(
+                "Warning!",
+                "No employees found.",
+                function () {
+                    $('.jsIPLoader[data-page="balance"]').hide(0);
+                }
+            );
         }
         //
         let rows = '';
         //
         rows += '<option value="all">All</option>';
         //
-        resp.Data.map(function(v) {
-            rows += `<option value="${v.policy_id}">${v.policy_title}</option>`;
+        resp.Data.map(function (v) {
+            rows += `<option value="${v.policy_id}">${v.policy_title}  ${(v.category_type==1)?"(Paid)":"(Unpaid)"}</option>`;
         });
         //
         $('#js-filter-policies').html(rows);
@@ -206,7 +218,7 @@ function startImportProcess(
         //
         if (index === false) {
             is_error = true;
-            alertify.alert('ERROR!', 'The file content doesn\'t match with the content sample format.', () => {});
+            alertify.alert('ERROR!', 'The file content doesn\'t match with the content sample format.', () => { });
             return;
         }
         newIndexes.push(index);
@@ -235,7 +247,7 @@ function startImportProcess(
     });
     //
     if (pushArray.length === 0) {
-        alertify.alert('WARNING!', 'No data found to import.', () => {});
+        alertify.alert('WARNING!', 'No data found to import.', () => { });
         return;
     }
     //
@@ -243,12 +255,12 @@ function startImportProcess(
     //
     $.post(
         handlerURL, {
-            action: 'import_balance',
-            companyId: companyId,
-            employerId: employerId,
-            employeeId: employeeId,
-            data: pushArray
-        },
+        action: 'import_balance',
+        companyId: companyId,
+        employerId: employerId,
+        employeeId: employeeId,
+        data: pushArray
+    },
         (resp) => {
             alertify.alert(
                 'SUCCESS',

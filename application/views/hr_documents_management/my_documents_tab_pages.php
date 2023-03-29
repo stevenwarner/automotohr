@@ -97,6 +97,14 @@
                                                     <td class="text-center hidden-xs">
                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                         <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                            <a 
+                                                                href="javascript:void(0);"
+                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                title="Revoke Library Document"
+                                                                data-asid="<?=$document['sid'];?>"
+                                                            >Revoke</a>
+                                                        <?php } ?>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
@@ -182,11 +190,27 @@
                                                                         ?>
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                         <a  href="<?php echo $document_offer_letter_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                                        <?php if ($uncompleted_offer_letter['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$uncompleted_offer_letter['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     </td>
                                                                 <?php } else { ?>
                                                                     <td class=" hidden-xs text-center">
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                         <a  href="<?php echo $document_d_base . '/' . $uncompleted_offer_letter['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                        <?php if ($uncompleted_offer_letter['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$uncompleted_offer_letter['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     </td>
                                                                 <?php } ?>
                                                         </tr>
@@ -276,11 +300,27 @@
                                                                         ?>
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                         <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     </td>
                                                                 <?php } else { ?>
                                                                     <td class=" hidden-xs text-center">
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                         <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     </td>
                                                                 <?php } ?>
                                                         </tr>
@@ -626,6 +666,14 @@
                                                                                 <td class=" text-center hidden-xs">
                                                                                     <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                                     <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                                    <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                        <a 
+                                                                                            href="javascript:void(0);"
+                                                                                            class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                            title="Revoke Library Document"
+                                                                                            data-asid="<?=$document['sid'];?>"
+                                                                                        >Revoke</a>
+                                                                                    <?php } ?>
                                                                                 </td>
                                                                             </tr>
                                                                         <?php } else { ?>
@@ -701,6 +749,7 @@
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
                                                                 data-type="W4_Form" 
+                                                                data-section="employee_section" 
                                                                 data-status="<?php echo $w4_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $w4_form['sid']; ?>" 
                                                                 class="btn btn-info btn-block jsShowVarificationDocument" 
@@ -728,6 +777,7 @@
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
                                                                 data-type="W9_Form" 
+                                                                data-section="employee_section" 
                                                                 data-status="<?php echo $w9_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $w9_form['sid']; ?>" 
                                                                 class="btn btn-info btn-block jsShowVarificationDocument" 
@@ -755,6 +805,7 @@
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
                                                                 data-type="I9_Form" 
+                                                                data-section="employee_section" 
                                                                 data-status="<?php echo $i9_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $i9_form['sid']; ?>" 
                                                                 class="btn btn-info btn-block jsShowVarificationDocument" 
@@ -854,6 +905,14 @@
                                                             ?>
                                                             <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                             <a href="<?php echo $document_offer_letter_base . '/' . $completed_offer_letter['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                            <?php if ($completed_offer_letter['isdoctolibrary'] == 1) { ?>
+                                                                <a 
+                                                                    href="javascript:void(0);"
+                                                                    class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                    title="Revoke Library Document"
+                                                                    data-asid="<?=$completed_offer_letter['sid'];?>"
+                                                                >Revoke</a>
+                                                            <?php } ?>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -937,11 +996,27 @@
                                                                                 ?>
                                                                                 <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                                 <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                                                <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                    <a 
+                                                                                        href="javascript:void(0);"
+                                                                                        class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                        title="Revoke Library Document"
+                                                                                        data-asid="<?=$document['sid'];?>"
+                                                                                    >Revoke</a>
+                                                                                <?php } ?>
                                                                             </td>
                                                                         <?php } else { ?>
                                                                             <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                             <td class="hidden-xs text-center">
                                                                                 <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                                <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                    <a 
+                                                                                        href="javascript:void(0);"
+                                                                                        class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                        title="Revoke Library Document"
+                                                                                        data-asid="<?=$document['sid'];?>"
+                                                                                    >Revoke</a>
+                                                                                <?php } ?>
                                                                             </td>
                                                                         <?php } ?>
                                                                 </tr>
@@ -1113,6 +1188,14 @@
                                                                                     <td class="text-center hidden-xs">
                                                                                     <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                                         <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                            <a 
+                                                                                                href="javascript:void(0);"
+                                                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                                title="Revoke Library Document"
+                                                                                                data-asid="<?=$document['sid'];?>"
+                                                                                            >Revoke</a>
+                                                                                        <?php } ?>
                                                                                     </td>
                                                                                 </tr>
                                                                             <?php } ?>
@@ -1213,11 +1296,27 @@
                                                                         ?>
                                                                         <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                         <a  href="<?php echo $document_offer_letter_base . '/' . $document['sid']; ?>" class="btn btn-info"><?php echo $btn_name; ?></a>
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     </td>
                                                                 <?php } else { ?>
                                                                     <td class=" hidden-xs text-center">
                                                                     <?=$pdBtn['pw'].$pdBtn['dw'];?>
                                                                         <a  href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     </td>
                                                                 <?php } ?>
                                                         </tr>
@@ -1321,7 +1420,47 @@
 </style>
 <script type="text/javascript">
     $(document).ready(function(){
-        // $('.open_not_completed_doc').trigger('click');
+        //
+        $('.jsRevokeDocumentLibrary').click((e) => {
+            //
+            e.preventDefault();
+            //
+            let sid = $(e.target).data('asid');
+            //
+            alertify.confirm(
+                'Are you Sure?',
+                'Do you really want to revoke this library document?',
+                function() {
+                    $('#loader').show();
+                    var myRequest;
+                    var myData = {
+                        'action': 'revoke_library_document',
+                        'document_sid': sid 
+                    };
+                    var myUrl = '<?php echo base_url("hr_documents_management/handler"); ?>';
+
+
+
+                    myRequest = $.ajax({
+                        url: myUrl,
+                        type: 'POST',
+                        data: myData,
+                        dataType: 'json'
+                    });
+
+                    myRequest.done(function(response) {
+                        alertify.alert("Success", 'Document Library Revoke Successfully', function () {
+                            window.location.reload();
+                        });
+                    });
+                },
+                function() {
+                    alertify.alert("Warning", 'Cancelled!');
+                }).set('labels', {
+                ok: 'I Consent and Accept!',
+                cancel: 'Cancel'
+            });
+        });
     })
 
     $('#show_latest_preview_document_modal').on('hidden.bs.modal', function () {

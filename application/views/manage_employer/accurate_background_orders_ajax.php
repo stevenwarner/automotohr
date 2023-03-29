@@ -23,7 +23,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php echo $title; ?> </span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?> </span>
                         </div>
                         <div class="box-wrapper">
                             <div class="row">
@@ -349,7 +349,12 @@
         $('.js-product-type').select2();
         $('#order_by').select2();
 
-        $('.datepicker').datepicker({ dateFormat: 'mm-dd-yy' });
+        $('.datepicker').datepicker({ 
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+         });
 
         $('button.js-search').click(function(e) {
             e.preventDefault();

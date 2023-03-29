@@ -15,7 +15,7 @@
         $employee_sid = isset($data[$i]) && isset($data[$i]['employee_number']) ? $data[$i]['employee_number'] : $user_sid;
         $print_name = isset($data[$i]) && isset($data[$i]['print_name']) ? $data[$i]['print_name'] : $user_print_name;
         $last_update_date = isset($data[$i]) && isset($data[$i]['consent_date']) ? date("m/d/Y", strtotime($data[$i]['consent_date'])) : date("m/d/Y");
-        $user_signature = isset($data[$i]) && isset($data[$i]['user_signature']) ? $data[$i]['user_signature'] : $user_primary_signature;
+        $user_signature = isset($data[$i]) && isset($data[$i]['user_signature']) && !empty($data[$i]['user_signature']) ? $data[$i]['user_signature'] : $user_primary_signature;
     }    
 ?>
 <style>
@@ -407,16 +407,27 @@ $(function(){
         var consent_date = $('#consent_date').val();
         var instructions = $('#instructions').val();
         var signature_flag = 0;
+        //
+        var todayDate = new Date('<?php echo date('m/d/Y'); ?>');
+        var consentDate = new Date(consent_date);
+        //
 
+        if (todayDate.getTime() > consentDate.getTime()) {
+            alertify.alert('Please Provide Today Date').set({
+                title: "WARNING !"
+            });
+            return exit;
+        }
+        //
         <?php if(empty($user_signature)) { ?>
             var drawn_signature = $('#drawn_signature').val();
+           
             if (drawn_signature == '' || drawn_signature == null) {
                 signature_flag = 1;
             } else {
                 $('#user_previous_signature').val(drawn_signature);
             }
         <?php } ?>
-
         if (print_name != '' && consent_date != '' &&  signature_flag != 1) {
             getData();
         }  else {
@@ -441,7 +452,6 @@ $(function(){
         var obj_length = '<?php echo $i; ?>';
         //
         $('.js-dd-row').map(function(el, i) {
-            console.log(`#jsVoidedCheck${el+1}`)
             var account_title = $(this).find('.js-account-title').val();
             var account_type = $(this).find('.js-account-type:checked').val();
             var financial_institution_name = $(this).find('.js-financial-institution-name').val();
@@ -620,6 +630,7 @@ $(function(){
                     var record_sid = $('#table_row_id_'+i).val();
 
                     var new_form_data = new FormData();
+                    new_form_data.append('account_code', i+1);
                     new_form_data.append('record_sid', record_sid);
                     new_form_data.append('company_sid', company_sid);
                     new_form_data.append('user_sid', user_sid);
@@ -700,14 +711,17 @@ $(function(){
             type: 'post',
             data: form_data,
             success: function (data) {
-                var obj = jQuery.parseJSON(data);
-                var signature_bas64_image = obj.signature_bas64_image;
-                currentSignature = signature_bas64_image;
-                //
-                if(signature_bas64_image == "<?=$user_signature;?>"){
-                    $('.replace_signature').remove();
-                } else{
-                    $('.replace_signature').add();
+                if(data !== ''){
+
+                    var obj = jQuery.parseJSON(data);
+                    var signature_bas64_image = obj.signature_bas64_image;
+                    currentSignature = signature_bas64_image;
+                    //
+                    if(signature_bas64_image == "<?=$user_signature;?>"){
+                        $('.replace_signature').remove();
+                    } else{
+                        $('.replace_signature').add();
+                    }
                 }
                
             },

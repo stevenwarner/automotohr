@@ -368,7 +368,7 @@
                                             <p></p>                                            
                                             <p><i class="fa fa-users" style="font-size: 50px;"></i></p>
                                             <p>
-                                            <p style="font-size: 20px;"><strong><?php echo count($total_online_employers); ?></strong></p>
+                                            <p style="font-size: 20px;"><strong><?php echo $total_online_employees_count; ?></strong></p>
                                             <p><a href="<?php echo base_url('manage_admin/users/who_is_online'); ?>" class="btn btn-success">View Details</a></p>
                                         </div>
                                     </div>

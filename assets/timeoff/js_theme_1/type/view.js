@@ -1,46 +1,46 @@
-$(function() {
+$(function () {
     //
     let callOBJ = {
-            CompanyTypes: {
-                Main: {
-                    action: 'get_types_by_company',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    filter: {
-                        archived: 0,
-                        type: '',
-                        startDate: '',
-                        endDate: '',
-                        status: ''
-                    },
-                    public: 0,
-                    page: 1,
+        CompanyTypes: {
+            Main: {
+                action: 'get_types_by_company',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                filter: {
+                    archived: 0,
+                    type: '',
+                    startDate: '',
+                    endDate: '',
+                    status: ''
                 },
-                cb: fetchCompanyTypes,
-                limit: 0,
-                count: 0,
-                pages: 0,
+                public: 0,
+                page: 1,
             },
-            TypeSort: {
-                Main: {
-                    action: "update_sort_order",
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    public: 0
-                }
-            },
-            TypeHistory: {
-                Main: {
-                    action: "get_type_history",
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    public: 0
-                }
+            cb: fetchCompanyTypes,
+            limit: 0,
+            count: 0,
+            pages: 0,
+        },
+        TypeSort: {
+            Main: {
+                action: "update_sort_order",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
             }
         },
+        TypeHistory: {
+            Main: {
+                action: "get_type_history",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
+            }
+        }
+    },
         oldState = {},
         xhr = null;
 
@@ -57,7 +57,7 @@ $(function() {
         dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
-        onSelect: function(v) { $('#js-filter-to-date').datepicker('option', 'minDate', v); }
+        onSelect: function (v) { $('#js-filter-to-date').datepicker('option', 'minDate', v); }
     });
 
     //
@@ -68,7 +68,7 @@ $(function() {
     }).datepicker('option', 'minDate', $('#js-filter-from-date').val());
 
     //
-    $(".js-tab").click(function() {
+    $(".js-tab").click(function () {
         callOBJ.CompanyTypes.Main.filter.archived = $(this).data('type') === 'archived' ? 1 : 0;
         fetchCompanyTypes();
     });
@@ -81,13 +81,13 @@ $(function() {
     $("#js-data-area").on("sortstop", callSort);
 
     //
-    $(document).on('click', '.js-archive-btn', function(e) {
+    $(document).on('click', '.js-archive-btn', function (e) {
         //
         e.preventDefault();
         //
         var _this = $(this);
         //
-        alertify.confirm('Do you really want to deactivate this type?', function() {
+        alertify.confirm('Do you really want to deactivate this type?', function () {
             //
             var post = {};
             post.action = 'archive_company_type';
@@ -99,7 +99,7 @@ $(function() {
             //
             ml(true, 'type');
             //
-            $.post(handlerURL, post, function(resp) {
+            $.post(handlerURL, post, function (resp) {
                 //
                 ml(false, 'type');
                 //
@@ -112,11 +112,11 @@ $(function() {
                 }
                 //
                 if (resp.Status === false) {
-                    alertify.alert('WARNING!', resp.Response, function() { return; });
+                    alertify.alert('WARNING!', resp.Response, function () { return; });
                     return;
                 }
                 //
-                alertify.alert('SUCCESS!', resp.Response, function() { loadViewPage(); });
+                alertify.alert('SUCCESS!', resp.Response, function () { loadViewPage(); });
                 return;
             });
         }).set('labels', {
@@ -126,13 +126,13 @@ $(function() {
     });
 
     //
-    $(document).on('click', '.js-activate-btn', function(e) {
+    $(document).on('click', '.js-activate-btn', function (e) {
         //
         e.preventDefault();
         //
         var _this = $(this);
         //
-        alertify.confirm('Do you really want to activate this type?', function() {
+        alertify.confirm('Do you really want to activate this type?', function () {
             var post = {};
             post.action = 'activate_company_type';
             post.companyId = companyId;
@@ -143,7 +143,7 @@ $(function() {
             //
             ml(true, 'type');
             //
-            $.post(handlerURL, post, function(resp) {
+            $.post(handlerURL, post, function (resp) {
                 //
                 ml(false, 'type');
                 //
@@ -156,11 +156,11 @@ $(function() {
                 }
                 //
                 if (resp.Status === false) {
-                    alertify.alert('WARNING!', resp.Response, function() { return; });
+                    alertify.alert('WARNING!', resp.Response, function () { return; });
                     return;
                 }
                 //
-                alertify.alert('SUCCESS!', resp.Response, function() { loadViewPage(); });
+                alertify.alert('SUCCESS!', resp.Response, function () { loadViewPage(); });
             });
         }).set('labels', {
             ok: 'YES',
@@ -170,7 +170,7 @@ $(function() {
 
     //
     // Trigger for policy history
-    $(document).on('click', '.jsTypeHistory', function() {
+    $(document).on('click', '.jsTypeHistory', function () {
         Modal({
             Id: 1,
             Title: `Type History for ${$(this).closest('tr').data('name')}`,
@@ -236,7 +236,7 @@ $(function() {
         //
         $('.js-error-row').remove();
         //
-        xhr = $.post(handlerURL, callOBJ.CompanyTypes.Main, function(resp) {
+        xhr = $.post(handlerURL, callOBJ.CompanyTypes.Main, function (resp) {
             //
             xhr = null;
             //
@@ -287,11 +287,11 @@ $(function() {
         //
         if (resp.Data.length == 0) {
             ml(false, 'type');
-            $('#js-data-area').html(`<tr><td colspan=""><p class="alert alert-info text-center">${resp.Response}</p></td></tr>`);
+            $('#js-data-area').html(`<tr><td colspan="4"><p class="alert alert-info text-center">${resp.Response}</p></td></tr>`);
             return;
         }
         //
-        $.each(resp.Data, function(i, v) {
+        $.each(resp.Data, function (i, v) {
             oldState[v.type_sid] = i;
             //
             rows += `<tr class="jsDragAble" data-id="${v.type_sid}" data-name="${v.type_title}">`;
@@ -300,14 +300,21 @@ $(function() {
             rows += `            <p> ${ucwords(v.type_title)}</p>`;
             rows += `        </div>`;
             rows += `    </td>`;
+
+
             rows += `    <td>`;
             rows += `        <div class="text">`;
             rows += `            <p class="js-type-popovers">${v.policies !== null ? v.policies.join(', ') : '-'}</p>`;
             rows += `        </div>`;
             rows += `    </td>`;
+            // rows += `    <td>`;
+            // rows += `        <div class="text-${v.category_type == 1 ? "success" : "danger"}">`;
+            // rows += `            <strong> ${v.category_type == 1 ? "Paid" : "Unpaid"}</strong>`;
+            // rows += `        </div>`;
+            // rows += `    </td>`;
             rows += `    <td>`;
             rows += `        <div class="text">`;
-            rows += `            <p class="js-type-popovers">${ v.created_at === null ? "Joining Date" : moment(v.created_at, '').format(timeoffDateFormat) }</p>`;
+            rows += `            <p class="js-type-popovers">${v.created_at === null ? "Joining Date" : moment(v.created_at, '').format(timeoffDateFormat)}</p>`;
             rows += `        </div>`;
             rows += `    </td>`;
             rows += `    <td>`;
@@ -315,7 +322,7 @@ $(function() {
                 rows += `        <div class="action-employee">`;
                 rows += `            <a href="javascript:void(0)" class="action-edit js-edit-row-btn"><i class="fa fa-pencil-square-o fa-fw icon_blue" data-toggle="tooltip" title="Edit type"></i></a>`;
                 rows += `            <a href="javascript:void(0)" class="action-activate custom-tooltip jsTypeHistory"><i class="fa fa-history fa-fw" data-toggle="tooltip" title="View history"></i></a>`;
-                rows += `            <a href="javascript:void(0)" class="action-activate custom-tooltip ${cl}"><i class="fa ${icon} fa-fw" data-toggle="tooltip" title="${ title}"></i></a>`;
+                rows += `            <a href="javascript:void(0)" class="action-activate custom-tooltip ${cl}"><i class="fa ${icon} fa-fw" data-toggle="tooltip" title="${title}"></i></a>`;
                 rows += `        </div>`;
             } else {
 
@@ -373,9 +380,9 @@ $(function() {
         //
         let o = Object.assign({},
             callOBJ.TypeSort.Main, {
-                sort: s,
-                type: 'categories'
-            }
+            sort: s,
+            type: 'categories'
+        }
         );
         //
         $.post(handlerURL, o, (resp) => {
@@ -427,7 +434,7 @@ $(function() {
             }
             //
             if (resp.Status === false) {
-                alertify.alert('WARNING!', resp.Response, () => {});
+                alertify.alert('WARNING!', resp.Response, () => { });
                 //
                 ml(false, 'jsTypeHistoryLoader');
                 //
@@ -448,9 +455,9 @@ $(function() {
                 resp.Data.map((v) => {
                     rows += `
                         <tr>
-                            <td>${ remakeEmployeeName(v) }</td>
-                            <td>${ v.action.toUpperCase() }</td>
-                            <td>${ moment(v.created_at).format(timeoffDateFormatWithTime) }</td>
+                            <td>${remakeEmployeeName(v)}</td>
+                            <td>${v.action.toUpperCase()}</td>
+                            <td>${moment(v.created_at).format(timeoffDateFormatWithTime)}</td>
                         </tr>
                     `;
                 });

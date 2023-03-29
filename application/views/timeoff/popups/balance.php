@@ -1,5 +1,5 @@
 <style>
-    .csModalLoader{
+    .csModalLoader {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -10,7 +10,8 @@
         background-color: #ffffff;
         z-index: 1;
     }
-    .csModalLoader i{
+
+    .csModalLoader i {
         position: relative;
         top: 50%;
         left: 50%;
@@ -18,7 +19,8 @@
         font-size: 50px;
         color: #81b431;
     }
-    .csSelect2ErrorLi:hover{
+
+    .csSelect2ErrorLi:hover {
         color: #000000 !important;
     }
 </style>
@@ -29,7 +31,7 @@
     let balanceFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startBalanceProcess(employeeId, employeeName){
+    async function startBalanceProcess(employeeId, employeeName,anniversarytext) {
         // Set the employee id
         balanceEmployeeId = employeeId;
         // Load Modal
@@ -40,6 +42,7 @@
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #81b431; color: #ffffff;">
                         <h4 class="modal-title">Time off Balance for ${employeeName}</h4>
+                        ${anniversarytext}
                     </div>
                     <div class="modal-body">
                         <div class="csModalLoader jsBPModalLoader"><i class="fa fa-circle-o-notch fa-spin"></i></div>
@@ -74,7 +77,7 @@
                                     <div class="col-sm-3">
                                         <label>Effective Date <span class="cs-required">*</span></label>
                                         <div>
-                                            <input type="text" readonly="true" class="form-control btn-theme" value="<?=date('m/d/Y');?>" id="jsBalanceEffectDate" />
+                                            <input type="text" readonly="true" class="form-control btn-theme" value="<?= date('m/d/Y'); ?>" id="jsBalanceEffectDate" />
                                         </div>
                                     </div>
                                 </div>
@@ -145,18 +148,17 @@
         });
         // Get employee policies
         let policies = await fetchManualBalances({
-                action: 'get_employee_policies',
-                companyId: <?=$company_sid;?>,
-                employerId: <?=$employer_sid;?>,
-                employeeId: balanceEmployeeId
-            });
+            action: 'get_employee_policies',
+            companyId: <?= $company_sid; ?>,
+            employerId: <?= $employer_sid; ?>,
+            employeeId: balanceEmployeeId
+        });
         //
-        if(policies.Status === false){
+        if (policies.Status === false) {
             $('#jsBalanceModal').modal('hide');
             alertify.alert('ERROR!', 'Please add the policies first as balances are added against employee policies.', () => {});
             return;
-        }
-        else policies = policies.Data;
+        } else policies = policies.Data;
         //
         $('#jsBPModalTR').html(getTimeRow(policies[0]['Settings']['Slug']));
         //
@@ -165,14 +167,14 @@
         balanceFormat = policies[0]['Settings']['Slug'];
         balanceTimeslot = policies[0]['Settings']['ShiftHours'];
         //
-        policies.map(function(policy){
+        policies.map(function(policy) {
             //
-            if(!policyList.hasOwnProperty(policy.Category)) policyList[policy.Category] = [];
+            if (!policyList.hasOwnProperty(policy.Category)) policyList[policy.Category] = [];
             //
             policyList[policy.Category].push(policy);
         });
         //
-        policyList  = sortObjectByKey(policyList);
+        policyList = sortObjectByKey(policyList);
         //
         let policyOptions = '<option value="0">[Select Policy]</option>';
         //
@@ -180,11 +182,11 @@
             //
             let policy = policyList[p];
             //
-            policyOptions += '<optgroup label="'+(p)+'">';
+            policyOptions += '<optgroup label="' + (p) + '">';
             //
             policy.map((pi) => {
                 //
-                policyOptions += `<option ${pi.Reason != '' ? `data-reason="${pi.Reason}"` : ''}" value="${pi.PolicyId}">${pi.Title} (${ pi.RemainingTime.text})</option>`;
+                policyOptions += `<option ${pi.Reason != '' ? `data-reason="${pi.Reason}"` : ''}" value="${pi.PolicyId}">${pi.Title}  ${(pi.CategoryType==1)?' (Paid)' : ' (Unpaid) '} (${ pi.RemainingTime.text})</option>`;
             });
             //
             policyOptions += '</optgroup>';
@@ -211,7 +213,7 @@
         $('.jsBPModalLoader').hide();
     }
 
-    $(document).on('select2:open', '#jsBalancePolicy', function(){
+    $(document).on('select2:open', '#jsBalancePolicy', function() {
         //
         $('.jsBPopover').popover({
             html: true,
@@ -219,38 +221,38 @@
         });
         //
         $('.csSelect2BError')
-        .parent()
-        .removeClass('bg-danger')
-        .removeClass('csSelect2ErrorLi');
+            .parent()
+            .removeClass('bg-danger')
+            .removeClass('csSelect2ErrorLi');
         //
-        $.each($('.csSelect2BError'), function(){
-            if($(this).hasClass('bg-danger')) {
-            console.log($(this).parent());
+        $.each($('.csSelect2BError'), function() {
+            if ($(this).hasClass('bg-danger')) {
+                console.log($(this).parent());
                 $(this).removeClass('bg-danger');
                 $(this).parent()
-                .addClass('bg-danger')
-                .addClass('csSelect2ErrorLi');
+                    .addClass('bg-danger')
+                    .addClass('csSelect2ErrorLi');
             }
         })
     })
 
 
     // Fetch employee policies
-    function fetchManualBalances(obj){
+    function fetchManualBalances(obj) {
         return new Promise((res, rej) => {
             //
-            $.post("<?=base_url('timeoff/handler');?>", obj, function(resp){
+            $.post("<?= base_url('timeoff/handler'); ?>", obj, function(resp) {
                 res(resp);
             });
         });
     }
 
     // Get time rows
-    function getTimeRow(format){
+    function getTimeRow(format) {
         //
         var row = '';
         //
-        if(format == 'D:H:M'){
+        if (format == 'D:H:M') {
             row += '<div class="col-sm-4">';
             row += '    <div class="form-group">';
             row += '        <label>Days </label>';
@@ -269,8 +271,7 @@
             row += '        <input type="text" class="form-control js-number" id="jsBalanceMinutes" />';
             row += '    </div>';
             row += '</div>';
-        }
-        else if(format == 'D:H'){
+        } else if (format == 'D:H') {
             row += '<div class="col-sm-6">';
             row += '    <div class="form-group">';
             row += '        <label>Days </label>';
@@ -283,8 +284,7 @@
             row += '        <input type="text" class="form-control js-number" id="jsBalanceHours" />';
             row += '    </div>';
             row += '</div>';
-        }
-        else if(format == 'H:M'){
+        } else if (format == 'H:M') {
             row += '<div class="col-sm-6">';
             row += '    <div class="form-group">';
             row += '        <label>Hours </label>';
@@ -297,16 +297,14 @@
             row += '        <input type="text" class="form-control js-number" id="jsBalanceMinutes" />';
             row += '    </div>';
             row += '</div>';
-        }
-        else if(format == 'H'){
+        } else if (format == 'H') {
             row += '<div class="col-sm-12">';
             row += '    <div class="form-group">';
             row += '        <label>Hours </label>';
             row += '        <input type="text" class="form-control js-number" id="jsBalanceHours" />';
             row += '    </div>';
             row += '</div>';
-        }
-        else{
+        } else {
             row += '<div class="col-sm-12">';
             row += '    <div class="form-group">';
             row += '        <label>Minutes </label>';
@@ -319,12 +317,12 @@
     }
 
     // Object sorter
-    var sortObjectByKey = function(obj){
+    var sortObjectByKey = function(obj) {
         var keys = [];
         var sorted_obj = {};
 
-        for(var key in obj){
-            if(obj.hasOwnProperty(key)){
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
                 keys.push(key);
             }
         }
@@ -333,7 +331,7 @@
         keys.sort();
 
         // create new array based on Sorted Keys
-        jQuery.each(keys, function(i, key){
+        jQuery.each(keys, function(i, key) {
             sorted_obj[key] = obj[key];
         });
 
@@ -345,9 +343,9 @@
         //
         e.preventDefault();
         //
-        let 
+        let
             obj = {};
-            days = 0,
+        days = 0,
             hours = 0,
             minutes = 0;
         // Set policy
@@ -357,13 +355,13 @@
         // Set date
         obj.effectedDate = $('#jsBalanceEffectDate').val();
         // Set time
-        if($('#jsBalanceDays').length > 0 ) days = $('#jsBalanceDays').val().trim();
-        if($('#jsBalanceHours').length > 0 ) hours = $('#jsBalanceHours').val().trim();
-        if($('#jsBalanceMinutes').length > 0 ) minutes = $('#jsBalanceMinutes').val().trim();
+        if ($('#jsBalanceDays').length > 0) days = $('#jsBalanceDays').val().trim();
+        if ($('#jsBalanceHours').length > 0) hours = $('#jsBalanceHours').val().trim();
+        if ($('#jsBalanceMinutes').length > 0) minutes = $('#jsBalanceMinutes').val().trim();
         //
-        if(days < 0) days = 0;
-        if(hours < 0) hours = 0;
-        if(minutes < 0) minutes = 0;
+        if (days < 0) days = 0;
+        if (hours < 0) hours = 0;
+        if (minutes < 0) minutes = 0;
         //
         days = parseFloat(days);
         hours = parseFloat(hours);
@@ -378,36 +376,36 @@
         // Set note
         obj.note = $('#jsBalanceNote').val().trim();
         //
-        if(obj.policy <= 0){
+        if (obj.policy <= 0) {
             alertify.alert('ERROR!', 'Please select a policy.', () => {});
             return;
         }
         //
-        if(obj.time <= 0){
+        if (obj.time <= 0) {
             alertify.alert('ERROR!', 'Time cannot be less or equal to 0.', () => {});
             return;
         }
         //
-        if(obj.effectedDate == ''){
+        if (obj.effectedDate == '') {
             alertify.alert('ERROR!', 'Please, select the effected date.', () => {});
             return;
         }
         //
-        if(obj.note == ''){
+        if (obj.note == '') {
             alertify.alert('ERROR!', 'Please, add a note.', () => {});
             return;
         }
         // Add empployee id to obj
         obj.employeeId = balanceEmployeeId;
-        obj.companyId = <?=$company_sid;?>;
-        obj.employerId = <?=$employer_sid;?>;
+        obj.companyId = <?= $company_sid; ?>;
+        obj.employerId = <?= $employer_sid; ?>;
         obj.action = "add_employee_balance";
         //
         $('.jsBalanceSaveBtn').text('Saving...');
         //
         let response = await addBalance(obj);
         //
-        if(response.Status === false){
+        if (response.Status === false) {
             alertify.alert('ERROR!', resp.Response, () => {});
             return;
         }
@@ -419,10 +417,10 @@
     });
 
     //
-    function addBalance(obj){
+    function addBalance(obj) {
         return new Promise((res, rej) => {
             //
-            $.post("<?=base_url('timeoff/handler');?>", obj, (resp) => {
+            $.post("<?= base_url('timeoff/handler'); ?>", obj, (resp) => {
                 $('.jsBalanceSaveBtn').text('Save');
                 res(resp);
             });
@@ -439,7 +437,7 @@
         //
         let balanceHistory = await fetchBalanceHistory();
         //
-        if(balanceHistory.Status === false || balanceHistory.Data.length === 0){
+        if (balanceHistory.Status === false || balanceHistory.Data.length === 0) {
             $('#jsBalanceHistoryTable').html(`
                 <tr>
                     <td colspan="6"><p class="text-center alert alert-info">No records found.</p></td>
@@ -453,7 +451,7 @@
         //
         $('#jsBalanceHistoryTable').html('');
         var
-        rows = '',
+            rows = '',
             totalTOs = 0,
             totalTimeTaken = {},
             totalManualTime = {};
@@ -470,8 +468,8 @@
         }
         //
         balanceHistory.Data.map(function(balance) {
-             //
-             var
+            //
+            var
                 startDate = '',
                 endDate = '',
                 employeeName = '',
@@ -557,7 +555,7 @@
         $('.jsCreateTimeOffManualAllowedTime').text(getText(totalManualTime));
         $('#jsBalanceHistoryTable').html(rows);
     });
-    
+
     //
     $(document).on('click', '.jsBalanceAddBtn', () => {
         $('.jsBalanceAddBtn').hide(0);
@@ -569,13 +567,13 @@
     });
 
     //
-    function fetchBalanceHistory(){
+    function fetchBalanceHistory() {
         return new Promise((res, rej) => {
             //
-            $.post("<?=base_url('timeoff/handler');?>", {
+            $.post("<?= base_url('timeoff/handler'); ?>", {
                 action: 'get_employee_balance_history',
-                companyId: <?=$company_sid;?>,
-                employerId: <?=$employer_sid;?>,
+                companyId: <?= $company_sid; ?>,
+                employerId: <?= $employer_sid; ?>,
                 employeeId: balanceEmployeeId
             }, (resp) => {
                 res(resp);
@@ -585,16 +583,17 @@
 </script>
 
 <style>
-    .cs-required{
+    .cs-required {
         font-weight: bold;
         font-size: 14px;
         color: #cc1100;
     }
-    .js-number{
+
+    .js-number {
         height: 40px;
     }
-    #ui-datepicker-div{
+
+    #ui-datepicker-div {
         z-index: 1051 !important;
     }
 </style>
-

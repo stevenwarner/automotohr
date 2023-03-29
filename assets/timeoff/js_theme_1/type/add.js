@@ -14,9 +14,11 @@ $(function(){
         typeOBJ.type = getField('#js-type-add');
         typeOBJ.policies = getField('#js-policies-add');
         typeOBJ.deactivate = $('#js-archived-add').prop('checked') === true ? 1 : 0;
+        typeOBJ.typeNew = getField('#js-type-add-new');
+
         //
         if(typeOBJ.type == 0){
-            alertify.alert('WARNING!', 'Type name is required.', () => {});
+            alertify.alert('WARNING!', 'Type title is required.', () => {});
             return false;
         }
         //

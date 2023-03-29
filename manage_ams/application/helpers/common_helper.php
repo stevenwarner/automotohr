@@ -16,8 +16,8 @@ if (!function_exists('clean_domain')) {
 
 }
 
-if(!function_exists('verifyCaptcha')){
-    function verifyCaptcha($secret, $token){
+if(!function_exists('verifyCaptcha_old')){
+    function verifyCaptcha_old($secret, $token){
         //
         if($token == '' || $secret == '') return false;
         //
@@ -45,6 +45,38 @@ if(!function_exists('verifyCaptcha')){
         if(json_decode($response, true)['success'] == 1) return true;
         //
         return false;
+    }
+}
+
+
+if (!function_exists('verifyCaptcha')) {
+    /**
+     * 
+     */
+    function verifyCaptcha($token)
+    {
+        //
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('secret' => getCreds('AHR')->GOOGLE_CAPTCHA_API_SECRET_V2, 'response' => $token)
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return json_decode($response, true);
     }
 }
 
@@ -1345,12 +1377,17 @@ if(!function_exists('sendResumeEmailToApplicant')){
         $user_info = $_this->resume_model->get_applicant_information($user_sid);
 
         if (empty($user_info)) {
-            $resp = array();
-            $resp['Status'] = FALSE;
-            $resp['Response'] = '<strong>Success: </strong> Applicant not found!';
-            header('Content-Type: application/json');
-            echo @json_encode($resp);
-            exit(0);
+            if($ec){
+
+                $resp = array();
+                $resp['Status'] = FALSE;
+                $resp['Response'] = '<strong>Success: </strong> Applicant not found!';
+                header('Content-Type: application/json');
+                echo @json_encode($resp);
+                exit(0);
+            } else{
+                return false;
+            }
         }
 
         $verification_key = '';
@@ -1783,5 +1820,23 @@ if (!function_exists('check_company_status')) {
         $result = $CI->db->get('users')->row_array();
         //
         return $result["active"]; 
+    }
+}
+
+// Display error
+// Created on: 29-09-2022
+if (!function_exists('_e')) {
+    function _e($e, $print = FALSE, $die = FAlSE, $isHidden = FALSE)
+    {
+        if ($isHidden) echo '<!-- ';
+        echo '<pre>';
+        if ($print) echo '<br />*****************************<br />';
+        if (is_array($e)) print_r($e);
+        else if (is_object($e)) var_dump($e);
+        else echo ($e);
+        if ($print) echo '<br />*****************************<br />';
+        echo '</pre>';
+        if ($isHidden) echo ' -->';
+        if ($die) exit(0);
     }
 }

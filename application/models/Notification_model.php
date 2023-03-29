@@ -8,10 +8,10 @@ class Notification_model extends CI_Model {
 
 
     //
-    function getNotifications($ses, $isEMS = FALSE, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE){
+    function getNotifications($ses, $isEMS = FALSE, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE, $isEMSEnabled = 0){
         $r = array();
 
-        if(!$isEMS){
+        if(!$isEMS && $isEMSEnabled ==1){
             // Fetch assigned documents
             $this->getAssignedDocuments($ses, $r, $companyEmployeesForVerification, $companyApplicantsForVerification);
         }
@@ -142,98 +142,102 @@ class Notification_model extends CI_Model {
                         $is_magic_tag_exist = 1;
                     }
                 }
+                
+                if ($assigned_document['approval_process'] == 0) {
+                    if ($assigned_document['document_type'] != 'offer_letter') {
+                        if ($assigned_document['status'] == 1) {
+                            if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0) {
 
-                if ($assigned_document['document_type'] != 'offer_letter') {
-                    if ($assigned_document['status'] == 1) {
-                        if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0) {
-
-                            if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
-                                if ($is_magic_tag_exist == 1) {
+                                if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                                     if ($assigned_document['uploaded'] == 1) {
                                         $is_document_completed = 1;
                                     } else {
                                         $is_document_completed = 0;
                                     }
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
+                                } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                                    if ($is_magic_tag_exist == 1) {
+                                        if ($assigned_document['uploaded'] == 1) {
+                                            $is_document_completed = 1;
+                                        } else {
+                                            $is_document_completed = 0;
+                                        }
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['acknowledgment_required'] == 1) {
+                                    if ($assigned_document['acknowledged'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['download_required'] == 1) {
+                                    if ($assigned_document['downloaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($is_magic_tag_exist == 1) {
+                                    if ($assigned_document['user_consent'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
                                 }
-                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['acknowledgment_required'] == 1) {
-                                if ($assigned_document['acknowledged'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['download_required'] == 1) {
-                                if ($assigned_document['downloaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($is_magic_tag_exist == 1) {
-                                if ($assigned_document['user_consent'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            }
 
-                            if ($is_document_completed > 0) {
-                                if (!empty($assigned_document['uploaded_file']) || !empty($assigned_document['submitted_description'])) {
-                                    $signed_document_sids[] = $assigned_document['document_sid'];
-                                    // $signed_documents[] = $assigned_document;
-                                    unset($assigned_documents[$key]);
+                                if ($is_document_completed > 0) {
+                                    if (!empty($assigned_document['uploaded_file']) || !empty($assigned_document['submitted_description'])) {
+                                        $signed_document_sids[] = $assigned_document['document_sid'];
+                                        // $signed_documents[] = $assigned_document;
+                                        unset($assigned_documents[$key]);
+                                    } else {
+                                        $completed_document_sids[] = $assigned_document['document_sid'];
+                                        // $completed_documents[] = $assigned_document;
+                                        unset($assigned_documents[$key]);
+                                    }
+                                    $completed_sids[] = $assigned_document['document_sid'];
+                                    $signed_documents[] = $assigned_document;
                                 } else {
-                                    $completed_document_sids[] = $assigned_document['document_sid'];
-                                    // $completed_documents[] = $assigned_document;
-                                    unset($assigned_documents[$key]);
+                                    $assigned_sids[] = $assigned_document['document_sid'];
                                 }
-                                $completed_sids[] = $assigned_document['document_sid'];
-                                $signed_documents[] = $assigned_document;
-                            } else {
+                            } else { // nothing is required so it is "No Action Required Document"
                                 $assigned_sids[] = $assigned_document['document_sid'];
+                                $no_action_required_sids[] = $assigned_document['document_sid'];
+                                $no_action_required_documents[] = $assigned_document;
+                                unset($assigned_documents[$key]);
                             }
-                        } else { // nothing is required so it is "No Action Required Document"
-                            $assigned_sids[] = $assigned_document['document_sid'];
-                            $no_action_required_sids[] = $assigned_document['document_sid'];
-                            $no_action_required_documents[] = $assigned_document;
-                            unset($assigned_documents[$key]);
+                        } else {
+                            $revoked_sids[] = $assigned_document['document_sid'];
                         }
-                    } else {
-                        $revoked_sids[] = $assigned_document['document_sid'];
                     }
-                }
+                } else {
+                    unset($assigned_documents[$key]);
+                }     
         }
 
         // Fetch General Documents
@@ -242,7 +246,13 @@ class Notification_model extends CI_Model {
         $w4_form = $this->is_w4_form_assign('employee', $employee_id);
         $w9_form = $this->is_w9_form_assign('employee', $employee_id);
         $i9_form = $this->is_i9_form_assign('employee', $employee_id);
-        $eeoc_form = $this->is_eeoc_form_assign('employee', $employee_id);
+        $eeo_form_status = getCompanyEEOCFormStatus($company_sid);
+        //
+        if ($eeo_form_status == 1) {
+            $eeoc_form = $this->is_eeoc_form_assign('employee', $employee_id);
+        } else {
+            $eeoc_form = 0;
+        }   
         // $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + count($generalDocuments);
         $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + $eeoc_form + count($generalDocuments) + $assigned_offer_letter;
         //
@@ -569,17 +579,24 @@ class Notification_model extends CI_Model {
 
     public function getMyApprovalDocuments ($employee_sid) {
         //
-        $this->db->select('sid');
-        $this->db->where('assigner_sid', $employee_sid);
-        $this->db->where('status', 1);
-        $this->db->where('assigner_turn', 1);
+        $this->db->select('portal_document_assign_flow_employees.sid');
+
+        $this->db->where('portal_document_assign_flow_employees.assigner_sid', $employee_sid);
+        $this->db->where('portal_document_assign_flow_employees.status', 1);
+        $this->db->where('portal_document_assign_flow_employees.assigner_turn', 1);
+        $this->db->where('portal_document_assign_flow.assign_status', 1);
+        $this->db->where('documents_assigned.approval_process', 1);
+
+        $this->db->join('portal_document_assign_flow', 'portal_document_assign_flow.sid = portal_document_assign_flow_employees.portal_document_assign_sid', 'inner');
+        $this->db->join('documents_assigned', 'documents_assigned.approval_flow_sid = portal_document_assign_flow.sid', 'inner');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
-        $records_arr = $records_obj->result_array();
+
+        $my_documents = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
 
-        if (!empty($records_arr)) {
-            $return_data = $records_arr;
+        if (!empty($my_documents)) {
+            $return_data = $my_documents;
         }
 
         return $return_data;

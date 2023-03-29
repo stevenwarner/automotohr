@@ -84,7 +84,7 @@
                     </div>
                     <div class="btn-panel">
                         <?php //echo anchor("/", "MORE CAREER Opportunities WITH THIS COMPANY", array('class' => 'site-btn-v2 lg-btn-v2 custom-theme-text')); ?>
-                        <a href="<?php echo $more_career_oppurtunatity; ?>" class="site-btn-v2">More Career Opportunities With This Company</a>
+                        <a href="<?php echo strtolower(str_replace(" ","_",$more_career_oppurtunatity)); ?>" class="site-btn-v2">More Career Opportunities With This Company</a>
                     </div>
                 </div>
             </div>

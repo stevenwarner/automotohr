@@ -36,6 +36,7 @@
     }
     .jsCategoryManagerBTN{ display: none;}
 </style>
+
 <div class="row">
     <div class="col-xs-12">
         <ul class="nav nav-tabs nav-justified doc_assign_nav_tab">
@@ -72,7 +73,7 @@
                                                         <tr>
                                                             <td class="col-lg-6">
                                                                 <?php
-                                                                    echo $document['document_title'] . '&nbsp;';
+                                                                    echo $document['document_title']. '&nbsp;';
                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                     echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                     echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
@@ -82,8 +83,13 @@
                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
                                                                     }
+
+                                                                    if ($document['approval_process'] == 1) {
+                                                                        echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                    }
                                                                 ?>
                                                             </td>
+
                                                             <?php if ($document['document_type'] == 'hybrid_document') { ?>
                                                                 <td></td>
                                                                 <td class="col-lg-2">
@@ -99,6 +105,15 @@
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                         <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?> 
                                                                 </td>
                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
@@ -156,7 +171,8 @@
                                                                 <?php } ?>
                                                                 <td class="col-lg-1">
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                        if (true) {  ?>
                                                                             <?php if ($document['document_sid'] != 0) { ?>
                                                                                 <?php if ($document['status'] == 1) { ?>
                                                                                     <?php if ($user_type == 'applicant') { ?>
@@ -168,8 +184,18 @@
                                                                                     <button class="btn btn-warning  btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                 <?php } ?>
                                                                             <?php } ?>
+                                                                            
                                                                         <?php } ?>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>    
                                                                 </td>
                                                             <?php } else { ?>
@@ -195,7 +221,10 @@
 
                                                                 <td class="col-lg-2">
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php 
+                                                                            //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) {
+                                                                            if (true) {
+                                                                        ?>
                                                                             <?php if ($document['status'] == 1) { ?>
                                                                                 <?php if ($user_type == 'applicant') { ?>
                                                                                     <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
@@ -207,6 +236,15 @@
                                                                             <?php } ?>   
                                                                         <?php } ?>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>
                                                                 </td>
                                                             <?php } ?>
@@ -219,6 +257,14 @@
                                                                         data-asid="<?=$document['sid'];?>"
                                                                         data-sid="<?=$document['document_sid'];?>"
                                                                     >Manage Category</a>
+                                                                    <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                        <a 
+                                                                            href="javascript:void(0);"
+                                                                            class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                            title="Revoke Library Document"
+                                                                            data-asid="<?=$document['sid'];?>"
+                                                                        >Revoke</a>
+                                                                    <?php } ?>
                                                                 <?php } ?>    
                                                                 <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                     <?php if ($document['is_document_authorized'] == 1) { ?> 
@@ -314,6 +360,10 @@
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
                                                                         }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                        echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                    }
                                                                     ?>
                                                                 </td>
                                                                 <?php if ($document['letter_type'] == 'hybrid_document') { ?>
@@ -412,6 +462,15 @@
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?php } ?>
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>    
                                                                 </td>
                                                             </tr>
@@ -487,6 +546,10 @@
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
                                                                         }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                        }
                                                                     ?>
                                                                 </td>
                                                                 <td class="col-lg-2">
@@ -550,10 +613,22 @@
                                                                             data-asid="<?=$document['sid'];?>"
                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                         >Manage Category</a>
+
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     <?php } ?>
                                                                         
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php 
+                                                                            //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                            if (true) {
+                                                                        ?>
                                                                             <?php if ($document['document_sid'] != 0) { ?>
                                                                                 <?php if ($document['status'] == 1) { ?>
                                                                                     <?php if ($user_type == 'applicant') { ?>
@@ -565,6 +640,15 @@
                                                                                     <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                 <?php } ?>
                                                                             <?php } ?>
+                                                                        <?php } ?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
                                                                         <?php } ?>
                                                                     <?php } ?>  
                                                                 </td>  
@@ -583,6 +667,7 @@
                             </div>
                         </div>
                     <?php } ?>
+
                 </div>
             </div>
             <!-- Not Completed Document End -->
@@ -791,6 +876,10 @@
                                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                             echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
                                                                                         }
+
+                                                                                        if ($document['approval_process'] == 1) {
+                                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                                        }
                                                                                     ?>
                                                                                 </td>
 
@@ -849,7 +938,10 @@
                                                                                         <?php } ?>
 
                                                                                         <?php if ($document_all_permission  && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                            <?php 
+                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                                if (true) {
+                                                                                            ?>
                                                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
                                                                                                         <?php if ($user_type == 'applicant') { ?>
@@ -862,6 +954,15 @@
                                                                                                     <?php } ?>
                                                                                                 <?php } ?>
                                                                                             <?php } ?> 
+                                                                                            <?php if ($document['approval_process'] == 1) { ?>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
+                                                                                            <?php } ?>
                                                                                         <?php } ?> 
                                                                                     </td>
                                                                                 <?php } else if ($document['document_type'] == 'uploaded') { ?>
@@ -896,7 +997,10 @@
                                                                                         <?php } ?>
 
                                                                                         <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                            <?php 
+                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                                if (true) {
+                                                                                            ?>
                                                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
                                                                                                         <?php if ($user_type == 'applicant') { ?>
@@ -909,6 +1013,15 @@
                                                                                                     <?php } ?>
                                                                                                 <?php } ?>
                                                                                             <?php } ?> 
+                                                                                            <?php if ($document['approval_process'] == 1) { ?>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
+                                                                                            <?php } ?>
                                                                                         <?php } ?> 
                                                                                     </td>
                                                                                 <?php } else { ?>
@@ -980,7 +1093,10 @@
                                                                                                 </a>
                                                                                             <?php } ?> 
 
-                                                                                            <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                            <?php 
+                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                                if (true) {
+                                                                                            ?>
                                                                                                 <?php if ($document['document_sid'] != 0 && $document['isdoctolibrary'] == 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
                                                                                                         <?php if ($user_type == 'applicant') { ?>
@@ -993,6 +1109,15 @@
                                                                                                     <?php } ?>
                                                                                                 <?php } ?>
                                                                                             <?php } ?> 
+                                                                                            <?php if ($document['approval_process'] == 1) { ?>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
+                                                                                            <?php } ?>
                                                                                         <?php } ?> 
                                                                                     </td>
                                                                                 <?php } ?>
@@ -1005,6 +1130,15 @@
                                                                                             data-asid="<?=$document['sid'];?>"
                                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                                         >Manage Category</a>
+
+                                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                            <a 
+                                                                                                href="javascript:void(0);"
+                                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                                title="Revoke Library Document"
+                                                                                                data-asid="<?=$document['sid'];?>"
+                                                                                            >Revoke</a>
+                                                                                        <?php } ?>
                                                                                     <?php } ?>    
                                                                                 </td>
                                                                             </tr>
@@ -1100,6 +1234,10 @@
                                                                             echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($document['signature_timestamp']));
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
+                                                                        }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                         }
                                                                     ?>
                                                                 </td>
@@ -1275,12 +1413,29 @@
                                                                 <?php } ?>
                                                                 <td>
                                                                     <?php if ($document_all_permission) { ?>
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                         <?php if ($user_type == 'applicant') { ?>
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
                                                                         <?php } else { ?>
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?php } ?>
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>    
                                                                 </td>
                                                             </tr>
@@ -1353,6 +1508,10 @@
                                                                                     echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
                                                                                 } else {
                                                                                     echo "<br><b>Signed On: </b> N/A";
+                                                                                }
+
+                                                                                if ($document['approval_process'] == 1) {
+                                                                                    echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                                 }
                                                                             ?>
                                                                         </td>
@@ -1460,7 +1619,10 @@
                                                                             <?php } ?>
 
                                                                             <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                <?php 
+                                                                                    // if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                    if (true) {
+                                                                                ?>
                                                                                     <?php if ($document['document_sid'] != 0) { ?>
                                                                                         <?php if ($document['status'] == 1) { ?>
                                                                                             <?php if ($user_type == 'applicant') { ?>
@@ -1472,6 +1634,15 @@
                                                                                             <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                         <?php } ?>
                                                                                     <?php } ?>
+                                                                                <?php } ?>
+                                                                                <?php if ($document['approval_process'] == 1) { ?>
+                                                                                    <button 
+                                                                                        data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                        data-user_type="<?=$user_type;?>"
+                                                                                        data-user_sid="<?=$user_sid;?>"
+                                                                                        class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                        View Approver(s)
+                                                                                    </button>
                                                                                 <?php } ?>
                                                                             <?php } ?>    
                                                                         </td>
@@ -1579,7 +1750,10 @@
 
                                                                             <?php } ?>
                                                                             <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                <?php 
+                                                                                    //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                    if (true) {
+                                                                                ?>
                                                                                     <?php if ($document['document_sid'] != 0) { ?>
                                                                                         <?php if ($document['status'] == 1) { ?>
                                                                                             <?php if ($user_type == 'applicant') { ?>
@@ -1591,6 +1765,15 @@
                                                                                             <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                         <?php } ?>
                                                                                     <?php } ?>
+                                                                                <?php } ?>
+                                                                                <?php if ($document['approval_process'] == 1) { ?>
+                                                                                    <button 
+                                                                                        data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                        data-user_type="<?=$user_type;?>"
+                                                                                        data-user_sid="<?=$user_sid;?>"
+                                                                                        class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                        View Approver(s)
+                                                                                    </button>
                                                                                 <?php } ?>
                                                                             <?php } ?>  
                                                                         </td>
@@ -1669,7 +1852,8 @@
                                                             </td>
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
-                                                                data-type="W4_Form" 
+                                                                data-type="W4_Form"
+                                                                data-section="complete_pdf" 
                                                                 data-status="<?php echo $w4_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $w4_form['sid']; ?>" 
                                                                 class="btn btn-success btn-block jsShowVarificationDocument" 
@@ -1696,7 +1880,8 @@
                                                             </td>
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
-                                                                data-type="W9_Form" 
+                                                                data-type="W9_Form"
+                                                                data-section="complete_pdf" 
                                                                 data-status="<?php echo $w9_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $w9_form['sid']; ?>" 
                                                                 class="btn btn-success btn-block jsShowVarificationDocument" 
@@ -1723,7 +1908,8 @@
                                                             </td>
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
-                                                                data-type="I9_Form" 
+                                                                data-type="I9_Form"
+                                                                data-section="complete_pdf"
                                                                 data-status="<?php echo $i9_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $i9_form['sid']; ?>" 
                                                                 class="btn btn-success btn-block jsShowVarificationDocument" 
@@ -1821,6 +2007,10 @@
                                                                                             echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
                                                                                         } else {
                                                                                             echo "<br><b>Signed On: </b> N/A";
+                                                                                        }
+
+                                                                                        if ($document['approval_process'] == 1) {
+                                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                                         }
                                                                                     ?>
                                                                                 </td>
@@ -1926,6 +2116,14 @@
                                                                                             data-asid="<?=$document['sid'];?>"
                                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                                         >Manage Category</a>
+                                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                            <a 
+                                                                                                href="javascript:void(0);"
+                                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                                title="Revoke Library Document"
+                                                                                                data-asid="<?=$document['sid'];?>"
+                                                                                            >Revoke</a>
+                                                                                        <?php } ?>
                                                                                     <?php } ?>
                                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                         <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
@@ -1938,6 +2136,15 @@
                                                                                                     Employer Section - Completed  
                                                                                                 <?php } ?>     
                                                                                             </a>
+                                                                                        <?php } ?>
+                                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                                            <button 
+                                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                data-user_type="<?=$user_type;?>"
+                                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                View Approver(s)
+                                                                                            </button>
                                                                                         <?php } ?>
                                                                                     <?php } ?>
                                                                                 </td>
@@ -2013,6 +2220,10 @@
                                                                             echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
+                                                                        }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                         }
                                                                     ?>
                                                                 </td>
@@ -2141,9 +2352,21 @@
                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                         >Manage Category</a>
 
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
+
                                                                     <?php } ?>
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php 
+                                                                            // if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) {
+                                                                            if (true) {
+                                                                        ?>
                                                                             <?php if ($document['status'] == 1) { ?>
                                                                                 <?php if ($user_type == 'applicant') { ?>
                                                                                     <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
@@ -2153,6 +2376,15 @@
                                                                             <?php } else { ?>
                                                                                 <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                             <?php } ?>
+                                                                        <?php } ?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
                                                                         <?php } ?>
                                                                     <?php } ?> 
                                                                 </td>
@@ -2211,6 +2443,48 @@
         ).set('labels', {
             ok: 'YES',
             cancel: 'NO'
+        });
+    });
+
+    //
+    $('.jsRevokeDocumentLibrary').click((e) => {
+        //
+        e.preventDefault();
+        //
+        let sid = $(e.target).data('asid');
+        //
+        alertify.confirm(
+            'Are you Sure?',
+            'Do you really want to revoke this library document?',
+            function() {
+                $('#loader').show();
+                var myRequest;
+                var myData = {
+                    'action': 'revoke_library_document',
+                    'document_sid': sid 
+                };
+                var myUrl = '<?php echo base_url("hr_documents_management/handler"); ?>';
+
+
+
+                myRequest = $.ajax({
+                    url: myUrl,
+                    type: 'POST',
+                    data: myData,
+                    dataType: 'json'
+                });
+
+                myRequest.done(function(response) {
+                    alertify.alert("Success", 'Document Library Revoke Successfully', function () {
+                        window.location.reload();
+                    });
+                });
+            },
+            function() {
+                alertify.alert("Warning", 'Cancelled!');
+            }).set('labels', {
+            ok: 'I Consent and Accept!',
+            cancel: 'Cancel'
         });
     });
 

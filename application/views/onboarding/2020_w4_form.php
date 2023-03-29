@@ -277,7 +277,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <span><b>Employee's signature</b> (This form is not valid unless you sign it.)</span>
                                             <?php if($signed_flag == true) { ?>
-                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['signature_bas64_image']; ?>"  />
+                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['signature_bas64_image']; ?>" class="esignaturesize" />
                                             <?php } else { ?>
                                                 <!-- the below loaded view add e-signature -->
                                                 <?php $this->load->view('static-pages/e_signature_button'); ?>
@@ -1346,7 +1346,10 @@
             dateFormat: 'mm-dd-yy',
             setDate: new Date(),
             maxDate: new Date,
-            minDate: new Date()
+            minDate: new Date(),
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
 
         $('.date_picker').datepicker({

@@ -556,62 +556,71 @@ class Form_i9 extends Public_Controller
         echo 'Verified';
     }
 
-    public function print_i9_form ($type, $sid) {
-        if ($this->session->userdata('logged_in')) {
-
-            $previous_form = $this->form_wi9_model->fetch_form('i9', $type, $sid);
-            $data['pre_form'] = $previous_form;
-
-            $this->load->view('form_i9/print_i9_pdf', $data);
-
-        } else {
-            redirect('login', "refresh");
-        }
-    }
-
+    //For employee to preview its own I9 PDF
     public function preview_i9form($user_type,$employee_sid)
     {
         if ($this->session->userdata('logged_in')) {
-
-            $data['title'] = 'Form i-9';
-
+            //
             $previous_form = $this->form_wi9_model->fetch_form('i9', $user_type, $employee_sid);
+            //
+            $data['title'] = 'Form i-9';
             $data['pre_form'] = $previous_form;
-
-
-            $this->load->view('form_i9/index-pdf', $data);
-
+            $data['section_access'] = "employee_section";
+            //
+            $this->load->view('2022/federal_fillable/form_i9_preview', $data);
+            //
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function download_i9form($user_type,$employee_sid)
+    //For employee to download its own I9 PDF
+    public function download_i9form($user_type, $employee_sid)
     {
         if ($this->session->userdata('logged_in')) {
-
-            $data['title'] = 'Form i-9';
-
+            //
             $previous_form = $this->form_wi9_model->fetch_form('i9', $user_type, $employee_sid);
-
+            //
+            $data['title'] = 'Form i-9';
             $data['pre_form'] = $previous_form;
-            $this->load->view('form_i9/form_i9_pdf', $data);
+            $data['section_access'] = "employee_section";
+            //
+            $this->load->view('2022/federal_fillable/form_i9_download', $data);
+            //
+        } else {
+            redirect('login', "refresh");
+        }
+    }
+
+    //For employer to print an employees I9 PDF
+    public function print_i9_form ($type, $sid) {
+        if ($this->session->userdata('logged_in')) {
+            //
+            $previous_form = $this->form_wi9_model->fetch_form('i9', $type, $sid);
+            //
+            $data['title'] = 'Form i-9';
+            $data['pre_form'] = $previous_form;
+            $data['section_access'] = "complete_pdf";
+            //
+            $this->load->view('2022/federal_fillable/form_i9_print', $data);
 
         } else {
             redirect('login', "refresh");
         }
     }
 
+    //For employer to download an employees I9 PDF
     public function download_i9_form($type, $sid)
     {
         if ($this->session->userdata('logged_in')) {
-
-            $data['title'] = 'Form i-9';
-
+            //
             $previous_form = $this->form_wi9_model->fetch_form('i9', $type, $sid);
-
+            //
+            $data['title'] = 'Form i-9';
             $data['pre_form'] = $previous_form;
-            $this->load->view('form_i9/download_i9_pdf', $data);
+            $data['section_access'] = "complete_pdf";
+            //
+            $this->load->view('2022/federal_fillable/form_i9_download', $data);
 
         } else {
             redirect('login', "refresh");

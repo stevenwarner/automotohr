@@ -23,7 +23,7 @@
                     <div class="row">
                         <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
                             <br />
-                            <a class="btn btn-info btn-block mb-2 csRadius5" href="<?php echo base_url('dashboard'); ?>">
+                            <a class="btn btn-info csRadius5" href="<?php echo base_url('dashboard'); ?>">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard</a>
                         </div>
                     </div>

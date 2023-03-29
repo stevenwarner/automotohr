@@ -174,9 +174,9 @@
                         <label>Signature of Employee</label>
                         <span class="value-box" id="">
                             <div>
-                                <?php if(!empty($pre_form)) { ?>
+                                <?php if(!empty($pre_form) && isset($pre_form['section1_emp_signature']) && !empty($pre_form['section1_emp_signature'])) { ?>
                                     <div >
-                                        <img  src="<?php echo isset($pre_form['section1_emp_signature']) && !empty($pre_form['section1_emp_signature']) ? $pre_form['section1_emp_signature'] : ''; ?>"  />
+                                        <img  src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                     </div>
                                 <?php } ?>
                             </div>
@@ -218,9 +218,9 @@
                 <tr>
                     <td style="width: 40%">
                         <label>Signature of Preparer or Translator</label>
-                        <?php if(!empty($pre_form)) { ?>
+                        <?php if(!empty($pre_form) && isset($pre_form['section1_preparer_signature']) && !empty($pre_form['section1_preparer_signature'])) { ?>
                             <div >
-                                <img  src="<?php echo isset($pre_form['section1_preparer_signature']) && !empty($pre_form['section1_preparer_signature']) ? $pre_form['section1_preparer_signature'] : ''; ?>"  />
+                                <img src="<?php echo $pre_form['section1_preparer_signature']; ?>"  class="esignaturesize" />
                             </div>
                         <?php } ?>
                     </td>
@@ -488,9 +488,9 @@
                     <td>
                         <label>Signature of Employer or Authorized Representative</label>
                         <span class="value-box no-border" id="">
-                            <?php if(!empty($pre_form)) { ?>
+                            <?php if(!empty($pre_form) && isset($pre_form['section2_sig_emp_auth_rep']) && !empty($pre_form['section2_sig_emp_auth_rep'])) { ?>
                                 <div >
-                                    <img  src="<?php echo isset($pre_form['section2_sig_emp_auth_rep']) && !empty($pre_form['section2_sig_emp_auth_rep']) ? $pre_form['section2_sig_emp_auth_rep'] : ''; ?>"  />
+                                    <img  src="<?php echo $pre_form['section2_sig_emp_auth_rep']; ?>" class="esignaturesize"  />
                                 </div>
                             <?php } ?>
                         </span>
@@ -645,9 +645,9 @@
                     <td style="width: 40%;">
                         <label>Signature of Employer or Authorized Representative</label>
                         <span class="value-box no-border" id="">
-                            <?php if(!empty($pre_form)) { ?>
+                            <?php if(!empty($pre_form) && isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
                                 <div >
-                                    <img  src="<?php echo isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign']) ? $pre_form['section3_emp_sign'] : ''; ?>"  />
+                                    <img  src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
                                 </div>
                             <?php } ?>
                         </span>

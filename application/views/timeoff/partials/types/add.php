@@ -21,10 +21,25 @@
         <br />
         <div class="row">
             <div class="col-sm-6 col-xs-12">
-                <label>Type <span class="cs-required">*</span></label>
+                <label>Title <span class="cs-required">*</span></label>
                 <div class="row">
                     <div class="col-sm-12">
                         <input type="text" value="" class="form-control" id="js-type-add" placeholder="Vacation" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <div class="row hidden">
+            <div class="col-sm-6 col-xs-12">
+                <label>Type </label>
+                <div class="row">
+                <div class="col-sm-12">
+                 <select class="invoice-fields" name="type_new" id="js-type-add-new" >
+                    <option value="1">Paid</option>
+                    <option value="0">Unpaid</option>
+                 </select>
                     </div>
                 </div>
             </div>

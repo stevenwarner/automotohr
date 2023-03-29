@@ -1,10 +1,13 @@
 <?php
-class Company_model extends CI_Model {
-    function __construct() {
+class Company_model extends CI_Model
+{
+    function __construct()
+    {
         parent::__construct();
     }
 
-    function get_all_companies($limit = NULL, $start = NULL, $search = array(), $status = 'all') {
+    function get_all_companies($limit = NULL, $start = NULL, $search = array(), $status = 'all')
+    {
         $this->db->select('*');
         $this->db->from('users');
 
@@ -28,7 +31,8 @@ class Company_model extends CI_Model {
         return $result;
     }
 
-    function total_companies($search = array()) {
+    function total_companies($search = array())
+    {
         foreach ($search as $key => $value) {
             if ($key != 'is_paid') {
                 $this->db->like($key, $value);
@@ -38,13 +42,14 @@ class Company_model extends CI_Model {
         $this->db->select('*');
         $this->db->from('users');
         $this->db->where('parent_sid', 0);
-//        $this->db->where('is_paid', 1);
+        //        $this->db->where('is_paid', 1);
         $this->db->where('career_page_type', 'standard_career_site');
         $this->db->where($search);
         return $this->db->get()->num_rows();
     }
 
-    function get_all_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date, $end_date, $limit = null, $start = null) {
+    function get_all_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date, $end_date, $limit = null, $start = null, $columns = '*')
+    {
         if (!empty($contact_name) && $contact_name != 'all') {
             $this->db->like('ContactName', $contact_name);
         }
@@ -63,7 +68,7 @@ class Company_model extends CI_Model {
             $this->db->limit($limit, $start);
         }
 
-        $this->db->select('*');
+        $this->db->select($columns);
         $this->db->from('users');
 
         if ($company_status != 'all') {
@@ -81,7 +86,8 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function total_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date, $end_date) {
+    function total_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date, $end_date)
+    {
         if (!empty($contact_name) && $contact_name != 'all') {
             $this->db->like('ContactName', $contact_name);
         }
@@ -111,30 +117,30 @@ class Company_model extends CI_Model {
     }
 
     function getCompanyApprovers(
-        $companySid, 
-        $approver, 
+        $companySid,
+        $approver,
         $status,
         $count = FALSE,
         $start = 0,
         $end = 0
     ) {
 
-        if($count){
+        if ($count) {
             //
-           $this->db
-           ->from('timeoff_approvers')
-           ->join('users', 'timeoff_approvers.employee_sid = users.sid', 'inner')
-           ->join('departments_management', 'departments_management.sid = timeoff_approvers.department_sid', 'left')
-           ->where('timeoff_approvers.company_sid', $companySid)
-           ->order_by('timeoff_approvers.sid', 'DESC');
-           // Search Filter
-           if($status != 'all') $this->db->where('timeoff_approvers.is_archived', $status);
-           if($approver != 'all') $this->db->where('timeoff_approvers.employee_sid', $approver);//
-           return $this->db->count_all_results();
+            $this->db
+                ->from('timeoff_approvers')
+                ->join('users', 'timeoff_approvers.employee_sid = users.sid', 'inner')
+                ->join('departments_management', 'departments_management.sid = timeoff_approvers.department_sid', 'left')
+                ->where('timeoff_approvers.company_sid', $companySid)
+                ->order_by('timeoff_approvers.sid', 'DESC');
+            // Search Filter
+            if ($status != 'all') $this->db->where('timeoff_approvers.is_archived', $status);
+            if ($approver != 'all') $this->db->where('timeoff_approvers.employee_sid', $approver); //
+            return $this->db->count_all_results();
         }
         //
         $this->db
-       ->select('
+            ->select('
            timeoff_approvers.sid as approver_id,
            timeoff_approvers.department_sid as department_id,
            timeoff_approvers.status,
@@ -147,33 +153,35 @@ class Company_model extends CI_Model {
            CONCAT(users.first_name," ", users.last_name) as full_name,
            departments_management.name as department_name
        ')
-       ->from('timeoff_approvers')
-       ->join('users', 'timeoff_approvers.employee_sid = users.sid', 'inner')
-       ->join('departments_management', 'departments_management.sid = timeoff_approvers.department_sid', 'left')
-       ->where('timeoff_approvers.company_sid', $companySid)
-       ->order_by('timeoff_approvers.sort_order', 'ASC')
-       ->limit($start, $end);
-       // Search Filter
-       if($status != 'all') $this->db->where('timeoff_approvers.is_archived', $status);
-       if($approver != 'all') $this->db->where('timeoff_approvers.employee_sid', $approver);
-       //
-       $result = $this->db->get();
-       $approvers = $result->result_array();
-       $result  = $result->free_result();
-       //
-       if(!sizeof($approvers)) return array();
+            ->from('timeoff_approvers')
+            ->join('users', 'timeoff_approvers.employee_sid = users.sid', 'inner')
+            ->join('departments_management', 'departments_management.sid = timeoff_approvers.department_sid', 'left')
+            ->where('timeoff_approvers.company_sid', $companySid)
+            ->order_by('timeoff_approvers.sort_order', 'ASC')
+            ->limit($start, $end);
+        // Search Filter
+        if ($status != 'all') $this->db->where('timeoff_approvers.is_archived', $status);
+        if ($approver != 'all') $this->db->where('timeoff_approvers.employee_sid', $approver);
+        //
+        $result = $this->db->get();
+        $approvers = $result->result_array();
+        $result  = $result->free_result();
+        //
+        if (!sizeof($approvers)) return array();
 
-       return $approvers;
+        return $approvers;
     }
 
-    function count_all_employers() {
+    function count_all_employers()
+    {
         $this->db->select('sid');
         $this->db->where('parent_sid > ', 0);
         $this->db->from('users');
         return $this->db->count_all_results();
     }
 
-    function get_all_employers_new($limit, $offset, $keyword = null, $status = 2, $count_only = false, $company = null, $contact_name = null) {
+    function get_all_employers_new($limit, $offset, $keyword = null, $status = 2, $count_only = false, $company = null, $contact_name = null)
+    {
         $this->db->select('table_one.sid');
         $this->db->select('table_one.first_name');
         $this->db->select('table_one.last_name');
@@ -195,12 +203,37 @@ class Company_model extends CI_Model {
         $this->db->select('table_one.system_user_date');
         $this->db->select('table_one.general_status');
         $this->db->select('table_two.CompanyName as company_name');
+        $this->db->select('table_one.complynet_onboard');
+        $this->db->select('table_one.parent_sid');
+        $this->db->select('table_one.transfer_date');
+        $this->db->select('table_one.languages_speak');
+
+        $this->db->select('table_one.complynet_job_title');
+
+
         $this->db->where('table_one.is_executive_admin <', 1);
         $this->db->where('table_one.parent_sid > ', 0);
 
+        /*
         if ($status != 2) {
             $this->db->where('table_one.active', $status);
         }
+      */
+
+        if ($status == 'active') {
+            $this->db->where('table_one.active', 1);
+            $this->db->where('table_one.terminated_status', 0);
+        }
+
+        if ($status == 'terminated') {
+            $this->db->where('table_one.terminated_status', 1);
+        }
+
+        if ($status != 'all' && $status != 'active' && $status != 'terminated') {
+            $this->db->where('LCASE(table_one.general_status) ', $status);
+        }
+
+
 
         $this->db->order_by('table_one.sid', 'desc');
 
@@ -225,23 +258,13 @@ class Company_model extends CI_Model {
             $this->db->group_end();
         }
 
+
         if ($contact_name != null && $contact_name != 'all') {
-            $name_parts = explode(' ', trim($contact_name));
-
             $this->db->group_start();
-            if (count($name_parts) == 1) {
-                $this->db->like('table_one.first_name', $name_parts[0]);
-                $this->db->or_like('table_one.last_name', $name_parts[0]);
-            } else {
-                $this->db->like('table_one.first_name', $name_parts[0]);
-
-                for ($i = 1; $i < count($name_parts); $i++) {
-                    $this->db->or_like('table_one.last_name', $name_parts[$i]);
-                }
-            }
-            $this->db->or_like('table_one.nick_name', $contact_name);
+            $this->db->where("(lower(concat(table_one.first_name,'',table_one.last_name)) LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%' or table_one.nick_name LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%')  ");
             $this->db->group_end();
         }
+
 
         $this->db->join('users as table_two', 'table_one.parent_sid = table_two.sid', 'left');
         $this->db->from('users as table_one');
@@ -255,38 +278,111 @@ class Company_model extends CI_Model {
             $records_obj->free_result();
             //
             $this->GetEmployeeStatus($records_arr);
+
+            $this->GetEmployeeDepartmentsTeams($records_arr);
             //
             return $records_arr;
         }
     }
 
-    private function GetEmployeeStatus(&$employees, $status = 1){
+    //
+    private function GetEmployeeDepartmentsTeams(&$employees)
+    {
         //
-        if(empty($employees)){
+        if (empty($employees)) {
             return false;
         }
         //
         $employeeIds = array_column($employees, 'sid');
         //
-        $statuses = $this->db
-        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire')
-        ->where_in('employee_sid', $employeeIds)
-        ->where('employee_status', $status)
-        ->get('terminated_employees')
-        ->result_array();
+        $employeeDepartmentTeams =
+            $this->db->select("
+            departments_management.name as department_name,
+            departments_team_management.name,
+            departments_employee_2_team.employee_sid
+        ")
+            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
+            ->where('departments_management.is_deleted', 0)
+            ->where('departments_team_management.is_deleted', 0)
+            ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
+            ->get('departments_employee_2_team')
+            ->result_array();
         //
-        $last_statuses = $this->db
-        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status')
-        ->where_in('employee_sid', $employeeIds)
-        ->order_by('terminated_employees.sid', 'DESC')
-        ->get('terminated_employees')
-        ->result_array();
-        //
-        if(!empty($statuses)){
+        if (!empty($employeeDepartmentTeams)) {
             //
             $tmp = [];
             //
-            foreach($statuses as $stat){
+            foreach ($employeeDepartmentTeams as $stat) {
+                //
+                if (!isset($tmp[$stat['employee_sid']])) {
+                    $tmp[$stat['employee_sid']] = [
+                        'departments' => [],
+                        'teams' => []
+                    ];
+                }
+                //
+                $tmp[$stat['employee_sid']]['departments'][] = $stat['department_name'];
+                $tmp[$stat['employee_sid']]['teams'][] = $stat['name'];
+            }
+            //
+            $employeeDepartmentTeams = $tmp;
+            //
+            $tmp = [];
+            //
+            unset($tmp);
+        }
+
+        //
+        foreach ($employees as $index => $employee) {
+            //
+            if (isset($employeeDepartmentTeams[$employee['sid']])) {
+
+                $employees[$index] = array_merge($employee, $employeeDepartmentTeams[$employee['sid']]);
+            } else {
+                $employees[$index]['departments'] = [];
+                $employees[$index]['teams'] = [];
+            }
+        }
+        //
+        return true;
+    }
+
+
+    private function GetEmployeeStatus(&$employees, $status = 1)
+    {
+        //
+        if (empty($employees)) {
+            return false;
+        }
+        $transferRecords = $this->db
+            ->select('new_employee_sid')
+            ->get('employees_transfer_log')
+            ->result_array();
+        //
+        $transferIds = array_column($transferRecords, 'new_employee_sid');
+        //
+        $employeeIds = array_column($employees, 'sid');
+        //
+        $statuses = $this->db
+            ->select('employee_sid, termination_date, status_change_date, details, do_not_hire')
+            ->where_in('employee_sid', $employeeIds)
+            ->where('employee_status', $status)
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        $last_statuses = $this->db
+            ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status')
+            ->where_in('employee_sid', $employeeIds)
+            ->order_by('terminated_employees.sid', 'DESC')
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        if (!empty($statuses)) {
+            //
+            $tmp = [];
+            //
+            foreach ($statuses as $stat) {
                 //
                 $tmp[$stat['employee_sid']] = $stat;
             }
@@ -295,9 +391,9 @@ class Company_model extends CI_Model {
             //
             $tmp = [];
             //
-            foreach($last_statuses as $stat){
+            foreach ($last_statuses as $stat) {
                 //
-                if(!isset($tmp[$stat['employee_sid']])){
+                if (!isset($tmp[$stat['employee_sid']])) {
                     $tmp[$stat['employee_sid']] = $stat;
                 }
             }
@@ -307,7 +403,12 @@ class Company_model extends CI_Model {
             unset($tmp);
         }
         //
-        foreach($employees as $index => $employee){
+        foreach ($employees as $index => $employee) {
+            //
+            if (in_array($employee['sid'], $transferIds)) {
+                $transferDate = get_employee_transfer_date($employee['sid']);
+                $employees[$index]['trensfer_date'] = $transferDate;
+            }
             //
             $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
             $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];
@@ -317,25 +418,27 @@ class Company_model extends CI_Model {
         return true;
     }
 
-    public function GetCurrentEmployeeStatus(&$employees_sid, $status = 1){
+    public function GetCurrentEmployeeStatus(&$employees_sid, $status = 1)
+    {
         //
-        if(empty($employees_sid)){
+        if (empty($employees_sid)) {
             return false;
         }
         //
         $last_statuses = $this->db
-        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status')
-        ->where_in('employee_sid', $employees_sid)
-        ->order_by('terminated_employees.sid', 'DESC')
-        ->get('terminated_employees')
-        ->row_array();
+            ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status')
+            ->where_in('employee_sid', $employees_sid)
+            ->order_by('terminated_employees.sid', 'DESC')
+            ->get('terminated_employees')
+            ->row_array();
         //
         $last_status_text = isset($last_statuses['employee_status']) ? GetEmployeeStatusText($last_statuses['employee_status']) : '';
 
         return $last_status_text;
     }
 
-    function get_all_employers($limit, $start, $search) {
+    function get_all_employers($limit, $start, $search)
+    {
         $this->db->select('*');
         $this->db->limit($limit, $start);
         $this->db->where('career_page_type', 'standard_career_site');
@@ -351,7 +454,8 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function total_employers($search) {
+    function total_employers($search)
+    {
         $this->db->select('*');
         $this->db->from('users');
         $this->db->where('career_page_type', 'standard_career_site');
@@ -363,7 +467,8 @@ class Company_model extends CI_Model {
         return $this->db->get()->num_rows();
     }
 
-    function get_company_ids_search($company_name) {
+    function get_company_ids_search($company_name)
+    {
         $this->db->select('sid');
         $this->db->like('CompanyName', $company_name);
         $this->db->where('parent_sid', 0);
@@ -389,7 +494,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_all_employers_date($limit, $start, $search, $between) {
+    function get_all_employers_date($limit, $start, $search, $between)
+    {
         if (isset($search['CompanyName'])) {
             $company_ids = $this->get_company_ids_search($search['CompanyName']);
 
@@ -424,7 +530,8 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function total_employers_date($search, $between) {
+    function total_employers_date($search, $between)
+    {
         if (isset($search['CompanyName'])) {
             $company_ids = $this->get_company_ids_search($search['CompanyName']);
 
@@ -454,7 +561,8 @@ class Company_model extends CI_Model {
         return $this->db->get()->num_rows();
     }
 
-    public function get_details($sid = NULL, $custom_check) {
+    public function get_details($sid = NULL, $custom_check)
+    {
         $this->db->select('*');
 
         if ($custom_check == 'company') {
@@ -471,7 +579,7 @@ class Company_model extends CI_Model {
             $this->db->where('user_sid', $sid);
             $this->db->from('portal_employer');
         }
-        
+
         $results = $this->db->get()->result_array();
         //
         if ($custom_check == 'employer') {
@@ -482,9 +590,10 @@ class Company_model extends CI_Model {
     }
 
     //
-    function getEmployeeCreator($sid){
+    function getEmployeeCreator($sid)
+    {
         $a = $this->db
-        ->select('
+            ->select('
             first_name,
             last_name,
             email,
@@ -495,8 +604,8 @@ class Company_model extends CI_Model {
             is_executive_admin,
             active
         ')
-        ->where('sid', $sid)
-        ->get('users');
+            ->where('sid', $sid)
+            ->get('users');
         //
         $b = $a->row_array();
         $a = $a->free_result();
@@ -504,7 +613,8 @@ class Company_model extends CI_Model {
         return $b;
     }
 
-    public function get_active_countries() {
+    public function get_active_countries()
+    {
         $this->db->select('*');
         $this->db->where('active', '1');
         $this->db->order_by("order", "asc");
@@ -516,7 +626,8 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    public function get_active_states($sid = NULL) {
+    public function get_active_states($sid = NULL)
+    {
         $this->db->select('sid, state_code, state_name');
         $this->db->where('country_sid', $sid);
         $this->db->order_by('order', 'asc');
@@ -527,19 +638,22 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function update_user($sid, $data, $type = NULL) {
+    function update_user($sid, $data, $type = NULL)
+    {
         $this->db->where('sid', $sid);
         $result = $this->db->update('users', $data);
         (!$result) ? $this->session->set_flashdata('message', 'Update Failed, Please try Again!') : $this->session->set_flashdata('message', $type . ' updated successfully');
     }
 
-    function update_company_timezone($sid, $timezone) {
+    function update_company_timezone($sid, $timezone)
+    {
         $data = array('company_timezone' => $timezone);
         $this->db->where('user_sid', $sid);
         $result = $this->db->update('portal_employer', $data);
     }
 
-    function perform_multiple_action($type, $action, $data) {
+    function perform_multiple_action($type, $action, $data)
+    {
         if ($action == 'activate') {
             $set_active = array('active' => '1');
             $set_portal_status = array('status' => '1');
@@ -608,7 +722,8 @@ class Company_model extends CI_Model {
         return true;
     }
 
-    function delete_employer($id) {
+    function delete_employer($id)
+    {
         $this->db->delete('portal_applicant_rating', array('employer_sid' => $id, 'users_type', 'employee'));
         $this->db->delete('portal_applicant_rating', array('employer_sid' => $id, 'users_type', 'applicant'));
         $this->db->delete('portal_applicant_rating', array('applicant_job_sid' => $id, 'users_type', 'applicant'));
@@ -618,7 +733,8 @@ class Company_model extends CI_Model {
         $this->db->delete('users');
     }
 
-    function get_employers() {
+    function get_employers()
+    {
         $this->db->select('sid, username, email, parent_sid');
         $this->db->where('career_page_type', 'standard_career_site');
         $this->db->where('parent_sid > ', 0);
@@ -630,11 +746,13 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function updateUserDocument($receiver_sid, $dataToUpdate) {
+    function updateUserDocument($receiver_sid, $dataToUpdate)
+    {
         $this->db->where('receiver_sid', $receiver_sid)->update('hr_user_document', $dataToUpdate);
     }
 
-    function get_company_theme_detail($company_sid, $select) {
+    function get_company_theme_detail($company_sid, $select)
+    {
         $result = $this->db->select($select)->where('theme_name', 'theme-4')->where('user_sid', $company_sid)->get('portal_themes')->result_array();
 
         if (!empty($result))
@@ -643,7 +761,8 @@ class Company_model extends CI_Model {
             return 0;
     }
 
-    function get_company_facebook_api_detail($company_sid, $select) {
+    function get_company_facebook_api_detail($company_sid, $select)
+    {
         $result = $this->db->select($select)->where('company_sid', $company_sid)->get('facebook_configuration')->result_array();
 
         if (!empty($result))
@@ -652,11 +771,13 @@ class Company_model extends CI_Model {
             return 0;
     }
 
-    function updateEnterpriseTheme($company_sid, $dataToUpdate) {
+    function updateEnterpriseTheme($company_sid, $dataToUpdate)
+    {
         $this->db->where('user_sid', $company_sid)->where('theme_name', 'theme-4')->update('portal_themes', $dataToUpdate);
     }
 
-    function updateFacebookStatus($company_sid, $dataToUpdate) {
+    function updateFacebookStatus($company_sid, $dataToUpdate)
+    {
         $result = $this->db->where('company_sid', $company_sid)->get('facebook_configuration')->result_array();
 
         if (empty($result)) {
@@ -667,11 +788,13 @@ class Company_model extends CI_Model {
         $this->db->where('company_sid', $company_sid)->update('facebook_configuration', $dataToUpdate);
     }
 
-    function updateToActiveOtherTheme($company_sid, $dataToUpdate) {
+    function updateToActiveOtherTheme($company_sid, $dataToUpdate)
+    {
         $this->db->where('user_sid', $company_sid)->where('theme_name', 'theme-1')->update('portal_themes', $dataToUpdate);
     }
 
-    function set_company_active_status($company_sid, $active_status) {
+    function set_company_active_status($company_sid, $active_status)
+    {
         $data = array();
         $data['active'] = intval($active_status);
         $this->db->where('sid', $company_sid);
@@ -680,7 +803,7 @@ class Company_model extends CI_Model {
         $company_details = $data;
         $company_details['sid'] = $company_sid;
         $company_data['company_details'] = $company_details;
-        send_settings_to_remarket(REMARKET_PORTAL_SYNC_COMPANY_URL,$company_data);
+        send_settings_to_remarket(REMARKET_PORTAL_SYNC_COMPANY_URL, $company_data);
         //Update Company Status
         //Update Company Portal Status
         $data = array();
@@ -690,21 +813,47 @@ class Company_model extends CI_Model {
         //Update Company Portal Status
     }
 
-    function set_company_powered_by_status($company_sid, $footer_powered_by_logo) {
+    function set_company_powered_by_status($company_sid, $footer_powered_by_logo)
+    {
         $data = array();
         $data['footer_powered_by_logo'] = intval($footer_powered_by_logo);
         $this->db->where('user_sid', $company_sid);
         $this->db->update('portal_employer', $data);
     }
 
-    function set_header_video_overlay_status($company_sid, $header_video_overlay_status) {
+    function set_header_video_overlay_status($company_sid, $header_video_overlay_status)
+    {
         $data = array();
         $data['header_video_overlay'] = intval($header_video_overlay_status);
         $this->db->where('user_sid', $company_sid);
         $this->db->update('portal_employer', $data);
+
+        //
+        $this->db->select('company_id, meta_key, meta_value');
+        $this->db->where('meta_key', 'site_settings');
+        $this->db->where('company_id', $company_sid);
+        $result = $this->db->get('portal_themes_meta_data')->result_array();
+
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                $meta_values = unserialize($row['meta_value']);
+                $metaValue =  [
+                    'enable_header_bg' => isset($meta_values['enable_header_bg']) ? $meta_values['enable_header_bg'] : 1,
+                    'enable_header_overlay' => intval($header_video_overlay_status)
+                ];
+                $data2 =  array(
+                    'meta_value' => serialize($metaValue)
+                );
+                //
+                $this->db->where('company_id', $row['company_id']);
+                $this->db->where('meta_key', 'site_settings');
+                $this->db->update('portal_themes_meta_data', $data2);
+            }
+        }
     }
 
-    function set_eeo_footer_text_status($company_sid, $eeo_footer_text_status) {
+    function set_eeo_footer_text_status($company_sid, $eeo_footer_text_status)
+    {
         $data = array();
         $data['eeo_footer_text'] = intval($eeo_footer_text_status);
         $this->db->where('user_sid', $company_sid);
@@ -720,7 +869,8 @@ class Company_model extends CI_Model {
      *
      * @return VOID
      */
-    function set_sms_module_status($company_sid, $sms_module_status) {
+    function set_sms_module_status($company_sid, $sms_module_status)
+    {
         // For user
         $this->db->where('sid', $company_sid);
         $this->db->update('users', array(
@@ -737,7 +887,8 @@ class Company_model extends CI_Model {
      *
      * @return VOID
      */
-    function set_phone_pattern_module($company_sid, $phone_pattern_module) {
+    function set_phone_pattern_module($company_sid, $phone_pattern_module)
+    {
         // For user
         $this->db->where('sid', $company_sid);
         $this->db->update('users', array(
@@ -745,7 +896,8 @@ class Company_model extends CI_Model {
         ));
     }
 
-    function set_company_user_active_status($company_sid, $user_sid, $active_status) {
+    function set_company_user_active_status($company_sid, $user_sid, $active_status)
+    {
         $dataToSave = array();
         $dataToSave['active'] = intval($active_status);
         $this->db->where('parent_sid', $company_sid);
@@ -753,7 +905,8 @@ class Company_model extends CI_Model {
         $this->db->update('users', $dataToSave);
     }
 
-    function get_all_platform_packages($package_type = 'account-package') {
+    function get_all_platform_packages($package_type = 'account-package')
+    {
         $this->db->select('*');
         $this->db->order_by('sort_order', 'ASC');
         $this->db->where('product_type', $package_type);
@@ -764,7 +917,8 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function get_company_details($company_sid) {
+    function get_company_details($company_sid)
+    {
         $this->db->select('users.*');
         $this->db->select('portal_employer.enable_captcha');
         $this->db->select('products.name as package_name');
@@ -818,21 +972,24 @@ class Company_model extends CI_Model {
         }
     }
 
-    function set_company_status($company_sid, $status = 1) { //Update Company Status
+    function set_company_status($company_sid, $status = 1)
+    { //Update Company Status
         $data = array();
         $data['active'] = intval($status);
         $this->db->where('sid', $company_sid);
         $this->db->update('users', $data);
     }
 
-    function set_company_portal_status($company_sid, $status = 1) { //Update Company Portal Status
+    function set_company_portal_status($company_sid, $status = 1)
+    { //Update Company Portal Status
         $data = array();
         $data['status'] = intval($status);
         $this->db->where('user_sid', $company_sid);
         $this->db->update('portal_employer', $data);
     }
 
-    function get_company_portal_status($company_sid) {
+    function get_company_portal_status($company_sid)
+    {
         $this->db->select('status');
         $this->db->where('user_sid', $company_sid);
         $data = $this->db->get('portal_employer')->result_array();
@@ -845,7 +1002,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function activate_trial_period($company_sid, $number_of_days, $enable_facebook_api, $enable_deluxe_theme) { // check if it is trail start or update
+    function activate_trial_period($company_sid, $number_of_days, $enable_facebook_api, $enable_deluxe_theme)
+    { // check if it is trail start or update
         $data_trial = $this->get_trial_period_details($company_sid);
         $admin_sid = $this->ion_auth->user()->row()->id;
         $current_date = date('Y-m-d H:i:s');
@@ -926,7 +1084,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function end_trial_period($company_sid, $trial_sid) { //Mark Trial Period As Disabled
+    function end_trial_period($company_sid, $trial_sid)
+    { //Mark Trial Period As Disabled
         $dataToUpdate = array();
         $dataToUpdate['status'] = 'disabled';
         $this->db->where('company_sid', $company_sid);
@@ -971,7 +1130,8 @@ class Company_model extends CI_Model {
         $this->db->update('facebook_configuration', $dataToUpdate);
     }
 
-    function get_trial_period_details($company_sid) {
+    function get_trial_period_details($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $record_obj = $this->db->get('trial_period');
@@ -987,22 +1147,24 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_company_default_cc($company_sid) {
+    function get_company_default_cc($company_sid)
+    {
         $data = $this->db->where('company_sid', $company_sid)
-                        ->where('is_default', 1)
-                        ->get('emp_cards')->row_array();
+            ->where('is_default', 1)
+            ->get('emp_cards')->row_array();
 
         if (!empty($data)) {
             return $data;
         } else {
             $data = $this->db->where('company_sid', $company_sid)
-                            ->limit(1)
-                            ->get('emp_cards')->row_array();
+                ->limit(1)
+                ->get('emp_cards')->row_array();
             return $data;
         }
     }
 
-    function insert_admin_company_note($company_sid, $created_by, $note_type, $note_text) {
+    function insert_admin_company_note($company_sid, $created_by, $note_type, $note_text)
+    {
         $dataToInsert = array();
         $dataToInsert['company_sid'] = $company_sid;
         $dataToInsert['created_by'] = $created_by;
@@ -1012,7 +1174,8 @@ class Company_model extends CI_Model {
         $this->db->insert('admin_company_notes', $dataToInsert);
     }
 
-    function update_admin_company_note($sid, $company_sid, $note_type, $note_text) {
+    function update_admin_company_note($sid, $company_sid, $note_type, $note_text)
+    {
         $dataToInsert = array();
         $dataToInsert['note_type'] = $note_type;
         $dataToInsert['note_text'] = $note_text;
@@ -1021,7 +1184,8 @@ class Company_model extends CI_Model {
         $this->db->update('admin_company_notes', $dataToInsert);
     }
 
-    function save_admin_company_note($sid, $company_sid, $created_by, $note_type, $note_text) {
+    function save_admin_company_note($sid, $company_sid, $created_by, $note_type, $note_text)
+    {
         if ($sid == null) {
             $this->insert_admin_company_note($company_sid, $created_by, $note_type, $note_text);
             $note_sid = $this->db->insert_id();
@@ -1032,7 +1196,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function insert_admin_company_note_modification_record($company_sid, $note_sid, $note_type, $note_text, $operation, $performed_by) {
+    function insert_admin_company_note_modification_record($company_sid, $note_sid, $note_type, $note_text, $operation, $performed_by)
+    {
         $dataToSave = array();
         $dataToSave['company_sid'] = $company_sid;
         $dataToSave['note_sid'] = $note_sid;
@@ -1044,7 +1209,8 @@ class Company_model extends CI_Model {
         $this->db->insert('admin_company_notes_modification_history', $dataToSave);
     }
 
-    function get_admin_company_notes($company_sid, $note_type) {
+    function get_admin_company_notes($company_sid, $note_type)
+    {
         $this->db->select('admin_company_notes.*');
         $this->db->select('administrator_users.first_name as admin_first_name, administrator_users.last_name as admin_last_name');
         $this->db->where('company_sid', $company_sid);
@@ -1057,7 +1223,8 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function get_admin_company_note($company_sid, $note_sid) {
+    function get_admin_company_note($company_sid, $note_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $note_sid);
@@ -1070,14 +1237,16 @@ class Company_model extends CI_Model {
         }
     }
 
-    function delete_admin_company_note($company_sid, $note_sid, $note_type, $note_text, $deleted_by) {
+    function delete_admin_company_note($company_sid, $note_sid, $note_type, $note_text, $deleted_by)
+    {
         $this->db->where('sid', $note_sid);
         $this->db->where('company_sid', $company_sid);
         $this->db->delete('admin_company_notes');
         $this->insert_admin_company_note_modification_record($company_sid, $note_type, $note_text, 'deleted', $deleted_by);
     }
 
-    function get_documents_status($company_sid) {
+    function get_documents_status($company_sid)
+    {
         $this->db->select('users.CompanyName');
         $this->db->select('form_document_credit_card_authorization.status as cc_auth_status');
         $this->db->select('form_document_eula.status as eula_status');
@@ -1098,7 +1267,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_company_trial_period_detail($company_sid) {
+    function get_company_trial_period_detail($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
 
@@ -1113,14 +1283,16 @@ class Company_model extends CI_Model {
         }
     }
 
-    function add_exec_admin($data) { // function for adding new executive administrator
-        if(isset($data['user_shift_minutes']) && (trim($data['user_shift_minutes']) == '') || $data['user_shift_minutes'] == null) unset($data['user_shift_minutes']);
-        if(isset($data['user_shift_hours']) && trim($data['user_shift_hours']) == '' || $data['user_shift_hours'] == null) unset($data['user_shift_hours']);
+    function add_exec_admin($data)
+    { // function for adding new executive administrator
+        if (isset($data['user_shift_minutes']) && (trim($data['user_shift_minutes']) == '') || $data['user_shift_minutes'] == null) unset($data['user_shift_minutes']);
+        if (isset($data['user_shift_hours']) && trim($data['user_shift_hours']) == '' || $data['user_shift_hours'] == null) unset($data['user_shift_hours']);
         $result = $this->db->insert('executive_users', $data);
         return $this->db->insert_id();
     }
 
-    function get_executive_administrators($name = 'all', $email = 'all') { // function for getting all data from the executive_users table
+    function get_executive_administrators($name = 'all', $email = 'all')
+    { // function for getting all data from the executive_users table
         if (!empty($email) && $email != 'all') {
             $this->db->where('email', $email);
         }
@@ -1148,7 +1320,8 @@ class Company_model extends CI_Model {
         return $data->result();
     }
 
-    function get_administrator($admin_id) { // function to get one administrator by id for editing
+    function get_administrator($admin_id)
+    { // function to get one administrator by id for editing
         $this->db->select('*');
         $this->db->where('sid', $admin_id);
         $record_obj = $this->db->get('executive_users');
@@ -1157,7 +1330,8 @@ class Company_model extends CI_Model {
         return $administrator;
     }
 
-    function edit_admin($admin_id, $data) { // function to update administrator data by id
+    function edit_admin($admin_id, $data)
+    { // function to update administrator data by id
         $this->db->where('sid', $admin_id);
         $result = $this->db->update('executive_users', $data);
         if ($result) { // record is updated, Update all companies accounts + session.
@@ -1173,8 +1347,10 @@ class Company_model extends CI_Model {
                     'email' => $data['email'],
                     'active' => $data['active'],
                     'timezone' => $data['timezone'],
+                    'access_level' => $data['access_level'],
                     'PhoneNumber' => $data['direct_business_number'],
-                    'job_title' => $data['job_title']);
+                    'job_title' => $data['job_title']
+                );
 
                 if (isset($data['profile_picture']) && $data['profile_picture'] != NULL) {  //profile_picture
                     $data_to_update['profile_picture'] = $data['profile_picture'];
@@ -1200,7 +1376,8 @@ class Company_model extends CI_Model {
         return $result;
     }
 
-    function get_admin_companies($admin_id) { // function to get all the companies against one administrator
+    function get_admin_companies($admin_id)
+    { // function to get all the companies against one administrator
         $this->db->select('*');
         $this->db->where('executive_admin_sid', $admin_id);
         $record_obj = $this->db->get('executive_user_companies');
@@ -1209,7 +1386,8 @@ class Company_model extends CI_Model {
         return $companies;
     }
 
-    function get_admin_exec_account($email_address, $company_sid) {
+    function get_admin_exec_account($email_address, $company_sid)
+    {
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('is_executive_admin', 1);
@@ -1226,7 +1404,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_executive_admin_info_from_users_table($company_sid, $executive_admin_sid) {
+    function get_executive_admin_info_from_users_table($company_sid, $executive_admin_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $executive_admin_sid);
 
@@ -1255,7 +1434,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function add_company($data, $company_sid, $username = null, $password = null, $career_page_type = null) {
+    function add_company($data, $company_sid, $username = null, $password = null, $career_page_type = null)
+    {
         $this->db->select('*');
         $this->db->where('sid', $data['executive_admin_sid']);
         $admin_array = $this->db->get('executive_users')->result_array();
@@ -1341,20 +1521,35 @@ class Company_model extends CI_Model {
         }
     }
 
-    function executive_admin_company_remove($sid, $logged_in_sid) {
+    function executive_admin_company_remove($sid, $logged_in_sid)
+    {
         $this->db->where('sid', $logged_in_sid);
         $this->db->update('users', array('active' => 0));
         $result = $this->db->delete('executive_user_companies', array('sid ' => $sid));
         return $result;
     }
 
-    function executive_admin_delete($administrator_sid) {
+    function executive_admin_user_delete($administrator_sid)
+    {
+        //
+        $this->db->select('email');
+        $this->db->where('sid', $administrator_sid);
+        $admin_array = $this->db->get('executive_users')->row_array();
+        //
+        $this->db->where('email', $admin_array['email']);
+        $this->db->where('is_executive_admin', '1');
+        $this->db->delete('users');
+    }
+
+    function executive_admin_delete($administrator_sid)
+    {
         $this->db->delete('executive_user_companies', array('executive_admin_sid ' => $administrator_sid));
         $result = $this->db->delete('executive_users', array('sid ' => $administrator_sid));
         return $result;
     }
 
-    function executive_admin_activation($administrator_sid) {
+    function executive_admin_activation($administrator_sid)
+    {
         $this->db->select('active');
         $this->db->where('sid', $administrator_sid);
         $record_obj = $this->db->get('executive_users');
@@ -1370,10 +1565,35 @@ class Company_model extends CI_Model {
             $result = $this->db->update('executive_users', array('active' => 1));
         }
 
+        $this->manageExecutiveAdminOnAllStores($administrator_sid, $status);
+
         return $result;
     }
 
-    function get_company_name($company_sid) {
+    public function manageExecutiveAdminOnAllStores($executiveAdminId, $status)
+    {
+        //
+        $inStores = $this->db
+            ->select('logged_in_sid')
+            ->where('executive_admin_sid', $executiveAdminId)
+            ->get('executive_user_companies')
+            ->result_array();
+        //
+        if (empty($inStores)) {
+            return false;
+        }
+        //
+        foreach ($inStores as $inStore) {
+            $this->db
+                ->where('sid', $inStore['logged_in_sid'])
+                ->update('users', ['active' => $status == '1' ? 0 : 1]);
+        }
+        //
+        return true;
+    }
+
+    function get_company_name($company_sid)
+    {
         $this->db->select('CompanyName');
         $this->db->where('sid', $company_sid);
         $record_obj = $this->db->get('users');
@@ -1387,7 +1607,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function add_new_employer($company_sid, $field_data = array()) {
+    function add_new_employer($company_sid, $field_data = array())
+    {
         $data_to_insert = array();
         $data_to_insert['parent_sid'] = $company_sid;
 
@@ -1399,7 +1620,8 @@ class Company_model extends CI_Model {
         return $this->db->insert_id();
     }
 
-    function get_security_access_levels() {
+    function get_security_access_levels()
+    {
         $this->db->select('access_level');
         $this->db->where('status', 1);
         $record_obj = $this->db->get('security_access_level');
@@ -1414,7 +1636,8 @@ class Company_model extends CI_Model {
         return $my_return;
     }
 
-    function get_automotive_groups() {
+    function get_automotive_groups()
+    {
         $this->db->select('*');
         $this->db->order_by('LOWER(group_name)', 'ASC');
 
@@ -1424,7 +1647,8 @@ class Company_model extends CI_Model {
         return $data;
     }
 
-    function get_automotive_group_member_companies($automotive_group_sid, $fetch_only_registered = null, $exec_admin_sid = 0) {
+    function get_automotive_group_member_companies($automotive_group_sid, $fetch_only_registered = null, $exec_admin_sid = 0)
+    {
         $this->db->select('*');
         $this->db->where('automotive_group_sid', $automotive_group_sid);
 
@@ -1476,7 +1700,8 @@ class Company_model extends CI_Model {
         return $member_companies;
     }
 
-    function get_executive_admin_company_details($executive_admin_sid, $company_sid) {
+    function get_executive_admin_company_details($executive_admin_sid, $company_sid)
+    {
         $this->db->select('*');
         $this->db->where('executive_admin_sid', $executive_admin_sid);
         $this->db->where('company_sid', $company_sid);
@@ -1492,7 +1717,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_automotive_group_details($automotive_group_sid) {
+    function get_automotive_group_details($automotive_group_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $automotive_group_sid);
 
@@ -1521,7 +1747,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_brands_by_company($company_sid) {
+    function get_brands_by_company($company_sid)
+    {
         $this->db->select('distinct(oem_brand_sid), oem_brands.*');
         $this->db->where('oem_brands_companies.company_sid', $company_sid);
         $this->db->join('oem_brands', 'oem_brands_companies.oem_brand_sid = oem_brands.sid');
@@ -1532,7 +1759,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function get_groups_by_company($company_sid) {
+    function get_groups_by_company($company_sid)
+    {
         $this->db->select('automotive_groups.*');
         $this->db->where('automotive_group_companies.company_sid', $company_sid);
         $this->db->order_by("LOWER(automotive_groups.group_name)", "asc");
@@ -1544,7 +1772,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function get_all_marketing_agencies() {
+    function get_all_marketing_agencies()
+    {
         $this->db->select('*');
         $this->db->where('is_deleted', 0);
         $this->db->order_by('sid', 'desc');
@@ -1555,7 +1784,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function check_if_exec_admin_has_access_to_corp_co($exec_admin_sid, $corporate_company_sid) {
+    function check_if_exec_admin_has_access_to_corp_co($exec_admin_sid, $corporate_company_sid)
+    {
         $this->db->select('*');
         $this->db->where('executive_admin_sid', $exec_admin_sid);
         $this->db->where('company_sid', $corporate_company_sid);
@@ -1568,17 +1798,18 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_executive_admin_companies($executive_admin_sid) {
+    function get_executive_admin_companies($executive_admin_sid)
+    {
         $this->db->select('*');
         $this->db->where('executive_admin_sid', $executive_admin_sid);
         $record_obj = $this->db->get('executive_user_companies');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
         return $record_arr;
-
     }
 
-    function get_industry_categories() {
+    function get_industry_categories()
+    {
         $this->db->select('sid, industry_name');
         $record_obj = $this->db->get('job_category_industries');
         $record_arr = $record_obj->result_array();
@@ -1586,7 +1817,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function get_industry_category($sid) {
+    function get_industry_category($sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $sid);
 
@@ -1596,7 +1828,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function get_portal_details($sid) {
+    function get_portal_details($sid)
+    {
         $this->db->select('*');
         $this->db->where('user_sid', $sid);
         $record_obj = $this->db->get('portal_employer');
@@ -1610,7 +1843,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_all_executive_admin_companies() {
+    function get_all_executive_admin_companies()
+    {
         $this->db->select('users.sid, users.career_page_type, users.CompanyName, portal_employer.sub_domain');
         $this->db->where('parent_sid', 0);
         $this->db->where('active', 1);
@@ -1624,7 +1858,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function get_job_fair_status($company_sid) {
+    function get_job_fair_status($company_sid)
+    {
         $this->db->select('status');
         $this->db->where('company_sid', $company_sid);
         $record_obj = $this->db->get('job_fairs_recruitment');
@@ -1639,7 +1874,8 @@ class Company_model extends CI_Model {
             $record_obj->free_result();
 
             if (!empty($record_arr)) { // company exists
-                $data_to_insert = array('company_sid' => $company_sid,
+                $data_to_insert = array(
+                    'company_sid' => $company_sid,
                     'title' => 'Job Fair',
                     'content' => '<p>Joining our Talent Network will enhance your job search and application process. Whether you choose to apply or just leave your information, we look forward to staying connected with you.</p>
                                                             <ul>
@@ -1659,7 +1895,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_job_fair_data($company_sid) {
+    function get_job_fair_data($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $record_obj = $this->db->get('job_fairs_recruitment');
@@ -1668,7 +1905,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function get_footer_logo_data($company_sid) {
+    function get_footer_logo_data($company_sid)
+    {
         $this->db->select('footer_powered_by_logo, footer_logo_type, footer_logo_text, footer_logo_image, copyright_company_status, copyright_company_name');
         $this->db->where('user_sid', $company_sid);
         $record_obj = $this->db->get('portal_employer');
@@ -1677,7 +1915,8 @@ class Company_model extends CI_Model {
         return $record_arr;
     }
 
-    function save_job_fair($data) {
+    function save_job_fair($data)
+    {
         $this->db->where('company_sid', $data['company_sid']);
         $result = $this->db->get('job_fairs_recruitment')->num_rows();
 
@@ -1691,7 +1930,8 @@ class Company_model extends CI_Model {
         return $result;
     }
 
-    function get_contact_info($company_sid) {
+    function get_contact_info($company_sid)
+    {
         $this->db->where('company_id', $company_sid);
         $records_obj = $this->db->get('contact_info_for_company');
         $records_arr = $records_obj->result_array();
@@ -1699,7 +1939,8 @@ class Company_model extends CI_Model {
         return $records_arr;
     }
 
-    function add_update_contact_info($company_sid, $SalesPhoneNumber, $SalesEmail, $TechnicalSupportPhoneNumber, $TechnicalSupportEmail) {
+    function add_update_contact_info($company_sid, $SalesPhoneNumber, $SalesEmail, $TechnicalSupportPhoneNumber, $TechnicalSupportEmail)
+    {
         $dataToInsert = array();
         $dataToInsert['company_id'] = $company_sid;
         $dataToInsert['exec_sales_phone_no'] = $SalesPhoneNumber;
@@ -1717,7 +1958,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_additional_content_boxes($sid) {
+    function get_additional_content_boxes($sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $sid);
         $this->db->from('portal_theme4_additional_sections');
@@ -1727,17 +1969,20 @@ class Company_model extends CI_Model {
         return $records_arr;
     }
 
-    function add_additional_content_boxes($data) {
+    function add_additional_content_boxes($data)
+    {
         $this->db->insert('portal_theme4_additional_sections', $data);
         return $this->db->insert_id();
     }
 
-    function update_additional_content_boxes($sid, $data) {
+    function update_additional_content_boxes($sid, $data)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('portal_theme4_additional_sections', $data);
     }
 
-    function get_additional_box($sid) {
+    function get_additional_box($sid)
+    {
         $this->db->where('sid', $sid);
         $records_obj = $this->db->get('portal_theme4_additional_sections');
         $records_arr = $records_obj->result_array();
@@ -1745,12 +1990,14 @@ class Company_model extends CI_Model {
         return $records_arr;
     }
 
-    function delete_additional_content_boxes($sid) {
+    function delete_additional_content_boxes($sid)
+    {
         $this->db->where('sid', $sid);
         $this->db->delete('portal_theme4_additional_sections');
     }
 
-    function get_reassign_configured_companies($company_sid) {
+    function get_reassign_configured_companies($company_sid)
+    {
         $this->db->select('users.CompanyName');
         $this->db->where('reassign_candidate_companies.company_sid', $company_sid);
         $this->db->where('reassign_candidate_companies.status', 1);
@@ -1761,17 +2008,20 @@ class Company_model extends CI_Model {
         return $records_arr;
     }
 
-    function update_user_status($sid, $data) {
+    function update_user_status($sid, $data)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('users', $data);
     }
 
-    function update_employer_status($sid, $data) {
+    function update_employer_status($sid, $data)
+    {
         $this->db->where('user_sid', $sid);
         return $this->db->update('portal_employer', $data);
     }
 
-    function insert_job_visibility_record_for_non_applicants($company_sid) {
+    function insert_job_visibility_record_for_non_applicants($company_sid)
+    {
         $data_to_insert = array();
         $data_to_insert['job_sid'] = 0;
         $data_to_insert['company_sid'] = $company_sid;
@@ -1780,7 +2030,8 @@ class Company_model extends CI_Model {
         return $this->db->insert_id();
     }
 
-    function get_employee_details($sid) {
+    function get_employee_details($sid)
+    {
         $this->db->select('first_name, last_name, username, access_level, salt, email');
         $this->db->where('sid', $sid);
         $this->db->from('users');
@@ -1790,11 +2041,13 @@ class Company_model extends CI_Model {
         return $records_arr;
     }
 
-    function update_excetive_admin($sid, $dataToUpdate) {
+    function update_excetive_admin($sid, $dataToUpdate)
+    {
         $this->db->where('sid', $sid)->set($dataToUpdate)->update('executive_users');
     }
 
-    function update_footer_logo($sid, $dataToUpdate) {
+    function update_footer_logo($sid, $dataToUpdate)
+    {
         $this->db->where('user_sid', $sid);
         $this->db->update('portal_employer', $dataToUpdate);
     }
@@ -1805,37 +2058,40 @@ class Company_model extends CI_Model {
      *
      * @return Array|Bool
      */
-    function fetch_company_details_by_employee_id($employee_id) {
+    function fetch_company_details_by_employee_id($employee_id)
+    {
         $result = $this->db
-                ->select('
+            ->select('
             company.CompanyName as company_name,
             company.PhoneNumber as company_phone,
             company.Location_Address as company_address,
             company.email  as company_email,
             company.WebSite  as career_site_url
         ')
-                ->from('users')
-                ->where('users.sid', $employee_id)
-                ->join('users as company', 'company.sid = users.parent_sid', 'left')
-                ->get();
+            ->from('users')
+            ->where('users.sid', $employee_id)
+            ->join('users as company', 'company.sid = users.parent_sid', 'left')
+            ->get();
         $result_arr = $result->row_array();
         $result = $result->free_result();
         return $result_arr;
     }
 
-    function get_company_employers($company_sid) {
+    function get_company_employers($company_sid)
+    {
         $this->db->select('email,access_level,profile_picture,sid,first_name,last_name,registration_date,is_executive_admin,complynet_credentials,pay_plan_flag');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         return $records_arr;
     }
 
-    function get_configured_access_level_plus_employers($company_sid) {
+    function get_configured_access_level_plus_employers($company_sid)
+    {
         $this->db->select('sid');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('active', 1);
@@ -1847,35 +2103,40 @@ class Company_model extends CI_Model {
         return $records_arr;
     }
 
-    function update_configured_DPO_employers($employee_sid, $flag) {
+    function update_configured_DPO_employers($employee_sid, $flag)
+    {
         $update_array = array();
         $update_array['doc_preview_only'] = $flag;
         $this->db->where('sid', $employee_sid);
         $this->db->update('users', $update_array);
     }
 
-    function update_configured_pay_plan_employers($employee_sid, $flag) {
+    function update_configured_pay_plan_employers($employee_sid, $flag)
+    {
         $update_array = array();
         $update_array['pay_plan_flag'] = $flag;
         $this->db->where('sid', $employee_sid);
         $this->db->update('users', $update_array);
     }
 
-    function add_configured_access_level_plus_employers($employee_sid) {
+    function add_configured_access_level_plus_employers($employee_sid)
+    {
         $update_array = array();
         $update_array['access_level_plus'] = 1;
         $this->db->where('sid', $employee_sid);
         $this->db->update('users', $update_array);
     }
 
-    function delete_configured_access_level_plus_employers($employee_sid) {
+    function delete_configured_access_level_plus_employers($employee_sid)
+    {
         $update_array = array();
         $update_array['access_level_plus'] = 0;
         $this->db->where('sid', $employee_sid);
         $this->db->update('users', $update_array);
     }
 
-    function fetch_details($id) {
+    function fetch_details($id)
+    {
         $this->db->select('mykey, myvalue, mydomain, mytype, mysec');
         $this->db->where('myid', $id);
         $record_obj = $this->db->get('portal_themes_data');
@@ -1889,9 +2150,9 @@ class Company_model extends CI_Model {
             $key = $data['mykey'];
             $value = $data['myvalue'];
 
-            $enc = openssl_decrypt($type,"AES-128-ECB",$sec);
-            $key = openssl_decrypt($key,$enc,$sec);
-            $value = openssl_decrypt($value,$enc,$sec);
+            $enc = openssl_decrypt($type, "AES-128-ECB", $sec);
+            $key = openssl_decrypt($key, $enc, $sec);
+            $value = openssl_decrypt($value, $enc, $sec);
 
             return array('auth_user' => $key, 'auth_pass' => $value);
         } else {
@@ -1907,15 +2168,16 @@ class Company_model extends CI_Model {
      *
      * @return Array|Bool
      */
-    function get_company_phone_by_sid($company_sid){
+    function get_company_phone_by_sid($company_sid)
+    {
         $result =
-        $this->db
-        ->select('phone_number')
-        ->from('portal_company_sms_module')
-        ->where('company_sid', $company_sid)
-        ->limit(1)
-        ->order_by('sid', 'DESC')
-        ->get();
+            $this->db
+            ->select('phone_number')
+            ->from('portal_company_sms_module')
+            ->where('company_sid', $company_sid)
+            ->limit(1)
+            ->order_by('sid', 'DESC')
+            ->get();
         //
         $result_arr = $result->row_array();
         $result     = $result->free_result();
@@ -1924,7 +2186,7 @@ class Company_model extends CI_Model {
     }
 
 
-     /**
+    /**
      * Check company phone record already exist
      * Created on: 17-03-2021
      *
@@ -1932,26 +2194,27 @@ class Company_model extends CI_Model {
      *
      * @return Integer|Bool
      */
-    function check_company_row_exist($company_sid){
+    function check_company_row_exist($company_sid)
+    {
         $result =
-        $this->db
-        ->select('phone_number')
-        ->from('portal_company_sms_module')
-        ->where('company_sid', $company_sid)
-        ->limit(1)
-        ->order_by('sid', 'DESC')
-        ->get();
+            $this->db
+            ->select('phone_number')
+            ->from('portal_company_sms_module')
+            ->where('company_sid', $company_sid)
+            ->limit(1)
+            ->order_by('sid', 'DESC')
+            ->get();
         //
         $result_arr = $result->row_array();
         $result     = $result->free_result();
         //
         return !sizeof($result_arr) ? false : true;
-
     }
 
-    function update_company_phone_number($company_sid, $dataToUpdate) {
-        $this->db->where('company_sid',$company_sid);
-        $this->db->update('portal_company_sms_module',$dataToUpdate);
+    function update_company_phone_number($company_sid, $dataToUpdate)
+    {
+        $this->db->where('company_sid', $company_sid);
+        $this->db->update('portal_company_sms_module', $dataToUpdate);
     }
 
 
@@ -1963,10 +2226,10 @@ class Company_model extends CI_Model {
      *
      * @return Integer|Bool
      */
-    function save_company_phone_number($insert_array){
+    function save_company_phone_number($insert_array)
+    {
         $inserted = $this->db->insert('portal_company_sms_module', $insert_array);
         return !$inserted ? false : $this->db->insert_id();
-
     }
 
 
@@ -1979,34 +2242,35 @@ class Company_model extends CI_Model {
      *
      * @return String|Integer
      */
-    function get_company_column($company_sid, $column = 'CompanyName'){
+    function get_company_column($company_sid, $column = 'CompanyName')
+    {
 
         $result = $this
-        ->db
-        ->select($column)
-        ->from('users')
-        ->where('parent_sid', 0)
-        ->where('sid', $company_sid)
-        ->limit(1)
-        ->get();
+            ->db
+            ->select($column)
+            ->from('users')
+            ->where('parent_sid', 0)
+            ->where('sid', $company_sid)
+            ->limit(1)
+            ->get();
 
         $result_arr = $result->row_array();
         $result     = $result->free_result();
 
         return isset($result_arr[$column]) ? $result_arr[$column] : 0;
-
     }
 
-    function get_customize_career_site_data($company_sid) {
+    function get_customize_career_site_data($company_sid)
+    {
         $this->db->select('status, menu, footer, inactive_pages');
         $this->db->where('company_sid', $company_sid);
         $record_obj = $this->db->get('customize_career_site');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        if(isset($record_arr[0])){
-            $record_arr[0]['inactive_pages'] = json_decode($record_arr[0]['inactive_pages'],true);
+        if (isset($record_arr[0])) {
+            $record_arr[0]['inactive_pages'] = json_decode($record_arr[0]['inactive_pages'], true);
             return $record_arr[0];
-        }else{
+        } else {
             $record_arr['status'] = 0;
             $record_arr['menu'] = 1;
             $record_arr['footer'] = 1;
@@ -2014,112 +2278,117 @@ class Company_model extends CI_Model {
             return $record_arr;
         }
     }
-    function update_customize_career_site($company_sid, $dataToUpdate) {
-        $this->db->where('company_sid',$company_sid);
+    function update_customize_career_site($company_sid, $dataToUpdate)
+    {
+        $this->db->where('company_sid', $company_sid);
         $q = $this->db->get('customize_career_site');
 
-        if ( $q->num_rows() > 0 )
-        {
-            $this->db->where('company_sid',$company_sid);
-            $this->db->update('customize_career_site',$dataToUpdate);
+        if ($q->num_rows() > 0) {
+            $this->db->where('company_sid', $company_sid);
+            $this->db->update('customize_career_site', $dataToUpdate);
         } else {
             $this->db->set('company_sid', $company_sid);
-            $this->db->insert('customize_career_site',$dataToUpdate);
+            $this->db->insert('customize_career_site', $dataToUpdate);
         }
     }
-    public function get_career_site_pages($company_sid) {
+    public function get_career_site_pages($company_sid)
+    {
         $this->db->select('page_name,page_title');
-        $this->db->where('company_id',$company_sid);
+        $this->db->where('company_id', $company_sid);
         return $this->db->get('portal_themes_pages')->result_array();
     }
     //
-    function getDynamicModulesByCompany($companyId){
+    function getDynamicModulesByCompany($companyId)
+    {
         $a = $this->db
-        ->select('sid, module_name, "0" as status')
-        ->where('is_disabled', 0)
-        ->where('stage', 'production')
-        ->order_by('module_name', 'ASC')
-        ->get('modules');
+            ->select('sid, module_name, "0" as status')
+            ->where('is_disabled', 0)
+            ->where('stage', 'production')
+            ->order_by('module_name', 'ASC')
+            ->get('modules');
         //
         $b = $a->result_array();
         $a->free_result();
         //
-        if(!sizeof($b)){ return $b;}
+        if (!sizeof($b)) {
+            return $b;
+        }
         //
         foreach ($b as $k => $v) {
-            if(
+            if (
                 $this->db
                 ->where('module_sid', $v['sid'])
                 ->where('is_active', 1)
                 ->where('company_sid', $companyId)
                 ->count_all_results('company_modules')
-            ){
+            ) {
                 $b[$k]['status'] = 1;
             }
         }
 
         return $b;
-
     }
 
     //
-    function update_module_status(){
+    function update_module_status()
+    {
         $post = $this->input->post(NULL, TRUE);
-        if(!sizeof($post)) return false;
+        if (!sizeof($post)) return false;
         // Check if company exists in modules
-        if(
+        if (
             $this->db
             ->where('company_sid', $post['CompanyId'])
             ->where('module_sid', $post['Id'])
             ->count_all_results('company_modules')
-        ){
+        ) {
             $this->db
-            ->where('company_sid', $post['CompanyId'])
-            ->where('module_sid', $post['Id'])
-            ->update('company_modules', array(
-                'is_active' => $post['Status'] == 1 ? 0 : 1
-            ));
+                ->where('company_sid', $post['CompanyId'])
+                ->where('module_sid', $post['Id'])
+                ->update('company_modules', array(
+                    'is_active' => $post['Status'] == 1 ? 0 : 1
+                ));
             return true;
-        }else{
+        } else {
             $this->db
-            ->insert('company_modules', array(
-                'company_sid' => $post['CompanyId'],
-                'module_sid' => $post['Id'],
-                'is_active' => 1
-            ));
+                ->insert('company_modules', array(
+                    'company_sid' => $post['CompanyId'],
+                    'module_sid' => $post['Id'],
+                    'is_active' => 1
+                ));
             return $this->db->insert_id();
         }
-
     }
-    public function sync_company_details_to_remarket($company_details){
+    public function sync_company_details_to_remarket($company_details)
+    {
         $this->db->select('sub_domain');
         $this->db->where('user_sid', $company_details['sid']);
         $record_obj = $this->db->get('portal_employer');
         $portal_employer = $record_obj->row_array();
         $company_details['sub_domain'] = $portal_employer['sub_domain'];
         $record_obj = $this->db->select('Logo')
-                    ->where('sid', $company_details['sid'])
-                    ->get('users');
-                    
+            ->where('sid', $company_details['sid'])
+            ->get('users');
+
         $result =  $record_obj->row_array();
         $record_obj->free_result();
-        if(isset($result['Logo']))
+        if (isset($result['Logo']))
             $company_details['Logo'] = $result['Logo'];
-        
+
         $company_data['company_details'] = $company_details;
-        send_settings_to_remarket(REMARKET_PORTAL_SYNC_COMPANY_URL,$company_data);
+        send_settings_to_remarket(REMARKET_PORTAL_SYNC_COMPANY_URL, $company_data);
     }
 
 
 
     //
-    function getCompanyActiveEmployees($companySid){
+    function getCompanyActiveEmployees($companySid)
+    {
         $a = $this->db
-        ->select('sid, first_name, last_name, access_level, access_level_plus, is_executive_admin, pay_plan_flag, job_title')
-        ->where('parent_sid', $companySid)
-        ->where('active', 1)
-        ->order_by('concat(first_name,last_name)', 'ASC', false)
-        ->get('users');
+            ->select('sid, first_name, last_name, access_level, access_level_plus, is_executive_admin, pay_plan_flag, job_title')
+            ->where('parent_sid', $companySid)
+            ->where('active', 1)
+            ->order_by('concat(first_name,last_name)', 'ASC', false)
+            ->get('users');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -2128,14 +2397,15 @@ class Company_model extends CI_Model {
     }
 
     //
-    function getCompanyActiveDepartments($companySid){
+    function getCompanyActiveDepartments($companySid)
+    {
         $a = $this->db
-        ->select('sid, name')
-        ->where('company_sid', $companySid)
-        ->where('status', 1)
-        ->where('is_deleted', 0)
-        ->order_by('sort_order', 'ASC')
-        ->get('departments_management');
+            ->select('sid, name')
+            ->where('company_sid', $companySid)
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->order_by('sort_order', 'ASC')
+            ->get('departments_management');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -2144,11 +2414,12 @@ class Company_model extends CI_Model {
     }
 
     //
-    function getSingleApprover($approversid){
+    function getSingleApprover($approversid)
+    {
         $a = $this->db
-        ->select('employee_sid, department_sid, is_archived, sort_order')
-        ->where('sid', $approversid)
-        ->get('timeoff_approvers');
+            ->select('employee_sid, department_sid, is_archived, sort_order')
+            ->where('sid', $approversid)
+            ->get('timeoff_approvers');
         //
         $b = $a->row_array();
         $a = $a->free_result();
@@ -2157,13 +2428,14 @@ class Company_model extends CI_Model {
     }
 
     //
-    function checkApprover($post){
+    function checkApprover($post)
+    {
         $this->db
-        ->where('employee_sid', $post['employeeSid'])
-        ->where('department_sid', $post['departmentSid']);
+            ->where('employee_sid', $post['employeeSid'])
+            ->where('department_sid', $post['departmentSid']);
 
-        if(isset($post['approversid'])) $this->db->where('sid <> ', $post['approversid']);
-        
+        if (isset($post['approversid'])) $this->db->where('sid <> ', $post['approversid']);
+
         return $this->db->count_all_results('timeoff_approvers');
     }
 
@@ -2171,44 +2443,44 @@ class Company_model extends CI_Model {
     function changeApproverStatus(
         $sid,
         $status
-    ){
+    ) {
         return $this->db
-        ->where('sid', $sid)
-        ->update('timeoff_approvers', array(
-            'is_archived' => $status
-        ));
+            ->where('sid', $sid)
+            ->update('timeoff_approvers', array(
+                'is_archived' => $status
+            ));
     }
 
     //
     function updateApprover(
         $post
-    ){
+    ) {
         return $this->db
-        ->where('sid', $post['approverSid'])
-        ->update('timeoff_approvers', array(
-            'is_archived' => $post['isArchived'],
-            'employee_sid' => $post['employeeSid'],
-            'department_sid' => $post['departmentSid']
-        ));
+            ->where('sid', $post['approverSid'])
+            ->update('timeoff_approvers', array(
+                'is_archived' => $post['isArchived'],
+                'employee_sid' => $post['employeeSid'],
+                'department_sid' => $post['departmentSid']
+            ));
     }
 
     //
     function addApprover(
         $post
-    ){
+    ) {
         //
         $a = $this->db
-        ->select('sid')
-        ->where('parent_sid', $post['companySid'])
-        ->where('active', 1)
-        ->group_start()
-        ->where('is_primary_admin', 1)
-        ->or_where('access_level_plus', 1)
-        ->group_end()
-        ->where('terminated_status', 0)
-        ->limit(1)
-        ->order_by('is_primary_admin', 'ASC')
-        ->get('users');
+            ->select('sid')
+            ->where('parent_sid', $post['companySid'])
+            ->where('active', 1)
+            ->group_start()
+            ->where('is_primary_admin', 1)
+            ->or_where('access_level_plus', 1)
+            ->group_end()
+            ->where('terminated_status', 0)
+            ->limit(1)
+            ->order_by('is_primary_admin', 'ASC')
+            ->get('users');
         //
         $b = $a->row_array();
         $a = $a->free_result();
@@ -2216,31 +2488,33 @@ class Company_model extends CI_Model {
         $creatorSid = $b['sid'];
         //
         $this->db
-        ->insert('timeoff_approvers', array(
-            'is_archived' => $post['isArchived'],
-            'employee_sid' => $post['employeeSid'],
-            'creator_sid' => $creatorSid,
-            'company_sid' => $post['companySid'],
-            'department_sid' => $post['departmentSid']
-        ));
+            ->insert('timeoff_approvers', array(
+                'is_archived' => $post['isArchived'],
+                'employee_sid' => $post['employeeSid'],
+                'creator_sid' => $creatorSid,
+                'company_sid' => $post['companySid'],
+                'department_sid' => $post['departmentSid']
+            ));
         //
         return $this->db->insert_id();
     }
 
     //
-    function getPhoneNumber($companyId){
+    function getPhoneNumber($companyId)
+    {
         return $this->db
-        ->where('company_sid', $companyId)
-        ->get('portal_company_sms_module')
-        ->row_array();
+            ->where('company_sid', $companyId)
+            ->get('portal_company_sms_module')
+            ->row_array();
     }
 
     //
-    function GetCompanyEmail($companyId){
+    function GetCompanyEmail($companyId)
+    {
         //
         $query = $this->db->select('email')
-        ->where('sid', $companyId)
-        ->get('users');
+            ->where('sid', $companyId)
+            ->get('users');
         //
         $b = $query->row_array();
         //
@@ -2251,51 +2525,54 @@ class Company_model extends CI_Model {
 
     //
     function UpdateCompanyIndeed(
-        $name, 
-        $email, 
-        $phone, 
+        $name,
+        $email,
+        $phone,
         $companyId
-    ){
+    ) {
         //
-        if($this->db->where('company_sid', $companyId)->count_all_results('company_indeed_details')){
+        if ($this->db->where('company_sid', $companyId)->count_all_results('company_indeed_details')) {
             //
             $this->db->where('company_sid', $companyId)
-            ->update('company_indeed_details', [
-                'contact_name' => $name,
-                'contact_email' => $email,
-                'contact_phone' => $phone,
-                'updated_at' => date("Y-m-d H:i:s", strtotime('now'))
-            ]);
-        } else{
+                ->update('company_indeed_details', [
+                    'contact_name' => $name,
+                    'contact_email' => $email,
+                    'contact_phone' => $phone,
+                    'updated_at' => date("Y-m-d H:i:s", strtotime('now'))
+                ]);
+        } else {
             //
             $this->db
-            ->insert('company_indeed_details', [
-                'contact_name' => $name,
-                'contact_email' => $email,
-                'contact_phone' => $phone,
-                'company_sid' => $companyId,
-                'created_at' => date("Y-m-d H:i:s", strtotime('now')),
-                'updated_at' => date("Y-m-d H:i:s", strtotime('now'))
-            ]);
+                ->insert('company_indeed_details', [
+                    'contact_name' => $name,
+                    'contact_email' => $email,
+                    'contact_phone' => $phone,
+                    'company_sid' => $companyId,
+                    'created_at' => date("Y-m-d H:i:s", strtotime('now')),
+                    'updated_at' => date("Y-m-d H:i:s", strtotime('now'))
+                ]);
         }
     }
 
     //
-    function GetCompanyIndeedDetails($companyId){
+    function GetCompanyIndeedDetails($companyId)
+    {
         return $this->db->where('company_sid', $companyId)->get('company_indeed_details')->row_array();
     }
 
 
-    function GetEmployeeById($employeeId, $columns = '*'){
+    function GetEmployeeById($employeeId, $columns = '*')
+    {
         //
         return $this->db
-        ->select($columns)
-        ->where('sid', $employeeId)
-        ->get('users')
-        ->row_array();
+            ->select($columns)
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
     }
 
-    function get_all_documents_category($company_sid, $status=NULL, $sort_order = NULL) {
+    function get_all_documents_category($company_sid, $status = NULL, $sort_order = NULL)
+    {
         //
         addDefaultCategoriesIntoCompany($company_sid);
         //
@@ -2303,7 +2580,7 @@ class Company_model extends CI_Model {
         $this->db->where('company_sid', $company_sid);
         $this->db->or_where('sid', PP_CATEGORY_SID);
 
-        if($status != NULL) {
+        if ($status != NULL) {
             $this->db->where('status', $status);
         }
 
@@ -2320,7 +2597,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_all_assign_documents($company_sid, $employee_sid) {
+    function get_all_assign_documents($company_sid, $employee_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type ', "employee");
@@ -2337,7 +2615,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function get_employee_information($company_sid, $employee_sid) {
+    function get_employee_information($company_sid, $employee_sid)
+    {
         $this->db->select('sid');
         $this->db->select('first_name');
         $this->db->select('last_name');
@@ -2358,7 +2637,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function check_employee_offer_letter_exist($company_sid, $user_type, $user_sid, $document_type) {
+    function check_employee_offer_letter_exist($company_sid, $user_type, $user_sid, $document_type)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2368,7 +2648,7 @@ class Company_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr;
         } else {
@@ -2376,7 +2656,8 @@ class Company_model extends CI_Model {
         }
     }
 
-    function check_offer_letter_moved($document_sid, $document_type) {
+    function check_offer_letter_moved($document_sid, $document_type)
+    {
         $this->db->select('*');;
         $this->db->where('doc_sid', $document_sid);
         $this->db->where('document_type', $document_type);
@@ -2384,7 +2665,7 @@ class Company_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned_history');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return 'yes';
         } else {
@@ -2392,11 +2673,13 @@ class Company_model extends CI_Model {
         }
     }
 
-    function insert_documents_assignment_record_history($data_to_insert) {
+    function insert_documents_assignment_record_history($data_to_insert)
+    {
         $this->db->insert('documents_assigned_history', $data_to_insert);
     }
 
-    function disable_all_previous_letter ($company_sid, $user_type, $user_sid, $document_type) {
+    function disable_all_previous_letter($company_sid, $user_type, $user_sid, $document_type)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('company_sid', $company_sid);
@@ -2406,23 +2689,26 @@ class Company_model extends CI_Model {
         $this->db->update('documents_assigned');
     }
 
-    function insertDocumentsAssignmentRecord($data_to_insert) {
+    function insertDocumentsAssignmentRecord($data_to_insert)
+    {
         $this->db->insert('documents_assigned', $data_to_insert);
         return $this->db->insert_id();
     }
 
-    function add_update_categories_2_documents($document_sid, $categories,$document_type) {
+    function add_update_categories_2_documents($document_sid, $categories, $document_type)
+    {
         $this->db->where('document_sid', $document_sid);
         $this->db->where('document_type', $document_type);
         $this->db->delete('documents_2_category');
-        if(is_array($categories)){
-            foreach($categories as $category){
-                $this->db->insert('documents_2_category', ['document_sid' => $document_sid, 'category_sid' => $category,'document_type' => $document_type]);
+        if (is_array($categories)) {
+            foreach ($categories as $category) {
+                $this->db->insert('documents_2_category', ['document_sid' => $document_sid, 'category_sid' => $category, 'document_type' => $document_type]);
             }
         }
     }
 
-    public function get_employee_status_detail($sid){
+    public function get_employee_status_detail($sid)
+    {
         $this->db->select('*');
         $this->db->where('employee_sid', $sid);
         $this->db->order_by('sid', 'DESC');
@@ -2438,16 +2724,18 @@ class Company_model extends CI_Model {
         return $return_data;
     }
 
-    public function get_terminated_employees_documents($sid, $record_sid){
+    public function get_terminated_employees_documents($sid, $record_sid)
+    {
         $this->db->select('file_name, file_code, file_type');
-        $this->db->where('terminated_user_id',$sid);
-        $this->db->where('terminated_record_sid',$record_sid);
+        $this->db->where('terminated_user_id', $sid);
+        $this->db->where('terminated_record_sid', $record_sid);
         $this->db->where('status', 1);
         $result = $this->db->get('terminated_employees_documents')->result_array();
         return $result;
     }
 
-    public function terminate_user($sid, $data){
+    public function terminate_user($sid, $data)
+    {
         //Insert Terminated Data
         $this->db->insert('terminated_employees', $data);
         $record_sid = $this->db->insert_id();
@@ -2459,37 +2747,42 @@ class Company_model extends CI_Model {
         $this->db->where('status', 0);
         $this->db->where('terminated_user_id', $sid);
         $this->db->where('terminated_record_sid', 0);
-        $this->db->update('terminated_employees_documents',$data_to_update);
+        $this->db->update('terminated_employees_documents', $data_to_update);
     }
 
-    public function change_terminate_user_status ($sid, $data_to_update) {
+    public function change_terminate_user_status($sid, $data_to_update)
+    {
         $this->db->where('sid', $sid);
-        $this->db->update('users',$data_to_update);
+        $this->db->update('users', $data_to_update);
     }
 
-    function get_status_by_id($status_id) {
+    function get_status_by_id($status_id)
+    {
         $this->db->where('sid', $status_id);
         return $this->db->get('terminated_employees')->row_array();
     }
 
-    function get_status_documents($status_id) {
+    function get_status_documents($status_id)
+    {
         $this->db->where('terminated_record_sid', $status_id);
         $this->db->where('status', 1);
         return $this->db->get('terminated_employees_documents')->result_array();
     }
 
-    public function update_terminate_user($sid, $data){
-        $this->db->where('sid',$sid);
+    public function update_terminate_user($sid, $data)
+    {
+        $this->db->where('sid', $sid);
         $this->db->update('terminated_employees', $data);
     }
 
-    function check_for_main_status_update($emp_sid, $status_id){
+    function check_for_main_status_update($emp_sid, $status_id)
+    {
         $this->db->select('sid');
         $this->db->where('employee_sid', $emp_sid);
-        $this->db->order_by('sid','DESC');
+        $this->db->order_by('sid', 'DESC');
         $status_result = $this->db->get('terminated_employees')->row_array();
-        if(sizeof($status_result)){
-            if($status_result['sid'] == $status_id){
+        if (sizeof($status_result)) {
+            if ($status_result['sid'] == $status_id) {
                 return true;
             }
         }
@@ -2502,7 +2795,8 @@ class Company_model extends CI_Model {
      * @param number $employeeId
      * @return
      */
-    function updateEmployeeRehireDate($rehireDate, $employeeId, $changed_by){
+    function updateEmployeeRehireDate($rehireDate, $employeeId, $changed_by)
+    {
         //
         $this->db->select('sid');
         $this->db->where('employee_status', 8);
@@ -2532,22 +2826,24 @@ class Company_model extends CI_Model {
             $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
             $data_to_insert['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
             //
-            $this->db->insert('terminated_employees',$data_to_insert);
+            $this->db->insert('terminated_employees', $data_to_insert);
         }
     }
 
-    function get_user_data($sid) {
+    function get_user_data($sid)
+    {
         $this->db->select('*');
         $this->db->from('users');
         $this->db->where('sid', $sid);
         $query_result = $this->db->get();
-        
+
         if ($query_result->num_rows() > 0) {
             return $row = $query_result->row_array();
         }
     }
 
-    function update_gender_in_eeoc_form($user_type, $user_sid, $dataToUpdate) {
+    function update_gender_in_eeoc_form($user_type, $user_sid, $dataToUpdate)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
         $this->db->from('portal_eeo_form');
@@ -2557,6 +2853,175 @@ class Company_model extends CI_Model {
             $this->db->where('users_type', $user_type);
             $this->db->where('application_sid', $user_sid);
             $this->db->update('portal_eeo_form', $dataToUpdate);
+        }
+    }
+
+
+
+    function get_company_all_default_categories($company_sid)
+    {
+        $this->db->select('sid, name, status, sort_order, created_date');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->group_start();
+        $this->db->or_where('is_default', 1);
+        $this->db->or_where('default_category_sid!=', 0);
+        $this->db->group_end();
+
+        $records_obj = $this->db->get('documents_category_management');
+
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+
+
+
+    public function get_e_signature($executive_user_sid, $status = 1)
+    {
+
+        $this->db->select('*');
+        $this->db->where('user_sid', $executive_user_sid);
+        if ($status == 1) {
+            $this->db->where('status', 1);
+        }
+        $this->db->from('executive_signatures_data');
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+
+    public function apply_e_signature($executive_user_sid)
+    {
+        $executive_user_signature = $this->get_e_signature($executive_user_sid, 1);
+
+        if (empty($executive_user_signature)) {
+            return false;
+        }
+
+        $this->db->select('executive_admin_sid,company_sid,logged_in_sid');
+        $this->db->where('executive_admin_sid', $executive_user_sid);
+        $this->db->from('executive_user_companies');
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        if (empty($records_arr)) {
+            return false;
+        }
+        //
+        foreach ($records_arr  as $companies_row) {
+            //
+            $data_to_save = array();
+            $data_to_save['first_name'] = $executive_user_signature['first_name'];
+            $data_to_save['last_name'] =  $executive_user_signature['last_name'];
+            $data_to_save['email_address'] = $executive_user_signature['email_address'];
+            $data_to_save['signature'] = $executive_user_signature['signature'];
+            $data_to_save['init_signature'] = $executive_user_signature['init_signature'];
+            $data_to_save['signature_hash'] = $executive_user_signature['signature_hash'];
+            $data_to_save['signature_timestamp'] = $executive_user_signature['signature_timestamp'];
+            $data_to_save['signature_bas64_image'] = $executive_user_signature['signature_bas64_image'];
+            $data_to_save['init_signature_bas64_image'] = $executive_user_signature['init_signature_bas64_image'];
+            $data_to_save['active_signature'] = $executive_user_signature['active_signature'];
+            $data_to_save['ip_address'] = $executive_user_signature['ip_address'];
+            $data_to_save['user_agent'] = $executive_user_signature['user_agent'];
+            $data_to_save['user_consent'] = $executive_user_signature['user_consent'];
+            //
+            $whereArray = [
+                'company_sid' => $companies_row['company_sid'],
+                'user_sid' => $companies_row['logged_in_sid'],
+                'user_type' => 'employee'
+            ];
+            // Check if the e signature is already been assigned
+            if ($this->db->where($whereArray)->count_all_results('e_signatures_data')) {
+                //
+                $this->db->where($whereArray)->update('e_signatures_data', $data_to_save);
+            } else {
+                //
+                $data_to_save['company_sid'] = $companies_row['company_sid'];
+                $data_to_save['user_sid'] = $companies_row['logged_in_sid'];
+                $data_to_save['user_type'] = 'employee';
+                $data_to_save['is_active'] = 1;
+                //
+                $this->db->insert('e_signatures_data', $data_to_save);
+            }
+        }
+        return true;
+    }
+
+    //
+    function add_new_employer_to_team($data_to_insert)
+    {
+
+        $this->db->insert('departments_employee_2_team', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
+
+    //
+    public function employees_transfer_log_update($sid, $data_transfer_log_update)
+    {
+
+        $this->db->select('new_employee_sid');
+        $this->db->where('new_employee_sid', $sid);
+        $result = $this->db->get('employees_transfer_log')->row_array();
+
+        if (!empty($result)) {
+            $data_update['employee_copy_date'] = $data_transfer_log_update['employee_copy_date'];
+            $this->db->where('new_employee_sid', $sid);
+            $this->db->update('employees_transfer_log', $data_update);
+        } else {
+            $data_transfer_log_update['from_company_sid'] = 0;
+            $data_transfer_log_update['previous_employee_sid'] = 0;
+            $data_transfer_log_update['employee_copy_date'] = $data_transfer_log_update['employee_copy_date'];
+            $data_transfer_log_update['last_update'] = date('Y-m-d H:i:s');
+            $data_transfer_log_update['new_employee_sid'] = $sid;
+            $this->db->insert('employees_transfer_log', $data_transfer_log_update);
+        }
+    }
+
+    //
+
+    function get_helpbox_info($company_sid)
+    {
+        $this->db->where('company_id', $company_sid);
+        $records_obj = $this->db->get('helpbox_info_for_company');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }
+
+    function add_update_helpbox_info($company_sid, $helpboxTitle, $helpboxEmail, $helpboxPhoneNumber, $helpboxStatus, $helpButtonText)
+    {
+        $dataToInsert = array();
+        $dataToInsert['company_id'] = $company_sid;
+        $dataToInsert['box_title'] = $helpboxTitle;
+        $dataToInsert['box_support_email'] = $helpboxEmail;
+        $dataToInsert['box_support_phone_number'] = $helpboxPhoneNumber;
+        $dataToInsert['box_status'] = $helpboxStatus;
+        $dataToInsert['box_status'] = $helpboxStatus;
+        $dataToInsert['button_text'] = $helpButtonText;
+        //
+        if (
+            $this->db
+            ->where('company_id', $company_sid)
+            ->count_all_results('helpbox_info_for_company')
+        ) {
+            $this->db->where('company_id', $company_sid);
+            $this->db->update('helpbox_info_for_company', $dataToInsert);
+        } else {
+            $this->db->insert('helpbox_info_for_company', $dataToInsert);
         }
     }
 }

@@ -9,7 +9,7 @@
                     <div class="dashboard-conetnt-wrp">
                         <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                         </div>
                         <div class="create-job-wrap">
                             <!-- <div class="job-title-text">                
@@ -27,28 +27,28 @@
                                                 <li class="form-col-100 autoheight">
                                                     <label>First Name<span class="staric">*</span></label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="first_name" id="first_name" value="<?php
-                                                    if (isset($formpost['first_name'])) {
-                                                        echo $formpost['first_name'];
-                                                    }
-                                                    ?>">
+                                                                                                                                                            if (isset($formpost['first_name'])) {
+                                                                                                                                                                echo $formpost['first_name'];
+                                                                                                                                                            }
+                                                                                                                                                            ?>">
                                                     <?php echo form_error('first_name'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
                                                     <label>Last Name<span class="staric">*</span></label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="last_name" id="last_name" value="<?php
-                                                    if (isset($formpost['last_name'])) {
-                                                        echo $formpost['last_name'];
-                                                    }
-                                                    ?>">
+                                                                                                                                                            if (isset($formpost['last_name'])) {
+                                                                                                                                                                echo $formpost['last_name'];
+                                                                                                                                                            }
+                                                                                                                                                            ?>">
                                                     <?php echo form_error('last_name'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
                                                     <label>E-Mail<span class="staric">*</span></label>
                                                     <input type="email" autocomplete="nope" class="invoice-fields" name="email" id="email" value="<?php
-                                                    if (isset($formpost['email'])) {
-                                                        echo $formpost['email'];
-                                                    }
-                                                    ?>">
+                                                                                                                                                    if (isset($formpost['email'])) {
+                                                                                                                                                        echo $formpost['email'];
+                                                                                                                                                    }
+                                                                                                                                                    ?>">
                                                     <?php echo form_error('email'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
@@ -61,24 +61,29 @@
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="access_level">
                                                             <option value="">Assign Security Access</option>
-                                                            <?php //$accessLevels = explode(',', $access_levels[0]); ?>
+                                                            <?php //$accessLevels = explode(',', $access_levels[0]); 
+                                                            ?>
                                                             <?php foreach ($access_levels as $accessLevel) { ?>
-                                                                <option value="<?php echo $accessLevel; ?>"
-                                                                <?php
-                                                                if (isset($formpost['access_level']) && $accessLevel == $formpost['access_level']) {
-                                                                    echo "selected";
-                                                                }
-                                                                ?>> 
-                                                                <?php echo $accessLevel; ?>
+                                                                <option value="<?php echo $accessLevel; ?>" <?php
+                                                                                                            if (isset($formpost['access_level']) && $accessLevel == $formpost['access_level']) {
+                                                                                                                echo "selected";
+                                                                                                            }
+                                                                                                            ?>>
+                                                                    <?php echo $accessLevel; ?>
                                                                 </option>
-                                                            <?php } ?>  
+                                                            <?php } ?>
                                                         </select>
                                                     </div>
                                                     <?php echo form_error('access_level'); ?>
-                                                </li> 
+                                                </li>
+
+
+
+
+
                                                 <li class="form-col-100 autoheight">
                                                     <label>Start Date<span class="staric">*</span></label>
-                                                    <input class="invoice-fields startdate" name="registration_date" type="text" autocomplete="nope" value="<?php echo set_value('registration_date'); ?>" readonly>        
+                                                    <input class="invoice-fields startdate" name="registration_date" type="text" autocomplete="nope" value="<?php echo set_value('registration_date'); ?>" readonly>
                                                     <?php echo form_error('registration_date'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight hidden">
@@ -102,10 +107,75 @@
                                                         <option value="commission-and-piece-rate-employees">Commission and piece rate employees</option> -->
                                                     </select>
                                                 </li>
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Gender:</label>
+                                                    <select class="invoice-fields" name="gender">
+                                                        <option value="">Please Select Gender</option>
+                                                        <option <?= $formpost["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
+                                                        <option <?= $formpost["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
+                                                        <option <?= $formpost["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
+                                                    </select>
+
+                                                </li>
+
+
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Team:</label>
+                                                    <?= get_company_departments_teams(
+                                                        $company_id,
+                                                        'teamId'
+                                                    ); ?>
+
+                                                </li>
+
+
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Workers Compensation Code</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="workers_compensation_code" id="workers_compensation_code">
+                                                </li>
+
+                                                <li class="form-col-100 autoheight">
+                                                    <label>EEOC Code</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="eeoc_code" id="eeoc_code" >
+                                                </li>
+
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Salary Benefits</label>
+                                                    <textarea autocomplete="nope" class="invoice-fields" name="salary_benefits" id="salary_benefits"></textarea>
+                                                </li>
+
+
+
+
+                                                <li class="form-col-100 autoheight">
+
+                                                    <div class="row js-timezone-row">
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                            <div class=" input-grey  ">
+                                                                <?php $field_id = 'timezone'; ?>
+                                                                <?php echo form_label('Timezone:', $field_id); ?>
+                                                                <?= timezone_dropdown(
+                                                                    '',
+                                                                    array(
+                                                                        'class' => 'invoice-fields js-timezone ',
+                                                                        'id' => 'timezone',
+                                                                        'name' => 'timezone'
+                                                                    )
+                                                                ); ?>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </li>
+
+
+
+
                                                 <li class="form-col-50-right autoheight" style="display: none">
                                                     <div class="checkbox-field">
                                                         <figure>
-                                                            <input name="employeeType" class="employeeRadio" value="direct_hiring" type="radio" <?php echo set_radio('employeeType', 'direct_hiring'); ?> id="direct_hiring"  required>
+                                                            <input name="employeeType" class="employeeRadio" value="direct_hiring" type="radio" <?php echo set_radio('employeeType', 'direct_hiring'); ?> id="direct_hiring" required>
                                                         </figure>
                                                         <div class="text">
                                                             <label for="direct_hiring">Direct Hiring & Current Employees</label>
@@ -115,7 +185,7 @@
                                                 <li class="form-col-50-left autoheight" style="display: none">
                                                     <div class="checkbox-field">
                                                         <figure>
-                                                            <input name="employeeType" class="employeeRadio"  value="onboard_hiring" type="radio" <?php echo set_radio('employeeType', 'onboard_hiring'); ?> id="onboard_hiring" required >
+                                                            <input name="employeeType" class="employeeRadio" value="onboard_hiring" type="radio" <?php echo set_radio('employeeType', 'onboard_hiring'); ?> id="onboard_hiring" required>
                                                         </figure>
                                                         <div class="text">
                                                             <label for="onboard_hiring">Onboarding & New Hires</label>
@@ -125,12 +195,12 @@
                                                 <div class="direct_hiring_div" style="display: none">
                                                     <li class="form-col-100 autoheight">
                                                         <label>Username:<span class="staric">*</span></label>
-                                                        <input type="text" autocomplete="nope" class="invoice-fields" name="username"  id="username" value="<?php
-                                                        if (isset($formpost['username'])) {
-                                                            echo $formpost['username'];
-                                                        }
-                                                        ?>">
-                                                               <?php echo form_error('username'); ?>
+                                                        <input type="text" autocomplete="nope" class="invoice-fields" name="username" id="username" value="<?php
+                                                                                                                                                            if (isset($formpost['username'])) {
+                                                                                                                                                                echo $formpost['username'];
+                                                                                                                                                            }
+                                                                                                                                                            ?>">
+                                                        <?php echo form_error('username'); ?>
                                                         <div class="video-link" style="font-style: italic;"><b></b>
                                                             Please create a Username for your Employee / Team member using their first and last name all one word all lower case. Example: johnsmith
                                                         </div>
@@ -142,10 +212,10 @@
                                                         <input class="select-domain" type="checkbox" name="send_welcome_email" value="1" checked="checked">
                                                         <div class="control__indicator"></div>
                                                     </label>
-                                                </li> 
+                                                </li>
                                                 <div class="video-link" style="font-style: italic;"><b></b>
                                                     <p><b>
-                                                        If "Send Email" checkbox is checked then an email will automatically be sent to your Employee / Team member requesting that they create their own secure password. They will be able to log in to your platform as soon as they have created their password.
+                                                            If "Send Email" checkbox is checked then an email will automatically be sent to your Employee / Team member requesting that they create their own secure password. They will be able to log in to your platform as soon as they have created their password.
                                                         </b></p>
                                                 </div>
                                                 <li class="form-col-100 autoheight save-send-btn">
@@ -168,9 +238,9 @@
                                     </div> -->
                                     <div class="tick-list-box">
                                         <h2><?php echo STORE_NAME; ?> is Secure</h2>
-                                        <ul>
+                                        <ul> 
                                             <li>Transmissions encrypted by Amazon Web Services® SSL</li>
-                                            <li>Information treated confidential by AutomotHR</li>
+                                            <li>Information treated confidential by AutomotoHR</li>
                                             <!-- <li>Receive emails with your signed paperwork</li> -->
                                         </ul>
                                     </div>
@@ -187,161 +257,168 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <!--<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/modernizr-custom.js"></script>-->
 <script language="JavaScript" type="text/javascript">
-        $(document).ready(function () {
-            $("#direct_hiring").click();
-            
-            if ($('#direct_hiring').is(':checked')) {
-                $(".direct_hiring_div").css('display', 'block');
-                $("input[name='username']").prop('required', true);
-                $("input[name='password']").prop('required', true);
-            } else {
-                $(".direct_hiring_div").css('display', 'none');
-                $("input[name='username']").prop('required', false);
-                $("input[name='password']").prop('required', false);
+    $(document).ready(function() {
+        $("#direct_hiring").click();
+
+        if ($('#direct_hiring').is(':checked')) {
+            $(".direct_hiring_div").css('display', 'block');
+            $("input[name='username']").prop('required', true);
+            $("input[name='password']").prop('required', true);
+        } else {
+            $(".direct_hiring_div").css('display', 'none');
+            $("input[name='username']").prop('required', false);
+            $("input[name='password']").prop('required', false);
+        }
+
+        //
+        $('#timezone').val('<?php echo $formpost['timezone']; ?>');
+        $('#department').val('<?php echo $formpost['department']; ?>');
+
+    });
+
+    $('.employeeRadio').click(function() {
+        if ($('#direct_hiring').is(':checked')) {
+            $(".direct_hiring_div").css('display', 'block');
+            $("input[name='username']").prop('required', true);
+            $("input[name='password']").prop('required', true);
+        } else {
+            $(".direct_hiring_div").css('display', 'none');
+            $("input[name='username']").prop('required', false);
+            $("input[name='password']").prop('required', false);
+        }
+    });
+
+    function getStates(val, states) {
+        var html = '';
+        if (val == '') {
+            $('#state').html('<option value="">Select State</option><option value="">Please Select your country</option>');
+        } else {
+            allstates = states[val];
+            for (var i = 0; i < allstates.length; i++) {
+                var id = allstates[i].sid;
+                var name = allstates[i].state_name;
+                html += '<option value="' + id + '">' + name + '</option>';
+            }
+            $('#state').html(html);
+        }
+    }
+
+    function validate_form() {
+        $("#employers_add").validate({
+            ignore: ":hidden:not(select)",
+            rules: {
+                first_name: {
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\- ]+$/
+                },
+                last_name: {
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\- ]+$/
+                },
+                job_title: {
+                    required: true
+                },
+                access_level: {
+                    required: true
+                },
+                salary_type: {
+                    required: true
+                },
+                salary_amount: {
+                    required: true
+                },
+                registration_date: {
+                    required: true
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                Location_City: {
+                    pattern: /^[a-zA-Z0-9\- ]+$/
+                },
+                Location_ZipCode: {
+                    pattern: /^[0-9\-]+$/
+                },
+                salary: {
+                    pattern: /^[0-9\-]+$/
+                }
+            },
+            messages: {
+                first_name: {
+                    required: 'First Name is required',
+                    pattern: 'Letters, numbers, and dashes only please'
+                },
+                last_name: {
+                    required: 'Last Name is required',
+                    pattern: 'Letters, numbers, and dashes only please'
+                },
+                job_title: {
+                    required: 'Job Title is required'
+                },
+                access_level: {
+                    required: 'Assign security access level'
+                },
+                salary_type: {
+                    required: 'Salary type is required'
+                },
+                salary_amount: {
+                    required: 'Salary amount is required'
+                },
+                registration_date: {
+                    required: 'Starting Date is required'
+                },
+                email: {
+                    required: 'email is required',
+                    email: 'Valid email Please'
+                },
+                username: {
+                    required: 'Username is required',
+                    pattern: 'Letters, numbers, and dashes only please'
+                },
+                Location_City: {
+                    pattern: 'Letters, numbers, and dashes only please',
+                },
+                Location_ZipCode: {
+                    pattern: 'Numeric values and dashes only please'
+                },
+                password: {
+                    required: 'Password is required'
+                },
+            },
+            submitHandler: function(form) {
+                form.submit();
             }
         });
+    }
 
-        $('.employeeRadio').click(function () {
-            if ($('#direct_hiring').is(':checked')) {
-                $(".direct_hiring_div").css('display', 'block');
-                $("input[name='username']").prop('required', true);
-                $("input[name='password']").prop('required', true);
-            } else {
-                $(".direct_hiring_div").css('display', 'none');
-                $("input[name='username']").prop('required', false);
-                $("input[name='password']").prop('required', false);
+    function check_file(val) {
+        var fileName = $("#" + val).val();
+        //            console.log(fileName);
+        if (fileName.length > 0) {
+            $('#name_' + val).html(fileName.substring(0, 45));
+            var ext = fileName.split('.').pop();
+            ext = ext.toLowerCase();
+            if (val == 'profile_picture') {
+                if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "jpe" && ext != "JPG" && ext != "JPEG" && ext != "JPE" && ext != "PNG") {
+                    $("#" + val).val(null);
+                    alertify.error("Please select a valid Image format.");
+                    $('#name_' + val).html('<p class="red">Only (.jpg .jpeg .png) allowed!</p>');
+                    return false;
+                } else
+                    return true;
             }
-        });
-
-        function getStates(val, states) {
-            var html = '';
-            if (val == '') {
-                $('#state').html('<option value="">Select State</option><option value="">Please Select your country</option>');
-            } else {
-                allstates = states[val];
-                for (var i = 0; i < allstates.length; i++) {
-                    var id = allstates[i].sid;
-                    var name = allstates[i].state_name;
-                    html += '<option value="' + id + '">' + name + '</option>';
-                }
-                $('#state').html(html);
-            }
+        } else {
+            $('#name_' + val).html('No file selected');
         }
+    }
 
-        function validate_form() {
-            $("#employers_add").validate({
-                ignore: ":hidden:not(select)",
-                rules: {
-                    first_name: {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\- ]+$/
-                    },
-                    last_name: {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\- ]+$/
-                    },
-                    job_title: {
-                        required: true
-                    },
-                    access_level: {
-                        required: true
-                    },
-                    salary_type: {
-                        required: true
-                    },
-                    salary_amount: {
-                        required: true
-                    },
-                    registration_date: {
-                        required: true
-                    },
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    Location_City: {
-                        pattern: /^[a-zA-Z0-9\- ]+$/
-                    },
-                    Location_ZipCode: {
-                        pattern: /^[0-9\-]+$/
-                    },
-                    salary: {
-                        pattern: /^[0-9\-]+$/
-                    }
-                },
-                messages: {
-                    first_name: {
-                        required: 'First Name is required',
-                        pattern: 'Letters, numbers, and dashes only please'
-                    },
-                    last_name: {
-                        required: 'Last Name is required',
-                        pattern: 'Letters, numbers, and dashes only please'
-                    },
-                    job_title: {
-                        required: 'Job Title is required'
-                    },
-                    access_level: {
-                        required: 'Assign security access level'
-                    },
-                    salary_type: {
-                        required: 'Salary type is required'
-                    },
-                    salary_amount: {
-                        required: 'Salary amount is required'
-                    },
-                    registration_date: {
-                        required: 'Starting Date is required'
-                    },
-                    email: {
-                        required: 'email is required',
-                        email: 'Valid email Please'
-                    },
-                    username: {
-                        required: 'Username is required',
-                        pattern: 'Letters, numbers, and dashes only please'
-                    },
-                    Location_City: {
-                        pattern: 'Letters, numbers, and dashes only please',
-                    },
-                    Location_ZipCode: {
-                        pattern: 'Numeric values and dashes only please'
-                    },
-                    password: {
-                        required: 'Password is required'
-                    },
-                },
-                submitHandler: function (form) {
-                    form.submit();
-                }
-            });
-        }
+    $('.startdate').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
+    }).val();
 
-        function check_file(val) {
-            var fileName = $("#" + val).val();
-//            console.log(fileName);
-            if (fileName.length > 0) {
-                $('#name_' + val).html(fileName.substring(0, 45));
-                var ext = fileName.split('.').pop();
-                ext = ext.toLowerCase();
-                if (val == 'profile_picture') {
-                    if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "jpe" && ext != "JPG" && ext != "JPEG" && ext != "JPE" && ext != "PNG") {
-                        $("#" + val).val(null);
-                        alertify.error("Please select a valid Image format.");
-                        $('#name_' + val).html('<p class="red">Only (.jpg .jpeg .png) allowed!</p>');
-                        return false;
-                    } else
-                        return true;
-                }
-            } else {
-                $('#name_' + val).html('No file selected');
-            }
-        }
-
-        $('.startdate').datepicker({
-            dateFormat: 'mm-dd-yy',
-            changeMonth: true,
-            changeYear: true,
-            yearRange: "1960:+5"
-        }).val();
+    $('.jsSelect2').select2();
 </script>

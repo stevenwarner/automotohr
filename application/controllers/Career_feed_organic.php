@@ -1,29 +1,31 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
+ini_set('memory_limit', '50M');
 class Career_feed_organic extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('all_feed_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
-/**
- * 
- */
-private function addLastRead($sid){
-    $this->db
-    ->where('sid', $sid)
-    ->set([
-        'last_read' => date('Y-m-d H:i:s', strtotime('now')),
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
-    ])->update('job_feeds_management');
-    //
-    $this->db
-    ->insert('job_feeds_management_history', [
-        'feed_id' => $sid,
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
-        'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-    ]);
-}
+    
+    /**
+     * 
+     */
+    private function addLastRead($sid){
+        $this->db
+        ->where('sid', $sid)
+        ->set([
+            'last_read' => date('Y-m-d H:i:s', strtotime('now')),
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
+        ])->update('job_feeds_management');
+        //
+        $this->db
+        ->insert('job_feeds_management_history', [
+            'feed_id' => $sid,
+            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
+            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+    }
+    
     public function index() {
 
         $sid = $this->isActiveFeed();
@@ -33,7 +35,7 @@ private function addLastRead($sid){
         $i = 0;
         $featuredArray[$i] = "";
 
-mail(TO_EMAIL_DEV, 'Feed XML - Career: ' . date('Y-m-d H:i:s'), 'Pinged');
+        mail(TO_EMAIL_DEV, 'Feed XML - Career: ' . date('Y-m-d H:i:s'), 'Pinged');
 
         foreach ($purchasedJobs as $purchased) {
             $featuredArray[$i] = $purchased['sid'];

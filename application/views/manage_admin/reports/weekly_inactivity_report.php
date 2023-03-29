@@ -28,7 +28,7 @@
                                                 <input type="hidden" id="start_date" name="start_date" value="" />
                                                 <input type="hidden" id="end_date" name="end_date" value="" />
 
-                                                <input id="week_span" class="week-picker invoice-fields" name="week_span" placeholder="Please Select Date" />
+                                                <input id="week_span" class="week-picker invoice-fields" readonly autocomplete="off" name="week_span" placeholder="Please Select Date" />
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -151,7 +151,8 @@
         $('.week-picker').datepicker({
             firstDay: 1,
             format:'yyyy/mm/dd',
-
+            changeMonth: true,
+            changeYear: true,
             beforeShow: function () {
                 $('#ui-datepicker-div').addClass('ui-weekpicker');
                 selectCurrentWeek();
@@ -184,21 +185,32 @@
 
     });
 
-
+    var my_request;
+    //
     function get_inactivity_report() {
+        //
+        if(my_request !== null){
+            my_request.abort();
+        }
+        //
+        if (typeof stopProcess != "undefined") {
+            stopProcess();
+        }
+        //
         var week_span = $('#week_span').val();
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
-
+        //
         if (week_span != '' && week_span != null && week_span != undefined) {
             var request_data = {
-                "perform_action": "get_weekly_inactivity",
+                // "perform_action": "get_weekly_inactivity",
+                "perform_action": "get_all_active_companies",
                 "start_date": start_date,
                 "end_date": end_date,
                 "week_span": week_span
             };
 
-            var my_request;
+            
             var my_url = '<?php echo base_url('manage_admin/reports/weekly_inactivity_report/ajax_responder'); ?>';
 
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');

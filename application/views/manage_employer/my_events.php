@@ -172,7 +172,12 @@
     $(document).ready(function () {
     var eventt = new Event('main');
             //populating date and time in Popup
-            $(".datepicker101").datepicker({ dateFormat: 'mm-dd-yy' }).val();
+            $(".datepicker101").datepicker({
+                     dateFormat: 'mm-dd-yy',
+                     changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+                 }).val();
             $('#eventendtime').datetimepicker({
     datepicker:false,
             format: 'g:iA',

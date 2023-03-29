@@ -2,18 +2,21 @@
 
 use FontLib\Table\Type\head;
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Merge_employees extends Admin_Controller {
+class Merge_employees extends Admin_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/merge_employees_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index () {
+    public function index()
+    {
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'merge_employees');
 
@@ -25,13 +28,14 @@ class Merge_employees extends Admin_Controller {
         $this->render('manage_admin/company/merge_employees', 'admin_master');
     }
 
-    function employees($companyId){
+    function employees($companyId)
+    {
         //
         $employees = $this->merge_employees_model->GetCompanyEmployees($companyId);
         //
-        if(!empty($employees)){
-            $t =[];
-            foreach($employees as $emp){
+        if (!empty($employees)) {
+            $t = [];
+            foreach ($employees as $emp) {
                 $t[] = [
                     'id' => $emp['userId'],
                     'name' => remakeEmployeeName($emp),
@@ -46,7 +50,8 @@ class Merge_employees extends Admin_Controller {
         exit;
     }
 
-    public function merge () {
+    public function merge()
+    {
         //
         $company_sid        = $this->input->post('company_sid');
         $secondary_employee_sid = $this->input->post('secondary_employee_sid');
@@ -54,21 +59,21 @@ class Merge_employees extends Admin_Controller {
         $secondary_employee_email    = $this->input->post('secondary_employee_email');
         //
         //Update Primary Employee Profile
-        $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
-        
+        $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
+
         // now move all other information
-        
+
         // 1) Employee emergency contacts
-        $this->merge_employees_model->update_employee_emergency_contacts($primary_employee_sid, $secondary_employee_sid);
-        
+        $emergency_contacts = $this->merge_employees_model->update_employee_emergency_contacts($primary_employee_sid, $secondary_employee_sid);
+
         // 2) Employee equipment information
-        $this->merge_employees_model->update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid);
-        
+        $equipment_information = $this->merge_employees_model->update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid);
+
         // 3) Employee dependant information
-        $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid);
+        $dependant_information = $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid);
 
         // 4) Employee license information
-        $this->merge_employees_model->update_employee_license_information($primary_employee_sid, $secondary_employee_sid);
+        $license_information = $this->merge_employees_model->update_employee_license_information($primary_employee_sid, $secondary_employee_sid);
 
         // 5) Employee background check
         $this->merge_employees_model->update_employee_background_check($primary_employee_sid, $secondary_employee_sid);
@@ -95,16 +100,34 @@ class Merge_employees extends Admin_Controller {
         $this->merge_employees_model->update_onboarding_configuration($primary_employee_sid, $secondary_employee_sid);
 
         // 13) Employee Documents
-        $this->merge_employees_model->update_documents($primary_employee_sid, $secondary_employee_sid);
+        $documents = $this->merge_employees_model->update_documents($primary_employee_sid, $secondary_employee_sid);
 
         // 14) Employee Direct Deposit Information
-        $this->merge_employees_model->update_employee_direct_deposit_information($primary_employee_sid, $secondary_employee_sid);
+        $bank_details = $this->merge_employees_model->update_employee_direct_deposit_information($primary_employee_sid, $secondary_employee_sid);
 
         // 15) Employee E-Signature Data
-        $this->merge_employees_model->update_employee_e_signature($primary_employee_sid, $secondary_employee_sid);
+        $e_signature_data = $this->merge_employees_model->update_employee_e_signature($primary_employee_sid, $secondary_employee_sid);
 
         // 16) Employee EEOC Form
-        $this->merge_employees_model->update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid);
+        $eeoc = $this->merge_employees_model->update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid);
+
+        //17) Employee statuses
+        $this->merge_employees_model->updateEmployeeStatus($primary_employee_sid, $secondary_employee_sid);
+        //
+        $merge_secondary_employee_data = [
+            'user_profile' => $secondary_employee_data,
+            'emergency_contacts' => $emergency_contacts,
+            'equipment_information' => $equipment_information,
+            'dependant_information' => $dependant_information,
+            'license_information' => $license_information,
+            'direct_deposit_information' => $bank_details,
+            'e_signature' => $e_signature_data,
+            'eeoc' => $eeoc,
+            'group' => "",
+            'documents' => $documents
+        ];
+        //
+        $this->merge_employees_model->save_merge_secondary_employee_info($merge_secondary_employee_data, $primary_employee_sid, $secondary_employee_sid);
         //
         $array['status'] = "success";
         $array['message'] = "Success! Employee is successfully merged!";
@@ -113,5 +136,3 @@ class Merge_employees extends Admin_Controller {
         return print_r(json_encode($array));
     }
 }
-
-

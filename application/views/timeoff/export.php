@@ -4,9 +4,6 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                    <div class="page-header-area">
-                        <span class="page-heading down-arrow">Export Time off</span>
-                    </div>
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="hr-box">
@@ -116,7 +113,10 @@
         $('#status').select2();
 
         $('.datepicker').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
 
         $('#start_date_applied').datepicker({

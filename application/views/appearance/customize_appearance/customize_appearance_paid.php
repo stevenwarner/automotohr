@@ -14,7 +14,7 @@ ul.select2-selection__rendered li{
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><a class="dashboard-link-btn" href="<?php echo base_url('appearance') ?>"><i class="fa fa-chevron-left"></i>Back To Themes</a>Customize Your Theme</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><a class="dashboard-link-btn" href="<?php echo base_url('appearance') ?>"><i class="fa fa-chevron-left"></i>Back To Themes</a>Customize Your Theme</span>
                         </div>
                         <div id="carousel">
                             <div class="carousel">
@@ -220,7 +220,7 @@ ul.select2-selection__rendered li{
                                                                                             <ul>
                                                                                                 <li class="form-col-100">
                                                                                                     <label>Page Title:</label>
-                                                                                                    <input class="invoice-fields" name="jobs_page_title" id="jobs_page_title" value="<?php echo isset($jobs_page_title) && $jobs_page_title != '' ? $jobs_page_title : 'Jobs';  ?>" type="text">
+                                                                                                    <input class="invoice-fields" name="jobs_page_title" id="jobs_page_title" value="<?php echo isset($jobs_page_title) && $jobs_page_title != '' ? $jobs_page_title : 'Join Our Team';  ?>" type="text">
                                                                                                 </li>
                                                                                         <?php   
                                                                                                 if($job_fair_configuration) { ?>

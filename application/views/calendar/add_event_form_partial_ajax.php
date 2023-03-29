@@ -12,41 +12,30 @@
                                 <div class="col-sm-4 col-xs-12">
                                     <div class="form-group autoheight">
                                         <label>Event Title <span class="required">*</span></label>
-                                        <input placeholder="Event Title"
-                                               name="title"
-                                               id="js-event-title"
-                                               class="form-control"
-                                               data-rule-required="true"
-                                               type="text">
+                                        <input placeholder="Event Title" name="title" id="js-event-title" class="form-control" data-rule-required="true" type="text">
                                     </div>
                                 </div>
                                 <div class="col-sm-4 col-xs-12">
                                     <div class="form-group autoheight">
-                                <?php   $uri_segment = $this->uri->segment(1);
+                                        <?php $uri_segment = $this->uri->segment(1);
                                         $users_phone = '';
 
-                                        if($uri_segment == 'employee_profile'){
+                                        if ($uri_segment == 'employee_profile') {
                                             $users_type = 'Employee';
 
-                                            if(isset($employer['PhoneNumber'])) {
+                                            if (isset($employer['PhoneNumber'])) {
                                                 $users_phone = $employer['PhoneNumber'];
                                             }
-
-                                        } else if($uri_segment == 'applicant_profile'){
+                                        } else if ($uri_segment == 'applicant_profile') {
                                             $users_type = 'Applicant';
 
-                                            if(isset($applicant_info['phone_number'])) {
+                                            if (isset($applicant_info['phone_number'])) {
                                                 $users_phone = $applicant_info['phone_number'];
                                             }
                                         } ?>
 
                                         <label><?php echo $users_type; ?> Phone Number </label>
-                                            <input name="users_phone"
-                                                   id="users_phone"
-                                                   class="form-control"
-                                                   data-rule-required="true"
-                                                   value="<?=$users_phone;?>"
-                                                   type="text">
+                                        <input name="users_phone" id="users_phone" class="form-control" data-rule-required="true" value="<?= $users_phone; ?>" type="text">
                                     </div>
                                 </div>
                                 <div class="col-sm-4 col-xs-12">
@@ -54,7 +43,7 @@
                                         <label>Category <span class="required">*</span></label>
                                         <input type="hidden" id="js-event-selected-type-value" name="category" value="interview" />
                                         <div class="dropdown event-category-dropdown">
-                                            <button class="btn btn-default btn-block dropdown-toggle form-control" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="js-event-selected-type-area">
+                                            <button class="btn btn-default btn-block dropdown-toggle form-control" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="js-event-selected-type-area">
                                                 <span id="js-event-selected-type-text"></span>
                                                 <span class="caret"></span>
                                             </button>
@@ -67,52 +56,33 @@
                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                     <div class="form-group  autoheight">
                                         <label>Event Timezone <span class="cs-required">*</span></label>
-                                        <?=timezone_dropdown(
-                                            $employer_timezone, 
+                                        <?= timezone_dropdown(
+                                            $employer_timezone,
                                             array(
                                                 'class' => 'form-control',
                                                 'id' => 'event_timezone',
                                                 'name' => 'event_timezone'
                                             ),
                                             'north_america'
-                                        );?>
+                                        ); ?>
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                     <div class="form-group">
                                         <label>Event Date <span class="required">*</span></label>
-                                        <input type="text"
-                                               readonly=""
-                                               placeholder="Event date"
-                                               name="date"
-                                               class="form-control"
-                                               data-rule-required="true"
-                                               required="required"
-                                               id="js-date" />
+                                        <input type="text" readonly="" placeholder="Event date" name="date" class="form-control" data-rule-required="true" required="required" id="js-date" />
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                     <div class="form-group">
                                         <label>Start Time <span class="required">*</span></label>
-                                        <input name="eventstarttime"
-                                               id="js-start-time"
-                                               readonly="readonly"
-                                               type="text"
-                                               class="start_time form-control"
-                                               data-rule-required="true"
-                                               required="required" />
+                                        <input name="eventstarttime" id="js-start-time" readonly="readonly" type="text" class="start_time form-control" data-rule-required="true" required="required" />
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                     <div class="form-group">
                                         <label>End Time <span class="required">*</span></label>
-                                        <input name="eventendtime"
-                                               id="js-end-time"
-                                               readonly="readonly"
-                                               type="text"
-                                               class="end_time form-control"
-                                               data-rule-required="true"
-                                               required="required" />
+                                        <input name="eventendtime" id="js-end-time" readonly="readonly" type="text" class="end_time form-control" data-rule-required="true" required="required" />
                                     </div>
                                 </div>
                             </div>
@@ -121,28 +91,22 @@
                             <div class="row">
                                 <div class="col-xs-12">
                                     <div class="form-group autoheight">
-                                        <label id="attendees_label"><span class="attendees_label"><?=$this->uri->segment(1) == 'applicant_profile' ? 'Interviewer(s)' : 'Participant(s)';?></span> <span class="required">*</span></label>
-                                        <select data-add="1"
-                                                class=" form-control"
-                                                multiple
-                                                id="js-interviewer"
-                                                data-rule-required="true"
-                                                name="interviewer[]">
+                                        <label id="attendees_label"><span class="attendees_label"><?= $this->uri->segment(1) == 'applicant_profile' ? 'Interviewer(s)' : 'Participant(s)'; ?></span> <span class="required">*</span></label>
+                                        <select data-add="1" class=" form-control" multiple id="js-interviewer" data-rule-required="true" name="interviewer[]">
                                             <?php foreach ($company_accounts as $account) { ?>
                                                 <?php if ($id != $account['sid']) { ?>
-                                                    <option
-                                                        value="<?= $account['sid'] ?>">
-                                                        <?php 
+                                                    <option value="<?= $account['sid'] ?>">
+                                                        <?php
                                                         $timezone = !empty($account['timezone']) ? $account['timezone'] : $company_timezone;
                                                         if ($employer_id == $account['sid']) {
-                                                            echo "You".' ('.$timezone.')';
+                                                            echo "You" . ' (' . $timezone . ')';
                                                         } else {
-                                                            if($account['is_executive_admin'] == 1) {
+                                                            if ($account['is_executive_admin'] == 1) {
                                                                 $employee_type = 'Executive Admin';
                                                             } else {
                                                                 $employee_type = $account['access_level'];
                                                             }
-                                                            echo $account['first_name'].'&nbsp;'.$account['last_name'].' ('.$timezone.')'.' ('.$employee_type.')';
+                                                            echo $account['first_name'] . '&nbsp;' . $account['last_name'] . ' (' . $timezone . ')' . ' (' . $employee_type . ')';
                                                         } ?>
                                                     </option>
                                                 <?php } ?>
@@ -151,27 +115,27 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <?php if($users_type == 'Applicant') { ?>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="form-group autoheight">
-                                        <label><span class="attendees_label">Applicant Jobs List</span></label>
-                                    </div>
-                                    <?php if (sizeof($applicant_jobs) > 0) { 
-                                       // echo "<pre>"; print_r($applicant_jobs); echo '</pre>';
-                                        $i=0;
-                                        foreach ($applicant_jobs as $applicant_job) {
+
+                            <?php if ($users_type == 'Applicant') { ?>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="form-group autoheight">
+                                            <label><span class="attendees_label">Applicant Jobs List</span></label>
+                                        </div>
+                                        <?php if (sizeof($applicant_jobs) > 0) {
+                                            // echo "<pre>"; print_r($applicant_jobs); echo '</pre>';
+                                            $i = 0;
+                                            foreach ($applicant_jobs as $applicant_job) {
                                                 $applicant_list_sid = $applicant_job['sid'];
                                                 $job_sid =  $applicant_job['job_sid'];
-                                                $job_title = $applicant_job['Title']; 
+                                                $job_title = $applicant_job['Title'];
                                                 $desired_job_title = $applicant_job['job_title'];
                                                 $i++;
-                                                
+
                                                 if (!empty($job_title)) {
                                                     $title = $job_title;
                                                 } else if (!empty($desired_job_title)) {
-                                                    if($desired_job_title == 'Job Not Applied') {
+                                                    if ($desired_job_title == 'Job Not Applied') {
                                                         continue;
                                                     }
                                                     $title = $desired_job_title;
@@ -182,14 +146,16 @@
                                                 <div class="col-xs-6">
                                                     <label class="control control--checkbox">
                                                         <?php echo ucwords($title); ?>
-                                                        <input name="applicant_jobs_list[]" class="js-applicant-job" value="<?php echo $applicant_list_sid; ?>" type="checkbox" <?php if($i==1) { echo 'checked="checked"'; } ?> />
+                                                        <input name="applicant_jobs_list[]" class="js-applicant-job" value="<?php echo $applicant_list_sid; ?>" type="checkbox" <?php if ($i == 1) {
+                                                                                                                                                                                    echo 'checked="checked"';
+                                                                                                                                                                                } ?> />
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
-                            <?php         }
-                                    } ?>
+                                        <?php         }
+                                        } ?>
+                                    </div>
                                 </div>
-                            </div>
                             <?php } ?>
 
                             <div id="js-interviewers-list" class="row show_email_main_container">
@@ -199,11 +165,11 @@
                                     </div>
                                     <div class="row">
                                         <?php foreach ($company_accounts as $account) {
-                                                $timezone = !empty($account['timezone']) ? $account['timezone'] : $company_timezone;
-                                                ?>
+                                            $timezone = !empty($account['timezone']) ? $account['timezone'] : $company_timezone;
+                                        ?>
                                             <div id="show_email_container_0_<?php echo $account['sid']; ?>" class="col-xs-6 show_email_col">
                                                 <label class="control control--checkbox">
-                                                    <?php echo ucwords($account["first_name"] . ' ' .$account["last_name"]) .' ('.$timezone.')'.' ( '. ($account["is_executive_admin"] == 1 ?  'Executive Admin' : ucwords($account["access_level"])) .' )' ?>
+                                                    <?php echo ucwords($account["first_name"] . ' ' . $account["last_name"]) . ' (' . $timezone . ')' . ' ( ' . ($account["is_executive_admin"] == 1 ?  'Executive Admin' : ucwords($account["access_level"])) . ' )' ?>
                                                     <input id="show_email_0_<?php echo $account['sid']; ?>" class="show_email" value="<?php echo $account['sid']; ?>" name="show_email[]" type="checkbox" />
                                                     <div class="control__indicator"></div>
                                                 </label>
@@ -255,17 +221,17 @@
                             </div>
                             <hr />
 
-                            <?php if($users_type == 'Employee' && $show_online_videos == 1) { ?>
-                            <!-- Videos row -->
-                            <div class="row" id="js-video-wrap"  style="display: none;">
-                                <div class="col-xs-12">
-                                    <div class="form-group autoheight">
-                                        <label>Online Videos</label>
-                                        <select class="form-control" multiple="true"></select>
+                            <?php if ($users_type == 'Employee' && $show_online_videos == 1) { ?>
+                                <!-- Videos row -->
+                                <div class="row" id="js-video-wrap" style="display: none;">
+                                    <div class="col-xs-12">
+                                        <div class="form-group autoheight">
+                                            <label>Online Videos</label>
+                                            <select class="form-control" multiple="true"></select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <hr class="js-video-hr"/>
+                                <hr class="js-video-hr" />
                             <?php } ?>
 
                             <!-- Comment -->
@@ -273,7 +239,7 @@
                                 <div class="col-xs-12">
                                     <div class="form-group autoheight">
                                         <label class="control control--checkbox">
-                                            Comment for <span class="comment_for"><?=$this->uri->segment(1) == 'applicant_profile' ? 'Interviewer(s)' : 'Participant(s)';?></span>
+                                            Comment for <span class="comment_for"><?= $this->uri->segment(1) == 'applicant_profile' ? 'Interviewer(s)' : 'Participant(s)'; ?></span>
                                             <input class="comment_check" data-event_id="0" id="js-comment-check" value="1" name="commentCheck" type="checkbox">
                                             <div class="control__indicator"></div>
                                         </label>
@@ -285,15 +251,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr class="js-comment-hr"/>
+                            <hr class="js-comment-hr" />
 
                             <!-- Message -->
                             <div class="row js-message-wrap">
                                 <div class="col-xs-12">
                                     <div class="form-group autoheight">
                                         <label class="control control--checkbox">
-                                            Message to <span class=""><?=$this->uri->segment(1) == 'applicant_profile' ? 'Applicant' : 'Employee';?></span>
-                                            <input id="js-message-check" class="message_check" data-event_id="0"  name="messageCheck" value="1" type="checkbox">
+                                            Message to <span class=""><?= $this->uri->segment(1) == 'applicant_profile' ? 'Applicant' : 'Employee'; ?></span>
+                                            <input id="js-message-check" class="message_check" data-event_id="0" name="messageCheck" value="1" type="checkbox">
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
@@ -320,7 +286,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr class="js-message-hr"/>
+                            <hr class="js-message-hr" />
 
                             <!-- Address -->
                             <div class="row">
@@ -344,8 +310,8 @@
                                     <div class="form-group autoheight">
                                         <div class="select">
                                             <select class="form-control" name="address" id="address_saved">
-                                                <?php foreach($addresses as $address) { ?>
-                                                    <option value="<?php echo $address?>"><?php echo $address?></option>
+                                                <?php foreach ($addresses as $address) { ?>
+                                                    <option value="<?php echo $address ?>"><?php echo $address ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
@@ -388,7 +354,7 @@
                                             <div class="col-xs-12">
                                                 <div class="form-group autoheight">
                                                     <label>Webinar/Meeting log in URL <span class="required">*</span></label>
-                                                    <input type="text" name="meetingURL" id="js-meeting-url"  class="form-control">
+                                                    <input type="text" name="meetingURL" id="js-meeting-url" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -423,7 +389,7 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>   
+                            </div>
 
                             <!-- Reoccuring events -->
                             <!-- TODO -->
@@ -477,7 +443,7 @@
                                         <div class="cs-row-view"></div>
                                     </div>
                                 </div>
-                            </div>   
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -487,30 +453,76 @@
 </div>
 
 <style>
-    .cs-row{ padding-top: 30px; }
-    .cs-row select{ padding: 5px; width: 60px; height: 40px; }
-    .cs-row p{ padding-top: 7px; }
-    .cs-row span{ margin-left: 10px; }
-    .cs-row span.cs-day{ display: inline-block; width: 40px; height: 40px; border: 2px solid #81b431; text-align: center; line-height: 36px; font-weight: bold; font-size: 24px; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; cursor: pointer; margin-right: 0px; color: #81b431; }
-    .cs-row span.cs-day:hover, .cs-row span.cs-day.cs-active-day{ background-color: #81b431; color: #ffffff; }
-    .cs-row input[type="text"]{ height: 40px !important; padding: 5px; }
-    .cs-required{ color: #cc1100; }
+    .cs-row {
+        padding-top: 30px;
+    }
+
+    .cs-row select {
+        padding: 5px;
+        width: 60px;
+        height: 40px;
+    }
+
+    .cs-row p {
+        padding-top: 7px;
+    }
+
+    .cs-row span {
+        margin-left: 10px;
+    }
+
+    .cs-row span.cs-day {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 2px solid #81b431;
+        text-align: center;
+        line-height: 36px;
+        font-weight: bold;
+        font-size: 24px;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        cursor: pointer;
+        margin-right: 0px;
+        color: #81b431;
+    }
+
+    .cs-row span.cs-day:hover,
+    .cs-row span.cs-day.cs-active-day {
+        background-color: #81b431;
+        color: #ffffff;
+    }
+
+    .cs-row input[type="text"] {
+        height: 40px !important;
+        padding: 5px;
+    }
+
+    .cs-required {
+        color: #cc1100;
+    }
 </style>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Set interviewers default text
         var default_interviewer_text = 'Participant(s)',
-        // Set interviewers default text
-        default_einterviewer_text = 'Non-employee Participant(s)',
-        employee_list = <?=@json_encode($company_accounts);?>,
-        current_event_type = '',
-        site_date_format = 'MM-DD-YYYY';
-        $('#js-date').datepicker({dateFormat: 'mm-dd-yy DD'}).val();
-        
+            // Set interviewers default text
+            default_einterviewer_text = 'Non-employee Participant(s)',
+            employee_list = <?= @json_encode($company_accounts); ?>,
+            current_event_type = '',
+            site_date_format = 'MM-DD-YYYY';
+        $('#js-date').datepicker({
+            dateFormat: 'mm-dd-yy DD',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
+
         // $('#event_form').validate();
 
-        $('body').on('click', '.btn_add_participant', function () {
+        $('body').on('click', '.btn_add_participant', function() {
 
             var random_id = Math.floor((Math.random() * 1000) + 1);
 
@@ -547,7 +559,7 @@
 
 
 
-            $(new_row).find('input').each(function () {
+            $(new_row).find('input').each(function() {
 
                 var name = $(this).attr('name').toString();
 
@@ -568,7 +580,7 @@
             $('#external_participants_container_' + event_id).append(new_row);
         });
 
-        $('body').on('click', '.btn_remove_participant', function () {
+        $('body').on('click', '.btn_remove_participant', function() {
             $($(this).closest('.external_participants').get()).remove();
         });
 
@@ -576,37 +588,37 @@
         $('#tab_loader').hide();
 
 
-        $('body').on('click', '.address_type', function () {
+        $('body').on('click', '.address_type', function() {
 
             var event_sid = $(this).attr('data-event_sid');
 
             if ($(this).prop('checked') == true) {
 
-               if ($(this).val() == 'saved') {
+                if ($(this).val() == 'saved') {
 
-                   $('#address_select_' + event_sid).show();
+                    $('#address_select_' + event_sid).show();
 
-                   $('#address_select_' + event_sid + ' select').prop('disabled', false);
-
-
-
-                   $('#address_input_'  + event_sid).hide();
-
-                   $('#address_input_'  + event_sid + ' input').prop('disabled', true);
-
-               } else if ($(this).val() == 'new') {
-
-                   $('#address_select_' + event_sid).hide();
-
-                   $('#address_select_' + event_sid + ' select').prop('disabled', true);
+                    $('#address_select_' + event_sid + ' select').prop('disabled', false);
 
 
 
-                   $('#address_input_' + event_sid).show();
+                    $('#address_input_' + event_sid).hide();
 
-                   $('#address_input_' + event_sid + ' input').prop('disabled', false);
+                    $('#address_input_' + event_sid + ' input').prop('disabled', true);
 
-               }
+                } else if ($(this).val() == 'new') {
+
+                    $('#address_select_' + event_sid).hide();
+
+                    $('#address_select_' + event_sid + ' select').prop('disabled', true);
+
+
+
+                    $('#address_input_' + event_sid).show();
+
+                    $('#address_input_' + event_sid + ' input').prop('disabled', false);
+
+                }
 
             }
         });
@@ -617,7 +629,7 @@
         $('#address_select_0').hide();
         $('#address_select_0 input').prop('disabled', true);
 
-        $(document).on('click', '.comment_check', function () {
+        $(document).on('click', '.comment_check', function() {
 
             var checked = $(this).prop('checked');
 
@@ -636,7 +648,7 @@
             }
         });
 
-        $(document).on('click', '.message_check', function () {
+        $(document).on('click', '.message_check', function() {
 
             var checked = $(this).prop('checked');
 
@@ -656,7 +668,7 @@
 
         });
 
-        $(document).on('click', '.goto_meeting_check', function () {
+        $(document).on('click', '.goto_meeting_check', function() {
 
             var checked = $(this).prop('checked');
 
@@ -676,12 +688,14 @@
 
         });
 
-        $(document).on('click', '#js-reminder-check', function () { $('#js-reminder-box').toggle(); });
+        $(document).on('click', '#js-reminder-check', function() {
+            $('#js-reminder-box').toggle();
+        });
 
         $('.show_email_main_container').hide();
         $('.show_email_col').hide();
-        
-        $('#js-date').val("<?=date('m-d-Y l');?>");
+
+        $('#js-date').val("<?= date('m-d-Y l'); ?>");
         $('#js-start-time').val(default_start_time);
         $('#js-end-time').val(default_end_time);
 
@@ -704,52 +718,55 @@
         // The user type
         // @param target_OBJ
         // Target el array
-        function load_categories(type, target_OBJ){
-            var target =  $(target_OBJ),
-            rows = '',
-            selected = event_type.default_applicant,
-            arr = event_type.applicant;
+        function load_categories(type, target_OBJ) {
+            var target = $(target_OBJ),
+                rows = '',
+                selected = event_type.default_applicant,
+                arr = event_type.applicant;
             target.html('');
             //
-            if(type == 'employee'){
+            if (type == 'employee') {
                 selected = event_type.default_employee;
                 arr = event_type.employee;
             }
             // Sort array by asc
             arr = _.sortBy(arr);
             var cls = 'js-btn-category';
-            if(edit_mode != '') cls += ' js-edit-btn-category';
-            $.each(arr, function(i,v){
-                if(v == 'training-session'){
-                    <?php if($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
-                        rows += '<li><button type="button" data-id="'+v+'" class="'+cls+' btn btn-default btn-block dropdown-btn cs-event-btn-'+v+' training-session-tile">'+event_obj[v]+'</button></li>';
+            if (edit_mode != '') cls += ' js-edit-btn-category';
+            $.each(arr, function(i, v) {
+                if (v == 'training-session') {
+                    <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
+                        rows += '<li><button type="button" data-id="' + v + '" class="' + cls + ' btn btn-default btn-block dropdown-btn cs-event-btn-' + v + ' training-session-tile">' + event_obj[v] + '</button></li>';
                     <?php } ?>
-                }else{
-                    rows += '<li><button type="button" data-id="'+v+'" class="'+cls+' btn btn-default btn-block dropdown-btn cs-event-btn-'+v+' training-session-tile">'+event_obj[v]+'</button></li>';
+                } else {
+                    rows += '<li><button type="button" data-id="' + v + '" class="' + cls + ' btn btn-default btn-block dropdown-btn cs-event-btn-' + v + ' training-session-tile">' + event_obj[v] + '</button></li>';
                 }
             });
 
-            $('#js'+( edit_mode )+'-event-selected-type-value').val(selected);
-            $('#js'+( edit_mode )+'-event-selected-type-text').text(event_obj[selected]);
-            $('#js'+( edit_mode )+'-event-selected-type-area').css({'background-color' : event_color_obj[selected], 'color': '#ffffff'});
+            $('#js' + (edit_mode) + '-event-selected-type-value').val(selected);
+            $('#js' + (edit_mode) + '-event-selected-type-text').text(event_obj[selected]);
+            $('#js' + (edit_mode) + '-event-selected-type-area').css({
+                'background-color': event_color_obj[selected],
+                'color': '#ffffff'
+            });
             target.html(rows);
         }
 
         // Set category on click 
-        $(document).on('click', '.js-btn-category', function(){
+        $(document).on('click', '.js-btn-category', function() {
             current_event_type = $(this).data('id');
-            if(user_type === 'employee'){
+            if (user_type === 'employee') {
                 $('#js-interviewers-list').show(0);
-               
+
                 $('label#attendees_label').text(default_interviewer_text);
                 $('#js-non-employee-heading').text(default_einterviewer_text);
                 $('.js-comment-wrap, .js-message-wrap, #js-message-box, .js-meeting-wrap, #js-meeting-box').show(0);
                 $('.js-message-hr').show(0);
                 $('.js-comment-hr').show(0);
 
-                if($('#js-message-check').prop('checked') === false)
+                if ($('#js-message-check').prop('checked') === false)
                     $('#js-message-box').hide(0);
-                if($('#js-meeting-check').prop('checked') === false)
+                if ($('#js-meeting-check').prop('checked') === false)
                     $('#js-meeting-box').hide(0);
 
                 $('#js-video-wrap, .js-video-hr').hide(0);
@@ -757,7 +774,7 @@
                 remove_all_from_interviewers();
 
                 // For training session
-                if($(this).data('id') == 'training-session'){
+                if ($(this).data('id') == 'training-session') {
                     $('#js-interviewers-list').hide(0);
 
                     $('label#attendees_label').text('Assigned Attendees');
@@ -774,53 +791,56 @@
             //
             $('#js-event-selected-type-value').val($(this).data('id'));
             $('#js-event-selected-type-text').text(event_obj[$(this).data('id')]);
-            $('#js-event-selected-type-area').css({'background-color' : event_color_obj[$(this).data('id')], 'color': '#ffffff'});
+            $('#js-event-selected-type-area').css({
+                'background-color': event_color_obj[$(this).data('id')],
+                'color': '#ffffff'
+            });
         });
 
-        if(show_recur_btn == 0) $('#js-reoccur-wrap').hide(0);
-        
-        $('#add_event_form').submit(function(e){
+        if (show_recur_btn == 0) $('#js-reoccur-wrap').hide(0);
+
+        $('#add_event_form').submit(function(e) {
             e.preventDefault();
-            if(form_check()){
+            if (form_check()) {
                 func_show_loader();
                 //
                 var eventOBJ = get_event_obj_template();
 
-                eventOBJ.applicant_sid = <?=$id;?>;
-                eventOBJ.employee_sid = <?=$main_employer_id;?>;
+                eventOBJ.applicant_sid = <?= $id; ?>;
+                eventOBJ.employee_sid = <?= $main_employer_id; ?>;
 
                 eventOBJ.title = $('#js-event-title').val().trim();
                 eventOBJ.users_phone = $('#users_phone').val().trim();
-                eventOBJ.category    = $('#js-event-selected-type-value').val().trim();
-                eventOBJ.date        = moment($('#js-date').val().trim(), site_date_format+" dddd").format(site_date_format);
+                eventOBJ.category = $('#js-event-selected-type-value').val().trim();
+                eventOBJ.date = moment($('#js-date').val().trim(), site_date_format + " dddd").format(site_date_format);
                 eventOBJ.eventstarttime = $('#js-start-time').val().trim();
-                eventOBJ.eventendtime   = $('#js-end-time').val().trim();
+                eventOBJ.eventendtime = $('#js-end-time').val().trim();
 
                 eventOBJ.commentCheck = $('#js-comment-check').prop('checked') ? 1 : 0;
-                if(eventOBJ.commentCheck === 1)
-                    eventOBJ.comment      = $('#js-comment-msg').val().trim();
+                if (eventOBJ.commentCheck === 1)
+                    eventOBJ.comment = $('#js-comment-msg').val().trim();
 
                 eventOBJ.reminder_flag = $('#js-reminder-check').prop('checked') ? 1 : 0;
-                if(eventOBJ.reminder_flag === 1)
-                    eventOBJ.duration      = $('#js-reminder-select').val().trim();
+                if (eventOBJ.reminder_flag === 1)
+                    eventOBJ.duration = $('#js-reminder-select').val().trim();
 
                 eventOBJ.messageCheck = $('#js-message-check').prop('checked') ? 1 : 0;
-                if(eventOBJ.messageCheck === 1){
-                    eventOBJ.message      = $('#js-message-body').val().trim();
-                    eventOBJ.subject      = $('#js-message-subject').val().trim();
+                if (eventOBJ.messageCheck === 1) {
+                    eventOBJ.message = $('#js-message-body').val().trim();
+                    eventOBJ.subject = $('#js-message-subject').val().trim();
                 }
 
                 eventOBJ.goToMeetingCheck = $('#js-meeting-check').prop('checked') ? 1 : 0;
-                if(eventOBJ.goToMeetingCheck === 1){
-                    eventOBJ.meetingId    = $('#js-meeting-id').val().trim();
-                    eventOBJ.meetingURL   = $('#js-meeting-url').val().trim();
+                if (eventOBJ.goToMeetingCheck === 1) {
+                    eventOBJ.meetingId = $('#js-meeting-id').val().trim();
+                    eventOBJ.meetingURL = $('#js-meeting-url').val().trim();
                     eventOBJ.meetingCallNumber = $('#js-meeting-call').val().trim();
                 }
 
                 // Interviewers
                 eventOBJ.interviewer = $('#js-interviewer').val();
                 var tmp = [];
-                $('#js-interviewers-list').find('input:checked').each(function () {
+                $('#js-interviewers-list').find('input:checked').each(function() {
                     tmp.push($(this).val());
                 });
                 eventOBJ.interviewer_show_email = tmp.join(',');
@@ -833,90 +853,90 @@
                 eventOBJ.applicant_jobs_list = tmp.join(',');
                 // show_email_sids.join(',');
 
-                var address_type  = $('.address_type:checked').val();
+                var address_type = $('.address_type:checked').val();
                 var address_saved = $('#address_saved').val();
-                var address_new   = $('#address_new').val();
+                var address_new = $('#address_new').val();
 
-                eventOBJ.address = address_type == 'new' ? address_new.trim() :  address_saved;
+                eventOBJ.address = address_type == 'new' ? address_new.trim() : address_saved;
 
                 // TODO
                 // Recurring event
                 var recur_obj = {};
-                if($('#js-reoccur-check').prop('checked') === true && show_recur_btn == 1 ){
+                if ($('#js-reoccur-check').prop('checked') === true && show_recur_btn == 1) {
                     recur_obj.recur_type = $('.js-recurr-type:checked').val();
-                    recur_obj.recur_start_date = moment(eventOBJ.date+' 23:59:59').format('YYYY-MM-DD');
-                    recur_obj.recur_end_date   = $('.js-infinite').prop('checked') === false ? moment($('.js-recurr-datepicker').val()+' 23:59:59').format('YYYY-MM-DD') : null;
+                    recur_obj.recur_start_date = moment(eventOBJ.date + ' 23:59:59').format('YYYY-MM-DD');
+                    recur_obj.recur_end_date = $('.js-infinite').prop('checked') === false ? moment($('.js-recurr-datepicker').val() + ' 23:59:59').format('YYYY-MM-DD') : null;
                     recur_obj.list = {};
                     switch (recur_obj.recur_type) {
                         case 'Daily':
                             recur_obj.list.Days = get_selected_days();
-                            if(recur_obj.list.Days.length === 0){
+                            if (recur_obj.list.Days.length === 0) {
                                 alertify.alert("Please, select atleast one day", flush_alertify_cb);
                                 return false;
                             }
-                        break;
+                            break;
 
                         case 'Weekly':
                             recur_obj.list.Weeks = $('#js-recurr-week-input').val().trim();
                             recur_obj.list.Days = get_selected_days();
-                            if(recur_obj.list.Days.length === 0){
+                            if (recur_obj.list.Days.length === 0) {
                                 alertify.alert("Please, select atleast one day", flush_alertify_cb);
                                 return false;
                             }
-                        break;
+                            break;
 
                         case 'Monthly':
                             recur_obj.list.Months = get_selected_months();
-                            if(recur_obj.list.Months.length === 0){
+                            if (recur_obj.list.Months.length === 0) {
                                 alertify.alert("Please, select atleast one month", flush_alertify_cb);
                                 return false;
                             }
                             recur_obj.list.Weeks = $('#js-recurr-week-input').val().trim();
                             recur_obj.list.Days = get_selected_days();
-                            if(recur_obj.list.Days.length === 0){
+                            if (recur_obj.list.Days.length === 0) {
                                 alertify.alert("Please, select atleast one day", flush_alertify_cb);
                                 return false;
                             }
-                        break;
+                            break;
 
                         case 'Yearly':
                             recur_obj.list.Years = $('#js-recurr-year-input').val().trim();
                             recur_obj.list.Months = get_selected_months();
-                            if(recur_obj.list.Months.length === 0 ){
+                            if (recur_obj.list.Months.length === 0) {
                                 alertify.alert("Please, select atleast one month", flush_alertify_cb);
                                 return false;
                             }
                             recur_obj.list.Weeks = $('#js-recurr-week-input').val().trim();
                             recur_obj.list.Days = get_selected_days();
-                            if(recur_obj.list.Days.length === 0){
+                            if (recur_obj.list.Days.length === 0) {
                                 alertify.alert("Please, select atleast one day", flush_alertify_cb);
                                 return false;
                             }
-                        break;
+                            break;
                     }
-                }      
-            
+                }
+
                 eventOBJ.recur = JSON.stringify(recur_obj);
                 //
                 // Set video 
                 eventOBJ.video_ids = $('#js-video-wrap select').val();
 
                 //
-                if(eventOBJ.interviewer == 'all'){
+                if (eventOBJ.interviewer == 'all') {
                     var tmp = [];
-                    employee_list.map(function(v){
-                        tmp.push(v.employer_id); 
+                    employee_list.map(function(v) {
+                        tmp.push(v.employer_id);
                     });
                     eventOBJ.interviewer = tmp.join(',');
                     eventOBJ.interviewer_show_email = '';
                     eventOBJ.interviewer_type = 'all';
-                }else eventOBJ.interviewer_type = 'specific';
+                } else eventOBJ.interviewer_type = 'specific';
 
                 var form_data = new FormData();
 
                 var file_data = $('#js-message-file').prop('files')[0];
                 form_data.append('messageFile', file_data);
-                form_data.append('event_timezone', $( "#event_timezone option:selected" ).val());
+                form_data.append('event_timezone', $("#event_timezone option:selected").val());
 
                 //
                 // eventOBJ.users_phone = eventOBJ.users_phone.replace(/\D/, '');
@@ -932,10 +952,10 @@
                     data: form_data,
                     processData: false,
                     contentType: false,
-                    success: function (res) {
+                    success: function(res) {
                         //
                         alertify.alert(res.Response, flush_alertify_cb);
-                        if(res.Status !== false)
+                        if (res.Status !== false)
                             window.location.reload();
                     }
                 });
@@ -949,106 +969,106 @@
             alertify.defaults.glossary.title = 'Event Management!';
             //
             var users_phone = $('#users_phone').val().trim();
-            if(users_phone != '' ){
+            if (users_phone != '') {
                 // Check for phone
-                if(!phone_regex.test(users_phone)){
+                if (!phone_regex.test(users_phone)) {
                     alertify.alert("Please, enter a proper phone number.", flush_alertify_cb);
                     return false;
                 }
             }
-            
+
 
             var ep = $.parseJSON(func_get_external_users_data());
-            if(ep.length > 1){
+            if (ep.length > 1) {
                 var is_error = false;
                 $.each(ep, function(i, v) {
                     email_regex.lastIndex = 0;
-                    if(v.name.trim() != '' || v.email.trim() != ''){
-                        if(v.name.trim() == ''){
-                            alertify.alert("Name is missing for non-employee participants.( "+(++i)+" row ) ", flush_alertify_cb); 
+                    if (v.name.trim() != '' || v.email.trim() != '') {
+                        if (v.name.trim() == '') {
+                            alertify.alert("Name is missing for non-employee participants.( " + (++i) + " row ) ", flush_alertify_cb);
                             is_error = true;
                             return false;
                         }
-                        if(v.email.trim() == ''){
-                            alertify.alert("Email is missing for non-employee participants.( "+(++i)+" row ) ", flush_alertify_cb);
-                            is_error = true; 
-                            return false;
-                        }
-                        if(!email_regex.test(v.email.trim())){
-                            alertify.alert("Invalid email is provided for non-employee participants.( "+(++i)+" row ) ", flush_alertify_cb); 
+                        if (v.email.trim() == '') {
+                            alertify.alert("Email is missing for non-employee participants.( " + (++i) + " row ) ", flush_alertify_cb);
                             is_error = true;
                             return false;
                         }
-                    }   
+                        if (!email_regex.test(v.email.trim())) {
+                            alertify.alert("Invalid email is provided for non-employee participants.( " + (++i) + " row ) ", flush_alertify_cb);
+                            is_error = true;
+                            return false;
+                        }
+                    }
                 });
 
-                if(is_error) return false;
-            }else if( ep.length == 1){
-                if(ep[0].name.trim() != '' || ep[0].email.trim() != ''){
-                    if(ep[0].name.trim() == ''){
-                        alertify.alert("Name is missing for non-employee participants.( 1 row ) ", flush_alertify_cb); 
+                if (is_error) return false;
+            } else if (ep.length == 1) {
+                if (ep[0].name.trim() != '' || ep[0].email.trim() != '') {
+                    if (ep[0].name.trim() == '') {
+                        alertify.alert("Name is missing for non-employee participants.( 1 row ) ", flush_alertify_cb);
                         return false;
                     }
-                    if(ep[0].email.trim() == ''){
-                        alertify.alert("Email is missing for non-employee participants.( 1 row ) ", flush_alertify_cb); 
+                    if (ep[0].email.trim() == '') {
+                        alertify.alert("Email is missing for non-employee participants.( 1 row ) ", flush_alertify_cb);
                         return false;
                     }
-                    if(!email_regex.test(ep[0].email.trim())){
-                        alertify.alert("Invalid email is provided for non-employee participants.( 1 row ) ", flush_alertify_cb); 
+                    if (!email_regex.test(ep[0].email.trim())) {
+                        alertify.alert("Invalid email is provided for non-employee participants.( 1 row ) ", flush_alertify_cb);
                         return false;
                     }
                 }
             }
 
             // Event title
-            if($('#js-event-title').val().trim() == '' ){
+            if ($('#js-event-title').val().trim() == '') {
                 alertify.alert('An event title is missing.', flush_alertify_cb);
                 return false;
             }
 
             // Check for comment
-            if($('#js-comment-check').prop('checked') === true && $('#js-comment-msg').val().trim() == ''){
+            if ($('#js-comment-check').prop('checked') === true && $('#js-comment-msg').val().trim() == '') {
                 alertify.alert('A comment is missing. If you don\'t want to add a comment please uncheck "Comment" check.', flush_alertify_cb);
                 return false;
             }
 
             // Check for message
-            if($('#js-message-check').prop('checked') === true ){
-                if($('#js-message-subject').val().trim() == ''){
+            if ($('#js-message-check').prop('checked') === true) {
+                if ($('#js-message-subject').val().trim() == '') {
                     alertify.alert('The Subject field is missing. If you don\'t want to send email to a candidate, please uncheck "Message To Candidate" check.', flush_alertify_cb);
                     return false;
                 }
-                if($('#js-message-body').val().trim() == ''){
+                if ($('#js-message-body').val().trim() == '') {
                     alertify.alert('Message field is missing. If you don\'t want to send email to a candidate, please uncheck "Message To Candidate" check.', flush_alertify_cb);
                     return false;
                 }
             }
 
             // Check for meeting
-            if($('#js-meeting-check').prop('checked') === true ){
-                
-                if($('#js-meeting-call').val().trim() == ''){
+            if ($('#js-meeting-check').prop('checked') === true) {
+
+                if ($('#js-meeting-call').val().trim() == '') {
                     alertify.alert('The call field is missing. If you don\'t want to set meeting details, please uncheck "Meeting Call Details" check.', flush_alertify_cb);
                     return false;
                 }
-                if(!digit_regex.test($('#js-meeting-call').val().trim())){
+                if (!digit_regex.test($('#js-meeting-call').val().trim())) {
                     alertify.alert('The call field can only hold numeric values. If you don\'t want to set meeting details, please uncheck "Meeting Call Details" check.', flush_alertify_cb);
                     return false;
                 }
                 // Reset
                 digit_regex.lastIndex = 0;
 
-                if($('#js-meeting-id').val().trim() == ''){
+                if ($('#js-meeting-id').val().trim() == '') {
                     alertify.alert('The ID field is missing. If you don\'t want to set meeting details, please uncheck "Meeting Call Details" check.', flush_alertify_cb);
                     return false;
                 }
 
-                if($('#js-meeting-url').val().trim() == ''){
+                if ($('#js-meeting-url').val().trim() == '') {
                     alertify.alert('The URL field is missing. If you don\'t want to set meeting details, please uncheck "Meeting Call Details" check.', flush_alertify_cb);
                     return false;
                 }
 
-                if(!url_regex.test($('#js-meeting-url').val().trim())){
+                if (!url_regex.test($('#js-meeting-url').val().trim())) {
                     alertify.alert('The URL is invalid. If you don\'t want to set meeting details, please uncheck "Meeting Call Details" check.', flush_alertify_cb);
                     return false;
                 }
@@ -1064,47 +1084,49 @@
         }
 
         // Overwrite Alertify callback
-        function flush_alertify_cb(){ console.clear(); }
+        function flush_alertify_cb() {
+            console.clear();
+        }
 
 
-        function get_event_obj_template(){
+        function get_event_obj_template() {
             return {
-                    action: 'save_event',
-                    applicant_sid: 0,
-                    employee_sid: 0,
-                    title: '',
-                    category: '',
-                    date: '',
-                    eventstarttime: '',
-                    eventendtime: '',
-                    interviewer: '',
-                    address: '',
-                    users_type: user_type,
-                    users_phone: '',
-                    interviewer_show_email: '',
-                    external_participants: func_get_external_users_data(),
-                    applicant_jobs_list: [],
-                    reminder_flag: 0,
-                    duration: 15,
-                    commentCheck: 0,
-                    comment: '',
-                    messageCheck: 0,
-                    subject: '',
-                    message: '',
-                    goToMeetingCheck: 0,
-                    meetingId: 0,
-                    meetingCallNumber: 0,
-                    meetingURL: '',
-                    recur: ''
-                };
+                action: 'save_event',
+                applicant_sid: 0,
+                employee_sid: 0,
+                title: '',
+                category: '',
+                date: '',
+                eventstarttime: '',
+                eventendtime: '',
+                interviewer: '',
+                address: '',
+                users_type: user_type,
+                users_phone: '',
+                interviewer_show_email: '',
+                external_participants: func_get_external_users_data(),
+                applicant_jobs_list: [],
+                reminder_flag: 0,
+                duration: 15,
+                commentCheck: 0,
+                comment: '',
+                messageCheck: 0,
+                subject: '',
+                message: '',
+                goToMeetingCheck: 0,
+                meetingId: 0,
+                meetingCallNumber: 0,
+                meetingURL: '',
+                recur: ''
+            };
         }
 
         // Get added external partipents
         function func_get_external_users_data() {
             var names = $('.external_participants_name'),
-            emails = $('.external_participants_email'),
-            show_emails = $('.external_participants_show_email'),
-            data = [];
+                emails = $('.external_participants_email'),
+                show_emails = $('.external_participants_show_email'),
+                data = [];
 
             for (iCount = 0; iCount < names.length; iCount++) {
                 var person_data = {
@@ -1115,15 +1137,15 @@
 
                 data.push(person_data);
             }
-            
+
             return JSON.stringify(data);
         }
 
-        $(document).on('change', '#js-interviewer', function () {
+        $(document).on('change', '#js-interviewer', function() {
             var event_sid = $(this).attr('data-event_sid');
             event_sid = event_sid == null || event_sid == undefined || event_sid == '' || event_sid == 0 ? 0 : event_sid;
             var selected = $(this).val();
-           
+
             if (selected !== null && selected.length > 0 && current_event_type != 'training-session') {
                 $('#js-interviewers-list').show();
                 $('#show_email_main_container_' + event_sid).show();
@@ -1142,26 +1164,30 @@
             }
         });
 
-        if(user_type === 'employee'){
+        if (user_type === 'employee') {
             // Triggers when interviewer is un-selected
-            $('#js-interviewer').on('select2:select', function(){ handle_all_check($('#js-interviewer').val()); });
-            $('#js-interviewer').on('select2:unselect', function(){ handle_all_check($('#js-interviewer').val()); });
+            $('#js-interviewer').on('select2:select', function() {
+                handle_all_check($('#js-interviewer').val());
+            });
+            $('#js-interviewer').on('select2:unselect', function() {
+                handle_all_check($('#js-interviewer').val());
+            });
         }
         // TODO
         // Check for reoccur events
         // @param e
         // Holds the current render event
-        function check_for_reoccur_event(e){
-            if(e.is_recur == 0) return true;
+        function check_for_reoccur_event(e) {
+            if (e.is_recur == 0) return true;
             // 
             // if(e.event_id != '1799') return false;
 
             var return_value = false,
-            recur_obj = {},
-            list = JSON.parse(e.recur_list);
+                recur_obj = {},
+                list = JSON.parse(e.recur_list);
             recur_obj.start_date = moment(e.recur_start_date);
-            recur_obj.end_date   = null;
-            if(e.recur_end_date != null)
+            recur_obj.end_date = null;
+            if (e.recur_end_date != null)
                 recur_obj.end_date = moment(e.recur_end_date);
 
             // Check for reoccur type
@@ -1170,37 +1196,37 @@
                     recur_obj.years = list.Years;
                     // Check for years
                     return_value = check_recur_years(e, recur_obj);
-                    if(return_value === false) return false;
+                    if (return_value === false) return false;
 
                     recur_obj.months = reset_array_for_recur(list.Months, 12);
                     // Check for months
                     return_value = check_recur_months(e, recur_obj);
-                    if(return_value === false) return false;
-                    
+                    if (return_value === false) return false;
+
                     recur_obj.weeks = list.Weeks;
                     // Check for weeks
                     return_value = check_recur_weeks(e, recur_obj);
-                    if(return_value === false) return false;
+                    if (return_value === false) return false;
 
                     recur_obj.days = reset_array_for_recur(list.Days, 7);
                     // Check for timeframe
                     return_value = check_recur_days(e, recur_obj);
-                break;
+                    break;
                 case 'Monthly':
                     recur_obj.months = reset_array_for_recur(list.Months, 12);
                     // Check for months
                     return_value = check_recur_months(e, recur_obj);
-                    if(return_value === false) return false;
-                    
+                    if (return_value === false) return false;
+
                     recur_obj.weeks = list.Weeks;
                     // Check for weeks
                     return_value = check_recur_weeks(e, recur_obj);
-                    if(return_value === false) return false;
+                    if (return_value === false) return false;
 
                     recur_obj.days = reset_array_for_recur(list.Days, 7);
                     // Check for timeframe
                     return_value = check_recur_days(e, recur_obj);
-                break;
+                    break;
                 case 'Weekly':
                     recur_obj.weeks = list.Weeks;
                     recur_obj.days = reset_array_for_recur(list.Days, 7);
@@ -1208,83 +1234,81 @@
                     // Check for weeks
                     // Don't check the end time if
                     return_value = check_recur_weeks(e, recur_obj);
-                    if(return_value === false) return false;
+                    if (return_value === false) return false;
 
                     // Check for timeframe
                     // Don't check the end time if
                     return_value = check_recur_days(e, recur_obj);
-                break;
-                case 'Daily':             
+                    break;
+                case 'Daily':
                     recur_obj.days = reset_array_for_recur(list.Days, 7);
                     // Check for timeframe
                     // Don't check the end time if
                     return_value = check_recur_days(e, recur_obj);
-                break;
+                    break;
             }
 
             return return_value;
         }
 
         // Check recur days check
-        function check_recur_days(e, recur_obj){    
+        function check_recur_days(e, recur_obj) {
 
             var is_return = false,
-            is_return_2 = false;
+                is_return_2 = false;
             // it's null
-            if(recur_obj.end_date == null )
+            if (recur_obj.end_date == null)
                 // 2019-05-08 >= 2019-05-08
                 is_return = e.start.isAfter(recur_obj.start_date) || e.start.format('MM-DD-YYYY') == recur_obj.start_date.format('MM-DD-YYYY');
-                // is_return = e.start.isAfter(recur_obj.start_date) || e.start.format('MM-DD-YYYY') == recur_obj.start_date.format('MM-DD-YYYY');
+            // is_return = e.start.isAfter(recur_obj.start_date) || e.start.format('MM-DD-YYYY') == recur_obj.start_date.format('MM-DD-YYYY');
             // 2019-05-08 <= 2019-09-04 && 2019-05-08 >= 2019-05-08
-            else if(recur_obj.end_date != null){
-                is_return = 
-                (e.start.isBefore(recur_obj.end_date) || e.start.format('MM-DD-YYYY') == recur_obj.start_date.format('MM-DD-YYYY'))
-                && 
-                (e.end.isAfter(recur_obj.start_date) || e.end.format('MM-DD-YYYY') == recur_obj.end_date.format('MM-DD-YYYY')
-                );
+            else if (recur_obj.end_date != null) {
+                is_return =
+                    (e.start.isBefore(recur_obj.end_date) || e.start.format('MM-DD-YYYY') == recur_obj.start_date.format('MM-DD-YYYY')) &&
+                    (e.end.isAfter(recur_obj.start_date) || e.end.format('MM-DD-YYYY') == recur_obj.end_date.format('MM-DD-YYYY'));
             }
-            
-            is_return_2 = (recur_obj.days.hasOwnProperty('is_all') || recur_obj.days.hasOwnProperty( e.start.day() ));
+
+            is_return_2 = (recur_obj.days.hasOwnProperty('is_all') || recur_obj.days.hasOwnProperty(e.start.day()));
 
             // console.log(
-                // e.start.format('MM-DD-YYYY'),
-                // e.end.format('MM-DD-YYYY'),
-                // recur_obj.start_date.format('MM-DD-YYYY'),
-                // recur_obj.end_date.format('MM-DD-YYYY')
+            // e.start.format('MM-DD-YYYY'),
+            // e.end.format('MM-DD-YYYY'),
+            // recur_obj.start_date.format('MM-DD-YYYY'),
+            // recur_obj.end_date.format('MM-DD-YYYY')
 
-                // recur_obj
+            // recur_obj
             // );
 
             // console.log(recur_obj.days.hasOwnProperty('is_all') || recur_obj.days.hasOwnProperty( e.start.day() ), e.start.day(), recur_obj.days, e.start.format('MM-DD-YYYY'), is_return, is_return_2);
             // console.log( e.start.day(), recur_obj.days, e.start.format('MM-DD-YYYY') );
 
             return is_return && is_return_2;
-        }   
+        }
 
         // Check recur weeks check
-        function check_recur_weeks(e, recur_obj){
-            return moment(e.start).week()%recur_obj.weeks === 0 ?  true : false
+        function check_recur_weeks(e, recur_obj) {
+            return moment(e.start).week() % recur_obj.weeks === 0 ? true : false
         }
 
         // Check recur months check
-        function check_recur_months(e, recur_obj){
-            if(recur_obj.months.hasOwnProperty('is_all'))
+        function check_recur_months(e, recur_obj) {
+            if (recur_obj.months.hasOwnProperty('is_all'))
                 return true;
             return recur_obj.months.hasOwnProperty(e.start.month() + 1);
         }
 
         // Check recur years check
-        function check_recur_years(e, recur_obj){
-            return moment(e.start).year()%recur_obj.years === 0 ?  true : false
+        function check_recur_years(e, recur_obj) {
+            return moment(e.start).year() % recur_obj.years === 0 ? true : false
         }
 
         // Generates HTML for recurr view
         // @param type
         // @param selected
-        function get_recurr_html(type, selected){
+        function get_recurr_html(type, selected) {
             var rows = '';
             //
-            switch(type){
+            switch (type) {
                 case 'days_row':
                     rows += '<div class="cs-row">';
                     rows += '    <div class="row">';
@@ -1294,13 +1318,13 @@
                     rows += '        <div class="col-sm-10">';
                     $.each(recurr_days, function(i, v) {
                         var key = i++,
-                        is_class = (selected !== undefined && (selected.hasOwnProperty(key) || selected.hasOwnProperty('is_all')))  ? 'cs-active-day' : '';
-                        rows += '        <span data-key="'+ key +'" title="'+ v +'" class="cs-day js-day-box '+ is_class +'">'+( v.substring(0, 1) )+'</span>';
+                            is_class = (selected !== undefined && (selected.hasOwnProperty(key) || selected.hasOwnProperty('is_all'))) ? 'cs-active-day' : '';
+                        rows += '        <span data-key="' + key + '" title="' + v + '" class="cs-day js-day-box ' + is_class + '">' + (v.substring(0, 1)) + '</span>';
                     });
                     rows += '        </div>';
                     rows += '    </div>';
                     rows += '</div>';
-                break;
+                    break;
 
                 case 'end_date_row':
                     rows += '<div class="cs-row">';
@@ -1311,7 +1335,7 @@
                     rows += '        <div class="col-sm-10">';
                     rows += '            <div class="row">';
                     rows += '                <div class="col-sm-4">';
-                    rows += '                    <input type="text" readonly="true" class="js-recurr-datepicker" '+( selected === undefined ? '' : 'value="'+selected+'"' )+' />';
+                    rows += '                    <input type="text" readonly="true" class="js-recurr-datepicker" ' + (selected === undefined ? '' : 'value="' + selected + '"') + ' />';
                     rows += '                </div>';
                     rows += '                <div class="col-sm-4">';
                     rows += '                    <label class="control control--checkbox">';
@@ -1324,7 +1348,7 @@
                     rows += '        </div>';
                     rows += '    </div>';
                     rows += '</div>';
-                break;
+                    break;
 
                 case 'summary_row':
                     rows += '<div class="cs-row">';
@@ -1337,8 +1361,8 @@
                     rows += '        </div>';
                     rows += '    </div>';
                     rows += '</div>';
-                break;
-                // 
+                    break;
+                    // 
                 case 'week_row':
                     rows += '<div class="cs-row">';
                     rows += '    <div class="row">';
@@ -1348,7 +1372,7 @@
                     rows += '        <div class="col-sm-10">';
                     rows += '            <div class="row">';
                     rows += '                <div class="col-sm-2">';
-                    rows += '                    <input value="'+ (selected === undefined ? 1 : selected) +'" type="text" minLength="1" id="js-recurr-week-input" />';
+                    rows += '                    <input value="' + (selected === undefined ? 1 : selected) + '" type="text" minLength="1" id="js-recurr-week-input" />';
                     rows += '                </div>';
                     rows += '                <div class="col-sm-8">';
                     rows += '                    <span>Weeks</span>';
@@ -1357,8 +1381,8 @@
                     rows += '        </div>';
                     rows += '    </div>';
                     rows += '</div>';
-                break;
-                // 
+                    break;
+                    // 
                 case 'month_row':
                     rows += '<div class="cs-row">';
                     rows += '    <div class="row">';
@@ -1368,13 +1392,13 @@
                     rows += '        <div class="col-sm-10">';
                     $.each(recurr_months, function(i, v) {
                         var key = i++,
-                        is_class = (selected !== undefined && (selected.hasOwnProperty(key) || selected.hasOwnProperty('is_all')))  ? 'cs-active-day' : '';
-                        rows += '        <span data-key="'+ key +'" title="'+ v +'" class="cs-day js-month-box '+ is_class +'">'+( v.substring(0, 1) )+'</span>';
+                            is_class = (selected !== undefined && (selected.hasOwnProperty(key) || selected.hasOwnProperty('is_all'))) ? 'cs-active-day' : '';
+                        rows += '        <span data-key="' + key + '" title="' + v + '" class="cs-day js-month-box ' + is_class + '">' + (v.substring(0, 1)) + '</span>';
                     });
                     rows += '        </div>';
                     rows += '    </div>';
                     rows += '</div>';
-                break;
+                    break;
 
                 case 'year_row':
                     rows += '<div class="cs-row">';
@@ -1385,7 +1409,7 @@
                     rows += '        <div class="col-sm-10">';
                     rows += '            <div class="row">';
                     rows += '                <div class="col-sm-2">';
-                    rows += '                    <input value="'+ (selected === undefined ? 1 : selected) +'" type="text" minLength="1" id="js-recurr-year-input" />';
+                    rows += '                    <input value="' + (selected === undefined ? 1 : selected) + '" type="text" minLength="1" id="js-recurr-year-input" />';
                     rows += '                </div>';
                     rows += '                <div class="col-sm-8">';
                     rows += '                    <span>Years</span>';
@@ -1394,7 +1418,7 @@
                     rows += '        </div>';
                     rows += '    </div>';
                     rows += '</div>';
-                break;
+                    break;
 
                 case 'every_day_row':
                     rows += '<div class="cs-row">';
@@ -1411,7 +1435,7 @@
                     rows += '        </div>';
                     rows += '    </div>';
                     rows += '</div>';
-                break;
+                    break;
             }
             return rows;
         }
@@ -1421,131 +1445,131 @@
         // Recur type
         // @param data
         // Holds data for edit mode
-        function load_recurr_view(type, data){
+        function load_recurr_view(type, data) {
             var row = '',
-            is_load = false;
+                is_load = false;
             switch (type) {
                 case 'daily':
                     row +=
-                        get_recurr_html('days_row', data === undefined ? default_days : data.days)+
-                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date)+
+                        get_recurr_html('days_row', data === undefined ? default_days : data.days) +
+                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date) +
                         get_recurr_html('summary_row');
                     is_load = 'daily';
-                break;
+                    break;
                 case 'weekly':
                     row +=
-                        get_recurr_html('week_row', data === undefined ? default_weeks : data.weeks)+
-                        get_recurr_html('days_row', data === undefined ? default_days : data.days)+
-                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date)+
+                        get_recurr_html('week_row', data === undefined ? default_weeks : data.weeks) +
+                        get_recurr_html('days_row', data === undefined ? default_days : data.days) +
+                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date) +
                         get_recurr_html('summary_row');
                     is_load = 'weekly';
-                break;
+                    break;
                 case 'monthly':
                     row +=
-                        get_recurr_html('month_row', data === undefined ? default_months: data.months)+
-                        get_recurr_html('week_row', data === undefined ? default_weeks : data.weeks)+
-                        get_recurr_html('days_row', data === undefined ? default_days : data.days)+
-                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date)+
+                        get_recurr_html('month_row', data === undefined ? default_months : data.months) +
+                        get_recurr_html('week_row', data === undefined ? default_weeks : data.weeks) +
+                        get_recurr_html('days_row', data === undefined ? default_days : data.days) +
+                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date) +
                         get_recurr_html('summary_row');
                     is_load = 'monthly';
-                break;
+                    break;
                 case 'yearly':
                     row +=
-                        get_recurr_html('year_row', data === undefined ? 2 : data.years)+
-                        get_recurr_html('month_row', data === undefined ? default_months: data.months)+
-                        get_recurr_html('week_row', data === undefined ? default_weeks : data.weeks)+
-                        get_recurr_html('days_row', data === undefined ? default_days : data.days)+
-                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date)+
+                        get_recurr_html('year_row', data === undefined ? 2 : data.years) +
+                        get_recurr_html('month_row', data === undefined ? default_months : data.months) +
+                        get_recurr_html('week_row', data === undefined ? default_weeks : data.weeks) +
+                        get_recurr_html('days_row', data === undefined ? default_days : data.days) +
+                        get_recurr_html('end_date_row', data === undefined ? default_end_date : data.end_date) +
                         get_recurr_html('summary_row');
                     is_load = 'yearly';
-                break;
+                    break;
             }
-            $('.cs'+edit_mode+'-row-view').html(row);
+            $('.cs' + edit_mode + '-row-view').html(row);
             // Load datepikcer for
             // recurr event
             $(".js-recurr-datepicker").datepicker({
-                dateFormat: 'mm-dd-yy', 
+                dateFormat: 'mm-dd-yy',
                 minDate: 0,
-                onSelect: function(){
+                onSelect: function() {
                     set_summary();
                 }
             });
             // Trigger set summary if is_load
             // check is active
-            if(is_load) {
+            if (is_load) {
                 $('.js-recurr-type').prop('checked', false);
-                $('#js-recurr-'+is_load+'-check').prop('checked', true);
+                $('#js-recurr-' + is_load + '-check').prop('checked', true);
                 set_summary();
             }
         }
 
         // Set summary for recurr event
-        function set_summary(){
+        function set_summary() {
             var rows = '',
-            number_of = null,
-            type = 'week';
+                number_of = null,
+                type = 'week';
 
             // For monthly
-            if($('#js-recurr-monthly-check').prop('checked') === true ||
-              $('#js-recurr-yearly-check').prop('checked') === true){
+            if ($('#js-recurr-monthly-check').prop('checked') === true ||
+                $('#js-recurr-yearly-check').prop('checked') === true) {
                 var month_length = $('.js-month-box.cs-active-day').length;
-                if(month_length !== 0){
-                    rows += ' for month'+( month_length === 1 ? ' ' : 's ' );
+                if (month_length !== 0) {
+                    rows += ' for month' + (month_length === 1 ? ' ' : 's ');
                     // Loop through selected
-                    $.each($('.js-month-box.cs-active-day'), function(i, v){
-                        if(i == 0)
+                    $.each($('.js-month-box.cs-active-day'), function(i, v) {
+                        if (i == 0)
                             rows += recurr_months[$(this).data('key')];
-                        else if(++i == month_length)
-                            rows += ' and '+recurr_months[$(this).data('key')];
+                        else if (++i == month_length)
+                            rows += ' and ' + recurr_months[$(this).data('key')];
                         else
-                            rows += ', '+recurr_months[$(this).data('key')];
+                            rows += ', ' + recurr_months[$(this).data('key')];
                     });
                 }
                 // rows += ' ';
                 number_of = $('#js-recurr-week-input').val();
-                type = 'week'+(number_of == 1 ? '' : 's');
+                type = 'week' + (number_of == 1 ? '' : 's');
             }
 
             // For daily view
-            if($('#js-recurr-daily-check').prop('checked') === true ||
-              $('#js-recurr-weekly-check').prop('checked') === true ||
-              $('#js-recurr-monthly-check').prop('checked') === true ||
-              $('#js-recurr-yearly-check').prop('checked') === true){
+            if ($('#js-recurr-daily-check').prop('checked') === true ||
+                $('#js-recurr-weekly-check').prop('checked') === true ||
+                $('#js-recurr-monthly-check').prop('checked') === true ||
+                $('#js-recurr-yearly-check').prop('checked') === true) {
                 var day_length = $('.js-day-box.cs-active-day').length;
                 rows += ' on ';
                 // Loop through selected
-                $.each($('.js-day-box.cs-active-day'), function(i, v){
-                    if(i == 0)
+                $.each($('.js-day-box.cs-active-day'), function(i, v) {
+                    if (i == 0)
                         rows += recurr_days[$(this).data('key')];
-                    else if(++i == day_length)
-                        rows += ' and '+recurr_days[$(this).data('key')];
+                    else if (++i == day_length)
+                        rows += ' and ' + recurr_days[$(this).data('key')];
                     else
-                        rows += ', '+recurr_days[$(this).data('key')];
+                        rows += ', ' + recurr_days[$(this).data('key')];
                 });
             }
 
             // For weekly
-            if($('#js-recurr-weekly-check').prop('checked') === true){
+            if ($('#js-recurr-weekly-check').prop('checked') === true) {
                 number_of = $('#js-recurr-week-input').val();
-                type = 'week'+(number_of == 1 ? '' : 's');
+                type = 'week' + (number_of == 1 ? '' : 's');
             }
 
             // For yearly
-            if($('#js-recurr-yearly-check').prop('checked') === true){
+            if ($('#js-recurr-yearly-check').prop('checked') === true) {
                 number_of = $('#js-recurr-year-input').val();
-                type = 'year'+(number_of == 1 ? '' : 's');
+                type = 'year' + (number_of == 1 ? '' : 's');
             }
 
             // Check if nothing was selected
-            if(rows == '') {
+            if (rows == '') {
                 $('.js-summary-row').text('');
                 return false;
             }
             // Load end time if defined
-            if($('.js-infinite').prop('checked') === false)
-                rows += ' until '+moment($('.js-recurr-datepicker').val()).format('MMMM Do, YYYY');
+            if ($('.js-infinite').prop('checked') === false)
+                rows += ' until ' + moment($('.js-recurr-datepicker').val()).format('MMMM Do, YYYY');
             // Add prefix
-            rows = 'Repeats '+ ( number_of === null ? '' : 'every '+number_of+' '+type+' ' ) +' '+ rows;
+            rows = 'Repeats ' + (number_of === null ? '' : 'every ' + number_of + ' ' + type + ' ') + ' ' + rows;
             // Load summary to DOM
             $('.js-summary-row').html(rows);
         }
@@ -1555,23 +1579,31 @@
         // Array to be converted in Object
         // @param check_length
         // Length
-        function reset_array_for_recur(arr, check_length){
+        function reset_array_for_recur(arr, check_length) {
             //
-            if(arr == '*') return {is_all: true};
+            if (arr == '*') return {
+                is_all: true
+            };
             //
-            if(arr.length === check_length) return {is_all: true};
+            if (arr.length === check_length) return {
+                is_all: true
+            };
             //
             var tmp = {};
-            $.each(arr, function(i, v) { tmp[v] = true; });
+            $.each(arr, function(i, v) {
+                tmp[v] = true;
+            });
             return tmp;
         }
 
         // Load recurr view
-        $(document).on('click', '.js-recurr-type', function() {  load_recurr_view($(this).val().toLowerCase()); });
-        
+        $(document).on('click', '.js-recurr-type', function() {
+            load_recurr_view($(this).val().toLowerCase());
+        });
+
         // Days on, off
         $(document).on('click', '.js-day-box', function() {
-            if($(this).hasClass('cs-active-day'))
+            if ($(this).hasClass('cs-active-day'))
                 $(this).removeClass('cs-active-day');
             else
                 $(this).addClass('cs-active-day');
@@ -1581,7 +1613,7 @@
 
         // Months on, off
         $(document).on('click', '.js-month-box', function() {
-            if($(this).hasClass('cs-active-day'))
+            if ($(this).hasClass('cs-active-day'))
                 $(this).removeClass('cs-active-day');
             else
                 $(this).addClass('cs-active-day');
@@ -1591,29 +1623,31 @@
 
         // Triggeres when infinite check
         // is changed
-        $(document).on('click', '.js-infinite', function(){ set_summary(); });
-        
+        $(document).on('click', '.js-infinite', function() {
+            set_summary();
+        });
+
         // Triggers when
         // week is entered 
-        $(document).on('keyup', '#js-recurr-week-input', function(){ 
-            if(isNaN($(this).val()) || $(this).val() < 1) 
-                $(this).val(1); 
-            set_summary(); 
+        $(document).on('keyup', '#js-recurr-week-input', function() {
+            if (isNaN($(this).val()) || $(this).val() < 1)
+                $(this).val(1);
+            set_summary();
         });
-        
+
         // Triggers when 
         // year is entered
-        $(document).on('keyup', '#js-recurr-year-input', function(){ 
-            if(isNaN($(this).val()) || $(this).val() < 1) 
-                $(this).val(1); 
-            set_summary(); 
+        $(document).on('keyup', '#js-recurr-year-input', function() {
+            if (isNaN($(this).val()) || $(this).val() < 1)
+                $(this).val(1);
+            set_summary();
         });
 
         // Triggers on
         // reccur check
         $(document).on('click', '#js-reoccur-check', function() {
             $('#js-reoccur-box').hide();
-            if($(this).prop('checked') === true){
+            if ($(this).prop('checked') === true) {
                 $('#js-reoccur-box').show();
                 $('#js-recurr-daily-check').prop('checked', true);
                 load_recurr_view('daily');
@@ -1621,16 +1655,20 @@
         });
 
         // Get selected days
-        function get_selected_days(){
+        function get_selected_days() {
             var tmp = [];
-            $('.js-day-box.cs-active-day').map(function(){ tmp.push($(this).data('key')); });
+            $('.js-day-box.cs-active-day').map(function() {
+                tmp.push($(this).data('key'));
+            });
             return tmp;
         }
 
         // Get selected months
-        function get_selected_months(){
+        function get_selected_months() {
             var tmp = [];
-            $('.js-month-box.cs-active-day').map(function(){ tmp.push($(this).data('key')); });
+            $('.js-month-box.cs-active-day').map(function() {
+                tmp.push($(this).data('key'));
+            });
             return tmp;
         }
 
@@ -1667,8 +1705,13 @@
 
         func_hide_loader();
 
-        function func_hide_loader(){ $('#my_loader').hide(); }
-        function func_show_loader(){ $('#my_loader').show(); }
+        function func_hide_loader() {
+            $('#my_loader').hide();
+        }
+
+        function func_show_loader() {
+            $('#my_loader').show();
+        }
 
 
         // File plugin on message file button
@@ -1679,24 +1722,24 @@
         });
 
         // Added on: 09-06-2019
-        if(user_type === 'employee'){ 
+        if (user_type === 'employee') {
             // Added on: 09-06-2019
             // Remove 'all' from interviewers
             // list
-            function remove_all_from_interviewers(){
+            function remove_all_from_interviewers() {
                 var vals = $('#js-interviewer').val();
-                if(vals == null) return;
+                if (vals == null) return;
                 vals.remove('all');
                 $('#js-interviewer option[value="all"]').remove();
-                $('#js-interviewer').select2('val', <?=$employer_id;?>);
-                var obj = get_ie_obj(<?=$employer_id;?>);    
+                $('#js-interviewer').select2('val', <?= $employer_id; ?>);
+                var obj = get_ie_obj(<?= $employer_id; ?>);
             }
 
             // Add 'all' in interviewers
             // list
-            function append_all_to_interviewers(default_select){
+            function append_all_to_interviewers(default_select) {
                 $('#js-interviewer').append('<option value="all">All</option>');
-                if(default_select === undefined){
+                if (default_select === undefined) {
                     $('#js-interviewer').select2('val', '');
                     $('#js-interviewer').select2('val', 'all');
                 }
@@ -1704,36 +1747,36 @@
 
             // Remove 'all' when employee is selected
             // Add 'all' when no employee is selected
-            function handle_all_check(selected_interviewers){
+            function handle_all_check(selected_interviewers) {
                 //
-                if(selected_interviewers == null){
+                if (selected_interviewers == null) {
                     $('#js-interviewer').select2('val', 'all');
                     return;
                 }
                 //
-                if(selected_interviewers.length > 1) {
+                if (selected_interviewers.length > 1) {
                     selected_interviewers.remove('all');
                     $('#js-interviewer').select2('val', selected_interviewers);
                 }
             }
 
             // Fetch online videos 
-            function fetch_online_videos(){
-                $.get("<?=base_url('calendar/fetch-online-videos');?>", function(resp) {
-                    if(resp.Status === false && resp.Redirect === true) window.reload();
-                    if(resp.Status === false) return;
+            function fetch_online_videos() {
+                $.get("<?= base_url('calendar/fetch-online-videos'); ?>", function(resp) {
+                    if (resp.Status === false && resp.Redirect === true) window.reload();
+                    if (resp.Status === false) return;
                     //
-                    $.each(resp.Videos, function(i,v) {
-                        $('#js-video-wrap select').append('<option value="'+v.id+'">'+v.name+'</option>');
+                    $.each(resp.Videos, function(i, v) {
+                        $('#js-video-wrap select').append('<option value="' + v.id + '">' + v.name + '</option>');
                     });
                 });
             }
 
             // Get employee index
-            function get_ie_obj(employer_id){
+            function get_ie_obj(employer_id) {
                 var return_value = false;
-                $.each(employee_list, function(i,v){
-                    if(employer_id == v.employer_id) {
+                $.each(employee_list, function(i, v) {
+                    if (employer_id == v.employer_id) {
                         return_value = v;
                         return false;
                     }
@@ -1749,7 +1792,9 @@
     });
 </script>
 <style>
-    #my_loader{ z-index: 9999 !important; }
+    #my_loader {
+        z-index: 9999 !important;
+    }
 </style>
 
 

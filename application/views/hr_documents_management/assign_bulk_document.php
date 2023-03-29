@@ -8,7 +8,7 @@
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <?php if($user_type == 'employee'){ ?>
                                         <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile/'.$user_sid); ?>"><i class="fa fa-chevron-left"></i>Employee Profile</a>
                                     <?php } else { ?>

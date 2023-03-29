@@ -450,7 +450,7 @@ define('COMPLYNET_URL', 'https://able.complynet.com/Training/Login');
 // define('COMPLYNET_URL', 'https://complynet.learn.taleo.net/login.asp?id=178443&requestedurl=%2fPage%2f596%3fh%3d1%26deepLink%3d1&secure=true');
 
 // Special Character remover regex
-define('SC_REGEX', '/([^a-z0-9\s-_])|([\x00-\x1F\x7F-\xFF])+/i');
+define('SC_REGEX', '/[^(\x20-\x7F)\x0A\x0D]*/i');
 
 // 26-06-2019
 // Default timezone for webapp
@@ -464,11 +464,11 @@ define('IS_TIMEZONE_ACTIVE', TRUE);
 
 // 12-07-2019
 // Twilio Sandbox credentials
-define('TWILIO_SANDBOX_SID', 'AC4c4ff03b21dc4691b623456eae03787e');
-define('TWILIO_SANDBOX_TOKEN', '5a91af234c615b4d87e5dcf741cc0448');
+define('TWILIO_SANDBOX_SID', 'AC625d8274289680ae299d41c4253460d1');
+define('TWILIO_SANDBOX_TOKEN', 'd8109cb5ac959835b414b5645879451c');
 // Twilio live credentials
 define('TWILIO_SID', 'AC625d8274289680ae299d41c4253460d1');
-define('TWILIO_TOKEN', '4acba7fdbbeeb03d526c040274a3f050');
+define('TWILIO_TOKEN', 'd8109cb5ac959835b414b5645879451c');
 
 // Twilio Message Services SIDs
 // Sandbox Message Service SID
@@ -530,10 +530,11 @@ define('FMLA_RIGHTS', 'To be eligible an employee must have worked for an employ
 define('TIMEOFFYEARLYCOMPANY', '58,5635');
 //
 define('ASSIGNEDOCIMPL', TRUE);
-define('DOB_LIMIT', '-100:+1');
-define('JOINING_DATE_LIMIT', '1960:+5');
-define('STARTING_DATE_LIMIT', '1960:+5');
+define('DOB_LIMIT', '1900:+1');
+define('JOINING_DATE_LIMIT', '1900:+5');
+define('STARTING_DATE_LIMIT', '1900:+20');
 define('DATE', 'M d Y, D');
+define('SITE_DATE', 'm/d/Y');
 define('DB_DATE', 'Y-m-d');
 define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
 define('TIME', 'H:i:s');
@@ -604,6 +605,7 @@ define('TIMEOFF_UPDATE_FOR_APPROVER', 393); // when the requestw as updated
 define('USER_TIMEOFF_REQUEST', 414); // Send approve email to employee
 define('APPROVER_TIMEOFF_REQUEST_UPDATE', 412); // Send approve/reject email to approvers
 define('APPROVER_TIMEOFF_REQUEST', 413); // Send request email
+define('CANCELED_TIMEOFF_REQUEST', 423); // Send request email
 
 //
 define('SHIFT_START', '9:00 AM'); // Default Shift Start
@@ -629,17 +631,28 @@ define('VIDEO_INTERVIEW', 'The selected contacts will be notified by email when 
 define('APPROVAL_RIGHTS', 'The selected contacts will be notified by email when a job is accepted/rejected.');
 define('FULL_EMPLOYMENT', 'The selected contacts will be notified by email when a Full Employment Application is completed.');
 define('EXPIRATION_MANAGER', 'The selected contacts will be notified by email when the employees\' license is expiring within 30 days.');
-define('ONBOARDING_REQUEST', 'The selected contacts will be notified by email when an applicant sends to onboarding.');
+define('ONBOARDING_REQUEST', 'The selected contacts= will be notified by email when an applicant sends to onboarding.');
 define('OFFER_LETTER', 'The selected contacts will be notified by email when an offer letter/pay plan is assigned to the employees/applicants.');
 define('DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when a document is assigned to the employees/applicants.');
 define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when a general information document is assigned to the employees/applicants.');
 define('EMPLOYEE_PROFILE', 'The selected contacts will be notified by email when an employee changes their profile info.');
+define('DEFAULT_APPROVERS', 'The selected contacts will be notified by email when a document is assigned for an approval.');
+define('PRIVATE_MESSAGE', 'The recipient will be notified by email when any employee sends a private message to another employee, or a Candidate or person responds to an email that was sent by the employee from within the system.');
+
+
+
+
+
+
+
+
+
 
 define('I9_EXPIRES', '10/31/2022');
-define('W4_YEAR', '2022');
-define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholding for 2022 if you meet both of the following conditions: you had no federal income tax liability in 2021 and you expect to have no federal income tax liability in 2022. You had no federal income tax liability in 2021 if (1) your total tax on line 24 on your 2021 Form 1040 or 1040-SR is zero (or less than the sum of lines 27a, 28, 29, and 30), or (2) you were not required to file a return because your income was below the filing threshold for your correct filing status. If you claim exemption, you will have no income tax withheld from your paycheck and may owe taxes and penalties when you file your 2022 tax return. To claim exemption from withholding, certify that you meet both of the conditions above by writing “Exempt” on Form W-4 in the space below Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not complete any other steps. You will need to submit a new Form W-4 by February 15, 2023.');
+define('W4_YEAR', '2023');
+define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholding for 2022 if you meet both of the following conditions: you had no federal income tax liability in 2021 and you expect to have no federal income tax liability in 2022. You had no federal income tax liability in 2021 if (1) your total tax on line 24 on your 2021 Form 1040 or 1040-SR is zero (or less than the sum of lines 27a, 28, 29, and 30), or (2) you were not required to file a return because your income was below the filing threshold for your correct filing status. If you claim exemption, you will have no income tax withheld from your paycheck and may owe taxes and penalties when you file your 2022 tax return. To claim exemption from withholding, certify that you meet both of the conditions above by writing “Exempt” on Form W-4 in the space below Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not complete any other steps. You will need to submit a new Form W-4 by February 15, 2024.');
 //
-define('FEED_STRIP_TAGS', '<h1><h2><h3><h4><h5><h6><p><br><ul><ol></li>');
+define('FEED_STRIP_TAGS', '<b><h1><h2><h3><h4><h5><h6><p><br><ul><ol><li></li><strong><em><table><tbody><th><tr><td>');
 //
 define('CHARACTER_SHOW', 2);
 define('GUSTO_ACCESS_TOKEN', 'sbPrNJznXEuSc_qCgct3DHn8pkzFYjFHjXGBpDC3jx0');
@@ -648,3 +661,17 @@ define('GUSTO_PAYROLL_TIME', '03:30 pm PDT');
 
 //
 define("WORK_WEEK_HOURS", 40);
+//
+define('PRIVATE_MESSAGE_NOTIFICATION', 424);
+define('TIMEOFF_THEME_ONE', 1);
+define('TIMEOFF_THEME_TWO', 2);
+
+
+/**
+ * Employee survey constants
+ */
+define('EMPLOYEE_SURVEYS', 'employeesurvey');
+
+
+// Holds the EFFECT MAGIC CODES
+define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);

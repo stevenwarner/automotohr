@@ -145,6 +145,47 @@ class Weekly_activity_overview_report extends Admin_Controller {
                     //print_r($return_data);
 
                     break;
+
+                case 'get_all_active_companies':
+                    //
+                    $start_date = $this->input->post('start_date');
+                    $end_date = $this->input->post('end_date');
+                    //
+                    $companies = $this->employer_login_duration_model->get_all_companies("sid, CompanyName");
+                    $data['companies'] = $companies;
+                    $data['start_date'] = $start_date;
+                    $data['end_date'] = $end_date;
+                    $data['report_type'] = "weekly";
+                    //
+                    $this->load->view('manage_admin/reports/activity_overview_report_partial_new', $data);
+                    break;
+
+                case 'get_company_employee_report':
+                    //
+                    $report_date = $this->input->post('report_date');
+                    $company_sid = $this->input->post('company_sid');
+                    //
+                    $start_date = $this->input->post('start_date');
+                    $end_date = $this->input->post('end_date');
+
+
+                    $start_date = new DateTime($start_date);
+
+                    $end_date = new DateTime($end_date);
+
+                    $week_start = $start_date->format('Y-m-d');
+                    $week_start = $week_start . ' 00:00:00';
+
+                    $week_end = $end_date->format('Y-m-d');
+                    $week_end = $week_end . ' 23:59:59';
+                    //
+                    $column = ["sid", "job_title", "access_level", "first_name", "last_name", "email", "PhoneNumber"];
+                    $report_data = $this->employer_login_duration_model->get_company_activity_overview_new($company_sid, $week_start, $week_end, $column);
+                    //
+                    res(['data'=>$report_data]);
+                    //  
+                    break; 
+                        
                 default:
                     //do nothing
                     break;

@@ -366,6 +366,7 @@
 			var 
 			status = $(this).data('document') == undefined ? 'original' : $(this).data('document'),
 			type = $(this).data('type') == undefined ? 'document' : $(this).data('type') ;
+			from = $(this).data('from') == undefined ? 'assigned' : $(this).data('from') ;
 			//
 			$('#js-preview-hybrid-modal .js-generated-document .js-toggle-modal-btn').removeClass('fa-minus').addClass('fa-plus');
 			// $('#js-preview-hybrid-modal .js-generated-document .panel-body').hide(0);
@@ -438,8 +439,17 @@
 			//
 			if(f.Type == 'iframe') loadIframe( f.URL, '.js-uploaded-document iframe', true);
 
-			print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/print";
-			download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/download";
+			if (from == "company") {
+				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_document/print";
+				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_document/download";
+			} else if (from == "company") {
+				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/print";
+				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/download";	
+			} else {
+				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/print";
+				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/download";
+			}
+			
 			$("#hybrid_print_doc").attr("href",print_url)
 			$("#hybrid_download_doc").attr("href",download_url)
 			if(status == 'submitted'){
@@ -840,8 +850,8 @@
 					2- Description
 				</p> -->
 				<div>
-					<a class="btn btn-success pull-right" id="hybrid_download_doc">Download</a>
-					<a class="btn btn-success pull-right" style="margin-right: 6px;" id="hybrid_print_doc">Print</a>
+					<a class="btn btn-success pull-right" id="hybrid_download_doc" target="_blank">Download</a>
+					<a class="btn btn-success pull-right" style="margin-right: 6px;" id="hybrid_print_doc" target="_blank">Print</a>
 				</div>
 				<br>
 				<hr>

@@ -39,6 +39,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
                                 <span class="page-heading down-arrow margin-top">
+                                <?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
                                     <?php echo $title; ?></span>
                             </div>
@@ -151,9 +152,9 @@
                                                         <label>Social Security Number <?=$ssn_required == 1 ? '<span class="staric">*</span>' : '';?> </label>
                                                         <input class="invoice-fields" type="text" name="TextBoxSSN"  <?=$ssn_required == 1 ? 'required="true"' : ''?> value="<?php
                                                         if (isset($formpost['TextBoxSSN'])) {
-                                                            echo $formpost['TextBoxSSN'];
+                                                            echo _secret($formpost['TextBoxSSN'], false, true);
                                                         } else if($employer['ssn'] != ''){
-                                                            echo $employer['ssn'];
+                                                            echo _secret($employer['ssn'], false, true);
                                                         }
                                                         ?>">
                                                                <?php echo form_error('TextBoxSSN'); ?>
@@ -164,7 +165,7 @@
                                                         <label>Date of Birth <?=$dob_required == 1 ? '<span class="staric">*</span>' : '';?></label>
                                                         <input class="invoice-fields" id="dob"  readonly="" type="text" name="TextBoxDOB"  <?=$dob_required == 1 ? 'required="true"' : ''?> value="<?php
                                                         if (isset($formpost['TextBoxDOB'])) {
-                                                            echo $formpost['TextBoxDOB'];
+                                                            echo _secret($formpost['TextBoxDOB'], true, true);
                                                         }
                                                         else if($dob){
                                                             
@@ -763,6 +764,8 @@
                                                             <?php
                                                             if (isset($formpost['RadioButtonListWorkTransportation']) && $formpost['RadioButtonListWorkTransportation'] == 'No') {
                                                                 echo " checked";
+                                                            } else if (!isset($formpost['RadioButtonListWorkTransportation'])) {
+                                                                echo " checked";
                                                             }
                                                             ?>>
                                                             <label for="RadioButtonListWorkTransportation_1">No</label>
@@ -822,6 +825,8 @@
                                                             <input type="radio" value="No" id="RadioButtonListAliases_1" name="RadioButtonListAliases"
                                                             <?php
                                                             if (isset($formpost['RadioButtonListAliases']) && $formpost['RadioButtonListAliases'] == 'No') {
+                                                                echo " checked";
+                                                            } else if (!isset($formpost['RadioButtonListAliases'])) {
                                                                 echo " checked";
                                                             }
                                                             ?>>
@@ -1030,6 +1035,8 @@
                                                                 <?php
                                                                 if (isset($formpost['RadioButtonListDriversLicenseTraffic']) && $formpost['RadioButtonListDriversLicenseTraffic'] == 'No') {
                                                                     echo " checked";
+                                                                }  else if (!isset($formpost['RadioButtonListDriversLicenseTraffic'])) {
+                                                                    echo " checked";
                                                                 }
                                                                 ?>>
                                                                 <label for="RadioButtonListDriversLicenseTraffic_1">No</label>
@@ -1044,7 +1051,7 @@
                                                                     }
                                                                     ?></textarea>
                                                                 <span id="license_guilty_details_remaining">512 Characters Left</span>
-<?php echo form_error('license_guilty_details_violation'); ?>
+                                                                <?php echo form_error('license_guilty_details_violation'); ?>
                                                                 <p style="display: none;" id="license_guilty_details_length">512</p>
                                                             </div>
                                                         </li>
@@ -1081,6 +1088,8 @@
                                                                 <input type="radio" value="No" id="RadioButtonListEducationHighSchoolGraduated_1" name="RadioButtonListEducationHighSchoolGraduated" 
                                                                 <?php
                                                                 if (isset($formpost['RadioButtonListEducationHighSchoolGraduated']) && $formpost['RadioButtonListEducationHighSchoolGraduated'] == 'No') {
+                                                                    echo " checked";
+                                                                } else if (!isset($formpost['RadioButtonListEducationHighSchoolGraduated'])) {
                                                                     echo " checked";
                                                                 }
                                                                 ?>>
@@ -1351,10 +1360,12 @@
                                                                 <div class="hr-radio-btns">
                                                                     <input type="radio" value="No" id="RadioButtonListEducationCollegeGraduated_1" name="RadioButtonListEducationCollegeGraduated"
                                                                     <?php
-                                                                           if (isset($formpost['RadioButtonListEducationCollegeGraduated']) && $formpost['RadioButtonListEducationCollegeGraduated'] == 'No') {
-                                                                               echo " checked";
-                                                                           }
-                                                                           ?>>
+                                                                       if (isset($formpost['RadioButtonListEducationCollegeGraduated']) && $formpost['RadioButtonListEducationCollegeGraduated'] == 'No') {
+                                                                           echo " checked";
+                                                                       } else if (!isset($formpost['RadioButtonListEducationCollegeGraduated'])) {
+                                                                            echo " checked";
+                                                                        }
+                                                                    ?>>
                                                                     <label for="RadioButtonListEducationCollegeGraduated_1">No</label>
                                                                 </div>
                                                             </li>
@@ -1642,9 +1653,11 @@ if (isset($formpost['TextBoxEducationOtherName'])) {
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" value="No" id="RadioButtonListEducationOtherGraduated_1" name="RadioButtonListEducationOtherGraduated"
                                                                        <?php
-                                                                       if (isset($formpost['RadioButtonListEducationOtherGraduated']) && $formpost['RadioButtonListEducationOtherGraduated'] == 'No') {
+                                                                        if (isset($formpost['RadioButtonListEducationOtherGraduated']) && $formpost['RadioButtonListEducationOtherGraduated'] == 'No') {
                                                                            echo " checked";
-                                                                       }
+                                                                        } else if (!isset($formpost['RadioButtonListEducationOtherGraduated'])) {
+                                                                            echo " checked";
+                                                                        }
                                                                        ?>>
                                                                 <label for="RadioButtonListEducationOtherGraduated_1">No</label>
                                                             </div>
@@ -2296,6 +2309,8 @@ if (isset($formpost['RadioButtonListEmploymentEmployerContact1_0']) && $formpost
 <?php
 if (isset($formpost['RadioButtonListEmploymentEmployerContact1_0']) && $formpost['RadioButtonListEmploymentEmployerContact1_0'] == 'No') {
     echo " checked";
+} else if (!isset($formpost['RadioButtonListEmploymentEmployerContact1_0'])) {
+    echo " checked";
 }
 ?>>
                                                                 <label for="RadioButtonListEmploymentEmployerContact1_1">No</label>
@@ -2632,11 +2647,13 @@ if (isset($formpost['TextBoxEmploymentEmployerName2'])) {
                                                                 </div>
                                                                 <div class="hr-radio-btns">
                                                                     <input type="radio" id="RadioButtonListEmploymentEmployerContact2_1" value="No" name="RadioButtonListEmploymentEmployerContact2_0"
-<?php
-if (isset($formpost['RadioButtonListEmploymentEmployerContact2_0']) && $formpost['RadioButtonListEmploymentEmployerContact2_0'] == 'No') {
-    echo " checked";
-}
-?>>
+                                                                    <?php
+                                                                    if (isset($formpost['RadioButtonListEmploymentEmployerContact2_0']) && $formpost['RadioButtonListEmploymentEmployerContact2_0'] == 'No') {
+                                                                        echo " checked";
+                                                                    } else if (!isset($formpost['RadioButtonListEmploymentEmployerContact2_0'])) {
+                                                                        echo " checked";
+                                                                    }
+                                                                    ?>>
                                                                     <label for="RadioButtonListEmploymentEmployerContact2_1">No</label>
                                                                 </div>
                                                             </li>
@@ -2971,11 +2988,13 @@ if (isset($formpost['DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd3'])
                                                             </div>
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" id="RadioButtonListEmploymentEmployerContact3_1" value="No" name="RadioButtonListEmploymentEmployerContact3_0"
-<?php
-if (isset($formpost['RadioButtonListEmploymentEmployerContact3_0']) && $formpost['RadioButtonListEmploymentEmployerContact3_0'] == 'No') {
-    echo " checked";
-}
-?>>
+                                                                <?php
+                                                                if (isset($formpost['RadioButtonListEmploymentEmployerContact3_0']) && $formpost['RadioButtonListEmploymentEmployerContact3_0'] == 'No') {
+                                                                    echo " checked";
+                                                                } else if (!isset($formpost['RadioButtonListEmploymentEmployerContact3_0'])) {
+                                                                        echo " checked";
+                                                                    }
+                                                                ?>>
                                                                 <label for="RadioButtonListEmploymentEmployerContact3_1">No</label>
                                                             </div>
                                                         </li>
@@ -3005,11 +3024,13 @@ if (isset($formpost['RadioButtonListEmploymentEmployerContact3_0']) && $formpost
                                                             </div>
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" value="No" id="RadioButtonListEmploymentEverTerminated_1" name="RadioButtonListEmploymentEverTerminated"
-<?php
-if (isset($formpost['RadioButtonListEmploymentEverTerminated']) && $formpost['RadioButtonListEmploymentEverTerminated'] == 'No') {
-    echo " checked";
-}
-?>>
+                                                                <?php
+                                                                if (isset($formpost['RadioButtonListEmploymentEverTerminated']) && $formpost['RadioButtonListEmploymentEverTerminated'] == 'No') {
+                                                                    echo " checked";
+                                                                } else if (!isset($formpost['RadioButtonListEmploymentEverTerminated'])) {
+                                                                    echo " checked";
+                                                                }
+                                                                ?>>
                                                                 <label for="RadioButtonListEmploymentEverTerminated_1">No</label>
                                                             </div>
                                                         </li>
@@ -3020,7 +3041,7 @@ if (isset($formpost['RadioButtonListEmploymentEverTerminated']) && $formpost['Ra
                                                                     if (isset($formpost['license_guilty_details'])) {
                                                                         echo $formpost['license_guilty_details'];
                                                                     }
-?></textarea>
+                                                                ?></textarea>
                                                                 <span id="TextBoxEmploymentEverTerminatedReason_remaining">128 Characters Left</span>
                                                                 <p style="display: none;" id="TextBoxEmploymentEverTerminatedReason_length">128</p>
                                                             </div>
@@ -3042,11 +3063,13 @@ if (isset($formpost['RadioButtonListEmploymentEverTerminated']) && $formpost['Ra
                                                             </div>
                                                             <div class="hr-radio-btns">
                                                                 <input type="radio" value="No" id="RadioButtonListEmploymentEverResign_1" name="RadioButtonListEmploymentEverResign"
-<?php
-if (isset($formpost['RadioButtonListEmploymentEverResign']) && $formpost['RadioButtonListEmploymentEverResign'] == 'No') {
-    echo " checked";
-}
-?>>
+                                                                <?php
+                                                                if (isset($formpost['RadioButtonListEmploymentEverResign']) && $formpost['RadioButtonListEmploymentEverResign'] == 'No') {
+                                                                    echo " checked";
+                                                                }  else if (!isset($formpost['RadioButtonListEmploymentEverResign'])) {
+                                                                    echo " checked";
+                                                                }
+                                                                ?>>
                                                                 <label for="RadioButtonListEmploymentEverResign_1">No</label>
                                                             </div>
                                                         </li>
@@ -3533,7 +3556,7 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                                                     <div class="col-lg-4">
 <?php $def_value = (isset($formpost['signature_date']) ? $formpost['signature_date'] : '' ); ?>
                                                         <div class="calendar-picker">
-                                                            <input  type="text" class="invoice-fields startdate" name="signature_date" id="signature_date" value="<?php echo set_value('signature_date', $def_value); ?>" />
+                                                            <input  type="text" class="invoice-fields " name="signature_date" id="signature_date" value="<?php echo set_value('signature_date', $def_value); ?>"/>
                                                         </div>
                                                                 <?php echo form_error('signature_date'); ?>
                                                     </div>
@@ -3906,6 +3929,14 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
             changeYear: true,
             yearRange: "-100:+50"
         }).val();
+
+        $('#signature_date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            setDate: new Date(),
+            maxDate: new Date,
+            minDate: new Date(),
+        }).val();
+        
 
         $('#dob').datepicker({
             dateFormat: 'mm-dd-yy',

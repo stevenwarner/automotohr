@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="page-header-area">
 
-                        <span class="page-heading down-arrow">
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                             <?php if($page_type == 'generated_doc') { ?>
                                 <a href="<?php echo base_url('resource_center').'/'.$main_menu_segment.'/'.$sub_menu_segment.'#psm_'.$page_content['sub_heading_id'];?>" class="dashboard-link-btn"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Back</a>
                             <?php } echo $title; ?>

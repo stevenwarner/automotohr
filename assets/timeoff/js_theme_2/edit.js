@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     let
         selectedRequestId = 0,
         selectedEmployeeId = 0,
@@ -15,7 +15,7 @@ $(function() {
             fromAdmin: 1
         };
     //
-    $(document).on('click', '.jsEditTimeOffBTN', function(e) {
+    $(document).on('click', '.jsEditTimeOffBTN', function (e) {
         //
         e.preventDefault();
         //
@@ -30,7 +30,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'You don\'t have any policies. Please select a different date.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -50,7 +50,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'Please select a policy.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -61,7 +61,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'Please select the start date.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -72,7 +72,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'Please select an end date.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -84,7 +84,7 @@ $(function() {
                 alertify.alert(
                     'WARNING!',
                     'Please either approve/reject the time off.',
-                    () => {}
+                    () => { }
                 );
                 //
                 return;
@@ -107,12 +107,12 @@ $(function() {
         if (selectedPolicy.IsUnlimited == 0) {
             //
             if (selectedPolicy.RemainingTimeWithNegative.M.minutes <= 0) {
-                alertify.alert('WARNING!', `You don't have any time left against this policy.`, () => {});
+                alertify.alert('WARNING!', `You don't have any time left against this policy.`, () => { });
                 return;
             }
             //
             if (cOBJ.dateRows.totalTime > selectedPolicy.RemainingTimeWithNegative.M.minutes) {
-                alertify.alert('WARNING!', `Requested time-off can not be greater than the allowed time i.e. "${selectedPolicy.RemainingTimeWithNegative.text}"`, () => {});
+                alertify.alert('WARNING!', `Requested time-off can not be greater than the allowed time i.e. "${selectedPolicy.RemainingTimeWithNegative.text}"`, () => { });
                 return;
             }
         }
@@ -135,7 +135,7 @@ $(function() {
             (resp) => {
                 if (resp.Status === false) {
                     ml(false, 'editModalLoader');
-                    alertify.alert('WARNING!', resp.Response, () => {});
+                    alertify.alert('WARNING!', resp.Response, () => { });
                     return;
                 }
                 //
@@ -153,7 +153,7 @@ $(function() {
     });
 
     // 
-    $(document).on('click', '.jsEditTimeOff', function(e) {
+    $(document).on('click', '.jsEditTimeOff', function (e) {
         //
         e.preventDefault();
         //
@@ -180,7 +180,7 @@ $(function() {
             ],
             Loader: 'editModalLoader',
             Ask: false
-        }, async() => {
+        }, async () => {
             //
             if (status == 'cancelled' || view == 1) $('.jsModalCancel').removeAttr('data-ask');
             //
@@ -231,7 +231,7 @@ $(function() {
                 policyRows += `<optgroup label="${category}">`;
                 //
                 policies.map((policy) => {
-                    policyRows += `<option value="${policy.PolicyId}">${policy.Title}</option>`;
+                    policyRows += `<option value="${policy.PolicyId}">${policy.Title} (<strong class="text-${policy.categoryType == 1 ? 'success' : 'danger'}">${policy.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</option>`;
                 });
                 policyRows += `</optgroup>`;
             });
@@ -357,7 +357,7 @@ $(function() {
                 cOBJ.dateRows
             );
             //
-            window.timeoff.companyEmployees.map(function(emp) {
+            window.timeoff.companyEmployees.map(function (emp) {
                 if (emp.user_id == selectedEmployeeId) {
                     var employeeJoinedAt = emp['joined_at'] == null ? emp['joined_at'] : emp['registration_date'];
                     //
@@ -371,7 +371,7 @@ $(function() {
                             <p>${emp.first_name} ${emp.last_name}</p>
                             <p class="csTextSmall"> ${remakeEmployeeName(emp, false)}</p>
                             <p class="csTextSmall">${emp.email}</p>
-                            <p class="csTextSmall">${employeeJoinedAt}</p>
+                            <p class="csTextSmall">${emp.anniversary_text}</p>
                         </div>
                     </figure>
                     <div class="clearfix"></div>
@@ -398,7 +398,7 @@ $(function() {
     /**
      * @param {Object} event
      */
-    $(document).on('click', '.jsCreateTimeOffBalanceEdit', function(event) {
+    $(document).on('click', '.jsCreateTimeOffBalanceEdit', function (event) {
         //
         event.preventDefault();
         //
@@ -419,12 +419,12 @@ $(function() {
         //
         $.post(
             handlerURL, {
-                action: 'get_employee_balance_history',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: selectedEmployeeId,
-            }
-        ).done(function(resp) {
+            action: 'get_employee_balance_history',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: selectedEmployeeId,
+        }
+        ).done(function (resp) {
             //
             var rows = '';
             //
@@ -454,7 +454,7 @@ $(function() {
                 }
 
                 //
-                resp.Data.map(function(balance) {
+                resp.Data.map(function (balance) {
                     //
                     var
                         startDate = '',
@@ -551,7 +551,7 @@ $(function() {
     /**
      * @param {Object} event
      */
-    $(document).on('click', '.jsCreateTimeOffBalanceBackEdit', function(event) {
+    $(document).on('click', '.jsCreateTimeOffBalanceBackEdit', function (event) {
         //
         event.preventDefault();
         //
@@ -571,13 +571,13 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: 'get_modal',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    type: type,
-                    formLMS: window.location.pathname.match(/(lms)|(create_employee)|(employee_management_system)|(dashboard)/gi) !== null ? 1 : 0
-                },
+                action: 'get_modal',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                type: type,
+                formLMS: window.location.pathname.match(/(lms)|(create_employee)|(employee_management_system)|(dashboard)/gi) !== null ? 1 : 0
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -590,11 +590,11 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: 'get_employee_policies_with_approvers',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId
-                },
+                action: 'get_employee_policies_with_approvers',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -607,12 +607,12 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: 'get_request_by_id',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: selectedEmployeeId,
-                    requestId: requestId
-                },
+                action: 'get_request_by_id',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: selectedEmployeeId,
+                requestId: requestId
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -627,12 +627,12 @@ $(function() {
         //
         $.post(
             handlerURL, {
-                action: 'get_employee_policies_by_date',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: selectedEmployeeId,
-                fromDate: $('#jsStartDateEdit').val()
-            },
+            action: 'get_employee_policies_by_date',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: selectedEmployeeId,
+            fromDate: $('#jsStartDateEdit').val()
+        },
             (resp) => {
                 //
                 window.timeoff.cPolicies = resp.Data;
@@ -652,13 +652,13 @@ $(function() {
                         newPolicies.push(policy);
                         rows += `
                         <div class="p10">
-                        <strong>${policy.Title}</strong>
+                        <strong>${policy.Title} (<strong class="text-${policy.categoryType == 1 ? 'success' : 'danger'}">${policy.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</strong>
                         <br />
                         <span>Remaining Time: ${policy.AllowedTime.M.minutes == 0 && policy.Reason == '' ? 'Unlimited' : policy.RemainingTime.text}</span>
                         <br />
                         <span>Scheduled Time: ${policy.AllowedTime.M.minutes == 0 && policy.Reason == '' ? 'Unlimited' : policy.ConsumedTime.text}</span>
                         <br />
-                        <span>Employement Status: ${ucwords(policy.EmployementStatus)}</span>  
+                        <span>Employment Status: ${ucwords(policy.EmployementStatus)}</span>  
                         </div>
                         <hr />
                         `;
@@ -730,16 +730,16 @@ $(function() {
             //
             rows += `
             <div class="csApproverBox" title="Approver" data-content="${msg}">
-            <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL+'test_file_01.png' : awsURL+approver.profile_picture}" />
-            <i class="fa fa-${a[1] == 'approved' ? 'check-circle text-success' : ( a[1] == 'rejected' ? 'times-circle text-danger' : 'clock-o' ) }"></i>
+            <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL + 'test_file_01.png' : awsURL + approver.profile_picture}" />
+            <i class="fa fa-${a[1] == 'approved' ? 'check-circle text-success' : (a[1] == 'rejected' ? 'times-circle text-danger' : 'clock-o')}"></i>
             </div>
             `;
             mRows += `
             <div class="csApproverBox">
                 <div class="employee-info">            
                     <figure>                
-                        <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL+'test_file_01.png' : awsURL+approver.profile_picture}" />  
-                        <i class="fa fa-${a[1] == 'approved' ? 'check-circle text-success' : ( a[1] == 'rejected' ? 'times-circle text-danger' : 'clock-o' ) }"></i>        
+                        <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL + 'test_file_01.png' : awsURL + approver.profile_picture}" />  
+                        <i class="fa fa-${a[1] == 'approved' ? 'check-circle text-success' : (a[1] == 'rejected' ? 'times-circle text-danger' : 'clock-o')}"></i>        
                     </figure>            
                     <div class="text">                
                         <h4>${msg}</h4>                
@@ -822,12 +822,11 @@ $(function() {
                 rows += '            <div class="text">';
                 rows += `                <h4>${v.first_name} ${v.last_name} </h4>`;
                 rows += `                <p>${remakeEmployeeName(v, false)}</p>`;
-                rows += `                <p><a href="${baseURL}employee_profile/${
-                    v.userId
-                }" target="_blank">Id: ${getEmployeeId(
-                    v.userId,
-                    v.employee_number
-                )}</a></p>`;
+                rows += `                <p><a href="${baseURL}employee_profile/${v.userId
+                    }" target="_blank">Id: ${getEmployeeId(
+                        v.userId,
+                        v.employee_number
+                    )}</a></p>`;
                 rows += "            </div>";
                 rows += "        </div>";
 
@@ -892,11 +891,11 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: 'get_company_employees',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: selectedEmployeeId
-                },
+                action: 'get_company_employees',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: selectedEmployeeId
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -905,7 +904,7 @@ $(function() {
     }
 
     //
-    $(document).on('change', '#jsEditPolicy', function() {
+    $(document).on('change', '#jsEditPolicy', function () {
         //
         if ($(this).val() === null) {
             policyOffDays = undefined;

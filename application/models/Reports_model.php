@@ -1,11 +1,14 @@
 <?php
 
-class Reports_model extends CI_Model {
-    function __construct() {
+class Reports_model extends CI_Model
+{
+    function __construct()
+    {
         parent::__construct();
     }
 
-    function GetColumnNames($table, $exclude = array()) {
+    function GetColumnNames($table, $exclude = array())
+    {
         $columnNames = $this->db->list_fields($table);
         $columnNamesToReturn = array();
 
@@ -22,7 +25,8 @@ class Reports_model extends CI_Model {
         return $columnNamesToReturn;
     }
 
-    function GetColumnsInformation($table) {
+    function GetColumnsInformation($table)
+    {
         $columnDetails = $this->db->field_data($table);
         $myReturn = array();
 
@@ -33,7 +37,8 @@ class Reports_model extends CI_Model {
         return $myReturn;
     }
 
-    function BuildWhereClauseFromArray($where, $table) {
+    function BuildWhereClauseFromArray($where, $table)
+    {
         $table_cols = $this->db->list_fields($table);
         $table_cols_detail = $this->GetColumnsInformation($table);
 
@@ -77,7 +82,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function GetAllApplicants($company_sid, $employer_sid, $columns = array(), $search = '', $search2 = '', $limit = 0, $start = 1) {
+    function GetAllApplicants($company_sid, $employer_sid, $columns = array(), $search = '', $search2 = '', $limit = 0, $start = 1)
+    {
         $applicants_not_hired_sids = $this->get_not_hired_applicants($company_sid);
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
@@ -144,7 +150,8 @@ class Reports_model extends CI_Model {
         return $applications;
     }
 
-    function GetAllApplicantsCompanySpecific($company_sid, $columns = array(), $search = '', $search2 = '', $limit = 0, $start = 1) {
+    function GetAllApplicantsCompanySpecific($company_sid, $columns = array(), $search = '', $search2 = '', $limit = 0, $start = 1)
+    {
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.status');
@@ -205,7 +212,8 @@ class Reports_model extends CI_Model {
         return $applications;
     }
 
-    function GetAllJobsCompanyAndEmployerSpecific($company_sid, $employer_sid, $keywords = '', $limit = 0, $start = 1) {
+    function GetAllJobsCompanyAndEmployerSpecific($company_sid, $employer_sid, $keywords = '', $limit = 0, $start = 1)
+    {
         $this->db->select('portal_job_listings.*, portal_job_listings_visibility.job_sid');
         $this->db->where('portal_job_listings_visibility.company_sid', $company_sid);
         $this->db->where('portal_job_listings_visibility.employer_sid', $employer_sid);
@@ -223,7 +231,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_job_listings_visibility')->result_array();
     }
 
-    function GetAllJobsCompanySpecific($company_sid, $keywords = '', $limit = 0, $start = 1) {
+    function GetAllJobsCompanySpecific($company_sid, $keywords = '', $limit = 0, $start = 1)
+    {
         $this->db->select('*');
         $this->db->where('user_sid', $company_sid);
 
@@ -239,7 +248,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_job_listings')->result_array();
     }
 
-    function GetAllHiredJobs($company_sid, $start_date = null, $end_date = null, $status = null) {
+    function GetAllHiredJobs($company_sid, $start_date = null, $end_date = null, $status = null)
+    {
         $this->db->select('portal_job_listings.Title');
         $this->db->select('portal_job_listings.Location_City');
         $this->db->select('portal_job_listings.Location_State');
@@ -262,14 +272,15 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_job_applications')->result_array();
     }
 
-    function GetAllEventsByCompanyAndEmployer($company_sid, $employer_sid) {
+    function GetAllEventsByCompanyAndEmployer($company_sid, $employer_sid)
+    {
         $this->db->select('portal_schedule_event.*');
         //$this->db->select('users.first_name as creator_first_name');
         //$this->db->select('users.last_name as creator_last_name');
         $this->db->select('portal_job_applications.first_name as applicant_first_name');
         $this->db->select('portal_job_applications.last_name as applicant_last_name');
         $this->db->where('portal_schedule_event.companys_sid', $company_sid);
-//        $this->db->where('portal_schedule_event.employers_sid', $employer_sid);
+        //        $this->db->where('portal_schedule_event.employers_sid', $employer_sid);
         $this->db->group_start();
         $this->db->where('portal_schedule_event.employers_sid', $employer_sid);
         $this->db->or_where('find_in_set (' . $employer_sid . ', portal_schedule_event.interviewer)');
@@ -281,7 +292,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_schedule_event')->result_array();
     }
 
-    function GetAllUsers($company_sid) {
+    function GetAllUsers($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('active', 1);
@@ -290,7 +302,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('users')->result_array();
     }
 
-    function GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null) {
+    function GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+    {
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.job_sid');
         $this->db->select('portal_applicant_jobs_list.desired_job_title');
@@ -299,7 +312,7 @@ class Reports_model extends CI_Model {
         $this->db->select('portal_job_applications.last_name');
         $this->db->select('portal_job_applications.hired_date');
         $this->db->select('portal_job_applications.sid');
-//        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
+        //        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
         $this->db->where('portal_applicant_jobs_list.archived', 0);
 
@@ -376,7 +389,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function GetAllApplicantsBetweenPeriod($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = 0, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null) {
+    function GetAllApplicantsBetweenPeriod($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = 0, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+    {
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.job_sid');
         $this->db->select('portal_applicant_jobs_list.desired_job_title');
@@ -385,7 +399,7 @@ class Reports_model extends CI_Model {
         $this->db->select('portal_job_applications.last_name');
         $this->db->select('portal_job_applications.hired_date');
         $this->db->select('portal_job_applications.sid');
-//        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
+        //        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
         $this->db->where('portal_applicant_jobs_list.archived', 0);
 
@@ -460,7 +474,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function GetAllApplicantsCompanyAndEmployerSpecific($company_sid, $employer_sid, $keywords = '', $limit = 0, $start = 1, $archived = 0) {
+    function GetAllApplicantsCompanyAndEmployerSpecific($company_sid, $employer_sid, $keywords = '', $limit = 0, $start = 1, $archived = 0)
+    {
         $this->db->select('portal_job_listings_visibility.job_sid');
         $this->db->select('portal_job_listings.Title');
         //$this->db->select('portal_job_applications.*');
@@ -511,7 +526,8 @@ class Reports_model extends CI_Model {
         return array_merge($jobApplicants, $talentAndManual);
     }
 
-    function GetAllApplicantsCompanyEmployerAndJobSpecific($company_sid, $employer_sid, $job_sid, $hired_status = null) {
+    function GetAllApplicantsCompanyEmployerAndJobSpecific($company_sid, $employer_sid, $job_sid, $hired_status = null)
+    {
         $this->db->select('job_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
@@ -566,7 +582,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function GetAllJobCategoriesWhereApplicantsAreHired($company_sid) {
+    function GetAllJobCategoriesWhereApplicantsAreHired($company_sid)
+    {
         $this->db->select('portal_job_applications.sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -637,7 +654,8 @@ class Reports_model extends CI_Model {
         return $myReturn;
     }
 
-    function GetAllApplicantsOnboarding($company_sid, $start_date, $end_date, $keyword = '', $check_hired_date = false) {
+    function GetAllApplicantsOnboarding($company_sid, $start_date, $end_date, $keyword = '', $check_hired_date = false)
+    {
         $this->db->select('users.username');
         $this->db->select('portal_job_applications.sid');
         $this->db->select('portal_job_applications.employer_sid');
@@ -711,7 +729,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('users')->result_array();
     }
 
-    function get_all_jobs_views_applicants_count($company_sid) {
+    function get_all_jobs_views_applicants_count($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('user_sid', $company_sid);
         $this->db->where('active <> ', 2);
@@ -725,7 +744,7 @@ class Reports_model extends CI_Model {
                 $this->db->where('job_sid', $job_sid);
                 $this->db->from('portal_applicant_jobs_list');
                 $count = $this->db->count_all_results();
-//                $applicants = $this->db->get('portal_applicant_jobs_list')->num_rows();
+                //                $applicants = $this->db->get('portal_applicant_jobs_list')->num_rows();
                 $return_data[$key]['applicant_count'] = $count;
             }
         }
@@ -733,7 +752,8 @@ class Reports_model extends CI_Model {
     }
 
     //**** references function ****//
-    function get_references($company_sid) {
+    function get_references($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->order_by('sid', 'DESC');
@@ -773,7 +793,8 @@ class Reports_model extends CI_Model {
         return $references;
     }
 
-    function get_applicants_status($company_sid = NULL, $start_date = NULL, $end_date = NULL) {
+    function get_applicants_status($company_sid = NULL, $start_date = NULL, $end_date = NULL)
+    {
         $this->db->select('portal_job_applications.sid as pja_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -837,13 +858,15 @@ class Reports_model extends CI_Model {
         return $applications;
     }
 
-    function get_application_status($status_sid) {
+    function get_application_status($status_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $status_sid);
         return $this->db->get('application_status')->result_array();
     }
 
-    function check_company_status($company_sid) {
+    function check_company_status($company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $records = $this->db->get('application_status')->result_array();
 
@@ -854,7 +877,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_candidate_offers($company_sid = NULL, $start_date = NULL, $end_date = NULL, $keyword = '') {
+    function get_candidate_offers($company_sid = NULL, $start_date = NULL, $end_date = NULL, $keyword = '')
+    {
         $this->db->select('first_name, last_name, registration_date, CompanyName, access_level, email, applicant_sid');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('username', NULL);
@@ -901,7 +925,7 @@ class Reports_model extends CI_Model {
                 $this->db->select('portal_job_listings.Location_State');
                 $this->db->where('sid', $job_sid);
                 $data = $this->db->get('portal_job_listings')->row_array();
-                if(sizeof($data)){
+                if (sizeof($data)) {
                     $candidates[$key] = array_merge(
                         $candidates[$key],
                         $data
@@ -915,12 +939,14 @@ class Reports_model extends CI_Model {
         return $candidates;
     }
 
-    function getApplicantReviewsCount($applicant_sid) {
+    function getApplicantReviewsCount($applicant_sid)
+    {
         $result = $this->db->get_where('portal_applicant_rating', array('applicant_job_sid' => $applicant_sid));
         return $result->num_rows();
     }
 
-    function getApplicantAverageRating($app_id, $users_type = 'applicant') {
+    function getApplicantAverageRating($app_id, $users_type = 'applicant')
+    {
         $result = $this->db->get_where('portal_applicant_rating', array(
             'applicant_job_sid' => $app_id
         ));
@@ -936,7 +962,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_not_hired_applicants($company_sid) {
+    function get_not_hired_applicants($company_sid)
+    {
         $this->db->select('sid');
         $this->db->where('employer_sid', $company_sid);
         $this->db->where('hired_status', 0);
@@ -950,7 +977,8 @@ class Reports_model extends CI_Model {
         return $applicant_sids;
     }
 
-    function get_job_title_by_type($job_sid, $applicant_type, $desired_job_title) {
+    function get_job_title_by_type($job_sid, $applicant_type, $desired_job_title)
+    {
         $job_title = '';
 
         if ($applicant_type == 'Applicant') {
@@ -974,7 +1002,8 @@ class Reports_model extends CI_Model {
         return $job_title;
     }
 
-    function get_applicants_by_source($company_sid, $applicant_source, $start_date, $end_date, $keyword = 'all', $count_only = false, $limit = null, $offset = null) {
+    function get_applicants_by_source($company_sid, $applicant_source, $start_date, $end_date, $keyword = 'all', $count_only = false, $limit = null, $offset = null)
+    {
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -1056,7 +1085,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_applicant_interview_scores($company_sid, $keyword = 'all', $start_date = NULL, $end_date = NULL, $count_only = false, $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $limit = null, $offset = null) {
+    function get_applicant_interview_scores($company_sid, $keyword = 'all', $start_date = NULL, $end_date = NULL, $count_only = false, $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $limit = null, $offset = null)
+    {
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -1170,7 +1200,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null, $source = 'all') {
+    function get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null, $source = 'all')
+    {
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.status');
@@ -1273,7 +1304,7 @@ class Reports_model extends CI_Model {
         }
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
-         $this->db->join('portal_job_listings', 'portal_job_listings.sid=portal_applicant_jobs_list.job_sid', 'left');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid=portal_applicant_jobs_list.job_sid', 'left');
         $this->db->join('application_status', 'portal_applicant_jobs_list.status_sid = application_status.sid', 'left');
         $this->db->order_by('portal_applicant_jobs_list.date_applied', 'DESC');
 
@@ -1306,7 +1337,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_company_statuses($company_sid) {
+    function get_company_statuses($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->order_by('status_order', 'ASC');
@@ -1318,7 +1350,8 @@ class Reports_model extends CI_Model {
         return $records_arr;
     }
 
-    function GetSourceReportAllApplicants($company_sid, $employer_sid, $keyword, $job_sid, $applicant_type, $start_date = null, $end_date = null, $limit = 0, $start = 1) {
+    function GetSourceReportAllApplicants($company_sid, $employer_sid, $keyword, $job_sid, $applicant_type, $start_date = null, $end_date = null, $limit = 0, $start = 1)
+    {
         $applicants_not_hired_sids = $this->get_not_hired_applicants($company_sid);
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
@@ -1409,7 +1442,8 @@ class Reports_model extends CI_Model {
         return $applications;
     }
 
-    function GetSourceReportAllApplicantsCompanySpecific($company_sid, $keyword, $job_sid, $applicant_type, $start_date = null, $end_date = null, $limit = null, $offset = null, $get_reviews = true, $count_only = false, $source = 'all', $applicant_status = 'all') {
+    function GetSourceReportAllApplicantsCompanySpecific($company_sid, $keyword, $job_sid, $applicant_type, $start_date = null, $end_date = null, $limit = null, $offset = null, $get_reviews = true, $count_only = false, $source = 'all', $applicant_status = 'all')
+    {
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.status');
@@ -1547,7 +1581,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_stats_by_source($search = array(), $company_sid) {
+    function get_stats_by_source($search = array(), $company_sid)
+    {
         if ($search['date_option'] == 'daily') {
             $start = date('Y-m-d 00:00:00');
             $end = date('Y-m-d 23:59:59');
@@ -1568,7 +1603,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_applicant_jobs_list')->result_array();
     }
 
-    function get_job_fairs($company_sid, $keyword = 'all', $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null) {
+    function get_job_fairs($company_sid, $keyword = 'all', $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null)
+    {
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.status');
@@ -1630,15 +1666,17 @@ class Reports_model extends CI_Model {
         }
     }
 
-    public function get_active_employers($company_sid, $start_date, $end_date) {
+    public function get_active_employers($company_sid, $start_date, $end_date)
+    {
         $this->db->distinct();
         $this->db->select('employer_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
-        return $this->db->get('logged_in_activitiy_tracker')->result_array();
+        return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
     }
 
-    public function generate_activity_log_data_for_view($company_sid, $start_date, $end_date, $employer_sid = null) {
+    public function generate_activity_log_data_for_view($company_sid, $start_date, $end_date, $employer_sid = null)
+    {
         //Handle Manual Employer Sid Feed
         if ($employer_sid == null) {
             $active_employers = $this->get_active_employers($company_sid, $start_date, $end_date);
@@ -1655,7 +1693,7 @@ class Reports_model extends CI_Model {
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('action_timestamp', 'ASC');
             $this->db->order_by('employer_ip', 'ASC');
-            $employer_logs = $this->db->get('logged_in_activitiy_tracker')->result_array();
+            $employer_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $logs_to_return = array();
 
             if (!empty($employer_logs)) {
@@ -1704,7 +1742,6 @@ class Reports_model extends CI_Model {
                     $current_ip_array_key = str_replace('::1', '000_000_000_000', $current_ip_array_key);
 
                     if ($current_activity_datetime_unix < $first_activity_ten_min_window_unix) {
-
                     } else {
                         if ($first_ip_array_key == $current_ip_array_key) {
                             $time_spent = $time_spent + 10;
@@ -1743,7 +1780,8 @@ class Reports_model extends CI_Model {
         return $active_employers;
     }
 
-    function have_status_records($company_sid) {
+    function have_status_records($company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $status = $this->db->count_all_results('application_status');
 
@@ -1754,7 +1792,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_company_events_in_date_range($company_sid, $start_date, $end_date) {
+    function get_company_events_in_date_range($company_sid, $start_date, $end_date)
+    {
         $this->db->select('sid, employers_sid, title, date, interviewer, applicant_jobs_list, applicant_job_sid, users_type');
         $this->db->where('companys_sid', $company_sid);
         $this->db->where('date BETWEEN "' . date('Y-m-d 00:00:00', strtotime($start_date)) . '" and "' . date('Y-m-d 23:59:59', strtotime($end_date)) . '"');
@@ -1767,22 +1806,24 @@ class Reports_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_employers_name($sid) {
+    function get_employers_name($sid)
+    {
         $this->db->select('first_name, last_name');
         $this->db->where('sid', $sid);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $name = 'Employee not found!';
 
-        if(!empty($records_arr)) {
-            $name = $records_arr[0]['first_name'].' '.$records_arr[0]['last_name'];
+        if (!empty($records_arr)) {
+            $name = $records_arr[0]['first_name'] . ' ' . $records_arr[0]['last_name'];
         }
         return $name;
     }
 
-    function get_applicants_name($sid) {
+    function get_applicants_name($sid)
+    {
         $this->db->select('first_name, last_name');
         $this->db->where('sid', $sid);
         $records_obj = $this->db->get('portal_job_applications');
@@ -1790,27 +1831,28 @@ class Reports_model extends CI_Model {
         $records_obj->free_result();
         $name = 'Applicant not found!';
 
-        if(!empty($records_arr)) {
-            $name = $records_arr[0]['first_name'].' '.$records_arr[0]['last_name'];
+        if (!empty($records_arr)) {
+            $name = $records_arr[0]['first_name'] . ' ' . $records_arr[0]['last_name'];
         }
         return $name;
     }
 
 
     //
-    function getEmployeesByCompanyId($companySid){
+    function getEmployeesByCompanyId($companySid)
+    {
         $a = $this->db
-        ->select("
+            ->select("
             sid as employeeId,
             CONCAT(first_name,' ', last_name) as full_name,
-            ".( getUserFields() )."
+            " . (getUserFields()) . "
         ")
-        ->where('parent_sid', $companySid)
-        ->where('active', 1)
-        ->where('terminated_status', 0)
-        ->where('general_status', 'active')
-        ->order_by('full_name', 'ASC')
-        ->get('users');
+            ->where('parent_sid', $companySid)
+            ->where('active', 1)
+            ->where('terminated_status', 0)
+            ->where('general_status', 'active')
+            ->order_by('full_name', 'ASC')
+            ->get('users');
         //
         $b = $a->result_array();
         $a->free_result();
@@ -1819,30 +1861,31 @@ class Reports_model extends CI_Model {
     }
 
     //
-    function getDriverLicenses($post){
+    function getDriverLicenses($post)
+    {
         $offSet = $post['limit'];
-        $inSet =  $post['page'] == 1 ? 0 : ( ( $post['page'] - 1 ) * $post['limit']);
+        $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
         $r = array(
             'Count' => 0,
             'Data' => array()
         );
         $this->db
-        ->select('license_information.license_details, CONCAT(users.first_name," ", users.last_name) as full_name, users.job_title, '.( getUserFields() ).'')
-        ->join('users', 'users.sid = license_information.users_sid', 'inner')
-        ->where('users.parent_sid', $post['companySid'])
-        ->where('users.active', 1)
-        ->where('users.terminated_status', 0)
-        ->where('license_information.users_type', 'employee')
-        ->limit($offSet, $inSet)
-        ->order_by('full_name', 'ASC');
+            ->select('license_information.license_details, CONCAT(users.first_name," ", users.last_name) as full_name, users.job_title, ' . (getUserFields()) . '')
+            ->join('users', 'users.sid = license_information.users_sid', 'inner')
+            ->where('users.parent_sid', $post['companySid'])
+            ->where('users.active', 1)
+            ->where('users.terminated_status', 0)
+            ->where('license_information.users_type', 'employee')
+            ->limit($offSet, $inSet)
+            ->order_by('full_name', 'ASC');
         // Filter
-        if($post['employeeSid'] != 'all') $this->db->where('license_information.users_sid', $post['employeeSid']);
+        if ($post['employeeSid'] != 'all') $this->db->where('license_information.users_sid', $post['employeeSid']);
         //
         $a = $this->db->get('license_information');
         $b = $a->result_array();
         $a->free_result();
         //
-        if(!sizeof($b)) return $r;
+        if (!sizeof($b)) return $r;
         //
         $t = array();
         //
@@ -1852,15 +1895,15 @@ class Reports_model extends CI_Model {
             $j = $v['job_title'] == null ? '' : $v['job_title'];
             $v = @unserialize($v['license_details']);
             // Make sure all fields exists
-            if(!isset($v['dob'])) $v['dob'] = '';
-            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
-            if(!isset($v['license_type'])) $v['license_type'] = '';
-            if(!isset($v['license_class'])) $v['license_class'] = '';
-            if(!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
-            if(!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
-            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
-            if(!isset($v['license_authority'])) $v['license_authority'] = '';
-            if(!isset($v['license_number'])) $v['license_number'] = '';
+            if (!isset($v['dob'])) $v['dob'] = '';
+            if (!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if (!isset($v['license_type'])) $v['license_type'] = '';
+            if (!isset($v['license_class'])) $v['license_class'] = '';
+            if (!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
+            if (!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
+            if (!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if (!isset($v['license_authority'])) $v['license_authority'] = '';
+            if (!isset($v['license_number'])) $v['license_number'] = '';
             // Reset fields
             $v['license_type'] = strtolower(trim($v['license_type']));
             $v['license_class'] = strtolower(trim($v['license_class']));
@@ -1870,11 +1913,11 @@ class Reports_model extends CI_Model {
             $v['license_indefinite'] = trim($v['license_indefinite']);
             $v['license_expiration_date'] = trim($v['license_expiration_date']);
             // Add Filter
-            if(($post['licenseType'] != $v['license_type']) && $post['licenseType'] != 'all') continue;
-            if(($post['licenseClass'] != $v['license_class']) && $post['licenseClass'] != 'all') continue;
-            if(($post['licenseNumber'] != $v['license_number']) && $post['licenseNumber'] != 'all') continue;
-            if(($post['issueDate'] != $v['license_issue_date']) && $post['issueDate'] != 'all') continue;
-            if(($post['expirationDate'] != $v['license_expiration_date']) && $post['expirationDate'] != 'all') continue;
+            if (($post['licenseType'] != $v['license_type']) && $post['licenseType'] != 'all') continue;
+            if (($post['licenseClass'] != $v['license_class']) && $post['licenseClass'] != 'all') continue;
+            if (($post['licenseNumber'] != $v['license_number']) && $post['licenseNumber'] != 'all') continue;
+            if (($post['issueDate'] != $v['license_issue_date']) && $post['issueDate'] != 'all') continue;
+            if (($post['expirationDate'] != $v['license_expiration_date']) && $post['expirationDate'] != 'all') continue;
             //
             $v['full_name'] = $e;
             $v['job_title'] = $j;
@@ -1888,34 +1931,34 @@ class Reports_model extends CI_Model {
         }
         //
         $r['Data'] = $t;
-        if($post['page'] != 1) return $r;
+        if ($post['page'] != 1) return $r;
 
         $this->db
-        ->select('license_information.sid')
-        ->join('users', 'users.sid = license_information.users_sid', 'inner')
-        ->where('users.parent_sid', $post['companySid'])
-        ->where('license_information.users_type', 'employee');
+            ->select('license_information.sid')
+            ->join('users', 'users.sid = license_information.users_sid', 'inner')
+            ->where('users.parent_sid', $post['companySid'])
+            ->where('license_information.users_type', 'employee');
         // Filter
-        if($post['employeeSid'] != 'all') $this->db->where('license_information.users_sid', $post['employeeSid']);
+        if ($post['employeeSid'] != 'all') $this->db->where('license_information.users_sid', $post['employeeSid']);
         //
         $a = $this->db->get('license_information');
         $b = $a->result_array();
         $a->free_result();
         //
-        if(!sizeof($b)) return $r;
+        if (!sizeof($b)) return $r;
         //
         $t = 0;
         //
         foreach ($b as $k => $v) {
             $v = @unserialize($v['license_details']);
             // Make sure all fields exists
-            if(!isset($v['license_type'])) $v['license_type'] = '';
-            if(!isset($v['license_class'])) $v['license_class'] = '';
-            if(!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
-            if(!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
-            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
-            if(!isset($v['license_authority'])) $v['license_authority'] = '';
-            if(!isset($v['license_number'])) $v['license_number'] = '';
+            if (!isset($v['license_type'])) $v['license_type'] = '';
+            if (!isset($v['license_class'])) $v['license_class'] = '';
+            if (!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
+            if (!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
+            if (!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if (!isset($v['license_authority'])) $v['license_authority'] = '';
+            if (!isset($v['license_number'])) $v['license_number'] = '';
             // Reset fields
             $v['license_type'] = strtolower(trim($v['license_type']));
             $v['license_class'] = strtolower(trim($v['license_class']));
@@ -1925,11 +1968,11 @@ class Reports_model extends CI_Model {
             $v['license_indefinite'] = trim($v['license_indefinite']);
             $v['license_expiration_date'] = trim($v['license_expiration_date']);
             // Add Filter
-            if(($post['licenseType'] != $v['license_type']) && $post['licenseType'] != 'all') continue;
-            if(($post['licenseClass'] != $v['license_class']) && $post['licenseClass'] != 'all') continue;
-            if(($post['licenseNumber'] != $v['license_number']) && $post['licenseNumber'] != 'all') continue;
-            if(($post['issueDate'] != $v['license_issue_date']) && $post['issueDate'] != 'all') continue;
-            if(($post['expirationDate'] != $v['license_expiration_date']) && $post['expirationDate'] != 'all') continue;
+            if (($post['licenseType'] != $v['license_type']) && $post['licenseType'] != 'all') continue;
+            if (($post['licenseClass'] != $v['license_class']) && $post['licenseClass'] != 'all') continue;
+            if (($post['licenseNumber'] != $v['license_number']) && $post['licenseNumber'] != 'all') continue;
+            if (($post['issueDate'] != $v['license_issue_date']) && $post['issueDate'] != 'all') continue;
+            if (($post['expirationDate'] != $v['license_expiration_date']) && $post['expirationDate'] != 'all') continue;
             //
             $t++;
         }
@@ -1941,21 +1984,22 @@ class Reports_model extends CI_Model {
 
 
     //
-    function getDriverLicensesForExport($post){
+    function getDriverLicensesForExport($post)
+    {
         $this->db
-        ->select('license_information.license_details, CONCAT(users.first_name," ", users.last_name) as full_name, users.job_title')
-        ->join('users', 'users.sid = license_information.users_sid', 'inner')
-        ->where('license_information.users_type', 'employee')
-        ->where('users.parent_sid', $post['companySid'])
-        ->order_by('full_name', 'ASC');
+            ->select('license_information.license_details, CONCAT(users.first_name," ", users.last_name) as full_name, users.job_title')
+            ->join('users', 'users.sid = license_information.users_sid', 'inner')
+            ->where('license_information.users_type', 'employee')
+            ->where('users.parent_sid', $post['companySid'])
+            ->order_by('full_name', 'ASC');
         // Filter
-        if($post['dd-employee'] != 'all') $this->db->where('license_information.users_sid', $post['dd-employee']);
+        if ($post['dd-employee'] != 'all') $this->db->where('license_information.users_sid', $post['dd-employee']);
         //
         $a = $this->db->get('license_information');
         $b = $a->result_array();
         $a->free_result();
         //
-        if(!sizeof($b)) return $b;
+        if (!sizeof($b)) return $b;
         //
         $t = array();
         //
@@ -1964,15 +2008,15 @@ class Reports_model extends CI_Model {
             $j = $v['job_title'] == null ? '' : $v['job_title'];
             $v = @unserialize($v['license_details']);
             // Make sure all fields exists
-            if(!isset($v['dob'])) $v['dob'] = '';
-            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
-            if(!isset($v['license_type'])) $v['license_type'] = '';
-            if(!isset($v['license_class'])) $v['license_class'] = '';
-            if(!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
-            if(!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
-            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
-            if(!isset($v['license_authority'])) $v['license_authority'] = '';
-            if(!isset($v['license_number'])) $v['license_number'] = '';
+            if (!isset($v['dob'])) $v['dob'] = '';
+            if (!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if (!isset($v['license_type'])) $v['license_type'] = '';
+            if (!isset($v['license_class'])) $v['license_class'] = '';
+            if (!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
+            if (!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
+            if (!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if (!isset($v['license_authority'])) $v['license_authority'] = '';
+            if (!isset($v['license_number'])) $v['license_number'] = '';
             // Reset fields
             $v['license_type'] = strtolower(trim($v['license_type']));
             $v['license_class'] = strtolower(trim($v['license_class']));
@@ -1982,11 +2026,11 @@ class Reports_model extends CI_Model {
             $v['license_indefinite'] = trim($v['license_indefinite']);
             $v['license_expiration_date'] = trim($v['license_expiration_date']);
             // Add Filter
-            if(($post['dd-license-type'] != $v['license_type']) && $post['dd-license-type'] != 'all') continue;
-            if(($post['dd-license-class'] != $v['license_class']) && $post['dd-license-class'] != 'all') continue;
-            if(($post['txt-license-number'] != $v['license_number']) && $post['txt-license-number'] != 'all') continue;
-            if(($post['txt-issue-date'] != $v['license_issue_date']) && $post['txt-issue-date'] != 'all') continue;
-            if(($post['txt-expiration-date'] != $v['license_expiration_date']) && $post['txt-expiration-date'] != 'all') continue;
+            if (($post['dd-license-type'] != $v['license_type']) && $post['dd-license-type'] != 'all') continue;
+            if (($post['dd-license-class'] != $v['license_class']) && $post['dd-license-class'] != 'all') continue;
+            if (($post['txt-license-number'] != $v['license_number']) && $post['txt-license-number'] != 'all') continue;
+            if (($post['txt-issue-date'] != $v['license_issue_date']) && $post['txt-issue-date'] != 'all') continue;
+            if (($post['txt-expiration-date'] != $v['license_expiration_date']) && $post['txt-expiration-date'] != 'all') continue;
             //
             $v['full_name'] = $e;
             $v['job_title'] = $j;
@@ -1996,7 +2040,8 @@ class Reports_model extends CI_Model {
         return $t;
     }
 
-    function get_sms_data ($company_sid, $start_date, $end_date) {
+    function get_sms_data($company_sid, $start_date, $end_date)
+    {
         $this->db->select('*');
 
         $this->db->where('company_id', $company_sid);
@@ -2015,6 +2060,389 @@ class Reports_model extends CI_Model {
         } else {
             return array();
         }
-
     }
+
+
+    //
+    function getEmployeesByCompanyIdAll($companySid)
+    {
+        $a = $this->db
+            ->select("
+        sid as employeeId,
+        CONCAT(first_name,' ', last_name) as full_name,
+        " . (getUserFields()) . "
+    ")
+            ->where('parent_sid', $companySid)
+            ->order_by('full_name', 'ASC')
+            ->get('users');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+
+
+
+    function getEmployeeDocument($post, $csv = false)
+    {
+        $offSet = $post['limit'];
+        $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
+        $r = array(
+            'Count' => 0,
+            'Data' => array()
+        );
+
+        //
+        $companyId = $post['companySid'];
+        $employeeArray = $post['employeeSid'];
+        $documentArray = $post['employeeStatus'];
+        //
+        if ($post['page'] == 1) {
+            //
+            $r['Count'] = $this->getDocumentForReportByFilter(
+                $companyId,
+                (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+                (!is_array($documentArray) || in_array('all', $documentArray)) ? ['confidential', 'authorizedsigners', 'approvalflow'] : $documentArray,
+                true
+            );
+        }
+        //
+        $holderArray = $this->getDocumentForReportByFilter(
+            $companyId,
+            (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+            (!is_array($documentArray) || in_array('all', $documentArray)) ? ['all', 'confidential', 'authorizedsigners', 'approvalflow'] : $documentArray,
+            false,
+            !$csv ? [$offSet, $inSet] : []
+        );
+        //
+        if (!$holderArray) {
+            return $r;
+        }
+        //
+        foreach($holderArray as $k => $v):
+            //
+            if($v['allowed_departments']):
+                $holderArray[$k]['allowed_departments'] = $this->getDepartmentByIds(explode(',', $v['allowed_departments']), 'name');
+            endif;
+            //
+            if($v['allowed_teams']):
+                $holderArray[$k]['allowed_teams'] = $this->getTeamByIds(explode(',', $v['allowed_teams']), 'name');
+            endif;
+
+        endforeach;
+        //
+        $r['Data'] = $holderArray;
+        //
+        return $r;
+    }
+
+    /**
+     * 
+     */
+    private function getDocumentForReportByFilter(
+        $companyId,
+        $employeeArray = [],
+        $documentStatus = [],
+        $doCount = false,
+        $limit = []
+    ){
+        //
+        if(!$doCount):
+            //
+            $this->db->select('
+                documents_assigned.user_sid,
+                documents_assigned.user_type,
+                documents_assigned.document_title,
+                documents_assigned.is_confidential,
+                documents_assigned.confidential_employees,
+                documents_assigned.managersList as authorize_signers,
+                documents_assigned.visible_to_payroll,
+                documents_assigned.allowed_roles,
+                documents_assigned.allowed_employees,
+                documents_assigned.allowed_departments,
+                documents_assigned.allowed_teams,
+                documents_assigned.document_approval_employees
+            ');
+        endif;
+        // Common
+        $this->db
+        ->from('documents_assigned')
+        ->join('users', 'users.sid = documents_assigned.user_sid')
+        ->where('documents_assigned.user_type', 'employee')
+        ->where('users.terminated_status', 0)
+        ->where('users.active', 1)
+        ->where('documents_assigned.company_sid', $companyId);
+        // Filter
+
+        // Employee filter
+        if($employeeArray):
+            $this->db->where_in('documents_assigned.user_sid', $employeeArray);
+        endif;
+        
+        // Status filter
+        if($documentStatus[0] !== 'all'):
+            $this->db->group_start();
+            //
+            if (in_array("confidential", $documentStatus)) {
+                $this->db->or_where('documents_assigned.is_confidential', 1);
+                $this->db->or_where('documents_assigned.confidential_employees <>', '');
+            }
+            //
+            if (in_array("authorizedsigners", $documentStatus)) {
+                $this->db->or_where('documents_assigned.managersList <>', '');
+            }
+            //
+            if (in_array("approvalflow", $documentStatus)) {
+                $this->db->or_where('documents_assigned.approval_process', 1);
+                $this->db->or_where('documents_assigned.has_approval_flow', 1);
+            }
+            //
+            $this->db->group_end();
+        endif;
+        //
+        if($doCount):
+            return $this->db->count_all_results();
+        endif;
+        //
+        if(isset($limit[0])):
+            $this->db->limit($limit[0], $limit[1]);
+        endif;
+        //
+        $this->db->order_by('users.first_name', 'ASC');
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
+    }
+
+    /**
+     * 
+     */
+    private function getDepartmentByIds(
+        $ids,
+        $column
+    ){
+        //
+        $d = 
+        $this->db
+        ->select($column)
+        ->where_in('sid', $ids)
+        ->order_by('name', 'ASC')
+        ->get('departments_management');
+        //
+        if(!$d){
+            return [];
+        }
+        //
+        $records = $d->result_array();
+        //
+        if(!$records){
+            return [];
+        }
+        //
+        return array_column($records, $column);
+    }
+
+    /**
+     * 
+     */
+    private function getTeamByIds(
+        $ids,
+        $column
+    ){
+        //
+        $d = 
+        $this->db
+        ->select($column)
+        ->where_in('sid', $ids)
+        ->order_by('name', 'ASC')
+        ->get('departments_team_management');
+        //
+        if(!$d){
+            return [];
+        }
+        //
+        $records = $d->result_array();
+        //
+        if(!$records){
+            return [];
+        }
+        //
+        return array_column($records, $column);
+    }
+
+    /**
+     * 
+     */
+    public function getEmployeeByIdsOBJ($ids){
+        //
+        $result = $this->db
+        ->select(getUserFields('users'))
+        ->where_in('sid', $ids)
+        ->get('users')
+        ->result_array();
+        //
+        $obj = [];
+        //
+        foreach($result as $v){
+            $obj[$v['userId']] = remakeEmployeeName($v);
+        }
+        return $obj;
+    }
+
+
+
+
+
+      //
+      function GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+      {
+          $this->db->select('first_name,last_name,job_title as Title, joined_at as hired_date, Location_City , Location_State');
+          $this->db->where('users.applicant_sid', null);
+          $this->db->where('users.parent_sid', $company_sid);
+  
+          if ($start_date != null && $end_date != null) {
+              $this->db->where('users.joined_at BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
+          }
+  
+  
+          if (!empty($keyword) && $keyword != 'all') {
+              $multiple_keywords = explode(' ', $keyword);
+           
+  
+              if (count($multiple_keywords) == 1) {
+                  $this->db->group_start();
+                  $this->db->like('first_name', $keyword);
+                  $this->db->or_like('last_name', $keyword);
+                  $this->db->group_end();
+              } else {
+                  
+                  foreach ($multiple_keywords as $keywrd) {
+                      $this->db->group_start();
+                      $this->db->like('first_name', $keywrd);
+                      $this->db->or_like('last_name', $keywrd);
+                      $this->db->group_end();
+                  }
+                  
+              }
+          }https://www.youtube.com/watch?v=s0A56zmIsUo
+  
+  
+          if ($limit !== null && $offset !== null) {
+              $limit = $limit / 2;
+              $offset = $offset / 2;
+              $this->db->limit($limit, $offset);
+          }
+  
+          $this->db->order_by('hired_date', 'DESC');
+  
+          if ($count_only == false) {
+              return  $this->db->get('users')->result_array();
+           
+          } else {
+              return  $this->db->get('users')->num_rows();
+         
+          }
+          
+      }
+
+
+   //
+   function GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+   {
+
+       $employeeCount = $this->GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword, $hired_status, $job_sid, $applicant_type, $applicant_status, $count_only, $limit, $offset);
+
+       $this->db->select('portal_applicant_jobs_list.date_applied,portal_applicant_jobs_list.job_sid,portal_applicant_jobs_list.desired_job_title,portal_applicant_jobs_list.applicant_type,portal_job_applications.first_name,portal_job_applications.last_name,portal_job_applications.hired_date,portal_job_applications.sid');
+       //        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
+       $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
+       $this->db->where('portal_applicant_jobs_list.archived', 0);
+
+       if (!empty($keyword) && $keyword != 'all') {
+           $multiple_keywords = explode(' ', $keyword);
+
+           if (count($multiple_keywords) == 1) {
+               $this->db->group_start();
+               $this->db->like('portal_job_applications.first_name', $keyword);
+               $this->db->or_like('portal_job_applications.last_name', $keyword);
+               $this->db->group_end();
+           } else {
+               foreach ($multiple_keywords as $keywrd) {
+                   $this->db->group_start();
+                   $this->db->like('portal_job_applications.first_name', $keywrd);
+                   $this->db->or_like('portal_job_applications.last_name', $keywrd);
+                   $this->db->group_end();
+               }
+           }
+       }
+
+       $check_jobs_exists = explode(',', $job_sid);
+
+       if (!in_array('all', $check_jobs_exists)) {
+           if (is_array($check_jobs_exists)) {
+               $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
+           } else {
+               $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
+           }
+       }
+
+       if (!empty($applicant_status) && $applicant_status != 'all') {
+           $this->db->like('portal_applicant_jobs_list.status', $applicant_status);
+       }
+
+       if (!empty($applicant_type) && $applicant_type != 'all') {
+           $this->db->where('portal_applicant_jobs_list.applicant_type', $applicant_type);
+       }
+
+       if ($hired_status != null) {
+           $this->db->where('portal_job_applications.hired_status', $hired_status);
+       }
+
+       if ($start_date != null && $end_date != null) {
+           $this->db->where('portal_job_applications.hired_date BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
+       }
+
+       if ($limit !== null && $offset !== null) {
+           $limit = $limit / 2;
+           $offset = $offset / 2;
+           $this->db->limit($limit, $offset);
+       }
+
+       $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
+
+       $this->db->order_by('portal_applicant_jobs_list.date_applied', 'DESC');
+       $this->db->group_by('portal_applicant_jobs_list.portal_job_applications_sid');
+
+       if ($count_only == false) {
+            $applications = $this->db->get('portal_applicant_jobs_list')->result_array();
+
+            foreach ($applications as $key => $application) {
+                if ($application['job_sid'] != 0) {
+                    // Get City and State
+                    $this->db->select('portal_job_listings.Location_City');
+                    $this->db->select('portal_job_listings.Location_State');
+                    $this->db->where('sid', $application['job_sid']);
+
+                    $applications[$key] = array_merge(
+                       $applications[$key],
+                       $this->db->get('portal_job_listings')->row_array()
+                    );
+                }
+                //
+                $applications[$key]['Title'] = $this->get_job_title_by_type($application['job_sid'], $application['applicant_type'], $application['desired_job_title']);
+            }
+
+            $applications = array_merge($employeeCount, $applications);
+          
+            return $applications;
+       } else {
+           $applicantCount = $this->db->get('portal_applicant_jobs_list')->num_rows();
+           $newHireCount = $employeeCount + $applicantCount;
+           return $newHireCount;
+       }
+   }
+
+
 }

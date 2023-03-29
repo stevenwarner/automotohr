@@ -94,7 +94,7 @@ class sub_accounts extends Public_Controller
             $this->session->set_flashdata('message', '<b>Success:</b> Sub account added successfully');
 
             //sending email to user
-            $from = FROM_EMAIL_DEV;
+            $from = FROM_EMAIL_NOTIFICATIONS;
             $to = $subaccount_data["email"];
             $subject = "Welcome to " . ucwords(STORE_DOMAIN);
 

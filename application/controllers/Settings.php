@@ -495,6 +495,12 @@ class Settings extends Public_Controller
                     $data['complynet_dashboard_link'] = $complynet_link;
                 }
 
+                // EEOC Questionnaire
+                    $portal_data['dl_vet'] = $this->input->post('dl_vet', true) == 'on' ? 1 : 0;
+                    $portal_data['dl_vol'] = $this->input->post('dl_vol', true) == 'on' ? 1 : 0;
+                    $portal_data['dl_gen'] = $this->input->post('dl_gen', true) == 'on' ? 1 : 0;
+                 
+
                 //
                 $data['ssn'] = $this->input->post('ssn', true);
 
@@ -596,6 +602,13 @@ class Settings extends Public_Controller
                 } else {
                     $portal_data['dob_required'] = 1;
                 }
+
+                $post = $this->input->post(null, true);
+
+                //
+                $portal_data['eeo_on_applicant_document_center'] = empty($post['eeo_on_applicant_document_center']) ? 0 : 1;
+                $portal_data['eeo_on_employee_document_center'] = empty($post['eeo_on_employee_document_center']) ? 0 : 1;
+                $portal_data['eeo_on_document_center'] = empty($post['eeo_on_document_center']) ? 0 : 1;
 
 
                 if (IS_TIMEZONE_ACTIVE) {
@@ -884,8 +897,10 @@ class Settings extends Public_Controller
                             $json_client->set_output('json');
                             $json_client->set_port(2083);
                             $json_client->password_auth($auth_user, $auth_pass);
-                            $pass = "^&hg#DFSGS(*&";
-
+                            //
+                            $AHR = getCreds("AHR");
+                            $pass = $AHR->keys->DomainPass;
+                            //
                             $args = array(
                                 'dir' => 'public_html/manage_portal/',
                                 'newdomain' => $new_domain,
@@ -895,7 +910,7 @@ class Settings extends Public_Controller
 
                             if ($_SERVER['SERVER_NAME'] != 'localhost') {
                                 $result = $json_client->api2_query($auth_user, "AddonDomain", "addaddondomain", $args);
-                                sendMail(FROM_EMAIL_DEV, 'mubashar.ahmed@egenienext.com', 'New addon domain - Domain Management', $result);
+                                sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashar.ahmed@egenienext.com', 'New addon domain - Domain Management', $result);
                             }
                         } else { // make subdomain at server
                             $server = STORE_DOMAIN;
@@ -912,7 +927,7 @@ class Settings extends Public_Controller
 
                             if ($_SERVER['SERVER_NAME'] != 'localhost') {
                                 $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
-                                sendMail(FROM_EMAIL_DEV, 'mubashar.ahmed@egenienext.com', 'New Api Result - Domain Management', $result);
+                                sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashar.ahmed@egenienext.com', 'New Api Result - Domain Management', $result);
                             }
                         }
                         $this->session->set_flashdata('message', '<b>Success:</b> Your domain is updated successfully!');
@@ -1447,10 +1462,10 @@ class Settings extends Public_Controller
                 $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
-            }
-            
-            if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
-                $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
+
+                if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
+                    $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
+                }
             }
             
             //
@@ -1488,6 +1503,16 @@ class Settings extends Public_Controller
            
 
             if ($this->form_validation->run() === FALSE) {
+                //
+                if (!empty(validation_errors())) {
+                    sendMail(
+                        FROM_EMAIL_NOTIFICATIONS,
+                        'mubashir.saleemi123@gmail.com',
+                        'Form Full Application Validation Error',
+                        @json_encode(validation_errors())
+                    );
+                }
+                //
                 $data_countries = db_get_active_countries(); //Get Countries and States - Start
 
                 foreach ($data_countries as $value) {
@@ -1597,8 +1622,33 @@ class Settings extends Public_Controller
                     'extra_info' => serialize($data["employer"]['extra_info']),
                     'full_employment_application' => serialize($full_employment_application)
                 );
+
+                $record =
+                $this->db
+                ->select('full_employment_application')
+                ->where('sid', $id)
+                ->get('users')
+                ->row_array();
                 //
-                if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
+                $fef = [];
+
+                //
+                if ($record) {
+                    $fef = unserialize($record['full_employment_application']);
+                }
+
+                //
+                if (isSecret($full_employment_application['TextBoxSSN'])) {
+                    $full_employment_application['TextBoxSSN'] = $fef['TextBoxSSN'];
+                }
+                //
+                if (isSecret($full_employment_application['TextBoxDOB'])) {
+                    $full_employment_application['TextBoxDOB'] = $fef['TextBoxDOB'];
+                }
+                //
+                $data['full_employment_application'] = serialize($full_employment_application);
+                //
+                if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB']) && !isSecret($formpost['TextBoxDOB'])) {
                     $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
                     $data['dob'] = $DOB;
                 }
@@ -1607,7 +1657,7 @@ class Settings extends Public_Controller
                     $data['middle_name'] = $formpost['TextBoxNameMiddle'];
                 }
                 //
-                if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
+                if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN']) && !isSecret($formpost['TextBoxSSN'])) {
                     $data['ssn'] = $formpost['TextBoxSSN'];
                 }
                 //
@@ -2373,6 +2423,19 @@ class Settings extends Public_Controller
                     $licenseData['license_file'] = $license_file;
                 }
 
+                if ($type == 'employee') {
+                    //
+                    $this->load->model('2022/User_model', 'em');
+                    //
+                    $this->em->handleGeneralDocumentChange(
+                        'driversLicense',
+                        $this->input->post(null, true),
+                        $license_file,
+                        $sid,
+                        $this->session->userdata('logged_in')['employer_detail']['sid']
+                    );
+                }
+
                 //uplaod file to AMS
                 /*
                   if (isset($_FILES['license_file']) && $_FILES['license_file']['name'] != '') {
@@ -2663,6 +2726,19 @@ class Settings extends Public_Controller
                 $licenseCheck = $this->dashboard_model->check_user_license($employer_id, $type, $license_type);
                 //$formpost['license_file'] = "";
                 $license_file = upload_file_to_aws('license_file', $company_id, 'license_file', $employer_id);
+
+                if ($type == 'employee') {
+                    //
+                    $this->load->model('2022/User_model', 'em');
+                    //
+                    $this->em->handleGeneralDocumentChange(
+                        'occupationalLicense',
+                        $this->input->post(null, true),
+                        $license_file,
+                        $sid,
+                        $this->session->userdata('logged_in')['employer_detail']['sid']
+                    );
+                }
 
                 if (!empty($license_file) && $license_file != 'error') {
                     $licenseData['license_file'] = $license_file;

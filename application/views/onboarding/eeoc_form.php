@@ -50,7 +50,11 @@ if (isset($applicant)) {
     $first_name = $employee['first_name'];
     $last_name = $employee['last_name'];
     $email = $employee['email'];
-} ?>
+} 
+
+$eeocFormOptions = get_eeoc_options_status($company_sid);
+
+?>
 <div class="main">
     <div class="container">
         
@@ -231,6 +235,7 @@ if (isset($applicant)) {
                                         </div>
                                     </div>
 
+                                    <?php if($eeocFormOptions['dl_vet']==1){?>
                                     <div class="hr-box">
                                         <div class="hr-box-header" style="background-color: #3598dc; color: #ffffff;">
                                             2. VETERAN
@@ -280,7 +285,9 @@ if (isset($applicant)) {
                                             </div>
                                         </div>
                                     </div>
+                                    <?php }?>
 
+                                    <?php if($eeocFormOptions['dl_vol']==1){?>
                                     <div class="hr-box">
                                         <div class="hr-box-header" style="background-color: #3598dc; color: #ffffff;">
                                             3. VOLUNTARY SELF-IDENTIFICATION OF DISABILITY
@@ -377,7 +384,9 @@ if (isset($applicant)) {
                                             </div>
                                         </div>
                                     </div>
+                                    <?php }?>
 
+                                    <?php if($eeocFormOptions['dl_gen']==1){?>
                                     <div class="hr-box">
                                         <div class="hr-box-header" style="background-color: #3598dc; color: #ffffff;">
                                             4. GENDER (PLEASE CHECK ONE)
@@ -401,15 +410,31 @@ if (isset($applicant)) {
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </div>
+                                            <div class="checkbox-radio-row">
+                                                <label class="control control--radio">
+                                                    <?php $default_checked = $temp == 'Other' ? true : false ;?>
+                                                    Other
+                                                    <input <?php echo set_radio($field_id, 'Other', $default_checked); ?> name="gender" id="other" type="radio" value="Other">
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
+                                    <?php }?>
 
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-8 col-md-10 col-lg-10"></div>
-                                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
-
-                                            <?php echo $next_btn;?>
-                                        </div>
+                                </div>
+                            </div>
+                            
+                            <div class="btn-wrp full-width">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i>  <?= $back_btn;?></a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <?php echo $center_btn;?>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <?php echo $next_btn;?>
                                     </div>
                                 </div>
                             </div>
@@ -451,21 +476,26 @@ if (isset($applicant)) {
                     alertify.error('Please select group status');
                     error_flag++;
                 }
-                
+                <?php if($eeocFormOptions['dl_vet']==1){?>
                 if($('input[name="veteran"]:checked').length == 0){
                     alertify.error('Please select veteran');
                     error_flag++;
                 }
+                <?php }?>
                 
+                <?php if($eeocFormOptions['dl_vol']==1){?>
                 if($('input[name="disability"]:checked').length == 0){
                     alertify.error('Please select voluntary self-identification of disability');
                     error_flag++;
                 }
+                <?php }?>
                 
+                <?php if($eeocFormOptions['dl_gen']==1){?>
                 if($('input[name="gender"]:checked').length == 0){
                     alertify.error('Please select gender');
                     error_flag++;
                 }
+                <?php }?>
                 
                 if(error_flag>0) {
                     return false;

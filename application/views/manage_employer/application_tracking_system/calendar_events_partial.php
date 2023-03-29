@@ -369,7 +369,10 @@
 
     function func_make_date_picker() {
         $('.datepicker').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
     }
 

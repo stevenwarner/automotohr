@@ -735,14 +735,19 @@
                     'Are you Sure?',
                     'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
                     function () {
+                        $('#user_consent_form').submit();
+
+                        /*
                         $('.js-hybrid-preview').remove();
+                        $('br').replaceWith('<div></div>');
                         var draw = kendo.drawing;
 
                         draw.drawDOM($("#jstopdf"), {
-                            avoidLinks: true,
+                            avoidLinks: false,
                             paperSize: "A4",
-                            margin: { bottom: "1cm" },
-                            scale: 0.6
+                            multiPage: true,
+                            margin: { bottom: "2cm" },
+                            scale: 0.8
                         })
                             .then(function(root) {
                                 return draw.exportPDF(root);
@@ -752,6 +757,7 @@
                                 $('#save_PDF').val(pdfdata);
                                 $('#user_consent_form').submit();
                             });
+                             */
                     },
                     function () {
                         alertify.error('Cancelled!');

@@ -78,6 +78,7 @@ define('STORE_PROTOCOL', 'http://');
 define('STORE_PROTOCOL_SSL', 'https://');
 define('STORE_NAME', 'AutomotoHR');
 define('STORE_DOMAIN', 'automotohr.com/affiliate_portal');
+define('STORE_DOMAIN_HR', 'automotohr.com');
 define('STORE_FULL_URL', STORE_PROTOCOL . 'www.' . STORE_DOMAIN);
 define('AWS_S3_BUCKET_NAME', 'automotohrattachments');
 define('AWS_S3_BUCKET_URL', STORE_PROTOCOL_SSL . AWS_S3_BUCKET_NAME . '.s3.amazonaws.com/');
@@ -85,15 +86,16 @@ define('SERVER_DNS_PRIMARY', 'NS1.M2408.SGDED.COM');
 define('SERVER_DNS_SECONDARY', 'NS2.M2408.SGDED.COM');
 define('STORE_FULL_URL_SSL', STORE_PROTOCOL_SSL . 'www.' . STORE_DOMAIN);
 define('STAGING_SERVER_URL', STORE_PROTOCOL . 'localhost/ahr/affiliate_portal');
-define('FROM_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN);
-define('TO_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN);
-define('FROM_EMAIL_DEV', 'dev@' . STORE_DOMAIN);
-define('TO_EMAIL_DEV', 'dev@' . STORE_DOMAIN);
+define('FROM_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN_HR);
+define('TO_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN_HR);
+define('FROM_EMAIL_DEV', 'dev@' . STORE_DOMAIN_HR);
+define('TO_EMAIL_DEV', 'dev@' . STORE_DOMAIN_HR);
 define('FROM_STORE_NAME', STORE_NAME);
-define('FROM_EMAIL_INFO', 'info@' . STORE_DOMAIN);
-define('TO_EMAIL_INFO', 'info@' . STORE_DOMAIN);
-define('REPLY_TO', 'notifications@' . STORE_DOMAIN);
-define('AFFILIATE_NOTIFICATION', 'affiliate_notification@' . STORE_DOMAIN);
+define('FROM_EMAIL_INFO', 'info@' . STORE_DOMAIN_HR);
+define('TO_EMAIL_INFO', 'info@' . STORE_DOMAIN_HR);
+define('REPLY_TO', 'notifications@' . STORE_DOMAIN_HR);
+define('AFFILIATE_NOTIFICATION', 'affiliate_notification@' . STORE_DOMAIN_HR);
+define('FROM_EMAIL_NOTIFICATIONS', 'notifications'. STORE_DOMAIN_HR);
 
 
 defined('EXIT_SUCCESS') OR define('EXIT_SUCCESS', 0); // no errors

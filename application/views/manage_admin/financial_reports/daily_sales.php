@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php $report_name = "daily_sales_report"; ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -72,8 +73,14 @@
                                         </div>
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-xs-12 text-right">
+                                            <a target="_blank" class="btn btn-success" href="<?php echo base_url('manage_admin/financial_reports/print_daily_sales')."/". $year . "/" . $month . "/" . $day; ?>">Print</a>
+                                            <a class="btn btn-success" href="JavaScript:;" onclick="jsReportAction(this)" data-action="download_report">Download</a>
+                                        </div>
+                                    </div>
 
-                                    <div class="hr-box">
+                                    <div class="hr-box" id="download_report">
                                         <div class="hr-box-header bg-header-green">
                                             <span class="hr-registered pull-left">Employer Portal Sales Summary</span>
                                             <span class="hr-registered pull-right"><?php echo date('l, jS F Y', mktime(0,0,0, $month, $day, $year)); ?></span>
@@ -129,8 +136,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
@@ -140,3 +145,43 @@
         </div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
+
+<script>
+    function jsReportAction (source) {
+        var action = $(source).data('action');
+
+        if(action == 'download_report') { 
+            var draw = kendo.drawing;
+            draw.drawDOM($("#download_report"), {
+                avoidLinks: false,
+                paperSize: "auto",
+                multiPage: true,
+                margin: { bottom: "2cm" },
+                scale: 0.8
+            })
+            .then(function(root) {
+                return draw.exportPDF(root);
+            })
+            .done(function(data) {
+                var pdf;
+                pdf = data;
+
+                $('#myiframe').attr("src",data);
+                kendo.saveAs({
+                    dataURI: pdf,
+                    fileName: '<?php echo $report_name.".pdf"; ?>',
+                });
+                window.close();
+            });
+        } else { 
+            window.print();
+            //
+            window.onafterprint = function(){
+                window.close();
+            }
+        }
+    }
+</script>

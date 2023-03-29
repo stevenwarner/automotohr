@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+ini_set('memory_limit', '50M');
 
 class Zip_recruiter_feed extends CI_Controller {
     public function __construct() {

@@ -8,13 +8,12 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                             <a class="dashboard-link-btn" href="<?php echo base_url('video_interview_system'); ?>">
                                 <i class="fa fa-chevron-left"></i>
                                 Back
                             </a>
                             <?php echo $title; ?>
-                            <span class="beta-label">beta</span>
                         </span>
                     </div>
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

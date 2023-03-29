@@ -33,5 +33,15 @@
     </div>
     <!-- Files Preview Modal *** End *** -->
     <span id="get_footer_url" style="display:none;"><?php echo base_url(); ?></span>
+    <!-- Scripts -->
+    <script>
+        var baseURI = "<?=rtrim(base_url(), '/');?>/"
+    </script>
+    <?php if (isset($PageCSS)): ?>
+        <?=GetCss($PageCSS);?>
+    <?php endif; ?>
+    <?php if (isset($PageScripts)): ?>
+        <?=GetScripts($PageScripts);?>
+    <?php endif; ?>
 </body>
 </html>

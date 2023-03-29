@@ -176,17 +176,21 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="arrow-links">
-                    <?php if ($enable_learbing_center && $company_eeoc_form_status == 1) {
-    $width = round(100 / 8, 4);
-} else if (!$enable_learbing_center && $company_eeoc_form_status == 0) {
-    $width = round(100 / 6, 3);
-} else if (!$enable_learbing_center || $company_eeoc_form_status == 0) {
-    $width = round(100 / 7, 4);
-} else {
-    $width = round(100 / 6, 3);
-}
+                    <?php 
+                        $eeo_form_status = getCompanyEEOCFormStatus($session['company_detail']['sid']);
+                        //
+                        if ($enable_learbing_center && ($company_eeoc_form_status == 1 && $eeo_form_status == 1)) {
+                            $width = round(100 / 8, 4);
+                        } else if (!$enable_learbing_center && $company_eeoc_form_status == 0) {
+                            $width = round(100 / 6, 3);
+                        } else if (!$enable_learbing_center || $company_eeoc_form_status == 0) {
+                            $width = round(100 / 7, 4);
+                        } else {
+                            $width = round(100 / 6, 3);
+                        }
 
-    $url_segment = $this->uri->segment(2);?>
+                        $url_segment = $this->uri->segment(2);
+                    ?>
                     <ul>
                         <li class="<?php echo $url_segment == 'getting_started' || $url_segment == 'colleague_profile' ? 'active' : ''; ?>"
                             style="width: <?php echo $width ?>%;">
@@ -220,7 +224,7 @@
                                     data-placement="left" title="Done!"></i>
                             </a>
                         </li>
-                        <li class="<?php echo $url_segment == 'general_information' || $url_segment == 'edit_dependant_information' || $url_segment == 'edit_emergency_contacts' ? 'active' : ''; ?> <?php echo $complete_steps['license_info'] > 0 ? 'done1' : ''; ?>"
+                       <li class="<?php echo $url_segment == 'general_information' || $url_segment == 'edit_dependant_information' || $url_segment == 'edit_emergency_contacts' ? 'active' : ''; ?> <?php echo $complete_steps['license_info'] > 0 ? 'done1' : ''; ?>"
                             style="width: <?php echo $width ?>%">
                             <a href="<?php echo base_url('onboarding/general_information/' . $unique_sid); ?>">
                                 <span>Step 4</span>
@@ -239,7 +243,7 @@
                         <!--                                </a>-->
                         <!--                            </li>-->
 
-                        <?php if ($company_eeoc_form_status == 1) {?>
+                        <?php if ($company_eeoc_form_status == 1 && $eeo_form_status == 1) {?>
                         <li class="<?php echo $url_segment == 'eeoc_form' ? 'active' : ''; ?> <?php echo $complete_steps['eeoc_form'] > 0 ? 'done1' : ''; ?>"
                             style="width: <?php echo $width ?>%;">
                             <a href="<?php echo base_url('onboarding/eeoc_form/' . $unique_sid); ?>">

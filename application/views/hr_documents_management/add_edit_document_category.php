@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management/documents_category_management'); ?>"><i class="fa fa-chevron-left"></i>Category Management Listing</a>
                                     <?php echo $title; ?>
                                 </span>
@@ -28,7 +28,7 @@
                                             <?php 
                                                 $is_default = "";
                                                 //
-                                                if ($category['default_category_sid'] != 0) {
+                                                if ($category['default_category_sid'] != 0 || $category['is_default'] == 1 ) {
                                                     $is_default = "readonly";
                                                 }
                                             ?>

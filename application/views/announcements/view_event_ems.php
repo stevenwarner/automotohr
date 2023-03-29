@@ -2,10 +2,17 @@
     #js-message-body img{ max-width: 100%; }
 </style>
 
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12">
+
+        <div class="col-lg-1">
+                <div class="btn-panel">
+                <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                </div>
+            </div>
+
+            <div class="col-lg-11">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="btn-panel">
                     <a href="<?php echo base_url('list_announcements'); ?>" class="btn btn-info"><i class="fa fa-angle-left"></i> Announcements</a>

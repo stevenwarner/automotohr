@@ -9,7 +9,7 @@
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                             
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('employee_status' . '/' . $employer['sid']) ?>"><i class="fa fa-chevron-left"></i>Employee Status Panel</a>
                                     <?php echo $title; ?>
                                 </span>
@@ -36,6 +36,7 @@
                                                     <option value="3">Deceased</option>
                                                     <option value="1">Terminated</option>
                                                     <option value="6">Inactive</option>
+                                                    <option value="9">Transferred</option>
                                                 </select>
                                                 <?php echo form_error('status'); ?>
                                             </li>
@@ -47,10 +48,13 @@
                                                         <option value="1">Resignation</option>
                                                         <option value="2">Fired</option>
                                                         <option value="3">Tenure Completed</option>
+                                                        <option value="18">Store Closure</option>
+                                                        <option value="19">Did Not Hire</option>
+                                                        <option value="20">Separation</option>
                                                     </optgroup>
                                                     
                                                     <optgroup label="Voluntary">    
-                                                        <option value="4">Voluntary</option>
+                                                        <option value="4">Personal</option>
                                                         <option value="5">Another Job</option>
                                                         <option value="6">Problem with Supervisor</option>
                                                         <option value="7">Relocation</option>

@@ -21,7 +21,7 @@ class Cron_document_assign extends Public_Controller {
         $documents = $this->hrm->getAssignAndSendDocuments(['weekly', 'monthly', 'yearly', 'custom', 'daily']);
         //
         sendMail(
-            'dev@automotohr.com',
+            'notifications@automotohr.com',
             'dev@automotohr.com',
             'Scheduled documents reassign - Start',
             '<pre>it is auto executed at '.date('Y-m-d H:i:s', strtotime('now')).'<br />'.(print_r($documents, true)),
@@ -202,7 +202,7 @@ class Cron_document_assign extends Public_Controller {
         $documents = $this->hrm->getCompletedDocuments($queryDate, 1);
         //
         sendMail(
-            'dev@automotohr.com',
+            'notifications@automotohr.com',
             'dev@automotohr.com',
             'Sent Completed Document Report',
             'it is auto executed at '.date('Y-m-d H:i:s', strtotime('now')).'<br />'.(print_r($documents, true)),
@@ -296,7 +296,7 @@ class Cron_document_assign extends Public_Controller {
         $documents = $this->hrm->getCompletedDocuments($queryDate, 0);
         //
         sendMail(
-            'dev@automotohr.com',
+            'notifications@automotohr.com',
             'dev@automotohr.com',
             'Sent Generated Document Report',
             'it is auto executed at '.date('Y-m-d H:i:s', strtotime('now')).''.(print_r($documents, true)),

@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management/documents_group_management'); ?>"><i class="fa fa-chevron-left"></i>Group Management</a>
                                     <?php echo $group_name; ?>
                                 </span>
@@ -62,6 +62,7 @@
                                                                 <div class="control__indicator"></div>    
                                                             </label>
                                                         </div>
+                                                        <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_document_center']) { ?>
                                                         <div class="col-xs-6">
                                                             <label class="control control--checkbox font-normal">
                                                                 EEOC Fillable
@@ -69,6 +70,7 @@
                                                                 <div class="control__indicator"></div>    
                                                             </label>
                                                         </div>
+                                                        <?php } ?>
                                                         <!-- system documents end -->
 
                                                         <div class="col-xs-12">

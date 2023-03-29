@@ -12,7 +12,7 @@
                         </div>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                             </div>
                             <div class="dashboard-conetnt-wrp">
                                 <div class="panel panel-success">
@@ -20,7 +20,7 @@
                                         <h4>The Provided CSV File must be in Following Format</h4>
                                     </div>
                                     <div class="panel-body">
-<pre>
+                                        <pre>
 <b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Resume URL, Cover Letter URL, Job Title</b><br>
 Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/jason_snow_resume.docx, https://yourwebsite.com/cover_letter/jason_snow_cover.docx, General Manager
 Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Manager Sales
@@ -37,7 +37,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                         <div class="universal-form-style-v2">
                             <ul>
                                 <form method="post" enctype="multipart/form-data" id="js-import-form">
-                                    <input type="hidden" value="upload_file" name="action"  />
+                                    <input type="hidden" value="upload_file" name="action" />
                                     <div>
                                         <label>Upload CSV File</label>
                                         <input type="file" id="userfile" style="display: none;" />
@@ -58,20 +58,20 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
 <!-- Loader -->
 <div id="my_loader" class="text-center js-loader">
     <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
-        <div class="loader-icon-box">
-            <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
-            <div class="loader-text js-loader-text" style="display:block; margin-top: 35px;">Please wait while we generate a preview...
+    <div class="loader-icon-box">
+        <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+        <div class="loader-text js-loader-text" style="display:block; margin-top: 35px;">Please wait while we generate a preview...
         </div>
     </div>
 </div>
-<script src="<?=base_url('assets/lodash/loadash.min.js');?>"></script>
-<link rel="stylesheet" href="<?=base_url('assets/alertifyjs/css/alertify.min.css');?>">
-<script src="<?=base_url('assets/alertifyjs/alertify.min.js');?>"></script>
+<script src="<?= base_url('assets/lodash/loadash.min.js'); ?>"></script>
+<link rel="stylesheet" href="<?= base_url('assets/alertifyjs/css/alertify.min.css'); ?>">
+<script src="<?= base_url('assets/alertifyjs/alertify.min.js'); ?>"></script>
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/waitMe.min.css">
 <script src="<?= base_url() ?>assets/js/waitMe.min.js"></script>
 
-<link rel="stylesheet" href="<?=base_url('assets/mFileUploader/index.css');?>" />
-<script src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
+<link rel="stylesheet" href="<?= base_url('assets/mFileUploader/index.css'); ?>" />
+<script src="<?= base_url('assets/mFileUploader/index.js'); ?>"></script>
 
 <script>
     function check_file(val) {
@@ -86,7 +86,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                     alertify.error("Please select a valid File format.");
                     $('#name_' + val).html('<p class="red">Only ( .csv ) allowed!</p>');
                     return false;
-                } else{
+                } else {
                     $('.js-submit-btn').removeClass('disabled').prop('disabled', false);
                     return true;
                 }
@@ -109,23 +109,32 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
     //     });
     // });
     //
-    $(function importCSV(){
-        var 
-        file = [],
-        jobTitles = <?=json_encode(array('jobtitle', 'job'));?>,
-        cityTitles = <?=json_encode(array('city', 'employeecity'));?>,
-        stateTitles = <?=json_encode(array('state','employeestate'));?>,
-        resumeTitles = <?=json_encode(array('resume', 'cv', 'resumeurl'));?>,
-        countryTitles = <?=json_encode(array('country', 'employeecountry'));?>,
-        addressTitles = <?=json_encode(array('address','streetaddress', 'employeeaddressline1', 'addressline1', 'employeeaddress'));?>,
-        zipCodeTitles = <?=json_encode(array('zipcode', 'zip', 'employeezip'));?>,
-        lastNameTitles = <?=json_encode(array('lastname', 'lname'));?>,
-        firstNameTitles = <?=json_encode(array('firstname', 'fname'));?>,
-        coverLetterTitles = <?=json_encode(array('coverletter', 'coverletterurl'));?>,
-        phoneNumberTitles = <?=json_encode(array('phonenumber','contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber'));?>,
-        accessLevelTitles = <?=json_encode(array('accesslevel'));?>,
-        emailAddressTitles = <?=json_encode(array('email', 'emailaddress'));?>,
-        profilePictureTitles = <?=json_encode(array('profile', 'profilepicture', 'profilepictureurl'));?>;
+    $(function importCSV() {
+        var
+            file = [],
+            jobTitles = <?= json_encode(array('jobtitle', 'job')); ?>,
+            cityTitles = <?= json_encode(array('city', 'employeecity')); ?>,
+            stateTitles = <?= json_encode(array('state', 'employeestate')); ?>,
+            resumeTitles = <?= json_encode(array('resume', 'cv', 'resumeurl')); ?>,
+            countryTitles = <?= json_encode(array('country', 'employeecountry')); ?>,
+            addressTitles = <?= json_encode(array('address', 'streetaddress', 'employeeaddressline1', 'addressline1', 'employeeaddress')); ?>,
+            zipCodeTitles = <?= json_encode(array('zipcode', 'zip', 'employeezip')); ?>,
+            lastNameTitles = <?= json_encode(array('lastname', 'lname')); ?>,
+            firstNameTitles = <?= json_encode(array('firstname', 'fname')); ?>,
+            coverLetterTitles = <?= json_encode(array('coverletter', 'coverletterurl')); ?>,
+            phoneNumberTitles = <?= json_encode(array('phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber')); ?>,
+            accessLevelTitles = <?= json_encode(array('accesslevel')); ?>,
+            emailAddressTitles = <?= json_encode(array('email', 'emailaddress')); ?>,
+            profilePictureTitles = <?= json_encode(array('profile', 'profilepicture', 'profilepictureurl')); ?>;
+
+            dateOfBirthTitles = <?= json_encode(array('dateofbirth', 'dob')); ?>;
+            socialSecurityNumberTitles = <?= json_encode(array('socialsecuritynumber', 'ssn')); ?>;
+            maritalStatusTitles = <?= json_encode(array('maritalstatus')); ?>;
+            genderTitles = <?= json_encode(array('gender')); ?>;
+
+
+
+
 
         loader('hide');
         // 
@@ -133,17 +142,17 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
         //
         $('#js-import-form').submit(formHandler);
         //
-         //
-         function readFile(f){
+        //
+        function readFile(f) {
             //
             $('.js-submit-btn').prop('disabled', true).addClass('disabled');
             //
-            if(Object.keys(f).length === 0){
+            if (Object.keys(f).length === 0) {
                 alertify.alert('WARNING!', 'Please, select a file.', () => {});
                 return;
             }
             //
-            if(f.hasError === true){
+            if (f.hasError === true) {
                 alertify.alert('WARNING!', 'Invalid file is uploaded.', () => {});
                 return;
             }
@@ -154,7 +163,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             fileReader.onload = fileLoaded;
             fileReader.readAsText(f);
         }
-        
+
         //
         $('#userfile').mFileUploader({
             fileLimit: -1,
@@ -169,78 +178,149 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
         });
 
         //
-        function fileLoaded(e){ file = e; }
+        function fileLoaded(e) {
+            file = e;
+        }
 
         //
-        function formHandler(e){
+        function formHandler(e) {
             e.preventDefault();
             var fileData = file.target.result.split(/\n/g);
             // Get header
-            var indexes  = fileData[0].split(',');
+            var indexes = fileData[0].split(',');
             // Reset index
-            indexes = indexes.map(function(v, i){
+            indexes = indexes.map(function(v, i) {
                 var index = in_array(v.toLowerCase().replace(/[^a-z]/g, '').trim());
                 return index === -1 ? 'extra' : index;
             });
             // Remove head
-            fileData.splice(0,1);
+            fileData.splice(0, 1);
             //
             var records = [];
             //
-            fileData.map(function(v){
+            fileData.map(function(v) {
                 var tmp = v.split(','),
-                record = new Object(),
-                i = 0,
-                len = tmp.length;
-                for(i; i < len; i++) record[indexes[i]] = tmp[i];
-                records.push(record); 
+                    record = new Object(),
+                    i = 0,
+                    len = tmp.length;
+                for (i; i < len; i++) record[indexes[i]] = tmp[i];
+                records.push(record);
             });
             //
             uploadRecords(records);
         }
 
         //
-        function in_array(index){
+        function in_array(index) {
             var i, len, array;
             // Reset start and length
-            i = 0; len = firstNameTitles.length; array = firstNameTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'first_name';
+            i = 0;
+            len = firstNameTitles.length;
+            array = firstNameTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'first_name';
             // Reset start and length
-            i = 0; len = lastNameTitles.length; array = lastNameTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'last_name';
+            i = 0;
+            len = lastNameTitles.length;
+            array = lastNameTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'last_name';
             // Reset start and length
-            i = 0; len = phoneNumberTitles.length; array = phoneNumberTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'phone_number';
+            i = 0;
+            len = phoneNumberTitles.length;
+            array = phoneNumberTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'phone_number';
             // Reset start and length
-            i = 0; len = emailAddressTitles.length; array = emailAddressTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'email';
+            i = 0;
+            len = emailAddressTitles.length;
+            array = emailAddressTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'email';
             // Reset start and length
-            i = 0; len = addressTitles.length; array = addressTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'address';
+            i = 0;
+            len = addressTitles.length;
+            array = addressTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'address';
             // Reset start and length
-            i = 0; len = countryTitles.length; array = countryTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'country';
+            i = 0;
+            len = countryTitles.length;
+            array = countryTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'country';
             // Reset start and length
-            i = 0; len = cityTitles.length; array = cityTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'city';
+            i = 0;
+            len = cityTitles.length;
+            array = cityTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'city';
             // Reset start and length
-            i = 0; len = stateTitles.length; array = stateTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'state';
+            i = 0;
+            len = stateTitles.length;
+            array = stateTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'state';
             // Reset start and length
-            i = 0; len = zipCodeTitles.length; array = zipCodeTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'zipcode';
+            i = 0;
+            len = zipCodeTitles.length;
+            array = zipCodeTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'zipcode';
             // Reset start and length
-            i = 0; len = jobTitles.length; array = jobTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'desired_job_title';
+            i = 0;
+            len = jobTitles.length;
+            array = jobTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'desired_job_title';
             // Reset start and length
-            i = 0; len = profilePictureTitles.length; array = profilePictureTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'pictures';
+            i = 0;
+            len = profilePictureTitles.length;
+            array = profilePictureTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'pictures';
             // Reset start and length
-            i = 0; len = resumeTitles.length; array = resumeTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'resume';
+            i = 0;
+            len = resumeTitles.length;
+            array = resumeTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'resume';
             // Reset start and length
-            i = 0; len = coverLetterTitles.length; array = coverLetterTitles;
-            for(i; i < len; i++) if(index == array[i]) return 'cover_letter';
+            i = 0;
+            len = dateOfBirthTitles.length;
+            array = dateOfBirthTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'dob';
+
+            // Reset start and length
+            i = 0;
+            len = socialSecurityNumberTitles.length;
+            array = socialSecurityNumberTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'ssn';
+
+            // Reset start and length
+            i = 0;
+            len = maritalStatusTitles.length;
+            array = maritalStatusTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'marital_status';
+
+
+            // Reset start and length
+            i = 0;
+            len = genderTitles.length;
+            array = genderTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'gender';
+
+
+            // Reset start and length
+            i = 0;
+            len = coverLetterTitles.length;
+            array = coverLetterTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'cover_letter';
             return -1;
         }
 
@@ -254,26 +334,28 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             totalChunks: 0,
             recordsLength: 0
         };
-        var failedCount = 0, insertedCount = 0, existedCount = 0;
+        var failedCount = 0,
+            insertedCount = 0,
+            existedCount = 0;
 
         //
-        function uploadRecords(records){
+        function uploadRecords(records) {
             chunkOBJ.records = [];
             //
             chunkOBJ.recordsLength = records.length;
             //
             chunkOBJ.totalChunks = Math.ceil(chunkOBJ.recordsLength / Math.ceil(chunkOBJ.recordsLength / chunkOBJ.chunkSize));
             //
-            if(chunkOBJ.totalChunks != 1)
-            chunkOBJ.records = _.chunk(records, chunkOBJ.totalChunks);
+            if (chunkOBJ.totalChunks != 1)
+                chunkOBJ.records = _.chunk(records, chunkOBJ.totalChunks);
             else chunkOBJ.records.push(records);
             //
             uploadChunk();
         }
 
         //
-        function uploadChunk(){
-            if(chunkOBJ.records[chunkOBJ.current] === undefined){
+        function uploadChunk() {
+            if (chunkOBJ.records[chunkOBJ.current] === undefined) {
                 // TODO
                 console.log('All chunks are being uploaded..');
                 return;
@@ -283,30 +365,30 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
 
         var xhr = null;
         //
-        function startAddProcess(chunk){
+        function startAddProcess(chunk) {
             //
-            if(xhr !== null) return;
+            if (xhr !== null) return;
             //
-            if( chunkOBJ.records[chunkOBJ.current] === undefined){
+            if (chunkOBJ.records[chunkOBJ.current] === undefined) {
                 loader('hide');
-                alertify.alert('SUCCESS!', 'You have successfully imported <b>'+( insertedCount )+'</b> new applicants, <b>'+( existedCount )+'</b> applicants already exists and <b>'+( failedCount )+'</b> applicants failed to add.');
+                alertify.alert('SUCCESS!', 'You have successfully imported <b>' + (insertedCount) + '</b> new applicants, <b>' + (existedCount) + '</b> applicants already exists and <b>' + (failedCount) + '</b> applicants failed to add.');
                 failedCount = existedCount = insertedCount = chunkOBJ.loaded = chunkOBJ.current = chunkOBJ.totalChunks = chunkOBJ.recordsLength = 0;
                 return;
             }
             //
             chunkOBJ.loaded += chunk.length;
-            var 
-            messageRow  = "Please, be patient as we import applicants.<br />";
+            var
+                messageRow = "Please, be patient as we import applicants.<br />";
             messageRow += "It may take a few minutes<br />";
-            messageRow += 'Importing '+(chunkOBJ.loaded)+' of '+(chunkOBJ.recordsLength)+' applicants.';
+            messageRow += 'Importing ' + (chunkOBJ.loaded) + ' of ' + (chunkOBJ.recordsLength) + ' applicants.';
             //
             loader('show', messageRow);
-            xhr = $.post("<?=base_url('import-applicant-csv/handler');?>", {
+            xhr = $.post("<?= base_url('import-applicant-csv/handler'); ?>", {
                 action: 'add_applicants',
                 applicants: chunk
             }, function(resp) {
                 xhr = null;
-                if(resp.Status === false){
+                if (resp.Status === false) {
                     alertify.alert('ERROR!', 'Something went wrong');
                     loader('hide');
                     return;
@@ -316,9 +398,9 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                 insertedCount += parseInt(resp.Inserted);
                 // Update current and hit uploadChunk function
                 chunkOBJ.current++;
-                if(chunkOBJ.current >= chunkOBJ.records.length) {
+                if (chunkOBJ.current >= chunkOBJ.records.length) {
                     loader('hide');
-                    alertify.alert('SUCCESS!', 'You have successfully imported <b>'+( insertedCount )+'</b> new applicants, <b>'+( existedCount )+'</b> applicants already exists and <b>'+( failedCount )+'</b> applicants failed to add.');
+                    alertify.alert('SUCCESS!', 'You have successfully imported <b>' + (insertedCount) + '</b> new applicants, <b>' + (existedCount) + '</b> applicants already exists and <b>' + (failedCount) + '</b> applicants failed to add.');
                     failedCount = existedCount = insertedCount = chunkOBJ.loaded = chunkOBJ.current = chunkOBJ.totalChunks = chunkOBJ.recordsLength = 0;
                     return;
                 }
@@ -327,13 +409,13 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
         }
 
         //
-        function loader(show_it, msg){
+        function loader(show_it, msg) {
             show = show_it === undefined || show_it === true || show_it === 'show' ? 'show' : show_it;
-            msg  = msg === undefined ? '' : msg;
-            if(show_it == 'show'){
+            msg = msg === undefined ? '' : msg;
+            if (show_it == 'show') {
                 $('.js-loader-text').html(msg);
                 $('.js-loader').show();
-            }else{
+            } else {
                 $('.js-loader-text').html('');
                 $('.js-loader').fadeOut(150);
             }

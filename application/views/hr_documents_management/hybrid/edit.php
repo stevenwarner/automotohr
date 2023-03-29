@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management'); ?>"><i class="fa fa-chevron-left"></i>Document Management</a>
                                     <?php echo !isset($document_info) ? 'Add HR Document' : 'Edit HR Document'; ?>
                                 </span>
@@ -309,6 +309,9 @@
                                         <?php } ?>
 
                                         <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
+
+                                        <?php $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowEHD", "containerIdx" => "jsApproverFlowContainerEHD", "addEmployeeIdx" => "jsAddDocumentApproversEHD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxEHD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxEHD", "approverNoteIdx" => "jsApproversNoteEHD", 'mainId' => 'testApproversEHD']); ?>
+                                        
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="hr-box">
@@ -464,6 +467,7 @@
                                         </div>
                                     </form>
                                 </div>
+
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                     <div class="offer-letter-help-widget" style="top: 0;">
                                         <div class="how-it-works-insturction">
@@ -534,6 +538,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -558,8 +563,37 @@
 
 <link rel="stylesheet" href="<?=base_url('assets/mFileUploader/index.css');?>" />
 <script src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
+
 <script>
     $(document).ready(function () {
+        //
+        var approverPrefill = {};
+        var approverSection = approverSection = {
+            appCheckboxIdx: '.jsHasApprovalFlowEHD',
+            containerIdx: '.jsApproverFlowContainerEHD',
+            addEmployeeIdx: '.jsAddDocumentApproversEHD',
+            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxEHD',
+            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxEHD',
+            approverNoteIdx: '.jsApproversNoteEHD',
+            employeesList: <?= json_encode($employeesList); ?>,
+            documentId: 0
+        };
+        //
+        <?php if (isset($document_info) && !empty($document_info)) { ?>
+            var l = <?= json_encode($document_info); ?>;
+            //
+            if (l.has_approval_flow == 1) {
+                approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
+            }
+        <?php } ?>
+        //
+        $("#jsEditHybridDocument").documentApprovalFlow(approverSection);
+        //
         var pre_selected = '<?php echo !empty($document_info['video_url']) ? $document_info['video_source'] : ''; ?>';
 
         $('input[name="assign-in-days"]').val(0);
@@ -1130,3 +1164,4 @@
 </div>
 
 <?php $this->load->view('iframeLoader'); ?>
+<?php $this->load->view('hr_documents_management/scripts/approvers'); ?>

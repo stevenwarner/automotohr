@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
+ini_set('memory_limit', '50M');
 class Indeed_feed_new extends CI_Controller {
     public function __construct() {
         parent::__construct();
@@ -362,7 +362,7 @@ class Indeed_feed_new extends CI_Controller {
                         <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
                         <url><![CDATA[" . STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid . "]]></url>
                         <company><![CDATA[" . $companyName . "]]></company>
-                        <sourcename><![CDATA[" . STORE_NAME . "]]></sourcename>
+                        <sourcename><![CDATA[" . $companyName . "]]></sourcename>
                         <city><![CDATA[" . $city . "]]></city>
                         <state><![CDATA[" . $state['state_name'] . "]]></state>
                         <country><![CDATA[" . $country['country_code'] . "]]></country>
@@ -516,7 +516,7 @@ class Indeed_feed_new extends CI_Controller {
                         <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
                         <url><![CDATA[" . STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid . "]]></url>
                         <company><![CDATA[" . $companyName . "]]></company>
-                        <sourcename><![CDATA[" . STORE_NAME . "]]></sourcename>
+                        <sourcename><![CDATA[" . $companyName . "]]></sourcename>
                         <city><![CDATA[" . $city . "]]></city>
                         <state><![CDATA[" . $state['state_name'] . "]]></state>
                         <country><![CDATA[" . $country['country_code'] . "]]></country>

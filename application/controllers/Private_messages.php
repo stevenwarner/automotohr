@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Private_messages extends Public_Controller
 {
@@ -72,11 +72,11 @@ class Private_messages extends Public_Controller
             $employer_email = $employer_detail['email'];
             $access_level = $employer_detail['access_level'];
             $data['messages'] = $this->message_model->get_employer_messages($employer_id, $employer_email, $between, $company_id);
-//            $data['messages']                                                   = $db_data->result_array();
+            //
             $data['employee'] = $employer_detail;
 
             $this->load->helper('email');
-//            echo '<pre>'; print_r($data['messages']); echo '</pre>';
+            // 
             foreach ($data['messages'] as $myKey => $message) {
                 if (is_numeric($message['username'])) {
                     $result_data = $this->message_model->get_name_by_id($message['username'], $message['users_type']);
@@ -143,7 +143,7 @@ class Private_messages extends Public_Controller
                         }
                     }
 
-                    if($value['date'] >= $start_date && $value['date'] <= $end_date){
+                    if ($value['date'] >= $start_date && $value['date'] <= $end_date) {
                         $return_messages[] = $value;
                         continue;
                     }
@@ -152,7 +152,7 @@ class Private_messages extends Public_Controller
                 $data['messages'] = $return_messages;
             }
 
-            //echo '<pre>'; print_r($data['messages']); echo '</pre>';
+            //
             $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, $employer_email, $between, $company_id);
             $data['total'] = $this->message_model->get_messages_total_inbox($employer_id, $employer_email, $between, NULL);
             $data['page'] = 'inbox';
@@ -160,15 +160,9 @@ class Private_messages extends Public_Controller
             $load_view = check_blue_panel_status(false, 'self');
             $data['load_view'] = $load_view;
 
-//            if(strtolower($access_level) == 'employee') {
-//                $this->load->view('onboarding/on_boarding_header', $data);
-//                $this->load->view('manage_employer/my_messages_ems');
-//                $this->load->view('onboarding/on_boarding_footer');
-//            } else {
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_messages_new');
             $this->load->view('main/footer');
-//            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -236,10 +230,10 @@ class Private_messages extends Public_Controller
             $employer_id = $employer_detail['sid'];
             $company_id = $company_detail['sid'];
             $data['messages'] = $this->message_model->get_employer_outbox_messages($employer_id, $between);
-//            $data['messages']                                                   = $db_data->result_array();
+            //            $data['messages']                                                   = $db_data->result_array();
             $data['employee'] = $employer_detail;
             $this->load->helper('email');
-//            echo '<pre>'; print_r($data['messages']); echo '</pre>';
+            //            echo '<pre>'; print_r($data['messages']); echo '</pre>';
             foreach ($data['messages'] as $myKey => $message) {
                 if (is_numeric($message['to_id'])) {
                     $result_data = $this->message_model->get_name_by_id($message['to_id'], $message['users_type']);
@@ -304,7 +298,7 @@ class Private_messages extends Public_Controller
                         }
                     }
 
-                    if($value['date'] >= $start_date && $value['date'] <= $end_date){
+                    if ($value['date'] >= $start_date && $value['date'] <= $end_date) {
                         $return_messages[] = $value;
                         continue;
                     }
@@ -321,15 +315,10 @@ class Private_messages extends Public_Controller
             $load_view = check_blue_panel_status(false, 'self');
             $data['load_view'] = $load_view;
 
-//            if(strtolower($access_level) == 'employee') {
-//                $this->load->view('onboarding/on_boarding_header', $data);
-//                $this->load->view('manage_employer/my_messages_ems');
-//                $this->load->view('onboarding/on_boarding_footer');
-//            } else {
+
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_messages_new');
             $this->load->view('main/footer');
-//            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -364,7 +353,7 @@ class Private_messages extends Public_Controller
                 $to_type = $message_data[0]['to_type'];
                 $this->load->helper('email');
                 $contact_details = $this->message_model->get_contact_name($msg_id, $to_id, $from_id, $from_type, $to_type);
-//                echo '<pre>'; print_r($contact_details); echo '</pre>';
+                //                echo '<pre>'; print_r($contact_details); echo '</pre>';
                 if (valid_email(trim($from_id))) {
                     $name_only = $this->message_model->fetch_name($from_id, $company_id);
                     $contact_details['from_email'] = $from_id;
@@ -424,7 +413,7 @@ class Private_messages extends Public_Controller
                     $contact_details['from_name'] = $name_only;
                 }
 
-//              echo $this->db->last_query().'<pre>'; print_r($contact_details); echo '</pre>';
+                //              echo $this->db->last_query().'<pre>'; print_r($contact_details); echo '</pre>';
                 $data['contact_details'] = $contact_details;
                 $data['message'] = $message_data[0];
                 $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
@@ -501,6 +490,7 @@ class Private_messages extends Public_Controller
                     $message_data['to_type'] = 'admin';
                     $message_date = date('Y-m-d H:i:s');
                     $message_data['date'] = $message_date;
+                    $message_data['company_sid'] = $company_id;
                     $from = REPLY_TO;
                     $message_data['identity_key'] = generateRandomString(48);
                     $secret_key = $message_data['identity_key'] . "__";
@@ -539,7 +529,12 @@ class Private_messages extends Public_Controller
                         $message_data['attachment'] = $messageFile;
                         sendMailWithAttachment($from, $to, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
                     } else {
+
                         sendMail($from, $to, $subject, $body, $company_name, REPLY_TO);
+                    }
+
+                    if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                        $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to);
                     }
 
                     $this->message_model->save_message($message_data);
@@ -572,6 +567,7 @@ class Private_messages extends Public_Controller
                                 $message_data['from_type'] = 'employer';
                                 $message_data['date'] = $message_date;
                                 $message_data['identity_key'] = generateRandomString(50);
+                                $message_data['company_sid'] = $company_id;
                                 $employee_data = $email_result['employee'][0];
                                 $message_data['to_id'] = $employee_data['sid'];
                                 $message_data['to_type'] = 'employer';
@@ -615,6 +611,10 @@ class Private_messages extends Public_Controller
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
                                 }
 
+                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                    $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
+                                }
+
                                 $this->message_model->save_message($message_data);
                             }
 
@@ -624,6 +624,7 @@ class Private_messages extends Public_Controller
                                 $message_data['from_type'] = 'employer';
                                 $message_data['date'] = $message_date;
                                 $message_data['identity_key'] = generateRandomString(50);
+                                $message_data['company_sid'] = $company_id;
                                 $applicant_data = $email_result['applicant'][0];
                                 $message_data['to_id'] = $email;
                                 $message_data['to_type'] = 'applicant';
@@ -668,6 +669,10 @@ class Private_messages extends Public_Controller
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
                                 }
 
+                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                    $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
+                                }
+
                                 $this->message_model->save_message($message_data);
                             }
 
@@ -678,6 +683,8 @@ class Private_messages extends Public_Controller
                                 $message_data['identity_key'] = generateRandomString(50);
                                 $message_data['to_id'] = trim($email);
                                 $message_data['to_type'] = 'employer';
+                                $message_data['company_sid'] = $company_id;
+                                //
                                 $name = trim($email);
                                 $to_email = $email;
                                 $subject = $formpost['subject'];
@@ -716,6 +723,11 @@ class Private_messages extends Public_Controller
                                 } else {
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
                                 }
+                                //
+                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                    $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
+                                }
+                                //
                                 $this->message_model->save_message($message_data);
                             }
                         }
@@ -750,6 +762,7 @@ class Private_messages extends Public_Controller
                             $message_data['from_type'] = 'employer';
                             $message_data['date'] = $message_date;
                             $message_data['identity_key'] = generateRandomString(49);
+                            $message_data['company_sid'] = $company_id;
 
                             if ($type == 'employee') {
                                 foreach ($data['employees'] as $employee) {
@@ -812,6 +825,10 @@ class Private_messages extends Public_Controller
                                 sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
                             }
 
+                            if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                $this->send_email_notification($company_id, $company_name, $message_data['contact_name'], $employer_name, $to_email);
+                            }
+
                             $this->message_model->save_message($message_data);
                         }
 
@@ -842,21 +859,26 @@ class Private_messages extends Public_Controller
             check_access_permissions($security_details, 'dashboard', 'private_messages');
             $data['title'] = 'Reply to Messages';
             $data['message_type'] = $user_id = $this->message_model->get_message_type($edit_id);
-//            echo $this->db->last_query().'<br>'.$data['message_type']; 
+            //            echo $this->db->last_query().'<br>'.$data['message_type']; 
             $data['backbtn'] = base_url('private_messages');
-
+            //
+            $type_flag = '';
+            //
             if ($data['message_type'] != 1) {
                 if (is_numeric($data['message_type'])) {
                     $this->load->model('dashboard_model');
                     $employerData = $this->dashboard_model->getEmployerDetail($data['message_type']);
                     $data['message_type'] = $employerData['email'];
-//                    echo '<br>'.$data['message_type']; exit;
+                    //                    echo '<br>'.$data['message_type']; exit;
                     $data['messgae_type_flag'] = 'employer';
+                    $type_flag = 'employer';
                 } else {
                     $data['messgae_type_flag'] = 'email';
+                    $type_flag = 'email';
                 }
             } else {
                 $data['messgae_type_flag'] = 'admin';
+                $type_flag = 'admin';
             }
 
             $this->load->library('form_validation');
@@ -875,23 +897,32 @@ class Private_messages extends Public_Controller
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/compose_message_new');
                 $this->load->view('main/footer');
-
             } else {
                 $message = $this->message_model->get_message($edit_id);
 
                 if (isset($message[0])) {
-                    $user_type = $message[0]['users_type'];
+                    $user_type = $message[0]['to_type'];
 
-                    if ($user_type == 'employee') { // employee
+                    if ($type_flag == 'employer') { // employee
                         $from_id = $message[0]['from_id'];
                         $user = $this->message_model->get_user($from_id);
+                        //
                         $first_name = $user[0]['first_name'];
                         $last_name = $user[0]['last_name'];
+                    } else if ($user_type == 'admin') {
+                        $first_name = 'Admin';
+                        $last_name = '';
                     } else {  // applicant
                         $job_id = $message[0]['job_id'];
-                        $applicant = $this->message_model->get_applicant($job_id);
-                        $first_name = $applicant[0]['first_name'];
-                        $last_name = $applicant[0]['last_name'];
+                        //
+                        if (!empty($job_id) || is_numeric($job_id)) {
+                            $applicant = $this->message_model->get_applicant($job_id);
+                            $first_name = $applicant[0]['first_name'];
+                            $last_name = $applicant[0]['last_name'];
+                        } else {
+                            $first_name = $message[0]['from_id'];
+                            $last_name = '';
+                        }
                     }
                 } else {
                     $first_name = '';
@@ -914,6 +945,7 @@ class Private_messages extends Public_Controller
                 $message_data['from_type'] = 'employer';
                 $message_data['to_type'] = 'admin';
                 $message_data['date'] = date('Y-m-d H:i:s');
+                $message_data['company_sid'] = $company_id;
 
                 if ($formpost['send_invoice'] == 'to_admin') {
                     $message_data['to_id'] = '1';
@@ -938,12 +970,12 @@ class Private_messages extends Public_Controller
                 $from = REPLY_TO;
                 $message_data['identity_key'] = generateRandomString(48);
                 $secret_key = $message_data['identity_key'] . "__";
-//                $message_data['to_id']                                        = $message_data['toemail'];
+                //                $message_data['to_id']                                        = $message_data['toemail'];
                 unset($message_data['toemail']);
                 $this->message_model->save_message($message_data);
                 $employerData = $this->message_model->user_data_by_id($employer_id);
                 $employer_name = $employerData['username'];
-                $from = $employerData['email'];
+                // $from = $employerData['email'];
                 //getting email header and footer
                 $message_hf = (message_header_footer($company_detail['sid'], $company_detail['CompanyName']));
                 //send email
@@ -964,11 +996,24 @@ class Private_messages extends Public_Controller
                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                     . $secret_key . '</div>';
                 sendMail($from, $to, $subject, $body, $company_detail['CompanyName'], REPLY_TO);
+                //
+                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                    if (!empty($message_data['contact_name'])) {
+                        $name = $message_data['contact_name'];
+                    }
+                    //
+                    $this->send_email_notification($company_id, $company_detail['CompanyName'], $name, $employer_name, $to);
+                }
+
                 $this->session->set_flashdata('message', 'Success! Messsage sent successfully!');
                 redirect('private_messages', 'refresh');
             }
         }
     }
+
+
+
+
 
     function message_task()
     {
@@ -1002,5 +1047,112 @@ class Private_messages extends Public_Controller
         echo $this->db->last_query() . '<pre>';
         print_r($contact_details);
         echo '</pre>';
+    }
+
+    function send_email_notification($company_sid, $company_name, $to_name, $from_name, $to_email)
+    {
+        $message_hf = message_header_footer($company_sid, $company_name);
+
+        //
+        $template = get_email_template(PRIVATE_MESSAGE_NOTIFICATION);
+        $replacement_array = array();
+        $replacement_array['contact_name'] = $to_name;
+        $replacement_array['from_name'] = $from_name;
+        $subject = $template['subject'];
+        $message = convert_email_template($template['text'], $replacement_array);
+        //
+        $notification_email = $message_hf['header'] . $message . $message_hf['footer'];
+        //
+        log_and_sendEmail(
+            FROM_EMAIL_NOTIFICATIONS,
+            $to_email,
+            $subject,
+            $notification_email,
+            $company_name
+        );
+    }
+
+    public function get_support_page()
+    {
+        return SendResponse(200, ['view' => $this->load->view('manage_employer/compose_message_ems_help', [], true)]);
+    }
+
+    //  
+    public function compose_message_help()
+    {
+        $formpost = $this->input->post(NULL, TRUE);
+        $this->load->helper('email');
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $employer_detail = $data['session']['employer_detail'];
+        $company_detail = $data['session']['company_detail'];
+        $employer_id = $employer_detail['sid'];
+        $data['title'] = 'Compose Messages';
+        $security_sid = $employer_detail['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        $data['security_details'] = $security_details;
+        $data['employee'] = $employer_detail;
+
+        $company_id = $company_detail['sid'];
+        $company_name = $company_detail['CompanyName'];
+        $data['employer_sid'] = $employer_id;
+
+        $getCompanyHelpboxInfo = get_company_helpbox_info($company_id);
+        $data['toemail'] = $getCompanyHelpboxInfo[0]['box_support_email'];
+        $data['fromemail'] = $data['employee']['email'];
+
+        $toemployeeData = db_get_employee_profile_byemail($getCompanyHelpboxInfo[0]['box_support_email'], $getCompanyHelpboxInfo[0]['company_id']);
+
+
+        $message_data['to_id'] = $data['toemail'];
+        $to = $data['toemail'];
+        $name = $toemployeeData[0]['first_name'] . ' ' . $toemployeeData[0]['last_name'];
+        $message_data['from_id'] = $employer_id;
+        $message_data['from_type'] = 'employer';
+        $message_data['to_type'] = 'employer';
+        $message_data['users_type'] = 'employee';
+        $message_date = date('Y-m-d H:i:s');
+        $message_data['date'] = $message_date;
+        $message_data['company_sid'] = $company_id;
+        $message_data['subject'] = $formpost['subject'];
+        $message_data['message'] =  $formpost["message"];
+        $message_data['contact_name'] =  $toemployeeData[0]['first_name'] . ' ' . $toemployeeData[0]['last_name'];
+
+        $from = $data['fromemail'];
+        $message_data['identity_key'] = generateRandomString(48);
+        $secret_key = $message_data['identity_key'] . "__";
+        $employerData = $this->message_model->user_data_by_id($employer_id);
+        $employer_name = $employerData['username'];
+        $message_hf = (message_header_footer($data['session']['company_detail']['sid'], $data['session']['company_detail']['CompanyName']));
+        $subject = $formpost['subject'];
+        $body = $message_hf['header']
+            . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
+            . '<br><br>'
+            . $employer_name . '</b> has sent you a private message.'
+            . '<br><br><b>'
+            . 'Date:</b> '
+            . $message_date
+            . '<br><br><b>'
+            . 'Subject:</b> '
+            . $formpost["subject"]
+            . '<br><hr>'
+            . $formpost["message"] . '<br><br>'
+            . $message_hf['footer']
+            . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+            . $secret_key . '</div>';
+
+        sendMail($from, $to, $subject, $body, $company_name, $data['fromemail']);
+
+        $this->message_model->save_message($message_data);
+        $resp['Response'] = '200';
+        $this->resp($resp);
+    }
+
+
+    function resp($responseArray)
+    {
+        header('Content-type: application/json');
+        echo json_encode($responseArray);
+        exit(0);
     }
 }

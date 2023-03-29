@@ -8,7 +8,7 @@
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="page-header-area margin-top">
-                    <span class="page-heading down-arrow">
+                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                         <a href="<?php echo base_url('dashboard'); ?>" class="dashboard-link-btn"><i class="fa fa-angle-left"> </i> Dashboard</a>
                         <?php echo $title; ?>
                     </span>

@@ -1,3 +1,4 @@
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="container">
     <div class="row">
         <div class="col-xs-12">

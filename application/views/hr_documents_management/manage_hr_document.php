@@ -22,7 +22,7 @@ if ($pp_flag == 1) {
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
 
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo $document_center_url; ?>"><i class="fa fa-chevron-left"></i>Document Management</a>
                                     <?php echo $title; ?>
                                 </span>
@@ -518,6 +518,15 @@ if ($pp_flag == 1) {
     }
 
     $(document).ready(function() {
+        $('#confidentialSelectedEmployees').select2({
+            closeOnSelect: false
+        });
+        //
+        <?php if ($document["confidential_employees"]) { ?>
+            var confidential_employees = '<?php echo $document["confidential_employees"]; ?>';
+            $('#confidentialSelectedEmployees').select2('val', confidential_employees.split(','));
+        <?php } ?>    
+        //
         $('#form_upload_file').validate({
             rules: {
                 upload_file: {

@@ -30,9 +30,11 @@ $(function(){
         typeOBJ.type = getField('#js-type-edit');
         typeOBJ.policies = getField('#js-policies-edit');
         typeOBJ.deactivate = $('#js-archived-edit').prop('checked') === true ? 1 : 0;
+
+        typeOBJ.typeNew = getField('#js-type-edit-new');
         //
         if(typeOBJ.type == 0){
-            alertify.alert('WARNING!', 'Type name is required.', () => {});
+            alertify.alert('WARNING!', 'Type title is required.', () => {});
             return false;
         }
         //
@@ -106,6 +108,8 @@ $(function(){
             $('#js-policies-edit').select2('val', resp.Data.policies.length == window.timeoff.policies.length ? 'all' : resp.Data.policies);
             //
             $('#js-archived-edit').prop('checked', resp.Data.is_archived == 1 ? true: false);
+            $('#js-type-edit-new').val(resp.Data.category_type);
+
             //
             ml(false, 'type');
         });

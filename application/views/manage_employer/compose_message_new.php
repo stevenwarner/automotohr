@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+  <?php defined('BASEPATH') OR exit('No direct script access allowed');
 if(!$load_view) { ?>
 <div class="main-content">
     <div class="container-fluid">
@@ -10,7 +10,7 @@ if(!$load_view) { ?>
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">Private Messages (<?= $page ?>)</span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Private Messages (<?= $page ?>)</span>
                     </div>
                     <div class="message-action">
                         <div class="row">
@@ -18,7 +18,7 @@ if(!$load_view) { ?>
                                 <div class="message-action-btn">
                                     <a class="submit-btn" href="<?= base_url('private_messages') ?>">Inbox <?php if($total_messages>0 ) { ?><span>(<?= $total_messages ?>)</span><?php } ?></a>
                                     <a class="submit-btn" href="<?= base_url('outbox') ?>" >Outbox</a>
-                                    <a class="submit-btn" href="<?= base_url('compose_message') ?>" >Compose new Message </a>
+                                    <a class="submit-btn " href="<?= base_url('compose_message') ?>" >Compose new Message </a>
                                 </div>
                             </div>
                         </div>

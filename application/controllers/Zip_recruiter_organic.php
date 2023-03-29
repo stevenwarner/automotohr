@@ -1,5 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 require_once(APPPATH . 'libraries/aws/aws.php');
+ini_set('memory_limit', '50M');
 
 class Zip_recruiter_organic extends CI_Controller {
 

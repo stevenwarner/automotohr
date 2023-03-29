@@ -8,7 +8,7 @@
                 <h4 class="modal-title">Training Session Video</h4>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row" id="jsVideoSection">
                     <div class="col-xs-12">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -92,11 +92,26 @@
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6"></div>
                         </div>
                     </div>
-                </div>          
+                </div> 
+                <div class="row" id="jsDocumentSection" style="display: none;">
+                    <div class="row mb-2">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <a target="_blank" class="btn btn-info pull-right margin-right jsLinkDownload" href=""><i class="fa fa-download"></i> Download</a>
+                            <a target="_blank" class="btn btn-info pull-right margin-right jsLinkPrint" href=""> <i class="fa fa-print"></i>Print</a>
+                            <button class="btn btn-black pull-right margin-right jsHideSupportingDocument"><i class="fa fa-chevron-left"></i> Back to Video</button>
+                        </div>
+                    </div>   
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="embed-responsive embed-responsive-4by3" id="jsSupportingDocument"></div>
+                        </div>
+                    </div>     
+                </div>         
             </div>
         </div>
     </div>
 </div>
+
 <!-- Including Youtube player javascript API -->
 <script src="https://www.youtube.com/iframe_api"></script>
 <!-- Including Vimeo player javascript API -->

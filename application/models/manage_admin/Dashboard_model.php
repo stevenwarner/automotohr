@@ -1178,30 +1178,52 @@ class Dashboard_model extends CI_Model {
         return $result_arr;
     }
 
-function get_total_job_applications_week(){
+    function get_total_job_applications_week(){
+        $dto = new DateTime();
+        $dto->setISODate(date('Y', strtotime('now')), date('W', strtotime('now')));
+        $week_start = $dto->format('Y-m-d');
+        $dto->modify('+6 days');
+        $week_end = $dto->format('Y-m-d');
+        //
+        $start_date = $week_start.' 00:00:01';
+        $end_date  = $week_end.' 23:59:59';
+        //
         $this->db->where('applicant_type', 'Applicant');
-        $this->db->where('date_format(date_applied,"%Y-%u") = "'.( date('Y-W', strtotime('now')) ).'"', null);
+        // $this->db->where('date_format(date_applied,"%Y-%u") = "'.( date('Y-W', strtotime('now')) ).'"', null);
+        $this->db->where('date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }
 
     function get_total_job_applications_month(){
+        $start_month = date('Y-m-01').' 00:00:01';
+        $end_month  = date('Y-m-t').' 23:59:59';
+        //
         $this->db->where('applicant_type', 'Applicant');
-        $this->db->where('date_format(date_applied,"%Y-%m") = "'.( date('Y-m', strtotime('now')) ).'"', null);
+        // $this->db->where('date_format(date_applied,"%Y-%m") = "'.( date('Y-m', strtotime('now')) ).'"', null);
+        $this->db->where('date_applied BETWEEN "' . $start_month . '" and "' . $end_month . '"');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }
 
     function get_total_job_applications_year(){
+        $start_year = date('Y-01-01').' 00:00:01';
+        $end_year  = date('Y-12-31').' 23:59:59';
+        //
         $this->db->where('applicant_type', 'Applicant');
-        $this->db->where('date_format(date_applied,"%Y") = "'.( date('Y', strtotime('now')) ).'"', null);
+        // $this->db->where('date_format(date_applied,"%Y") = "'.( date('Y', strtotime('now')) ).'"', null);
+        $this->db->where('date_applied BETWEEN "' . $start_year . '" and "' . $end_year . '"');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }
 
     function get_total_job_applications_today(){
+        $start_date = date('Y-m-d').' 00:00:01';
+        $end_date  = date('Y-m-d').' 23:59:59';
+        //
         $this->db->where('applicant_type', 'Applicant');
-        $this->db->where('date_format(date_applied,"%Y-%m-%d") = "'.( date('Y-m-d', strtotime('now')) ).'"', null);
+        // $this->db->where('date_format(date_applied,"%Y-%m-%d") = "'.( date('Y-m-d', strtotime('now')) ).'"', null);
+        $this->db->where('date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }

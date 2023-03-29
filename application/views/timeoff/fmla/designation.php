@@ -318,6 +318,9 @@
 
 <script>
     $('.datepicker').datepicker({
-        format: 'mm-dd-yyyy'
+        format: 'mm-dd-yyyy',
+        changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
     });
 </script>

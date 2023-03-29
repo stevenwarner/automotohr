@@ -8,7 +8,7 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                             <a href="<?php echo base_url('job_fair_configuration/customize_form_listing'); ?>" class="dashboard-link-btn"><i class="fa fa-chevron-left"></i>Forms Listing</a>
                             <?php echo $title; ?>
                         </span>
@@ -404,6 +404,8 @@
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
+                                                <a href="javascript:;" class="btn btn-danger btn-xs delete-field" data-attr="<?php echo $field['sid'];?>"><i class="fa fa-trash"></i></a>
+                                                <a href="<?php echo base_url('job_fair_configuration/edit_custom_field/'.$id.'/'.$field['sid'])?>" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
                                             </div>
                                         </div>
                         <?php       } else { ?>

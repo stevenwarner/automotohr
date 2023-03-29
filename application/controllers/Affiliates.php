@@ -226,7 +226,7 @@ class Affiliates extends CI_Controller {
 
             $this->affiliation_model->insert_affiliation_form($insert_data);
 
-            $from = FROM_EMAIL_DEV;
+            $from = FROM_EMAIL_NOTIFICATIONS;
             //$to = TO_EMAIL_STEVEN;
             $subject = "Affiliate Program - New Request";
             $fromName = ucwords($insert_data['first_name'] . ' ' . $insert_data['last_name']);

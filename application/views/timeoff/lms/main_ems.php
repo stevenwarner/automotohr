@@ -1,6 +1,6 @@
 <!-- Main area -->
 <div class="csContent">
-    <div class="col-sm-9">
+    <div class="col-sm-12">
         <div class="panel panel-success">
             <div class="panel-heading">
                 <ul>
@@ -36,6 +36,8 @@
         </div>
     </div>
 </div>
+
+<?php $this->load->view('timeoff/add_edit_note'); ?>
 
 <script>
     $("#all_time_off").on("click", function () {

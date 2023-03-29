@@ -50,7 +50,7 @@ class Users_model extends CI_Model {
         //$theme4_meta3                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (NULL, 'home', " . $user_id . ", 'footer_content', 'a:2:{s:5:\"title\";s:39:\"JOIN A WINNING TEAM AT {{company_name}}\";s:7:\"content\";s:646:\"At {{company_name}} we thrive on inspiring pride among our team members and envy among our competitors. Our culture rests on providing opportunity and challenge for our team members while encouraging healthy work-life balance. To keep growing and building on our success we look for like-minded individuals to join our team. Bring your passion, energy and experience. We will give you the training, support and encouragement to succeed. To keep growing and building on our success we look for like-minded individuals to join our team. Bring your passion, energy and experience. We will give you the training, support and encouragement to succeed.\";}', 'theme-4');";
         $theme4_meta3                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (NULL, 'home', " . $user_id . ", 'footer_content', 'a:2:{s:5:\"title\";s:39:\"JOIN A WINNING TEAM AT {{company_name}}\";s:7:\"content\";s:467:\"<p>At {{company_name}} we thrive on inspiring pride among our team members and envy among our competitors.</p><p>Our culture rests on providing opportunity and challenge for our team members while encouraging healthy work-life balance.</p><p>To keep growing and building on our success we look for like-minded individuals to join our team.</p><p>Bring your passion, energy and experience.</p><p>We will give you the training, support and encouragement to succeed.</p>\";}', 'theme-4');";
         //$theme4_meta4                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_01', 'a:7:{s:5:\"title\";s:18:\"Looking for a Job?\";s:8:\"tag_line\";s:34:\"There is No Better Place To Start!\";s:19:\"show_video_or_image\";s:5:\"video\";s:5:\"image\";s:11:\"1-e1qhe.jpg\";s:5:\"video\";s:11:\"STRPsW6IY8k\";s:6:\"status\";s:1:\"1\";s:7:\"content\";s:23:\"This is a test message.\";}', 'theme-4')";
-        $theme4_meta4                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_01', 'a:7:{s:5:\"title\";s:30:\"LOOKING FOR AN AMAZING CAREER?\";s:8:\"tag_line\";s:34:\"There is No Better Place To Start!\";s:19:\"show_video_or_image\";s:5:\"video\";s:5:\"image\";s:11:\"1-e1qhe.jpg\";s:5:\"video\";s:11:\"STRPsW6IY8k\";s:6:\"status\";s:1:\"1\";s:7:\"content\";s:23:\"This is a test message.\";}', 'theme-4');";        
+        $theme4_meta4                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_01', 'a:7:{s:5:\"title\";s:50:\"Are You Looking For an Amazing Career Opportunity?\";s:8:\"tag_line\";s:25:\"There is No Better Place!\";s:19:\"show_video_or_image\";s:5:\"video\";s:5:\"image\";s:11:\"1-e1qhe.jpg\";s:5:\"video\";s:11:\"STRPsW6IY8k\";s:6:\"status\";s:1:\"1\";s:7:\"content\";s:23:\"This is a test message.\";}', 'theme-4');";        
         //$theme4_meta5                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_02', 'a:7:{s:5:\"image\";s:13:\"tab-6GRW9.jpg\";s:5:\"video\";s:0:\"\";s:5:\"title\";s:11:\"OUR CULTURE\";s:8:\"tag_line\";s:0:\"\";s:7:\"content\";s:751:\"We boast a diverse, energetic, dedicated and fast-paced culture in which teamwork and ingenuity thrive. We strive to create an environment that is entrepreneurial, nurtures personal development and builds on unique talents. Team member passion and commitment to excellence have helped make &quot;Store Name&quot; a leader in the industry. It&rsquo;s why &quot;Store Name&quot; stands out as a category leader and why people want to work with us, organizations want to partner with us and why clients come to us time and again as a leading resource for for all of their vehicle needs. Above all else, it makes &quot;Store Name&quot; a special company, one that can attribute its success to its products, clients, and most importantly, its team members.\";s:6:\"status\";s:1:\"1\";s:19:\"show_video_or_image\";s:5:\"image\";}', 'theme-4');";
         //$theme4_meta5                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_02', 'a:7:{s:5:\"image\";s:13:\"tab-6GRW9.jpg\";s:5:\"video\";s:0:\"\";s:5:\"title\";s:11:\"OUR CULTURE\";s:8:\"tag_line\";s:0:\"\";s:7:\"content\";s:733:\"We boast a diverse, energetic, dedicated and fast-paced culture in which teamwork and ingenuity thrive. We strive to create an environment that is entrepreneurial, nurtures personal development and builds on unique talents. Team member passion and commitment to excellence have helped make {{company_name}} a leader in the industry. It&rsquo;s why {{company_name}} stands out as a category leader and why people want to work with us, organizations want to partner with us and why clients come to us time and again as a leading resource for for all of their vehicle needs. Above all else, it makes {{company_name}} a special company, one that can attribute its success to its products, clients, and most importantly, its team members.\";s:6:\"status\";s:1:\"1\";s:19:\"show_video_or_image\";s:5:\"image\";}', 'theme-4');";
 
@@ -64,7 +64,7 @@ class Users_model extends CI_Model {
         $theme4_meta6                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_03', '"  . addslashes($serialized_info) . "', 'theme-4');";
 
         $theme4_meta7                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_04', 'a:7:{s:5:\"image\";s:0:\"\";s:5:\"video\";s:11:\"STRPsW6IY8k\";s:5:\"title\";s:0:\"\";s:8:\"tag_line\";s:0:\"\";s:7:\"content\";s:0:\"\";s:6:\"status\";s:1:\"0\";s:19:\"show_video_or_image\";s:4:\"none\";}', 'theme-4')";
-        $theme4_meta8                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_05', 'a:7:{s:5:\"title\";s:40:\"OUR PARTNER COMPANY CAREER OPPORTUNITIES\";s:8:\"tag_line\";s:34:\"There is No Better Place To Start!\";s:19:\"show_video_or_image\";s:5:\"image\";s:5:\"image\";s:11:\"1-e1qhe.jpg\";s:5:\"video\";s:11:\"STRPsW6IY8k\";s:6:\"status\";s:1:\"0\";s:7:\"content\";s:23:\"This is a test message.\";}', 'theme-4');";
+        $theme4_meta8                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_05', 'a:7:{s:5:\"title\";s:40:\"OUR PARTNER COMPANY CAREER OPPORTUNITIES\";s:8:\"tag_line\";s:25:\"There is No Better Place!\";s:19:\"show_video_or_image\";s:5:\"image\";s:5:\"image\";s:11:\"1-e1qhe.jpg\";s:5:\"video\";s:11:\"STRPsW6IY8k\";s:6:\"status\";s:1:\"0\";s:7:\"content\";s:23:\"This is a test message.\";}', 'theme-4');";
         $theme4_meta9                                                           = "INSERT INTO `portal_themes_meta_data` (`sid`, `page_name`, `company_id`, `meta_key`, `meta_value`, `theme_name`) VALUES (null, 'home', " . $user_id . ", 'section_06', 'a:7:{s:5:\"image\";s:0:\"\";s:5:\"video\";s:0:\"\";s:5:\"title\";s:12:\"Testimonials\";s:8:\"tag_line\";s:29:\"KIND WORDS FROM HAPPY MEMBERS\";s:7:\"content\";s:0:\"\";s:6:\"status\";s:1:\"0\";s:19:\"show_video_or_image\";s:5:\"image\";}', 'theme-4')";
         //Facebook configuration Query
         $facebook_cofig                                                         = "INSERT INTO `facebook_configuration` (`company_sid`) VALUES ($user_id)";
@@ -362,5 +362,130 @@ class Users_model extends CI_Model {
 
         }
 
+    }
+
+
+    /**
+     * Check the onboarding address
+     */
+    public function checkCompanyOnboardAddress(
+        int $companyId
+    ) {
+        //
+        return
+            $this->db
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->count_all_results('onboarding_office_locations');
+    }
+
+    /**
+     * Get company primary address
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyAddress(
+        int $companyId
+    ) {
+        //
+        return
+            $this->db
+            ->select([
+                'users.Location_Address',
+                'users.Location_City',
+                'users.Location_ZipCode',
+                'users.PhoneNumber',
+                'states.state_name',
+                'countries.country_name'
+            ])
+            ->join('states', 'states.sid = users.Location_State', 'left')
+            ->join('countries', 'countries.sid = users.Location_Country', 'left')
+            ->where([
+                'users.sid' => $companyId
+            ])
+            ->get('users')
+            ->row_array();
+    }
+
+    /**
+     * Get company address location
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyAddressLocation(
+        int $companyId
+    ) {
+        //
+        return
+            $this->db
+            ->select([
+                'address'
+            ])
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('company_addresses_locations')
+            ->row_array();
+    }
+
+    /**
+     * Copy the company default address as onboarding address
+     *
+     * @param int $companyId
+     * @param int $fromScript
+     * @return int
+     */
+    public function fixOnboardingAddress(
+        int $companyId,
+        int $fomScript = 1
+    ) {
+        // Check the onboarding address
+        $onboardAddress = $this->checkCompanyOnboardAddress($companyId);
+        //
+        if ($onboardAddress != 0) {
+            return 0;
+        }
+        // Get company default address
+        $companyAddress = $this->getCompanyAddress($companyId);
+        //
+        if (!empty($companyAddress)) {
+            //
+            $address = '';
+            $address .= !empty($companyAddress['Location_Address']) ? $companyAddress['Location_Address'] . ', ' : '';
+            $address .= !empty($companyAddress['Location_City']) ? $companyAddress['Location_City'] . ', ' : '';
+            $address .= !empty($companyAddress['Location_ZipCode']) ? $companyAddress['Location_ZipCode'] . ', ' : '';
+            $address .= !empty($companyAddress['state_name']) ? $companyAddress['state_name'] . ', ' : '';
+            $address .= !empty($companyAddress['country_name']) ? $companyAddress['country_name'] : '';
+            //
+            $address = trim(ltrim(rtrim($address, ', '), ', '));
+        } else {
+            //
+            $companyAddress = $this->getCompanyAddressLocation($companyId);
+            //
+            if (empty($companyAddress)) {
+                return 0;
+            }
+            //
+            $address = $companyAddress['address'];
+            $companyAddress['PhoneNumber'] = '';
+        }
+        //
+        $ins = [];
+        $ins['company_sid'] = $companyId;
+        $ins['location_title'] = 'Primary Location';
+        $ins['location_address'] = $address;
+        $ins['location_telephone'] = $companyAddress['PhoneNumber'];
+        $ins['location_fax'] = '';
+        $ins['location_status'] = 1;
+        $ins['date_created'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ins['is_primary'] = 1;
+        $ins['by_script'] = $fomScript;
+        //
+        $this->db->insert('onboarding_office_locations', $ins);
+        //
+        return $this->db->insert_id();
     }
 }

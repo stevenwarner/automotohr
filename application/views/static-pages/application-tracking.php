@@ -7,7 +7,7 @@
                     <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12">
                         <div class="row">
                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
-                                <span class="page-heading down-arrow">Application Tracking</span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Application Tracking</span>
                             </div>
                             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">				
                                 <div class="filter-form-wrp">

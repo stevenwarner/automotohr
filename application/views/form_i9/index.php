@@ -15,7 +15,7 @@
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
 
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
                                     <?php echo $title; ?></span>
                             </div>
@@ -240,7 +240,7 @@
                                                     <div class="form-group">
                                                         <label>Signature of Employee <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_3_signature_of_employee"></i></label>
                                                         <?php if($signed_flag == true) { ?>
-                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>"  />
+                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -310,7 +310,7 @@
                                                         <label>Signature of Preparer or Translator <i class="fa fa-question-circle-o modalShow" src="section_41_signature_of_preparer"></i></label>
                                                         <input type="hidden" name="section1_preparer_signature" id="section1_admin_preparer_signature">
                                                         <?php if(!empty($pre_form['section1_preparer_signature'])) { ?>
-                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_preparer_signature']; ?>"  />
+                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_preparer_signature']; ?>" class="esignaturesize" />
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -514,7 +514,10 @@
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="form-group">
                                                                 <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
-                                                                <input type="text" name="section2_lista_part1_expiration_date"
+                                                                <input type="text" 
+                                                                
+                                                                readonly
+                                                                name="section2_lista_part1_expiration_date"
                                                                        id="section2_lista_part1_expiration_date"
                                                                        value="<?= isset($pre_form['section2_lista_part1_expiration_date']) && !empty($pre_form['section2_lista_part1_expiration_date']) && $pre_form['section2_lista_part1_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part1_expiration_date'])) : "";?>"
                                                                        class="form-control date_picker2" readonly>
@@ -802,7 +805,7 @@
                                                             <div class="form-group">
                                                                 <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
                                                                 <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
-                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>"  />
+                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
                                                                 <?php } else { ?>
                                                                     <!-- the below loaded view add e-signature -->
                                                                     <a class="btn btn-success btn-sm sign_of_emp_or_aut_rep" href="javascript:;">Create E-Signature</a>
@@ -1163,7 +1166,7 @@
                                                                             <div class="form-group">
                                                                                 <label>Signature of Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
                                                                                 <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
-                                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>"  />
+                                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize"  />
                                                                                 <?php } else { ?>
                                                                                     <!-- the below loaded view add e-signature -->
                                                                                     <a class="btn btn-success btn-sm sign_of_aut_rep" href="javascript:;">Create E-Signature</a>
@@ -1524,7 +1527,9 @@
 
             $('.date_picker2').datepicker({
                 dateFormat: 'mm-dd-yy',
-                changeYear: true
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo STARTING_DATE_LIMIT; ?>"
             });
 
             $('.date_of_birth').datepicker({

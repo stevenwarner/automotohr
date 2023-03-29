@@ -98,8 +98,8 @@ class Users extends CI_Controller
         $result = $this->users_model->login($username, $password);
 
 //        if ($keep == 'on') {
-//            setcookie(STORE_NAME . "[username]", $this->encryptCookie($username), time() + 3600);
-//            setcookie(STORE_NAME . "[password]", $this->encryptCookie($password), time() + 3600);
+//            setcookie(STORE_NAME . "[username]", encryptCookie($username), time() + 3600);
+//            setcookie(STORE_NAME . "[password]", encryptCookie($password), time() + 3600);
 //        }
 
         if ($result) {
@@ -142,34 +142,6 @@ class Users extends CI_Controller
             $this->session->set_flashdata('message', '<b>Error:</b> Invalid Login Credentials!');
             $this->form_validation->set_message('check_database', 'Your Username and/or Password is not correct!');
             return false;
-        }
-    }
-
-    function encryptCookie($value) { // https://secure.php.net/manual/en/function.openssl-encrypt.php#refsect1-function.openssl-encrypt-examples
-        if (!$value) {
-            return false;
-        }
-        
-        $key = 'roltyFoamisTheDI';
-        $plaintext = $value;
-        $version = phpversion();
-            
-        if($version < 6) {
-            $ivlen = openssl_cipher_iv_length($cipher="aes-128-cbc");
-            $iv = openssl_random_pseudo_bytes($ivlen);
-            $ciphertext_raw = openssl_encrypt($plaintext, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
-            $hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
-            $ciphertext = base64_encode( $iv.$hmac.$ciphertext_raw );
-            return $ciphertext;
-        } else {
-            $cipher = "aes-128-cbc";
-            
-            if (in_array($cipher, openssl_get_cipher_methods())) {
-                $ivlen = openssl_cipher_iv_length($cipher);
-                $iv = openssl_random_pseudo_bytes($ivlen);
-                $ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv, $tag);
-                return $ciphertext;                
-            }
         }
     }
 
@@ -391,7 +363,7 @@ class Users extends CI_Controller
             }
 
             if($is_blocked_email == 'not-blocked') {
-                $from = FROM_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $subject = "Contact Us enquiry - ".STORE_NAME;
                 $fromName = $contact_name;
                 $replyTo = $contact_email;

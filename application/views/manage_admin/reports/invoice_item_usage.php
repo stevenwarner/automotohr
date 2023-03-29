@@ -147,7 +147,10 @@
 <script>
     $(document).ready(function(){
         $('.datepicker').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
     });
 

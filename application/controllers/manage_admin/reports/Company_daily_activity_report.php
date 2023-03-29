@@ -26,6 +26,8 @@ class Company_daily_activity_report extends Admin_Controller
         // ** Check Security Permissions Checks - End ** //
 
         $companies = $this->employer_login_duration_model->get_all_companies();
+       // print_r($companies);
+      //  die();
         $this->data['companies'] = $companies;
 
         $this->data['page_title'] = 'Company Daily Activity Report';

@@ -39,7 +39,7 @@ class Demo_model extends CI_Model {
         } else {
             if($is_admin == 0) {
                 $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your free demo request, we will contact you soon.');
-                $from = FROM_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $body = '<p><img src="' . base_url() . 'assets/images/new_logo.JPG"/></p>'
                         . 'Dear Admin,'
                         . '<br><br>There is new demo request at '
@@ -101,7 +101,7 @@ class Demo_model extends CI_Model {
             $this->session->set_flashdata('message', '<b>Failed: </b>Could not send your Enquiry, Please try Again!');
         } else {
             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your free demo request, we will contact you soon.');
-            $from = FROM_EMAIL_DEV;
+            $from = FROM_EMAIL_NOTIFICATIONS;
             $body = '<p><img src="' . base_url() . 'assets/images/new_logo.JPG"/></p>'
                 . 'Dear Admin,'
                 . '<br><br>There is new demo request at '

@@ -356,14 +356,23 @@ if ($class == 'performance_management') { ?>
     //
     function footer_fixer() {
         //
-        if ($('.csPageWrap').length === 0) {
+        var baseClasses = ['.csPageWrap', '.main-content','.jsmaincontent'];
+        //
+        var baseClass = baseClasses.filter(function(val){
+            return $(val).length == 0 ? false : true;
+        });
+        //
+        if (baseClass.length == 0) {
             return;
         }
         //
-        var wh = $(document).height() - $('.csPageWrap').height();
+        baseClass = baseClass[0];
+        //
+        var wh = $(document).height() - $(baseClass).height();
         var fh = $('footer').height();
         $('footer').css('margin-top', (wh - fh) + 'px')
     }
+
 
     //
     $(document).on('click', '.jsToggleHelp', function(event) {

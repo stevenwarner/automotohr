@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Hire_onboarding_applicant extends CI_Controller
 {
@@ -46,20 +46,18 @@ class Hire_onboarding_applicant extends CI_Controller
 
                     $employee_status = 1;
                     $access_level = 'Employee';
-                    if(isset($credentials['access_level']))
-                    {
+                    if (isset($credentials['access_level'])) {
                         $access_level = ucwords($credentials['access_level']);
                     }
 
-                    if(isset($credentials['joining_date']))
-                    {
+                    if (isset($credentials['joining_date'])) {
                         $joining_date = ucwords($credentials['joining_date']);
                     }
                     $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
                     $status = $result['status'];
 
-                    if($status == 'success'){
-//                    if(1){
+                    if ($status == 'success') {
+                        //                    if(1){
                         //Send New Applicant On-board Email Notification
                         $notifications_status                                           = get_notifications_status($company_sid);
                         $onboarding_request_email_notification                          = 0;
@@ -78,29 +76,29 @@ class Hire_onboarding_applicant extends CI_Controller
                                 foreach ($onboarding_request_handlers as $emp_info) {
                                     $sms_notify = 0;
                                     $contact_no = 0;
-                                    if($company_sms_notification_status){
-                                        if($emp_info['employer_sid'] != 0){
+                                    if ($company_sms_notification_status) {
+                                        if ($emp_info['employer_sid'] != 0) {
                                             $notify_by = get_employee_sms_status($this, $emp_info['employer_sid']);
-                                            if(strpos($notify_by['notified_by'],'sms') !== false){
+                                            if (strpos($notify_by['notified_by'], 'sms') !== false) {
                                                 $contact_no = $notify_by['PhoneNumber'];
                                                 $sms_notify = 1;
                                             }
-                                        }else{
-                                            if(!empty($emp_info['contact_no'])){
+                                        } else {
+                                            if (!empty($emp_info['contact_no'])) {
                                                 $contact_no = $emp_info['contact_no'];
                                                 $sms_notify = 1;
                                             }
                                         }
-                                        if($sms_notify){
+                                        if ($sms_notify) {
                                             $this->load->library('Twilioapp');
                                             // Send SMS
-                                            $sms_template = get_company_sms_template($this,$company_sid,'onboarding_request');
+                                            $sms_template = get_company_sms_template($this, $company_sid, 'onboarding_request');
                                             $replacement_sms_array = array(); //Send Payment Notification to admin.
-                                            $replacement_sms_array['applicant_name'] = $applicant_info['first_name']. ' '. $applicant_info['last_name'];
+                                            $replacement_sms_array['applicant_name'] = $applicant_info['first_name'] . ' ' . $applicant_info['last_name'];
                                             $replacement_sms_array['contact_name'] = ucwords(strtolower($emp_info['contact_name']));
-                                            $sms_body = 'This sms is to inform you that '.$applicant_info['first_name']. ' '. $applicant_info['last_name'].'�has completed their on-boarding Processing.';
-                                            if(sizeof($sms_template)>0){
-                                                $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_sms_array);
+                                            $sms_body = 'This sms is to inform you that ' . $applicant_info['first_name'] . ' ' . $applicant_info['last_name'] . '�has completed their on-boarding Processing.';
+                                            if (sizeof($sms_template) > 0) {
+                                                $sms_body = replace_sms_body($sms_template['sms_body'], $replacement_sms_array);
                                             }
                                             sendSMS(
                                                 $contact_no,
@@ -113,7 +111,7 @@ class Hire_onboarding_applicant extends CI_Controller
                                             );
                                         }
                                     }
-//                                    $emp_info = $this->job_approval_rights_model->getemployeedetails($ertre, $company_sid);
+                                    //                                    $emp_info = $this->job_approval_rights_model->getemployeedetails($ertre, $company_sid);
 
                                     if (!empty($emp_info)) {
                                         $userEmail = $emp_info['email'];
@@ -135,25 +133,23 @@ class Hire_onboarding_applicant extends CI_Controller
                                     }
                                 }
                             }
-
                         }
 
                         $this->session->sess_destroy();
                         redirect('login', 'refresh');
                     } else {
-                        $this->session->set_flashdata('message', '<strong>Error</strong> '. $result['message'].'');
+                        $this->session->set_flashdata('message', '<strong>Error</strong> ' . $result['message'] . '');
                         redirect('onboarding/getting_started/' . $unique_sid, 'refresh');
                     }
 
                     break;
             }
         }
-
     }
 
-    private function move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date=null)
+    private function move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date = null)
     {
-        if($joining_date == null) $joining_date = date('Y-m-d');
+        if ($joining_date == null) $joining_date = date('Y-m-d');
         else $joining_date = DateTime::createFromFormat('m/d/Y', $joining_date)->format('Y-m-d');
         $company_name = $company_info['CompanyName'];
         //Step No:1, Check if this email address is already registered in the company.
@@ -179,22 +175,22 @@ class Hire_onboarding_applicant extends CI_Controller
         }
 
         $resume = $this->hire_onboarding_applicant_model->check_for_resume($applicant_sid);
-        if($resume != 0){
+        if ($resume != 0) {
             $applicant_profile_info['resume'] = $resume;
         }
 
         // For job title
-        if($applicant_profile_info['job_sid'] != 0){
+        if ($applicant_profile_info['job_sid'] != 0) {
             $applicant_profile_info['jobTitle'] = $this->hire_onboarding_applicant_model->getJobTitleById($applicant_profile_info['job_sid']);
             //
-            if(empty($applicant_profile_info['jobTitle'])) $applicant_profile_info['jobTitle'] = $applicant_profile_info['desired_job_title'];
+            if (empty($applicant_profile_info['jobTitle'])) $applicant_profile_info['jobTitle'] = $applicant_profile_info['desired_job_title'];
         } else $applicant_profile_info['jobTitle'] = $applicant_profile_info['desired_job_title'];
 
         $employer_data = array();
         $employer_data['first_name'] = $applicant_profile_info['first_name'];
         $employer_data['last_name'] = $applicant_profile_info['last_name'];
         $employer_data['active'] = $employee_status;
-        $employer_data['registration_date'] = $joining_date.date(' H:i:s');
+        $employer_data['registration_date'] = $joining_date . date(' H:i:s');
         // $employer_data['registration_date'] = date('Y-m-d H:i:s', strtotime('+3 days'));
         $employer_data['access_level'] = $access_level;
         $employer_data['resume'] = $applicant_profile_info['resume'];
@@ -219,14 +215,50 @@ class Hire_onboarding_applicant extends CI_Controller
         $employer_data['username'] = $username;
         $employer_data['joined_at'] = $joining_date;
         $employer_data['created_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
-        if (!empty($password)){
-           $employer_data['password'] = do_hash($password, 'md5');
+        if (!empty($password)) {
+            $employer_data['password'] = do_hash($password, 'md5');
         }
         $employer_data['ssn'] = $applicant_profile_info['ssn'];
         $employer_data['dob'] = $applicant_profile_info['dob'];
+
+        if (!empty($applicant_profile_info['marital_status'])) {
+            $employer_data['marital_status'] = $applicant_profile_info['marital_status'];
+        }
+
+        if (!empty($applicant_profile_info['gender'])) {
+            $employer_data['gender'] = $applicant_profile_info['gender'];
+        }
+
+        if (!empty($applicant_profile_info['ip_address'])) {
+            $employer_data['ip_address'] = $applicant_profile_info['ip_address'];
+        }
+        
+        if (!empty($applicant_profile_info['cover_letter'])) {
+            $employer_data['cover_letter'] = $applicant_profile_info['cover_letter'];
+        }
+        
+        if (!empty($applicant_profile_info['video_type'])) {
+            $employer_data['video_type'] = $applicant_profile_info['video_type'];
+        }
+        
+        if (!empty($applicant_profile_info['middle_name'])) {
+            $employer_data['middle_name'] = $applicant_profile_info['middle_name'];
+        }
+
+        if (!empty($applicant_profile_info['nick_name'])) {
+            $employer_data['nick_name'] = $applicant_profile_info['nick_name'];
+        }
+        
         //
+
+       //
+        $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
+        $employer_data['department_sid'] = $departmentsTeams['department_sid'];
+        $employer_data['team_sid'] = $departmentsTeams['team_sid'];
+
         // insert employer data to table and get its ID
         $employee_result = $this->hire_onboarding_applicant_model->insert_company_employee($employer_data, $applicant_sid, $applicant_job_sid);
+
 
         if ($employee_result != 'error' && is_numeric($employee_result) && is_int($employee_result)) { // There was some issue.
             //Update Applicant Data
@@ -291,8 +323,8 @@ class Hire_onboarding_applicant extends CI_Controller
 
             // 19) EEOC Form
             $eeoc = $this->hire_onboarding_applicant_model->copy_eeoc_as_user($applicant_sid, $employee_result);
-            if(preg_match('/applybuz/', base_url())){
-                if($ids){
+            if (preg_match('/applybuz/', base_url())) {
+                if ($ids) {
                     foreach ($ids as $k0 => $v0) {
                         ics_files(
                             $v0['sid'],
@@ -340,7 +372,8 @@ class Hire_onboarding_applicant extends CI_Controller
         }
     }
 
-    public function hire_applicant_manually () {
+    public function hire_applicant_manually()
+    {
         $session = $this->session->userdata('logged_in');
         $security_sid = $session['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
@@ -367,51 +400,52 @@ class Hire_onboarding_applicant extends CI_Controller
         $applicant_email    = $applicant_detail['email'];
         $first_name         = strtolower($applicant_detail['first_name']);
         $last_name          = strtolower($applicant_detail['last_name']);
-        $username           = str_replace(' ', '', $first_name).str_replace(' ', '', $last_name);
+        $username           = str_replace(' ', '', $first_name) . str_replace(' ', '', $last_name);
 
         $is_exist           = $this->hire_onboarding_applicant_model->is_username_exist($username);
 
         if ($is_exist == 1) {
             $rendom = generateRandomString(5);
-            $username = $username.$rendom;
+            $username = $username . $rendom;
         }
 
         $configuration      = $this->onboarding_model->get_onboarding_configuration('applicant', $applicant_sid);
         $credentials_data   = $this->get_single_record_from_array($configuration, 'section', 'credentials');
         $credentials        = empty($credentials_data) ? array() : unserialize($credentials_data['items']);
 
-        if(isset($credentials['access_level']))
-        {
+        if (isset($credentials['access_level'])) {
             $access_level = ucwords($credentials['access_level']);
         }
 
-        if(isset($credentials['joining_date']))
-        {
+        if (isset($credentials['joining_date'])) {
             $joining_date = ucwords($credentials['joining_date']);
         }
 
+
+       
         $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
         $status = $result['status'];
 
-        if($status == 'success'){
-            $this->session->set_flashdata('message', '<strong>Success:</strong> You have moved applicant <b>'.$first_name.' '.$last_name.'</b> to the "Employee / Team Members" section!');
+        if ($status == 'success') {
+            $this->session->set_flashdata('message', '<strong>Success:</strong> You have moved applicant <b>' . $first_name . ' ' . $last_name . '</b> to the "Employee / Team Members" section!');
             print_r(json_encode(array('status' => 'success', 'adid' => $result['added_id'])));
         } else {
             $error_type = $result['category'];
             if ($error_type == "email_error") {
                 print_r(json_encode(array('status' => 'failure_e')));
-//                echo 'failure_e';
+                //                echo 'failure_e';
             } else if ($error_type == "applicant_not_found_error") {
                 print_r(json_encode(array('status' => 'failure_f')));
-//                echo 'failure_f';
+                //                echo 'failure_f';
             } else if ($error_type == "record_not_insert_error") {
                 print_r(json_encode(array('status' => 'failure_i')));
-//                echo 'failure_i';
+                //                echo 'failure_i';
             }
         }
     }
 
-    public function merge_applicant_with_employee(){
+    public function merge_applicant_with_employee()
+    {
         $session = $this->session->userdata('logged_in');
         $security_sid = $session['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
@@ -435,7 +469,7 @@ class Hire_onboarding_applicant extends CI_Controller
             return print_r(json_encode($array));
         }
         $resume = $this->hire_onboarding_applicant_model->check_for_resume($applicant_sid);
-        if($resume != 0){
+        if ($resume != 0) {
             $applicant_profile_info['resume'] = $resume;
         }
 
@@ -452,28 +486,31 @@ class Hire_onboarding_applicant extends CI_Controller
         //Preparing Difference Array
         $employer_data = array();
         $employer_data['applicant_sid'] = $applicant_sid;
-        if((empty($employee_profile_info['resume']) || $employee_profile_info['resume'] == NULL) && !empty($applicant_profile_info['resume'])){
+        if ((empty($employee_profile_info['resume']) || $employee_profile_info['resume'] == NULL) && !empty($applicant_profile_info['resume'])) {
             $employer_data['resume'] = $applicant_profile_info['resume'];
             $update_flag = 1;
         }
 
         //
-        if((empty($employee_profile_info['profile_picture']) || $employee_profile_info['profile_picture'] == NULL) && !empty($applicant_profile_info['pictures'])){
+        if ((empty($employee_profile_info['profile_picture']) || $employee_profile_info['profile_picture'] == NULL) && !empty($applicant_profile_info['pictures'])) {
             $employer_data['profile_picture'] = $applicant_profile_info['pictures'];
             $update_flag = 1;
         }
         //
-        if((empty($employee_profile_info['full_employment_application']) || $employee_profile_info['full_employment_application'] == NULL) && !empty($applicant_profile_info['full_employment_application'])){
+        if ((empty($employee_profile_info['full_employment_application']) || $employee_profile_info['full_employment_application'] == NULL) && !empty($applicant_profile_info['full_employment_application'])) {
             $employer_data['full_employment_application'] = $applicant_profile_info['full_employment_application'];
             $update_flag = 1;
-        }else if(!empty($employee_profile_info['full_employment_application']) && !empty($applicant_profile_info['full_employment_application'])){
+            //
+            $this->hire_onboarding_applicant_model->form_full_employment_application($applicant_sid, $employee_sid);
+            //
+        } else if (!empty($employee_profile_info['full_employment_application']) && !empty($applicant_profile_info['full_employment_application'])) {
             //
             $fef = unserialize($employee_profile_info['full_employment_application']);
             $faf = unserialize($applicant_profile_info['full_employment_application']);
             //
-            foreach($faf as $k => $v){
+            foreach ($faf as $k => $v) {
                 //
-                if(!isset($fef[$k]) || empty($fef[$k])){
+                if (!isset($fef[$k]) || empty($fef[$k])) {
                     $fef[$k] = $v;
                 }
             }
@@ -484,13 +521,13 @@ class Hire_onboarding_applicant extends CI_Controller
         }
 
         //
-        if(
+        if (
             (empty($employee_profile_info['Location_Country']) || $employee_profile_info['Location_Country'] == NULL) &&
             (empty($employee_profile_info['Location_State']) || $employee_profile_info['Location_State'] == NULL) &&
             (empty($employee_profile_info['Location_City']) || $employee_profile_info['Location_City'] == NULL) &&
             (empty($employee_profile_info['Location_Address']) || $employee_profile_info['Location_Address'] == NULL) &&
             (empty($employee_profile_info['Location_ZipCode']) || $employee_profile_info['Location_ZipCode'] == NULL)
-        ){
+        ) {
             $employer_data['Location_Country'] = $applicant_profile_info['country'];
             $employer_data['Location_State'] = $applicant_profile_info['state'];
             $employer_data['Location_City'] = $applicant_profile_info['city'];
@@ -500,19 +537,19 @@ class Hire_onboarding_applicant extends CI_Controller
         }
 
         //
-        if((empty($employee_profile_info['PhoneNumber']) || $employee_profile_info['PhoneNumber'] == NULL ) && !empty($applicant_profile_info['phone_number'])){
+        if ((empty($employee_profile_info['PhoneNumber']) || $employee_profile_info['PhoneNumber'] == NULL) && !empty($applicant_profile_info['phone_number'])) {
             $employer_data['PhoneNumber'] = $applicant_profile_info['phone_number'];
             $update_flag = 1;
         }
 
         //
-        if((empty($employee_profile_info['YouTubeVideo']) || $employee_profile_info['YouTubeVideo'] == NULL) && !empty($applicant_profile_info['YouTube_Video'])){
+        if ((empty($employee_profile_info['YouTubeVideo']) || $employee_profile_info['YouTubeVideo'] == NULL) && !empty($applicant_profile_info['YouTube_Video'])) {
             $employer_data['YouTubeVideo'] = $applicant_profile_info['YouTube_Video'];
             $update_flag = 1;
         }
 
         //
-        if((empty($employee_profile_info['job_title']) || $employee_profile_info['job_title'] == NULL) && !empty($applicant_profile_info['desired_job_title'])){
+        if ((empty($employee_profile_info['job_title']) || $employee_profile_info['job_title'] == NULL) && !empty($applicant_profile_info['desired_job_title'])) {
             $employer_data['job_title'] = $applicant_profile_info['desired_job_title'];
             $update_flag = 1;
         }
@@ -520,40 +557,51 @@ class Hire_onboarding_applicant extends CI_Controller
         //
         $emp_extra_unserial = unserialize($employee_profile_info['extra_info']);
         $emp_extra_keys = array();
-        if($emp_extra_unserial && sizeof($emp_extra_unserial)){
+        if ($emp_extra_unserial && sizeof($emp_extra_unserial)) {
             $emp_extra_keys = array_keys($emp_extra_unserial);
         }
         $app_extra_unserial = unserialize($applicant_profile_info['extra_info']);
-        if($app_extra_unserial && sizeof($app_extra_unserial)){
-            foreach($app_extra_unserial as $key => $info){
-                if(!in_array($key,$emp_extra_keys)){
+        if ($app_extra_unserial && sizeof($app_extra_unserial)) {
+            foreach ($app_extra_unserial as $key => $info) {
+
+                if (!in_array($key, $emp_extra_keys)) {
                     $emp_extra_unserial[$key] = $info;
                     $update_flag = 1;
                 }
+                
             }
-            if($emp_extra_unserial && sizeof($emp_extra_unserial)) {
+
+            if ($emp_extra_unserial && sizeof($emp_extra_unserial)) {
                 $employer_data['extra_info'] = serialize($emp_extra_unserial);
             }
+
         }
 
         //
-        if((empty($employee_profile_info['linkedin_profile_url']) || $employee_profile_info['linkedin_profile_url'] == NULL) && !empty($applicant_profile_info['linkedin_profile_url'])){
+        if ((empty($employee_profile_info['linkedin_profile_url']) || $employee_profile_info['linkedin_profile_url'] == NULL) && !empty($applicant_profile_info['linkedin_profile_url'])) {
             $employer_data['linkedin_profile_url'] = $applicant_profile_info['linkedin_profile_url'];
             $update_flag = 1;
         }
 
         //
-        if((empty($employee_profile_info['ssn']) || $employee_profile_info['ssn'] == NULL) && !empty($applicant_profile_info['ssn'])){
+        if ((empty($employee_profile_info['ssn']) || $employee_profile_info['ssn'] == NULL) && !empty($applicant_profile_info['ssn'])) {
             $employer_data['ssn'] = $applicant_profile_info['ssn'];
             $update_flag = 1;
         }
 
         //
-        if((empty($employee_profile_info['dob']) || $employee_profile_info['dob'] == NULL) && !empty($applicant_profile_info['dob'])){
+        if ((empty($employee_profile_info['dob']) || $employee_profile_info['dob'] == NULL) && !empty($applicant_profile_info['dob'])) {
             $employer_data['dob'] = $applicant_profile_info['dob'];
             $update_flag = 1;
         }
 
+        //
+        $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
+        if ($employee_profile_info['department_sid']== 0 && $departmentsTeams['department_sid']!=0 && $employee_profile_info['team_sid']== 0  && $departmentsTeams['team_sid']!=0 ) {
+            $employer_data['department_sid'] = $departmentsTeams['department_sid'];
+            $employer_data['team_sid'] = $departmentsTeams['team_sid'];
+        }
+    
         $this->hire_onboarding_applicant_model->update_company_employee($employer_data, $applicant_sid, $employee_sid, 0);
 
         // now move all other information
@@ -597,6 +645,9 @@ class Hire_onboarding_applicant extends CI_Controller
         // 13) Onboarding Configuration
         $onboarding_configuration = $this->hire_onboarding_applicant_model->update_onboarding_configuration($applicant_sid, $employee_sid);
 
+        // Groups
+        $applicant_groups = $this->hire_onboarding_applicant_model->update_groups($applicant_sid, $employee_sid);
+
         // 14) Documents
         $documents = $this->hire_onboarding_applicant_model->update_documents($applicant_sid, $employee_sid);
 
@@ -613,11 +664,26 @@ class Hire_onboarding_applicant extends CI_Controller
 
         // 19) EEOC Form
         $eeoc = $this->hire_onboarding_applicant_model->update_employee_copy_eeoc_as_user($applicant_sid, $employee_sid);
+        //
+        $merge_applicant_data = [
+            'user_profile' => $applicant_profile_info,
+            'old_data_update' => $employer_data,
+            'emergency_contacts' => $applicant_emergency_contacts,
+            'equipment_information' => $applicant_equipment_information,
+            'dependant_information' => $applicant_dependant_information,
+            'license_information' => $applicant_license_information,
+            'direct_deposit_information' => $bank_details,
+            'e_signature' => $e_signature_data,
+            'eeoc' => $eeoc,
+            'group' => $applicant_groups,
+            'documents' => $documents
+        ];
+        //
+        $this->hire_onboarding_applicant_model->save_merge_applicant_info($merge_applicant_data, $applicant_sid, $employee_sid);
+        //
         $array['status'] = "success";
         $array['message'] = "Success! Applicant is successfully merged!";
         $this->session->set_flashdata('message', '<b>Success:</b> Applicant Merged Successfully!');
         return print_r(json_encode($array));
     }
-
-
 }

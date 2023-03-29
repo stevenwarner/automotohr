@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Onboarding Configuration</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Onboarding Configuration</span>
                         </div>
                         <div class="row" id="add_new_useful_link_form">
                             <div class="col-xs-12">

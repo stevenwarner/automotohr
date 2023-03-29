@@ -35,7 +35,7 @@ class Cron_payments extends CI_Controller {
         parent::__construct();
         $this->load->model('cron_payments_model');
         $this->load->model('manage_admin/admin_invoices_model');
-        $test_email = FROM_EMAIL_DEV;
+        $test_email = FROM_EMAIL_NOTIFICATIONS;
         mail($test_email, 'AutomtoHr Debug - Cron_payments Constructor Called', 'Email Generated On : ' . date('Y-m-d H:i:s'));
         mail($test_email, 'AutomtoHr Debug - Payment Helper Loaded', 'Email Generated On : ' . date('Y-m-d H:i:s'));
     }
@@ -43,7 +43,7 @@ class Cron_payments extends CI_Controller {
     public function index($verification_key = null) {
         exit;
         $test = '/usr/local/bin/php -q /'.DOC_ROOT.'cron.php /cron_payments/index/kg9bMWfIuhP0jCwfQ51x9g5HMtPvZr3qMVYgYJdN3w1MhWpi0l4Hx4sB2QHbIEqqVejAWAF0qmY2oOmUf1oSPC5cXqUKASbl9MEM';
-        $test_email = FROM_EMAIL_DEV;
+        $test_email = FROM_EMAIL_NOTIFICATIONS;
         mail($test_email, 'AutomtoHr Debug - Payments Cron Running', 'Email Generated On : ' . date('Y-m-d H:i:s'));
 
         if ($verification_key == 'kg9bMWfIuhP0jCwfQ51x9g5HMtPvZr3qMVYgYJdN3w1MhWpi0l4Hx4sB2QHbIEqqVejAWAF0qmY2oOmUf1oSPC5cXqUKASbl9MEM') {
@@ -127,7 +127,7 @@ class Cron_payments extends CI_Controller {
                             $message_body .= '<p>' . 'There is no credit card information saved in the system.' . '</p>';
                             $message_body .= '<p>' . STORE_NAME . '</p>';
                             $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-                            //log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, FROM_STORE_NAME);
+                            //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, FROM_STORE_NAME);
                             //Email to Company Admin
                             $message_body = '';
                             $message_body .= '<p>' . 'Dear ' . ucwords($admin_details['first_name'] . ' ' . $admin_details['last_name']) . '</p>';
@@ -140,7 +140,7 @@ class Cron_payments extends CI_Controller {
                             $message_body .= '<p>' . 'Please check details and do the needful.' . '</p>';
                             $message_body .= '<p>' . STORE_NAME . '</p>';
                             $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-                            //log_and_sendEmail(FROM_EMAIL_DEV, $admin_details['email'], $subject, $message_body, FROM_STORE_NAME);
+                            //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $admin_details['email'], $subject, $message_body, FROM_STORE_NAME);
                         }
                     }
                 }
@@ -179,7 +179,7 @@ class Cron_payments extends CI_Controller {
             $message_body .= '<p>' . 'Please check details and do the needful.' . '</p>';
             $message_body .= '<p>' . STORE_NAME . '</p>';
             $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-            //log_and_sendEmail(FROM_EMAIL_DEV, $admin_details['email'], $subject, $message_body, FROM_STORE_NAME);
+            //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $admin_details['email'], $subject, $message_body, FROM_STORE_NAME);
         }
     }
 
@@ -203,7 +203,7 @@ class Cron_payments extends CI_Controller {
             $message_body .= '<p>' . 'Please check details and do the needful.' . '</p>';
             $message_body .= '<p>' . STORE_NAME . '</p>';
             $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-            //log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, FROM_STORE_NAME);
+            //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, FROM_STORE_NAME);
             //Email to Company Admin
 
             $message_body = '';
@@ -216,7 +216,7 @@ class Cron_payments extends CI_Controller {
             $message_body .= '<p>' . 'Please check details and do the needful.' . '</p>';
             $message_body .= '<p>' . STORE_NAME . '</p>';
             $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-            //log_and_sendEmail(FROM_EMAIL_DEV, $admin_details['email'], $subject, $message_body, FROM_STORE_NAME);
+            //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $admin_details['email'], $subject, $message_body, FROM_STORE_NAME);
         }
     }
  * *

@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Add messages to policies
@@ -14,12 +14,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 
  * @return Void
  */
-if(!function_exists('setPolicyStatusFields')){
+if (!function_exists('setPolicyStatusFields')) {
     function setPolicyStatusFields(
         &$p,
         $type,
         $replace
-    ){
+    ) {
         // Set messages array
         $msg = [];
         $msg['{{minimum_probation_days}}'] = "The employee is on probation and doesn't meet the minimum workdays of {{new_hire_days}} days. The employee has worked for {{worked_days}} days.";
@@ -39,14 +39,14 @@ if(!function_exists('setPolicyStatusFields')){
  * 
  * @return String|Void
  */
-if(!function_exists('getFormatFromString')){
+if (!function_exists('getFormatFromString')) {
     function getFormatFromString(
         $s
-    ){
-        if($s == 'years') return "%y";
-        if($s == 'months') return "%m";
-        if($s == 'days') return "%d";
-        if($s == 'hours') return "%h";
+    ) {
+        if ($s == 'years') return "%y";
+        if ($s == 'months') return "%m";
+        if ($s == 'days') return "%d";
+        if ($s == 'hours') return "%h";
     }
 }
 
@@ -60,15 +60,15 @@ if(!function_exists('getFormatFromString')){
  * 
  * @return Bool
  */
-if(!function_exists('policyAccrualCheck')){
+if (!function_exists('policyAccrualCheck')) {
     function policyAccrualCheck(
         $accrual,
         $employeeJoiningDate,
         $employmentStatus,
         &$policy
-    ){
+    ) {
         // If accrual is empty that means the employee can avail the time
-        if(empty($accrual)) return true;
+        if (empty($accrual)) return true;
 
         // Set policy accural checks
         // New hire days check
@@ -87,7 +87,7 @@ if(!function_exists('policyAccrualCheck')){
             //
             return false;
         }
-        
+
         // Check for applicable date
         if ($accrual['accural_start_date'] == null || $accrual['accural_start_date'] == '0000-00-00') {
             if ($employeeJoiningDate > date('Y-m-d', strtotime('now'))) {
@@ -117,9 +117,9 @@ if(!function_exists('policyAccrualCheck')){
                 return false;
             }
         }
-        
+
         // minimum applicable check
-        if (date('Y-m-d', strtotime('now')) < date('Y-m-d', strtotime($employeeJoiningDate . '+' . ($accrual['minimum_applicable_hours']) . ' '.( $accrual['minimum_applicable_type'] ).''))) {
+        if (date('Y-m-d', strtotime('now')) < date('Y-m-d', strtotime($employeeJoiningDate . '+' . ($accrual['minimum_applicable_hours']) . ' ' . ($accrual['minimum_applicable_type']) . ''))) {
             setPolicyStatusFields(
                 $policy,
                 '{{minimum_applicable_hours}}',
@@ -128,7 +128,7 @@ if(!function_exists('policyAccrualCheck')){
                     '{{minimum_applicable_type}}' => $accrual['minimum_applicable_type'],
                     '{{worked_days}}' => dateDifferenceInDays(
                         date('Y-m-d', strtotime('now')),
-                        date('Y-m-d', strtotime($employeeJoiningDate . '+' . ($accrual['minimum_applicable_hours']) . ' '.( $accrual['minimum_applicable_type'] ).'')),
+                        date('Y-m-d', strtotime($employeeJoiningDate . '+' . ($accrual['minimum_applicable_hours']) . ' ' . ($accrual['minimum_applicable_type']) . '')),
                         getFormatFromString($accrual['minimum_applicable_type'])
                     )
                 ]
@@ -152,41 +152,44 @@ if(!function_exists('policyAccrualCheck')){
  * 
  * @return Integer
  */
-if(!function_exists('getAwardedRate')){
+if (!function_exists('getAwardedRate')) {
     function getAwardedRate(
         $employeeJoiningDateOBJ,
         $employeeWorkedInMinutes,
         $rateInMinutes,
         $rateType,
         $plans
-    ){
+    ) {
         //
-        if(empty($plans)) return $rateInMinutes;
+        if (empty($plans)) return $rateInMinutes;
         //
         $employeeWorkedTimeInTimestamp = new DateTime(date('Y-m-d', $employeeJoiningDateOBJ->format('U')));
-        $employeeWorkedTimeInTimestamp->add(new DateInterval('PT'.($employeeWorkedInMinutes).'M'));
+        $employeeWorkedTimeInTimestamp->add(new DateInterval('PT' . ($employeeWorkedInMinutes) . 'M'));
         $employeeWorkedTimeInTimestamp = $employeeWorkedTimeInTimestamp->format('U');
         //
         $i = count($plans) - 1;
         $il = 0;
         $d2 = 'hours';
         // Inverse loop
-        for($i; $i >= $il; $i--){
+        for ($i; $i >= $il; $i--) {
             //
-            $dateToAdd = $plans[$i]['accrualType'];
-            $d = $plans[$i]['accrualTypeM'];
-            //
-            $planTimeInTimestamp = new DateTime(date('Y-m-d', $employeeJoiningDateOBJ->format('U')));
-            $planTimeInTimestamp->add(new DateInterval('P'.($dateToAdd).''.( $d == 'years' ? 'Y' : 'M' ).''));
-            $planTimeInTimestamp = $planTimeInTimestamp->format('U');
-            //
-            // Difference in minutes
-            if($employeeWorkedTimeInTimestamp >= $planTimeInTimestamp){
+            if (isset($plans[$i]['accrualType']) && $plans[$i]['accrualTypeM']) {
                 //
-                $newAllowedTime = $plans[$i]['accrualRate'] * 60;
+                $dateToAdd = $plans[$i]['accrualType'];
+                $d = $plans[$i]['accrualTypeM'];
                 //
-                return $newAllowedTime + $rateInMinutes;
-            } 
+                $planTimeInTimestamp = new DateTime(date('Y-m-d', $employeeJoiningDateOBJ->format('U')));
+                $planTimeInTimestamp->add(new DateInterval('P' . ($dateToAdd) . '' . ($d == 'years' ? 'Y' : 'M') . ''));
+                $planTimeInTimestamp = $planTimeInTimestamp->format('U');
+                //
+                // Difference in minutes
+                if ($employeeWorkedTimeInTimestamp >= $planTimeInTimestamp) {
+                    //
+                    $newAllowedTime = $plans[$i]['accrualRate'] * 60;
+                    //
+                    return $newAllowedTime + $rateInMinutes;
+                }
+            }
         }
         //
         return $rateInMinutes;
@@ -208,7 +211,7 @@ if(!function_exists('getAwardedRate')){
  * 
  * @return Array
  */
-if(!function_exists('getEmployeeAccrual')){
+if (!function_exists('getEmployeeAccrual')) {
     function getEmployeeAccrual(
         $policyId,
         $employeeId,
@@ -218,8 +221,9 @@ if(!function_exists('getEmployeeAccrual')){
         $accruals,
         $balanceInMinutes,
         $asOfToday = '',
-        $slug = ''
-    ){
+        $slug = '',
+        $categoryType = '1'
+    ) {
         // Get instance of CI
         $_this = &get_instance();
         // Load time off modal
@@ -258,7 +262,7 @@ if(!function_exists('getEmployeeAccrual')){
         //
         $employeeJoiningDate = explode(' ', $employeeJoiningDate)[0];
         //
-        if(empty($employeeJoiningDate)) $employeeJoiningDate = $todayDate;
+        if (empty($employeeJoiningDate)) $employeeJoiningDate = $todayDate;
         //
         $todayDateOBJ = DateTime::createfromformat('Y-m-d', $todayDate);
         $employeeJoiningDateOBJ = DateTime::createfromformat('Y-m-d', $employeeJoiningDate);
@@ -277,18 +281,18 @@ if(!function_exists('getEmployeeAccrual')){
         //     'date' => $planTimeInTimestamp
         // ];
         //
-        if(!empty($accruals['plans'])){
-            foreach($accruals['plans'] as $plan){
+        if (!empty($accruals['plans'])) {
+            foreach ($accruals['plans'] as $plan) {
                 //
                 $planTimeInTimestamp = new DateTime(date('Y-m-d', $employeeJoiningDateOBJ->format('U')));
-                $planTimeInTimestamp->add(new DateInterval('P'.($plan['accrualType']).''.( $plan['accrualTypeM'] == 'years' ? 'Y' : 'M' ).''));
+                $planTimeInTimestamp->add(new DateInterval('P' . ($plan['accrualType']) . '' . ($plan['accrualTypeM'] == 'years' ? 'Y' : 'M') . ''));
                 $planTimeInTimestamp = $planTimeInTimestamp->format('Y-m-d');
                 //
-                $r['Plans'][] = 
-                [
-                    'time' => get_array_from_minutes( ($accruals['rate']+$plan['accrualRate']) * 60, $durationInMinutes / 60, $slug)['text'],
-                    'date' => $planTimeInTimestamp
-                ];
+                $r['Plans'][] =
+                    [
+                        'time' => get_array_from_minutes(($accruals['rate'] + $plan['accrualRate']) * 60, $durationInMinutes / 60, $slug)['text'],
+                        'date' => $planTimeInTimestamp
+                    ];
             }
         }
         // Permanent
@@ -304,62 +308,62 @@ if(!function_exists('getEmployeeAccrual')){
             $todayDate
         );
         // Check if employee is on probabtion
-        if($employementStatus == 'probation'){
+        if ($employementStatus == 'probation') {
             // Probation
             $accrualRate = $accruals['newHireRate'];
             //
-            if($accrualRate == 0){
+            if ($accrualRate == 0) {
                 // return $r;
             }
         }
         // See if policy implements
         // When the policy starts from employee joining date
-        if(empty($accruals['applicableDate']) || $accruals['applicableDate'] == '0000-00-00'){
+        if (empty($accruals['applicableDate']) || $accruals['applicableDate'] == '0000-00-00') {
             //
             $compareDate = getFormatedDate($employeeJoiningDate, 'd-m-Y');
             //
-            if($employeeJoiningDate > $todayDate){
-                $r['Reason'] = "The employee doesn't meet the policy 'Applicable Date'. The joining date is less than today's date."; 
+            if ($employeeJoiningDate > $todayDate) {
+                $r['Reason'] = "The employee doesn't meet the policy 'Applicable Date'. The joining date is less than today's date.";
                 return $r;
             }
-        } else{
+        } else {
             //
             $compareDate = getFormatedDate($accruals['applicableDate'], 'd-m-Y');
             // When the policy starts on a specific date
-            if(getFormatedDate($todayDate, '') < getFormatedDate($accruals['applicableDate'], '')){
-                $r['Reason'] = "The employee doesn't meet the policy 'Applicable Date'."; 
+            if (getFormatedDate($todayDate, '') < getFormatedDate($accruals['applicableDate'], '')) {
+                $r['Reason'] = "The employee doesn't meet the policy 'Applicable Date'.";
                 return $r;
             }
         }
         // Check if employee has worked for certain time
         // Employee doesn't meet the minimum allowed time
-        if($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false){
+        if ($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
             //
-            $r['Reason'] = "The employee doesn't meet the minimum work-time of $applicableTime $applicableType."; 
+            $r['Reason'] = "The employee doesn't meet the minimum work-time of $applicableTime $applicableType.";
             return $r;
         }
         // Check the period
-        if($accruals['frequency'] == 'none'){
-            if($accruals['time'] == 'start_of_period'){
-                if($cdm > 6) {
-                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from Jan to June."; 
+        if ($accruals['frequency'] == 'none') {
+            if ($accruals['time'] == 'start_of_period') {
+                if ($cdm > 6) {
+                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from Jan to June.";
                     return $r;
                 }
-            } else if($accruals['time'] == 'end_of_period'){
-                if($cdm < 6) {
-                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from July to Dec."; 
+            } else if ($accruals['time'] == 'end_of_period') {
+                if ($cdm < 6) {
+                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from July to Dec.";
                     return $r;
                 }
             }
-        } else{
-            if($accruals['time'] == 'start_of_period'){
-                if($cdd > 15){
-                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from 1st to 15th."; 
+        } else {
+            if ($accruals['time'] == 'start_of_period') {
+                if ($cdd > 15) {
+                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from 1st to 15th.";
                     return $r;
                 }
-            } else if($accruals['time'] == 'end_of_period'){
-                if($cdd < 15){
-                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from 16th to 30th."; 
+            } else if ($accruals['time'] == 'end_of_period') {
+                if ($cdd < 15) {
+                    $r['Reason'] = "The employee doesn't meet the policy 'Accrual Time'. The employee can take time-off from 16th to 30th.";
                     return $r;
                 }
             }
@@ -383,10 +387,10 @@ if(!function_exists('getEmployeeAccrual')){
         }
         // Convert rate into minutes
         // For days
-        if($accruals['rateType'] == 'days') $originalAloowedTime = $accrualRateInMinutes = $accrualRate * $durationInMinutes;
+        if ($accruals['rateType'] == 'days') $originalAloowedTime = $accrualRateInMinutes = $accrualRate * $durationInMinutes;
         else $originalAloowedTime = $accrualRateInMinutes = $accrualRate * 60; // For hours
         // Get award time for permanent employee
-        if($employementStatus != 'probation'){
+        if ($employementStatus != 'probation') {
             // Get awarded rate
             $accrualRateInMinutesWithoutAward = $accrualRateInMinutes;
             //
@@ -418,11 +422,11 @@ if(!function_exists('getEmployeeAccrual')){
         $monthsWorked += $difference->m;
         // Only get pending time if carryover
         // is enabled
-        if($accruals['carryOverCheck'] == 'yes' && $accruals['carryOverCheck'] != 'on'){
+        if ($accruals['carryOverCheck'] == 'yes' && $accruals['carryOverCheck'] != 'on') {
             // Difference in minutes
             $carryOverInMinutes = $accruals['carryOverVal'] * 60;
             //
-            if($carryOverInMinutes == 0) $carryOverInMinutes = $accrualRateInMinutes;
+            if ($carryOverInMinutes == 0) $carryOverInMinutes = $accrualRateInMinutes;
             //
             $hasCarryOver = 1;
             // Get Pending time
@@ -440,43 +444,42 @@ if(!function_exists('getEmployeeAccrual')){
             );
         }
         // Set negative time
-        if($accruals['negativeBalanceCheck'] == 'yes' && $accruals['negativeBalanceCheck'] != 'off'){
+        if ($accruals['negativeBalanceCheck'] == 'yes' && $accruals['negativeBalanceCheck'] != 'off') {
             //
-            if($accruals['negativeBalanceType'] == 'days'){
+            if ($accruals['negativeBalanceType'] == 'days') {
                 $negativeTimeInMinutes = $accruals['negativeBalanceVal'] * $durationInMinutes;
-            } else{
+            } else {
                 $negativeTimeInMinutes = $accruals['negativeBalanceVal'] * 60;
             }
         }
         // Total allowed time
-        if($accrualRateInMinutes == 0){
+        if ($accrualRateInMinutes == 0) {
             $actualTime = 0;
             $allowedTime = 0;
-        } else{
-            $actualTime = $accrualRateInMinutes ;
+        } else {
+            $actualTime = $accrualRateInMinutes;
             $allowedTime = $carryOverTimeInMinutes + $accrualRateInMinutes;
         }
         // Set the frequency
         //
-        if($accruals['frequency'] == 'none') $allowedTime = $allowedTime;
-        else if($accruals['frequency'] == 'yearly') {
+        if ($accruals['frequency'] == 'none') $allowedTime = $allowedTime;
+        else if ($accruals['frequency'] == 'yearly') {
             //
             $currentYearMonthsWorked = $difference->m + 1;
             $currentYearMonthsWorked = $currentYearMonthsWorked > 12 ? 12 : $currentYearMonthsWorked;
             //
-            if($accruals['rateType'] == 'total_hours'){
+            if ($accruals['rateType'] == 'total_hours') {
                 $allowedTime = ($allowedTime / 12) * $currentYearMonthsWorked;
-            } else{
-                $allowedTime = ($allowedTime * 12 )  * $currentYearMonthsWorked;
+            } else {
+                $allowedTime = ($allowedTime * 12)  * $currentYearMonthsWorked;
             }
-        }
-        else if($accruals['frequency'] == 'custom') {
+        } else if ($accruals['frequency'] == 'custom') {
             // Get slots
             $slots = 12 / $accruals['frequencyVal'];
             //
-            $workedSlots = ceil(($difference->m ) / $slots);
+            $workedSlots = ceil(($difference->m) / $slots);
             //
-            $workedSlots = $workedSlots == 0 ? 1: $workedSlots;
+            $workedSlots = $workedSlots == 0 ? 1 : $workedSlots;
             $newAllowedTime = ($allowedTime / $slots) * $workedSlots;
             //
             $allowedTime = $newAllowedTime > $allowedTime ? $allowedTime : $newAllowedTime;
@@ -490,17 +493,24 @@ if(!function_exists('getEmployeeAccrual')){
         $r['Balance'] = $balanceInMinutes;
         $r['EmployementStatus'] = $employementStatus;
         //
-        if($accruals['frequency'] == 'none'){
+        if ($accruals['frequency'] == 'none') {
             $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
-        } else if($accruals['frequency'] == 'monthly'){
+        } else if ($accruals['frequency'] == 'monthly') {
             $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
-        } else if($accruals['frequency'] == 'yearly'){
+        } else if ($accruals['frequency'] == 'yearly') {
             $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
-        } else if($accruals['frequency'] == 'custom'){
+        } else if ($accruals['frequency'] == 'custom') {
             $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
         }
         //
         $r['IsUnlimited'] = $accrualRateInMinutes == 0 ? 1 : 0;
+
+        // for unpaid
+        if ($categoryType == '0') {
+            $tmp = $r['UnpaidConsumedTime'];
+            $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
+            $r['ConsumedTime'] = $tmp;
+        }
         //
         return $r;
     }
@@ -512,9 +522,9 @@ function getTimeDifference(
     $applicableType,
     $todayDate
 
-){    
+) {
     //
-    if($applicableTime == 0) return true;
+    if ($applicableTime == 0) return true;
     //
     $d1 = DateTime::createfromformat('Y-m-d', $employeeJoiningDate);
     $d2 = DateTime::createfromformat('Y-m-d', $todayDate);
@@ -525,25 +535,25 @@ function getTimeDifference(
     $minutes += $diff->h * 60;
     $minutes += $diff->i;
     //
-    switch($applicableType){
+    switch ($applicableType) {
         case "years":
             $applicableTimeToMinutes = $applicableTime * 365 * 24 * 60;
-        break;
+            break;
         case "months":
             $applicableTimeToMinutes = $applicableTime * 30 * 24 * 60;
-        break;
+            break;
         case "days":
             $applicableTimeToMinutes = $applicableTime * 24 * 60;
-        break;
+            break;
         case "hours":
             $applicableTimeToMinutes = $applicableTime * 24;
-        break;
+            break;
         case "minutes":
             $applicableTimeToMinutes = $applicableTime;
-        break;
+            break;
     }
     //
-    if($minutes >= $applicableTimeToMinutes) return true;
+    if ($minutes >= $applicableTimeToMinutes) return true;
     //
     return false;
 }
@@ -555,9 +565,9 @@ function getEmployementStatus(
     $durationInMinutes,
     $todayDate
 
-){    
+) {
     //
-    if($applicableTime == 0) return 'permanent';
+    if ($applicableTime == 0) return 'permanent';
     //
     $d1 = DateTime::createfromformat('Y-m-d', $employeeJoiningDate);
     $d2 = DateTime::createfromformat('Y-m-d', $todayDate);
@@ -570,34 +580,34 @@ function getEmployementStatus(
     $minutes += $diff->h * 60;
     $minutes += $diff->i;
     //
-    switch($applicableType){
+    switch ($applicableType) {
         case "years":
             $applicableTimeToMinutes = $applicableTime * 365 * 24 * 60;
-        break;
+            break;
         case "months":
             $applicableTimeToMinutes = $applicableTime * 30 * 24 * 60;
             break;
-            case "days":
-                $applicableTimeToMinutes = $applicableTime * 24 * 60;
-                break;
-                case "hours":
-                    $applicableTimeToMinutes = $applicableTime * 24;
-                    break;
-                    case "minutes":
-                        $applicableTimeToMinutes = $applicableTime;
-                        break;
-                        case "per_week":
-                            case "per_month":
-        //
-        $durationInHours = $durationInMinutes / 60;
-        $workedTime = $durationInHours * ($applicableType == 'per_week' ? 7 : 30);
-        //
-        if($workedTime >= $applicableTime) return 'permanent';
-        return 'probation';
-        break;
+        case "days":
+            $applicableTimeToMinutes = $applicableTime * 24 * 60;
+            break;
+        case "hours":
+            $applicableTimeToMinutes = $applicableTime * 24;
+            break;
+        case "minutes":
+            $applicableTimeToMinutes = $applicableTime;
+            break;
+        case "per_week":
+        case "per_month":
+            //
+            $durationInHours = $durationInMinutes / 60;
+            $workedTime = $durationInHours * ($applicableType == 'per_week' ? 7 : 30);
+            //
+            if ($workedTime >= $applicableTime) return 'permanent';
+            return 'probation';
+            break;
     }
-        //
-    if($minutes >= $applicableTimeToMinutes) return 'permanent';
+    //
+    if ($minutes >= $applicableTimeToMinutes) return 'permanent';
     //
     return 'probation';
 }
@@ -607,13 +617,13 @@ function getEmployementStatus(
 function getFormatedDate(
     $d1,
     $toFormat = 'Y-m-d'
-){
+) {
     //
     $fromFormat = 'Y-m-d';
     //
-    if(preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/', $d1)) $fromFormat = 'Y/m/d';
-    else if(preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/', $d1)) $fromFormat = 'd/m/Y';
-    else if(preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $d1)) $fromFormat = 'm-d-Y';
+    if (preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/', $d1)) $fromFormat = 'Y/m/d';
+    else if (preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/', $d1)) $fromFormat = 'd/m/Y';
+    else if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $d1)) $fromFormat = 'm-d-Y';
     //
     //
     $d2 = DateTime::createfromformat(
@@ -621,7 +631,7 @@ function getFormatedDate(
         $d1
     );
     //
-    if(empty($toFormat)) return $d2->format('U');
+    if (empty($toFormat)) return $d2->format('U');
     return $d2->format($toFormat);
 }
 
@@ -636,8 +646,9 @@ function getFormatedDate(
  * 
  * @return String
  */
-if(!function_exists('timeoffGetEncryptedLink')){
-    function timeoffGetEncryptedLink($args){
+if (!function_exists('timeoffGetEncryptedLink')) {
+    function timeoffGetEncryptedLink($args)
+    {
         // Get CI instance
         $_this = &get_instance();
         // Load encryption library
@@ -645,9 +656,9 @@ if(!function_exists('timeoffGetEncryptedLink')){
         //
         $params = '';
         //
-        foreach($args as $k => $v) $params .= "{$k}={$v}/";
+        foreach ($args as $k => $v) $params .= "{$k}={$v}/";
         //
-        return base_url('timeoff/public/'.( str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/'))) ).'');
+        return base_url('timeoff/public/' . (str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/')))) . '');
     }
 }
 
@@ -661,8 +672,9 @@ if(!function_exists('timeoffGetEncryptedLink')){
  * 
  * @return String
  */
-if(!function_exists('timeoffGetApproverEncryptedLink')){
-    function timeoffGetApproverEncryptedLink($args){
+if (!function_exists('timeoffGetApproverEncryptedLink')) {
+    function timeoffGetApproverEncryptedLink($args)
+    {
         // Get CI instance
         $_this = &get_instance();
         // Load encryption library
@@ -670,9 +682,9 @@ if(!function_exists('timeoffGetApproverEncryptedLink')){
         //
         $params = '';
         //
-        foreach($args as $k => $v) $params .= "{$k}={$v}/";
+        foreach ($args as $k => $v) $params .= "{$k}={$v}/";
         //
-        return base_url('timeoff/approver/public/'.( str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/'))) ).'');
+        return base_url('timeoff/approver/public/' . (str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/')))) . '');
     }
 }
 
@@ -686,8 +698,9 @@ if(!function_exists('timeoffGetApproverEncryptedLink')){
  * 
  * @return Array
  */
-if(!function_exists('timeoffDecryptLink')){
-    function timeoffDecryptLink($url){
+if (!function_exists('timeoffDecryptLink')) {
+    function timeoffDecryptLink($url)
+    {
         // Get CI instance
         $_this = &get_instance();
         // Load encryption library
@@ -697,7 +710,7 @@ if(!function_exists('timeoffDecryptLink')){
         //
         $params = [];
         //
-        foreach($url as $urla) {
+        foreach ($url as $urla) {
             $t = explode('=', $urla);
             $params[$t[0]] = $t[1];
         }
@@ -718,8 +731,9 @@ if(!function_exists('timeoffDecryptLink')){
  * 
  * @return Array
  */
-if(!function_exists('timeoffMagicQuotesReplace')){
-    function timeoffMagicQuotesReplace($body, $replaceArray){
+if (!function_exists('timeoffMagicQuotesReplace')) {
+    function timeoffMagicQuotesReplace($body, $replaceArray)
+    {
         // Get indexes
         $indexes = array_keys($replaceArray);
         // Replace Subject
@@ -729,7 +743,7 @@ if(!function_exists('timeoffMagicQuotesReplace')){
         // Replace Body
         $body['Body'] = str_replace($indexes, $replaceArray, $body['Body']);
         $body['Body'] = preg_replace('/{{(.*)}}/', '', $body['Body']);
-        
+
         // Replace FromName
         $body['FromName'] = str_replace($indexes, $replaceArray, $body['FromName']);
         $body['FromName'] = preg_replace('/{{(.*)}}/', '', $body['FromName']);
@@ -750,8 +764,9 @@ if(!function_exists('timeoffMagicQuotesReplace')){
  * 
  * @return String
  */
-if(!function_exists('getButton')){
-    function getButton($replaceArray){
+if (!function_exists('getButton')) {
+    function getButton($replaceArray)
+    {
         return
             str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
         {{text}}             

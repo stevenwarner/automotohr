@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php echo $title; ?> </span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?> </span>
                         </div>
                         <div class="box-wrapper">
                             <div class="row">
@@ -308,7 +308,9 @@
         
         $("#startdate").datepicker({
             dateFormat: 'mm-dd-yy',
-            yearRange: "1960:+5",
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() + 1);

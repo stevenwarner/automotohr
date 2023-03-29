@@ -111,7 +111,7 @@ class Appearance extends Public_Controller {
 
     public function customize_appearance($theme_id = 0) {
         header("X-XSS-Protection: 0");
-        if ($this->session->userdata('logged_in')) {
+          if ($this->session->userdata('logged_in')) {
             if ($theme_id == 0) { // theme not found - redirect to appreance
                 $this->session->set_flashdata('message', '<b>Error:</b> Theme not found!');
                 redirect('appearance', 'refresh');
@@ -139,6 +139,7 @@ class Appearance extends Public_Controller {
 
             if (isset($_POST["action"]) && $_POST["action"] == "update") {
                 $theme_name = $this->input->post('theme_name');
+
                 $sid = $this->input->post('sid');
                 $job_fair_homepage_page_url = !empty($this->input->post('job_fair_homepage_page_url')) ? implode(',', $this->input->post('job_fair_homepage_page_url')) : '';
                 $theme4_enable_job_fair_homepage = 0;
@@ -228,7 +229,8 @@ class Appearance extends Public_Controller {
                 $page_name = $postData["page_name"];
                 $enableHeaderBG = $postData['enable_header_bg'];
                 $enableHeaderOverlay = $postData['enable_header_overlay'];
-                
+
+                               
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'site_settings', [
                     'enable_header_bg' => $enableHeaderBG ? 1: 0,
                     'enable_header_overlay' => $enableHeaderOverlay ? 1: 0,
@@ -252,11 +254,14 @@ class Appearance extends Public_Controller {
 
                 $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, 'section_01');
                 $update_section_meta = $this->generate_page_section_meta_array('', '', $title, $tag_line, '', 0, $show_img_vdo, '', $do_capitalize);
+                             
                 $dataToStore = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
                 // Added on: 10-03-2019
                 // Overwrite tagline
                 if($tag_line == '') $dataToStore['tag_line'] = NULL;
+                if($title == '') $dataToStore['title'] = '';
                 $dataToStore['do_capitalize'] = $do_capitalize == 'on' ? 1 : 0;
+               
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'section_01', $dataToStore);
             }
 
@@ -799,10 +804,11 @@ class Appearance extends Public_Controller {
                 if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'update_jobs_page_title') { //Save Jobs Page Title
                     $company_sid = $company_id; //$_POST['company_sid'];
                     $jobs_page_title = $_POST['jobs_page_title'];
-                    $jobs_page_title = strtolower(str_replace('{{company_name}}', '', $jobs_page_title));
+                   // $jobs_page_title = strtolower(str_replace('{{company_name}}', '', $jobs_page_title));
+                    $jobs_page_title = str_replace('{{company_name}}', '', $jobs_page_title);
                     $jobs_page_title = trim($jobs_page_title);
                     $jobs_page_title = str_replace('  ', ' ', $jobs_page_title);
-                    $jobs_page_title = str_replace(' ', '-', $jobs_page_title);
+                  //  $jobs_page_title = str_replace(' ', '-', $jobs_page_title);
                     $jobs_page_title = str_replace('\`', '', $jobs_page_title);
                     $jobs_page_title = str_replace('"', '', $jobs_page_title);
                     $jobs_page_title = str_replace('\'', '', $jobs_page_title);
@@ -911,7 +917,7 @@ class Appearance extends Public_Controller {
                 $data['jobs_detail_page_banner'] = $jobs_detail_page_banner;
 //                echo '<pre>';
 //                print_r($jobs_detail_page_banner);
-//                die();
+             
                 $data['jobs_page_title'] = $jobs_page_title;
                 $data['footer_content'] = $footer_content;
                 $google_fonts = $this->customize_appearance_model->get_google_fonts(); // get list of all the google font family

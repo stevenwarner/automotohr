@@ -10,7 +10,7 @@ class Dashboard extends CI_Controller {
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->model('Users_model');
-
+        
         $this->resp['Status'] = false;
         $this->resp['Response'] = 'Invalid Request!';
     }
@@ -24,7 +24,17 @@ class Dashboard extends CI_Controller {
             $executive_user_companies                                           = $this->Users_model->get_executive_users_companies($data['executive_user']['sid'], $keyword);
             $deleted_companies                                                  = array();
             $this->load->model('message_model');
-            
+            $this->load->model('e_signature_model');
+
+            $e_signature_data = $this->e_signature_model->get_e_signature($data['exadminId']);
+
+            if (!empty($e_signature_data)) {
+                $data['applysignature'] = 1;
+            } else {
+                $data['applysignature'] = 0;
+            }
+           
+
             if(!empty($executive_user_companies)){ // check for deleted companies
                foreach($executive_user_companies as $key => $value) {
                    $company_details                                             = $this->Users_model->get_company_details($value['company_sid']);
@@ -106,6 +116,10 @@ class Dashboard extends CI_Controller {
                 $data['admin_invoices'] = $this->Users_model->get_admin_invoices($company_id);
                 $data['marketplace_invoices'] = $this->Users_model->get_admin_marketplace_invoices($company_id);
                 $employee_details = $this->Users_model->get_company_employees($company_id);
+
+               // print_r($employee_details);
+                //die();
+
                 $company_details = $this->Users_model->get_company_details($company_id);
                 if(empty($company_details)){
                     $this->session->set_flashdata('message', 'Company not found');
@@ -118,6 +132,7 @@ class Dashboard extends CI_Controller {
                 $data['career_website'] = STORE_PROTOCOL . db_get_sub_domain($company_id);
                 $data['company'] = $company_details;
                 $data['employees'] = $employee_details;
+                 
                 $this->load->view('main/header', $data);
                 $this->load->view('dashboard/manage_company');
                 $this->load->view('main/footer');
@@ -186,7 +201,7 @@ class Dashboard extends CI_Controller {
                 $emailTemplateBody = $emailTemplateBody . 'You can change your password by following the link below : ' . '<br>';
                 $emailTemplateBody = $emailTemplateBody . 'Your username is : ' . $user_data["username"] . '<br>';
                 $emailTemplateBody = $emailTemplateBody . '<a href="'.$url.'">Change Your Password</a><br><br>';
-                $from = TO_EMAIL_DEV; //$emailTemplateData['from_email'];
+                $from = FROM_EMAIL_NOTIFICATIONS; //$emailTemplateData['from_email'];
                 $to = $email;
                 $subject = 'Password Recovery'; //$emailTemplateData['subject'];
                 $from_name = ucwords(STORE_DOMAIN); //$emailTemplateData['from_name'];
@@ -251,7 +266,7 @@ class Dashboard extends CI_Controller {
                 $this->Users_model->reset_key($user);
                 $user_data = $this->Users_model->username_user_data($user);
                 
-                $from = TO_EMAIL_DEV; 
+                $from = FROM_EMAIL_NOTIFICATIONS; 
                 $to = $user_data['email'];
                 $subject = 'Password Changed Successfully'; 
                 $from_name = ucwords(STORE_DOMAIN); 
@@ -454,6 +469,8 @@ class Dashboard extends CI_Controller {
             $this->resp['Response'] = 'You don\'t have any comapnies to manage.';
             $this->response();
         }
+        //
+        $query = str_replace('--', ' ', $query);
         // 
         $inset = 0;
         $offset = $this->limit;
@@ -477,6 +494,11 @@ class Dashboard extends CI_Controller {
             $this->resp['Response'] = 'No records found.';
             $this->response();
         }
+
+        foreach($users as $index => $value){
+            $users[$index]['newstatus'] = GetEmployeeStatus($value['last_status_text'], $value['is_active']);
+        }
+
         //
         $this->resp['Status'] = true;
         $this->resp['Response'] = 'Proceed';

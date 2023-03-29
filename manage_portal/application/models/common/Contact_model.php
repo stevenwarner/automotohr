@@ -95,7 +95,7 @@ class Contact_model extends CI_Model {
     }
     
     // Join our talent network Function
-    function talent_network_applicant($email, $first_name, $last_name, $country, $city, $phone_number, $desired_job_title, $resume, $data, $cover_letter, $state, $date_applied, $video_source, $video_id) {
+    function talent_network_applicant($email, $first_name, $last_name, $country, $city, $phone_number, $desired_job_title, $resume, $data, $cover_letter, $state, $date_applied, $video_source = NULL, $video_id = NULL) {
         $sid                                                                    = $data['company_details']['sid'];
         $company_email                                                          = $data['company_details']['email'];
         $CompanyName                                                            = $data['company_details']['CompanyName'];

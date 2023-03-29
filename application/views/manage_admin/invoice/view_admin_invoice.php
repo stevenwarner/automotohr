@@ -24,12 +24,12 @@
                                                     <div style="margin:5px 0;" class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                                                         <div class="hr-select-dropdown">
                                                             <select class="invoice-fields" id="invoice_status" name="invoice_status">
-                                                                <option <?php echo ( $invoice['invoice_status'] == 'active' ? 'selected="selected"' : '' ); ?> value="active">Active</option>
-                                                                <option <?php echo ( $invoice['invoice_status'] == 'cancelled' ? 'selected="selected"' : '' ); ?> value="cancelled">Cancelled</option>
-                                                                <option <?php echo ( $invoice['invoice_status'] == 'archived' ? 'selected="selected"' : '' ); ?> value="archived">Archived</option>
-                                                                <option <?php echo ( $invoice['invoice_status'] == 'due' ? 'selected="selected"' : '' ); ?> value="due">Due</option>
-                                                                <option <?php echo ( $invoice['invoice_status'] == 'overdue' ? 'selected="selected"' : '' ); ?> value="overdue">Overdue</option>
-                                                                <option <?php echo ( $invoice['invoice_status'] == 'baddebt' ? 'selected="selected"' : '' ); ?> value="baddebt">Bad Debt</option>
+                                                                <option <?php echo ($invoice['invoice_status'] == 'active' ? 'selected="selected"' : ''); ?> value="active">Active</option>
+                                                                <option <?php echo ($invoice['invoice_status'] == 'cancelled' ? 'selected="selected"' : ''); ?> value="cancelled">Cancelled</option>
+                                                                <option <?php echo ($invoice['invoice_status'] == 'archived' ? 'selected="selected"' : ''); ?> value="archived">Archived</option>
+                                                                <option <?php echo ($invoice['invoice_status'] == 'due' ? 'selected="selected"' : ''); ?> value="due">Due</option>
+                                                                <option <?php echo ($invoice['invoice_status'] == 'overdue' ? 'selected="selected"' : ''); ?> value="overdue">Overdue</option>
+                                                                <option <?php echo ($invoice['invoice_status'] == 'baddebt' ? 'selected="selected"' : ''); ?> value="baddebt">Bad Debt</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -63,7 +63,7 @@
                                                         <div class="add-new-company">
                                                             <div class="heading-title page-title">
                                                                 <h1 class="page-title">Invoice # <?php echo $invoice['invoice_number']; ?></h1>
-                                                                <a class="black-btn pull-right" href="<?php echo base_url('manage_admin/invoice/edit_admin_invoice/'.$invoice['sid']); ?>">Edit Invoice</a>
+                                                                <a class="black-btn pull-right" href="<?php echo base_url('manage_admin/invoice/edit_admin_invoice/' . $invoice['sid']); ?>">Edit Invoice</a>
                                                             </div>
                                                         </div>
                                                         <div class="invoice-receiver">
@@ -97,11 +97,7 @@
                                                                                         <input type="hidden" name="previous_date" value="<?php echo $invoice['created'] ?>" />
                                                                                         <div>
                                                                                             <?php $end_date = strtotime(str_replace('-', '/', $invoice['created'])); ?>
-                                                                                            <input class="invoice-fields"
-                                                                                                   type="text"
-                                                                                                   name="invoice_date"
-                                                                                                   id="invoice_date"
-                                                                                                   value="<?php echo set_value('invoice_date', date('m-d-Y', $end_date)); ?>"/>
+                                                                                            <input class="invoice-fields" type="text" name="invoice_date" id="invoice_date" value="<?php echo set_value('invoice_date', date('m-d-Y', $end_date)); ?>" />
                                                                                         </div>
 
                                                                                         <div class="field-row">
@@ -116,7 +112,7 @@
                                                                     <div class="row">
                                                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                                             <label>Payment Status</label>
-                                                                            <div class="<?php echo $invoice['payment_status']; ?>" >
+                                                                            <div class="<?php echo $invoice['payment_status']; ?>">
                                                                                 <?php echo ucwords($invoice['payment_status']); ?>
                                                                             </div>
                                                                         </div>
@@ -138,7 +134,7 @@
                                                                                     } ?>
                                                                                 </div>
                                                                             </div>
-                                                                    <?php } ?>
+                                                                        <?php } ?>
                                                                     </div>
                                                                     <hr />
                                                                     <?php if ($invoice['payment_method'] == 'credit-card') { ?>
@@ -146,35 +142,35 @@
                                                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                                                 <label>Credit Card Number</label>
                                                                                 <div>
-                                                                                <?php echo!is_null($invoice['credit_card_number']) && !empty($invoice['credit_card_number']) ? $invoice['credit_card_number'] : 'N/A'; ?>
+                                                                                    <?php echo !is_null($invoice['credit_card_number']) && !empty($invoice['credit_card_number']) ? $invoice['credit_card_number'] : 'N/A'; ?>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                                                 <label>Credit Card Type</label>
                                                                                 <div>
-                                                                                <?php echo!is_null($invoice['credit_card_type']) && !empty($invoice['credit_card_type']) ? ucwords($invoice['credit_card_type']) : 'N/A'; ?>
+                                                                                    <?php echo !is_null($invoice['credit_card_type']) && !empty($invoice['credit_card_type']) ? ucwords($invoice['credit_card_type']) : 'N/A'; ?>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                         <hr />
-                                                                        <?php } ?>
+                                                                    <?php } ?>
                                                                     <div class="row">
-                                                                    <?php if ($invoice['payment_status'] == 'paid') { ?>
+                                                                        <?php if ($invoice['payment_status'] == 'paid') { ?>
                                                                             <div class="col-lg-12 col-md-12 col-xs-6 col-sm-6">
                                                                                 <label>Payment Description</label>
                                                                                 <div>
-                                                                            <?php echo $invoice['payment_description']; ?>
+                                                                                    <?php echo $invoice['payment_description']; ?>
                                                                                 </div>
                                                                             </div>
-                                                                    <?php } ?>
-                                                                    <?php if ($invoice['payment_status'] == 'paid') { ?>
+                                                                        <?php } ?>
+                                                                        <?php if ($invoice['payment_status'] == 'paid') { ?>
                                                                             <!--<div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                                                 <label>Payment Processed By</label>
                                                                                 <div>
                                                                             <?php echo $invoice['payment_processed_by']; ?>
                                                                                 </div>
                                                                             </div>-->
-                                                                    <?php } ?>
+                                                                        <?php } ?>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -223,15 +219,19 @@
 
                                                             <?php } ?>
 
-                                                            <?php //if ($facebook_api_flag == true) { ?>
-                                                               <!--  <tr>
+                                                            <?php //if ($facebook_api_flag == true) { 
+                                                            ?>
+                                                            <!--  <tr>
                                                                     <td class="">Facebook API</td>
                                                                     <td class="">Fully Featured Facebook Recruiting Application</td>
-                                                                    <td class="text-right">$ <?php //echo number_format(399, 2, '.', ','); ?></td>
+                                                                    <td class="text-right">$ <?php //echo number_format(399, 2, '.', ','); 
+                                                                                                ?></td>
                                                                     <td class="text-center"></td>
-                                                                    <td class="text-right">$ <?php //echo number_format(0, 2, '.', ','); ?></td>
+                                                                    <td class="text-right">$ <?php //echo number_format(0, 2, '.', ','); 
+                                                                                                ?></td>
                                                                 </tr> -->
-                                                            <?php //} ?>
+                                                            <?php //} 
+                                                            ?>
                                                             <tr>
                                                                 <td class="no-border"></td>
                                                                 <td class="no-border"></td>
@@ -265,7 +265,7 @@
                                                             <tr>
                                                                 <td class=""><strong>US Dollars</strong></td>
                                                                 <td class="" colspan="4">
-                                                                <?php echo ucwords(convert_number_to_words($invoice['total_after_discount'])); ?> Only.
+                                                                    <?php echo ucwords(convert_number_to_words($invoice['total_after_discount'])); ?> Only.
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -282,7 +282,7 @@
                                                                     <input type="hidden" id="perform_action" name="perform_action" value="update_invoice_description" />
 
                                                                     <div class="row">
-                                                                        <div class="col-xs-4" >
+                                                                        <div class="col-xs-4">
                                                                             <label for="invoice_description">Invoice Notes</label>
                                                                         </div>
                                                                         <div class="col-xs-8">
@@ -290,8 +290,8 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="row">
-                                                                        <div class="col-xs-4" >
-                                                                            <label ></label>
+                                                                        <div class="col-xs-4">
+                                                                            <label></label>
                                                                         </div>
                                                                         <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
                                                                             <button style="margin-top:15px; float:right;" type="submit" class="site-btn lineheight">Update Note</button>
@@ -312,7 +312,7 @@
                                                                     <input type="hidden" id="perform_action" name="perform_action" value="update_company_notes" />
 
                                                                     <div class="row">
-                                                                        <div class="col-xs-4" >
+                                                                        <div class="col-xs-4">
                                                                             <label for="invoice_description">Invoice Notes For Company</label>
                                                                         </div>
                                                                         <div class="col-xs-8">
@@ -320,8 +320,8 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="row">
-                                                                        <div class="col-xs-4" >
-                                                                            <label ></label>
+                                                                        <div class="col-xs-4">
+                                                                            <label></label>
                                                                         </div>
                                                                         <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
                                                                             <button style="margin-top:15px; float:right;" type="submit" class="site-btn lineheight">Update Note</button>
@@ -356,14 +356,14 @@
                                                             <?php
                                                             if (sizeof($notes) > 0) {
                                                                 foreach ($notes as $note) {
-                                                                    ?>
+                                                            ?>
                                                                     <tr>
                                                                         <td class=""><strong><?php echo $note['invoice_type']; ?></strong></td>
                                                                         <td class=""><strong><?php echo $note['notes']; ?></strong></td>
                                                                         <td class=""><strong><?php echo $note['credit_amount']; ?></strong></td>
                                                                         <td class=""><strong><?php echo date('m-d-Y', strtotime($note['refund_date'])); ?></strong></td>
                                                                     </tr>
-                                                                <?php
+                                                            <?php
                                                                 }
                                                             } else {
                                                                 echo '<tr><td class="col-xs-12">No Notes Found</td></tr>';
@@ -396,13 +396,9 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div style="" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                                                    <div >
+                                                                                    <div>
                                                                                         <label for="rfd_date">Refund Date</label>
-                                                                                        <input class="invoice-fields"
-                                                                                               type="text"
-                                                                                               name="rfd_date"
-                                                                                               id="rfd_date"
-                                                                                               value="<?php echo set_value('rfd_date'); ?>" required="required"/>
+                                                                                        <input class="invoice-fields" type="text" name="rfd_date" id="rfd_date" value="<?php echo set_value('rfd_date'); ?>" required="required" />
                                                                                     </div>
                                                                                 </div>
                                                                                 <div style="" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -414,7 +410,7 @@
                                                                                 </div>
                                                                                 <div style="" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                                                     <div>
-                                                                                        <label ></label>
+                                                                                        <label></label>
                                                                                         <button style="margin-top:15px; float:right;" type="submit" class="site-btn lineheight">Add Refund</button>
                                                                                     </div>
                                                                                 </div>
@@ -441,55 +437,72 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var dateToday = new Date();
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
         $('#rfd_date').datepicker({
             dateFormat: 'mm-dd-yy',
-//            minDate: dateToday,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+            //            minDate: dateToday,
         });
         $('#invoice_date').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
     });
-    
+
     function fEmailInvoiceToClient(invoice_sid, email_address) {
         alertify.prompt(
-                'Are you sure?',
-                'Are you sure you want to forward this invoice to Client? <br /> Client Email Address',
-                email_address,
-                function (event, value) {
-                    var myUrl = '<?php echo base_url('manage_admin/invoice/ajax_responder') ?>';
+            'Are you sure?',
+            'Are you sure you want to forward this invoice to Client? <br /> Client Email Address',
+            email_address,
+            function(event, value) {
+                var myUrl = '<?php echo base_url('manage_admin/invoice/ajax_responder') ?>';
 
-                    var myRequest;
+                var myRequest;
 
-                    myRequest = $.ajax({
-                        url: myUrl,
-                        type: 'post',
-                        data: {perform_action: 'send_invoice_to_client_by_email', invoice_sid: invoice_sid, email_address: value}
-                    });
+                myRequest = $.ajax({
+                    url: myUrl,
+                    type: 'post',
+                    data: {
+                        perform_action: 'send_invoice_to_client_by_email',
+                        invoice_sid: invoice_sid,
+                        email_address: value
+                    }
+                });
 
-                    myRequest.done(function (response) {
-                        console.log(response);
+                myRequest.done(function(response) {
+                    console.log(response);
 
-                        if (response == 'success') {
-                            alertify.success('Successfully Forwarded Invoice!');
-                        }
+                    if (response == 'success') {
+                        alertify.success('Successfully Forwarded Invoice!');
+                    }
 
-                    });
-                }, function () {
+                });
+            },
+            function() {
 
-        });
+            });
     }
 
     function fUpdateInvoiceStatus() {
         alertify.confirm(
-                'Are you sure?',
-                'Are you sure you want to update Invoice Status?',
-                function () {
-                    $('#update_invoice_status').submit();
-                }, function () {
+            'Are you sure?',
+            'Are you sure you want to update Invoice Status?',
+            function() {
+                $('#update_invoice_status').submit();
+            },
+            function() {
 
-        });
+            });
     }
 </script>

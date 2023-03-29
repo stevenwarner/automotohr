@@ -324,7 +324,7 @@ class Hr_documents_management_model extends CI_Model
         return array_column($b, 'sid');
     }
 
-    function get_all_assigned_auth_documents($company_sid, $employer_sid, $ine = [], $ina= [])
+    function get_all_assigned_auth_documents($company_sid, $employer_sid, $ine = [], $ina = [])
     {
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
@@ -360,7 +360,7 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    function get_all_paginate_auth_documents($company_sid, $employer_sid, $limit = null, $start = null, $ine = [], $ina= [])
+    function get_all_paginate_auth_documents($company_sid, $employer_sid, $limit = null, $start = null, $ine = [], $ina = [])
     {
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date, authorized_document_assigned_manager.is_archive as  assign_archive, authorized_document_assigned_manager.archived_by_date, authorized_document_assigned_manager.archived_by');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
@@ -554,7 +554,7 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0, $ems = 0)
+    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0, $ems = 0, $adf = 0)
     {
 
         $payroll_sids = $this->get_payroll_documents_sids();
@@ -568,8 +568,12 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', $archive);
         //
+        if ($adf == 1) {
+            $this->db->where('approval_process', 0);
+        }
+        //
         if ($ems == 1) {
-            $this->db->where('documents_assigned.is_confidential', 0);
+            // $this->db->where('documents_assigned.is_confidential', 0);
         }
 
         if ($fetch_offer_letter) {
@@ -1137,6 +1141,7 @@ class Hr_documents_management_model extends CI_Model
 
     public function fetch_form_history($form_name, $user_type, $user_sid)
     {
+        $records_arr = [];
         $this->db->select('*');
 
         if ($form_name == 'w4') {
@@ -1157,7 +1162,7 @@ class Hr_documents_management_model extends CI_Model
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
-        } else {
+        } elseif ($form_name == 'i9') {
             $this->db->where('user_type', $user_type);
             $this->db->where('user_sid', $user_sid);
             $this->db->from('applicant_i9form_history');
@@ -1667,28 +1672,51 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('application_sid', $user_sid);
         //
         $this->db->update('portal_eeo_form', $updateArray);
+
+        //
+        $this->CheckAndMoveToHistory($user_type, $user_sid);
     }
 
     //
     function CheckAndMoveToHistory($user_type, $user_sid)
     {
         //
-        $form = $this->db
+        $forms = $this->db
             ->where('users_type', $user_type)
             ->where('application_sid', $user_sid)
-            ->where('is_expired', 1)
+            ->order_by('sid', 'desc')
             ->get('portal_eeo_form')
-            ->row_array();
+            ->result_array();
         //
-        if (!count($form) || empty($form['us_citizen'])) {
+        if (empty($forms)) {
             return false;
         }
         //
-        $form['eeo_form_sid'] = $form['sid'];
+        $sid = 0;
         //
-        unset($form['sid']);
-        //
-        $this->db->insert('portal_eeo_form_history', $form);
+        foreach ($forms as $form) {
+            //
+            if ($sid == 0) {
+                $sid = $form['sid'];
+                //
+                $form['eeo_form_sid'] = $form['sid'];
+                //
+                unset($form['sid']);
+                //
+                $this->db->insert('portal_eeo_form_history', $form);
+                continue;
+            }
+            //
+            if (empty($form['us_citizen'])) {
+                $this->db->delete('portal_eeo_form', ['sid' => $form['sid']]);
+            }
+            //
+            $form['eeo_form_sid'] = $form['sid'];
+            //
+            unset($form['sid']);
+            //
+            $this->db->insert('portal_eeo_form_history', $form);
+        }
     }
 
     function activate_i9_forms($user_type, $user_sid)
@@ -1804,7 +1832,7 @@ class Hr_documents_management_model extends CI_Model
         $employeeList = 'all',
         $documentList = 'all'
     ) {
-        $this->db->select('user_sid');
+        $this->db->select('user_sid,sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_consent', 0);
         $this->db->where('status', 1);
@@ -1839,99 +1867,103 @@ class Hr_documents_management_model extends CI_Model
                     }
                 }
 
-                if ($assigned_document['document_type'] != 'offer_letter') {
-                    if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
+                if ($assigned_document['approval_process'] == 0) {
+                    if ($assigned_document['document_type'] != 'offer_letter') {
+                        if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
 
-                        if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
-                            if ($is_magic_tag_exist == 1) {
+                            if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                                 if ($assigned_document['uploaded'] == 1) {
                                     $is_document_completed = 1;
                                 } else {
                                     $is_document_completed = 0;
                                 }
-                            } else if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
+                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                                if ($is_magic_tag_exist == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($assigned_document['acknowledgment_required'] == 1) {
+                                if ($assigned_document['acknowledged'] == 1) {
+                                    $is_document_completed = 1;
+                                } else if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($assigned_document['download_required'] == 1) {
+                                if ($assigned_document['downloaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($assigned_document['signature_required'] == 1) {
+                                if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($is_magic_tag_exist == 1) {
+                                if ($assigned_document['user_consent'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
                             }
-                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['acknowledgment_required'] == 1) {
-                            if ($assigned_document['acknowledged'] == 1) {
-                                $is_document_completed = 1;
-                            } else if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['download_required'] == 1) {
-                            if ($assigned_document['downloaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($is_magic_tag_exist == 1) {
-                            if ($assigned_document['user_consent'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        }
 
-                        if ($is_document_completed > 0) {
+                            if ($is_document_completed > 0) {
+                                unset($assigned_documents[$document_key]);
+                            } else {
+                                $assigned_sids[] = $assigned_document['document_sid'];
+                                $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
+                                $now = time();
+                                $datediff = $now - strtotime($assigned_document['assigned_date']);
+                                $days = round($datediff / (60 * 60 * 24));
+
+                                $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+                            }
+                        } else {
+                            unset($assigned_documents[$document_key]);
+                        }
+                    } else {
+                        //
+                        if ($assigned_document['user_consent'] == 1) {
                             unset($assigned_documents[$document_key]);
                         } else {
                             $assigned_sids[] = $assigned_document['document_sid'];
                             $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
+                            //
                             $now = time();
                             $datediff = $now - strtotime($assigned_document['assigned_date']);
                             $days = round($datediff / (60 * 60 * 24));
-
-                            $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+                            //
+                            $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
                         }
-                    } else {
-                        unset($assigned_documents[$document_key]);
                     }
                 } else {
-                    //
-                    if ($assigned_document['user_consent'] == 1) {
-                        unset($assigned_documents[$document_key]);
-                    } else {
-                        $assigned_sids[] = $assigned_document['document_sid'];
-                        $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
-                        //
-                        $now = time();
-                        $datediff = $now - strtotime($assigned_document['assigned_date']);
-                        $days = round($datediff / (60 * 60 * 24));
-                        //
-                        $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
-                    }
+                    unset($assigned_documents[$document_key]);
                 }
             }
 
@@ -1939,7 +1971,11 @@ class Hr_documents_management_model extends CI_Model
             $pending_w4         = $this->is_employee_w4_document_pending('employee', $employee_sid);
             $pending_w9         = $this->is_employee_w9_document_pending('employee', $employee_sid);
             $pending_i9         = $this->is_employee_i9_document_pending('employee', $employee_sid);
-            $pending_eeoc         = $this->is_eeoc_form_assign('employee', $employee_sid);
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
+                $pending_eeoc       = $this->is_eeoc_form_assign('employee', $employee_sid);
+            } else {
+                $pending_eeoc       = 0;
+            }
 
             // Get General Documents
             $this->addGeneralDocuments(
@@ -1947,7 +1983,6 @@ class Hr_documents_management_model extends CI_Model
                 $employee['user_sid'],
                 $employee_sids[$emp_key]['Documents']
             );
-
 
             // 
             if ($pending_w4 != 0) {
@@ -2006,7 +2041,294 @@ class Hr_documents_management_model extends CI_Model
             }
         }
 
+        if ($documentList == 'all') {
+            $ignore = array_column($employee_sids, 'user_sid');
+            $this->db->select('sid');
+            $this->db->where('parent_sid', $company_sid);
+            $this->db->where('terminated_status', 0);
+            $this->db->where('active', 1);
+            $this->db->where_not_in('sid', $ignore);
+
+            $record_obj = $this->db->get('users');
+            $other_employees = [];
+
+            if ($record_obj !== FALSE && $record_obj->num_rows() > 0) {
+                $other_employees = $record_obj->result_array();
+                $record_obj->free_result();
+            }
+
+
+            if (!empty($other_employees)) {
+                foreach ($other_employees as $other_key => $other_employee) {
+                    $pending_w4         = $this->is_employee_w4_document_pending('employee', $other_employee['sid']);
+                    $pending_w9         = $this->is_employee_w9_document_pending('employee', $other_employee['sid']);
+                    $pending_i9         = $this->is_employee_i9_document_pending('employee', $other_employee['sid']);
+                    // 
+                    if ($pending_w4 != 0) {
+                        $w4_info = $this->get_w4_document_assign_date('employee', $other_employee['sid']);
+                        //
+                        $other_employees[$other_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W4 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $w4_info['assigned_on'],
+                            'Days' => $w4_info['days']
+                        );
+                    }
+
+                    if ($pending_w9 != 0) {
+                        $w9_info = $this->get_w9_document_assign_date('employee', $other_employee['sid']);
+                        //
+                        $other_employees[$other_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $w9_info['assigned_on'],
+                            'Days' => $w9_info['days']
+                        );
+                    }
+
+                    if ($pending_i9 != 0) {
+                        $i9_info = $this->get_i9_document_assign_date('employee', $other_employee['sid']);
+                        //
+                        $other_employees[$other_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'I9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $i9_info['assigned_on'],
+                            'Days' => $i9_info['days']
+                        );
+                    }
+
+                    if ($pending_w4 == 0 && $pending_w9 == 0 && $pending_i9 == 0) {
+                        unset($employee_sids[$emp_key]);
+                    } else {
+                        $r[$other_employee['sid']]['Documents'] = $other_employees[$other_key]['Documents'];
+                    }
+                }
+            }
+        }
+
         return $r;
+    }
+
+    function getEmployeesWithPendingFederalFillable(
+        $company_sid,
+        $employeeList = 'all',
+        $documentList = 'all'
+    ) {
+
+        $r = array();
+
+        $this->db->select('sid');
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('terminated_status', 0);
+        $this->db->where('active', 1);
+        if ($employeeList != 'all') $this->db->where_in('sid', explode(':', $employeeList));
+
+        $record_obj = $this->db->get('users');
+        $employees = $record_obj->result_array();
+        $record_obj->free_result();
+        //      
+        if (!empty($employees)) {
+            foreach ($employees as $emp_key => $employee) {
+                $documents = explode(':', $documentList);
+                // _e($documents,true,true);
+                if (in_array('w4', $documents) || in_array('all', $documents)) {
+                    $pending_w4_status = $this->is_employee_w4_document_pending_or_notassigned('employee', $employee['sid']);
+                } else {
+                    $pending_w4_status = 0;
+                }
+                //
+                if (in_array('i9', $documents) || in_array('all', $documents)) {
+                    $pending_i9_status = $this->is_employee_i9_document_pending_or_notassigned('employee', $employee['sid']);
+                } else {
+                    $pending_i9_status = 0;
+                }
+
+                if ($pending_w4_status == "not_assigned" || $pending_w4_status == "pending") {
+                    if ($pending_w4_status == "pending") {
+                        $w4_info = $this->get_w4_document_assign_date('employee', $employee['sid']);
+                        //
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W4 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $w4_info['assigned_on'],
+                            'Days' => $w4_info['days'],
+                            'Status' => 'pending'
+                        );
+                    } else {
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W4 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => "",
+                            'Days' => "",
+                            'Status' => 'not_assigned'
+                        );
+                    }
+                } else if ($pending_w4_status == "completed") {
+                    $w4_info = $this->get_w4_completed_document_assign_date('employee', $employee['sid']);
+                    //
+                    $employees[$emp_key]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'W4 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $w4_info['assigned_on'],
+                        'Days' => $w4_info['days'],
+                        'Status' => 'completed'
+                    );
+                }
+
+                if ($pending_i9_status == "not_assigned" || $pending_i9_status == "pending") {
+                    if ($pending_i9_status == "pending") {
+                        $i9_info = $this->get_i9_document_assign_date('employee', $employee['sid']);
+                        //
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'I9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $i9_info['assigned_on'],
+                            'Days' => $i9_info['days'],
+                            'Status' => 'pending'
+                        );
+                    } else {
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'I9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => "",
+                            'Days' => "",
+                            'Status' => 'not_assigned'
+                        );
+                    }
+                } else if ($pending_i9_status == "completed") {
+                    $i9_info = $this->get_i9_completed_document_assign_date('employee', $employee['sid']);
+                    //
+                    $employees[$emp_key]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'I9 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $i9_info['assigned_on'],
+                        'Days' => $i9_info['days'],
+                        'Status' => 'completed'
+                    );
+                }
+
+                if ($pending_w4_status === 0 && $pending_i9_status === 0) {
+                    unset($employees[$emp_key]);
+                } else {
+                    $r[$employee['sid']]['Documents'] = $employees[$emp_key]['Documents'];
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    function is_employee_w4_document_pending_or_notassigned($user_type, $user_sid)
+    {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('form_w4_original');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            if ($records_arr['user_consent'] == 1) {
+                return 'completed';
+            } else {
+                return "pending";
+            }
+        } else {
+            return "not_assigned";
+        }
+    }
+
+    function is_employee_i9_document_pending_or_notassigned($user_type, $user_sid)
+    {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('applicant_i9form');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            if ($records_arr['user_consent'] == 1) {
+                return 'completed';
+            } else {
+                return "pending";
+            }
+        } else {
+            return "not_assigned";
+        }
+    }
+
+    function get_w4_completed_document_assign_date($user_type, $user_sid)
+    {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('form_w4_original');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time();
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
+    function get_i9_completed_document_assign_date($user_type, $user_sid)
+    {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('applicant_i9form');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time();
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
     }
 
     function get_employee_assigned_documents($company_sid, $user_type, $user_sid = null)
@@ -2888,7 +3210,88 @@ class Hr_documents_management_model extends CI_Model
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
+        //
+        if ($records_arr) {
+            //
+            $documentIds = array_column($records_arr, 'sid');
+            //
+            $skipIdObj = $this->getDocumentCategoryIds($documentIds);
+            //
+            if ($skipIdObj) {
+                //
+                foreach ($records_arr as $index => $value) {
+                    //
+                    if (isset($skipIdObj[$value['sid']]) && $value['archive'] == 0) {
+                        unset($records_arr[$index]);
+                    }
+                }
+                //
+                $records_arr = array_values($records_arr);
+            }
+        }
+
         return $records_arr;
+    }
+
+    /**
+     * Get company documents category ids
+     *
+     * @param array $ids
+     * @param string $type optional
+     * @return array
+     */
+    public function getDocumentCategoryIds(array $ids, string $type = 'documents_management')
+    {
+        $records =
+            $this->db->select('DISTINCT(document_sid)')
+            ->where_in([
+                'document_sid' => $ids,
+                'document_type' => $type
+            ])
+            ->get('documents_2_category')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            $tmp[$record['document_sid']] = true;
+        }
+        //
+        return $tmp;
+    }
+
+    /**
+     * Get company documents category ids
+     *
+     * @param array $ids
+     * @param string $type optional
+     * @return array
+     */
+    public function getDocumentGroupIds(array $ids, string $type = 'documents_management')
+    {
+        $records =
+            $this->db->select('DISTINCT(document_sid)')
+            ->where_in([
+                'document_sid' => $ids
+            ])
+            ->get('documents_2_group')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            $tmp[$record['document_sid']] = true;
+        }
+        //
+        return $tmp;
     }
 
     function get_access_level_manual_doc($company_sid, $employer_sid, $employer_type, $pp_flag = 0)
@@ -3273,8 +3676,10 @@ class Hr_documents_management_model extends CI_Model
         addDefaultCategoriesIntoCompany($companySid);
         //
         $this->db->select('sid, name')
+            ->group_start()
             ->where('company_sid', $companySid)
             ->or_where('sid', PP_CATEGORY_SID)
+            ->group_end()
             ->order_by('sort_order', 'asc');
         //
         if ($status != NULL) $this->db->where('status', $status);
@@ -3283,6 +3688,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $b = $a->result_array();
         $a->free_result();
+
         //
         return $b;
     }
@@ -3481,7 +3887,7 @@ class Hr_documents_management_model extends CI_Model
                 }
             }
         }
-        if (count($completed_documents) > 0) {
+        if (is_array($completed_documents) && count($completed_documents) > 0) {
             $cat_index = count($categories);
             $categories_documents_completed[$cat_index]['name'] = "Uncategorized Documents";
             $categories_documents_completed[$cat_index]['category_sid'] = 0;
@@ -3621,7 +4027,16 @@ class Hr_documents_management_model extends CI_Model
             download_required,
             signature_required,
             archive,
-            sort_order
+            sort_order,
+            is_confidential,
+            has_approval_flow,
+            document_approval_note,
+            document_approval_employees,
+            confidential_employees,
+            automatic_assign_in,
+            automatic_assign_type,
+            managers_list as signers,
+            
         ')
             ->where('sid', $documentId)
             ->get('documents_management');
@@ -4447,12 +4862,12 @@ class Hr_documents_management_model extends CI_Model
                 array_column($b, 'team_sid')
             );
             //
-            if(!$activeTeamsByIds){
+            if (!$activeTeamsByIds) {
                 return $r;
             }
 
             foreach ($b as $k => $v) {
-                if(in_array($v['team_sid'], $activeTeamsByIds)){
+                if (in_array($v['team_sid'], $activeTeamsByIds)) {
                     $r[] = $v['employee_sid'];
                 }
             }
@@ -4460,13 +4875,14 @@ class Hr_documents_management_model extends CI_Model
         return $r;
     }
 
-    public function getActiveTeamsIdsByIds($teamIds){
+    public function getActiveTeamsIdsByIds($teamIds)
+    {
         $a = $this->db
-        ->select('sid')
-        ->where_in('sid', $teamIds)
-        ->where('status', 1)
-        ->where('is_deleted', 0)
-        ->get('departments_team_management');
+            ->select('sid')
+            ->where_in('sid', $teamIds)
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->get('departments_team_management');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -4545,12 +4961,12 @@ class Hr_documents_management_model extends CI_Model
                     'assigned_status' => 0
                 ));
             //
-            $this->sendEmailToAuthorizedManagers($v, $assignedSid);    
-                
+            $this->sendEmailToAuthorizedManagers($v, $assignedSid);
         }
     }
 
-    function sendEmailToAuthorizedManagers ($managerId, $assignedDocumentId) {
+    function sendEmailToAuthorizedManagers($managerId, $assignedDocumentId)
+    {
         //
         $session = $this->session->userdata('logged_in');
         $CompanySID = $session['company_detail']['sid'];
@@ -4571,14 +4987,14 @@ class Hr_documents_management_model extends CI_Model
         $replacement_array['baseurl']           = base_url();
         $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
         $replacement_array['company_name']  = $CompanyName;
-        $replacement_array['employee_name']  = ucwords($userDetails['first_name'].' '.$userDetails['last_name']);
+        $replacement_array['employee_name']  = ucwords($userDetails['first_name'] . ' ' . $userDetails['last_name']);
         $replacement_array['link']  = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . (base_url('authorized_document')) . '">Show Document</a>';
         //
         $user_extra_info = array();
         $user_extra_info['user_sid'] = $managerId;
         $user_extra_info['user_type'] = "employee";
         //
-        if($this->isActiveUser($managerId) && $this->doSendEmail($managerId, 'employee', "HREMSM1")){
+        if ($this->isActiveUser($managerId) && $this->doSendEmail($managerId, 'employee', "HREMSM1")) {
             //
             log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
         }
@@ -4978,10 +5394,22 @@ class Hr_documents_management_model extends CI_Model
             ->where('user_type', $type)
             ->where('company_sid', $cId)
             ->where('archive', 0)
-            ->where('acknowledgment_required', NULL)
-            ->where('download_required', NULL)
-            ->where('signature_required', NULL)
             ->where('status', 1)
+            ->group_start()
+            ->where('acknowledgment_required IS NULL', NULL)
+            ->or_where('acknowledgment_required', '')
+            ->or_where('acknowledgment_required', 0)
+            ->group_end()
+            ->group_start()
+            ->where('download_required IS NULL', NULL)
+            ->or_where('download_required', '')
+            ->or_where('download_required', 0)
+            ->group_end()
+            ->group_start()
+            ->where('signature_required IS NULL', NULL)
+            ->or_where('signature_required', '')
+            ->or_where('signature_required', 0)
+            ->group_end()
             ->order_by('sid', 'DESC');
         //
         if (!empty($dIds)) {
@@ -5232,6 +5660,32 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('sid', $sid)->update('documents_assigned', ['link_creation_time' => $time]);
     }
 
+    function updateAssignedFederalFillableDocumentLinkTime(
+        $time,
+        $user_sid,
+        $type
+    ) {
+        $table = "form_w4_original";
+        //
+        if ($type == "I9") {
+            $table = "applicant_i9form";
+        }
+        //
+        if ($type == "I9") {
+            $this->db->where('user_sid', $user_sid);
+        } else {
+            $this->db->where('employer_sid', $user_sid);
+        }
+        //
+        $this->db->where('user_type', 'applicant');
+        $this->db->update(
+            $table,
+            [
+                'link_creation_time' => $time
+            ]
+        );
+    }
+
     //
     function checkForExiredToken(
         $sid,
@@ -5260,6 +5714,43 @@ class Hr_documents_management_model extends CI_Model
             ->select('first_name, last_name, email')
             ->where('sid', $b['user_sid'])
             ->get($b['user_type'] == 'employee' ? 'users' : 'portal_job_applications');
+        //
+        $c = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (!count($c)) return false;
+        //
+        $b['user'] = $c;
+        //
+        return $b;
+    }
+
+    function checkForFederalFillableExiredToken(
+        $type,
+        $user_sid
+    ) {
+        if ($type == 'I9') {
+            $a = $this->db
+                ->where('user_type', "applicant")
+                ->where('user_sid', $user_sid)
+                ->where('status', 1)
+                ->get('applicant_i9form');
+        } else {
+            $a = $this->db
+                ->where('user_type', "applicant")
+                ->where('employer_sid', $user_sid)
+                ->where('status', 1)
+                ->get('form_w4_original');
+        }
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        if (!count($b)) return false;
+        //
+        $a = $this->db
+            ->select('first_name, last_name, email')
+            ->where('sid', $user_sid)
+            ->get('portal_job_applications');
         //
         $c = $a->row_array();
         $a = $a->free_result();
@@ -5423,6 +5914,9 @@ class Hr_documents_management_model extends CI_Model
         $note = '',
         $is_required = 0
     ) {
+        //
+        $is_required = !$is_required ? 0 : $is_required;
+        //
         if ($sid == 0) {
             //
             $this->db
@@ -5640,7 +6134,7 @@ class Hr_documents_management_model extends CI_Model
             if ($v['user_type'] == 'applicant') {
                 $a =
                     $this->db->select('
-                    first_name, 
+                    first_name,
                     last_name
                 ')
                     ->where('sid', $v['user_sid'])
@@ -5651,6 +6145,10 @@ class Hr_documents_management_model extends CI_Model
             } else {
                 $c[$k]['name'] = remakeEmployeeName($v);
             }
+            // Set the datetime
+            $c[$k]['created_at'] = convertDateTimeToTimeZone(
+                $c[$k]['created_at']
+            );
         }
         return $c;
     }
@@ -5710,18 +6208,18 @@ class Hr_documents_management_model extends CI_Model
             //
             $key = 'man_d1';
             //
-            if($documentType == 'direct_deposit'){
+            if ($documentType == 'direct_deposit') {
                 $key = 'man_d2';
-            } else if($documentType == 'drivers_license'){
+            } else if ($documentType == 'drivers_license') {
                 $key = 'man_d3';
-            } else if($documentType == 'emergency_contacts'){
+            } else if ($documentType == 'emergency_contacts') {
                 $key = 'man_d4';
-            } else if($documentType == 'occupational_license'){
+            } else if ($documentType == 'occupational_license') {
                 $key = 'man_d5';
             }
             //
             $isRequired = $this->getDefaultRequiredFlag(
-                $companySid, 
+                $companySid,
                 $key
             );
             //
@@ -6285,10 +6783,10 @@ class Hr_documents_management_model extends CI_Model
             $user_extra_info['user_sid'] = $document['user_sid'];
             $user_extra_info['user_type'] = $document['user_type'];
             //
-            if($this->isActiveUser($document['user_sid'])){
+            if ($this->isActiveUser($document['user_sid'])) {
                 //
                 $this->load->model('hr_documents_management_model');
-                if($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")){
+                if ($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")) {
                     //
                     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                 }
@@ -6506,6 +7004,10 @@ class Hr_documents_management_model extends CI_Model
         $sid
     ) {
         //
+        if (!$sid) {
+            return ['departments' => [], 'teams' => []];
+        }
+        //
         $departments = $this->db
             ->select('sid')
             ->where('departments_management.is_deleted', 0)
@@ -6570,34 +7072,71 @@ class Hr_documents_management_model extends CI_Model
         $sid,
         $ses
     ) {
+        // Check for confidential as priority
+        // on both main and assigned table
+        if (
+            $this->hasAccessToDocument($companyId, $sid, $ses['departments'], $ses['teams'], $role) ||
+            $this->hasAccessToDocument($companyId, $sid, $ses['departments'], $ses['teams'], $role, 'documents_assigned')
+        ) {
+            return true;
+        }
         //
-        $this->db->from('documents_management');
-        //
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('archive', 0);
-        $this->db->where('is_specific', 0);
-        $this->db->group_start();
-        // Role clause
-        $this->db->or_where('FIND_IN_SET("' . ($role) . '", is_available_for_na) > 0', NULL, FALSE);
-        // Allowed employees clause
-        $this->db->or_where('FIND_IN_SET("' . ($sid) . '", allowed_employees) > 0', NULL, FALSE);
-        // Department clause
-        $this->db->or_where('FIND_IN_SET("-1", allowed_departments) > 0', NULL, FALSE);
-        if (!empty($ses['departments'])) {
-            foreach ($ses['departments'] as $department) {
+        return false;
+    }
+
+    /**
+     * 
+     */
+    public function hasAccessToDocument(
+        $companyId,
+        $employeeId,
+        $departments,
+        $teams,
+        $role,
+        $tbl = 'documents_management'
+    ) {
+        // In case of confidential
+        if (
+            $this->db
+            ->where('company_sid', $companyId)
+            ->where('is_confidential', 1)
+            ->where('archive', 0)
+            ->group_start()
+            ->where('confidential_employees', '-1')
+            ->or_where('confidential_employees', NULL)
+            ->or_where('confidential_employees', '')
+            ->or_where('FIND_IN_SET("' . ($employeeId) . '", confidential_employees) > 0', NULL, FALSE)
+            ->group_end()
+            ->count_all_results($tbl)
+        ) {
+            return true;
+        }
+        // In case of visibility
+        $this->db
+            ->where('company_sid', $companyId)
+            ->where('archive', 0)
+            ->where('is_confidential', 0)
+            ->group_start()
+            ->or_where('FIND_IN_SET("' . ($role) . '", ' . ($tbl == 'documents_assigned' ? 'allowed_roles' : 'is_available_for_na') . ') > 0', NULL, FALSE)
+            ->or_where('FIND_IN_SET("' . ($employeeId) . '", allowed_employees) > 0', NULL, FALSE)
+            ->or_where('FIND_IN_SET("-1", allowed_departments) > 0', NULL, FALSE)
+            ->or_where('FIND_IN_SET("-1", allowed_teams) > 0', NULL, FALSE);
+        // For departments
+        if (!$departments) {
+            foreach ($departments as $department) {
                 $this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
             }
         }
-        // Team clause
-        $this->db->or_where('FIND_IN_SET("-1", allowed_teams) > 0', NULL, FALSE);
-        if (!empty($ses['teams'])) {
-            foreach ($ses['teams'] as $team) {
+        // For teams
+        if ($teams) {
+            foreach ($teams as $team) {
                 $this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
             }
         }
-        $this->db->group_end();
         //
-        return $this->db->count_all_results();
+        return $this->db
+            ->group_end()
+            ->count_all_results($tbl);
     }
 
     //
@@ -6758,6 +7297,8 @@ class Hr_documents_management_model extends CI_Model
     {
         $this->db->select('users.first_name, users.last_name, users.email, users.sid');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
+        $this->db->where('users.active', 1);
+        $this->db->where('users.terminated_status', 0);
         $this->db->where('authorized_document_assigned_manager.document_assigned_sid', $document_sid);
         $this->db->join('users', 'users.sid = authorized_document_assigned_manager.assigned_to_sid', 'inner');
         $record_obj = $this->db->get('authorized_document_assigned_manager');
@@ -6826,8 +7367,6 @@ class Hr_documents_management_model extends CI_Model
         //
         $b = $a->row_array();
         //
-        unset($a);
-        //
         if (empty($b)) {
             $this->db
                 ->insert("portal_eeo_form", [
@@ -6843,16 +7382,59 @@ class Hr_documents_management_model extends CI_Model
             //
             $sid = $this->db->insert_id();
             //
-            keepTrackVerificationDocument($assign_by_sid, "employee", 'assign', $sid, 'eeoc', $location);
-            //
         } else {
-            $sid = $b['sid'];
             //
             $data_to_update = array();
+            $data_to_update['status'] = 1;
+            $data_to_update['is_latest'] = 1;
+            $data_to_update['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
             $data_to_update['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-            $this->db->where('sid', $sid);
+            $this->db->where('application_sid', $id);
+            $this->db->where('users_type', $type);
             $this->db->update('portal_eeo_form', $data_to_update);
+            //
+            if ($a->num_rows > 1) {
+                $records =
+                    $this->db
+                    ->where('application_sid', $id)
+                    ->where('users_type', $type)
+                    ->order_by('sid', 'desc')
+                    ->get('portal_eeo_form')
+                    ->result_array();
+                //
+                $sid = 0;
+                //
+                foreach ($records as $record) {
+                    //
+                    if ($sid == 0) {
+                        $sid = $record['sid'];
+                        continue;
+                    }
+                    if (empty($record['us_citizen'])) {
+                        $this->db->delete('portal_eeo_form', ['sid' => $record['sid']]);
+                    }
+                    //
+                    $id = $record['sid'];
+                    //
+                    unset($record['sid']);
+                    //
+                    $record['eeo_form_sid'] = $id;
+                    //
+                    $this->db->insert('portal_eeo_form_history', $record);
+                }
+            } else {
+                //
+                $sid =
+                    $this->db
+                        ->select('sid')
+                        ->where('application_sid', $id)
+                        ->where('users_type', $type)
+                        ->get('portal_eeo_form')
+                        ->row_array()['sid'];
+            }
         }
+        //
+        keepTrackVerificationDocument($assign_by_sid, $type, 'assign', $sid, 'eeoc', $location);
         return $sid;
     }
 
@@ -7115,6 +7697,22 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
+    public function hasEEOCPermission($company_id, $column)
+    {
+        //
+        $record =
+            $this->db->select($column)
+            ->where('user_sid', $company_id)
+            ->get('portal_employer')
+            ->row_array();
+        //
+        if (empty($record)) {
+            return 0;
+        }
+        //
+        return $record[$column];
+    }
+
     function get_user_eeo_form_info($sid, $type, $checkExpired = true)
     {
         $this->db->select('*');
@@ -7136,12 +7734,28 @@ class Hr_documents_management_model extends CI_Model
 
     public function getMyAssignApprovalInfo($employee_sid)
     {
-        //
-        $this->db->select('sid, portal_document_assign_sid, assign_on');
-        $this->db->where('assigner_sid', $employee_sid);
-        $this->db->where('status', 1);
-        $this->db->where('assigner_turn', 1);
+
+        $this->db->select('portal_document_assign_flow_employees.sid');
+        $this->db->select('portal_document_assign_flow_employees.portal_document_assign_sid');
+        $this->db->select('portal_document_assign_flow_employees.assign_on');
+        $this->db->select('portal_document_assign_flow_employees.assigner_sid as approver_sid');
+        $this->db->select('documents_assigned.sid as document_sid');
+        $this->db->select('documents_assigned.document_title');
+        $this->db->select('documents_assigned.document_type');
+        $this->db->select('documents_assigned.user_sid');
+        $this->db->select('documents_assigned.user_type');
+        $this->db->select('portal_document_assign_flow.assigner_note');
+
+        $this->db->where('portal_document_assign_flow_employees.assigner_sid', $employee_sid);
+        $this->db->where('portal_document_assign_flow_employees.status', 1);
+        $this->db->where('portal_document_assign_flow_employees.assigner_turn', 1);
+        $this->db->where('portal_document_assign_flow.assign_status', 1);
+        $this->db->where('documents_assigned.approval_process', 1);
+
+        $this->db->join('portal_document_assign_flow', 'portal_document_assign_flow.sid = portal_document_assign_flow_employees.portal_document_assign_sid', 'inner');
+        $this->db->join('documents_assigned', 'documents_assigned.approval_flow_sid = portal_document_assign_flow.sid', 'inner');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
+
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
@@ -7174,9 +7788,9 @@ class Hr_documents_management_model extends CI_Model
     public function getAssignApprovalDocumentInfo($document_sid)
     {
         //
-        $this->db->select('flow_json, document_type, document_sid, user_sid, user_type, assigner_note');
+        $this->db->select('document_sid, assigner_note');
         $this->db->where('sid', $document_sid);
-        $this->db->where('assign_status <>', 0);
+        $this->db->where('assign_status', 1);
         $record_obj = $this->db->get('portal_document_assign_flow');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
@@ -7189,22 +7803,29 @@ class Hr_documents_management_model extends CI_Model
         return $return_data;
     }
 
-    function saveAssignerAction($sid, $data_to_update)
-    {
-        $this->db->where('sid', $sid);
-        $this->db->update('portal_document_assign_flow_employees', $data_to_update);
-    }
-
-    function updateApproversInfo($document_sid, $data_to_update)
+    function saveApproverAction($approver_reference, $document_sid, $data_to_update)
     {
         $this->db->where('portal_document_assign_sid', $document_sid);
+        //
+        if (is_numeric($approver_reference) && $approver_reference > 0) {
+            $this->db->where('assigner_sid', $approver_reference);
+        } else {
+            $this->db->where('approver_email', $approver_reference);
+        }
+        //
         $this->db->update('portal_document_assign_flow_employees', $data_to_update);
     }
 
-    function getnextApproversInfo($document_sid)
+    function updateApproversInfo($flow_sid, $data_to_update)
+    {
+        $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->update('portal_document_assign_flow_employees', $data_to_update);
+    }
+
+    function getnextApproversInfo($approval_flow_sid)
     {
         //
-        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('portal_document_assign_sid', $approval_flow_sid);
         $this->db->where('status', 1);
         $this->db->where('assigner_turn', 0);
         $this->db->where('assign_on', NULL);
@@ -7237,9 +7858,9 @@ class Hr_documents_management_model extends CI_Model
         return $record_arr;
     }
 
-    function updateApprovalDocument($document_sid, $data_to_update)
+    function updateApprovalDocument($flow, $data_to_update)
     {
-        $this->db->where('sid', $document_sid);
+        $this->db->where('sid', $flow);
         $this->db->update('portal_document_assign_flow', $data_to_update);
     }
 
@@ -7285,12 +7906,13 @@ class Hr_documents_management_model extends CI_Model
         return $return_data;
     }
 
-    public function getAllDocumentAssigners($document_sid)
+    public function getAllDocumentApprovers($document_sid)
     {
         //
         $this->db->select('*');
         $this->db->where('portal_document_assign_sid', $document_sid);
         // $this->db->where('status', 1);
+        $this->db->order_by('sid', 'desc');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -7309,9 +7931,9 @@ class Hr_documents_management_model extends CI_Model
         $this->db->select('document_sid');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        $this->db->where('assign_status', 1);
+        $this->db->where('approval_process', 1);
         $this->db->where('document_type <>', "offer_letter");
-        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_obj = $this->db->get('documents_assigned');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
@@ -7329,9 +7951,9 @@ class Hr_documents_management_model extends CI_Model
         $this->db->select('document_sid');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        $this->db->where('assign_status', 1);
+        $this->db->where('approval_process', 1);
         $this->db->where('document_type', "offer_letter");
-        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_obj = $this->db->get('documents_assigned');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
@@ -8084,7 +8706,7 @@ class Hr_documents_management_model extends CI_Model
         } else {
             $this->db->select('sid, document_title, document_type, document_description, document_s3_name, uploaded_file, form_input_data, submitted_description, authorized_signature, authorized_signature_date, signature_base64, signature_initial, signature_timestamp');
         }
-        
+
         $this->db->where('sid', $document_sid);
 
         $record_obj = $this->db->get($type == "company" ? "documents_management" : "documents_assigned");
@@ -8093,6 +8715,140 @@ class Hr_documents_management_model extends CI_Model
 
         if (!empty($records_arr)) {
             return $records_arr;
+        }
+        //
+        return [];
+    }
+
+    public function get_approval_document_information($document_sid, $user_type, $user_sid)
+    {
+        //
+        $this->db->select('sid, company_sid, approval_flow_sid, document_title, document_type, document_approval_employees');
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('user_type', $user_type);
+        $this->db->where('approval_process', 1);
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_approvers($flow_sid)
+    {
+        //
+        $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date, approver_email');
+        $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->order_by('sid', 'desc');
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function check_document_approver_turn($document_sid)
+    {
+        //
+        $this->db->select('sid');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = 1;
+        }
+
+        return $return_data;
+    }
+
+    public function get_approval_document_bySID($sid)
+    {
+        //
+        $this->db->select('sid, assigner_note, assigned_date, assigned_by');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function delete_document_approver_from_list($sid)
+    {
+        //
+        $this->db->where('sid', $sid);
+        $this->db->delete('portal_document_assign_flow_employees');
+    }
+
+    public function change_document_approval_status($document_sid, $data_to_update)
+    {
+        $this->db->where('sid', $document_sid);
+        $this->db->update('documents_assigned', $data_to_update);
+    }
+
+    public function get_assigned_document_info_by_sid($sid)
+    {
+        $this->db->select('user_type, user_sid, document_title');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('documents_assigned');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function revoke_document_previous_flow($document_sid)
+    {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->set('assign_status', 0);
+        $this->db->update('portal_document_assign_flow');
+    }
+
+    public function requiredDocumentLibrary($document_sid)
+    {
+        $this->db->where('sid', $document_sid);
+        $this->db->set('status', 0);
+        $this->db->update('documents_assigned');
+    }
+
+    public function get_approver_detail($approver_sid)
+    {
+        $this->db->select('*');
+        $this->db->where('sid', $approver_sid);
+        $this->db->where('active', 1);
+
+
+        $record_obj = $this->db->get('users');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
         } else {
             return array();
         }
@@ -8111,32 +8867,39 @@ class Hr_documents_management_model extends CI_Model
         $userId,
         $userType = 'employee',
         $placeCode
-    ){
+    ) {
         //
         $this->logEmailPlace('HR_DOCUMENTS_NOTIFICATION_EMS', $userId, $placeCode, $userType);
         //
         $q = $this->db
-        ->select('document_sent_on')
-        ->where('sid', $userId)
-        ->get($userType === 'employee' ? 'users' : 'portal_job_applications');
+            ->select('document_sent_on')
+            ->where('sid', $userId)
+            ->get($userType === 'employee' ? 'users' : 'portal_job_applications');
         //
         $r = $q->row_array();
         $q->free_result();
         //
-        if(!empty($r['document_sent_on'])) {
+        if (!empty($r['document_sent_on'])) {
             //
-            $date1 = DateTime::createFromFormat('Y-m-d H:i:s', $r['document_sent_on']);
-            $date2 = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', strtotime('now')));
-            //
-            if($date2->diff($date1)->format('%h') < 2){
+            if (date('Y-m-d', strtotime('now')) == DateTime::createFromFormat('Y-m-d H:i:s', $r['document_sent_on'])->format('Y-m-d')) {
                 //
-                return false;
+                $date1 = DateTime::createFromFormat('Y-m-d H:i:s', $r['document_sent_on']);
+                $date2 = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', strtotime('now')));
+                //
+                if ($date2->diff($date1)->format('%h') < 2) {
+                    //
+                    return false;
+                }
             }
         }
         //
-        $this->db->where('sid', $userId)->update($userType === 'employee' ? 'users' : 'portal_job_applications', [
-            'document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))
-        ]);
+        $this->db
+            ->where(
+                'sid',
+                $userId
+            )->update($userType === 'employee' ? 'users' : 'portal_job_applications', [
+                'document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))
+            ]);
         //
         return true;
     }
@@ -8154,16 +8917,18 @@ class Hr_documents_management_model extends CI_Model
         $userId,
         $placeCode,
         $userType = 'employee'
-    ){
+    ) {
         //
         $this->db->insert(
-            'email_tracker', [
+            'email_tracker',
+            [
                 'template_name' => $templateName,
                 'user_sid' => $userId,
                 'user_type' => $userType,
                 'place_code' => $placeCode,
                 'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-        ]);
+            ]
+        );
         //
         return true;
     }
@@ -8183,19 +8948,19 @@ class Hr_documents_management_model extends CI_Model
     public function isActiveUser(
         $userId,
         $userType = 'employee'
-    ){
+    ) {
         //
-        if(empty($userId) || $userId == 0 || $userType != 'employee'){
+        if (empty($userId) || $userId == 0 || $userType != 'employee') {
             return 1;
         }
         //
         return $this->db
-        ->where([
-            'sid' => $userId,
-            'terminated_status' => 0,
-            'active' => 1
-        ])
-        ->count_all_results('users');
+            ->where([
+                'sid' => $userId,
+                'terminated_status' => 0,
+                'active' => 1
+            ])
+            ->count_all_results('users');
     }
 
 
@@ -8214,7 +8979,7 @@ class Hr_documents_management_model extends CI_Model
         $userId,
         $userType,
         $isRequired
-    ){
+    ) {
         //
         $whereArray = [
             'user_sid' => $userId,
@@ -8223,7 +8988,7 @@ class Hr_documents_management_model extends CI_Model
             'sid' => $documentId
         ];
         //
-        if(
+        if (
             $this->db->where($whereArray)->count_all_results('documents_assigned_general')
         ) {
             $this->db->where($whereArray)->update('documents_assigned_general', [
@@ -8243,13 +9008,13 @@ class Hr_documents_management_model extends CI_Model
     public function getDefaultRequiredFlag(
         $companyId,
         $column
-    ){
+    ) {
         //
-        $q = 
-        $this->db
-        ->select($column)
-        ->where('user_sid', $companyId)
-        ->get('portal_employer');
+        $q =
+            $this->db
+            ->select($column)
+            ->where('user_sid', $companyId)
+            ->get('portal_employer');
         //
         $d = $q->row_array();
         //
@@ -8265,10 +9030,10 @@ class Hr_documents_management_model extends CI_Model
         $companyId,
         $userId,
         $userType = 'employee'
-    ){
+    ) {
         $r = [];
         // Check for I9 permission
-        if($this->getDefaultRequiredFlag($companyId, 'dl_i9')){
+        if ($this->getDefaultRequiredFlag($companyId, 'dl_i9')) {
             // 
             $r['I9'] = [
                 'id' => 0,
@@ -8289,7 +9054,7 @@ class Hr_documents_management_model extends CI_Model
                 'employer_filled_date'
             ], true);
             //
-            if($form){
+            if ($form) {
                 $r['I9']['id'] = $form['sid'];
                 $r['I9']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
                 $r['I9']['assigned_on'] = $form['sent_date'];
@@ -8297,7 +9062,7 @@ class Hr_documents_management_model extends CI_Model
             }
         }
         // Check for W9 permission
-        if($this->getDefaultRequiredFlag($companyId, 'dl_w9')){
+        if ($this->getDefaultRequiredFlag($companyId, 'dl_w9')) {
             // 
             $r['W9'] = [
                 'id' => 0,
@@ -8318,7 +9083,7 @@ class Hr_documents_management_model extends CI_Model
                 'signature_timestamp'
             ], true);
             //
-            if($form){
+            if ($form) {
                 $r['W9']['id'] = $form['sid'];
                 $r['W9']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
                 $r['W9']['assigned_on'] = $form['sent_date'];
@@ -8326,7 +9091,7 @@ class Hr_documents_management_model extends CI_Model
             }
         }
         // Check for W4 permission
-        if($this->getDefaultRequiredFlag($companyId, 'dl_w4')){
+        if ($this->getDefaultRequiredFlag($companyId, 'dl_w4')) {
             // 
             $r['W4'] = [
                 'id' => 0,
@@ -8347,7 +9112,7 @@ class Hr_documents_management_model extends CI_Model
                 'signature_timestamp'
             ], true);
             //
-            if($form){
+            if ($form) {
                 $r['W4']['id'] = $form['sid'];
                 $r['W4']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
                 $r['W4']['assigned_on'] = $form['sent_date'];
@@ -8374,11 +9139,11 @@ class Hr_documents_management_model extends CI_Model
         $where,
         $columns,
         $single = false
-    ){
+    ) {
         //
         $q = $this->db->select($columns)
-        ->where($where)
-        ->get($table);
+            ->where($where)
+            ->get($table);
         //
         $d = $single ? $q->row_array() : $q->result_array();
         //
@@ -8400,7 +9165,7 @@ class Hr_documents_management_model extends CI_Model
         $companyId,
         $userId,
         $userType
-    ){
+    ) {
         //
         $whereArray = [
             'company_sid' => $companyId,
@@ -8416,7 +9181,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $dateTime = date('Y-m-d H:i:s', strtotime('now'));
         // Needs to add a fresh record
-        if(!$form){
+        if (!$form) {
             $ins = array();
             $ins['user_sid'] = $userId;
             $ins['user_type'] = $userType;
@@ -8429,7 +9194,7 @@ class Hr_documents_management_model extends CI_Model
             return $this->db->insert_id();
         }
         // Means the user has completed and the document is assigned
-        if($form['status'] == 1 && $form['user_consent']){
+        if ($form['status'] == 1 && $form['user_consent']) {
             // Fetch the old doc and move to history
             $fullForm = $this->getData('applicant_i9form', $whereArray, [
                 '*'
@@ -8442,8 +9207,8 @@ class Hr_documents_management_model extends CI_Model
         }
         // Flush the data
         $upd = array();
-        $upd["status"] = $form['status'] == 1 ? 0 : 1;
-        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["status"] = 1;
+        $upd["sent_status"] = 1;
         $upd["sent_date"] = $dateTime;
         $upd["section1_emp_signature"] = NULL;
         $upd["section1_emp_signature_init"] = NULL;
@@ -8476,7 +9241,7 @@ class Hr_documents_management_model extends CI_Model
         $companyId,
         $userId,
         $userType
-    ){
+    ) {
         //
         $whereArray = [
             'company_sid' => $companyId,
@@ -8492,7 +9257,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $dateTime = date('Y-m-d H:i:s', strtotime('now'));
         // Needs to add a fresh record
-        if(!$form){
+        if (!$form) {
             $ins = array();
             $ins['user_sid'] = $userId;
             $ins['user_type'] = $userType;
@@ -8505,12 +9270,12 @@ class Hr_documents_management_model extends CI_Model
             return $this->db->insert_id();
         }
         // Means the user has completed and the document is assigned
-        if($form['status'] == 1 && $form['user_consent']){
+        if ($form['status'] == 1 && $form['user_consent']) {
             // Fetch the old doc and move to history
             $fullForm = $this->getData('applicant_w9form', $whereArray, [
                 '*'
             ], true);
-            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            $fullForm['w9form_ref_sid'] = $fullForm['sid'];
             //
             unset($fullForm['sid']);
             //
@@ -8518,8 +9283,8 @@ class Hr_documents_management_model extends CI_Model
         }
         // Flush the data
         $upd = array();
-        $upd["status"] = $form['status'] == 1 ? 0 : 1;
-        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["status"] =  1;
+        $upd["sent_status"] =  1;
         $upd["sent_date"] = $dateTime;
         $upd["user_consent"] = NULL;
         $upd['user_agent'] = NULL;
@@ -8533,7 +9298,7 @@ class Hr_documents_management_model extends CI_Model
         $upd['signature_ip_address'] = NULL;
         $upd['signature_user_agent'] = NULL;
         //
-        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        $this->db->where($whereArray)->update('applicant_w9form', $upd);
         //
         return $form['sid'];
     }
@@ -8551,7 +9316,7 @@ class Hr_documents_management_model extends CI_Model
         $companyId,
         $userId,
         $userType
-    ){
+    ) {
         //
         $whereArray = [
             'company_sid' => $companyId,
@@ -8567,7 +9332,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $dateTime = date('Y-m-d H:i:s', strtotime('now'));
         // Needs to add a fresh record
-        if(!$form){
+        if (!$form) {
             $ins = array();
             $ins['employer_sid'] = $userId;
             $ins['user_type'] = $userType;
@@ -8580,12 +9345,12 @@ class Hr_documents_management_model extends CI_Model
             return $this->db->insert_id();
         }
         // Means the user has completed and the document is assigned
-        if($form['status'] == 1 && $form['user_consent']){
+        if ($form['status'] == 1 && $form['user_consent']) {
             // Fetch the old doc and move to history
             $fullForm = $this->getData('form_w4_original', $whereArray, [
                 '*'
             ], true);
-            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            $fullForm['form_w4_ref_sid'] = $fullForm['sid'];
             //
             unset($fullForm['sid']);
             //
@@ -8593,8 +9358,8 @@ class Hr_documents_management_model extends CI_Model
         }
         // Flush the data
         $upd = array();
-        $upd["status"] = $form['status'] == 1 ? 0 : 1;
-        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["status"] = 1;
+        $upd["sent_status"] = 1;
         $upd["sent_date"] = $dateTime;
         $upd["user_consent"] = NULL;
         $upd['signature_timestamp']        = NULL;
@@ -8604,7 +9369,7 @@ class Hr_documents_management_model extends CI_Model
         $upd['ip_address']                 = NULL;
         $upd['user_agent']                 = NULL;
         //
-        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        $this->db->where($whereArray)->update('form_w4_original', $upd);
         //
         return $form['sid'];
     }
@@ -8620,25 +9385,309 @@ class Hr_documents_management_model extends CI_Model
      * @param number $sid
      * @return array
      */
-    public function getAssignedDocumentUserDetailsById($sid){
+    public function getAssignedDocumentUserDetailsById($sid)
+    {
         //
         $q = $this->db
-        ->select('user_sid, user_type')
-        ->where('sid', $sid)
-        ->get('documents_assigned');
+            ->select('user_sid, user_type')
+            ->where('sid', $sid)
+            ->get('documents_assigned');
         //
         $d = $q->row_array();
         //
-        if(!$d){
+        if (!$d) {
             return [];
         }
         //
         $q = $this->db
-        ->select('first_name, last_name')
-        ->where('sid', $d['user_sid'])
-        ->get($d['user_type'] == 'employee' ? 'users' : 'portal_job_applications')
-        ->row_array();
+            ->select('first_name, last_name')
+            ->where('sid', $d['user_sid'])
+            ->get($d['user_type'] == 'employee' ? 'users' : 'portal_job_applications')
+            ->row_array();
         //
         return $q ? $q : [];
+    }
+
+    function getPendingApproversDocument($company_sid)
+    {
+        $this->db->select('sid, assigned_date, assigned_by, user_type, user_sid, document_sid, assign_status, assigner_note, flow_json');
+        $this->db->where('assign_status <>', 2);
+        $this->db->where('company_sid', $company_sid);
+        $this->db->from('portal_document_assign_flow');
+        $result = $this->db->get()->result_array();
+
+        return $result;
+    }
+    public function get_approval_document_detail($document_sid, $status = true)
+    {
+        //
+        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, document_description, document_s3_name, document_sid, acknowledgment_required, download_required, signature_required, is_required, assigned_by, document_approval_employees, has_approval_flow');
+        $this->db->where('sid', $document_sid);
+        //
+        if ($status) {
+            $this->db->where('approval_process', 1);
+        }
+        //
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_current_approver_sid($currentFlowId)
+    {
+        //
+        $this->db->select('assigner_sid, approver_email');
+        $this->db->where('portal_document_assign_sid', $currentFlowId);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_company_domain_by_sid($compnay_id)
+    {
+        //
+        $this->db->select('sub_domain');
+        $this->db->where('user_sid', $compnay_id);
+        $records_obj = $this->db->get('portal_employer');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = "";
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['sub_domain'];
+        }
+
+        return $return_data;
+    }
+
+
+    public function get_approver_note($document_flow_sid, $approver_reference)
+    {
+        //
+        $this->db->select('note');
+        $this->db->where('portal_document_assign_sid', $document_flow_sid);
+        //
+        if (is_numeric($approver_reference) && $approver_reference > 0) {
+            $this->db->where('assigner_sid', $approver_reference);
+        } else {
+            $this->db->where('approver_email', $approver_reference);
+        }
+        //
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['note'];
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_approver_info($flow_sid, $approver_sid)
+    {
+        //
+        $this->db->select('assign_on, approval_status, note, action_date');
+        $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->where('assigner_sid', $approver_sid);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function getDefaultApprovers($company_sid, $flow_sid, $status)
+    {
+        //
+        //
+        $return_data = "";
+        //
+        if ($status == 1) {
+            $this->db->select('default_approvers');
+            $this->db->where('company_sid', $company_sid);
+            $record_obj = $this->db->get('notifications_emails_configuration');
+            $record_arr = $record_obj->row_array();
+            $record_obj->free_result();
+
+            //
+            if (!empty($record_arr) && $record_arr["default_approvers"] == 1) {
+                $this->db->select('employer_sid, email');
+                $this->db->where('company_sid', $company_sid);
+                $this->db->where('notifications_type', "default_approvers");
+                $this->db->where('status', "active");
+                $records_obj = $this->db->get('notifications_emails_management');
+                $default_approvers = $records_obj->result_array();
+                $records_obj->free_result();
+                //
+                if (!empty($default_approvers)) {
+                    foreach ($default_approvers as $approver) {
+                        $this->db->select('sid');
+                        $this->db->where('status', 1);
+                        $this->db->where('portal_document_assign_sid', $flow_sid);
+                        //
+                        if ($approver["employer_sid"] == 0) {
+                            $this->db->where('approver_email', $approver["email"]);
+                        } else {
+                            $this->db->where('assigner_sid', $approver["employer_sid"]);
+                        }
+                        //
+                        $record_obj = $this->db->get('portal_document_assign_flow_employees');
+                        $approver_data = $record_obj->row_array();
+                        $record_obj->free_result();
+                        //
+                        if (empty($approver_data)) {
+                            if ($approver["employer_sid"] == 0) {
+                                $return_data = $approver["email"];
+                            } else {
+                                $return_data =  $approver["employer_sid"];
+                            }
+                            //
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $return_data;
+    }
+
+
+    public function get_default_outer_approver($company_sid, $email)
+    {
+        //
+        $this->db->select('contact_name, email');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('email', $email);
+        $this->db->where('notifications_type', "default_approvers");
+        $this->db->where('status', "active");
+        $record_obj = $this->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function is_document_has_approval_flow($document_sid)
+    {
+        //
+        $this->db->select('has_approval_flow, document_approval_note');
+        $this->db->where('sid', $document_sid);
+        $record_obj = $this->db->get('documents_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_external_approver_info($flow_sid, $company_sid)
+    {
+        //
+        $this->db->select('assign_on, action_date, note, approval_status, approver_email');
+        $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->where('assigner_sid', 0);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        $return_approvers = array();
+        //
+        if (!empty($records_arr)) {
+            foreach ($records_arr as $key => $approver) {
+                $records_arr[$key]["approver_name"] = getDefaultApproverName($company_sid, $approver["approver_email"]);
+            }
+            //
+            $return_approvers = $records_arr;
+        }
+
+        return $return_approvers;
+    }
+
+    public function is_default_approver($employee_sid)
+    {
+        //
+        $this->db->select('sid');
+        $this->db->where('employer_sid', $employee_sid);
+        $this->db->where('notifications_type', "default_approvers");
+        $this->db->where('status', "active");
+        $record_obj = $this->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function get_document_detail_for_end_process($document_sid)
+    {
+        //
+        $this->db->select('company_sid, user_sid, user_type, assigned_by, document_title, document_description, sendEmail, managersList');
+        $this->db->where('sid', $document_sid);
+        //
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function is_document_has_approval_flow_offer_letter($document_sid)
+    {
+        //
+        $this->db->select('has_approval_flow, document_approval_note');
+        $this->db->where('sid', $document_sid);
+        $record_obj = $this->db->get('offer_letter');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
     }
 }

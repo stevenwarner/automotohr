@@ -10,7 +10,7 @@
                         <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('reports'); ?>" class="dashboard-link-btn"><i class="fa fa-chevron-left"></i>Back</a>
                                     <?=$title;?>
                                 </span>
@@ -217,13 +217,15 @@
         // Filter Start
         $('#js-issue-date').datepicker({ 
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
-            changeMonth: true
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         })
         $('#js-expiration-date').datepicker({ 
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
-            changeMonth: true
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         })
 
         $('#js-apply-filter').click(applyFilter);

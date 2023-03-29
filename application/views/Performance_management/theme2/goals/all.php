@@ -1,4 +1,4 @@
-<div class="col-md-9 col-sm-12">
+<div class="col-md-12 col-sm-12">
     <!-- Goals -->
     <div class="panel panel-theme">
         <div class="panel-heading" style="background-color: #3554DC;">

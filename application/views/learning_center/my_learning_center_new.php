@@ -64,14 +64,14 @@ if (isset($applicant)) {
     }
 </style>
 
-<div class="main">
+<div class="main jsmaincontent">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                        <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
@@ -128,8 +128,8 @@ if (isset($applicant)) {
                 <div class="panel panel-default lc-tabs-panel">
                     <div class="panel-heading">
                         <ul class="nav nav-tabs nav-justified">
-                            <li class="active"><a href="#online_videos" data-toggle="tab" id="OV_tab">Online Videos</a></li>
-                            <li><a href="#training_sessions" data-toggle="tab" id="TS_tab">Training Sessions</a></li>
+                            <li class="active"><a href="#online_videos" data-toggle="tab" id="OV_tab">Online Videos <?php echo !empty($videos) ? '('.$pendingVideo.')' : ""; ?></a></li>
+                            <li><a href="#training_sessions" data-toggle="tab" id="TS_tab">Training Sessions <?php echo !empty($assigned_sessions) ? '('.$pendingSessions.')' : ""; ?></a></li>
                         </ul>
                     </div>
                     

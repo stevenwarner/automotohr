@@ -7,7 +7,7 @@
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                             <?php echo $title; ?>
                         </span>
                     </div>
@@ -2524,20 +2524,12 @@
             });
 
             my_request.done(function (response) {
-                if (response == 'success') {
+                if (response == 'success' || response == 'Done') {
                     alertify.success("Candidate status updated successfully.");
                 } else {
                     alertify.error("Could not update Candidate Status.");
                 }
             });
-
-            /*
-             $.post(url, {id: id, status: status, action: "ajax_update_status"})
-             .done(function (data) {
-             console.log(data);
-             alertify.success("Candidate status updated successfully.");
-             });
-             */
         });
 
         $('.applicant').hover(function () {

@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="btn-panel top-btn">
     <a href="javascript:void(0);" class="site-btn-lg custom-apply-now" data-toggle="modal" data-target="#myModal">apply now</a>
 </div>
@@ -92,7 +93,7 @@
                     </div>
                     <div class="btn-panel">
                         <?php //echo anchor("/", "MORE CAREER Opportunities WITH THIS COMPANY", array('class' => 'site-btn-v2')); ?> 
-                        <a href="<?php echo $more_career_oppurtunatity; ?>" class="site-btn-v2">More Career Opportunities With This Company</a>
+                        <a href="<?php echo strtolower(str_replace(" ","_",$more_career_oppurtunatity)); ?>" class="site-btn-v2">More Career Opportunities With This Company</a>
                     </div> 
                 </div>					
             </div>

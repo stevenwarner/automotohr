@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -12,3 +12,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |	http://codeigniter.com/user_guide/general/profiling.html
 |
 */
+
+$config['config']          = true;
+$config['post']         = true;
+$config['uri_string']         = true;
+$config['memory_usage']         = true;
+$config['controller_info']         = true;
+$config['get']         = true;
+$config['http_headers']         = true;
+$config['session_data']         = true;
+$config['queries']         = true;

@@ -39,10 +39,17 @@
         // Datepickers
         $('#js-filter-from-date').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (v) { $('#js-filter-to-date').datepicker('option', 'minDate', v); }
         })
         $('#js-filter-to-date').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+
         }).datepicker('option', 'minDate', $('#js-filter-from-date').val());
 
         // Filter buttons

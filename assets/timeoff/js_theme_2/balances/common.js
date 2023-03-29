@@ -21,7 +21,7 @@ let cmnOBJ = {
 
 //
 fetchEmployees();
-fetchPolicies();
+// fetchPolicies();
 
 //
 $(document).on('click', '.jsExpandBalance', function(e) {
@@ -93,6 +93,7 @@ function fetchEmployees() {
         if (resp.Status === false) {
             window.timeoff.employees = [];
             console.log('Failed to load employees.');
+            $('.jsIPLoader[data-page="balance"]').hide(0);
             return;
         }
         //
@@ -135,6 +136,7 @@ function fetchPolicies() {
         //
         if (resp.Status === false) {
             console.log('Failed to load employees.');
+            $('.jsIPLoader[data-page="balance"]').hide(0);
             return;
         }
         //

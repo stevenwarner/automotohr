@@ -340,6 +340,22 @@ class Emergency_contacts extends Public_Controller
                 $this->load->view('manage_employer/edit_emergency_contacts');
                 $this->load->view('main/footer');
             } else {
+                //
+                if ($type == 'employee') {
+                    //
+                    $this->load->model('2022/User_model', 'em');
+                    //
+                    $_POST['sid'] = $sid;
+                    //
+                    $this->em->handleGeneralDocumentChange(
+                        'emergencyContact',
+                        $this->input->post(null, true),
+                        null,
+                        $user_sid,
+                        $this->session->userdata('logged_in')['employer_detail']['sid']
+                    );
+                }
+                //
                 $update_data = array(
                                         'first_name'                            => $this->input->post('first_name'),
                                         'last_name'                             => $this->input->post('last_name'),
@@ -403,7 +419,9 @@ class Emergency_contacts extends Public_Controller
                             $data['session']['company_detail']['CompanyName'],
                             $userData['first_name'],
                             $userData['last_name'],
-                            $sid
+                            $sid,
+                            [],
+                            $type
                         );
                     }
                 }
@@ -594,7 +612,9 @@ class Emergency_contacts extends Public_Controller
                             $data['session']['company_detail']['CompanyName'],
                             $userData['first_name'],
                             $userData['last_name'],
-                            $sid
+                            $sid,
+                            [],
+                            $type
                         );
                     }
                 }
@@ -606,10 +626,24 @@ class Emergency_contacts extends Public_Controller
     }
 
     public function ajax_handler(){
-        if($this->input->is_ajax_request()){
+        if ($this->input->is_ajax_request()) {
             $users_type = $this->input->post('users_type');
             $users_sid = $this->input->post('users_sid');
             $contact_sid = $this->input->post('contact_sid');
+            //
+            if ($users_type == 'employee') {
+                //
+                $this->load->model('2022/User_model', 'em');
+                //
+                $this->em->saveDifference([
+                    'user_sid' => $users_sid,
+                    'employer_sid' => ($users_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
+                    ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
+                    'history_type' => 'emergencyContact',
+                    'profile_data' => json_encode(['action' => 'delete']),
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]);
+            }
             $this->emergency_contacts_model->delete_emergency_contact($users_type, $users_sid, $contact_sid);
             echo 'deleted';
         } else {

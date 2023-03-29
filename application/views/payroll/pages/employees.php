@@ -1,5 +1,5 @@
 <!--  -->
-<div class="container-fluid">
+<div class="container">
     <div class="csPageWrap">
         <!-- Body -->
         <div class="row">
@@ -11,16 +11,18 @@
         </div>
         <br>
         <div class="row">
-            <?php 
-            if(!empty($employees)):
-                foreach($employees as $employee):
-                ?>
-                <div class="col-md-4 col-xs-12">
-                    <label class="control control--checkbox csF16">
-                        <input type="checkbox" class="jsPayrollEmployees" value="<?=$employee['sid'];?>" name="employees[]" /> <?=remakeEmployeeName($employee);?> 
-                        <div class="control__indicator"></div>
-                    </label>
-                </div>
+            <?php
+            if (!empty($employees)) :
+                foreach ($employees as $employee) :
+                    //
+                    $canBeOnboard = getEmployeeOnboardCheckForPayroll($employee, true);
+            ?>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="control control--checkbox csF16">
+                            <input type="checkbox" <?=$canBeOnboard ? 'disabled' : '';?> class="jsPayrollEmployees" value="<?= $employee['sid']; ?>" name="employees[]" /> <?= remakeEmployeeName($employee); ?>
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
             <?php endforeach;
             endif;
             ?>

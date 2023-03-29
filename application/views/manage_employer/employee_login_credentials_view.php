@@ -9,7 +9,7 @@
 
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                             </div>
                             <div class="job-title-text">                
                                 <p>Fields marked with an asterisk (<span>*</span>) are mandatory.</p>
@@ -26,9 +26,10 @@
                                                 <?php echo form_input('email', set_value('email', $employer['email']), 'class="invoice-fields"'); ?>
                                                 <?php echo form_error('email'); ?>
                                             </li>
-                                            <li class="form-col-100">
+                                            <li class="form-col-100" style="margin-bottom: 36px;">
                                                 <?php echo form_label('USERNAME <span class="hr-required">*</span>', 'username'); ?> Username should consist of a minimum of 5 characters.
                                                 <?php echo form_input('username', set_value('username', $employer['username']), 'class="invoice-fields"'); ?>
+                                                <p><strong>Note: </strong>Please create a Username for your Employee / Team member using their first and last name all one word all lower case. Example: johnsmith</p>
                                                 <?php echo form_error('username'); ?>
                                             </li>
                                             <li class="form-col-100">

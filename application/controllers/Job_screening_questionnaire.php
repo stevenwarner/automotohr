@@ -391,7 +391,7 @@ class Job_screening_questionnaire extends CI_Controller {
             $autoemailbody .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
 
             sendMail(FROM_EMAIL_INFO, $applicant_email, $emailTemplateSubject, $autoemailbody, $company_name, FROM_EMAIL_INFO);
-            //sendMail(REPLY_TO, 'ahassan@egenienext.com', $subject, $autoemailbody, $from_name, REPLY_TO);
+            //sendMail(REPLY_TO, 'mubashir.saleemi123@gmail.com', $subject, $autoemailbody, $from_name, REPLY_TO);
 
             $sent_to_pm = common_save_message($message_data, NULL);
             //log_and_send_templated_email('346', $applicant_email, $replacement_array, message_header_footer($company_sid, $company_name));            
@@ -420,9 +420,11 @@ class Job_screening_questionnaire extends CI_Controller {
             $body = $template[0]['message_body'];
             $body = str_replace('{{applicant_name}}', $applicationData['first_name'] . ' ' . $applicationData['last_name'], $body);
             $body = str_replace('{{job_title}}', $title, $body);
+            $body = str_replace('{{company_name}}', $applicationData['company_name'], $body);
             $email = $template[0];
             $from = REPLY_TO;
             $subject = $email['subject'];
+            $subject = str_replace('{{company_name}}', $applicationData['company_name'], $email['subject']);
             $from_name = $email['from_name'];
             $message_data = array();
             $message_data['to_id'] = $applicationData['email'];
@@ -447,7 +449,7 @@ class Job_screening_questionnaire extends CI_Controller {
                 . $secret_key . '</div>';
 
             sendMail(REPLY_TO, $applicationData['email'], $subject, $autoemailbody, $from_name, REPLY_TO);
-            //sendMail(REPLY_TO, 'ahassan@egenienext.com', $subject, $autoemailbody, $from_name, REPLY_TO);
+            //sendMail(REPLY_TO, 'mubashir.saleemi123@gmail.com', $subject, $autoemailbody, $from_name, REPLY_TO);
 
             $sent_to_pm = common_save_message($message_data, NULL);
             $email_log_autoresponder = array();
@@ -463,7 +465,7 @@ class Job_screening_questionnaire extends CI_Controller {
             $email_log_autoresponder['job_or_employee_id'] = $applicationData['sid'];
             $save_email_log = save_email_log_autoresponder($email_log_autoresponder);
         } /* else {
-            mail('ahassan@egenienext.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
+            mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
         } */
     }
     

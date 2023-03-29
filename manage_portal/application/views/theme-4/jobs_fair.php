@@ -11,6 +11,8 @@
         </div>
     </div>
 </div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <div class="main">
     <div class="container-fluid">
         <div class="row">					
@@ -161,10 +163,16 @@
                                         </div>
                                         <?php echo form_error('profile_picture'); ?>
                                     </li>
+
+                                    <li>
+                                <div class="g-recaptcha" data-callback="googleCaptchaChecker" data-sitekey="<?= getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2; ?>"></div>
+                               <label id='captchaerror' style="display: none; float: none !important;color: #CC0000 !important;font-weight: 400;margin: 0 !important;" >Empty/Invalid Captcha </label>
+                            </li>
+
                                    <!--  <li>
                                         <div id="RecaptchaField"></div>
                                     </li> -->
-                                    <li>
+                                    <li><br>
                                         <div class="loader_cover" style="display:none; background: #ccc; width: 100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; opacity: 0.7;">
                                             <div class="loader" style="display: none; width: 100px; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto;"></div>
                                         </div>
@@ -374,9 +382,12 @@
                                             } // optional fields
                                         } // loop
                                     } // job_fair_custom_questions ?>
-                                   <!--  <li>
-                                        <div id="RecaptchaField"></div>
-                                    </li> -->
+                                  
+                                    <li>
+                                <div class="g-recaptcha" data-callback="googleCaptchaChecker" data-sitekey="<?= getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2; ?>"></div>
+                                <label id='captchaerror' style="display: none; float: none !important;color: #CC0000 !important;font-weight: 400;margin: 0 !important;" >Empty/Invalid Captcha </label>
+                            </li>
+                               <br>
                                     <li>
                                         <div class="loader_cover" style="display:none; background: #ccc; width: 100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; opacity: 0.7;">
                                             <div class="loader" style="display: none; width: 100px; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto;"></div>
@@ -409,6 +420,12 @@
         $('#up_video_container').hide();  
     });
 
+    var googleCaptchaToken = null;
+    
+    function googleCaptchaChecker(don) {
+        googleCaptchaToken = don;
+    }
+
     function validate_form() {
         $("#job_fair_default").validate({
             ignore: ":hidden:not(select)",
@@ -426,6 +443,13 @@
                 profile_picture: "profile_picture required"
             },
             submitHandler: function (form) {
+
+                if(googleCaptchaToken === null){
+                    
+                    $("#captchaerror").show();
+                     return;
+                 }
+
                 var video_source = $('input[name="video_source"]:checked').val();
                 var flag = 0;
                     

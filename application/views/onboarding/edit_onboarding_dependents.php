@@ -1,11 +1,11 @@
 <?php
-    $company_sid = 0;
-    $users_type = '';
-    $users_sid = 0;
-    $back_url = '';
-    $dependants_arr = array();
-    $delete_post_url = '';
-    $save_post_url = '';
+$company_sid = 0;
+$users_type = '';
+$users_sid = 0;
+$back_url = '';
+$dependants_arr = array();
+$delete_post_url = '';
+$save_post_url = '';
 
 if (isset($applicant)) {
     $company_sid = $applicant['employer_sid'];
@@ -26,13 +26,13 @@ if (isset($applicant)) {
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                    <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i>  Dependents</a>
+                    <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i> Dependents</a>
                 </div>
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
 
                 <div class="page-header">
-                  <h2 class="section-ttile">Update Dependent</h2>
+                    <h2 class="section-ttile">Update Dependent</h2>
                 </div>
                 <div class="form-wrp">
                     <form id="dependantForm" action="" method="POST" enctype="multipart/form-data">
@@ -79,11 +79,11 @@ if (isset($applicant)) {
                                     <?php $field_id = 'Location_Country'; ?>
                                     <?php $country_id = ((isset($dependant_info[$field_id]) && !empty($dependant_info[$field_id])) ? $dependant_info[$field_id] : ''); ?>
                                     <?php echo form_label('Country:', $field_id); ?>
-                                    <select class="form-control" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'Location_State', <?php echo $dependant_info['Location_State']?>)">
+                                    <select class="form-control" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'Location_State', <?php echo $dependant_info['Location_State'] ?>)">
                                         <option value="">Please Select</option>
                                         <?php foreach ($active_countries as $active_country) { ?>
                                             <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
-                                            <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
+                                            <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>"> <?= $active_country["country_name"]; ?></option>
                                         <?php } ?>
                                     </select>
                                     <?php echo form_error($field_id); ?>
@@ -93,17 +93,17 @@ if (isset($applicant)) {
                                 <div class="form-group">
                                     <?php $field_id = 'Location_State'; ?>
                                     <?php $state_id = ((isset($dependant_info[$field_id]) && !empty($dependant_info[$field_id])) ? $dependant_info[$field_id] : ''); ?>
-                                    <?php echo form_label('State:', $field_id); ?>                                    
-                                    <select class="form-control" name="<?php echo $field_id?>" id="<?php echo $field_id?>">
+                                    <?php echo form_label('State:', $field_id); ?>
+                                    <select class="form-control" name="<?php echo $field_id ?>" id="<?php echo $field_id ?>">
                                         <?php if (empty($state_id)) { ?>
                                             <option value="">Select State</option> <?php
-                                        } else {
-                                            foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                                } else {
+                                                                                    foreach ($active_states[$country_id] as $active_state) { ?>
                                                 <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
-                                                <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>"><?= $active_state["state_name"] ?></option>
                                             <?php } ?>
                                         <?php } ?>
-                                    </select>                                    
+                                    </select>
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -168,16 +168,13 @@ if (isset($applicant)) {
                                     <?php echo form_error($field_name); ?>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">                                
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <?php $field_name = 'family_member'; ?>
                                 <label for="<?php echo $field_name; ?>" class="control control--checkbox">
                                     Add Family Members
-                                    <input name="<?php echo $field_name; ?>"
-                                           id="<?php echo $field_name; ?>"
-                                        <?php if (isset($dependant_info['family_member']) && $dependant_info['family_member'] == 'on') { ?> checked <?php } ?>
-                                           type="checkbox">
+                                    <input name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>" <?php if (isset($dependant_info['family_member']) && $dependant_info['family_member'] == 'on') { ?> checked <?php } ?> type="checkbox">
                                     <div class="control__indicator"></div>
-                                </label>                                
+                                </label>
                             </div>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="btn-wrp full-width text-right">
@@ -189,9 +186,10 @@ if (isset($applicant)) {
                     </form>
                 </div>
             </div>
-            <?php if($users_type != 'applicant') { ?>
+            <?php if ($users_type != 'applicant') { ?>
                 <!-- <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4"> -->
-                    <?php //$this->load->view('manage_employer/employee_hub_right_menu'); ?>
+                <?php //$this->load->view('manage_employer/employee_hub_right_menu'); 
+                ?>
                 <!-- </div> -->
             <?php } ?>
         </div>
@@ -204,15 +202,15 @@ if (isset($applicant)) {
         alertify.confirm(
             'Are you Sure?',
             'Are you sure you sure you want to delete this dependent?',
-            function () {
+            function() {
                 $('#form_delete_dependent_' + dependent_sid).submit();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled!');
             });
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#dependantForm').validate({
             rules: {
                 first_name: {
@@ -228,7 +226,7 @@ if (isset($applicant)) {
                     required: true
                 }
             },
-            messages:{
+            messages: {
                 first_name: {
                     message: 'First Name is required'
                 },
@@ -243,17 +241,20 @@ if (isset($applicant)) {
                 }
             }
         });
-        $('.collapse').on('shown.bs.collapse', function () {
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
         $('#Location_Country').trigger('change');
     });
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.datepicker').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         });
     });
 
@@ -269,10 +270,10 @@ if (isset($applicant)) {
                 select = '';
                 var id = allstates[i].sid;
                 var name = allstates[i].state_name;
-                if(select_val == id){
+                if (select_val == id) {
                     select = 'selected="selected"';
                 }
-                html += '<option value="' + id + '"'+ select +'>' + name + '</option>';
+                html += '<option value="' + id + '"' + select + '>' + name + '</option>';
             }
             $('#' + select_id).html(html);
             $('#' + select_id).trigger('change');

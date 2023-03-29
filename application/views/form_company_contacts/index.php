@@ -17,7 +17,7 @@
                         </div>
                         <?php //} ?>
                     <!-- page print -->
-                    <span class="page-heading down-arrow">COMPANY CONTACTS FORM</span>
+                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>COMPANY CONTACTS FORM</span>
                     <div class="end-user-agreement-wrp recurring-payment-authorization">
                         <form id="form_company_contacts" action="<?php echo base_url('form_company_contacts/' . $verification_key . '/' . $pre_fill); ?>" method="post" enctype="multipart/form-data">
                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -537,7 +537,9 @@
     <?php if($document_record['status'] != 'signed') { ?>
     $('.startdate').datepicker({
       dateFormat: 'mm/dd/yy',
-      changeYear: true
+      changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
     <?php } ?>
 

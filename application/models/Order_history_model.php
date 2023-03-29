@@ -97,11 +97,11 @@ class order_history_model extends CI_Model
     public function get_orders_total($company_sid)
     {
         return $this->db
-        ->select('invoices.sid')
-        ->join('users', 'users.sid = invoices.user_sid')
-        ->from('invoices')
-        ->where('company_sid', $company_sid)
-        ->count_all_results();
+            ->select('invoices.sid')
+            ->join('users', 'users.sid = invoices.user_sid')
+            ->from('invoices')
+            ->where('company_sid', $company_sid)
+            ->count_all_results();
         // $this->db->select('*');
         // $this->db->join('users', 'users.sid = invoices.user_sid');
         // return $this->db->get_where('invoices', array('company_sid' => $company_sid))->num_rows();
@@ -109,6 +109,7 @@ class order_history_model extends CI_Model
 
     public function get_product_detail($product_sid)
     {
+
         $this->db->select('name');
         $this->db->where('sid', $product_sid);
         $product_detail = $this->db->get('products')->result_array();
@@ -146,10 +147,11 @@ class order_history_model extends CI_Model
      *
      *@return Array|Bool
      */
-    function getCompanyAccounts($company_id) {
+    function getCompanyAccounts($company_id)
+    {
         $args = array('parent_sid' => $company_id, 'active' => 1, 'career_page_type' => 'standard_career_site');
-        $this->db->select('sid,concat(first_name," ", last_name) as fullname, '.(getUserFields() ).'')
-        ->order_by('fullname', 'ASC');
+        $this->db->select('sid,concat(first_name," ", last_name) as fullname, ' . (getUserFields()) . '')
+            ->order_by('fullname', 'ASC');
         //$this->db->where('is_executive_admin', 0);
         $res = $this->db->get_where('users', $args);
         $ret = $res->result_array();
@@ -190,9 +192,9 @@ class order_history_model extends CI_Model
         $do_count = false,
         $get_all = false,
         $exec = false
-    ){
+    ) {
         $this->db
-        ->select('
+            ->select('
             invoices.sid as invoice_number,
             invoices.product_sid,
             invoices.date,
@@ -203,8 +205,8 @@ class order_history_model extends CI_Model
             concat( users.first_name, " ", users.last_name) as fullname,
             users.username
         ')
-        ->from('invoices')
-        ->join('users', 'invoices.user_sid = users.sid', 'left');
+            ->from('invoices')
+            ->join('users', 'invoices.user_sid = users.sid', 'left');
 
         // Date Check
         // if($from != '' && $to != '')
@@ -215,30 +217,30 @@ class order_history_model extends CI_Model
         //     $this->db->where(" date <= '$to'", NULL);
 
         // Invoice id check
-        if($invoice_id != 'all') $this->db->where('invoices.sid',$invoice_id);
+        if ($invoice_id != 'all') $this->db->where('invoices.sid', $invoice_id);
         // Username check
-        if($username && $username != 'all') $this->db->where('users.sid',$username);
+        if ($username && $username != 'all') $this->db->where('users.sid', $username);
         // Status check
-        if($status && $status != 'all') $this->db->where('invoices.status',$status);
+        if ($status && $status != 'all') $this->db->where('invoices.status', $status);
         // Payment method check
-        if($payment_method && $payment_method != 'any') $this->db->where('invoices.payment_method',$payment_method);
+        if ($payment_method && $payment_method != 'any') $this->db->where('invoices.payment_method', $payment_method);
         //
         $this->db->where("invoices.company_sid", $company_sid)
-        ->order_by("invoices.sid", "DESC");
+            ->order_by("invoices.sid", "DESC");
 
-        if(!$do_count && !$get_all){
+        if (!$do_count && !$get_all) {
             $this->db->limit($offset, $inset);
         }
 
-        if($exec) _e($this->db->get_compiled_select(), true);
+        if ($exec) _e($this->db->get_compiled_select(), true);
 
-        if($do_count) return $this->db->count_all_results();
+        if ($do_count) return $this->db->count_all_results();
 
         $result = $this->db->get();
         $result_arr = $result->result_array();
         $result = $result->free_result();
         //
-        if(!sizeof($result_arr)) return false;
+        if (!sizeof($result_arr)) return false;
         //
         $rows = '';
         foreach ($result_arr as $k0 => $v0) {
@@ -247,43 +249,44 @@ class order_history_model extends CI_Model
             $items = '';
             $product_ids = explode(',', $v0['product_sid']);
             $result_arr[$k0]['has_refund_notes'] = $v0['has_refund_notes'] = sizeof($this->get_invoice_credit_notes($v0['invoice_number'], 'Marketplace', true)) ? 1 : 0;
-            
+
             $result_arr[$k0]['fullname'] = $v0['fullname'] = ucwords($v0['fullname']);
             $result_arr[$k0]['date']     = $v0['date']     = reset_datetime(array('datetime' => $v0['date'], '_this' => $this));
             $result_arr[$k0]['status']   = $v0['status']   = $v0['has_refund_notes'] == 1 ? 'Refunded' : $v0['status'];
 
             $rows .= '<tr>';
-            $rows .= '  <td>'.$v0['invoice_number'].'</td>';
-            $rows .= '  <td>'.($v0['fullname'] == '' ? $v0['username'] : $v0['fullname']).'</td>';
+            $rows .= '  <td>' . $v0['invoice_number'] . '</td>';
+            $rows .= '  <td>' . ($v0['fullname'] == '' ? $v0['username'] : $v0['fullname']) . '</td>';
             $rows .= '  <td><p>Items Summary: </p>';
             $rows .= '      <ul class="list-unstyled invoice-description-list">';
             foreach ($product_ids as $prodcut_id_key => $product_id) {
                 $product_detail  = $this->get_product_detail($product_id);
-                $items .= sc_remove($product_detail['name']); 
+                $items .= sc_remove($product_detail['name']);
+                $items .= $product_detail['name'];
+
                 $rows .= '  <li class="invoice-description-list-item">'.sc_remove($product_detail['name']);
+
                 //
-                if(isset($uns['credit'][$product_id])){
-                    $rows .='<br><span class="text-danger">Last Credited on '.(formatDateToDB($uns['credit'][$product_id]['date'], 'Y-m-d H:i:s', DATE_WITH_TIME)).'</span>';
+                if (isset($uns['credit'][$product_id])) {
+                    $rows .= '<br><span class="text-danger">Last Credited on ' . (formatDateToDB($uns['credit'][$product_id]['date'], 'Y-m-d H:i:s', DATE_WITH_TIME)) . '</span>';
                 }
-                $rows .='</li>';
+                $rows .= '</li>';
             }
             $rows .= '  </ul></td>';
-            $rows .= '  <td>'.$v0['date'].'</td>';
-            $rows .= '  <td>'.$v0['payment_method'].'</td>';
-            $rows .= '  <td>$'.$v0['total'].'</td>';
-            $rows .= '  <td><span class="text-'.( $v0['status'] == 'Refunded' ? 'warning' : (
-                    $v0['status'] == 'Paid' ? 'success' : 'danger'
-                )
-            ).'">'.($v0['status']).'</span></td>';
-            $rows .= '  <td class="no-print"><a href="'.base_url('order_detail/'.$v0['invoice_number'].'').'" class="btn btn-success">View</a></td>';
+            $rows .= '  <td>' . $v0['date'] . '</td>';
+            $rows .= '  <td>' . $v0['payment_method'] . '</td>';
+            $rows .= '  <td>$' . $v0['total'] . '</td>';
+            $rows .= '  <td><span class="text-' . ($v0['status'] == 'Refunded' ? 'warning' : ($v0['status'] == 'Paid' ? 'success' : 'danger'
+            )
+            ) . '">' . ($v0['status']) . '</span></td>';
+            $rows .= '  <td class="no-print"><a href="' . base_url('order_detail/' . $v0['invoice_number'] . '') . '" class="btn btn-success">View</a></td>';
             $rows .= '</tr>';
-            
+
             $result_arr[$k0]['items'] = $items;
         }
 
-        if($get_all) return $result_arr;
+        if ($get_all) return $result_arr;
 
         return $rows;
     }
-
 }

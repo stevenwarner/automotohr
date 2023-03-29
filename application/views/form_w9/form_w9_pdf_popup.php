@@ -476,18 +476,18 @@
                                 <?php if($pre_form['active_signature'] == 'typed') { ?>
 
                                     <div >
-                                        <img src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>"  />
+                                        <img src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>" class="esignaturesize" />
                                     </div>
 
                                 <?php } else if($pre_form['active_signature'] == 'drawn') { ?>
 
                                     <div >
-                                        <img style="max-height: 150px; width: 530px;" src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>"  />
+                                        <img style="max-height: 150px; width: 530px;" src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>" class="esignaturesize" />
                                     </div>
 
                                 <?php } else { ?>
                                     <div >
-                                        <img style="max-height: 150px; width: 530px;" src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>"  />
+                                        <img style="max-height: 150px; width: 530px;" src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>"  class="esignaturesize" />
                                     </div>
                                 <?php }  ?>
                             <?php } ?>

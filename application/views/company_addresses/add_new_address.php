@@ -10,7 +10,7 @@
                         <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('company_addresses'); ?>" class="dashboard-link-btn"><i class="fa fa-chevron-left"></i>Back</a>
                                     <?php echo $title; ?></span>
                             </div>

@@ -173,6 +173,7 @@
                                                 <p><?php echo $extra_info["office_location"]; ?></p>
                                             <?php } ?>
                                         </li>
+                                 
 
                                         <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid = '') { ?>
                                         <li class="form-col-50-right">
@@ -400,6 +401,7 @@
                                                 <label>Date of Birth: <?= $required_asterisk;?></label>
                                                 <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?= $required_rule;?> name="<?php echo $field_id;?>" value="<?php echo $temp; ?>">
                                             </li>
+
 
                                             <li class="form-col-50-left">
                                                 <?php $department = isset($extra_info["department"]) ? $extra_info["department"] : ''; ?>
@@ -1759,8 +1761,18 @@ $('#notified_by').select2({
         }
     });
     
-    $('.eventdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
-    $('#eventdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
+    $('.eventdate').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+    }).val();
+    $('#eventdate').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+    }).val();
     $("#eventdate").datepicker("setDate", new Date());
     $('#add_event').click(function () {
         $('.event_create').fadeIn();

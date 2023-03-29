@@ -73,7 +73,7 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo $back_url; ?>"><i class="fa fa-chevron-left" aria-hidden="true"></i>Online Videos</a>
                                     <?php echo $title; ?>
                                 </span>

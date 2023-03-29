@@ -47,8 +47,8 @@ class User extends MY_Controller
 
                 if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember)) {
                     if ($remember) {
-                        setcookie("admin[username]", $this->encryptCookie($this->input->post('identity')), time() + 3600);
-                        setcookie("admin[password]", $this->encryptCookie($this->input->post('password')), time() + 3600);
+                        setcookie("admin[username]", encryptCookie($this->input->post('identity')), time() + 3600);
+                        setcookie("admin[password]", encryptCookie($this->input->post('password')), time() + 3600);
                     }
                     redirect('manage_admin', 'refresh');
                 } else {
@@ -68,31 +68,5 @@ class User extends MY_Controller
         setcookie("admin[password]", time() - 3600);
         $this->ion_auth->logout();
         redirect('manage_admin/user/login', 'refresh');
-    }
-
-    function encryptCookie($value)
-    {
-        if (!$value) {
-            return false;
-        }
-        $key = 'roltyFoamisTheDI';
-        $text = $value;
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $text, MCRYPT_MODE_ECB, $iv);
-        return trim(base64_encode($crypttext)); //encode for cookie
-    }
-
-    function decryptCookie($value)
-    {
-        if (!$value) {
-            return false;
-        }
-        $key = 'roltyFoamisTheDI';
-        $crypttext = base64_decode($value); //decode cookie
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $iv);
-        return trim($decrypttext);
     }
 }

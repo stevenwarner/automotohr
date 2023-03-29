@@ -316,6 +316,12 @@ input[type='checkbox'].user_checkbox:checked:after {
                 }
                 
                 function download_document () {
+                    var document_type = '<?php echo $is_hybrid; ?>';
+                    //
+                    if(request_type == 'assigned') {
+                        $('br').replaceWith('<div></div>');
+                    }
+                    //
                     var draw = kendo.drawing;
                     draw.drawDOM($("#download_generated_document"), {
                         avoidLinks: false,
@@ -342,7 +348,16 @@ input[type='checkbox'].user_checkbox:checked:after {
                         });
                         //
                         setTimeout(() => {
-                            window.close();
+                            if (document_type == "yes") {
+                                var document_path = '<?php echo $document_path; ?>';
+                                window.open(document_path, '_blank');
+                                setTimeout(() => {
+                                    window.close();
+                                },5000)
+                            } else {
+                                window.close();
+                            }
+                            
                         }, 5000);
                     });
                 }

@@ -6,19 +6,20 @@ class Users_model extends CI_Model {
     }
 
 
-    function get_online_users($minutes = 5, $company_sid = 0){
-        $current_date_obj = new DateTime(date('Y-m-d H:i:s'));
-        $current_date_obj->sub(date_interval_create_from_date_string( $minutes . ' min'));
-        $current_date_str = $current_date_obj->format('Y-m-d H:i:s');
+    function get_online_users($minutes = 10, $company_sid = 0){
+        // $current_date_obj = new DateTime(date('Y-m-d H:i:s'));
+        // $current_date_obj->sub(date_interval_create_from_date_string( $minutes . ' min'));
+        // $current_date_str = $current_date_obj->format('Y-m-d H:i:s');
+        $current_date_str = date('Y-m-d H:i:s', strtotime("-$minutes minutes"));
         $rows_to_return = array();
         $this->db->select('*');
         $this->db->where('action_timestamp >',  $current_date_str);
         $this->db->order_by('sid', 'DESC');
         
-        $return_obj = $this->db->get('logged_in_activitiy_tracker');
+        $return_obj = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $current_date_str));
         $data_row = $return_obj->result_array();
         $return_obj->free_result();
-//        $data_row = $this->db->get('logged_in_activitiy_tracker')->result_array(); //Table name is correct
+//        $data_row = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array(); //Table name is correct
         
         if(!empty($data_row)){
             foreach($data_row as $value) {
@@ -100,4 +101,19 @@ class Users_model extends CI_Model {
 
         (!$result) ? $this->session->set_flashdata('message', 'Update Failed, Please try Again!') : $this->session->set_flashdata('message', $type . ' updated successfully');
     }
+
+    function get_online_users_count($minutes){
+        $current_date_obj = new DateTime(date('Y-m-d H:i:s'));
+        $current_date_obj->sub(date_interval_create_from_date_string( $minutes . ' min'));
+        $current_date_str = $current_date_obj->format('Y-m-d H:i:s');
+        //
+        $this->db->where('action_timestamp >',  $current_date_str);
+        $this->db->group_by('employer_sid');
+        $this->db->from(checkAndGetArchiveTable('logged_in_activitiy_tracker', $current_date_str));
+        //
+        $count = $this->db->count_all_results();
+        //
+        return $count;
+    }
+
 }

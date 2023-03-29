@@ -33,7 +33,7 @@ class Bulk_email_model extends CI_Model {
     }
     
     function get_employee_data($employee_id) {
-        $this->db->select('sid, email, first_name, last_name, PhoneNumber as phone_number');
+        $this->db->select('sid, email, first_name, last_name, PhoneNumber as phone_number, active, terminated_status');
         $this->db->where('sid', $employee_id);
         $employee = $this->db->get('users')->result_array();
         

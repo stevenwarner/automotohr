@@ -134,6 +134,9 @@
 					</div>
 				</div>
 			</div>
+
+
+			
 			<!-- 7 -->
 			<div class="form-group js-for-generated">
 				<label>Authorized Management Signers</label>

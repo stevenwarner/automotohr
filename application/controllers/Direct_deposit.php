@@ -30,6 +30,16 @@ class Direct_deposit extends Public_Controller
             $company_sid = $data["session"]["company_detail"]["sid"];
             $company_name = $data['session']['company_detail']['CompanyName'];
 
+            //
+            if($type == 'employee'){
+                $exits = $this->direct_deposit_model->checkDDI($type, $sid, $company_sid);
+                //
+                if($exits == 0){
+                    //$type = 'applicant';
+                    // not understand this logic
+                }
+            }
+
             if ($sid == NULL && $type == NULL) {
                 $sid = $employer_sid;
                 $left_navigation = 'manage_employer/employee_management/profile_right_menu_personal';
@@ -44,7 +54,7 @@ class Direct_deposit extends Public_Controller
                 $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($employer_sid, 'employee');
                 $load_view = check_blue_panel_status(false, 'self');
                 $data["employee"] = $data['session']['employer_detail'];
-            } elseif ($type == 'employee') {
+            } else if ($type == 'employee') {
                 check_access_permissions($security_details, 'employee_management', 'employee_occupational_license_info');  // Param2: Redirect URL, Param3: Function Name
                 $data = employee_right_nav($sid);
                 $data['security_details'] = $security_details;
@@ -74,7 +84,7 @@ class Direct_deposit extends Public_Controller
                 $data['send_email_notification'] = 'yes';
                 //
 
-            } elseif ($type == 'applicant') {
+            } else if ($type == 'applicant') {
                 if ($data['session']['employer_detail']['access_level'] != "Hiring Manager"){
                     check_access_permissions($security_details, 'application_tracking', 'direct_deposit_info');  // Param2: Redirect URL, Param3: Function Name
                 }
@@ -292,7 +302,7 @@ class Direct_deposit extends Public_Controller
             $session['company_detail']['CompanyName'] = $company_name;
         }
         //
-        if($session) { 
+        if($session) {
 
             $updated_by                 = $session["employer_detail"]["sid"];
             $record_sid                 = $_POST['record_sid'];
@@ -318,6 +328,19 @@ class Direct_deposit extends Public_Controller
             if (!empty($_FILES) && isset($_FILES['upload_img']) && $_FILES['upload_img']['size'] > 0) {
                 $update_incident_img = upload_file_to_aws('upload_img', $company_sid, 'upload_img', '', AWS_S3_BUCKET_NAME);
                 $cheque_img             = $update_incident_img;
+            }
+            //
+            if ($this->input->post('user_type', true) == 'employee') {
+                //
+                $this->load->model('2022/User_model', 'em');
+                //
+                $this->em->handleGeneralDocumentChange(
+                    'directDeposit',
+                    $this->input->post(null, true),
+                    $cheque_img,
+                    $this->input->post('user_sid', true),
+                    $this->session->userdata('logged_in')['employer_detail']['sid']
+                );
             }
 
             $this->direct_deposit_model->set_user_extra_info($user_type, $user_sid, $company_sid, $employee_number);
@@ -406,7 +429,10 @@ class Direct_deposit extends Public_Controller
                     $session['company_detail']['CompanyName'],
                     $userData['first_name'],
                     $userData['last_name'],
-                    $user_sid
+                    $user_sid,
+                    [],
+                    $user_type
+
                 );
             }    
 

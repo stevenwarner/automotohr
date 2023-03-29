@@ -40,6 +40,10 @@
     $importColumnsArray[] = 'Rehire Reason';
     $importColumnsArray[] = 'Termination Date';
     $importColumnsArray[] = 'Termination Reason';
+
+    $importColumnsArray[] = 'EEOC Code';
+    $importColumnsArray[] = 'Salary Benefits';
+    $importColumnsArray[] = 'Workers Compensation Code';
     //
     $importValueArray = '';
     $importValueArray .= 'Jason, josi, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
@@ -59,7 +63,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                             </div>
                         <div class="dashboard-conetnt-wrp">
                             <div class="panel panel-success">
@@ -185,6 +189,11 @@
         middlenameTitles = <?=json_encode(array('middlename', 'middleinitial', 'middlenameinitial'));?>;
         nicknameTitles = <?=json_encode(array('nick_name', 'nickname'));?>;
 
+        eeoccodeTitles = <?=json_encode(array('eeoc_code', 'eeoccode'));?>;
+        salarybenefitsTitles = <?=json_encode(array('salary_benefits', 'salarybenefits'));?>;
+        workerscompensationcodeTitles = <?=json_encode(array('workers_compensation_code', 'workerscompensationcode'));?>;
+
+
         loader('hide');
         // 
         // $('#userfile').change(fileChanged);
@@ -231,7 +240,7 @@
         //
         function formHandler(e){
             e.preventDefault();
-            var fileData = file.target.result.split(/\n/g);
+            var fileData = file.target.result.split(/\r\n|\n/g);
             //Check if is it right format
             var format_index = fileData[0].toLowerCase().replace(/[^a-z]/g, '').trim();
             if(!format_index.includes("firstname") && !format_index.includes("first-name") && !format_index.includes("fname") && !format_index.includes("first_name")){
@@ -247,6 +256,30 @@
             });
             // Remove head
             fileData.splice(0,1);
+            //
+            var errorRows = "";
+            //
+            fileData.map((row, index) => {
+                var er = row.split(',');
+                //
+                if(er.length != indexes.length && er.length !== 1){
+                    errorRows += '<p>';
+                    errorRows += '  <strong>Row #: </strong>'+(index+2)+'<br />';
+                    errorRows += '  <strong>Name: </strong>'+(er[0] + er[1])+'';
+                    errorRows += '</p>';
+                }
+            });
+            //
+            if(errorRows.length){
+                //
+                return alertify.alert(
+                    "Error!",
+                    "<p>Please make sure there are no <strong>','</strong> in values.</p><br />"+
+                    "<p><strong>For instance </strong>422 Street, 3rd floor -> 422 Street 3rd floor</p><br />"+
+                    errorRows,
+                    function(){}
+                );
+            }
             //
             var records = [];
             //
@@ -406,9 +439,19 @@
             for(i; i < len; i++) if(index == array[i].trim()) return 'middle_name';
             i = 0; len = nicknameTitles.length; array = nicknameTitles;
             for(i; i < len; i++) if(index == array[i].trim()) return 'nick_name';
+            
+            i = 0; len = eeoccodeTitles.length; array = eeoccodeTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'eeoc_code';
+            i = 0; len = salarybenefitsTitles.length; array = salarybenefitsTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'salary_benefits';
+            i = 0; len = workerscompensationcodeTitles.length; array = workerscompensationcodeTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'workers_compensation_code';
+
             return -1;
         }
 
+
+    
         //
         var chunkOBJ = {
             current: 0,

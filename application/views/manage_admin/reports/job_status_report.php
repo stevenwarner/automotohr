@@ -235,6 +235,9 @@
 
         $('#start_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (value) {
                 //console.log(value);
                 $('#end_date_applied').datepicker('option', 'minDate', value);

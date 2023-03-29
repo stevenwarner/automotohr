@@ -10,6 +10,7 @@
         $input_group_end   = '</div>';
     }
 ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="modal modal-fullscreen fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog custom-popup" role="document">
         <div class="modal-content">
@@ -160,6 +161,20 @@
                                            echo $formpost['referred_by_email'];
                                        } ?>">
                                 <?php echo form_error('referred_by_email'); ?>
+                            </li>
+                            <li></li>
+                            <!--  -->
+                            <li class="jsContactPreference <?=$sms_module_status == 1 ?  '' : 'hidden';?>">
+                                <label for="contact_preferred">Contact Preference</label>
+                                <p class="text-danger" style="font-size: 12px;"><strong>You must enter a valid US phone number to enable sms.<strong></p>
+                                <label class="control control--radio">
+                                    <input type="radio" class="contactPreference" name="contactPreference" value="email" checked /> Email
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
+                                    <input type="radio" class="contactPreference" name="contactPreference" value="sms" /> SMS
+                                    <div class="control__indicator"></div>
+                                </label>
                             </li>
                             <li class="questionare-section" id="show_questionnaire"></li>
                             <?php if($eeo_form_status == 1) { ?>
@@ -367,6 +382,12 @@
                                 <label for="squared" class="hint-label">I have Read and Understand the <a href="javascript:;" data-toggle="modal" data-target="#terms_and_conditions_apply_now">Terms & Conditions</a> and <a href="javascript:;" data-toggle="modal" data-target="#privay_policy_apply_now">Privacy Policy</a><span class="staric">*</span></label>
                                 <input type="checkbox" required="required" name="check_box" value="1" id="squared">
                             </li>
+
+                            <li>
+                                <div class="g-recaptcha" data-callback="googleCaptchaChecker" data-sitekey="<?= getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2; ?>"></div>
+                                <label id='captchaerrors' style="display: none; float: none !important;color: #CC0000 !important;font-weight: 400;margin: 0 !important;">Empty/Invalid Captcha </label>
+                            </li>
+
                             <li>
                                 <input type="hidden" name='job_sid' id="job_sid" value="">
                                 <input type="hidden" name="questionnaire_sid" id="questionnaire_sid" value="">
@@ -426,6 +447,14 @@
         }
     }
 
+    var googleCaptchaToken = null;
+    
+    function googleCaptchaChecker(don) {
+        googleCaptchaToken = don;
+    }
+
+    var sm_enable = <?=$sms_module_status == 1 ? 1 : 0?>;
+    var sm_regex = sm_enable == 1 ? /(\d{10})|(\d{11})$/ : /^[0-9\-]+$/;
     function validate_form() {
         youtube_check();
         $("#register-form").validate({
@@ -497,6 +526,13 @@
                 gender: "Please Select Your Gender."
             },
             submitHandler: function (form) {
+
+
+                if(googleCaptchaToken === null){
+                    
+                       $("#captchaerrors").show();
+                        return;
+                    }
                 $('#mySubmitBtn').prop('disabled', true);
                 <?php if($is_regex === 1){ ?>
                     $("#register-form").append('<input type="hidden" name="txt_phonenumber" id="txt_phonenumber" value="+1'+($('#PhoneNumber').val().replace(/\D/g, ''))+'" />')

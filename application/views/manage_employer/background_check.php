@@ -11,7 +11,7 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
                                     <?php echo $title; ?></span>
                             </div>
@@ -116,6 +116,29 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                                     $current_status = isset($product['order_response']['orderStatus']['status']) ? $product['order_response']['orderStatus']['status'] : '';
                                                                                     $status = strtolower($current_status);
                                                                                 ?>
+                                                                                <tr>
+                                                                                    <?php
+                                                                                        $package_id = '';
+                                                                                        $search_id = '';
+                                                                                        $order_status = isset($product['order_response']['orderStatus']) ? $product['order_response']['orderStatus'] : '';
+                                                                                        // 
+                                                                                        $order_response_order_info = isset($product['order_response']['orderInfo']) ? $product['order_response']['orderInfo'] : '';
+                                                                                        //
+                                                                                        $package_response_order_info = isset($product['package_response']['orderInfo']) ? $product['package_response']['orderInfo'] : '';
+                                                                                        //
+                                                                                        if ($order_response_order_info != '') {
+                                                                                            $package_id = $order_response_order_info['packageId']; 
+                                                                                            $search_id = isset($order_response_order_info['searchId']) ? $order_response_order_info['searchId'] : $product['external_id']; 
+                                                                                        } else if ($package_response_order_info != '') { 
+                                                                                            $package_id = $package_response_order_info['packageId']; 
+                                                                                            $search_id = isset($package_response_order_info['searchId']) ? $package_response_order_info['searchId'] : $product['external_id'];
+                                                                                        } else {
+                                                                                            $package_id = isset($product['package_id']) ? $product['package_id'] : '';
+                                                                                        }
+                                                                                    ?>
+                                                                                    <th class="col-xs-4">Accu. Background Search Id</th>
+                                                                                    <td class="text-left"><?php echo $search_id; ?></td>
+                                                                                </tr>
                                                                                 <th class="col-xs-4">Status</th>
                                                                                 <td class="text-left">
                                                                                     <?php

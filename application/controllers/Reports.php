@@ -1,9 +1,11 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Reports extends Public_Controller {
+class Reports extends Public_Controller
+{
     private $res;
     private $limit = 50;
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('reports_model');
         $this->load->model('attendance_model');
@@ -14,7 +16,8 @@ class Reports extends Public_Controller {
         $this->res['Response'] = 'Session has expired. Please login again';
     }
 
-    public function index() {
+    public function index()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -38,7 +41,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate($type = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $source = 'all', $page_number = 1) {
+    public function generate($type = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $source = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -110,10 +114,10 @@ class Reports extends Public_Controller {
                 if ($type == 'applicants') {
                     if (is_admin($employer_sid)) { //echo 'admin';
                         $allJobs = $this->reports_model->GetAllJobsCompanySpecific($company_sid);
-//                        $applicants = $this->reports_model->GetAllApplicantsCompanySpecific($company_sid, $myColumns, $search_string, $search_string2);
+                        //                        $applicants = $this->reports_model->GetAllApplicantsCompanySpecific($company_sid, $myColumns, $search_string, $search_string2);
                     } else {
                         $allJobs = $this->reports_model->GetAllJobsCompanyAndEmployerSpecific($company_sid, $employer_sid);
-//                        $applicants = $this->reports_model->GetAllApplicants($company_sid, $employer_sid, $myColumns, $search_string, $search_string2);
+                        //                        $applicants = $this->reports_model->GetAllApplicants($company_sid, $employer_sid, $myColumns, $search_string, $search_string2);
                     }
 
                     $lastQuery = $this->db->last_query();
@@ -123,15 +127,15 @@ class Reports extends Public_Controller {
 
                     foreach ($allJobs as $job) {
                         $state = $city = '';
-                        if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                        if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                        if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                        if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
                         $active = ' (In Active) ';
 
                         if ($job['active']) {
                             $active = ' (Active) ';
                         }
 
-                        $jobOptions[$job['sid']] = $job['Title'].$city.$state . $active;
+                        $jobOptions[$job['sid']] = $job['Title'] . $city . $state . $active;
                     }
 
                     $data['company_sid'] = $company_sid;
@@ -203,7 +207,7 @@ class Reports extends Public_Controller {
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
 
-                    if(isset($_POST['embed-source']) && $_POST['embed-source'] == 1){
+                    if (isset($_POST['embed-source']) && $_POST['embed-source'] == 1) {
                         $myColumns = array(
                             'sid',
                             'Title',
@@ -219,8 +223,7 @@ class Reports extends Public_Controller {
                             'passing_score',
                             'status'
                         );
-                    }
-                    else{
+                    } else {
                         $myColumns = array(
                             'sid',
                             'Title',
@@ -235,7 +238,6 @@ class Reports extends Public_Controller {
                             'passing_score',
                             'status'
                         );
-
                     }
                     $cols = array();
 
@@ -268,14 +270,14 @@ class Reports extends Public_Controller {
                                     }
                                 } else {
                                     $city = '';
-                                    $state='';
+                                    $state = '';
                                     if (isset($applicant['Location_City']) && $applicant['Location_City'] != NULL) {
-                                        $city = ' - '.ucfirst($applicant['Location_City']);
+                                        $city = ' - ' . ucfirst($applicant['Location_City']);
                                     }
                                     if (isset($applicant['Location_State']) && $applicant['Location_State'] != NULL) {
-                                        $state = ', '.db_get_state_name($applicant['Location_State'])['state_name'];
+                                        $state = ', ' . db_get_state_name($applicant['Location_State'])['state_name'];
                                     }
-                                    $input[$myColumn] = ($applicant[$myColumn] == '' ? 'Job Removed From System' : $applicant[$myColumn].$city.$state);
+                                    $input[$myColumn] = ($applicant[$myColumn] == '' ? 'Job Removed From System' : $applicant[$myColumn] . $city . $state);
                                 }
                             }
                         }
@@ -323,7 +325,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_monthly_filled_jobs_report() {
+    public function generate_monthly_filled_jobs_report()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -414,9 +417,9 @@ class Reports extends Public_Controller {
                         foreach ($jobList as $job) {
                             $input = array();
                             $state = $city = '';
-                            if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                            if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
-                            $input['Title'] = ($job['Title'] != '' ? $job['Title'].$city.$state : 'Job Removed From System');
+                            if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                            if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
+                            $input['Title'] = ($job['Title'] != '' ? $job['Title'] . $city . $state : 'Job Removed From System');
                             $input['hired_date'] = reset_datetime(array('datetime' => $job['hired_date'], '_this' => $this));
                             fputcsv($output, $input);
                         }
@@ -436,7 +439,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_candidates_between_certain_period($start_date = null, $end_date = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $page_number = 1) {
+    public function generate_candidates_between_certain_period($start_date = null, $end_date = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -463,8 +467,8 @@ class Reports extends Public_Controller {
 
             foreach ($allJobs as $job) {
                 $state = $city = '';
-                if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
 
 
                 $active = ' (In Active) ';
@@ -473,7 +477,7 @@ class Reports extends Public_Controller {
                     $active = ' (Active) ';
                 }
 
-                $jobOptions[$job['sid']] = $job['Title'].$city.$state . $active;
+                $jobOptions[$job['sid']] = $job['Title'] . $city . $state . $active;
             }
             $data['jobOptions'] = $jobOptions;
             $applicant_types = explode(',', APPLICANT_TYPE_ATS);
@@ -568,10 +572,10 @@ class Reports extends Public_Controller {
 
                     foreach ($applicants as $applicant) {
                         $state = $city = '';
-                        if(isset($applicant['Location_City']) && $applicant['Location_City'] != null && $applicant['Location_City'] != '') $city = ' - '.ucfirst($applicant['Location_City']);
-                        if(isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', '.db_get_state_name($applicant['Location_State'])['state_name'];
+                        if (isset($applicant['Location_City']) && $applicant['Location_City'] != null && $applicant['Location_City'] != '') $city = ' - ' . ucfirst($applicant['Location_City']);
+                        if (isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', ' . db_get_state_name($applicant['Location_State'])['state_name'];
                         $input = array();
-                        $input['Title'] = ($applicant['Title'] != '' ? $applicant['Title'].$city.$state : 'Job Removed From System');
+                        $input['Title'] = ($applicant['Title'] != '' ? $applicant['Title'] . $city . $state : 'Job Removed From System');
                         $input['name'] = ucwords($applicant['first_name'] . ' ' . $applicant['last_name']);
 
                         if (isset($is_hired_report) && $is_hired_report == true) {
@@ -602,7 +606,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_time_to_fill($keyword = 'all') {
+    public function generate_time_to_fill($keyword = 'all')
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -664,12 +669,12 @@ class Reports extends Public_Controller {
                     foreach ($jobs as $job) {
                         $input = array();
                         if (isset($job['Location_City']) && $job['Location_City'] != NULL) {
-                            $city = ' - '.ucfirst($job['Location_City']);
+                            $city = ' - ' . ucfirst($job['Location_City']);
                         }
                         if (isset($job['Location_State']) && $job['Location_State'] != NULL) {
-                            $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                            $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
                         }
-                        $input['Title'] = $job['Title'].$city.$state;
+                        $input['Title'] = $job['Title'] . $city . $state;
                         // $input['date'] = date('m-d-Y', strtotime(str_replace('-', '/', $job['activation_date'])));
                         $input['date'] = reset_datetime(array('datetime' => $job['activation_date'], '_this' => $this));
                         $input['applicant_count'] = $job['applicant_count'];
@@ -691,7 +696,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_time_to_hire($keyword = 'all') {
+    public function generate_time_to_hire($keyword = 'all')
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -752,10 +758,10 @@ class Reports extends Public_Controller {
 
                     foreach ($jobs as $job) {
                         $state = $city = '';
-                        if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                        if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                        if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                        if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
                         $input = array();
-                        $input['Title'] = $job['Title'].$city.$state;
+                        $input['Title'] = $job['Title'] . $city . $state;
                         // $input['date'] = date('m-d-Y', strtotime(str_replace('-', '/', $job['activation_date'])));
                         $input['date'] = reset_datetime(array('datetime' => $job['activation_date'], '_this' => $this));
                         $input['applicant_count'] = $job['applicant_count'];
@@ -777,7 +783,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_active_new_hire_categories() {
+    public function generate_active_new_hire_categories()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -824,7 +831,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_new_hires_report($start_date = null, $end_date = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $page_number = 1) {
+    public function generate_new_hires_report($start_date = null, $end_date = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -854,15 +862,15 @@ class Reports extends Public_Controller {
 
             foreach ($allJobs as $job) {
                 $state = $city = '';
-                if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
                 $active = ' (In Active) ';
 
                 if ($job['active']) {
                     $active = ' (Active) ';
                 }
 
-                $jobOptions[$job['sid']] = $job['Title'].$city.$state . $active;
+                $jobOptions[$job['sid']] = $job['Title'] . $city . $state . $active;
             }
 
             $data['jobOptions'] = $jobOptions;
@@ -892,7 +900,7 @@ class Reports extends Public_Controller {
                 $offset = ($page_number - 1) * $per_page;
             }
 
-            $total_records = $this->reports_model->GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, true);
+            $total_records = $this->reports_model->GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, true);
             $this->load->library('pagination');
             $pagination_base = base_url('reports/generate_new_hires_report') . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($keyword) . '/' . urlencode($job_sid) . '/' . urlencode($applicant_type) . '/' . urlencode($applicant_status);
             $config = array();
@@ -936,19 +944,19 @@ class Reports extends Public_Controller {
             $data['applicant_statuses'] = $applicant_statuses;
 
 
-            $applicants = $this->reports_model->GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false, $per_page, $offset);
+            $applicants = $this->reports_model->GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false, $per_page, $offset);
             $data['title'] = 'Advanced Hr Reports - Applicants Hired Between ( ' . date('m-d-Y', strtotime($start_date)) . ' - ' . date('m-d-Y', strtotime($end_date)) . ' )';
             $data['applicants'] = $applicants;
             $data['is_hired_report'] = true;
 
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
-                $applicants = $this->reports_model->GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false);
+                $applicants = $this->reports_model->GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false);
 
                 if (isset($applicants) && sizeof($applicants) > 0) {
 
                     header('Content-Type: text/csv; charset=utf-8');
-                    header('Content-Disposition: attachment; filename=data.csv');
+                    header('Content-Disposition: attachment; filename=New Hires data.csv');
                     $output = fopen('php://output', 'w');
 
                     if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {
@@ -959,10 +967,10 @@ class Reports extends Public_Controller {
 
                     foreach ($applicants as $applicant) {
                         $state = $city = '';
-                        if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                        if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                        if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                        if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
                         $input = array();
-                        $input['Title'] = ($applicant['Title'] != '' ? $applicant['Title'].$city.$state : 'Job Removed From System');
+                        $input['Title'] = ($applicant['Title'] != '' ? $applicant['Title'] . $city . $state : 'Job Removed From System');
                         $input['name'] = ucwords($applicant['first_name'] . ' ' . $applicant['last_name']);
                         if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {
                             $input['date'] = date('m-d-Y', strtotime(str_replace('-', '/', $applicant['hired_date'])));
@@ -990,7 +998,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_new_hires_onboarding_report($start_date = null, $end_date = null, $keyword = 'all') {
+    public function generate_new_hires_onboarding_report($start_date = null, $end_date = null, $keyword = 'all')
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1039,15 +1048,15 @@ class Reports extends Public_Controller {
 
                     foreach ($applicants as $applicant) {
                         $input = array();
-                         $city = '';
-                         $state='';
-                         if (isset($applicant['Location_City']) && $applicant['Location_City'] != NULL) {
-                            $city = ' - '.ucfirst($applicant['Location_City']);
-                         }
-                         if (isset($applicant['Location_State']) && $applicant['Location_State'] != NULL) {
-                            $state = ', '.db_get_state_name($applicant['Location_State'])['state_name'];
-                         }
-                        $input['Title'] = ($applicant['Title'] != '' ? $applicant['Title'].$city.$state : 'Job Removed From System');
+                        $city = '';
+                        $state = '';
+                        if (isset($applicant['Location_City']) && $applicant['Location_City'] != NULL) {
+                            $city = ' - ' . ucfirst($applicant['Location_City']);
+                        }
+                        if (isset($applicant['Location_State']) && $applicant['Location_State'] != NULL) {
+                            $state = ', ' . db_get_state_name($applicant['Location_State'])['state_name'];
+                        }
+                        $input['Title'] = ($applicant['Title'] != '' ? $applicant['Title'] . $city . $state : 'Job Removed From System');
                         $input['name'] = ucwords($applicant['first_name'] . ' ' . $applicant['last_name']);
                         if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {
                             // Added on: 27-06-2019
@@ -1072,7 +1081,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_job_views_applicants_report() {
+    public function generate_job_views_applicants_report()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1109,11 +1119,11 @@ class Reports extends Public_Controller {
 
                     foreach ($all_jobs as $job) {
                         $state = $city = '';
-                        if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                        if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
-                        $title = ($job['Title'] != '' ? $job['Title'].$city.$state : 'Job Removed From System');
+                        if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                        if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
+                        $title = ($job['Title'] != '' ? $job['Title'] . $city . $state : 'Job Removed From System');
                         // $created_date = date('F j, Y, g:i a', strtotime($job['activation_date']));
-                        $created_date = reset_datetime(array('datetime' => $job['activation_date'],'_this' => $this));
+                        $created_date = reset_datetime(array('datetime' => $job['activation_date'], '_this' => $this));
                         $deactivation_date = ($job['deactivation_date'] != null ? date('F j, Y, g:i a', strtotime($job['activation_date'])) : 'N.A.');
                         $status = $job['active'];
                         $views = $job['views'];
@@ -1145,7 +1155,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function print_report() {
+    public function print_report()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1167,7 +1178,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         if (array_key_exists('perform_action', $_POST)) {
             $perform_action = strtoupper($_POST['perform_action']);
             switch ($perform_action) {
@@ -1180,7 +1192,8 @@ class Reports extends Public_Controller {
     }
 
     //** applicant referrals **//
-    public function generate_applicant_referrals_report() {
+    public function generate_applicant_referrals_report()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1258,7 +1271,8 @@ class Reports extends Public_Controller {
     }
 
     // ** applicant statuses ** //
-    public function generate_applicant_status_report($keyword = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $job_sid = 'all', $applicant_type = 'all', $page_number = 1) {
+    public function generate_applicant_status_report($keyword = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $job_sid = 'all', $applicant_type = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1298,23 +1312,23 @@ class Reports extends Public_Controller {
             $jobOptions = array();
             foreach ($allJobs as $job) {
                 $state = $city = '';
-                if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
                 $active = ' (In Active) ';
 
                 if ($job['active']) {
                     $active = ' (Active) ';
                 }
 
-                $jobOptions[$job['sid']] = $job['Title'].$city.$state . $active;
+                $jobOptions[$job['sid']] = $job['Title'] . $city . $state . $active;
             }
             $data['jobOptions'] = $jobOptions;
-//            $applicant_types = array();
-//            $applicant_types[] = 'Applicant';
-//            $applicant_types[] = 'Talent Network';
-//            $applicant_types[] = 'Manual Candidate';
-//            $applicant_types[] = 'Job Fair';
-//            $applicant_types[] = 'Re-Assigned Candidates';
+            //            $applicant_types = array();
+            //            $applicant_types[] = 'Applicant';
+            //            $applicant_types[] = 'Talent Network';
+            //            $applicant_types[] = 'Manual Candidate';
+            //            $applicant_types[] = 'Job Fair';
+            //            $applicant_types[] = 'Re-Assigned Candidates';
             $applicant_types = explode(',', APPLICANT_TYPE_ATS);
             $data['applicant_types'] = $applicant_types;
 
@@ -1392,14 +1406,14 @@ class Reports extends Public_Controller {
 
                     foreach ($applicants as $applicant) {
                         $state = $city = '';
-                        if(isset($applicant['Location_City']) && $applicant['Location_City'] != null && $applicant['Location_City'] != '') $city = ' - '.ucfirst($applicant['Location_City']);
-                        if(isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', '.db_get_state_name($applicant['Location_State'])['state_name'];
+                        if (isset($applicant['Location_City']) && $applicant['Location_City'] != null && $applicant['Location_City'] != '') $city = ' - ' . ucfirst($applicant['Location_City']);
+                        if (isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', ' . db_get_state_name($applicant['Location_State'])['state_name'];
                         $input = array();
 
                         // $input['date_applied'] = date('m-d-Y', strtotime(str_replace('-', '/', $applicant['date_applied'])));
                         $input['date_applied'] = reset_datetime(array('datetime' => $applicant['date_applied'], '_this' => $this));
                         $input['name'] = ucwords($applicant['first_name'] . ' ' . $applicant['last_name']);
-                        $input['Title'] = $applicant['Title'].$city.$state;
+                        $input['Title'] = $applicant['Title'] . $city . $state;
                         $input['email'] = $applicant['email'];
                         $input['status'] = ucwords($applicant['status']);
 
@@ -1421,7 +1435,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function generate_candidate_offers_report($start_date = null, $end_date = null, $keyword = 'all') {
+    public function generate_candidate_offers_report($start_date = null, $end_date = null, $keyword = 'all')
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1466,13 +1481,13 @@ class Reports extends Public_Controller {
 
                     foreach ($data['candidates'] as $candidate) {
                         $state = $city = '';
-                        if(isset($candidate['Location_City']) && $candidate['Location_City'] != null && $candidate['Location_City'] != '') $city = ' - '.ucfirst($candidate['Location_City']);
-                        if(isset($candidate['Location_State']) && $candidate['Location_State'] != null && $candidate['Location_State'] != '') $state = ', '.db_get_state_name($candidate['Location_State'])['state_name'];
+                        if (isset($candidate['Location_City']) && $candidate['Location_City'] != null && $candidate['Location_City'] != '') $city = ' - ' . ucfirst($candidate['Location_City']);
+                        if (isset($candidate['Location_State']) && $candidate['Location_State'] != null && $candidate['Location_State'] != '') $state = ', ' . db_get_state_name($candidate['Location_State'])['state_name'];
                         $input = array();
 
                         // $input['offer_date'] = date('m-d-Y', strtotime(str_replace('-', '/', $candidate['registration_date'])));
                         $input['offer_date'] = reset_datetime(array('datetime' => $candidate['registration_date'], '_this' => $this));
-                        $input['job_title'] = $candidate['job_title'].$city.$state;
+                        $input['job_title'] = $candidate['job_title'] . $city . $state;
                         $input['applicant_name'] = ucwords($candidate['first_name'] . ' ' . $candidate['last_name']);
                         $input['email'] = $candidate['email'];
                         $input['employee_type'] = ucwords($candidate['access_level']);
@@ -1495,7 +1510,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function applicant_origination_tracker_report($start_date = null, $end_date = null) {
+    public function applicant_origination_tracker_report($start_date = null, $end_date = null)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1586,7 +1602,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    private function get_company_applicants_by_source($company_sid, $applicant_sources = array(), $start_date, $end_date) {
+    private function get_company_applicants_by_source($company_sid, $applicant_sources = array(), $start_date, $end_date)
+    {
 
         $applicants_by_source = array();
 
@@ -1606,7 +1623,8 @@ class Reports extends Public_Controller {
         return $company_data;
     }
 
-    public function applicant_interview_scores_report($keyword = 'all', $start_date = 'all', $end_date = 'all', $job_sid = 'all', $applicant_status = 'all', $applicant_type = 'all', $page_number = 1) {
+    public function applicant_interview_scores_report($keyword = 'all', $start_date = 'all', $end_date = 'all', $job_sid = 'all', $applicant_status = 'all', $applicant_type = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1623,23 +1641,23 @@ class Reports extends Public_Controller {
 
             foreach ($allJobs as $job) {
                 $state = $city = '';
-                if(isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - '.ucfirst($job['Location_City']);
-                if(isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', '.db_get_state_name($job['Location_State'])['state_name'];
+                if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
                 $active = ' (In Active) ';
 
                 if ($job['active']) {
                     $active = ' (Active) ';
                 }
 
-                $jobOptions[$job['sid']] = $job['Title'].$city.$state . $active;
+                $jobOptions[$job['sid']] = $job['Title'] . $city . $state . $active;
             }
             $data['jobOptions'] = $jobOptions;
-//            $applicant_types = array();
-//            $applicant_types[] = 'Applicant';
-//            $applicant_types[] = 'Talent Network';
-//            $applicant_types[] = 'Manual Candidate';
-//            $applicant_types[] = 'Job Fair';
-//            $applicant_types[] = 'Re-Assigned Candidates';
+            //            $applicant_types = array();
+            //            $applicant_types[] = 'Applicant';
+            //            $applicant_types[] = 'Talent Network';
+            //            $applicant_types[] = 'Manual Candidate';
+            //            $applicant_types[] = 'Job Fair';
+            //            $applicant_types[] = 'Re-Assigned Candidates';
             $applicant_types = explode(',', APPLICANT_TYPE_ATS);
             $data['applicant_types'] = $applicant_types;
 
@@ -1684,7 +1702,7 @@ class Reports extends Public_Controller {
 
             $total_records = $this->reports_model->get_applicant_interview_scores($company_sid, $keyword, $start_date_applied, $end_date_applied, true, $job_sid, $applicant_type, $applicant_status);
             $this->load->library('pagination');
-            $pagination_base = base_url('reports/applicant_interview_scores_report') . '/' . urlencode($keyword) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($job_sid) . '/' . urlencode($applicant_status) . '/' . urlencode($applicant_type) ;
+            $pagination_base = base_url('reports/applicant_interview_scores_report') . '/' . urlencode($keyword) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($job_sid) . '/' . urlencode($applicant_status) . '/' . urlencode($applicant_type);
             //echo $pagination_base;
             $config = array();
             $config["base_url"] = $pagination_base;
@@ -1741,14 +1759,14 @@ class Reports extends Public_Controller {
                     if (!empty($data['companies_applicant_scores'])) {
                         foreach ($data['companies_applicant_scores'] as $applicant_score) {
                             $state = $city = '';
-                            if(isset($applicant_score['Location_City']) && $applicant_score['Location_City'] != null && $applicant_score['Location_City'] != '') $city = ' - '.ucfirst($applicant_score['Location_City']);
-                            if(isset($applicant_score['Location_State']) && $applicant_score['Location_State'] != null && $applicant_score['Location_State'] != '') $state = ', '.db_get_state_name($applicant_score['Location_State'])['state_name'];
+                            if (isset($applicant_score['Location_City']) && $applicant_score['Location_City'] != null && $applicant_score['Location_City'] != '') $city = ' - ' . ucfirst($applicant_score['Location_City']);
+                            if (isset($applicant_score['Location_State']) && $applicant_score['Location_State'] != null && $applicant_score['Location_State'] != '') $state = ', ' . db_get_state_name($applicant_score['Location_State'])['state_name'];
                             $input = array();
                             // $input['created_date'] = convert_date_to_frontend_format($applicant_score['created_date']);
                             $input['created_date'] = reset_datetime(array('datetime' => $applicant_score['created_date'], '_this' => $this));
                             $input['applicant'] = ucwords($applicant_score['first_name'] . ' ' . $applicant_score['last_name']);
                             $input['conducted_by'] = ucwords($applicant_score['conducted_by_first_name'] . ' ' . $applicant_score['conducted_by_last_name']) . ' ( ' . ucwords($applicant_score['conducted_by_job_title']) . ' ) ';
-                            $input['for_position'] = ucwords($applicant_score['job_title'].$city.$state);
+                            $input['for_position'] = ucwords($applicant_score['job_title'] . $city . $state);
                             $input['applicant_evaluation_score'] = $applicant_score['candidate_score'] . ' Point(s) ( Out of 100 )';
                             $input['job_relevancy_evaluation_score'] = $applicant_score['job_relevancy_score'] . ' Point(s) ( Out of 100 )';
                             $input['applicant_overall_score'] = ($applicant_score['candidate_overall_score'] * 10) . ' Point(s) ( Out of 100 )';
@@ -1775,7 +1793,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function applicant_source_report($keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $start_date = 'all', $end_date = 'all', $source = 'all', $applicant_status = 'all', $page_number = 1) {
+    public function applicant_source_report($keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $start_date = 'all', $end_date = 'all', $source = 'all', $applicant_status = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1789,12 +1808,12 @@ class Reports extends Public_Controller {
             $data['title'] = 'Advanced Hr Reports - Applicant Source Report';
             $data['company_sid'] = $company_sid;
 
-//            $applicant_types = array();
-//            $applicant_types[] = 'Applicant';
-//            $applicant_types[] = 'Talent Network';
-//            $applicant_types[] = 'Manual Candidate';
-//            $applicant_types[] = 'Job Fair';
-//            $applicant_types[] = 'Re-Assigned Candidates';
+            //            $applicant_types = array();
+            //            $applicant_types[] = 'Applicant';
+            //            $applicant_types[] = 'Talent Network';
+            //            $applicant_types[] = 'Manual Candidate';
+            //            $applicant_types[] = 'Job Fair';
+            //            $applicant_types[] = 'Re-Assigned Candidates';
             $applicant_types = explode(',', APPLICANT_TYPE_ATS);
             $data['applicant_types'] = $applicant_types;
 
@@ -1832,8 +1851,8 @@ class Reports extends Public_Controller {
             /* if (is_admin($employer_sid)) { */
 
             $allJobs = $this->reports_model->GetAllJobsCompanySpecific($company_sid);
-            $applicants = $this->reports_model->GetSourceReportAllApplicantsCompanySpecific($company_sid, $keyword, $job_sid, $applicant_type, $start_date_applied, $end_date_applied, $per_page, $offset, true, false, $source,$applicant_status);
-            $applicants_count = $this->reports_model->GetSourceReportAllApplicantsCompanySpecific($company_sid, $keyword, $job_sid, $applicant_type, $start_date_applied, $end_date_applied, null, null, false, true, $source,$applicant_status);
+            $applicants = $this->reports_model->GetSourceReportAllApplicantsCompanySpecific($company_sid, $keyword, $job_sid, $applicant_type, $start_date_applied, $end_date_applied, $per_page, $offset, true, false, $source, $applicant_status);
+            $applicants_count = $this->reports_model->GetSourceReportAllApplicantsCompanySpecific($company_sid, $keyword, $job_sid, $applicant_type, $start_date_applied, $end_date_applied, null, null, false, true, $source, $applicant_status);
 
             /* } else {
               $allJobs = $this->reports_model->GetAllJobsCompanyAndEmployerSpecific($company_sid, $employer_sid);
@@ -1927,7 +1946,7 @@ class Reports extends Public_Controller {
                             }
                             fclose($output);
                             exit;
-//                            redirect(current_url(), 'refresh');
+                            //                            redirect(current_url(), 'refresh');
                         }
                         break;
                 }
@@ -1937,7 +1956,8 @@ class Reports extends Public_Controller {
         }
     }
 
-    public function employee_monthly_attendance_report($employer_sid = null, $year = null, $month = null) {
+    public function employee_monthly_attendance_report($employer_sid = null, $year = null, $month = null)
+    {
         if ($this->session->userdata('logged_in')) {
             if ($this->form_validation->run() == false) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -2015,14 +2035,14 @@ class Reports extends Public_Controller {
                 $this->load->view('reports/employee_monthly_attendance_report');
                 $this->load->view('main/footer');
             } else {
-
             }
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-    public function employee_weekly_attendance_report($employer_sid = null, $year = null, $week = null) {
+    public function employee_weekly_attendance_report($employer_sid = null, $year = null, $week = null)
+    {
         if ($this->session->userdata('logged_in')) {
             if ($this->form_validation->run() == false) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -2115,14 +2135,14 @@ class Reports extends Public_Controller {
                 $this->load->view('reports/employee_weekly_attendance_report');
                 $this->load->view('main/footer');
             } else {
-
             }
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-    public function generate_job_fair_report($keyword = 'all', $start_date = 'all', $end_date = 'all', $page_number = 1) {
+    public function generate_job_fair_report($keyword = 'all', $start_date = 'all', $end_date = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('logged_in')) {
             if ($this->form_validation->run() == false) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -2196,8 +2216,8 @@ class Reports extends Public_Controller {
                 $data['applicants'] = $applicants;
                 $data['applicants_count'] = $total_records;
 
-//                echo '<pre>';
-//                print_r(unserialize($applicants[0]['talent_and_fair_data']));
+                //                echo '<pre>';
+                //                print_r(unserialize($applicants[0]['talent_and_fair_data']));
                 // ** export file sheet ** //
                 if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                     $myRecords = $this->reports_model->get_job_fairs($company_sid, $keyword, $start_date_applied, $end_date_applied, false);
@@ -2243,33 +2263,32 @@ class Reports extends Public_Controller {
                                         $input[$myColumn] = ($applicant['desired_job_title'] == '' ? 'Job Not Provided' : $applicant['desired_job_title']);
                                     }
                                 }
-                                if ($myColumn == 'questionnaire'){
+                                if ($myColumn == 'questionnaire') {
 
                                     $questions = unserialize($applicant['talent_and_fair_data']);
                                     $job_fair_data = '';
 
                                     // Updated on: 27-06-2019
                                     // Added questionaire exists check
-                                    if(sizeof($questions) && isset($questions['questions']) && sizeof($questions['questions'])){
-                                        foreach($questions['questions'] as $question => $answer){
-                                            $job_fair_data = 'Que: '. $question ;
+                                    if (sizeof($questions) && isset($questions['questions']) && sizeof($questions['questions'])) {
+                                        foreach ($questions['questions'] as $question => $answer) {
+                                            $job_fair_data = 'Que: ' . $question;
                                             $input[] = $job_fair_data;
-                                            if(is_array($answer)){
+                                            if (is_array($answer)) {
                                                 $multi_ans = '';
-                                                foreach($answer as $que => $ans){
+                                                foreach ($answer as $que => $ans) {
                                                     $multi_ans .= $ans . ',';
                                                 }
-                                                $multi_ans = rtrim($multi_ans,',');
-                                                $job_fair_data = 'Ans: ' . $multi_ans ;
+                                                $multi_ans = rtrim($multi_ans, ',');
+                                                $job_fair_data = 'Ans: ' . $multi_ans;
                                                 $input[] = $job_fair_data;
-                                            }
-                                            else{
-                                                $job_fair_data = 'Ans: ' . $answer ;
+                                            } else {
+                                                $job_fair_data = 'Ans: ' . $answer;
                                                 $input[] = $job_fair_data;
                                             }
                                         }
                                     }
-//                                    $input[] = $job_fair_data;
+                                    //                                    $input[] = $job_fair_data;
                                 }
                             }
 
@@ -2287,14 +2306,14 @@ class Reports extends Public_Controller {
                 $this->load->view('reports/generate_job_fair_report');
                 $this->load->view('main/footer');
             } else {
-
             }
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-    public function generate_applicant_origination_statistics_report($employer_sid = null, $year = null, $week = null) {
+    public function generate_applicant_origination_statistics_report($employer_sid = null, $year = null, $week = null)
+    {
         if ($this->session->userdata('logged_in')) {
             if ($this->form_validation->run() == false) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -2329,7 +2348,7 @@ class Reports extends Public_Controller {
                 $zip_recruiter_array = array();
                 $jobs_2_career_array = array();
 
-                $applicants = $this->reports_model->get_stats_by_source($search,$company_sid);
+                $applicants = $this->reports_model->get_stats_by_source($search, $company_sid);
 
                 foreach ($applicants as $key => $value) {
                     $source = $value['applicant_source'];
@@ -2380,15 +2399,15 @@ class Reports extends Public_Controller {
                 $career_sites_array = array();
                 $other_sites_array = array();
 
-//                foreach ($automotohr_array as $key => $value) {
-//                    $career_sites_array[$value['applicant_source']][] = $automotohr_array[$key];
-//                }
+                //                foreach ($automotohr_array as $key => $value) {
+                //                    $career_sites_array[$value['applicant_source']][] = $automotohr_array[$key];
+                //                }
 
                 foreach ($other_array as $key => $value) {
                     if (!empty($value['applicant_source'])) {
                         $other_sites_array[$value['applicant_source']][] = $other_array[$key];
                     } else {
-//                $career_sites_array['Career Website'][] = $other_array[$key];
+                        //                $career_sites_array['Career Website'][] = $other_array[$key];
                         $automotohr_array[] = $other_array[$key];
                     }
                 }
@@ -2402,14 +2421,14 @@ class Reports extends Public_Controller {
                 $this->load->view('reports/generate_applicant_origination_statistics');
                 $this->load->view('main/footer');
             } else {
-
             }
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-    public function generate_company_daily_activity_report($today_date = NULL){
+    public function generate_company_daily_activity_report($today_date = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -2422,18 +2441,18 @@ class Reports extends Public_Controller {
             $data['title'] = "Daily Activity Report";
             $perform_action = $this->input->post('perform_action');
 
-            switch($perform_action){
+            switch ($perform_action) {
                 case 'export_csv_file':
                     $this->form_validation->set_rules('report_date', 'report_date', 'required|trim|xss_clean');
                     break;
             }
 
-            if($this->form_validation->run() == false){
+            if ($this->form_validation->run() == false) {
                 //Do Nothing
             } else {
                 $perform_action = $this->input->post('perform_action');
 
-                switch($perform_action){
+                switch ($perform_action) {
                     case 'export_csv_file':
 
                         $report_date = $this->input->post('report_date');
@@ -2457,10 +2476,10 @@ class Reports extends Public_Controller {
                         header('Content-Disposition: attachment; filename=data.csv');
                         $output = fopen('php://output', 'w');
 
-                        foreach($employers as $employer){
-                            fputcsv($output, array($employer['employer_name'] ,'' , $employer['total_time_spent'] . ' Minutes'));
+                        foreach ($employers as $employer) {
+                            fputcsv($output, array($employer['employer_name'], '', $employer['total_time_spent'] . ' Minutes'));
                             fputcsv($output, array('IP Address', 'Login Duration', 'User Agent'));
-                            foreach($employer['activity_logs'] as $key => $activity_log){
+                            foreach ($employer['activity_logs'] as $key => $activity_log) {
                                 fputcsv($output, array(str_replace('_', '.', $key), $activity_log['time_spent'] . ' Minutes', $activity_log['act_details']['user_agent']));
                             }
                             fputcsv($output, array('', '', ''));
@@ -2505,7 +2524,6 @@ class Reports extends Public_Controller {
         }
 
         if ($this->form_validation->run() == false) {
-
         } else {
             $perform_action = $this->input->post('perform_action');
             switch ($perform_action) {
@@ -2525,7 +2543,7 @@ class Reports extends Public_Controller {
                     $my_data['report_type'] = 'daily';
                     $my_data['report_date'] = $report_date;
 
-                    $this->load->view('reports/generate_company_daily_activity_report_partial',$my_data);
+                    $this->load->view('reports/generate_company_daily_activity_report_partial', $my_data);
 
                     break;
                 default:
@@ -2533,10 +2551,10 @@ class Reports extends Public_Controller {
                     break;
             }
         }
-
     }
 
-    function generate_interviews_scheduled_by_recruiters($start_date = null, $end_date = null) {
+    function generate_interviews_scheduled_by_recruiters($start_date = null, $end_date = null)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -2546,14 +2564,14 @@ class Reports extends Public_Controller {
             $company_sid                                                        = $data['session']['company_detail']['sid'];
 
             if ($start_date == null || $start_date == 'beginning-of-time') {
-                $first_day_of_month                                             = mktime (0, 0, 0, date("m"), 1, date("Y"));
+                $first_day_of_month                                             = mktime(0, 0, 0, date("m"), 1, date("Y"));
                 $start_date                                                     = date("d-m-Y", $first_day_of_month);
             } else {
                 $start_date                                                     = date('Y-m-d', strtotime(urldecode(str_replace('-', '/', $start_date))));
             }
 
             if ($end_date == null || $end_date == 'end-of-days') {
-                $last_day_of_month                                              = mktime (0, 0, 0, date("m"), date('t'), date("Y"));
+                $last_day_of_month                                              = mktime(0, 0, 0, date("m"), date('t'), date("Y"));
                 $end_date                                                       = date("d-m-Y", $last_day_of_month);
             } else {
                 $end_date                                                       = date('Y-m-d', strtotime(urldecode(str_replace('-', '/', $end_date))));
@@ -2577,24 +2595,24 @@ class Reports extends Public_Controller {
                 $users_type                                                     = $event_detail['users_type'];
                 $user_sid                                                       = $event_detail['applicant_job_sid'];
 
-                if($users_type == 'employee') {
-                    if(!array_key_exists($user_sid, $employer_names)) {
+                if ($users_type == 'employee') {
+                    if (!array_key_exists($user_sid, $employer_names)) {
                         $employer_names[$user_sid]                              = $this->reports_model->get_employers_name($user_sid);
                     }
                 } else {
-                    if(!array_key_exists($user_sid, $applicant_names)) {
+                    if (!array_key_exists($user_sid, $applicant_names)) {
                         $applicant_names[$user_sid]                             = $this->reports_model->get_applicants_name($user_sid);
                     }
                 }
 
-                if(!array_key_exists($employer_sid, $employer_names)) {
+                if (!array_key_exists($employer_sid, $employer_names)) {
                     $employer_names[$employer_sid]                              = $this->reports_model->get_employers_name($employer_sid);
                 }
 
-                foreach($interviewer_array as $ia) {
+                foreach ($interviewer_array as $ia) {
                     $employers_in_event[$ia][$event_detail['sid']]              = $event_detail;
 
-                    if(!array_key_exists($ia, $employer_names)) {
+                    if (!array_key_exists($ia, $employer_names)) {
                         $employer_names[$ia]                                    = $this->reports_model->get_employers_name($ia);
                     }
                 }
@@ -2613,7 +2631,7 @@ class Reports extends Public_Controller {
 
                 foreach ($data['events'] as $employer_id => $employee_events) {
                     $name = ucwords($employer_names[$employer_id]);
-//                    fputcsv($output, array($name));
+                    //                    fputcsv($output, array($name));
                     fputcsv($output, array($name, 'Interview Scheduled For', 'Interview Status', 'Interview Date'));
 
                     foreach ($employee_events as $event) {
@@ -2621,17 +2639,17 @@ class Reports extends Public_Controller {
                         $input['schedule_for'] = '';
                         $user_sid = $event['applicant_job_sid'];
 
-                        if($event['users_type'] == 'employee') {
+                        if ($event['users_type'] == 'employee') {
                             $input['name'] = ucwords($employer_names[$user_sid]);
                         } else {
                             $input['name'] =  ucwords($applicant_names[$user_sid]);
                         }
 
-                        if($have_status == true) {
+                        if ($have_status == true) {
                             if (empty($event['applicant_jobs_list'])) {
-                                if(!empty($event['applicant_job_sid'])) {
+                                if (!empty($event['applicant_job_sid'])) {
                                     $status_sid = $event['applicant_job_sid'];
-                                    $status_info = get_interview_status_by_parent_id($status_sid );
+                                    $status_info = get_interview_status_by_parent_id($status_sid);
                                 } else {
                                     $status_info = array();
                                     $status_info['name'] = 'Status Not Found';
@@ -2639,17 +2657,17 @@ class Reports extends Public_Controller {
                             } else {
                                 $status_array = explode(',', $event['applicant_jobs_list']);
                                 $status_sid = $status_array[0];
-                                $status_info = get_interview_status($status_sid );
+                                $status_info = get_interview_status($status_sid);
                             }
 
-                            if(empty($status_info)) {
+                            if (empty($status_info)) {
                                 $status_info = array();
                                 $status_info['name'] = 'Status Not Found';
                             }
 
                             $input['status'] = ucwords($status_info['name']);
                         } else { // don't have custom status enabled
-                            if(empty($event['applicant_jobs_list'])) {
+                            if (empty($event['applicant_jobs_list'])) {
                                 $status_sid = $event['applicant_job_sid'];
                                 $field_id = 'portal_job_applications_sid';
                             } else {
@@ -2681,7 +2699,7 @@ class Reports extends Public_Controller {
                             } elseif ($default_status == 'Not Contacted Yet') {
                                 $input['status'] = ucwords($default_status);
                             } elseif ($default_status == 'Future Opportunity') {
-                               $input['status'] = ucwords($default_status);
+                                $input['status'] = ucwords($default_status);
                             } elseif ($default_status == 'Left Message') {
                                 $input['status'] = ucwords($default_status);
                             }
@@ -2690,7 +2708,6 @@ class Reports extends Public_Controller {
                         $input['date'] = reset_datetime(array('datetime' => $event['date'], '_this' => $this));
                         fputcsv($output, $input);
                     }
-
                 }
                 fclose($output);
                 exit;
@@ -2708,7 +2725,8 @@ class Reports extends Public_Controller {
      *
      *
      */
-    function driving_license(){
+    function driving_license()
+    {
         if (!$this->session->userdata('logged_in')) redirect('login', "refresh");
         //
         $data['session'] = $this->session->userdata('logged_in');
@@ -2719,28 +2737,28 @@ class Reports extends Public_Controller {
         //
         $data['title'] = 'Driving License Report';
 
-        if(sizeof($this->input->post(NULL, TRUE))){
+        if (sizeof($this->input->post(NULL, TRUE))) {
             $post = $this->input->post(NULL, TRUE);
             $post['companySid'] = $company_sid;
 
             $post['dd-license-type'] = strtolower($post['dd-license-type']);
             $post['dd-license-class'] = strtolower($post['dd-license-class']);
 
-            if($post['txt-license-number'] == '') $post['txt-license-number'] = 'all';
-            if($post['txt-issue-date'] == '') $post['txt-issue-date'] = 'all';
-            if($post['txt-expiration-date'] == '') $post['txt-expiration-date'] = 'all';
+            if ($post['txt-license-number'] == '') $post['txt-license-number'] = 'all';
+            if ($post['txt-issue-date'] == '') $post['txt-issue-date'] = 'all';
+            if ($post['txt-expiration-date'] == '') $post['txt-expiration-date'] = 'all';
             // Fetch licenses
-            $licenses = $this->reports_model->getDriverLicensesForExport( $post );
-            if(sizeof($licenses)){
+            $licenses = $this->reports_model->getDriverLicensesForExport($post);
+            if (sizeof($licenses)) {
 
                 header('Content-Type: text/csv; charset=utf-8');
-                header("Content-Disposition: attachment; filename=Driving_report_".(date('YmdHis')).".csv");
+                header("Content-Disposition: attachment; filename=Driving_report_" . (date('YmdHis')) . ".csv");
                 $output = fopen('php://output', 'w');
                 fputcsv($output, array('Employee', 'Job Title', 'Licence Type', 'Licence Class', 'License Authority', 'License Number', 'Date Of Birth', 'Issue Date', 'Expiration Date'));
 
-                foreach($licenses as $license){
+                foreach ($licenses as $license) {
                     $a = array();
-                    $a[] = remakeEmployeeName( $license );
+                    $a[] = remakeEmployeeName($license);
                     $a[] = $license['job_title'];
                     $a[] = $license['license_type'] != '' ? $license['license_type'] : 'N/A';
                     $a[] = $license['license_class'] != '' ? $license['license_class'] : 'N/A';
@@ -2753,9 +2771,7 @@ class Reports extends Public_Controller {
                 }
 
                 fclose($output);
-
                 exit;
-
             }
         }
         //
@@ -2764,13 +2780,12 @@ class Reports extends Public_Controller {
         $this->load->view('main/footer');
     }
 
-
-
     //
-    function handler(){
+    function handler()
+    {
         if (!$this->session->userdata('logged_in')) redirect('login', "refresh");
         $this->res['Redirect'] = false;
-        if(!$this->input->is_ajax_request() || !$this->input->post('action', true)) {
+        if (!$this->input->is_ajax_request() || !$this->input->post('action', true)) {
             $this->res['Response'] = 'Invalid request made.';
             $this->resp();
         }
@@ -2783,12 +2798,12 @@ class Reports extends Public_Controller {
         $formpost['companySid'] = $companyId;
         //
         switch (strtolower($formpost['action'])) {
-            //
+                //
             case 'get_driving_license_filter':
                 // Fetch employees
-                $employees = $this->reports_model->getEmployeesByCompanyId( $companyId );
+                $employees = $this->reports_model->getEmployeesByCompanyId($companyId);
                 //
-                if(!sizeof($employees)){
+                if (!sizeof($employees)) {
                     $this->res['Response'] = 'No Employees found.';
                     $this->resp();
                 }
@@ -2796,13 +2811,13 @@ class Reports extends Public_Controller {
                 $this->res['Response'] = 'Proceed';
                 $this->res['Data'] = $employees;
                 $this->resp();
-            break;
-            //
+                break;
+                //
             case 'get_driving_licenses':
                 // Fetch licenses
-                $licenses = $this->reports_model->getDriverLicenses( $formpost );
+                $licenses = $this->reports_model->getDriverLicenses($formpost);
                 //
-                if(!sizeof($licenses)){
+                if (!sizeof($licenses)) {
                     $this->res['Response'] = 'No Employees found.';
                     $this->resp();
                 }
@@ -2811,25 +2826,62 @@ class Reports extends Public_Controller {
                 $this->res['Response'] = 'Proceed';
                 $this->res['Data'] = $licenses['Data'];
                 //
-                if($formpost['page'] == 1){
+                if ($formpost['page'] == 1) {
                     $this->res['TotalRecords'] = $licenses['Count'];
                     $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
                 }
                 $this->resp();
-            break;
+                break;
+
+            case 'get_employee_status_filter':
+
+                // Fetch employees
+                $employees = $this->reports_model->getEmployeesByCompanyIdAll($companyId);
+                //
+                if (!sizeof($employees)) {
+                    $this->res['Response'] = 'No Employees found.';
+                    $this->resp();
+                }
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed';
+                $this->res['Data'] = $employees;
+                $this->resp();
+                break;
+
+            case 'get_employee_document':
+
+                $employeedocuments = $this->reports_model->getEmployeeDocument($formpost);
+                //
+                if (!sizeof($employeedocuments)) {
+                    $this->res['Response'] = 'No Employees found.';
+                    $this->resp();
+                }
+                $this->res['Status'] = true;
+                $this->res['Limit'] = $formpost['limit'];
+                $this->res['Response'] = 'Proceed';
+                $this->res['Data'] = $employeedocuments['Data'];
+                //
+                if ($formpost['page'] == 1) {
+                    $this->res['TotalRecords'] = $employeedocuments['Count'];
+                    $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
+                }
+                $this->resp();
+                break;
         }
         //
         $this->resp();
     }
 
     //
-    function resp(){
+    function resp()
+    {
         header('Content-Type: application/json');
         echo json_encode($this->res);
         exit(0);
     }
 
-    function company_sms_report ($start_date = null, $end_date = null) {
+    function company_sms_report($start_date = null, $end_date = null)
+    {
         if (!$this->session->userdata('logged_in')) redirect('login', "refresh");
         //
         $data['session'] = $this->session->userdata('logged_in');
@@ -2838,7 +2890,7 @@ class Reports extends Public_Controller {
         //
         $company_sid   = $data['session']['company_detail']['sid'];
         //
-        if($this->form_validation->run() == false){
+        if ($this->form_validation->run() == false) {
             $from_date = '';
             $to_date = '';
             $grand_total = '';
@@ -2854,7 +2906,6 @@ class Reports extends Public_Controller {
                 $from_date = date('Y-m-01', strtotime($end_date));
                 //
                 $to_date = date('Y-m-d', strtotime($end_date));
-
             } else if (($start_date != 'all' || !empty($start_date)) && $end_date == 'all') {
                 // 
                 $from_date = date('Y-m-d', strtotime($start_date));
@@ -2866,12 +2917,12 @@ class Reports extends Public_Controller {
                 //
                 $to_date = date('Y-m-d', strtotime($end_date));
             }
-            
+
             $sms_data = $this->reports_model->get_sms_data($company_sid, $from_date, $to_date);
 
             $data_to_show = array();
 
-            if(!empty($sms_data)) {
+            if (!empty($sms_data)) {
                 $total_amount = 0;
                 foreach ($sms_data as $key => $sms) {
                     //
@@ -2914,54 +2965,200 @@ class Reports extends Public_Controller {
             $this->load->view('main/header', $data);
             $this->load->view('reports/sms_company_report');
             $this->load->view('main/footer');
-
         } else {
-
         }
     }
 
-    function error_report () {
-        $alertpages = ["assign_bulk_documents","add_history_documents"];
-        $page = str_replace(base_url(),"",$_POST["OnPage"]);
+    function error_report()
+    {
+        // $alertpages = ["assign_bulk_documents", "add_history_documents"];
+		// $page = str_replace(base_url(), "", $_POST["OnPage"]);
+		// $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
+		// $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
+		// if (str_replace($alertpages, '', $page) != $page) {
+		// 	sendMail(
+		// 		FROM_EMAIL_NOTIFICATIONS,
+		// 		OFFSITE_DEV_EMAIL,
+		// 		'Bulk Upload Documents Error',
+		// 		@json_encode($_POST)
+		// 	);
+		// } else {
+		// 	sendMail(
+		// 		FROM_EMAIL_NOTIFICATIONS,
+		// 		OFFSITE_DEV_EMAIL,
+		// 		'Error On ' . $page,
+		// 		@json_encode($_POST)
+		// 	);
+		// }
+        // //
+        // jsErrorHandler($_POST);
+		//  
+		echo "error repoted and send email";
+    }
 
-        $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
-        $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
 
-        if (str_replace($alertpages, '', $page) != $page) {
-            sendMail(
-                FROM_EMAIL_NOTIFICATIONS, 
-                'mubashir.saleemi123@gmail.com', 
-                'Bulk Upload Documents Error', 
-                @json_encode($_POST)
-            );
+    function employee_document()
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login', "refresh");
         }
-
-        $folder = APPPATH.'../../error_logs';
         //
-        if(!is_dir($folder)){
-            mkdir($folder, 0777, true);
-        }
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        check_access_permissions($data['security_details'], 'my_settings', 'reports');
+        $company_sid   = $data['session']['company_detail']['sid'];
+        //
+        $data['title'] = 'Employee Document Report';
 
-        $file_name = $folder."/error_log_report" . date('Y_m_d') . ".json";
-        // 
-        if (!file_exists($file_name)) {
-            $error_file = fopen($file_name, 'w');
-            fwrite($error_file, json_encode($_POST));
-            fclose($error_file);
-        } else {
-            $file = fopen($file_name, 'r');
-            // read data from file
-            $file_data =  fread($file, filesize($file_name));
-            fclose($file);
-            //
-            $new_file_data = json_encode($_POST).','.$file_data;
-            //
-            $error_file = fopen($file_name, 'w');
-            fwrite($error_file, $new_file_data);
-            fclose($error_file);
+        if (sizeof($this->input->post(NULL, TRUE))) {
+            $post = $this->input->post(NULL, TRUE);
+            $post['companySid'] = $company_sid;
+
+            $post['employeeSid'] = $post['dd-employee'];
+            $post['employeeStatus'] = $post['dd-status-emp'];
+            // Fetch Status
+            $employeedocument = $this->reports_model->getEmployeeDocument($post, true);
+
+            if (sizeof($employeedocument['Data'])) {
+
+
+                header('Content-Type: text/csv; charset=utf-8');
+                header("Content-Disposition: attachment; filename=document_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
+                $output = fopen('php://output', 'w');
+                fputcsv($output, array(
+                    "Exported By", $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
+                ));
+                fputcsv($output, array(
+                    "Export Date", date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
+                ));
+
+                fputcsv(
+                    $output,
+                    array(
+                        'Employee',
+                        'Document Title',
+                        'Is Confidential?',
+                        'Confidential Employees',
+                        'Authorize Signers',
+                        'Visible To Payroll',
+                        'Allowed Departments',
+                        'Allowed Teams',
+                        'Allowed Employees',
+                        'Approval Flow'
+                    )
+                );
+
+                //
+                $rows = $employeedocument['Data'];
+                //
+                $employeeList = '';
+                //
+                $us = array_column($rows, 'user_sid');
+                //
+                if ($us) {
+                    $employeeList .= implode(',', $us) . ',';
+                }
+                //
+                $ce = array_column($rows, 'confidential_employees');
+                //
+                if ($ce) {
+                    $employeeList .= implode(',', $ce) . ',';
+                }
+                $as = array_column($rows, 'authorize_signers');
+                //
+                if ($as) {
+                    $employeeList .= implode(',', $as) . ',';
+                }
+                $ae = array_column($rows, 'allowed_employees');
+                //
+                if ($ae) {
+                    $employeeList .= implode(',', $ae) . ',';
+                }
+                $ae = array_column($rows, 'document_approval_employees');
+                //
+                if ($ae) {
+                    $employeeList .= implode(',', $ae) . ',';
+                }
+                //
+                $employeeList = array_values(array_unique(explode(',', rtrim($employeeList, ','))));
+                $employeeOBJ = $this->reports_model->getEmployeeByIdsOBJ($employeeList);
+                //
+                foreach ($rows as $row) {
+                    //
+                    $a = [];
+                    $a[] = $employeeOBJ[$row['user_sid']];
+                    $a[] = $row['document_title'];
+                    $a[] = $row['is_confidential'] == '1' ? "YES" : "NO";
+                    //
+                    if ($row['confidential_employees']) {
+                        //
+                        $tmp = explode(',', $row['confidential_employees']);
+                        //
+                        $b = '';
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else {
+                        $a[] = '-';
+                    }
+                    //
+                    if ($row['authorize_signers']) {
+                        //
+                        $tmp = explode(',', $row['authorize_signers']);
+                        //
+                        $b = '';
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else {
+                        $a[] = '-';
+                    }
+                    $a[] = $row['visible_to_payroll'] == '1' ? "YES" : "NO";
+                    $a[] = $row['allowed_departments'] ? implode("\n\n", $row['allowed_departments']) : '-';
+                    $a[] = $row['allowed_teams'] ? implode("\n\n", $row['allowed_teams']) : '-';
+                    //
+                    if ($row['allowed_employees']) {
+                        //
+                        $tmp = explode(',', $row['allowed_employees']);
+                        //
+                        $b = '';
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else {
+                        $a[] = '-';
+                    }
+                    //
+                    if ($row['document_approval_employees']) {
+                        //
+                        $tmp = explode(',', $row['document_approval_employees']);
+                        //
+                        $b = '';
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else {
+                        $a[] = '-';
+                    }
+                    //
+                    fputcsv($output, $a);
+                }
+
+                fclose($output);
+                exit;
+            }
         }
-        //  
-        echo "error repoted and send email"; 
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('reports/employee_document');
+        $this->load->view('main/footer');
     }
-
 }

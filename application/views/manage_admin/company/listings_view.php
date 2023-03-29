@@ -1,7 +1,7 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
-        <div class="row">		
+        <div class="row">
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
@@ -18,73 +18,85 @@
                                     </div>
                                     <div class="hr-search-main" <?= $flag ? "style='display:block'" : "" ?>>
                                         <form method="GET" action="">
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
-                                                    <?php $ContactName = $this->uri->segment(4) != 'all' ? urldecode($this->uri->segment(4)) : ''; ?>
-                                                    <label>Contact Name:</label>
-                                                    <input type="text" name="ContactName" id="ContactName" value="<?= $ContactName; ?>"  class="invoice-fields">
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
-                                                    <?php $CompanyName = $this->uri->segment(5) != 'all' ? urldecode($this->uri->segment(5)) : ''; ?>
-                                                    <label>Company Name:</label>
-                                                    <input type="text" name="CompanyName" id="CompanyName" value="<?= $CompanyName; ?>"  class="invoice-fields">
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                            <label>Company Type:</label>
-                                                            <div class="hr-select-dropdown">
-                                                                <?php $is_paid = $this->uri->segment(6) != 'all' ? urldecode($this->uri->segment(6)) : ''; ?>
-                                                                <select class="invoice-fields" name="is_paid" id="is_paid">
-                                                                    <option value="1">Main List</option>
-                                                                    <option value="0" <?php echo $is_paid == '0' ? 'selected="selected"' : ''; ?>>Secondary List</option>
-                                                                </select>
-                                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
+                                                <?php $ContactName = $this->uri->segment(4) != 'all' ? urldecode($this->uri->segment(4)) : ''; ?>
+                                                <label>Contact Name:</label>
+                                                <input type="text" name="ContactName" id="ContactName" value="<?= $ContactName; ?>" class="invoice-fields">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
+                                                <?php $CompanyName = $this->uri->segment(5) != 'all' ? urldecode($this->uri->segment(5)) : ''; ?>
+                                                <label>Company Name:</label>
+                                                <input type="text" name="CompanyName" id="CompanyName" value="<?= $CompanyName; ?>" class="invoice-fields">
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <label>Company Type:</label>
+                                                        <div class="hr-select-dropdown">
+                                                            <?php $is_paid = $this->uri->segment(6) != 'all' ? urldecode($this->uri->segment(6)) : ''; ?>
+                                                            <select class="invoice-fields" name="is_paid" id="is_paid">
+                                                                <option value="1">Main List</option>
+                                                                <option value="0" <?php echo $is_paid == '0' ? 'selected="selected"' : ''; ?>>Secondary List</option>
+                                                            </select>
                                                         </div>
-                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                            <label>Company Status:</label>
-                                                            <div class="hr-select-dropdown">
-                                                                <?php $active = $this->uri->segment(7) != 'all' ? urldecode($this->uri->segment(7)) : ''; ?>
-                                                                <select class="invoice-fields" name="active" id="active">
-                                                                    <option value="all">All</option>
-                                                                    <option value="1" <?php echo $active == '1' ? 'selected="selected"' : ''; ?>>Active</option>
-                                                                    <option value="0" <?php echo $active == '0' ? 'selected="selected"' : ''; ?>>In-Active</option>
-                                                                </select>
-                                                            </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <label>Company Status:</label>
+                                                        <div class="hr-select-dropdown">
+                                                            <?php $active = $this->uri->segment(7) != 'all' ? urldecode($this->uri->segment(7)) : ''; ?>
+                                                            <select class="invoice-fields" name="active" id="active">
+                                                                <option value="all">All</option>
+                                                                <option value="1" <?php echo $active == '1' ? 'selected="selected"' : ''; ?>>Active</option>
+                                                                <option value="0" <?php echo $active == '0' ? 'selected="selected"' : ''; ?>>In-Active</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                            <?php $start_date = $this->uri->segment(8) != 'all' && $this->uri->segment(8) != '' ? urldecode($this->uri->segment(8)) : ''; ?>
-                                                            <label>Registration Date From:</label>
-                                                            <input type="text" name="start" value="<?= $start_date; ?>" class="invoice-fields" id="startdate" readonly>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                            <?php $end_date = $this->uri->segment(9) != 'all' && $this->uri->segment(9) != '' ? urldecode($this->uri->segment(9)) : ''; ?>
-                                                            <label>Registration Date To:</label>
-                                                            <input type="text" name="end" value="<?= $end_date; ?>" class="invoice-fields" id="enddate" readonly>
-                                                        </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <?php $start_date = $this->uri->segment(8) != 'all' && $this->uri->segment(8) != '' ? urldecode($this->uri->segment(8)) : ''; ?>
+                                                        <label>Registration Date From:</label>
+                                                        <input type="text" name="start" value="<?= $start_date; ?>" class="invoice-fields" id="startdate" readonly>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <?php $end_date = $this->uri->segment(9) != 'all' && $this->uri->segment(9) != '' ? urldecode($this->uri->segment(9)) : ''; ?>
+                                                        <label>Registration Date To:</label>
+                                                        <input type="text" name="end" value="<?= $end_date; ?>" class="invoice-fields" id="enddate" readonly>
+                                                    </div>
 
-                                                    </div>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right">
-<!--                                                    <input type="submit" class="btn btn-success" value="Search">-->
-                                                    <a href="javascript:;" id="btn_apply_filters" class="btn btn-success">Search</a>
-                                                    <a href="<?php echo base_url('manage_admin/companies'); ?>" class="btn btn-success">Clear</a>
-                                                </div>
-                                            
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right">
+                                                <!--                                                    <input type="submit" class="btn btn-success" value="Search">-->
+                                                <a href="javascript:;" id="btn_apply_filters" class="btn btn-success">Search</a>
+                                                <a href="<?php echo base_url('manage_admin/companies'); ?>" class="btn btn-success">Clear</a>
+                                            </div>
+
                                         </form>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12 text-right">
+                                            <button class="btn btn-success jsActionBtn" data-type="print">
+                                                <i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print
+                                            </button>
+                                            <button class="btn btn-success jsActionBtn" data-type="export">
+                                                <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Export as CSV
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <br />
 
                                     <form name="users_form" method="post">
                                         <div class="hr-box-header">
                                             <div class="hr-items-count">
                                                 <strong><?php echo $total; ?></strong> Companies
                                             </div>
-                                            <?php if(check_access_permissions_for_view($security_details, 'show_company_multiple_actions')){ ?>
-                                                    <?php $this->load->view('templates/_parts/admin_manage_multiple_actions'); ?>
-                                            <?php } ?> 
+                                            <?php if (check_access_permissions_for_view($security_details, 'show_company_multiple_actions')) { ?>
+                                                <?php $this->load->view('templates/_parts/admin_manage_multiple_actions'); ?>
+                                            <?php } ?>
                                             <?php echo $links; ?>
                                         </div>
                                     </form>
@@ -102,10 +114,10 @@
                                                             <th>Registration Date</th>
                                                             <th>Expiry Date</th>
                                                             <th>Status</th>
-                                                            <?php if(check_access_permissions_for_view($security_details, 'edit_company')){ ?>
+                                                            <?php if (check_access_permissions_for_view($security_details, 'edit_company')) { ?>
                                                                 <th class="text-center" colspan="4">Actions</th>
                                                             <?php } ?>
-                                                        </tr> 
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($companies as $key => $value) { ?>
@@ -114,22 +126,22 @@
                                                                 <td><a><b><?php echo $value['sid']; ?></b></a></td>
                                                                 <td><a><?php echo $value['ContactName']; ?></a></td>
                                                                 <td><?php echo $value['CompanyName']; ?></td>
-                                                                <td><?=phonenumber_format($value['PhoneNumber']); ?></td>
+                                                                <td><?= phonenumber_format($value['PhoneNumber']); ?></td>
                                                                 <td><?php echo date_with_time($value['registration_date']); ?></td>
-                                                                <td><?php   if (!empty($value['expiry_date'])) {
-                                                                                echo date_with_time($value['expiry_date']);
-                                                                            } else { 
-                                                                                echo 'Not Set';
-                                                                            } ?>
+                                                                <td><?php if (!empty($value['expiry_date'])) {
+                                                                        echo date_with_time($value['expiry_date']);
+                                                                    } else {
+                                                                        echo 'Not Set';
+                                                                    } ?>
                                                                 </td>
                                                                 <td>
-                                                        <?php       if ($value['active'] == 1) {  ?>
+                                                                    <?php if ($value['active'] == 1) {  ?>
                                                                         <span style="color:green;">Active</span>
-                                                        <?php       } else { ?>
+                                                                    <?php       } else { ?>
                                                                         <span style="color:red;">In-Active</span>
-                                                        <?php       } ?>
+                                                                    <?php       } ?>
                                                                 </td>
-                                                                <?php if(check_access_permissions_for_view($security_details, 'edit_company')){ ?>
+                                                                <?php if (check_access_permissions_for_view($security_details, 'edit_company')) { ?>
                                                                     <td>
                                                                         <a class="hr-edit-btn" href="<?php echo base_url('manage_admin/companies/manage_company') . '/' . $value['sid']; ?>">Manage</a>
                                                                     </td>
@@ -148,7 +160,8 @@
                                             <div class="hr-items-count">
                                                 <strong><?php echo $total; ?></strong> Companies
                                             </div>
-                                            <?php //$this->load->view('templates/_parts/admin_manage_multiple_actions');    ?>
+                                            <?php //$this->load->view('templates/_parts/admin_manage_multiple_actions');    
+                                            ?>
                                             <!-- Pagination Start -->
                                             <?php echo $links; ?>
                                             <!-- Pagination End -->
@@ -183,24 +196,27 @@
 
         $('#btn_apply_filters').attr('href', url);
     }
-    $(document).ready(function(){
-        $('#btn_apply_filters').on('click', function(e){
+    $(document).ready(function() {
+        $('#btn_apply_filters').on('click', function(e) {
             e.preventDefault();
             generate_search_url();
             window.location = $(this).attr('href').toString();
         });
-        $('input').on('keyup', function () {
+        $('input').on('keyup', function() {
             generate_search_url();
         });
-        $("#is_paid").change(function () {
+        $("#is_paid").change(function() {
             generate_search_url();
         });
-        $("#active").change(function () {
+        $("#active").change(function() {
             generate_search_url();
         });
         $('#startdate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
                 generate_search_url();
             }
@@ -208,24 +224,53 @@
 
         $('#enddate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);
                 generate_search_url();
             }
         }).datepicker('option', 'minDate', $('#startdate').val());
     });
+
     function sendActivatinEmail(company_id) {
         url = "<?= base_url() ?>manage_admin/companies/send_company_activation_email";
         alertify.confirm('Confirmation', "Are you sure you want to send activation email to this Company?",
-                function () {
-                    $.post(url, {action: 'email', sid: company_id})
-                            .done(function (data) {
-                                console.log(data);
-                                alertify.success('Activation email sent.');
-                            });
-                },
-                function () {
-                    alertify.error('Canceled');
-                });
+            function() {
+                $.post(url, {
+                        action: 'email',
+                        sid: company_id
+                    })
+                    .done(function(data) {
+                        console.log(data);
+                        alertify.success('Activation email sent.');
+                    });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
     }
+
+
+    $(function(){
+        //
+        $('.jsActionBtn').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var url = "<?=base_url('pd');?>/";
+            //
+            url += '?action='+$(this).data('type');
+            url += '&type=companies';
+            url += '&contact_name='+($('#ContactName').val().trim());
+            url += '&company_name='+($('#CompanyName').val().trim());
+            url += '&company_type='+($('#is_paid').val());
+            url += '&company_status='+($('#active').val());
+            url += '&registration_from_date='+($('#startdate').val().trim());
+            url += '&registration_to_date='+($('#enddate').val().trim());
+            //
+            window.open(url, '_blank').focus();
+        });
+    });
 </script>

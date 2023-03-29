@@ -7,10 +7,10 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile' . '/' . $employer['sid']) ?>"><i class="fa fa-chevron-left"></i>Employee Profile</a>
                                     <?php echo $title; ?>
-                                    <a class="dashboard-link-btn-right" href="<?php echo base_url('change_status/' . $employer['sid']); ?>">Change Employee Status</a>
+                                    <a class="dashboard-link-btn-right btn-warning" href="<?php echo base_url('change_status/' . $employer['sid']); ?>">Change Employee Status</a>
                                 </span>
                             </div>
                         </div>
@@ -31,166 +31,191 @@
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($employee_status_records)) {
-                                            $i=0;
+                                            $i = 0;
                                             foreach ($employee_status_records as $record) { ?>
-                                                    <tr <?= $i%2 == 0 ? 'style="background-color: #f9f9f9 !important;"' : '';?>>
-                                                        <td class="text-center" style="font-size: 14px; vertical-align: middle;">
-                                                <?php       if (isset($record['employee_status']) && !empty($record['employee_status'])) {
-                                                                $employee_status = $record['employee_status'];
+                                                <tr <?= $i % 2 == 0 ? 'style="background-color: #f9f9f9 !important;"' : ''; ?>>
+                                                    <td class="text-center" style="font-size: 14px; vertical-align: middle;">
+                                                        <?php if (isset($record['employee_status']) && !empty($record['employee_status'])) {
+                                                            $employee_status = $record['employee_status'];
 
-                                                                if ($employee_status == 1) {
-                                                                    echo 'Terminated';
-                                                                } else if ($employee_status == 2) {
-                                                                    echo 'Retired';
-                                                                } else if ($employee_status == 3) {
-                                                                    echo 'Deceased';
-                                                                } else if ($employee_status == 4) {
-                                                                    echo 'Suspended';
-                                                                } else if ($employee_status == 5) {
-                                                                    echo 'Active';
-                                                                } else if ($employee_status == 6) {
-                                                                    echo 'Inactive';
-                                                                } else if ($employee_status == 7) {
-                                                                    echo 'Leave';
-                                                                } else if ($employee_status == 8) {
-                                                                    echo 'Rehired';
-                                                                } else {
-                                                                    echo 'N/A';
-                                                                }
-                                                            } ?>
-                                                        </td>
-                                                        <td class="text-center" style="vertical-align: middle;">
-                                                <?php       if (isset($record['termination_reason']) && !empty($record['termination_reason'])) {
-                                                                $reason = $record['termination_reason'];
-
-                                                                if ($reason == 1) {
-                                                                    echo 'Resignation';
-                                                                } else if ($reason == 2) {
-                                                                    echo 'Fired';
-                                                                } else if ($reason == 3) {
-                                                                    echo 'Tenure Completed';
-                                                                } else {
-                                                                    echo 'N/A';
-                                                                }
+                                                            if ($employee_status == 1) {
+                                                                echo 'Terminated';
+                                                            } else if ($employee_status == 2) {
+                                                                echo 'Retired';
+                                                            } else if ($employee_status == 3) {
+                                                                echo 'Deceased';
+                                                            } else if ($employee_status == 4) {
+                                                                echo 'Suspended';
+                                                            } else if ($employee_status == 5) {
+                                                                echo 'Active';
+                                                            } else if ($employee_status == 6) {
+                                                                echo 'Inactive';
+                                                            } else if ($employee_status == 7) {
+                                                                echo 'Leave';
+                                                            } else if ($employee_status == 8) {
+                                                                echo 'Rehired';
+                                                            } else if ($employee_status == 9) {
+                                                                echo 'Transferred';
                                                             } else {
                                                                 echo 'N/A';
-                                                            } ?>
-                                                        </td>
-                                                        <td class="text-center" style="vertical-align: middle;">
-                                                <?php       if (isset($record['termination_date']) && !empty($record['termination_date'])) {
-                                                                $termination_date = $record['termination_date'];
-                                                                echo reset_datetime(array('datetime' => $termination_date, '_this' => $this));
+                                                            }
+                                                        } ?>
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <?php if (isset($record['termination_reason']) && !empty($record['termination_reason'])) {
+                                                            $reason = $record['termination_reason'];
+
+                                                            if ($reason == 1) {
+                                                                echo 'Resignation';
+                                                            } else if ($reason == 2) {
+                                                                echo 'Fired';
+                                                            } else if ($reason == 3) {
+                                                                echo 'Tenure Completed';
+                                                            } else if ($reason == 4) {
+                                                                echo 'Personal';
+                                                            } else if ($reason == 5) {
+                                                                echo 'Personal';
+                                                            } else if ($reason == 6) {
+                                                                echo 'Problem with Supervisor';
+                                                            } else if ($reason == 7) {
+                                                                echo 'Relocation';
+                                                            } else if ($reason == 8) {
+                                                                echo 'Work Schedule';
+                                                            } else if ($reason == 9) {
+                                                                echo 'Retirement';
+                                                            } else if ($reason == 10) {
+                                                                echo 'Return to School';
+                                                            } else if ($reason == 11) {
+                                                                echo 'Pay';
+                                                            } else if ($reason == 12) {
+                                                                echo 'Without Notice/Reason';
+                                                            } else if ($reason == 13) {
+                                                                echo 'Involuntary';
+                                                            } else if ($reason == 14) {
+                                                                echo 'Violating Company Policy';
+                                                            } else if ($reason == 15) {
+                                                                echo 'Attendance Issues';
+                                                            } else if ($reason == 16) {
+                                                                echo 'Performance';
+                                                            } else if ($reason == 17) {
+                                                                echo 'Workforce Reduction';
+                                                            } elseif ($reason == 18) {
+                                                                echo 'Store Closure';
                                                             } else {
                                                                 echo 'N/A';
-                                                            } ?>
-                                                        </td>
-                                                        <td class="text-center" style="vertical-align: middle;">
-                                                <?php       if (isset($record['involuntary_termination']) && !empty($record['involuntary_termination'])) {
-                                                                $involuntary_termination = $record['involuntary_termination'];
-                                                                if ($involuntary_termination == 1) {
-                                                                    echo '<i class="fa fa-check fa-2x text-success"></i>';
-                                                                }
-                                                            } else {
-                                                                echo 'N/A';
-                                                            } ?>
-                                                        </td>
-                                                        <td class="text-center" style="vertical-align: middle;">
-                                                <?php       if (isset($record['do_not_hire']) && !empty($record['do_not_hire'])) {
-                                                                $do_not_hire = $record['do_not_hire'];
-                                                                if ($do_not_hire == 1) {
-                                                                    echo '<i class="fa fa-check fa-2x text-success"></i>';
-                                                                }
-                                                            } else {
-                                                                echo 'N/A';
-                                                            } ?>
-                                                        </td>
-                                                        <td class="text-center" style="vertical-align: middle;">
-                                                <?php       if (isset($record['status_change_date']) && !empty($record['status_change_date'])) {
-                                                                $status_change_date = $record['status_change_date'];
-                                                                echo reset_datetime(array('datetime' => $status_change_date, '_this' => $this));
-                                                            } ?>
-                                                        </td>
-                                                        <td class="text-center" style="vertical-align: middle;">
-                                                            <?php if($employer_sid == $record['changed_by'] || $record['changed_by'] == 0) { ?>
-                                                                <a class="btn btn-success btn-sm" href="<?php echo base_url('edit_status').'/'. $employer['sid'].'/'. $record['sid']; ?>">
-                                                                    <i class="fa fa-edit"></i>
-                                                                </a>
-                                                            <?php } else { ?>
-                                                                <a class="btn btn-success btn-sm" href="javascript:void(0);" disabled>
-                                                                    <i class="fa fa-edit"></i>
-                                                                </a>
-                                                            <?php } ?>
-                                                        </td>
-                                                    </tr>
-                                                    <tr <?= $i++%2 == 0 ? 'style="background-color: #f9f9f9 !important;"' : '';?>>
-                                                        <td colspan="7">
-                                                            <div class="row">
-                                                <?php if (isset($record['details']) && !empty($record['details'])) {
-                                                    $details = $record['details'];
-                                                    $status_detail = html_entity_decode($details); ?>
+                                                            }
+                                                        } else {
+                                                            echo 'N/A';
+                                                        } ?>
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <?php if (isset($record['termination_date']) && !empty($record['termination_date'])) {
+                                                            $termination_date = $record['termination_date'];
+                                                            echo formatDateToDb($termination_date, DB_DATE, DATE);
+                                                        } else {
+                                                            echo 'N/A';
+                                                        } ?>
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <?php if (isset($record['involuntary_termination']) && !empty($record['involuntary_termination'])) {
+                                                            $involuntary_termination = $record['involuntary_termination'];
+                                                            if ($involuntary_termination == 1) {
+                                                                echo '<i class="fa fa-check fa-2x text-success"></i>';
+                                                            }
+                                                        } else {
+                                                            echo 'N/A';
+                                                        } ?>
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <?php if (isset($record['do_not_hire']) && !empty($record['do_not_hire'])) {
+                                                            $do_not_hire = $record['do_not_hire'];
+                                                            if ($do_not_hire == 1) {
+                                                                echo '<i class="fa fa-check fa-2x text-success"></i>';
+                                                            }
+                                                        } else {
+                                                            echo 'N/A';
+                                                        } ?>
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <?php if (isset($record['status_change_date']) && !empty($record['status_change_date'])) {
+                                                            $status_change_date = $record['status_change_date'];
+                                                            echo formatDateToDb($status_change_date, DB_DATE, DATE);
+                                                        } ?>
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <?php if ($employer_sid == $record['changed_by'] || $record['changed_by'] == 0) { ?>
+                                                            <a class="btn btn-success btn-sm" href="<?php echo base_url('edit_status') . '/' . $employer['sid'] . '/' . $record['sid']; ?>">
+                                                                <i class="fa fa-edit"></i>
+                                                            </a>
+                                                        <?php } else { ?>
+                                                            <a class="btn btn-success btn-sm" href="javascript:void(0);" disabled>
+                                                                <i class="fa fa-edit"></i>
+                                                            </a>
+                                                        <?php } ?>
+                                                    </td>
+                                                </tr>
+                                                <tr <?= $i++ % 2 == 0 ? 'style="background-color: #f9f9f9 !important;"' : ''; ?>>
+                                                    <td colspan="7">
+                                                        <div class="row">
+                                                            <?php if (isset($record['details']) && !empty($record['details'])) {
+                                                                $details = $record['details'];
+                                                                $status_detail = html_entity_decode($details); ?>
 
-                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                        <p><strong>Details :</strong> <?php echo $status_detail; ?></p>
-                                                    </div>
-                                                <?php               } ?>
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <p><strong>Details :</strong> <?php echo $status_detail; ?></p>
+                                                                </div>
+                                                            <?php               } ?>
 
-                                                <?php           if (isset($record['changed_by']) && !empty($record['changed_by'])) {
-                                                                    $changed_by = $record['changed_by'];
-                                                                    $user_name = db_get_employee_profile($changed_by);
-                                                                    $changed_by_name = $user_name[0]['first_name'] . ' ' . $user_name[0]['last_name']; ?>
-                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                        <p><strong>Changed By: </strong><?php echo $changed_by_name; ?></p>
-                                                                        <p><strong>Added On: </strong><?php echo !empty($record['created_at']) && $record['created_at'] != NULL ? reset_datetime(array('datetime' => $record['created_at'], '_this' => $this)) : 'N/A'; ?></p>
-                                                                    </div>
-                                                <?php           } if (isset($record['attach_documents']) && !empty($record['attach_documents'])) { ?>
-                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                            <p><strong>Attached Document: </strong>
-                                                <?php                       $attach_documents = $record['attach_documents'];
+                                                            <?php if (isset($record['changed_by']) && !empty($record['changed_by'])) {
+                                                                $changed_by = $record['changed_by'];
+                                                                $user_name = db_get_employee_profile($changed_by);
+                                                                $changed_by_name = $user_name[0]['first_name'] . ' ' . $user_name[0]['last_name']; ?>
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <p><strong>Changed By: </strong><?php echo $changed_by_name; ?></p>
+                                                                    <p><strong>Added On: </strong><?php echo !empty($record['created_at']) && $record['created_at'] != NULL ? reset_datetime(array('datetime' => $record['created_at'], '_this' => $this)) : 'N/A'; ?></p>
+                                                                </div>
+                                                            <?php           }
+                                                            if (isset($record['attach_documents']) && !empty($record['attach_documents'])) { ?>
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <p><strong>Attached Document: </strong>
+                                                                        <?php $attach_documents = $record['attach_documents'];
 
-                                                                            foreach ($attach_documents as $document) { ?>
-                                                                                <a  data-toggle="tooltip"
-                                                                                    data-placement="top"
-                                                                                    class="btn btn-default btn-sm"
-                                                                                    href="javascript:;"
-                                                                                    onclick="display_document(this);"
-                                                                                    document_title="<?php echo $document['file_name']; ?>"
-                                                                                    document_url="<?php echo AWS_S3_BUCKET_URL . $document['file_code']; ?>"
-                                                                                    print_url="<?php echo $document['file_code']; ?>"
-                                                                                    document_ext="<?php echo $document['file_type']; ?>">
-                                                                                    <i class="fa fa-file"></i>
-                                                                                </a>
-                                                                            <?php } ?>
-                                                                            </p>
-                                                                    </div>
-                                                <?php               }?>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                                        foreach ($attach_documents as $document) { ?>
+                                                                            <a data-toggle="tooltip" data-placement="top" class="btn btn-default btn-sm" href="javascript:;" onclick="display_document(this);" document_title="<?php echo $document['file_name']; ?>" document_url="<?php echo AWS_S3_BUCKET_URL . $document['file_code']; ?>" print_url="<?php echo $document['file_code']; ?>" document_ext="<?php echo $document['file_type']; ?>">
+                                                                                <i class="fa fa-file"></i>
+                                                                            </a>
+                                                                        <?php } ?>
+                                                                    </p>
+                                                                </div>
+                                                            <?php               } ?>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             <?php } ?>
-                                        <?php } else { ?>  
+                                        <?php } else { ?>
                                             <tr>
                                                 <td colspan="7">
                                                     <h3 class="text-center">
-                                        <?php           $active = $employer['active'];
+                                                        <?php $active = $employer['active'];
                                                         $archived = $employer['archived'];
 
                                                         if ($active) {
                                                             echo 'Active Employee';
-                                                        } else { 
-                                                            if($archived != 1) {
+                                                        } else {
+                                                            if ($archived != 1) {
                                                                 echo 'Onboarding or Deactivated Employee';
                                                             } else {
                                                                 echo 'Archived Employee';
-                                                            } 
+                                                            }
                                                         } ?>
                                                     </h3>
                                                 </td>
                                             </tr>
-                                        <?php } ?>  
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>
-                        </div>    
+                        </div>
                     </div>
                 </div>
                 <?php $this->load->view($left_navigation); ?>
@@ -251,14 +276,14 @@
                     required: 'Status Change Date is required'
                 }
             },
-            submitHandler: function (form) {
+            submitHandler: function(form) {
                 var instances = $.trim(CKEDITOR.instances.termination_details.getData());
-                
+
                 if (instances.length === 0) {
                     alertify.alert('Error! Details Missing', "Please provide some details");
                     return false;
                 }
-                
+
                 form.submit();
             }
         });
@@ -269,7 +294,7 @@
 
         if (fileName.length > 0) {
             var ext = fileName.split('.').pop();
-            
+
             if (ext != "PDF" && ext != "pdf" && ext != "docx" && ext != "xlsx") {
                 $("#" + val).val(null);
                 alertify.error("Please select a valid document format.");
@@ -307,7 +332,7 @@
         $('#loader').show();
         $('#upload').addClass('disabled-btn');
         $('#upload').prop('disabled', true);
-        
+
         $.ajax({
             url: '<?= base_url('employee_status/ajax_handler') ?>',
             cache: false,
@@ -315,7 +340,7 @@
             processData: false,
             type: 'post',
             data: form_data,
-            success: function (data) {
+            success: function(data) {
                 $('#loader').hide();
                 $('#upload').removeClass('disabled-btn');
                 $('#upload').prop('disabled', false);
@@ -332,8 +357,7 @@
                     alert('Doc error');
                 }
             },
-            error: function () {
-            }
+            error: function() {}
         });
     }
 
@@ -385,7 +409,7 @@
                     modal_content = '<img src="' + document_url + '" style="width:100%; height:500px;" />';
                     footer_print_btn = '<a target="_blank" href="<?php echo base_url('onboarding/print_applicant_upload_img/') ?>' + document_file_name + '" class="btn btn-success">Print</a>';
                     break;
-                default :
+                default:
                     //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_url + '&embedded=true';
                     modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
@@ -402,8 +426,8 @@
         $('#document_modal_footer').append(footer_print_btn);
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
-        $('#document_modal').on("shown.bs.modal", function () {
-            
+        $('#document_modal').on("shown.bs.modal", function() {
+
             if (iframe_url != '') {
                 $('#preview_iframe').attr('src', iframe_url);
             }

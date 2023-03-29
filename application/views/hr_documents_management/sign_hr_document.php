@@ -1,19 +1,32 @@
 <?php $company_name = ucwords($session['company_detail']['CompanyName']); ?>
-<?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
-<div class="main" style="background: #fff;">
+<?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
+
+<div class="main jsmaincontent" style="background: #fff;">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                    <a href="<?php echo $back_url; ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i>  Documents</a>
+
+                <div class="form-group col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                    <a href="<?= base_url('employee_management_system'); ?>" class="btn btn-info csRadius5">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                    </a>
                 </div>
+
+                <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <a href="<?php echo $back_url; ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i> Documents</a>
+                </div>
+                <?php if (checkIfAppIsEnabled('documentlibrary')) : ?>
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                        <a href="<?php echo base_url('library_document'); ?>" class="btn btn-block blue-button"><i class="fa fa-angle-left"></i> Document Library</a>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="page-header">
                     <h1 class="section-ttile">Review & Sign <?php echo $doc == 'o' ? 'Offer Letter' : 'Assigned Document'; ?>
                         <span class="pull-right">
-                            <?=$pdBtn['pw'].$pdBtn['dw'];?>
+                            <?= $pdBtn['pw'] . $pdBtn['dw']; ?>
                         </span>
                     </h1>
                     <strong>Information:</strong> If you are unable to view the document, kindly reload the page.
@@ -29,23 +42,23 @@
                                     <div class="col-xs-12" id="required_fields_div" style="padding: 0 30px">
                                         <?php if ((isset($document['document_type']) && $document['document_type'] == 'hybrid_document') || (isset($document['letter_type']) && $document['letter_type'] == 'hybrid_document')) { ?>
 
-                                            <?php 
-                                                $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
-                                                $document_file = pathinfo($document_filename);
-                                                $document_extension = strtolower($document['document_extension']);
+                                            <?php
+                                            $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
+                                            $document_file = pathinfo($document_filename);
+                                            $document_extension = strtolower($document['document_extension']);
 
-                                                //
-                                                $t = explode('.', $document_filename);
-                                                $de = $t[sizeof($t) - 1];
-                                                //
-                                                if($de != $document_extension) $document_extension = $de;
-                                            ?>     
+                                            //
+                                            $t = explode('.', $document_filename);
+                                            $de = $t[sizeof($t) - 1];
+                                            //
+                                            if ($de != $document_extension) $document_extension = $de;
+                                            ?>
 
                                             <?php if (in_array($document_extension, ['csv'])) { ?>
-                                                <iframe src="<?php echo 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_filename . '&embedded=true'; ?>" class="uploaded-file-preview js-hybrid-iframe"  style="width:100%; height:80em;" frameborder="0"></iframe>
+                                                <iframe src="<?php echo 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_filename . '&embedded=true'; ?>" class="uploaded-file-preview js-hybrid-iframe" style="width:100%; height:80em;" frameborder="0"></iframe>
 
                                             <?php } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
-                                                <img class="img-responsive js-hybrid-iframe" src="<?php echo AWS_S3_BUCKET_URL . $document_filename; ?>"/>
+                                                <img class="img-responsive js-hybrid-iframe" src="<?php echo AWS_S3_BUCKET_URL . $document_filename; ?>" />
                                             <?php } else if (in_array($document_extension, ['doc', 'docx', 'xlsx', 'xlx', 'pptx', 'ppt'])) { ?>
                                                 <iframe src="<?php echo 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_filename); ?>" class="uploaded-file-preview js-hybrid-iframe" style="width:100%; height:80em;" frameborder="0"></iframe>
                                             <?php } else { ?>
@@ -66,23 +79,23 @@
 
                                         <?php } else if ($document['document_type'] == 'uploaded' || $document['offer_letter_type'] == 'uploaded') { ?>
                                             <div class="img-thumbnail text-center" style="width: 100%; max-height: 82em;">
-                                                <?php 
-                                                    $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
-                                                    $document_file = pathinfo($document_filename);
-                                                    $document_extension = strtolower($document['document_extension']);
+                                                <?php
+                                                $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
+                                                $document_file = pathinfo($document_filename);
+                                                $document_extension = strtolower($document['document_extension']);
 
-                                                    //
-                                                    $t = explode('.', $document_filename);
-                                                    $de = $t[sizeof($t) - 1];
-                                                    //
-                                                    if($de != $document_extension) $document_extension = $de;
-                                                ?>     
+                                                //
+                                                $t = explode('.', $document_filename);
+                                                $de = $t[sizeof($t) - 1];
+                                                //
+                                                if ($de != $document_extension) $document_extension = $de;
+                                                ?>
 
                                                 <?php if (in_array($document_extension, ['csv'])) { ?>
-                                                    <iframe src="<?php echo 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_filename . '&embedded=true'; ?>" class="uploaded-file-preview"  style="width:100%; height:80em;" frameborder="0"></iframe>
+                                                    <iframe src="<?php echo 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_filename . '&embedded=true'; ?>" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>
 
                                                 <?php } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
-                                                    <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $document_filename; ?>"/>
+                                                    <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $document_filename; ?>" />
                                                 <?php } else if (in_array($document_extension, ['doc', 'docx', 'xlsx', 'xlx', 'pptx', 'ppt'])) { ?>
                                                     <iframe src="<?php echo 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_filename); ?>" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>
                                                 <?php } else { ?>
@@ -108,7 +121,7 @@
                                                 <input type="hidden" name="save_signature_date" id="save_signature_date" value="no">
                                                 <input type="hidden" name="save_PDF" id="save_PDF" value="yes">
                                                 <input type="hidden" name="save_input_values" id="save_input_values" value="yes">
-                                                <input type="hidden" name="user_consent"  value="1">
+                                                <input type="hidden" name="user_consent" value="1">
                                                 <?php $consent = isset($document['user_consent']) ? $document['user_consent'] : 0; ?>
 
                                                 <?php if ($consent == 0) { ?>
@@ -135,9 +148,9 @@
                                                     <div class="row">
                                                         <div class="col-xs-12 text-justify">
                                                             <?php
-                                                                echo '<p>'.str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_HEADING).'</p>';
-                                                                echo '<p>'.SIGNATURE_CONSENT_TITLE.'</p>';
-                                                                echo '<p>'.str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_DESCRIPTION).'</p>'; 
+                                                            echo '<p>' . str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_HEADING) . '</p>';
+                                                            echo '<p>' . SIGNATURE_CONSENT_TITLE . '</p>';
+                                                            echo '<p>' . str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_DESCRIPTION) . '</p>';
                                                             ?>
                                                         </div>
                                                     </div>
@@ -147,7 +160,7 @@
                                                             <?php $consent = isset($document['user_consent']) ? $document['user_consent'] : 0; ?>
                                                             <label class="control control--checkbox">
                                                                 <?php echo SIGNATURE_CONSENT_CHECKBOX; ?>
-                                                                <input <?php echo $signed_flag == true ? 'disabled="disabled"' : ''; ?>  <?php echo set_checkbox('user_consent', 1, $consent == 1); ?> data-rule-required="true" type="checkbox" id="user_consent" name="user_consent" value="1" <?php echo $consent == 1 ? 'checked="checked"' : ''; ?> />
+                                                                <input <?php echo $signed_flag == true ? 'disabled="disabled"' : ''; ?> <?php echo set_checkbox('user_consent', 1, $consent == 1); ?> data-rule-required="true" type="checkbox" id="user_consent" name="user_consent" value="1" <?php echo $consent == 1 ? 'checked="checked"' : ''; ?> />
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                         </div>
@@ -169,23 +182,24 @@
                             </div>
                         </div>
 
-                        <?php if($document['document_description'] != '' && $document['document_type'] == 'uploaded') { ?>
-                        <!-- Instructions -->
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading stev_blue">
-                                        <strong>Guidence Instructions</strong>
-                                    </div>
-                                    <div class="panel-body">
-                                        <?=html_entity_decode($document['document_description']);?>
+                        <?php if ($document['document_description'] != '' && $document['document_type'] == 'uploaded') { ?>
+                            <!-- Instructions -->
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading stev_blue">
+                                            <strong>Guidence Instructions</strong>
+                                        </div>
+                                        <div class="panel-body">
+                                            <?= html_entity_decode($document['document_description']); ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         <?php } ?>
 
-                        <?php if ($document['document_sid'] != 0) { ?> <!-- For All other than Manual Upload -->
+                        <?php if ($document['document_sid'] != 0) { ?>
+                            <!-- For All other than Manual Upload -->
                             <?php if (!empty($attached_video) && $attached_video['video_required'] == 1 && !empty($attached_video['video_source'])) { ?>
                                 <div class="hr-box">
                                     <div class="alert alert-info">
@@ -200,7 +214,7 @@
                                                     <?php if ($source == 'youtube') { ?>
                                                         <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo $attached_video['video_url']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="width:100%; height:500px !important;"></iframe>
                                                     <?php  } elseif ($source == 'vimeo') { ?>
-                                                        <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $attached_video['video_url']; ?>"  frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="width:100%; height:500px !important;"></iframe>
+                                                        <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $attached_video['video_url']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="width:100%; height:500px !important;"></iframe>
                                                     <?php } else { ?>
                                                         <video controls style="width:100%; height:500px !important;">
                                                             <source src="<?php echo base_url() . 'assets/uploaded_videos/' . $attached_video['video_url']; ?>" type='video/mp4'>
@@ -241,10 +255,10 @@
                                                             <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['document_sid']; ?>" />
                                                         </form>
                                                         <?php
-                                                            if ($document['acknowledged_date'] != NULL) {
-                                                                echo '<b>Acknowledged On: </b>';
-                                                                echo convert_date_to_frontend_format($document['acknowledged_date']);
-                                                            } 
+                                                        if ($document['acknowledged_date'] != NULL) {
+                                                            echo '<b>Acknowledged On: </b>';
+                                                            echo convert_date_to_frontend_format($document['acknowledged_date']);
+                                                        }
                                                         ?>
                                                         <button onclick="<?php echo $acknowledgement_button_action; ?>" type="button" class="btn <?php echo $acknowledgement_button_css; ?> pull-right"><?php echo $acknowledgement_button_txt; ?></button>
                                                     </div>
@@ -266,10 +280,10 @@
                                                     </div>
                                                     <div class="document-action-required">
                                                         <?php
-                                                            if ($document['downloaded_date'] != NULL) {
-                                                                echo '<b>Downloaded On: </b>';
-                                                                echo convert_date_to_frontend_format($document['downloaded_date']);
-                                                            } 
+                                                        if ($document['downloaded_date'] != NULL) {
+                                                            echo '<b>Downloaded On: </b>';
+                                                            echo convert_date_to_frontend_format($document['downloaded_date']);
+                                                        }
                                                         ?>
                                                         <?php echo $document_type; ?>
                                                         <a target="_blank" href="<?php echo $download_button_action; ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right" onclick="save_print()">
@@ -296,11 +310,11 @@
                                                         <?php echo $uploaded_status; ?>
                                                     </div>
                                                     <div class="document-action-required">
-                                                        <?php 
-                                                            if ($document['uploaded_date'] != NULL) {
-                                                                echo '<br><b>Uploaded On: </b>';
-                                                                echo '<strong class="text-blue">'.convert_date_to_frontend_format($document['uploaded_date']).'</strong> <br><br>';
-                                                            } 
+                                                        <?php
+                                                        if ($document['uploaded_date'] != NULL) {
+                                                            echo '<br><b>Uploaded On: </b>';
+                                                            echo '<strong class="text-blue">' . convert_date_to_frontend_format($document['uploaded_date']) . '</strong> <br><br>';
+                                                        }
                                                         ?>
 
                                                         <form id="form_upload_file" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -327,22 +341,14 @@
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                                     <button type="submit" class="btn <?php echo $uploaded_button_css; ?> btn-equalizer btn-block"><?php echo $uploaded_button_txt; ?></button>
 
-                                                                    <?php 
-                                                                        if (!empty($document['uploaded_file'])) {
-                                                                            $document_filename = $document['uploaded_file'];
-                                                                            $document_file = pathinfo($document_filename);
-                                                                            $document_extension = $document_file['extension']; 
+                                                                    <?php
+                                                                    if (!empty($document['uploaded_file'])) {
+                                                                        $document_filename = $document['uploaded_file'];
+                                                                        $document_file = pathinfo($document_filename);
+                                                                        $document_extension = $document_file['extension'];
                                                                     ?>
 
-                                                                            <a class="btn blue-button btn-equalizer btn-block"
-                                                                               href="javascript:void(0);"
-                                                                               onclick="fLaunchModal(this);"
-                                                                               data-preview-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>"
-                                                                               data-download-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>"
-                                                                               data-file-name="<?php echo $document_filename; ?>"
-                                                                               data-download-sid="<?php echo $document['sid']; ?>"
-                                                                               data-document-title="<?php echo $document_filename; ?>"
-                                                                               data-preview-ext="<?php echo $document_extension ?>">Preview Uploaded</a>
+                                                                        <a class="btn blue-button btn-equalizer btn-block" href="javascript:void(0);" onclick="fLaunchModal(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>" data-download-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>" data-file-name="<?php echo $document_filename; ?>" data-download-sid="<?php echo $document['sid']; ?>" data-document-title="<?php echo $document_filename; ?>" data-preview-ext="<?php echo $document_extension ?>">Preview Uploaded</a>
                                                                     <?php } ?>
                                                                 </div>
                                                             </div>
@@ -352,7 +358,7 @@
                                             </div>
                                         <?php } ?>
 
-                                        <?php if ($document['signature_required'] == 1 && ( $document_type == 'generated' || $document['offer_letter_type'] == 'generated')) { ?>
+                                        <?php if ($document['signature_required'] == 1 && ($document_type == 'generated' || $document['offer_letter_type'] == 'generated')) { ?>
                                             <!--do nothing for now-->
                                         <?php } ?>
                                     </div>
@@ -389,84 +395,85 @@
 <?php $this->load->view('static-pages/e_signature_popup'); ?>
 <script src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
 <script>
-    $(document).ready(function () {
-        if ( window.history.replaceState ) {
-            window.history.replaceState( null, null, window.location.href );
+    $(document).ready(function() {
+        //
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
         }
 
-        if($('#jstopdf').find('select').length >= 0){
-            $('#jstopdf').find('select').map(function(i){
+        if ($('#jstopdf').find('select').length >= 0) {
+            $('#jstopdf').find('select').map(function(i) {
                 //
                 $(this).addClass('js_select_document');
-                $(this).prop('name', 'selectDD'+i);
+                $(this).prop('name', 'selectDD' + i);
             });
         }
 
         <?php if (!empty($document['form_input_data'])) { ?>
             var form_input_data = <?php echo $form_input_data; ?>;
             form_input_data = Object.entries(form_input_data);
-        
-            $.each(form_input_data, function(key ,input_value) { 
+
+            $.each(form_input_data, function(key, input_value) {
                 if (input_value[0] == 'signature_person_name') {
-                    var input_field_id = input_value[0];  
+                    var input_field_id = input_value[0];
                     var input_field_val = input_value[1];
-                    $('#'+input_field_id).val(input_field_val);
-                    $('.js_'+input_field_id).val(input_field_val);
+                    $('#' + input_field_id).val(input_field_val);
+                    $('.js_' + input_field_id).val(input_field_val);
                 } else {
-                    var input_field_id = input_value[0]+'_id';  
-                    var input_field_val = input_value[1]; 
-                    var input_type =  $('#'+input_field_id).attr('data-type');
+                    var input_field_id = input_value[0] + '_id';
+                    var input_field_val = input_value[1];
+                    var input_type = $('#' + input_field_id).attr('data-type');
 
                     if (input_type == 'text') {
-                        $('#'+input_field_id).val(input_field_val);
-                        <?php if($document['user_consent'] == 1): ?>
-                        $('#'+input_field_id).prop('disabled', true);
+                        $('#' + input_field_id).val(input_field_val);
+                        <?php if ($document['user_consent'] == 1) : ?>
+                            $('#' + input_field_id).prop('disabled', true);
                         <?php endif; ?>
                     } else if (input_type == 'checkbox') {
                         if (input_field_val == 'yes') {
-                            $('#'+input_field_id).prop('checked', true);;
+                            $('#' + input_field_id).prop('checked', true);;
                         }
-                        <?php if($document['user_consent'] == 1): ?>
-                        $('#'+input_field_id).prop('disabled', true);
+                        <?php if ($document['user_consent'] == 1) : ?>
+                            $('#' + input_field_id).prop('disabled', true);
                         <?php endif; ?>
-                        
+
                     } else if (input_type == 'textarea') {
-                        <?php if($document['user_consent'] == 1): ?>
-                            $('#'+input_field_id).hide();
-                            $('#'+input_field_id+'_sec').show();
-                            $('#'+input_field_id+'_sec').html(input_field_val);
-                            $('#'+input_field_id+'_sec').html(input_field_val);
-                        <?php else: ?>
-                            $('#'+input_field_id).show();
-                            $('#'+input_field_id+'').val(input_field_val);
+                        <?php if ($document['user_consent'] == 1) : ?>
+                            $('#' + input_field_id).hide();
+                            $('#' + input_field_id + '_sec').show();
+                            $('#' + input_field_id + '_sec').html(input_field_val);
+                            $('#' + input_field_id + '_sec').html(input_field_val);
+                        <?php else : ?>
+                            $('#' + input_field_id).show();
+                            $('#' + input_field_id + '').val(input_field_val);
                         <?php endif; ?>
-                    }  else if(input_value[0].match(/select/) !== -1){
-                        if(input_value[1] != null){
-                            let cc =get_select_box_value(input_value[0],input_value[1]);
-                            $(`select.js_select_document[name="${input_value[0]}"]`).html(''); 
+                    } else if (input_value[0].match(/select/) !== -1) {
+                        if (input_value[1] != null) {
+                            let cc = get_select_box_value(input_value[0], input_value[1]);
+                            $(`select.js_select_document[name="${input_value[0]}"]`).html('');
                             $(`select.js_select_document[name="${input_value[0]}"]`).hide(0);
-                            $(`select.js_select_document[name="${input_value[0]}"]`).after(`<strong style="font-size: 20px;">${cc}</strong>`);    
+                            $(`select.js_select_document[name="${input_value[0]}"]`).after(`<strong style="font-size: 20px;">${cc}</strong>`);
                         }
                     }
                 }
-            });   
-            
+            });
+
         <?php } ?>
 
         function get_select_box_value(select_box_name, select_box_val) {
             var data = select_box_val;
             let cc = '';
 
-            if (select_box_val.indexOf(',') > -1) { 
-                data = select_box_val.split(','); 
+            if (select_box_val.indexOf(',') > -1) {
+                data = select_box_val.split(',');
             }
-            
 
-            if($.isArray(data)) {
+
+            if ($.isArray(data)) {
                 let modify_string = '';
-                $.each(data, function(key ,value) { 
+                $.each(data, function(key, value) {
                     if (modify_string == '') {
-                        modify_string = ' '+$(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
+                        modify_string = ' ' + $(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
                     } else {
                         modify_string = modify_string + ', ' + $(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
                     }
@@ -475,39 +482,39 @@
             } else {
                 cc = $(`select.js_select_document[name="${select_box_name}"] option[value="${select_box_val}"]`).text();
             }
-            
+
             return cc;
         }
 
         var imgs = $('#required_fields_div').find('img');
 
-        if(imgs.length){
-            $(imgs).each(function(i,v) {
+        if (imgs.length) {
+            $(imgs).each(function(i, v) {
                 var imgSrc = $(this).attr('src');
                 var _this = this;
 
-                var p = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm; 
+                var p = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm;
 
                 if (imgSrc.match(p)) {
                     $.ajax({
-                        url: '<?= base_url('hr_documents_management/getbase64/')?>',
-                        data:{
+                        url: '<?= base_url('hr_documents_management/getbase64/') ?>',
+                        data: {
                             url: imgSrc
                         },
                         type: "GET",
                         async: false,
-                        success: function (resp){
+                        success: function(resp) {
                             resp = JSON.parse(resp);
-                            $(_this).attr("src", "data:"+resp.type+";base64,"+resp.string);
+                            $(_this).attr("src", "data:" + resp.type + ";base64," + resp.string);
                         },
-                        error: function(){
+                        error: function() {
 
                         }
                     });
                 }
             });
         }
-        
+
         kendo.pdf.defineFont({
             "DejaVu Sans": "<?php echo base_url('assets/employee_panel/fonts/DejaVuSans.ttf'); ?>",
             "DejaVu Sans|Bold": "<?php echo base_url('assets/employee_panel/fonts/DejaVuSans-Bold.ttf'); ?>",
@@ -518,7 +525,9 @@
 
         $('.date_picker2').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         });
 
         $('#form_upload_file').validate({
@@ -536,22 +545,22 @@
             }
         });
 
-        $('body').on('change', 'input[type=file]', function () {
+        $('body').on('change', 'input[type=file]', function() {
             var selected_file = $(this).val();
             var selected_file = selected_file.substring(selected_file.lastIndexOf('\\') + 1, selected_file.length);
             var id = $(this).attr('id');
             $('#name_' + id).html(selected_file);
         });
 
-        $('.div-editable').on("focus", function () {
+        $('.div-editable').on("focus", function() {
             $(this).addClass("selected");
         });
 
-        $('.div-editable').on("blur", function () {
+        $('.div-editable').on("blur", function() {
             $(this).removeClass("selected");
         });
 
-        $(document).on('change keydown keyup', 'div[data-placeholder]', function () {
+        $(document).on('change keydown keyup', 'div[data-placeholder]', function() {
             if (this.textContent) {
                 this.dataset.divPlaceholderContent = 'true';
             } else {
@@ -559,12 +568,12 @@
             }
         });
 
-        $(function () {
+        $(function() {
             var main_obj_id = 'fillable_checkbox';
             var on_class = 'on_off_on';
             var off_class = 'on_off_off';
 
-            $('.' + main_obj_id).click(function () {
+            $('.' + main_obj_id).click(function() {
                 if ($(this).is('.' + on_class)) {
                     $(this).removeClass(on_class);
                     $(this).addClass(off_class);
@@ -588,10 +597,10 @@
         alertify.confirm(
             'Are you sure?',
             'Are you sure you want to Acknowledge the document?',
-            function () {
+            function() {
                 $('#form_acknowledge_document').submit();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled!');
             });
     }
@@ -653,7 +662,7 @@
                     footer_print_btn = '<a target="_blank" href="<?php echo base_url('onboarding/print_applicant_upload_img/') ?>' + document_file_name + '" class="btn blue-button">Print</a>';
                     footer_content = '<a target="_blank" class="btn blue-button" href="<?php echo base_url('hr_documents_management/download_assign_document') ?>' + '/' + user_type + '/' + user_sid + '/' + document_sid + '/submitted' + '">Download</a>';
                     break;
-                default :
+                default:
                     //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
@@ -670,7 +679,7 @@
         $('#document_modal_footer').append(footer_print_btn);
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
-        $('#document_modal').on("shown.bs.modal", function () {
+        $('#document_modal').on("shown.bs.modal", function() {
             if (iframe_url != '') {
                 $('#preview_iframe').attr('src', iframe_url);
             }
@@ -687,29 +696,31 @@
             type: "GET",
             url: myurl,
             async: false,
-            success: function (data) {
+            success: function(data) {
                 $('#print_btn_click').removeClass('blue-button');
                 $('#print_btn_click').addClass('btn-warning');
                 $('#download_btn_click').removeClass('blue-button');
                 $('#download_btn_click').addClass('btn-warning');
                 $('#download_btn_click').html('Re-Download');
             },
-            error: function (data) {
+            error: function(data) {
 
             }
         });
 
         var draw = kendo.drawing;
         draw.drawDOM($("#jstopdf"), {
-            avoidLinks: true,
-            paperSize: "A4",
-            margin: {bottom: "1cm"},
-            scale: 0.6
-        })
-            .then(function (root) {
+                avoidLinks: true,
+                paperSize: "A4",
+                margin: {
+                    bottom: "1cm"
+                },
+                scale: 0.6
+            })
+            .then(function(root) {
                 return draw.exportPDF(root);
             })
-            .done(function (data) {
+            .done(function(data) {
                 var consent = '<?php echo isset($document['user_consent']) ? $document['user_consent'] : 0; ?>';
                 var pdfdata = "";
                 if (consent == 0) {
@@ -725,7 +736,7 @@
             });
     }
 
-    $('#print_btn_click').click(function () {
+    $('#print_btn_click').click(function() {
         var company_sid = '<?php echo $document['company_sid']; ?>';
         var user_sid = '<?php echo $document['user_sid']; ?>';
         var document_sid = '<?php echo $document['sid']; ?>';
@@ -735,14 +746,14 @@
             type: "GET",
             url: myurl,
             async: false,
-            success: function (data) {
+            success: function(data) {
                 $('#print_btn_click').removeClass('blue-button');
                 $('#print_btn_click').addClass('btn-warning');
                 $('#download_btn_click').removeClass('blue-button');
                 $('#download_btn_click').addClass('btn-warning');
                 $('#download_btn_click').html('Re-Download');
             },
-            error: function (data) {
+            error: function(data) {
 
             }
         });
@@ -779,78 +790,87 @@
             if (is_sign == 'true' && is_init == 'true' && is_date == 'true') {
                 var input_values_obj = {};
 
-                $('input.short_textbox').map(function () {
-                   input_values_obj[this.name] = this.value;
-                }).get();
-
-
-                $('input.long_textbox').map(function () {
+                $('input.short_textbox').map(function() {
                     input_values_obj[this.name] = this.value;
                 }).get();
 
-                $('input#signature_person_name').map(function () {
+
+                $('input.long_textbox').map(function() {
                     input_values_obj[this.name] = this.value;
                 }).get();
 
-                $('input.user_checkbox').map(function () {
+                $('input#signature_person_name').map(function() {
+                    input_values_obj[this.name] = this.value;
+                }).get();
+
+                $('input.user_checkbox').map(function() {
                     var condition = 'no';
                     if ($(this).is(":checked")) {
                         condition = 'yes';
                     }
-                    
+
                     input_values_obj[this.name] = condition;
                 }).get();
 
-                $('textarea.text_area').map(function () {
+                $('textarea.text_area').map(function() {
                     input_values_obj[this.name] = this.value;
                 }).get();
 
                 let hasError = false;
 
-                $('select.js_select_document').map(function () {
+                $('select.js_select_document').map(function() {
                     //
-                    if($(this).prop('required') == true && $(this).val() == null && hasError == false){
+                    if ($(this).prop('required') == true && $(this).val() == null && hasError == false) {
                         hasError = true;
                         alertify.alert('WARNING!', 'Please select an option.', () => {});
                     } else if ($(this).prop('multiple') == true) {
                         var multi_select_values = $(this).val();
                         input_values_obj[this.name] = multi_select_values == null ? multi_select_values : multi_select_values.toString();
                     } else {
-                       input_values_obj[this.name] = this.value; 
+                        input_values_obj[this.name] = this.value;
                     }
                 }).get();
 
-                if(hasError) return;
+                if (hasError) return;
 
                 $('#save_input_values').val(JSON.stringify(input_values_obj));
 
                 alertify.confirm(
                     'Are you Sure?',
                     'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
-                    function () {
-                        $('.js-hybrid-iframe').remove();
-                        var draw = kendo.drawing;
-
-                        draw.drawDOM($("#jstopdf"), {
-                            avoidLinks: true,
-                            paperSize: "A4",
-                            margin: {bottom: "1cm"},
-                            scale: 0.6
-                        })
-                                .then(function (root) {
-                                    return draw.exportPDF(root);
-                                })
-                                .done(function (pdfdata) {
-                                    $('.disabled_consent_btn').prop('disabled', true);
-                                    $('#save_PDF').val(pdfdata);
-                                    $('#user_consent_form').submit();
-                                });
+                    function() {
+                        //      $('.js-hybrid-iframe').remove();
+                        //        var draw = kendo.drawing;
+                        //         $('br').replaceWith('<div></div>');
+                        $('#user_consent_form').submit();
+                        /* draw.drawDOM($("#jstopdf"), {
+                                 avoidLinks: false,
+                                 paperSize: "A4",
+                                 multiPage: true,
+                                 margin: { bottom: "2cm" },
+                                 scale: 0.8
+                             })
+                             .then(function(root) {
+                                 return draw.exportPDF(root);
+                             })
+                             .done(function(pdfdata) {
+                                 $('.disabled_consent_btn').prop('disabled', true);
+                                 $('#save_PDF').val(pdfdata);
+                                 $('#user_consent_form').submit();
+                             }); */
                     },
-                    function () {
+                    function() {
                         alertify.error('Cancelled!');
-                    }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
+                    }).set('labels', {
+                    ok: 'I Consent and Accept!',
+                    cancel: 'Cancel'
+                });
             } else {
-                var validation = {signature: is_sign, signature_Initial: is_init, signature_Date: is_date};
+                var validation = {
+                    signature: is_sign,
+                    signature_Initial: is_init,
+                    signature_Date: is_date
+                };
 
                 for (var key in validation) {
                     if (validation[key] == 'false') {
@@ -867,76 +887,81 @@
             alertify.confirm(
                 'Are you Sure?',
                 'Are you sure you want to Save this Document?',
-                function () {
+                function() {
                     var draw = kendo.drawing;
 
                     draw.drawDOM($("#jstopdf"), {
-                        avoidLinks: true,
-                        paperSize: "A4",
-                        margin: {bottom: "1cm"},
-                        scale: 0.6
-                    })
-                    .then(function (root) {
-                        return draw.exportPDF(root);
-                    })
-                    .done(function (pdfdata) {
+                            avoidLinks: true,
+                            paperSize: "A4",
+                            margin: {
+                                bottom: "1cm"
+                            },
+                            scale: 0.6
+                        })
+                        .then(function(root) {
+                            return draw.exportPDF(root);
+                        })
+                        .done(function(pdfdata) {
 
-                        var input_values_obj = {};
+                            var input_values_obj = {};
 
-                        $('input.short_textbox').map(function () {
-                           input_values_obj[this.name] = this.value;
-                        }).get();
+                            $('input.short_textbox').map(function() {
+                                input_values_obj[this.name] = this.value;
+                            }).get();
 
 
-                        $('input.long_textbox').map(function () {
-                            input_values_obj[this.name] = this.value;
-                        }).get();
+                            $('input.long_textbox').map(function() {
+                                input_values_obj[this.name] = this.value;
+                            }).get();
 
-                        $('input#signature_person_name').map(function () {
-                            input_values_obj[this.name] = this.value;
-                        }).get();
+                            $('input#signature_person_name').map(function() {
+                                input_values_obj[this.name] = this.value;
+                            }).get();
 
-                        $('input.user_checkbox').map(function () {
-                            var condition = 'no';
-                            if ($(this).is(":checked")) {
-                                condition = 'yes';
-                            }
-                            
-                            input_values_obj[this.name] = condition;
-                        }).get();
-                        
+                            $('input.user_checkbox').map(function() {
+                                var condition = 'no';
+                                if ($(this).is(":checked")) {
+                                    condition = 'yes';
+                                }
 
-                        $('textarea.text_area').map(function () {
-                            input_values_obj[this.name] = this.value;
-                        }).get();
+                                input_values_obj[this.name] = condition;
+                            }).get();
 
-                        let hasError = false;
 
-                        $('select.js_select_document').map(function () {
-                            //
-                            if($(this).prop('required') == true && $(this).val() == null && hasError == false){
-                                hasError = true;
-                                alertify.alert('WARNING!', 'Please select an option.', () => {});
-                            } else if ($(this).prop('multiple') == true) {
-                                var multi_select_values = $(this).val();
-                                input_values_obj[this.name] = multi_select_values == null ? multi_select_values : multi_select_values.toString();
-                            } else {
-                               input_values_obj[this.name] = this.value; 
-                            }
-                        }).get();
+                            $('textarea.text_area').map(function() {
+                                input_values_obj[this.name] = this.value;
+                            }).get();
 
-                        if(hasError) return;
+                            let hasError = false;
 
-                        $('#save_input_values').val(JSON.stringify(input_values_obj));
-                
-                        $('.disabled_consent_btn').prop('disabled', true);
-                        $('#save_PDF').val(pdfdata);
-                        $('#user_consent_form').submit();
-                    });
+                            $('select.js_select_document').map(function() {
+                                //
+                                if ($(this).prop('required') == true && $(this).val() == null && hasError == false) {
+                                    hasError = true;
+                                    alertify.alert('WARNING!', 'Please select an option.', () => {});
+                                } else if ($(this).prop('multiple') == true) {
+                                    var multi_select_values = $(this).val();
+                                    input_values_obj[this.name] = multi_select_values == null ? multi_select_values : multi_select_values.toString();
+                                } else {
+                                    input_values_obj[this.name] = this.value;
+                                }
+                            }).get();
+
+                            if (hasError) return;
+
+                            $('#save_input_values').val(JSON.stringify(input_values_obj));
+
+                            $('.disabled_consent_btn').prop('disabled', true);
+                            $('#save_PDF').val(pdfdata);
+                            $('#user_consent_form').submit();
+                        });
                 },
-                function () {
+                function() {
                     alertify.error('Cancelled!');
-                }).set('labels', {ok: 'Save Document!', cancel: 'Cancel'});
+                }).set('labels', {
+                ok: 'Save Document!',
+                cancel: 'Cancel'
+            });
         }
     }
     $('.hr-innerpadding').find('input,textarea,select').addClass('gray-background');
@@ -944,18 +969,24 @@
 </script>
 
 <style type="text/css">
-    #required_fields_div ol, #required_fields_div ul { padding-left: 15px !important; }
+    #required_fields_div ol,
+    #required_fields_div ul {
+        padding-left: 15px !important;
+    }
+
     div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
         content: attr(data-placeholder);
         color: #b3b3b3;
     }
-    .gray-background{
-      background-color: #eee !important;
-      border-color:#777 !important;
+
+    .gray-background {
+        background-color: #eee !important;
+        border-color: #777 !important;
     }
-    .gray-background-div{
-      background-color: #eee !important;
-      border: 1px solid #777 !important;
+
+    .gray-background-div {
+        background-color: #eee !important;
+        border: 1px solid #777 !important;
     }
 </style>
 
@@ -963,10 +994,9 @@
 
 <script>
     loadIframe(
-        $('iframe.uploaded-file-preview').prop('src'), 
-        'iframe.uploaded-file-preview', 
+        $('iframe.uploaded-file-preview').prop('src'),
+        'iframe.uploaded-file-preview',
         true,
         false
     );
 </script>
-

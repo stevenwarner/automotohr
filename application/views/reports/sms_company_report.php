@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -12,10 +12,10 @@
                         <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('reports'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Back</a>
-                                        <?php echo $title; ?>
+                                    <?php echo $title; ?>
                                 </span>
                             </div>
 
@@ -70,8 +70,8 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <?php if(!empty($sms_data)) { ?>
-                                                            <?php foreach($sms_data as $sms) { ?>
+                                                        <?php if (!empty($sms_data)) { ?>
+                                                            <?php foreach ($sms_data as $sms) { ?>
                                                                 <tr>
                                                                     <td class="text-left">
                                                                         <?php echo $sms['receiver_name']; ?> <br />
@@ -106,7 +106,7 @@
                                                                 <strong>Total</strong>
                                                             </td>
                                                             <td class="text-right">
-                                                                <strong>$<?php echo $grand_total;?></strong>
+                                                                <strong>$<?php echo $grand_total; ?></strong>
                                                             </td>
                                                         </tr>
                                                     </tfoot>
@@ -125,23 +125,26 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        function generate_search_url(){
+    $(document).ready(function() {
+        function generate_search_url() {
             var start_date = $('#startdate').val();
             var end_date = $('#enddate').val();
 
             start_date = start_date != '' && start_date != null && start_date != undefined && start_date != 0 ? encodeURIComponent(start_date) : 'all';
             end_date = end_date != '' && end_date != null && end_date != undefined && end_date != 0 ? encodeURIComponent(end_date) : 'all';
 
-            var myUrl = '<?php echo base_url("reports/company_sms_report")?>' + '/' + start_date + '/' + end_date;
+            var myUrl = '<?php echo base_url("reports/company_sms_report") ?>' + '/' + start_date + '/' + end_date;
 
             console.log(myUrl);
             $('#search_btn').attr('href', myUrl);
         }
 
-    	$('#startdate').datepicker({
+        $('#startdate').datepicker({
             dateFormat: 'dd-mm-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
                 generate_search_url();
             }
@@ -149,7 +152,10 @@
 
         $('#enddate').datepicker({
             dateFormat: 'dd-mm-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);
                 generate_search_url();
             }

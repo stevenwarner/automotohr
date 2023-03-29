@@ -1,5 +1,5 @@
 <style>
-    .csModalLoader{
+    .csModalLoader {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -8,7 +8,8 @@
         width: 100%;
         background-color: #ffffff;
     }
-    .csModalLoader i{
+
+    .csModalLoader i {
         position: relative;
         top: 50%;
         left: 50%;
@@ -16,7 +17,8 @@
         font-size: 50px;
         color: #81b431;
     }
-    .bg-danger{
+
+    .bg-danger {
         background-color: #f2dede !important;
     }
 </style>
@@ -28,7 +30,7 @@
     let policyFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startPolicyProcess(employeeId, employeeName){
+    async function startPolicyProcess(employeeId, employeeName,anniversarytext) {
         // Load Modal
         let rows = `
         <!-- Modal -->
@@ -37,6 +39,7 @@
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #81b431; color: #ffffff;">
                         <h4 class="modal-title">Balance Breakdown for ${employeeName} (As Of Today)</h4>
+                        ${anniversarytext}
                     </div>
                     <div class="modal-body">
                         <div>
@@ -59,10 +62,8 @@
                             </div>
                         </div>
                         <div>
-                            <div class="col-sm-2 bg-danger" style="height: 30px;"></div>
-                            <div class="col-sm-12 pl0">
-                                <br />
-                                <span>Represents the policies that are not available to employees because they meet the accrual.<br /> To see reason, click '<i class="fa fa-question-circle"></i>' icon next to the policy title.</span>
+                            <div class="col-sm-12 bg-danger p10">
+                                <span><strong><em>Note: Represents the policies that are not available to employees until they meet the Accrual or Qualify. <br/><br/>To see why, click '<i class="fa fa-question-circle"></i>' icon next to the policy title.</strong></em></span>
                             </div>
                         </div>
                     </div>
@@ -83,24 +84,23 @@
         // Get employee policies
         let policies = await fetchEmployeePolicies();
         //
-        if(policies.Status === false){
+        if (policies.Status === false) {
             $('#jsEmployeePolicyModal').modal('hide');
             alertify.alert('ERROR!', 'System could not found any policies against the selected employee.', () => {});
             //
             return;
-        }
-        else policies = policies.Data;
+        } else policies = policies.Data;
         //
         let policyList = {};
         //
-        policies.map(function(policy){
+        policies.map(function(policy) {
             //
-            if(!policyList.hasOwnProperty(policy.Category)) policyList[policy.Category] = [];
+            if (!policyList.hasOwnProperty(policy.Category)) policyList[policy.Category] = [];
             //
             policyList[policy.Category].push(policy);
         });
         //
-        policyList  = sortObjectByKey(policyList);
+        policyList = sortObjectByKey(policyList);
         //
         let policyOptions = '';
         //
@@ -111,9 +111,9 @@
             policyOptions += `<tr><th colspan="7">${p}</th></tr>`;
             //
             policy.map((pi) => {
-              policyOptions += `
+                policyOptions += `
                 <tr ${ pi.Reason != '' ? 'class="bg-danger"' : '' }>
-                    <td>${pi.Title}${ pi.Reason != '' ? ` <i class="fa fa-question-circle jsPopover" title="Why?" data-content="${pi.Reason}"></i>` : '' }</td>
+                    <td>${pi.Title} (<strong class="text-${pi.CategoryType == 1 ? 'success' : 'danger'}">${pi.CategoryType == 1 ? 'Paid' : 'Unpaid'}</strong>) ${ pi.Reason != '' ? ` <i class="fa fa-question-circle jsPopover" title="Why?" data-content="${pi.Reason}"></i>` : '' }</td>
                     <td>${pi.AllowedTime !== undefined && pi.AllowedTime.M.minutes != 0 && pi.Reason == '' && pi.EmploymentStatus != 'probation' ? pi.AllowedTime.text : 'Unlimited'}</td>
                     <td>${pi.Balance !== undefined ? pi.Balance.text : '0'}</td>
                     <td>${pi.CarryOverTime !== undefined ? pi.CarryOverTime.text : '0'}</td>
@@ -134,27 +134,27 @@
     }
 
     // Fetch employee policies
-    function fetchEmployeePolicies(){
+    function fetchEmployeePolicies() {
         return new Promise((res, rej) => {
             //
-            $.post("<?=base_url('timeoff/handler');?>", {
+            $.post("<?= base_url('timeoff/handler'); ?>", {
                 action: 'get_employee_policies',
-                companyId: <?=$company_sid;?>,
-                employerId: <?=$employer_sid;?>,
+                companyId: <?= $company_sid; ?>,
+                employerId: <?= $employer_sid; ?>,
                 employeeId: policyEmployeeId
-            }, function(resp){
+            }, function(resp) {
                 res(resp);
             });
         });
     }
 
     // Object sorter
-    var sortObjectByKey = function(obj){
+    var sortObjectByKey = function(obj) {
         var keys = [];
         var sorted_obj = {};
 
-        for(var key in obj){
-            if(obj.hasOwnProperty(key)){
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
                 keys.push(key);
             }
         }
@@ -163,26 +163,26 @@
         keys.sort();
 
         // create new array based on Sorted Keys
-        jQuery.each(keys, function(i, key){
+        jQuery.each(keys, function(i, key) {
             sorted_obj[key] = obj[key];
         });
 
         return sorted_obj;
     };
-
 </script>
 
 <style>
-    .cs-required{
+    .cs-required {
         font-weight: bold;
         font-size: 14px;
         color: #cc1100;
     }
-    .js-number{
+
+    .js-number {
         height: 40px;
     }
-    #ui-datepicker-div{
+
+    #ui-datepicker-div {
         z-index: 1051 !important;
     }
 </style>
-

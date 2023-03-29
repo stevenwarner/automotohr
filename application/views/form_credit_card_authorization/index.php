@@ -22,7 +22,7 @@
                         </div>
                         <?php //} ?>
                         <!-- page print -->
-                        <span class="page-heading down-arrow">CREDIT CARD AUTHORIZATION FORM</span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>CREDIT CARD AUTHORIZATION FORM</span>
                         <div class="end-user-agreement-wrp recurring-payment-authorization">
                             <div class="recurring-payment-text-area">
                                 <p>Schedule your payment to be automatically deducted from your bank account, or charged to your Visa, MasterCard, American Express or Discover Card. Just complete and sign this form to get started! </p>
@@ -502,7 +502,9 @@
             $(document).ready(function () {
                 $('.startdate').datepicker({
                     dateFormat: 'mm/dd/yy',
-                    changeYear: true
+                    changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
                 }).val();
             });
         </script>

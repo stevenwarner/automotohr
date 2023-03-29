@@ -2491,6 +2491,7 @@ p.error_message {
   padding-right: 16px;
   display: inline-block;
 }
+
 .staric {
   color: #c03b3b;
 }
@@ -2847,4 +2848,28 @@ input[type='checkbox'].user_checkbox:checked:after {
 
 .btn-black{
     background-color: #000000 !important;
+}
+
+.btn-succes-selected{
+  color: #fff;
+  background-color: #068206;
+  pointer-events: none;
+  
+}
+
+.btn-success:hover {
+  color: #fff;
+  background-color: #068206 !important;
+  border-color: #398439;
+}
+
+.esignaturesize{
+  width: 156px !important;
+  height: 44px !important;
+
+}
+
+
+.goog-te-gadget-simple .VIpgJd-ZVi9od-xl07Ob-lTBxed {
+  color: #fff !important;
 }

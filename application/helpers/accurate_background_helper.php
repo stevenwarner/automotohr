@@ -82,7 +82,7 @@ if (!function_exists('curl_make_api_call')) {
             $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
             $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
 
-            $from = TO_EMAIL_DEV;
+            $from = FROM_EMAIL_NOTIFICATIONS;
             $to = TO_EMAIL_STEVEN;
             $subject = 'Background request failed for '. $candidate_name;
             $from_name = ucwords(STORE_DOMAIN);
@@ -100,7 +100,7 @@ if (!function_exists('curl_make_api_call')) {
         $email_body .= 'Request Data: ' . $data . PHP_EOL;
         $email_body .= 'Request Result: ' . $result . PHP_EOL;
 
-        mail(FROM_EMAIL_DEV, 'Accurate Background Debug Email', $email_body);
+        mail(TO_EMAIL_DEV, 'Accurate Background Debug Email', $email_body);
 
         //Send eMail To dev - end
 

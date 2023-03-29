@@ -1642,8 +1642,18 @@
             }
         });
 
-        $('.eventdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
-        $('#eventdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.eventdate').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
+        $('#eventdate').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
         $("#eventdate").datepicker("setDate", new Date());
         $('.selected').click(function () {
             $(this).next().css("display", "block");
@@ -1947,7 +1957,7 @@
             });
 
             my_request.done(function (response) {
-                if (response == 'success') {
+                if (response == 'success' || response == 'Done') {
                     alertify.success("Candidate status updated successfully.");
                 } else {
                     alertify.error("Could not update Candidate Status.");

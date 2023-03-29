@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('my_settings'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Back</a>
                                     <?php echo $title; ?></span>
@@ -438,6 +438,29 @@
                                             </div>
                                         </div>
                                         -->
+
+
+
+
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <?php $url = base_url('reports/employee_document');?>
+                                                    <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo $url; ?>">Employee</a>
+                                                    </h2>
+                                                    <div class="count-box">
+                                                        <small>Confidential and Authorized Document Report</small>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a class="site-btn" href="<?php echo $url; ?>">Generate</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
 
                                     </div>
                                 </div>

@@ -10,7 +10,7 @@
                         <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('reports'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Advanced Reports</a>
                                     <?php echo $title; ?></span>
@@ -21,74 +21,64 @@
                                         <div class="row">
                                             <div class="applicant-reg-date">
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <!--                                                <div class="row">-->
-                                                        <form id="form-filters" method="post" enctype="multipart/form-data" action="">
+                                                    <!--                                                <div class="row">-->
+                                                    <form id="form-filters" method="post" enctype="multipart/form-data" action="">
 
-                                                            <div class="row">
-                                                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                                    <div class="form-col-100">
-                                                                        <label for="startdate">Keyword</label>
-                                                                        <?php $keyword = $this->uri->segment(3) != 'all' ? urldecode($this->uri->segment(3)) : ''; ?>
-                                                                        <input type="text" id="keyword" class="invoice-fields" name="keyword" value="<?php echo set_value('keyword',$keyword); ?>">
-                                                                        <div class="video-link" style='font-style: italic;'><b>Hint:</b>
-                                                                            Search by First Name, Last Name, Email or Phone number
-                                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                <div class="form-col-100">
+                                                                    <label for="startdate">Keyword</label>
+                                                                    <?php $keyword = $this->uri->segment(3) != 'all' ? urldecode($this->uri->segment(3)) : ''; ?>
+                                                                    <input type="text" id="keyword" class="invoice-fields" name="keyword" value="<?php echo set_value('keyword', $keyword); ?>">
+                                                                    <div class="video-link" style='font-style: italic;'><b>Hint:</b>
+                                                                        Search by First Name, Last Name, Email or Phone number
                                                                     </div>
                                                                 </div>
-
-                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-
-                                                                        <label class="">Start Date</label>
-                                                                        <?php $start_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-01-Y');?>
-                                                                        <input class="invoice-fields"
-                                                                               placeholder="<?php echo date('m-01-Y'); ?>"
-                                                                               type="text"
-                                                                               name="start_date_applied"
-                                                                               id="start_date_applied"
-                                                                               value="<?php echo set_value('start_date_applied', $start_date); ?>"/>
-
-                                                                </div>
                                                             </div>
-                                                            <div class="row">
-                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
 
-                                                                        <label class="">End Date</label>
-                                                                        <?php $end_date = $this->uri->segment(5) != 'all' && $this->uri->segment(5) != '' ? urldecode($this->uri->segment(5)) : date('m-d-Y');?>
-                                                                        <input class="invoice-fields"
-                                                                               placeholder="<?php echo date('m-d-Y'); ?>"
-                                                                               type="text"
-                                                                               name="end_date_applied"
-                                                                               id="end_date_applied"
-                                                                               value="<?php echo set_value('end_date_applied', $end_date); ?>"/>
+                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
 
-                                                                </div>
+                                                                <label class="">Start Date</label>
+                                                                <?php $start_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-01-Y'); ?>
+                                                                <input class="invoice-fields" placeholder="<?php echo date('m-01-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
 
-                                                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                                    <div class="report-btns">
-                                                                        <div class="row">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+
+                                                                <label class="">End Date</label>
+                                                                <?php $end_date = $this->uri->segment(5) != 'all' && $this->uri->segment(5) != '' ? urldecode($this->uri->segment(5)) : date('m-d-Y'); ?>
+                                                                <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
+
+                                                            </div>
+
+                                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                                <div class="report-btns">
+                                                                    <div class="row">
+                                                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                            <a class=" btn-block btn btn-success" id="btn_apply_filters" href="javascript:;">Filter</a>
+                                                                        </div>
+                                                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                            <a class="btn btn-success btn-block" id="clear">Clear</a>
+                                                                            <!--                                                                        <button class="form-btn" onclick="fClearDateFilters();">Clear</button>-->
+                                                                        </div>
+                                                                        <?php if (isset($applicants) && sizeof($applicants) > 0) { ?>
                                                                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                                                                <a class=" btn-block btn btn-success" id="btn_apply_filters" href="javascript:;">Filter</a>
-                                                                            </div>
-                                                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                                                                <a class="btn btn-success btn-block" id="clear">Clear</a>
-        <!--                                                                        <button class="form-btn" onclick="fClearDateFilters();">Clear</button>-->
-                                                                            </div>
-                                                                            <?php if (isset($applicants) && sizeof($applicants) > 0) { ?>
-                                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                                                                    <div class="form-group">
-                                                                                        <form method="post" id="export" name="export">
-                                                                                            <input type="submit" name="submit" class="btn btn-block btn-success" value="Export" />
-                                                                                        </form>
-                                                                                    </div>
+                                                                                <div class="form-group">
+                                                                                    <form method="post" id="export" name="export">
+                                                                                        <input type="submit" name="submit" class="btn btn-block btn-success" value="Export" />
+                                                                                    </form>
                                                                                 </div>
+                                                                            </div>
 
-                                                                            <?php } ?>
-                                                                        </div>
+                                                                        <?php } ?>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </form>
-    <!--                                                </div>-->
+                                                        </div>
+                                                    </form>
+                                                    <!--                                                </div>-->
                                                 </div>
                                             </div>
                                         </div>
@@ -96,15 +86,15 @@
 
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <?php if(isset($applicants) && sizeof($applicants) > 0) { ?>
+                                            <?php if (isset($applicants) && sizeof($applicants) > 0) { ?>
 
                                                 <div class="row">
                                                     <div class="col-xs-12">
                                                         <span class="pull-left">
-                                                            <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count?></p>
+                                                            <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count ?></p>
                                                         </span>
                                                         <span class="pull-right">
-                                                            <?php echo $page_links?>
+                                                            <?php echo $page_links ?>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -112,9 +102,9 @@
                                                     <hr>
                                                 </div>
                                                 <div class="page-header-area">
-                                                        <span class="page-heading pull-right">
-                                                            <b><?= 'Total number of applicants:    ' . $applicants_count?></b>
-                                                        </span>
+                                                    <span class="page-heading pull-right">
+                                                        <b><?= 'Total number of applicants:    ' . $applicants_count ?></b>
+                                                    </span>
                                                 </div>
                                             <?php } ?>
 
@@ -123,41 +113,45 @@
 
                                                     <table class="table table-bordered table-stripped table-hover">
                                                         <thead>
-                                                        <tr>
-                                                            <th>Job Title</th>
-                                                            <th>First Name</th>
-                                                            <th>Last Name</th>
-                                                            <th>Email</th>
-                                                            <th>Phone Number</th>
-                                                            <!--                                                                <th>Applicant Type</th>-->
-                                                            <th>Application Date</th>
-                                                            <th>Action</th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th>Job Title</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>
+                                                                <th>Email</th>
+                                                                <th>Phone Number</th>
+                                                                <!--                                                                <th>Applicant Type</th>-->
+                                                                <th>Application Date</th>
+                                                                <th>Action</th>
+                                                            </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <?php if (!empty($applicants)) { ?>
-                                                            <?php foreach ($applicants as $applicant) { ?>
-                                                                <?php
-                                                                $state = $city = '';
-                                                                if(isset($applicant['Location_City']) && $applicant['Location_City'] != null && $applicant['Location_City'] != '') $city = ' - '.ucfirst($applicant['Location_City']);
-                                                                if(isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', '.db_get_state_name($applicant['Location_State'])['state_name'];
-                                                                $applicant['desired_job_title'] .= $city.$state;
-                                                                ?>
-                                                                <tr>
-                                                                    <td style="color:<?php echo (($applicant['desired_job_title'] != '' ) ? 'green' : 'red'); ?>"><?php echo $applicant['desired_job_title']!='' ? ucwords($applicant['desired_job_title']) : 'Job Not Provided'; ?></td>
-                                                                    <td><?php echo ucwords($applicant['first_name']); ?></td>
-                                                                    <td><?php echo ucwords($applicant['last_name']); ?></td>
-                                                                    <td><?php echo $applicant['email']; ?></td>
-                                                                    <td><?php echo $applicant['phone_number']; ?></td>
-                                                                    <!--                                                                        <td>--><?php //echo $applicant['applicant_type']; ?><!--</td>-->
-                                                                    <td><?=reset_datetime(array('datetime' => $applicant['date_applied'], '_this' => $this)); ?></td>
-                                                                    <td><a class="btn-success btn btn-sm questionnaire" data-time="<?php echo date_with_time($applicant['date_applied']); ?>" data-key='<?php echo json_encode($applicant)?>' data-attr='<?php echo json_encode(unserialize($applicant['talent_and_fair_data'])) ?>' href="javascript:;">View Questionnaire</a></td>
+                                                            <?php if (!empty($applicants)) { ?>
+                                                                <?php foreach ($applicants as $applicant) { ?>
+                                                                    <?php
+                                                                    $state = $city = '';
+                                                                    if (isset($applicant['Location_City']) && $applicant['Location_City'] != null && $applicant['Location_City'] != '') $city = ' - ' . ucfirst($applicant['Location_City']);
+                                                                    if (isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', ' . db_get_state_name($applicant['Location_State'])['state_name'];
+                                                                    $applicant['desired_job_title'] .= $city . $state;
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td style="color:<?php echo (($applicant['desired_job_title'] != '') ? 'green' : 'red'); ?>"><?php echo $applicant['desired_job_title'] != '' ? ucwords($applicant['desired_job_title']) : 'Job Not Provided'; ?></td>
+                                                                        <td><?php echo ucwords($applicant['first_name']); ?></td>
+                                                                        <td><?php echo ucwords($applicant['last_name']); ?></td>
+                                                                        <td><?php echo $applicant['email']; ?></td>
+                                                                        <td><?php echo $applicant['phone_number']; ?></td>
+                                                                        <!--                                                                        <td>--><?php //echo $applicant['applicant_type']; 
+                                                                                                                                                            ?>
+                                                                        <!--</td>-->
+                                                                        <td><?= reset_datetime(array('datetime' => $applicant['date_applied'], '_this' => $this)); ?></td>
+                                                                        <td><a class="btn-success btn btn-sm questionnaire" data-time="<?php echo date_with_time($applicant['date_applied']); ?>" data-key='<?php echo json_encode($applicant) ?>' data-attr='<?php echo json_encode(unserialize($applicant['talent_and_fair_data'])) ?>' href="javascript:;">View Questionnaire</a></td>
 
+                                                                    </tr>
+                                                                <?php } ?>
+                                                            <?php } else { ?>
+                                                                <tr>
+                                                                    <td colspan="12" class="text-center">No Applicants Found</td>
                                                                 </tr>
                                                             <?php } ?>
-                                                        <?php } else { ?>
-                                                            <tr><td colspan="12" class="text-center">No Applicants Found</td></tr>
-                                                        <?php } ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -175,26 +169,26 @@
 
                                             <div class="col-lg-12 mb-2">
                                                 <div class="table-responsive table-outer" id="print_div">
-                                                <div class="border-none mylistings-wrp">
+                                                    <div class="border-none mylistings-wrp">
 
-                                                    <table class="table table-bordered table-stripped table-hover">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Job Title</th>
-                                                            <th>First Name</th>
-                                                            <th>Last Name</th>
-                                                            <th>Email</th>
-                                                            <th>Phone Number</th>
-<!--                                                            <th>Applicant Type</th>-->
-                                                            <th>Application Date</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody id="detail-table">
+                                                        <table class="table table-bordered table-stripped table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Job Title</th>
+                                                                    <th>First Name</th>
+                                                                    <th>Last Name</th>
+                                                                    <th>Email</th>
+                                                                    <th>Phone Number</th>
+                                                                    <!--                                                            <th>Applicant Type</th>-->
+                                                                    <th>Application Date</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="detail-table">
 
-                                                        </tbody>
-                                                    </table>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="panel-section">
@@ -213,18 +207,18 @@
 
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
-<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"  />
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 
 <script>
     $(document).keypress(function(e) {
-        if(e.which == 13) {
+        if (e.which == 13) {
             // enter pressed
             $('#btn_apply_filters').click();
         }
     });
 
-    function generate_search_url(){
+    function generate_search_url() {
         var keyword = $('#keyword').val();
         var start_date_applied = $('#start_date_applied').val();
         var end_date_applied = $('#end_date_applied').val();
@@ -238,47 +232,46 @@
         $('#btn_apply_filters').attr('href', url);
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#detail').hide();
-        var url = '<?php echo base_url();?>' + 'reports/generate_job_fair_report/';
-        $('#clear').attr('href',url);
+        var url = '<?php echo base_url(); ?>' + 'reports/generate_job_fair_report/';
+        $('#clear').attr('href', url);
 
 
-        $('#btn_apply_filters').on('click', function(e){
+        $('#btn_apply_filters').on('click', function(e) {
             e.preventDefault();
             generate_search_url();
 
             window.location = $(this).attr('href').toString();
         });
 
-        $('#keyword').on('keyup', function () {
+        $('#keyword').on('keyup', function() {
             generate_search_url();
         });
 
         $('#keyword').trigger('keyup');
 
-        $('.questionnaire').click(function(){
+        $('.questionnaire').click(function() {
             var questionnaire = $(this).attr('data-attr');
             var general_data = $(this).attr('data-key');
             var date = $(this).attr('data-time');
             general_data = JSON.parse(general_data);
-            var title = general_data.desired_job_title!='' && general_data.desired_job_title!=null ? general_data.desired_job_title:'Job Not Provided';
-            var phone_number = general_data.phone_number!='' && general_data.phone_number!=null ? general_data.phone_number:'Not Provided';
+            var title = general_data.desired_job_title != '' && general_data.desired_job_title != null ? general_data.desired_job_title : 'Job Not Provided';
+            var phone_number = general_data.phone_number != '' && general_data.phone_number != null ? general_data.phone_number : 'Not Provided';
 
             $('#detail-table').html('');
-            $('#detail-table').append('<tr><td>'+title+'</td><td>'+general_data.first_name+'</td><td>'+general_data.last_name+'</td><td>'+general_data.email+'</td>' +
-            '<td>'+phone_number+'</td>' +
-            '<td>'+date+'</td>' +
-            '</tr>'
+            $('#detail-table').append('<tr><td>' + title + '</td><td>' + general_data.first_name + '</td><td>' + general_data.last_name + '</td><td>' + general_data.email + '</td>' +
+                '<td>' + phone_number + '</td>' +
+                '<td>' + date + '</td>' +
+                '</tr>'
             );
-            if(questionnaire!='false'){
+            if (questionnaire != 'false') {
                 var questionnaire = JSON.parse(questionnaire);
                 $('#panel-section').html('');
-                $.each(questionnaire.questions, function (index, value) {
+                $.each(questionnaire.questions, function(index, value) {
                     $('#panel-section').append('<div class="panel panel-default"><div class="panel-heading"><strong>' + index + '</strong></div> <div class="panel-body">' + value + '</div> </div>');
                 });
-            }
-            else{
+            } else {
                 $('#panel-section').html('');
                 $('#panel-section').append('<div class="panel panel-default"><div class="panel-heading"><strong>Job Fair Data Not Found</strong></div> </div>');
 
@@ -287,22 +280,24 @@
             $('#detail').show();
         });
 
-        $('#search-btn').click(function(){
+        $('#search-btn').click(function() {
             $('#listing').show();
             $('#detail').hide();
         });
 
         $('.datepicker').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
             changeYear: true,
-            changeMonth: true
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
 
         $('#start_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
-            onSelect: function (value) {
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#end_date_applied').datepicker('option', 'minDate', value);
 
@@ -312,9 +307,10 @@
 
         $('#end_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
-            onSelect: function (value) {
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#start_date_applied').datepicker('option', 'maxDate', value);
 
@@ -324,58 +320,58 @@
 
     });
 
-    function fApplyDateFilters(){
+    function fApplyDateFilters() {
         var startDate = $('#startdate').val();
         var endDate = $('#enddate').val();
         var keyword = $('#keyword').val();
         var job_sid = $('#job_sid').val();
         var applicant_type = '';
         var applicant_status = '';
-        <?php if(isset($is_hired_report) && $is_hired_report == false) { ?>
+        <?php if (isset($is_hired_report) && $is_hired_report == false) { ?>
             applicant_type = $('#applicant_type').val();
             applicant_status = $('#applicant_status').val();
         <?php } ?>
 
         var url = '';
-        <?php if(isset($is_hired_report) && $is_hired_report == true) { ?>
-            url = '<?php echo base_url();?>' + 'reports/generate_new_hires_report/';
+        <?php if (isset($is_hired_report) && $is_hired_report == true) { ?>
+            url = '<?php echo base_url(); ?>' + 'reports/generate_new_hires_report/';
         <?php } else { ?>
-            url = '<?php echo base_url();?>' + 'reports/candidates_between_period/';
+            url = '<?php echo base_url(); ?>' + 'reports/candidates_between_period/';
         <?php } ?>
 
-        if(startDate != '' && endDate == ''){
+        if (startDate != '' && endDate == '') {
             url += encodeURI(startDate) + '/end-of-days/';
         }
 
-        if(endDate != '' && startDate == ''){
+        if (endDate != '' && startDate == '') {
             url += 'beginning-of-time/' + encodeURI(endDate) + '/';
         }
 
-        if((startDate != '') && (endDate != '')){
+        if ((startDate != '') && (endDate != '')) {
             url += encodeURI(startDate) + '/' + encodeURI(endDate) + '/';
         }
 
-        if(keyword != ''){
-            url += encodeURI(keyword)+ '/';
-        }else{
+        if (keyword != '') {
+            url += encodeURI(keyword) + '/';
+        } else {
             url += encodeURI('all/');
         }
 
-        if(job_sid != '' && job_sid != null){
-            url += encodeURI(job_sid)+ '/';
-        }else{
+        if (job_sid != '' && job_sid != null) {
+            url += encodeURI(job_sid) + '/';
+        } else {
             url += encodeURI('all/');
         }
 
-        if(applicant_type != ''){
-            url += encodeURI(applicant_type)+ '/';
-        }else{
+        if (applicant_type != '') {
+            url += encodeURI(applicant_type) + '/';
+        } else {
             url += encodeURI('all/');
         }
 
-        if(applicant_status != ''){
+        if (applicant_status != '') {
             url += encodeURI(applicant_status);
-        }else{
+        } else {
             url += encodeURI('all');
         }
         $('#form-filters').attr('action', url);
@@ -384,8 +380,7 @@
 
     }
 
-    function print_page(elem)
-    {
+    function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
 

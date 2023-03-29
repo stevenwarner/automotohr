@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management'); ?>"><i class="fa fa-chevron-left"></i>Document Management</a>
                                     <?php echo 'Add HR Document'; ?>
                                 </span>
@@ -96,15 +96,15 @@
                                                 <input type="number" name="sort_order" class="invoice-fields" value="<?php if (isset($document_info['sort_order'])) echo $document_info['sort_order']; ?>">
                                             </div>
                                         </div>
-<!--                                        <div class="row">-->
-<!--                                            <div class="col-xs-6">-->
-<!--                                                <label>&nbsp;</label>-->
-<!--                                                <div class="input-group pto-time-off-margin-custom">-->
-<!--                                                    <span class="input-group-addon">Automatically assign after Days</span>-->
-<!--                                                    <input type="number" class="form-control" value="--><?php //echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?><!--" name="assign-in">-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
+                                        <!-- <div class="row">-->
+                                        <!-- <div class="col-xs-6">-->
+                                        <!-- <label>&nbsp;</label>-->
+                                        <!-- <div class="input-group pto-time-off-margin-custom">-->
+                                        <!-- <span class="input-group-addon">Automatically assign after Days</span>-->
+                                        <!--   <input type="number" class="form-control" value="--><?php //echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?><!--" name="assign-in">-->
+                                        <!--  </div>-->
+                                        <!--  </div>-->
+                                        <!--  </div>-->
                                         <br />
                                         <div class="row">
                                             <div class="col-sm-12">
@@ -228,6 +228,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
+                                        <?php $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowGOL", "containerIdx" => "jsApproverFlowContainerGOL", "addEmployeeIdx" => "jsAddDocumentApproversGOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxGOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxGOL", "approverNoteIdx" => "jsApproversNoteGOL", 'mainId' => 'testApproversGOL']); ?>
+                                       <br>
+                                        <?php $this->load->view('hr_documents_management/partials/settings', [
+                                            'is_confidential' =>  $document_info['is_confidential']
+                                        ]); ?>
                                         <hr />
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -311,7 +317,63 @@
 </div>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
+
 <script>
+    $(document).ready(function() {
+        var approverPrefill = {};
+        var approverSection = approverSection = {
+            appCheckboxIdx: '.jsHasApprovalFlowGOL',
+            containerIdx: '.jsApproverFlowContainerGOL',
+            addEmployeeIdx: '.jsAddDocumentApproversGOL',
+            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxGOL',
+            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxGOL',
+            approverNoteIdx: '.jsApproversNoteGOL',
+            employeesList: <?= json_encode($employeesList); ?>,
+            documentId: 0
+        };
+        //        
+        <?php if (isset($document_info) && !empty($document_info)) { ?>
+            var l = <?= json_encode($document_info); ?>;
+            //
+            if (l.has_approval_flow == 1) {
+                approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
+            }
+        <?php } ?>
+
+        $("#jsGenerateOfferLetter").documentApprovalFlow(approverSection);
+
+        $("#confidentialSelectedEmployees").select2();
+
+        $("#confidentialSelectedEmployeesdiv").show();
+
+        //--- Automatically assign after Days:
+        $('input[name="assign-in-days"]').val(0);
+        $('input[name="assign-in-months"]').val(0);
+        $('.js-type').hide();
+        $('input[value="days"]').prop('checked', false);
+        $('input[value="months"]').prop('checked', false);
+        //
+        <?php if (isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in'])) { ?>
+            $('.js-type-<?= $document_info['automatic_assign_type']; ?>').show();
+            $('input[value="<?= $document_info['automatic_assign_type']; ?>"]').prop('checked', true);
+            $('.js-type-<?= $document_info['automatic_assign_type']; ?>').find('input').val(<?= $document_info['automatic_assign_in']; ?>);
+        <?php } else { ?>
+            $('input[value="days"]').prop('checked', true);
+            $('.js-type-days').show();
+        <?php } ?>
+        //
+        $('input[name="assign_type"]').click(function() {
+            $('.js-type').hide(0).val(0);
+            $('.js-type-' + ($(this).val()) + '').show(0);
+        });
+        //---------------------
+    });
+
     function validate_form() {
         $("#form_new_document").validate({
             ignore: [],
@@ -350,4 +412,5 @@
         $('#jsEmployees').select2(config);
         $('#jsManagers').select2(config);
     });
+      
 </script>

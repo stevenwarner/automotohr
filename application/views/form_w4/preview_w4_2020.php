@@ -417,7 +417,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['signature_bas64_image']; ?>"  />
+                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['signature_bas64_image']; ?>" class="esignaturesize"  />
                                         </td>
                                         <td style="width: 30%;">
                                             <input class="plane-input" type="text" value="<?php echo !empty($pre_form['signature_timestamp']) && $pre_form['signature_timestamp'] != '0000-00-00 00:00:00' ? reset_datetime(array('datetime' => $pre_form['signature_timestamp'], '_this' => $this)) : ''; ?>" readonly  style="border: none; font-weight: bold; display: inline-block;"/>

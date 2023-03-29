@@ -1,4 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+ini_set("memory_limit","1024M");
+
 
 class Application_tracking_system extends Public_Controller {
     public function __construct() {
@@ -263,6 +265,7 @@ class Application_tracking_system extends Public_Controller {
                     $applicants = $this->application_tracking_system_model->get_admin_jobs_and_applicants($company_sid, $archived, $records_per_page, $my_offset, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     $applicant_total_array = $this->application_tracking_system_model->get_admin_jobs_and_applicants_count($company_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
 
+//print_r($applicant_total_array);
                     if (!empty($applicant_total_array)) {
                         $applicant_total = $applicant_total_array['all_job_applicants'];
                         $all_manual_applicants = $applicant_total_array['all_manual_applicants'];
@@ -288,7 +291,6 @@ class Application_tracking_system extends Public_Controller {
                     
                     $applicants = $this->application_tracking_system_model->get_employee_jobs_and_applicants($company_sid, $employer_sid, $archived, $records_per_page, $my_offset, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     $applicant_total_array = $this->application_tracking_system_model->get_employee_jobs_and_applicants_count($company_sid, $employer_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
-
                     if (!empty($applicant_total_array)) {
                         $applicant_total = $applicant_total_array['all_job_applicants'];
                         $all_manual_applicants = $applicant_total_array['all_manual_applicants'];
@@ -378,7 +380,7 @@ class Application_tracking_system extends Public_Controller {
 
             $data['job_fair_forms']                                             = $job_fair_forms;
             //**** code for graph ****//
-            if ($archived == 0) {
+            if ($archived == 0) { 
                 $ApplciantPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Applicant', $company_sid);
                 $ManualPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Manual Candidate', $company_sid);
                 $TalentPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Talent Network', $company_sid);
@@ -602,7 +604,7 @@ class Application_tracking_system extends Public_Controller {
                             array(
                                     'field' => 'last_name',
                                     'label' => 'Last Name',
-                                    'rules' => 'trim|required|xss_clean'
+                                    'rules' => 'trim|xss_clean'
                             ),
                             array(
                                     'field' => 'email',
@@ -1911,7 +1913,7 @@ class Application_tracking_system extends Public_Controller {
                                 'username' => $userName
                             );
                             $this->application_tracking_system_model->save_email_logs($emailData);
-                            sendMail(FROM_EMAIL_DEV, $applicantEmail, $subject, $body, $company_name, NULL);
+                            sendMail(FROM_EMAIL_NOTIFICATIONS, $applicantEmail, $subject, $body, $company_name, NULL);
                             $this->session->set_flashdata('message', '<b>Notification: </b>Email has been successfully Sent!');
                         }
                         redirect($reload_location, 'refresh');
@@ -2104,7 +2106,9 @@ class Application_tracking_system extends Public_Controller {
                                                 $status = $questionnaire_answers['status'];
                                                 $item ++;
 
-                                                $ques_start = '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$item.'"><span class="glyphicon glyphicon-minus"></span>  '.$key.'</a></h4></div><div id="collapse_'.$item.'" class="panel-collapse collapse in">';
+                                                $attendDate = formatDateToDB($my_questionnaire['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+
+                                                $ques_start = '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> '.$attendDate.'</span><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$item.'"><span class="glyphicon glyphicon-minus"></span>  '.$key.'</a></h4></div><div id="collapse_'.$item.'" class="panel-collapse collapse in">';
                                                 if (is_array($answer)) {
                                                     foreach ($answer as $multiple_answer) {
                                                         $ques_ans = '<div class="panel-body">'. $multiple_answer .'</div>';
@@ -2187,10 +2191,11 @@ class Application_tracking_system extends Public_Controller {
                                                             } else {
                                                                 $man_ans = '<div class="panel-body">'.$answer.'</div>';
                                                             }
-
+                                                            $attendDate = formatDateToDB($job_manual_questionnaire_array['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
                                                             $man_ques = $man_ques . '<div class="panel panel-default">
                                                                             <div class="panel-heading">
                                                                                 <h4 class="panel-title">
+                                                                                <span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> '.$attendDate.'</span>
                                                                                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'. $item.'"><span class="glyphicon glyphicon-plus"></span>  '. $key.'</a>
                                                                                 </h4>
                                                                             </div>

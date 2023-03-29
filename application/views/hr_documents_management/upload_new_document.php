@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management'); ?>"><i class="fa fa-chevron-left"></i>Document Management</a>
                                     <?php echo !isset($document_info) ? 'Add HR Document' : 'Edit HR Document'; ?>
                                 </span>
@@ -47,6 +47,7 @@
                                             <?php echo form_error('document_title'); ?>
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <label>Instructions / Guidance </label>
@@ -61,6 +62,7 @@
                                             </textarea>
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <label>Browse Document<?php echo !isset($document_info) ? '<span class="staric">*</span>' : ''; ?></label>
@@ -267,6 +269,7 @@
                                             </div>
                                         </div>
                                     <?php } ?>
+
                                     <?php if (!empty($active_categories)) { ?>
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -284,6 +287,7 @@
                                         </div>
                                         <br>
                                     <?php } ?>
+
                                     <?php if (isset($document_info['sid'])) { ?>
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -296,8 +300,11 @@
                                         </div>
                                         <br />
                                     <?php } ?>
+
                                     <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
-                                    <?php $this->load->view('hr_documents_management/partials/assigner'); ?>
+
+                                    <?php $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowUD", "containerIdx" => "jsApproverFlowContainerUD", "addEmployeeIdx" => "jsAddDocumentApproversUD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxUD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxUD", "approverNoteIdx" => "jsApproversNoteUD", 'mainId' => 'testApproversUD']); ?>
+
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <div class="hr-box">
@@ -498,10 +505,36 @@
 
 <link rel="stylesheet" href="<?= base_url('assets/mFileUploader/index.css'); ?>" />
 <script src="<?= base_url('assets/mFileUploader/index.js'); ?>"></script>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
 
 <script>
     $(document).ready(function() {
+        var approverPrefill = {};
+        var approverSection = approverSection = {
+            appCheckboxIdx: '.jsHasApprovalFlowUD',
+            containerIdx: '.jsApproverFlowContainerUD',
+            addEmployeeIdx: '.jsAddDocumentApproversUD',
+            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxUD',
+            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxUD',
+            approverNoteIdx: '.jsApproversNoteUD',
+            employeesList: <?= json_encode($employeesList); ?>,
+            documentId: 0
+        };
         //
+        <?php if (isset($document_info) && !empty($document_info)) { ?>
+            var l = <?= json_encode($document_info); ?>;
+            //
+            if (l.has_approval_flow == 1) {
+                approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
+            }
+        <?php } ?>
+        //
+        $("#jsGenerateOfferLetter").documentApprovalFlow(approverSection);
+
         $('#jsFileUpload').mFileUploader({
             fileLimit: -1,
             allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv'],
@@ -590,6 +623,7 @@
             submitHandler: function(form) {
                 var flag = 1;
                 var video_source = $('input[name="video_source"]:checked').val();
+
 
                 if (video_source != 'not_required') {
                     if (video_source == 'youtube') {
@@ -991,5 +1025,3 @@
         height: 30px;
     }
 </style>
-
-<?php $this->load->view('hr_documents_management/scripts/assigner'); ?>

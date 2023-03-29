@@ -12,15 +12,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $hook['post_controller'][] = array(
-    'filepath' => 'hooks',
-    'filename' => 'AppVerify.php',
-    'function' => 'checkIfAppIsEnabled',
-    'class' => 'AppVerify'
+        'filepath' => 'hooks',
+        'filename' => 'AppVerify.php',
+        'function' => 'checkIfAppIsEnabled',
+        'class' => 'AppVerify'
 );
-// Run 
-// $hook['post_controller'][] = array(
-//     'filepath' => 'hooks',
-//     'filename' => 'AppVerify.php',
-//     'function' => 'loginToAPI',
-//     'class' => 'AppVerify'
-// );
+
+/**
+ * Stop the not allowed traffic
+ */
+$hook['pre_controller'][] = array(
+        'filepath' => 'hooks',
+        'filename' => 'security.php',
+        'function' => 'checkBlockedIps',
+        'class' => 'Security'
+);
+
+$AHR = getCreds("AHR");
+//
+if ($AHR->PROFILER_SHOW || $AHR->PROFILER_LOG) {
+    // Profiler for all controllers
+    $hook['post_controller_constructor'][] = array(
+        'class'    => 'ProfilerHandler',
+        'function' => 'EnableProfiler',
+        'filename' => 'appprofiler.php',
+        'filepath' => 'hooks',
+        'params'   => array()
+    );
+}        

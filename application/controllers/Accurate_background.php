@@ -201,7 +201,7 @@ class Accurate_background extends Public_Controller {
 
             // Set product type
             if ($product_type != 'all' && $product_type !== FALSE)
-                $product_type = $product_type == 'background_check' ? 'background-checks' : 'drug-testing';
+                $product_type = $product_type == 'background_check' || $product_type == 'background-checks' ? 'background-checks' : 'drug-testing';
             else $product_type = 'all';
 
             // Set start date

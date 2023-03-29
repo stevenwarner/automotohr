@@ -641,7 +641,7 @@
     function fSendFullEmploymentForm(){
         alertify.confirm(
             'Are you sure?',
-            'Are you sure you want to send Full Employment Application to this Applicant?',
+            'Are you sure you want to send a Full Employment Application to this Applicant?',
             function () {
                 $('#form_send_full_employment_application').submit();
             },

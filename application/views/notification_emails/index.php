@@ -39,7 +39,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <?php echo $title; ?>
                                 </span>
                             </div>
@@ -289,6 +289,51 @@
                                                     </div>
                                                     <div class="button-panel">
                                                         <a class="site-btn" href="<?php echo base_url('notification_emails/employee_profile'); ?>">View</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-envelope"></i></figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('notification_emails/default_approvers'); ?>">Default Document Approvers</a>
+                                                    </h2>
+                                                    <div class="count-box">
+                                                        <small>View Default Document Approvers</small>
+                                                        <br>
+                                                        <p>
+                                                            <strong class="notification_Info">
+                                                                <?php echo DEFAULT_APPROVERS; ?>
+                                                            </strong>
+                                                        </p>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/default_approvers'); ?>">View</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-envelope"></i></figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('notification_emails/private_message_notification'); ?>">Private Messages Notification</a>
+                                                    </h2>
+                                                    <div class="count-box">
+                                                        <small>View Private Messages Notifications</small>
+                                                        <br>
+                                                        <p>
+                                                            <strong class="notification_Info">
+                                                                <?php echo PRIVATE_MESSAGE; ?>
+                                                            </strong>
+                                                        </p>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/private_message_notification'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>

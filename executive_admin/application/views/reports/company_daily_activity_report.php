@@ -65,6 +65,9 @@
     $(document).ready(function () {
         $('#report_date').datepicker({
             format: 'mm/dd/yyyy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function () {
                 var company_sid = '<?php echo $company_sid; ?>';
                 var report_date = $('#report_date').val();

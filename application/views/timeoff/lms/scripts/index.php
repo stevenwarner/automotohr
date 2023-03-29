@@ -49,12 +49,18 @@
         // Filter
         $('#js-filter-from-date').datepicker({
             format: 'mm/dd/yyyy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function(dt){
                $('#js-filter-to-date').datepicker("option", "minDate", dt);
             }
         });
         $('#js-filter-to-date').datepicker({
             format: 'mm/dd/yyyy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function(dt){
                $('#js-filter-from-date').datepicker("option", "maxDate", dt);
             }

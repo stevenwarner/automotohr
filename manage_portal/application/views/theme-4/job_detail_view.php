@@ -1,3 +1,4 @@
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="container">
     <div class="row">
         <div class="col-xs-12">
@@ -49,7 +50,7 @@
                     <div class="bottom-btn-row">
                         <ul>
                             <li><a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a></li>
-                            <li><a href="<?php echo $more_career_oppurtunatity; ?>" class="site-btn bg-color-v3">More Career Opportunities With This Company</a></li>
+                            <li><a href="<?php echo strtolower(str_replace(" ","_",$more_career_oppurtunatity)); ?>" class="site-btn bg-color-v3">More Career Opportunities With This Company</a></li>
                         </ul>
                     </div>
                 </div>

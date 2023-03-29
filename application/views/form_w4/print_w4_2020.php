@@ -417,7 +417,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['signature_bas64_image']; ?>"  />
+                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['signature_bas64_image']; ?>" class="esignaturesize" />
                                         </td>
                                     </tr>
                                     <tr>

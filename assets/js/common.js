@@ -46,6 +46,71 @@ $(document).on('click', '.jsEmployeeQuickProfile', function(event) {
         }
     });
 });
+//
+$(document).on('click','.jsViewDocumentApprovares',function(){
+    //
+    event.preventDefault();
+    //
+    var documentSid = $(this).data('document_sid') || null;
+    var userSid = $(this).data('user_sid') || null;
+    var userType = $(this).data('user_type') || null;
+    //
+    Model({
+        Id: "jsDocumentsApproversModal",
+        Loader: 'jsDocumentsApproversModalLoader',
+        Title: 'Document Approvers List',
+        Body: '<div class="container"><div id="jsDocumentsApproversModalBody"></div></div>'
+    }, function() {
+        var html = '<div id="jsDocumentsApproversModalMainBody"></div>';
+        //
+        $('#jsDocumentsApproversModalBody').html(html);
+        GetSpecificDocumentApprovers(documentSid, userSid, userType, 'jsDocumentsApproversModal');
+        
+    });
+});
+//
+function GetSpecificDocumentApprovers(
+    documentSid,
+    userSid, 
+    userType,
+    id
+) {
+    $('#' + id + 'MainBody').html('');
+    //
+    if (documentSid === 0) {
+        // flush view
+        $('#' + id + 'MainBody').html('');
+        return;
+    }
+    //
+    if (isXHRInProgress != null) {
+        isXHRInProgress.abort();
+    }
+    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+    //
+    isXHRInProgress =
+        $.get(window.location.origin + '/hr_documents_management/get_document_approvers/' + documentSid + '/' + userType+ '/' + userSid)
+        .done(function(resp) {
+            //
+            isXHRInProgress = null;
+            //
+            if (resp.Status === false) {
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                $('#' + id + 'MainBody').html(resp.Msg);
+                return;
+            }
+            $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+            //
+            $('#' + id + 'MainBody').html(resp.Data);
+        })
+        .error(function(err) {
+            //
+            isXHRInProgress = null;
+            $('#' + id).html('Something went wrong while accessing the employee profile.');
+        });
+    //
+    return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+}
 /**
  * Click
  * 
@@ -318,7 +383,6 @@ function GetSpecificEmployeeDetails(
     employeeId,
     id
 ) {
-
     //
     if (employeeId === 0) {
         // flush view
@@ -364,12 +428,22 @@ function loadTitles() {
 //
 function footer_fixer() {
     //
-    if ($('.csPageWrap').length === 0) {
+    var baseClasses = ['.csPageWrap', '.main-content','.jsmaincontent'];
+    //
+    var baseClass = baseClasses.filter(function(val){
+        return $(val).length == 0 ? false : true;
+    });
+    //
+    if (baseClass.length == 0) {
         return;
     }
-    var wh = $(document).height() - $('.csPageWrap').height();
+    //
+    baseClass = baseClass[0];
+    //
+    var wh = $(document).height() - $(baseClass).height();
     var fh = $('footer').height();
     $('footer').css('margin-top', (wh - fh) + 'px')
 }
+
 //
 footer_fixer();

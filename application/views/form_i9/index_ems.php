@@ -3,15 +3,27 @@
     $db_preparer_serialized_data = sizeof($pre_form) > 0 && $pre_form['section1_preparer_or_translator'] != null ? unserialize($pre_form['section1_preparer_or_translator']) : array();
     $prepared_section = isset($db_preparer_serialized_data['section1_preparer_or_translator']) && !empty($db_preparer_serialized_data['section1_preparer_or_translator']) ? $db_preparer_serialized_data['section1_preparer_or_translator'] : '';
 ?>
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message');?>
+                <div class="form-group col-xs-12 col-sm-1 col-md-1 col-lg-1">
+                <a href="<?=base_url('employee_management_system');?>" class="btn btn-info csRadius5">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                </a> 
+                </div>
+
                 <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
                     <a href="<?php echo base_url('hr_documents_management/my_documents'); ?>"
                         class="btn btn-block blue-button"><i class="fa fa-angle-left"></i> Documents</a>
                 </div>
+                <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
+                <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <a href="<?php echo base_url('library_document'); ?>"
+                        class="btn btn-block blue-button"><i class="fa fa-angle-left"></i> Document Library</a>
+                </div>
+                <?php endif; ?>
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header"><span class="section-ttile"><?php echo $title; ?></span></div>
@@ -345,7 +357,7 @@
                                                     src="section_3_signature_of_employee"></i></label>
                                             <?php if ($signed_flag == true) {?>
                                             <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;"
-                                                src="<?php echo $pre_form['section1_emp_signature']; ?>" />
+                                                src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                             <?php } else {?>
                                             <!-- the below loaded view add e-signature -->
                                             <?php $this->load->view('static-pages/e_signature_button');?>
@@ -442,7 +454,7 @@
                                                     src="section_41_signature_of_preparer"></i></label>
                                             <?php if ($signed_flag == true) {?>
                                             <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;"
-                                                src="<?php echo $pre_form['section1_preparer_signature']; ?>" />
+                                                src="<?php echo $pre_form['section1_preparer_signature']; ?>" class="esignaturesize" />
                                             <?php } else {?>
                                             <!-- the below loaded view add e-signature -->
                                             <a class="btn blue-button btn-sm get_prepare_signature_btn"
@@ -656,7 +668,9 @@
                                             <div class="form-group">
                                                 <label>Expiration Date <i class="fa fa-question-circle-o modalShow"
                                                         src="section_5_expiration_date"></i></label>
-                                                <input type="text" name="section2_lista_part1_expiration_date"
+                                                <input type="text" 
+                                                readonly
+                                                name="section2_lista_part1_expiration_date"
                                                     id="section2_lista_part1_expiration_date"
                                                     class="form-control date_picker2">
                                             </div>
@@ -1296,7 +1310,7 @@
 
                                                                 <div class="img-full">
                                                                     <img style="max-height: 150px;"
-                                                                        src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>" />
+                                                                        src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>" class="esignaturesize" />
                                                                 </div>
 
                                                                 <?php }?>
@@ -1587,7 +1601,9 @@ $(document).ready(function() {
     });
     $('.date_picker2').datepicker({
         dateFormat: 'mm-dd-yy',
-        changeYear: true
+        changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo STARTING_DATE_LIMIT; ?>"
     });
     var option_val = '<?php echo isset($pre_form['section1_penalty_of_perjury']) > 0 ? $pre_form['section1_penalty_of_perjury'] : '' ?>';
     if (option_val == 'alien-work') {

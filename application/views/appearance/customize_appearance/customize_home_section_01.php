@@ -26,21 +26,21 @@
 
                                     <li class="form-col-100 autoheight">
                                         <label for="title_section_01">Title</label>
-                                        <input type="text" name="title_section_01" id="title_section_01" class="invoice-fields" placeholder="Title Goes Here" value="<?php echo (isset($section_01_meta['title']) ? $section_01_meta['title'] : ''); ?>" />
+                                        <input type="text" name="title_section_01" id="title_section_01" class="invoice-fields" placeholder="Title Goes Here" value="<?php echo (isset($section_01_meta['title']) && trim($section_01_meta['title'])!='' ? $section_01_meta['title'] : ''); ?>" />
                                     </li>
 
                                     <li class="form-col-100 autoheight">
                                         <label for="section_01_tagline">Tag Line</label>
-                                        <input type="text" name="tag_line_section_01" id="tag_line_section_01" class="invoice-fields" placeholder="Tag Line Goes Here" value="<?php echo (isset($section_01_meta['tag_line']) ? $section_01_meta['tag_line'] : ''); ?>" />
+                                        <input type="text" name="tag_line_section_01" id="tag_line_section_01" class="invoice-fields" placeholder="Tag Line Goes Here" value="<?php echo (isset($section_01_meta['tag_line']) && trim($section_01_meta['tag_line'])!='' ? $section_01_meta['tag_line'] : ''); ?>" />
                                     </li>
 
                                     <!-- Capitalize option section -->
                                     <li class="form-col-100 autoheight">
                                         <div class="questionair_radio_container">
                                             <input 
-                                            type="checkbox" 
-                                            name="show_capitalize_section_01" 
-                                            id="show_capitalize_section_01" 
+                                            type = "checkbox" 
+                                            name = "show_capitalize_section_01" 
+                                            id = "show_capitalize_section_01" 
                                             <?=(isset($section_01_meta['do_capitalize']) && $section_01_meta['do_capitalize'] == 1) || (!isset($section_01_meta['do_capitalize'])) ? 'checked="true"' : '';?>
                                             />
                                             <label for="show_capitalize_section_01">Capitalize text</label>

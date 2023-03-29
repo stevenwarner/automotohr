@@ -10,7 +10,7 @@
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">Expirations Manager</span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Expirations Manager</span>
                     </div>
                     <div class="box-wrapper">
                         <div class="row">

@@ -8,7 +8,7 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                     </div>
                     <div class="form-wrp">
                         <form id="add_new_event" action="" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -514,6 +514,9 @@
 
             $('#display_start_date').datepicker({
                 dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
                 onSelect: function (value) {
                     $('#display_end_date').datepicker('option', 'minDate', value);
                 }
@@ -521,6 +524,9 @@
 
             $('#display_end_date').datepicker({
                 dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
                 onSelect: function (value) {
                     $('#display_start_date').datepicker('option', 'maxDate', value);
                 }
@@ -528,6 +534,9 @@
 
             $('#event_start_date').datepicker({
                 dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
                 onSelect: function (value) {
                     $('#event_end_date').datepicker('option', 'minDate', value);
                 }
@@ -535,13 +544,19 @@
 
             $('#event_end_date').datepicker({
                 dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
                 onSelect: function (value) {
                     $('#event_start_date').datepicker('option', 'maxDate', value);
                 }
             }).datepicker('option', 'minDate', $('#event_start_date').val());
 
             $('#new_hire_joining_date').datepicker({
-                dateFormat: 'mm-dd-yy'
+                dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
             });
 
 

@@ -875,7 +875,7 @@ class Incident_reporting_system extends Public_Controller
 
 
 
-                            $from = TO_EMAIL_DEV;
+                            $from = FROM_EMAIL_NOTIFICATIONS;
                             $to = $receiver_email;
 
                             $body = $email_hf['header']
@@ -1354,7 +1354,7 @@ class Incident_reporting_system extends Public_Controller
                         $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
 
-                        $from = TO_EMAIL_DEV;
+                        $from = FROM_EMAIL_NOTIFICATIONS;
                         $to = $manual_email;
 
                         $body = $email_hf['header']
@@ -1462,7 +1462,7 @@ class Incident_reporting_system extends Public_Controller
                             $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
 
-                            $from = TO_EMAIL_DEV;
+                            $from = FROM_EMAIL_NOTIFICATIONS;
                             $to = $receiver_email;
 
                             $body = $email_hf['header']
@@ -2127,7 +2127,7 @@ class Incident_reporting_system extends Public_Controller
 
 
 
-                    $from = TO_EMAIL_DEV;
+                    $from = FROM_EMAIL_NOTIFICATIONS;
                     $to = $manual_email;
 
                     $body = $email_hf['header']
@@ -2269,7 +2269,7 @@ class Incident_reporting_system extends Public_Controller
                         $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
 
-                        $from = TO_EMAIL_DEV;
+                        $from = FROM_EMAIL_NOTIFICATIONS;
                         $to = $receiver_email;
 
                         $body = $email_hf['header']

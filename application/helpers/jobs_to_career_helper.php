@@ -56,7 +56,7 @@ if (!function_exists('curl_make_api_call')) {
         $email_body .= 'Request Data: ' . $data . PHP_EOL;
         $email_body .= 'Request Result: ' . $result . PHP_EOL;
 
-        mail(FROM_EMAIL_DEV, 'Jobs2Career Debug Email', $email_body);
+        mail(TO_EMAIL_DEV, 'Jobs2Career Debug Email', $email_body);
 
         //Send eMail To dev - end
 

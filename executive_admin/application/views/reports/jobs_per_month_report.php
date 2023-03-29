@@ -11,17 +11,17 @@
                 </div>
                 <!-- search form drop down -->
                 <div class="hr-search-criteria <?php
-                if (isset($flag) && $flag == true) {
-                    echo 'opened';
-                }
-                ?>">
+                                                if (isset($flag) && $flag == true) {
+                                                    echo 'opened';
+                                                }
+                                                ?>">
                     <strong>Click to modify search criteria</strong>
                 </div>
                 <div class="hr-search-main" <?php
-                if (isset($flag) && $flag == true) {
-                    echo "style='display:block'";
-                }
-                ?>>
+                                            if (isset($flag) && $flag == true) {
+                                                echo "style='display:block'";
+                                            }
+                                            ?>>
                     <!-- search form -->
                     <form method="GET" action="<?php echo base_url('reports/jobs_per_month_report/' . $company_sid); ?>" name="search" id="search">
                         <div class="row">
@@ -35,13 +35,13 @@
                                         <select class="invoice-fields" name="year" id="year">
                                             <?php for ($i = 2015; $i < 2025; $i++) { ?>
                                                 <option value="<?php echo $i; ?>" <?php
-                                                if (isset($search['year']) && $search['year'] == $i) {
-                                                    echo 'selected';
-                                                } else if (!(isset($search['year'])) && date("Y") == $i) {
-                                                    echo 'selected';
-                                                }
-                                                ?>><?php echo $i; ?></option>
-                                                    <?php } ?>
+                                                                                    if (isset($search['year']) && $search['year'] == $i) {
+                                                                                        echo 'selected';
+                                                                                    } else if (!(isset($search['year'])) && date("Y") == $i) {
+                                                                                        echo 'selected';
+                                                                                    }
+                                                                                    ?>><?php echo $i; ?></option>
+                                            <?php } ?>
                                         </select>
                                     </div>
                                 </div>
@@ -52,8 +52,8 @@
                                 <div class="col-lg-5 col-md-5 col-xs-8 col-sm-5">
                                     <div class="hr-select-dropdown">
                                         <select class="invoice-fields" name="status" id="status">
-                                            <option value="0" <?php if(!$status) echo 'selected';?>>All</option>
-                                            <option value="1" <?php if($status) echo 'selected';?>>Hired</option>
+                                            <option value="0" <?php if (!$status) echo 'selected'; ?>>All</option>
+                                            <option value="1" <?php if ($status) echo 'selected'; ?>>Hired</option>
                                         </select>
                                     </div>
                                 </div>
@@ -67,18 +67,18 @@
                     </form>
                     <!-- search form -->
                 </div>
-                <!-- search form drop down -->     
+                <!-- search form drop down -->
                 <?php if (isset($jobs) && sizeof($jobs) > 0) { ?>
-                <div class="bt-panel">
-                    <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                        <i class="fa fa-print" aria-hidden="true"></i>
-                        Print
-                    </a>
-                    <form method="post" id="export" name="export">
-                        <input type="hidden" name="submit" value="Export" />
-                        <button type="submit" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export To Excel</button>
-                    </form>
-                </div>
+                    <div class="bt-panel">
+                        <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
+                            <i class="fa fa-print" aria-hidden="true"></i>
+                            Print
+                        </a>
+                        <form method="post" id="export" name="export">
+                            <input type="hidden" name="submit" value="Export" />
+                            <button type="submit" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export To Excel</button>
+                        </form>
+                    </div>
                 <?php } ?>
                 <div id="print_div">
                     <?php if (isset($jobs) && sizeof($jobs) > 0) { ?>
@@ -105,7 +105,8 @@
                                                             <tr>
                                                                 <td style="color:<?php echo (($job['Title'] != 'Job Deleted' && $job['Title'] != '') ? 'green' : 'red'); ?>"><?php echo ($job['Title'] != '' ? $job['Title'] : 'Job Removed From System'); ?></td>
                                                                 <td class="text-center">
-<!--                                                                    --><?php //echo date_with_time($job['hired_date']); ?>
+                                                                    <!--                                                                    --><?php //echo date_with_time($job['hired_date']); 
+                                                                                                                                                ?>
                                                                     <?php echo reset_datetime(array(
                                                                         'datetime' => $job['hired_date'],
                                                                         // 'from_format' => 'h:iA', // Y-m-d H:i:s
@@ -119,7 +120,7 @@
                                                         <?php } ?>
                                                     <?php } else { ?>
                                                         <tr>
-                                                            <td class="text-center" colspan="2" >No Jobs Found</td>
+                                                            <td class="text-center" colspan="2">No Jobs Found</td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>
@@ -148,22 +149,22 @@
                                             </td>
                                         </tr>
                                     </tbody>
-                                </table>                                                        
+                                </table>
                             </div>
                         </div>
                     <?php } ?>
                 </div>
                 <?php if (isset($jobs) && sizeof($jobs) > 0) { ?>
-                <div class="bt-panel">
-                    <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                        <i class="fa fa-print" aria-hidden="true"></i>
-                        Print
-                    </a>
-                    <form method="post" id="export" name="export">
-                        <input type="hidden" name="submit" value="Export" />
-                        <button type="submit" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export To Excel</button>
-                    </form>
-                </div>
+                    <div class="bt-panel">
+                        <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
+                            <i class="fa fa-print" aria-hidden="true"></i>
+                            Print
+                        </a>
+                        <form method="post" id="export" name="export">
+                            <input type="hidden" name="submit" value="Export" />
+                            <button type="submit" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export To Excel</button>
+                        </form>
+                    </div>
                 <?php } ?>
             </div>
         </div>
@@ -171,23 +172,27 @@
 </div>
 <script type="text/javascript">
     $(document).keypress(function(e) {
-        if(e.which == 13) {
+        if (e.which == 13) {
             // enter pressed
             $('#apply_filters_submit').click();
         }
     });
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Search Area Toggle Function    
         jQuery('.hr-search-criteria').click(function() {
             jQuery(this).next().slideToggle('1000');
             jQuery(this).toggleClass("opened");
         });
 
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
     });
 
-    function print_page(elem)
-    {
+    function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
 

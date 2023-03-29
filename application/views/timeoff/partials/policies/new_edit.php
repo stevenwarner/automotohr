@@ -1,6 +1,6 @@
 <div class="js-page p10" id="js-page-edit" style="display: none;">
 
-    <div class="csPageHeader <?php echo $this->agent->is_mobile() ? 'csMobileWrap' : '';?>">
+    <div class="csPageHeader <?php echo $this->agent->is_mobile() ? 'csMobileWrap' : ''; ?>">
         <div class="row">
             <div class="col-sm-6">
                 <h4>
@@ -38,13 +38,27 @@
                             <!--  -->
                             <?php $this->load->view('timeoff/partials/note'); ?>
 
+                            <div class="row mb10 csRow" id="js-policy-type-box-edit">
+                                <div class="col-md-6 offset-md-3">
+                                    <div class="form-group margin-bottom-custom">
+                                        <label>Policy Category<span class="cs-required">*</span> <i class="fa fa-question-circle" data-hint="js-hint" data-target="type"></i></label>
+                                        <div class="js-hint js-hint-type">Policy can be paid or unpaid
+                                        </div>
+                                        <div>
+                                            <select id="js-policy-type-edit">
+                                                <option value="0">Unpaid</option>
+                                                <option value="1">Paid</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Policy Type - Edit -->
                             <div class="row mb10 csRow" id="js-policy-categories-edit">
                                 <div class="col-md-6 offset-md-3">
                                     <div class="form-group margin-bottom-custom">
-                                        <label><?php echo $get_policy_item_info['policy_type_label']; ?> <span
-                                                class="cs-required">*</span> <i class="fa fa-question-circle"
-                                                data-hint="js-hint" data-target="type"></i></label>
+                                        <label><?php echo $get_policy_item_info['policy_type_label']; ?> <span class="cs-required">*</span> <i class="fa fa-question-circle" data-hint="js-hint" data-target="type"></i></label>
                                         <div class="js-hint js-hint-type">
                                             <?php echo $get_policy_item_info['type_info']; ?>
                                         </div>
@@ -62,15 +76,13 @@
                                         <div class="form-group margin-bottom-custom">
                                             <label class=""><?php echo $get_policy_item_info['policy_title_label']; ?>
                                                 <span class="cs-required">*</span>
-                                                <i class="fa fa-question-circle" data-hint="js-hint"
-                                                    data-target="info"></i>
+                                                <i class="fa fa-question-circle" data-hint="js-hint" data-target="info"></i>
                                             </label>
                                             <div class="js-hint js-hint-info">
                                                 <?php echo $get_policy_item_info['policy_title_info']; ?>
                                             </div>
                                             <div>
-                                                <input class="invoice-fields" name="policyTitle"
-                                                    id="js-policy-title-edit" placeholder="Sick leave" />
+                                                <input class="invoice-fields" name="policyTitle" id="js-policy-title-edit" placeholder="Sick leave" />
                                             </div>
                                         </div>
                                     </div>
@@ -95,16 +107,33 @@
                             <!-- Policy Entitled Employees - Edit -->
                             <div class="row mb10 csRow">
                                 <div class="col-sm-6 col-xs-12">
-                                    <label><?php echo $get_policy_item_info['non_employees_label']; ?>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="employees"></i>
+                                    <label class="control control--radio">
+                                        <?php echo $get_policy_item_info['non_employees_label']; ?>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees"></i>
+
+                                        <input type="radio" class="jsIsEntitledEmployee" name="is_entitled_employee" value="0" id="NonEntitledEmployees" checked>
+                                        <div class="control__indicator"></div>
                                     </label>
+                                    <br>
+                                    <label class="control control--radio">
+                                        <?php echo $get_policy_item_info['entitled_employee_label']; ?>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees2"></i>
+
+                                        <input type="radio" class="jsIsEntitledEmployee" name="is_entitled_employee" value="1" id="EntitledEmployees" />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                    <br>
+                                    <br>
                                     <div class="js-hint js-hint-employees">
+                                        <?php echo $get_policy_item_info['non_entitled_employee_info']; ?>
+                                    </div>
+                                    <div class="js-hint js-hint-employees2">
                                         <?php echo $get_policy_item_info['entitled_employee_info']; ?>
                                     </div>
+
+
                                     <div>
-                                        <select class="invoice-fields" name="template[]" id="js-employee-edit"
-                                            multiple="true">
+                                        <select class="invoice-fields" name="template[]" id="js-employee-edit" multiple="true">
                                         </select>
                                     </div>
                                 </div>
@@ -115,14 +144,12 @@
                                 <div class="col-sm-6 col-xs-12">
                                     <label><?php echo $get_policy_item_info['employees_type_label']; ?>
                                         <span class="cs-required">*</span>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="employees-type"></i>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees-type"></i>
                                     </label>
                                     <div class="js-hint js-hint-employees-type">
                                         <?php echo $get_policy_item_info['employees_type_info']; ?></div>
                                     <div>
-                                        <select class="invoice-fields" name="templatesadas2[]"
-                                            id="js-employee-type-edit" multiple="true">
+                                        <select class="invoice-fields" name="templatesadas2[]" id="js-employee-type-edit" multiple="true">
                                             <option value="all">All</option>
                                             <option value="fulltime">Full-time</option>
                                             <option value="parttime">Part-time</option>
@@ -136,31 +163,33 @@
                                 <div class="col-sm-6 col-xs-12">
                                     <label><?php echo $get_policy_item_info['week_off_days_info']; ?>
                                     </label>
-                                        <select name="templatedayedit[]" id="js-off-days-edit"
-                                            multiple="true">
-                                                <option value="monday">Monday</option>
-                                                <option value="tuesday">Tuesday</option>
-                                                <option value="wednesday">Wednesday</option>    
-                                                <option value="thursday">Thursday</option>
-                                                <option value="friday">Friday</option>
-                                                <option value="saturday">Saturday</option>
-                                                <option value="sunday">Sunday</option>
-                                        </select>
+                                    <select name="templatedayedit[]" id="js-off-days-edit" multiple="true">
+                                        <option value="monday">Monday</option>
+                                        <option value="tuesday">Tuesday</option>
+                                        <option value="wednesday">Wednesday</option>
+                                        <option value="thursday">Thursday</option>
+                                        <option value="friday">Friday</option>
+                                        <option value="saturday">Saturday</option>
+                                        <option value="sunday">Sunday</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <div class="row mb10 csRow">
+                            <div class="row mb10">
                                 <div class="col-sm-6 col-xs-12">
                                     <div class="">
                                         <label class="control control--checkbox">
-                                            <input type="checkbox" id="js-approver-check-edit" />
+                                            <input type="checkbox" id="js-approver-check-edit" data-type="edit" />
                                             <?php echo $get_policy_item_info['approvers_can_see_label']; ?>
                                             <span class="control__indicator"></span>
                                         </label>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="approvers"></i>
-                                        <div class="js-hint js-hint-approvers">
-                                            <?php echo $get_policy_item_info['approvers_only']; ?></div>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="approvers"></i>
+                                        <div class="js-hint js-hint-approvers">The policy will only be visible to selected approvers.</div>
+                                    </div>
+                                    <!-- To allow approvers -->
+                                    <div class="jsMultipleApproverList" data-type="edit">
+                                        <br>
+                                        <select class="invoice-fields" name="jsMultipleApproversListsEdit[]" id="js-approvers-list-edit" multiple="true"></select>
                                     </div>
                                 </div>
                             </div>
@@ -173,8 +202,7 @@
                                             <?php echo $get_policy_item_info['deactivate_label']; ?>
                                             <span class="control__indicator"></span>
                                         </label>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="deactivate"></i>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="deactivate"></i>
                                         <div class="js-hint js-hint-deactivate">
                                             <?php echo $get_policy_item_info['deactivate_policy']; ?>
                                         </div>
@@ -206,29 +234,23 @@
                                 <div class="col-lg-6">
                                     <div>
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-edit" value="standard_year"
-                                                class="js-fmla-range-edit" />&nbsp;Standard Year (Jan-Dec)
+                                            <input type="radio" name="fmla-range-edit" value="standard_year" class="js-fmla-range-edit" />&nbsp;Standard Year (Jan-Dec)
                                             <div class="control__indicator"></div>
                                         </label> <br />
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-edit" value="employee_start_date"
-                                                class="js-fmla-range-edit" />&nbsp;Employee Start Date
+                                            <input type="radio" name="fmla-range-edit" value="employee_start_date" class="js-fmla-range-edit" />&nbsp;Employee Start Date
                                             <div class="control__indicator"></div>
                                         </label> <br />
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-edit" value="start_year"
-                                                class="js-fmla-range-edit" />&nbsp;Starting
+                                            <input type="radio" name="fmla-range-edit" value="start_year" class="js-fmla-range-edit" />&nbsp;Starting
                                             from First FMLA usage
-                                            <i class="fa fa-question-circle js-popover"
-                                                data-content="The 12-month period measured forward from the date of your first FMLA leave usage."></i>
+                                            <i class="fa fa-question-circle js-popover" data-content="The 12-month period measured forward from the date of your first FMLA leave usage."></i>
                                             <div class="control__indicator"></div>
                                         </label> <br />
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-edit" value="end_year"
-                                                class="js-fmla-range-edit" />&nbsp;Ending on
+                                            <input type="radio" name="fmla-range-edit" value="end_year" class="js-fmla-range-edit" />&nbsp;Ending on
                                             your First FMLA usage
-                                            <i class="fa fa-question-circle js-popover"
-                                                data-content="A “rolling” 12-month period measured backward from the date of any FMLA leave usage."></i>
+                                            <i class="fa fa-question-circle js-popover" data-content="A “rolling” 12-month period measured backward from the date of any FMLA leave usage."></i>
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
@@ -254,41 +276,33 @@
                                     <!--  -->
                                     <div>
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['minimum_applicable_time_label']; ?> <i
-                                                class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="minimum-hours"></i></h5>
+                                            <?php echo $get_policy_item_info['minimum_applicable_time_label']; ?> <i class="fa fa-question-circle" data-hint="js-hint" data-target="minimum-hours"></i></h5>
                                         <div class="js-hint js-hint-minimum-hours">
                                             <?php echo $get_policy_item_info['minimum_applicable_hours_info']; ?></div>
                                         <div>
                                             <label class="control control--radio">
                                                 Hours &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-edit"
-                                                    class="js-minimum-applicable-time-edit" checked="true"
-                                                    value="hours" />
+                                                <input type="radio" name="js-minimum-applicable-time-edit" class="js-minimum-applicable-time-edit" checked="true" value="hours" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio">
                                                 Days &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-edit"
-                                                    class="js-minimum-applicable-time-edit" value="days" />
+                                                <input type="radio" name="js-minimum-applicable-time-edit" class="js-minimum-applicable-time-edit" value="days" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio">
                                                 Months &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-edit"
-                                                    class="js-minimum-applicable-time-edit" value="months" />
+                                                <input type="radio" name="js-minimum-applicable-time-edit" class="js-minimum-applicable-time-edit" value="months" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio">
                                                 Years &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-edit"
-                                                    class="js-minimum-applicable-time-edit" value="years" />
+                                                <input type="radio" name="js-minimum-applicable-time-edit" class="js-minimum-applicable-time-edit" value="years" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
                                         <div style="margin-top: 5px;">
-                                            <input class="invoice-fields" name="template"
-                                                id="js-minimum-applicable-hours-edit" />
+                                            <input class="invoice-fields" name="template" id="js-minimum-applicable-hours-edit" />
                                         </div>
                                     </div>
                                 </div>
@@ -299,10 +313,8 @@
                                 <div class="col-sm-6">
                                     <div>
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_method_label']; ?> <span
-                                                class="cs-required">*</span>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="method"></i>
+                                            <?php echo $get_policy_item_info['accrual_method_label']; ?> <span class="cs-required">*</span>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="method"></i>
                                         </h5>
                                         <div class="js-hint js-hint-method">
                                             <?php echo $get_policy_item_info['accrual_method_info']; ?>
@@ -322,8 +334,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_time_label']; ?> <span
-                                                class="cs-required">*</span>
+                                            <?php echo $get_policy_item_info['accrual_time_label']; ?> <span class="cs-required">*</span>
                                             <i class="fa fa-question-circle" data-hint="js-hint" data-target="info"></i>
                                         </h5>
                                         <div class="js-hint js-hint-info">
@@ -346,14 +357,11 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_frequency_label']; ?> <span
-                                                class="cs-required">*</span> <i class="fa fa-question-circle"
-                                                data-hint="js-hint" data-target="frequency"></i></h5>
+                                            <?php echo $get_policy_item_info['accrual_frequency_label']; ?> <span class="cs-required">*</span> <i class="fa fa-question-circle" data-hint="js-hint" data-target="frequency"></i></h5>
                                         <div class="js-hint js-hint-frequency">
                                             <?php echo $get_policy_item_info['accrual_frequency_info']; ?></div>
                                         <div>
-                                            <select class="invoice-fields" name="template"
-                                                id="js-accrual-frequency-edit">
+                                            <select class="invoice-fields" name="template" id="js-accrual-frequency-edit">
                                                 <option value="none" selected="true">None</option>
                                                 <option value="yearly">Yearly</option>
                                                 <option value="monthly">Monthly</option>
@@ -363,8 +371,7 @@
                                         <div class="jsCustomBoxAdd" style="margin-top: 5px; display: none;">
                                             <span>Every</span>
                                             <div class="form-group form-group-custom form-group-custom-settings">
-                                                <input class="form-control form-control-custom"
-                                                    id="js-accrual-frequency-val-edit" />
+                                                <input class="form-control form-control-custom" id="js-accrual-frequency-val-edit" />
                                             </div>
                                             <span> month(s).</span>
                                         </div>
@@ -377,20 +384,17 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_rate_label']; ?> <span
-                                                class="cs-required">*</span>
+                                            <?php echo $get_policy_item_info['accrual_rate_label']; ?> <span class="cs-required">*</span>
                                             <i class="fa fa-question-circle" data-hint="js-hint" data-target="rate"></i>
                                         </h5>
                                         <div class="js-hint js-hint-rate">
                                             <?php echo $get_policy_item_info['accrual_rate_info']; ?></div>
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <input class="form-control" name="template" id="js-accrual-rate-edit"
-                                                    autocomplete="off" />
+                                                <input class="form-control" name="template" id="js-accrual-rate-edit" autocomplete="off" />
                                             </div>
                                             <div class="col-sm-4">
-                                                <select class="form-control jsTimeTypeSelect-edit"
-                                                    id="js-accrual-rate-type-edit">
+                                                <select class="form-control jsTimeTypeSelect-edit" id="js-accrual-rate-type-edit">
                                                     <option value="days">Day(s)</option>
                                                 </select>
                                             </div>
@@ -407,8 +411,7 @@
                                         <?php echo $get_policy_item_info['accruals_plans_label']; ?>
                                         <i class="fa fa-question-circle" data-hint="js-hint" data-target="plans"></i>
                                         <span class="pull-right">
-                                            <button class="btn btn-orange js-plan-btn-edit" data-type="edit"
-                                                style="margin-top: -5px;"><i class="fa fa-plus"></i>&nbsp; Add
+                                            <button class="btn btn-orange js-plan-btn-edit" data-type="edit" style="margin-top: -5px;"><i class="fa fa-plus"></i>&nbsp; Add
                                                 Plan</button>
                                         </span>
                                     </h4>
@@ -441,16 +444,13 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['carry_over_label']; ?> <span
-                                                class="cs-required">*</span>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="carycheck"></i>
+                                            <?php echo $get_policy_item_info['carry_over_label']; ?> <span class="cs-required">*</span>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="carycheck"></i>
                                         </h5>
                                         <div class="js-hint js-hint-carycheck">
                                             <?php echo $get_policy_item_info['allow_carryover_cap_info']; ?></div>
                                         <div>
-                                            <select class="invoice-fields" name="template"
-                                                id="js-carryover-cap-check-edit">
+                                            <select class="invoice-fields" name="template" id="js-carryover-cap-check-edit">
                                                 <option value="yes" selected="true">Yes</option>
                                                 <option value="no">No</option>
                                             </select>
@@ -465,19 +465,16 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['carryover_cap_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="caryval"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="caryval"></i>
                                         </h5>
                                         <div class="js-hint js-hint-caryval">
                                             <?php echo $get_policy_item_info['carryover_cap_info']; ?></div>
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <input class="form-control" name="template"
-                                                    id="js-carryover-cap-edit" />
+                                                <input class="form-control" name="template" id="js-carryover-cap-edit" />
                                             </div>
                                             <div class="col-sm-4">
-                                                <select class="form-control jsTimeTypeSelect-edit"
-                                                    id="js-accrual-carryover-type-edit"></select>
+                                                <select class="form-control jsTimeTypeSelect-edit" id="js-accrual-carryover-type-edit"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -502,8 +499,7 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['negative_balance_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="negativecheck"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="negativecheck"></i>
                                         </h5>
                                         <div class="js-hint js-hint-negativecheck">
                                             <?php echo $get_policy_item_info['allow_negative_balance_info']; ?></div>
@@ -523,20 +519,17 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['negative_balance_limit_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="negativeval"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="negativeval"></i>
                                         </h5>
                                         <div class="js-hint js-hint-negativeval">
                                             <?php echo $get_policy_item_info['new_hire_maximum_days_off_HD_info']; ?>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <input class="form-control" name="template"
-                                                    id="js-maximum-balance-edit" />
+                                                <input class="form-control" name="template" id="js-maximum-balance-edit" />
                                             </div>
                                             <div class="col-sm-4">
-                                                <select class="form-control jsTimeTypeSelect-edit"
-                                                    id="js-accrual-negative-balance-type-edit"></select>
+                                                <select class="form-control jsTimeTypeSelect-edit" id="js-accrual-negative-balance-type-edit"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -559,9 +552,7 @@
                             <div class="row mb10 csRow">
                                 <div class="col-lg-12">
                                     <h5 class="timeline-title allowed-time-off-title-custom">
-                                        <?php echo $get_policy_item_info['applicable_date_label']; ?> <i
-                                            class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="applicable-date"></i></h5>
+                                        <?php echo $get_policy_item_info['applicable_date_label']; ?> <i class="fa fa-question-circle" data-hint="js-hint" data-target="applicable-date"></i></h5>
                                     <div class="js-hint js-hint-applicable-date">
                                         <?php echo $get_policy_item_info['applicable_date_for_policy_info']; ?>
                                     </div>
@@ -570,20 +561,17 @@
                                     <div class="">
                                         <label class="control control--radio">
                                             <?php echo $get_policy_item_info['employee_joining_date_label']; ?>
-                                            <input type="radio" name="js-hire-date-edit" checked="true" value="hireDate"
-                                                class="js-hire-date-edit" />
+                                            <input type="radio" name="js-hire-date-edit" checked="true" value="hireDate" class="js-hire-date-edit" />
                                             <div class="control__indicator"></div>
                                         </label>
                                         <br />
                                         <label class="control control--radio">
                                             <?php echo $get_policy_item_info['pick_a_date_label']; ?>
-                                            <input type="radio" name="js-hire-date-edit" value="customHireDate"
-                                                class="js-hire-date-edit" />
+                                            <input type="radio" name="js-hire-date-edit" value="customHireDate" class="js-hire-date-edit" />
                                             <div class="control__indicator"></div>
                                         </label>
                                         <div class="jsImplementDateBox-edit" style="display: none; margin-top: 5px;">
-                                            <input type="text" readonly="true" class="invoice-fields"
-                                                id="js-custom-date-edit" />
+                                            <input type="text" readonly="true" class="invoice-fields" id="js-custom-date-edit" />
                                         </div>
                                     </div>
                                     <br />
@@ -613,8 +601,7 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['reset_date_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="reset-date"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="reset-date"></i>
                                         </h5>
                                         <div class="js-hint js-hint-reset-date">
                                             <?php echo $get_policy_item_info['reset_date_info']; ?>
@@ -622,21 +609,17 @@
                                         <div class="">
                                             <label class="control control--radio">
                                                 <?php echo $get_policy_item_info['reset_date_1_label']; ?>
-                                                <input type="radio" name="js-policy-reset-date-edit"
-                                                    class="js-policy-reset-date-edit" checked="true"
-                                                    value="policyDate" />
+                                                <input type="radio" name="js-policy-reset-date-edit" class="js-policy-reset-date-edit" checked="true" value="policyDate" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <br />
                                             <label class="control control--radio">
                                                 <?php echo $get_policy_item_info['reset_date_2_label']; ?>
-                                                <input type="radio" name="js-policy-reset-date-edit"
-                                                    class="js-policy-reset-date-edit" value="policyDateCustom" />
+                                                <input type="radio" name="js-policy-reset-date-edit" class="js-policy-reset-date-edit" value="policyDateCustom" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <div class="jsResetDateBox-edit" style="display: none; margin-top: 5px;">
-                                                <input type="text" readonly="true" class="invoice-fields"
-                                                    id="js-custom-reset-date-edit" />
+                                                <input type="text" readonly="true" class="invoice-fields" id="js-custom-reset-date-edit" />
                                             </div>
                                         </div>
                                     </div>
@@ -676,8 +659,7 @@
                                     <span></span>
                                     <div class="form-group form-group-custom form-group-custom-settings">
                                         <input class="form-control" id="js-accrue-new-hire-edit" />
-                                    </div><span> <select class="form-control" style="width: 200px; display: inline;"
-                                            id="js-accrual-new-hire-time-type-edit">
+                                    </div><span> <select class="form-control" style="width: 200px; display: inline;" id="js-accrual-new-hire-time-type-edit">
                                             <option value="hours">Hours</option>
                                             <option value="days">Days</option>
                                             <option value="months">Months</option>
@@ -693,8 +675,7 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['probation_period_rate_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="newhiretime"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="newhiretime"></i>
                                         </h5>
                                         <div class="js-hint js-hint-newhiretime">
                                             <?php echo $get_policy_item_info['new_hire_maximum_days_off_info']; ?></div>
@@ -728,9 +709,7 @@
                             <div class="row mb10 csRow" id="js-policy-categories-reset">
                                 <div class="col-md-6 offset-md-3">
                                     <div class="form-group margin-bottom-custom">
-                                        <label><?php echo $get_policy_item_info['policy_type_label']; ?> <span
-                                                class="cs-required">*</span> <i class="fa fa-question-circle"
-                                                data-hint="js-hint" data-target="type"></i></label>
+                                        <label><?php echo $get_policy_item_info['policy_type_label']; ?> <span class="cs-required">*</span> <i class="fa fa-question-circle" data-hint="js-hint" data-target="type"></i></label>
                                         <div class="js-hint js-hint-type">
                                             <?php echo $get_policy_item_info['type_info']; ?>
                                         </div>
@@ -748,15 +727,13 @@
                                         <div class="form-group margin-bottom-custom">
                                             <label class=""><?php echo $get_policy_item_info['policy_title_label']; ?>
                                                 <span class="cs-required">*</span>
-                                                <i class="fa fa-question-circle" data-hint="js-hint"
-                                                    data-target="info"></i>
+                                                <i class="fa fa-question-circle" data-hint="js-hint" data-target="info"></i>
                                             </label>
                                             <div class="js-hint js-hint-info">
                                                 <?php echo $get_policy_item_info['policy_title_info']; ?>
                                             </div>
                                             <div>
-                                                <input class="invoice-fields" name="policyTitle"
-                                                    id="js-policy-title-reset" placeholder="Sick leave" />
+                                                <input class="invoice-fields" name="policyTitle" id="js-policy-title-reset" placeholder="Sick leave" />
                                             </div>
                                         </div>
                                     </div>
@@ -782,15 +759,13 @@
                             <div class="row mb10 csRow">
                                 <div class="col-sm-6 col-xs-12">
                                     <label><?php echo $get_policy_item_info['non_employees_label']; ?>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="employees"></i>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees"></i>
                                     </label>
                                     <div class="js-hint js-hint-employees">
                                         <?php echo $get_policy_item_info['entitled_employee_info']; ?>
                                     </div>
                                     <div>
-                                        <select class="invoice-fields" name="template[]" id="js-employee-reset"
-                                            multiple="true">
+                                        <select class="invoice-fields" name="template[]" id="js-employee-reset" multiple="true">
                                         </select>
                                     </div>
                                 </div>
@@ -801,14 +776,12 @@
                                 <div class="col-sm-6 col-xs-12">
                                     <label><?php echo $get_policy_item_info['non_employees_label']; ?>
                                         <span class="cs-required">*</span>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="employees"></i>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees"></i>
                                     </label>
                                     <div class="js-hint js-hint-employees">
                                         <?php echo $get_policy_item_info['entitled_employee_info']; ?></div>
                                     <div>
-                                        <select class="invoice-fields" name="templatesadasdas2[]"
-                                            id="js-employee-type-reset" multiple="true">
+                                        <select class="invoice-fields" name="templatesadasdas2[]" id="js-employee-type-reset" multiple="true">
                                             <option value="all">All</option>
                                             <option value="fulltime">Full-time</option>
                                             <option value="parttime">Part-time</option>
@@ -825,8 +798,7 @@
                                             <?php echo $get_policy_item_info['approvers_can_see_label']; ?>
                                             <span class="control__indicator"></span>
                                         </label>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="approvers"></i>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="approvers"></i>
                                         <div class="js-hint js-hint-approvers">
                                             <?php echo $get_policy_item_info['approvers_only']; ?></div>
                                     </div>
@@ -841,8 +813,7 @@
                                             <?php echo $get_policy_item_info['deactivate_label']; ?>
                                             <span class="control__indicator"></span>
                                         </label>
-                                        <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="deactivate"></i>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="deactivate"></i>
                                         <div class="js-hint js-hint-deactivate">
                                             <?php echo $get_policy_item_info['deactivate_policy']; ?>
                                         </div>
@@ -874,29 +845,23 @@
                                 <div class="col-lg-6">
                                     <div>
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-reset" value="standard_year"
-                                                class="js-fmla-range-reset" />&nbsp;Standard Year (Jan-Dec)
+                                            <input type="radio" name="fmla-range-reset" value="standard_year" class="js-fmla-range-reset" />&nbsp;Standard Year (Jan-Dec)
                                             <div class="control__indicator"></div>
                                         </label> <br />
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-reset" value="employee_start_date"
-                                                class="js-fmla-range-reset" />&nbsp;Employee Start Date
+                                            <input type="radio" name="fmla-range-reset" value="employee_start_date" class="js-fmla-range-reset" />&nbsp;Employee Start Date
                                             <div class="control__indicator"></div>
                                         </label> <br />
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-reset" value="start_year"
-                                                class="js-fmla-range-reset" />&nbsp;Starting
+                                            <input type="radio" name="fmla-range-reset" value="start_year" class="js-fmla-range-reset" />&nbsp;Starting
                                             from First FMLA usage
-                                            <i class="fa fa-question-circle js-popover"
-                                                data-content="The 12-month period measured forward from the date of your first FMLA leave usage."></i>
+                                            <i class="fa fa-question-circle js-popover" data-content="The 12-month period measured forward from the date of your first FMLA leave usage."></i>
                                             <div class="control__indicator"></div>
                                         </label> <br />
                                         <label class="control control--radio">
-                                            <input type="radio" name="fmla-range-reset" value="end_year"
-                                                class="js-fmla-range-reset" />&nbsp;Ending on
+                                            <input type="radio" name="fmla-range-reset" value="end_year" class="js-fmla-range-reset" />&nbsp;Ending on
                                             your First FMLA usage
-                                            <i class="fa fa-question-circle js-popover"
-                                                data-content="A “rolling” 12-month period measured backward from the date of any FMLA leave usage."></i>
+                                            <i class="fa fa-question-circle js-popover" data-content="A “rolling” 12-month period measured backward from the date of any FMLA leave usage."></i>
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
@@ -922,41 +887,33 @@
                                     <!--  -->
                                     <div>
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['minimum_applicable_time_label']; ?> <i
-                                                class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="minimum-hours"></i></h5>
+                                            <?php echo $get_policy_item_info['minimum_applicable_time_label']; ?> <i class="fa fa-question-circle" data-hint="js-hint" data-target="minimum-hours"></i></h5>
                                         <div class="js-hint js-hint-minimum-hours">
                                             <?php echo $get_policy_item_info['minimum_applicable_hours_info']; ?></div>
                                         <div>
                                             <label class="control control--radio">
                                                 Hours &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-reset"
-                                                    class="js-minimum-applicable-time-reset" checked="true"
-                                                    value="hours" />
+                                                <input type="radio" name="js-minimum-applicable-time-reset" class="js-minimum-applicable-time-reset" checked="true" value="hours" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio">
                                                 Days &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-reset"
-                                                    class="js-minimum-applicable-time-reset" value="days" />
+                                                <input type="radio" name="js-minimum-applicable-time-reset" class="js-minimum-applicable-time-reset" value="days" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio">
                                                 Months &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-reset"
-                                                    class="js-minimum-applicable-time-reset" value="months" />
+                                                <input type="radio" name="js-minimum-applicable-time-reset" class="js-minimum-applicable-time-reset" value="months" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio">
                                                 Years &nbsp;&nbsp;
-                                                <input type="radio" name="js-minimum-applicable-time-reset"
-                                                    class="js-minimum-applicable-time-reset" value="years" />
+                                                <input type="radio" name="js-minimum-applicable-time-reset" class="js-minimum-applicable-time-reset" value="years" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
                                         <div style="margin-top: 5px;">
-                                            <input class="invoice-fields" name="template"
-                                                id="js-minimum-applicable-hours-reset" />
+                                            <input class="invoice-fields" name="template" id="js-minimum-applicable-hours-reset" />
                                         </div>
                                     </div>
                                 </div>
@@ -967,10 +924,8 @@
                                 <div class="col-sm-6">
                                     <div>
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_method_label']; ?> <span
-                                                class="cs-required">*</span>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="method"></i>
+                                            <?php echo $get_policy_item_info['accrual_method_label']; ?> <span class="cs-required">*</span>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="method"></i>
                                         </h5>
                                         <div class="js-hint js-hint-method">
                                             <?php echo $get_policy_item_info['accrual_method_info']; ?>
@@ -990,8 +945,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_time_label']; ?> <span
-                                                class="cs-required">*</span>
+                                            <?php echo $get_policy_item_info['accrual_time_label']; ?> <span class="cs-required">*</span>
                                             <i class="fa fa-question-circle" data-hint="js-hint" data-target="info"></i>
                                         </h5>
                                         <div class="js-hint js-hint-info">
@@ -1014,14 +968,11 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_frequency_label']; ?> <span
-                                                class="cs-required">*</span> <i class="fa fa-question-circle"
-                                                data-hint="js-hint" data-target="frequency"></i></h5>
+                                            <?php echo $get_policy_item_info['accrual_frequency_label']; ?> <span class="cs-required">*</span> <i class="fa fa-question-circle" data-hint="js-hint" data-target="frequency"></i></h5>
                                         <div class="js-hint js-hint-frequency">
                                             <?php echo $get_policy_item_info['accrual_frequency_info']; ?></div>
                                         <div>
-                                            <select class="invoice-fields" name="template"
-                                                id="js-accrual-frequency-reset">
+                                            <select class="invoice-fields" name="template" id="js-accrual-frequency-reset">
                                                 <option value="none" selected="true">None</option>
                                                 <option value="yearly">Yearly</option>
                                                 <option value="monthly">Monthly</option>
@@ -1031,8 +982,7 @@
                                         <div class="jsCustomBoxAdd" style="margin-top: 5px; display: none;">
                                             <span>Every</span>
                                             <div class="form-group form-group-custom form-group-custom-settings">
-                                                <input class="form-control form-control-custom"
-                                                    id="js-accrual-frequency-val-reset" />
+                                                <input class="form-control form-control-custom" id="js-accrual-frequency-val-reset" />
                                             </div>
                                             <span> month(s).</span>
                                         </div>
@@ -1045,20 +995,17 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['accrual_rate_label']; ?> <span
-                                                class="cs-required">*</span>
+                                            <?php echo $get_policy_item_info['accrual_rate_label']; ?> <span class="cs-required">*</span>
                                             <i class="fa fa-question-circle" data-hint="js-hint" data-target="rate"></i>
                                         </h5>
                                         <div class="js-hint js-hint-rate">
                                             <?php echo $get_policy_item_info['accrual_rate_info']; ?></div>
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <input class="form-control" name="template" id="js-accrual-rate-reset"
-                                                    autocomplete="off" />
+                                                <input class="form-control" name="template" id="js-accrual-rate-reset" autocomplete="off" />
                                             </div>
                                             <div class="col-sm-4">
-                                                <select class="form-control jsTimeTypeSelect-reset"
-                                                    id="js-accrual-rate-type-reset">
+                                                <select class="form-control jsTimeTypeSelect-reset" id="js-accrual-rate-type-reset">
                                                     <option value="days">Day(s)</option>
                                                 </select>
                                             </div>
@@ -1075,8 +1022,7 @@
                                         <?php echo $get_policy_item_info['accruals_plans_label']; ?>
                                         <i class="fa fa-question-circle" data-hint="js-hint" data-target="plans"></i>
                                         <span class="pull-right">
-                                            <button class="btn btn-orange js-plan-btn-reset" data-type="reset"
-                                                style="margin-top: -5px;"><i class="fa fa-plus"></i>&nbsp; Add
+                                            <button class="btn btn-orange js-plan-btn-reset" data-type="reset" style="margin-top: -5px;"><i class="fa fa-plus"></i>&nbsp; Add
                                                 Plan</button>
                                         </span>
                                     </h4>
@@ -1109,16 +1055,13 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
-                                            <?php echo $get_policy_item_info['carry_over_label']; ?> <span
-                                                class="cs-required">*</span>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="carycheck"></i>
+                                            <?php echo $get_policy_item_info['carry_over_label']; ?> <span class="cs-required">*</span>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="carycheck"></i>
                                         </h5>
                                         <div class="js-hint js-hint-carycheck">
                                             <?php echo $get_policy_item_info['allow_carryover_cap_info']; ?></div>
                                         <div>
-                                            <select class="invoice-fields" name="template"
-                                                id="js-carryover-cap-check-reset">
+                                            <select class="invoice-fields" name="template" id="js-carryover-cap-check-reset">
                                                 <option value="yes" selected="true">Yes</option>
                                                 <option value="no">No</option>
                                             </select>
@@ -1133,19 +1076,16 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['carryover_cap_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="caryval"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="caryval"></i>
                                         </h5>
                                         <div class="js-hint js-hint-caryval">
                                             <?php echo $get_policy_item_info['carryover_cap_info']; ?></div>
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <input class="form-control" name="template"
-                                                    id="js-carryover-cap-reset" />
+                                                <input class="form-control" name="template" id="js-carryover-cap-reset" />
                                             </div>
                                             <div class="col-sm-4">
-                                                <select class="form-control jsTimeTypeSelect-reset"
-                                                    id="js-accrual-carryover-type-reset"></select>
+                                                <select class="form-control jsTimeTypeSelect-reset" id="js-accrual-carryover-type-reset"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -1170,14 +1110,12 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['negative_balance_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="negativecheck"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="negativecheck"></i>
                                         </h5>
                                         <div class="js-hint js-hint-negativecheck">
                                             <?php echo $get_policy_item_info['allow_negative_balance_info']; ?></div>
                                         <div>
-                                            <select class="invoice-fields" name="template"
-                                                id="js-accrual-balance-reset">
+                                            <select class="invoice-fields" name="template" id="js-accrual-balance-reset">
                                                 <option value="yes">Yes</option>
                                                 <option value="no">No</option>
                                             </select>
@@ -1192,20 +1130,17 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['negative_balance_limit_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="negativeval"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="negativeval"></i>
                                         </h5>
                                         <div class="js-hint js-hint-negativeval">
                                             <?php echo $get_policy_item_info['new_hire_maximum_days_off_HD_info']; ?>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <input class="form-control" name="template"
-                                                    id="js-maximum-balance-reset" />
+                                                <input class="form-control" name="template" id="js-maximum-balance-reset" />
                                             </div>
                                             <div class="col-sm-4">
-                                                <select class="form-control jsTimeTypeSelect-reset"
-                                                    id="js-accrual-negative-balance-type-reset"></select>
+                                                <select class="form-control jsTimeTypeSelect-reset" id="js-accrual-negative-balance-type-reset"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -1229,8 +1164,7 @@
                                 <div class="col-lg-12">
                                     <h5 class="timeline-title allowed-time-off-title-custom">Applicable date for policy
                                         to
-                                        take affect <i class="fa fa-question-circle" data-hint="js-hint"
-                                            data-target="applicable-date"></i></h5>
+                                        take affect <i class="fa fa-question-circle" data-hint="js-hint" data-target="applicable-date"></i></h5>
                                     <div class="js-hint js-hint-applicable-date">
                                         <?php echo $get_policy_item_info['applicable_date_for_policy_info']; ?>
                                     </div>
@@ -1239,20 +1173,17 @@
                                     <div class="">
                                         <label class="control control--radio">
                                             <?php echo $get_policy_item_info['employee_joining_date_label']; ?>
-                                            <input type="radio" name="js-hire-date-reset" checked="true"
-                                                value="hireDate" class="js-hire-date-reset" />
+                                            <input type="radio" name="js-hire-date-reset" checked="true" value="hireDate" class="js-hire-date-reset" />
                                             <div class="control__indicator"></div>
                                         </label>
                                         <br />
                                         <label class="control control--radio">
                                             <?php echo $get_policy_item_info['pick_a_date_label']; ?>
-                                            <input type="radio" name="js-hire-date-reset" value="customHireDate"
-                                                class="js-hire-date-reset" />
+                                            <input type="radio" name="js-hire-date-reset" value="customHireDate" class="js-hire-date-reset" />
                                             <div class="control__indicator"></div>
                                         </label>
                                         <div class="jsImplementDateBox-reset" style="display: none; margin-top: 5px;">
-                                            <input type="text" readonly="true" class="invoice-fields"
-                                                id="js-custom-date-reset" />
+                                            <input type="text" readonly="true" class="invoice-fields" id="js-custom-date-reset" />
                                         </div>
                                     </div>
                                     <br />
@@ -1281,8 +1212,7 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['reset_date_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="reset-date"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="reset-date"></i>
                                         </h5>
                                         <div class="js-hint js-hint-reset-date">
                                             <?php echo $get_policy_item_info['reset_date_info']; ?>
@@ -1290,21 +1220,17 @@
                                         <div class="">
                                             <label class="control control--radio">
                                                 <?php echo $get_policy_item_info['reset_date_1_label']; ?>
-                                                <input type="radio" name="js-policy-reset-date-reset"
-                                                    class="js-policy-reset-date-reset" checked="true"
-                                                    value="policyDate" />
+                                                <input type="radio" name="js-policy-reset-date-reset" class="js-policy-reset-date-reset" checked="true" value="policyDate" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <br />
                                             <label class="control control--radio">
                                                 <?php echo $get_policy_item_info['reset_date_2_label']; ?>
-                                                <input type="radio" name="js-policy-reset-date-reset"
-                                                    class="js-policy-reset-date-reset" value="policyDateCustom" />
+                                                <input type="radio" name="js-policy-reset-date-reset" class="js-policy-reset-date-reset" value="policyDateCustom" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <div class="jsResetDateBox-reset" style="display: none; margin-top: 5px;">
-                                                <input type="text" readonly="true" class="invoice-fields"
-                                                    id="js-custom-reset-date-reset" />
+                                                <input type="text" readonly="true" class="invoice-fields" id="js-custom-reset-date-reset" />
                                             </div>
                                         </div>
                                     </div>
@@ -1346,8 +1272,7 @@
                                     <span></span>
                                     <div class="form-group form-group-custom form-group-custom-settings">
                                         <input class="form-control" id="js-accrue-new-hire-reset" />
-                                    </div><span> <select class="form-control" style="width: 200px; display: inline;"
-                                            id="js-accrual-new-hire-time-type-reset">
+                                    </div><span> <select class="form-control" style="width: 200px; display: inline;" id="js-accrual-new-hire-time-type-reset">
                                             <option value="hours">Hours</option>
                                             <option value="days">Days</option>
                                             <option value="months">Months</option>
@@ -1363,8 +1288,7 @@
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['probation_period_rate_label']; ?>
-                                            <i class="fa fa-question-circle" data-hint="js-hint"
-                                                data-target="newhiretime"></i>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="newhiretime"></i>
                                         </h5>
                                         <div class="js-hint js-hint-newhiretime">
                                             <?php echo $get_policy_item_info['new_hire_maximum_days_off_info']; ?></div>

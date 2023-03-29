@@ -35,13 +35,13 @@
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/performance_review/css/bootstrap.css">
         <?php } else { ?>
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/bootstrap.css">
-        <?php } ?>        
-        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css">
+        <?php } ?>
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css?v=1.0.1">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/font-awesome.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/responsive.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/star-rating.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/easy-responsive-tabs.css">
-        <link rel="icon" href="<?= base_url() ?>assets/images/favi-icon.png?v=<?=time();?>"/>
+        <link rel="icon" href="<?= base_url() ?>assets/images/favi-icon.png?v=<?= time(); ?>" />
         <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
         <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
         <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery-1.11.3.min.js"></script>
@@ -66,8 +66,8 @@
             <script type="text/javascript" src="<?= base_url() ?>assets/performance_review/js/bootstrap.min.js"></script>
         <?php } else { ?>
             <script type="text/javascript" src="<?= base_url() ?>assets/js/bootstrap.min.js"></script>
-        <?php } ?>    
-        
+        <?php } ?>
+
         <script src="<?= base_url() ?>assets/js/select2.js"></script>
 
         <?php if ($class == 'turnover_cost_calculator') { ?>
@@ -124,10 +124,10 @@
             <script src="<?php echo base_url('assets/video_interview/video-js-record/dist/videojs.record.js') ?>"></script>
         <?php } ?>
 
-         <!--  -->
-    <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
+        <!--  -->
+        <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
             <?php $this->load->view("{$pp}styles"); ?>
-        <?php }?>
+        <?php } ?>
 
         <!-- Modal -->
         <div class="modal fade" id="popupmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -151,19 +151,19 @@
             </div>
         </div>
         <!--  -->
-        <link rel="stylesheet" href="<?=base_url('assets/css/theme-2021.css?v='.time());?>">
+        <link rel="stylesheet" href="<?= base_url('assets/css/theme-2021.css?v=' . time()); ?>">
         <!--  -->
         <?php if (in_array('timeoff', $this->uri->segment_array()) || in_array('dashboard', $this->uri->segment_array())) { ?>
             <?php $this->load->view('timeoff/style'); ?>
-        <?php }?>
+        <?php } ?>
 
         <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
-        <!-- Performance Management  -->
-            <?php  $this->load->view("{$pp}styles"); ?>
-        <?php }?>
+            <!-- Performance Management  -->
+            <?php $this->load->view("{$pp}styles"); ?>
+        <?php } ?>
 
         <!-- Bable -->
-            <script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
+        <script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
         <!-- Bable -->
     </head>
 
@@ -302,19 +302,21 @@
 
         <?php } ?>
 
-        <?php if(in_array('ems', $this->uri->segment_array())){ ?>
-                <style>
-                    .fc-day-header.fc-widget-header,
-                    .dashboard-link-btn,
-                    .fc-axis, .fc-widget-header,
-                    .page-heading{
-                        background-color: #1032c3 !important;
-                        color: #ffffff !important;   
-                    }
-                    .page-header-area:after{
-                        border-top-color: #1032c3 !important;
-                    }
-                </style>
+        <?php if (in_array('ems', $this->uri->segment_array())) { ?>
+            <style>
+                .fc-day-header.fc-widget-header,
+                .dashboard-link-btn,
+                .fc-axis,
+                .fc-widget-header,
+                .page-heading {
+                    background-color: #1032c3 !important;
+                    color: #ffffff !important;
+                }
+
+                .page-header-area:after {
+                    border-top-color: #1032c3 !important;
+                }
+            </style>
         <?php   }
         ?>
 
@@ -322,110 +324,110 @@
         <div id="loading"></div>
         <div id="messageBox"></div>
         <div id="wrapper">
-            <header class="<?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?> header<?php
-                                    if (
-                                        $class == 'dashboard' ||
-                                        $class == 'time_off' ||
-                                        $class == 'job_listings' ||
-                                        $class == 'screening_questionnaires' ||
-                                        $class == 'settings' ||
-                                        $class == 'employee_login_text' ||
-                                        $class == 'bulk_resume_download' ||
-                                        $class == 're_assign_candidate' ||
-                                        $class == 'job_fair_configuration' ||
-                                        $class == 'incident_reporting_system' ||
-                                        $class == 'resend_screening_questionnaire' ||
-                                        $class == 'users' ||
-                                        $class == 'eeo' ||
-                                        // $class == 'demo' ||
-                                        $class == 'application_tracking' ||
-                                        $class == 'market_place' ||
-                                        $class == 'portal_email_templates' ||
-                                        $class == 'portal_sms_templates' ||
-                                        $class == 'manual_candidate' ||
-                                        $class == 'private_messages' ||
-                                        $class == 'xml_export' ||
-                                        $class == 'employee_management' ||
-                                        $class == 'department_management' ||
-                                        $class == 'onboarding_block' ||
-                                        $class == 'appearance' ||
-                                        $class == 'hr_documents' ||
-                                        $class == 'background_check' ||
-                                        $class == 'my_hr_documents' ||
-                                        $class == 'order_history' ||
-                                        $class == 'received_documents' ||
-                                        $class == 'order_detail' ||
-                                        $class == 'reference_checks' ||
-                                        $class == 'i9form'  ||
-                                        $class == 'form_i9' ||
-                                        $class == 'form_w4' ||
-                                        $class == 'form_w9' ||
-                                        $class == 'resource_center' ||
-                                        $class == 'facebook_configuration' ||
-                                        $class == 'security_access_level' ||
-                                        $class == 'reference_network' ||
-                                        $class == 'expirations_manager' ||
-                                        $class == 'reports' ||
-                                        $class == 'approval_rights_management' ||
-                                        $class == 'job_approval_management' ||
-                                        $class == 'applicant_approval_management' ||
-                                        $class == 'misc' ||
-                                        $class == 'cc_management' ||
-                                        $class == 'import_csv' ||
-                                        $class == 'accurate_background' ||
-                                        $class == 'job_listing_categories_manager' ||
-                                        $class == 'support_tickets' ||
-                                        $class == 'resume_database' ||
-                                        $class == 'notification_emails' ||
-                                        $class == 'post_on_jobs_to_career' ||
-                                        $class == 'application_status' ||
-                                        $class == 'interview_questionnaire' ||
-                                        $class == 'application_tracking_system' ||
-                                        $class == 'import_applicants_csv' ||
-                                        $class == 'assign_bulk_documents' ||
-                                        $class == 'turnover_cost_calculator' ||
-                                        $class == 'photo_gallery' ||
-                                        $class == 'organizational_hierarchy' ||
-                                        $class == 'video_interview_system' ||
-                                        $class == 'attendance' ||
-                                        $class == 'task_management' ||
-                                        $class == 'export_employees_csv' ||
-                                        $class == 'export_applicants_csv' ||
-                                        $class == 'events_management' ||
-                                        $class == 'onboarding' ||
-                                        $class == 'direct_deposit' ||
-                                        $class == 'learning_center' ||
-                                        $class == 'e_signature' ||
-                                        $class == 'my_learning_center' ||
-                                        $class == 'documents_management' ||
-                                        $class == 'hr_documents_management' ||
-                                        $class == 'calendar' ||
-                                        $class == 'company_addresses' ||
-                                        $class == 'form_full_employment_application' ||
-                                        $class == 'emergency_contacts' ||
-                                        $class == 'dependents' ||
-                                        $class == 'announcements' ||
-                                        $class == 'manage_ems' ||
-                                        $class == 'safety_sheets' ||
-                                        $class == 'general_info' ||
-                                        $class == 'complynet' ||
-                                        $class == 'turnover_cost_calculator' ||
-                                        $class == 'paid_time_off' ||
-                                        $class == 'performance_management' ||
-                                        $class == 'goals' ||
-                                        $class == 'govt_user' ||
-                                        $class == 'terminate_employee' ||
-                                        ($class == 'home' && $method == 'resource_page') ||
-                                        ($class == 'home' && $method == 'event') ||
-                                        ($class == 'home' && $method == 'services' && $this->uri->segment(2) == 'questionnaires-tutorial') ||
-                                        $class == 'performance_review' ||
-                                        $class == 'payroll' ||
-                                        isset($logged_in_view)
-                                    ) {
-                                        echo " header-position";
-                                    } elseif ($class == 'demo') {
-                                        echo " header-new-fixed";
-                                    } ?>">
+            <header class="<?= in_array('iframe', $this->uri->segment_array()) ? 'hidden' : ''; ?> header<?php
+                                                                                                        if (
+                                                                                                            $class == 'dashboard' ||
+                                                                                                            $class == 'time_off' ||
+                                                                                                            $class == 'job_listings' ||
+                                                                                                            $class == 'screening_questionnaires' ||
+                                                                                                            $class == 'settings' ||
+                                                                                                            $class == 'employee_login_text' ||
+                                                                                                            $class == 'bulk_resume_download' ||
+                                                                                                            $class == 're_assign_candidate' ||
+                                                                                                            $class == 'job_fair_configuration' ||
+                                                                                                            $class == 'incident_reporting_system' ||
+                                                                                                            $class == 'resend_screening_questionnaire' ||
+                                                                                                            $class == 'users' ||
+                                                                                                            $class == 'eeo' ||
+                                                                                                            // $class == 'demo' ||
+                                                                                                            $class == 'application_tracking' ||
+                                                                                                            $class == 'market_place' ||
+                                                                                                            $class == 'portal_email_templates' ||
+                                                                                                            $class == 'portal_sms_templates' ||
+                                                                                                            $class == 'manual_candidate' ||
+                                                                                                            $class == 'private_messages' ||
+                                                                                                            $class == 'xml_export' ||
+                                                                                                            $class == 'employee_management' ||
+                                                                                                            $class == 'department_management' ||
+                                                                                                            $class == 'onboarding_block' ||
+                                                                                                            $class == 'appearance' ||
+                                                                                                            $class == 'hr_documents' ||
+                                                                                                            $class == 'background_check' ||
+                                                                                                            $class == 'my_hr_documents' ||
+                                                                                                            $class == 'order_history' ||
+                                                                                                            $class == 'received_documents' ||
+                                                                                                            $class == 'order_detail' ||
+                                                                                                            $class == 'reference_checks' ||
+                                                                                                            $class == 'i9form'  ||
+                                                                                                            $class == 'form_i9' ||
+                                                                                                            $class == 'form_w4' ||
+                                                                                                            $class == 'form_w9' ||
+                                                                                                            $class == 'resource_center' ||
+                                                                                                            $class == 'facebook_configuration' ||
+                                                                                                            $class == 'security_access_level' ||
+                                                                                                            $class == 'reference_network' ||
+                                                                                                            $class == 'expirations_manager' ||
+                                                                                                            $class == 'reports' ||
+                                                                                                            $class == 'approval_rights_management' ||
+                                                                                                            $class == 'job_approval_management' ||
+                                                                                                            $class == 'applicant_approval_management' ||
+                                                                                                            $class == 'misc' ||
+                                                                                                            $class == 'cc_management' ||
+                                                                                                            $class == 'import_csv' ||
+                                                                                                            $class == 'accurate_background' ||
+                                                                                                            $class == 'job_listing_categories_manager' ||
+                                                                                                            $class == 'support_tickets' ||
+                                                                                                            $class == 'resume_database' ||
+                                                                                                            $class == 'notification_emails' ||
+                                                                                                            $class == 'post_on_jobs_to_career' ||
+                                                                                                            $class == 'application_status' ||
+                                                                                                            $class == 'interview_questionnaire' ||
+                                                                                                            $class == 'application_tracking_system' ||
+                                                                                                            $class == 'import_applicants_csv' ||
+                                                                                                            $class == 'assign_bulk_documents' ||
+                                                                                                            $class == 'turnover_cost_calculator' ||
+                                                                                                            $class == 'photo_gallery' ||
+                                                                                                            $class == 'organizational_hierarchy' ||
+                                                                                                            $class == 'video_interview_system' ||
+                                                                                                            $class == 'attendance' ||
+                                                                                                            $class == 'task_management' ||
+                                                                                                            $class == 'export_employees_csv' ||
+                                                                                                            $class == 'export_applicants_csv' ||
+                                                                                                            $class == 'events_management' ||
+                                                                                                            $class == 'onboarding' ||
+                                                                                                            $class == 'direct_deposit' ||
+                                                                                                            $class == 'learning_center' ||
+                                                                                                            $class == 'e_signature' ||
+                                                                                                            $class == 'my_learning_center' ||
+                                                                                                            $class == 'documents_management' ||
+                                                                                                            $class == 'hr_documents_management' ||
+                                                                                                            $class == 'calendar' ||
+                                                                                                            $class == 'company_addresses' ||
+                                                                                                            $class == 'form_full_employment_application' ||
+                                                                                                            $class == 'emergency_contacts' ||
+                                                                                                            $class == 'dependents' ||
+                                                                                                            $class == 'announcements' ||
+                                                                                                            $class == 'manage_ems' ||
+                                                                                                            $class == 'safety_sheets' ||
+                                                                                                            $class == 'general_info' ||
+                                                                                                            $class == 'complynet' ||
+                                                                                                            $class == 'turnover_cost_calculator' ||
+                                                                                                            $class == 'paid_time_off' ||
+                                                                                                            $class == 'performance_management' ||
+                                                                                                            $class == 'goals' ||
+                                                                                                            $class == 'govt_user' ||
+                                                                                                            $class == 'terminate_employee' ||
+                                                                                                            ($class == 'home' && $method == 'resource_page') ||
+                                                                                                            ($class == 'home' && $method == 'event') ||
+                                                                                                            ($class == 'home' && $method == 'services' && $this->uri->segment(2) == 'questionnaires-tutorial') ||
+                                                                                                            $class == 'performance_review' ||
+                                                                                                            $class == 'payroll' ||
+                                                                                                            isset($logged_in_view)
+                                                                                                        ) {
+                                                                                                            echo " header-position";
+                                                                                                        } elseif ($class == 'demo') {
+                                                                                                            echo " header-new-fixed";
+                                                                                                        } ?>">
                 <div class="container-fluid">
                     <div class="row hidden-print">
                         <div class="col-md-12">
@@ -664,7 +666,8 @@
                                                                                                     <td colspan="2" width="60%"> &nbsp;</td>
                                                                                                     <td>&nbsp;</td>
                                                                                                     <td class="text-align">
-                                                                                                        <b>Total</b></td>
+                                                                                                        <b>Total</b>
+                                                                                                    </td>
                                                                                                     <?php $final_total = round(($sub_total - $coupon_discount), 2); ?>
                                                                                                     <p style="display: none;" id="checkout_subtotal_value"><?php echo $final_total; ?></p>
                                                                                                     <td class="text-align">
@@ -1033,8 +1036,8 @@
                                                         </li>
                                                     <?php } ?>
                                                     <!--6-->
-                                                    <?php 
-                                                        $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
+                                                    <?php
+                                                    $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
                                                     ?>
                                                     <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
                                                         <li>
@@ -1116,7 +1119,7 @@
                                                                     echo 'class="active_header_nav"';
                                                                 } ?> href="<?php echo base_url('video_interview_system') ?>">
                                                                 <figure><i class="fa fa-file-text-o"></i></figure>
-                                                                Video Interview System<span class="beta-label">beta</span>
+                                                                Video Interview System
                                                             </a>
                                                         </li>
                                                     <?php } ?>
@@ -1244,7 +1247,8 @@
                                                     <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
-                                                            <a href="<?php echo base_url('complynet') ?>">
+                                                            <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
+                                                            <a href="<?php echo $complyNetLink ?? base_url('complynet') ?>">
                                                                 <figure><i class="fa fa-book"></i></figure>
                                                                 Complynet
                                                             </a>
@@ -1274,7 +1278,7 @@
                                                             </a>
                                                         </li>
                                                     <?php  } ?>
-                                                    <?php if (checkIfAppIsEnabled('performance_management') ) { ?>
+                                                    <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
                                                             <a href="<?php echo base_url('performance-management/dashboard'); ?>">
@@ -1283,7 +1287,7 @@
                                                             </a>
                                                         </li>
                                                     <?php  } ?>
-                                                    <?php if (checkIfAppIsEnabled('performance_management') ) { ?>
+                                                    <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
                                                             <a href="<?php echo base_url('performance-management/goals'); ?>">
@@ -1925,19 +1929,19 @@
                     <?php } else { ?>
                         <?php $this->load->view('onboarding/on_boarding_header'); ?>
                     <?php } ?>
-                    <?php 
-                        $API_TOKENS = $this->session->userdata('API_TOKENS');
+                    <?php
+                    $API_TOKENS = $this->session->userdata('API_TOKENS');
                     ?>
                     <script type="text/javascript">
                         //
                         window.onerror = function(message, source, lineno, colno, error) {
                             // 
-                            var ErrorOBJ = 
-                            { 
-                                ErrorMessage: message, 
-                                OnPage: source, 
-                                LineNumber: lineno, 
-                                UserAgent: navigator.userAgent, 
+                            var ErrorOBJ = {
+                                ErrorMessage: message,
+                                OnPage: source,
+                                Page: window.location.href,
+                                LineNumber: lineno,
+                                UserAgent: navigator.userAgent,
                                 OccurrenceTime: new Date().toLocaleString(),
                                 ErrorLogTime: ''
                             };
@@ -1947,26 +1951,15 @@
                             //
                             var o = {};
                             o.error = JSON.stringify(ErrorOBJ);
-                            //
-                            // xhr = $.ajax({
-                            //     method: "POST",
-                            //     headers: { "Content-Type": "application/json", "Key" : API_KEY },
-                            //     url: "http://127.0.0.1:3000/report_error",
-                            //     data: JSON.stringify(o)
-                            // })
-                            // .done(function(resp) {
-                            //     console.log("Report Error");
-                            // })
-                            // .error();
 
                             xhr = $.ajax({
-                                method: "POST",
-                                url: "<?php echo base_url('reports/error_report'); ?>",
-                                data: ErrorOBJ
-                            })
-                            .done(function(resp) {
-                                console.log("Report Error");
-                            })
-                            .error();
+                                    method: "POST",
+                                    url: "<?php echo base_url('reports/error_report'); ?>",
+                                    data: ErrorOBJ
+                                })
+                                .done(function(resp) {
+                                    console.log("Report Error");
+                                })
+                                .error();
                         }
                     </script>

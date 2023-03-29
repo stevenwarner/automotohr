@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Personal Settings</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Personal Settings</span>
                         </div>
                         <div class="setting-grid">
                             <article class="setting-box">
@@ -56,7 +56,7 @@
                         </div> 
                         <div class="company-setting-grid">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">Career Page Settings</span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Career Page Settings</span>
                             </div>
                             <article class="setting-box">
                                 <h2>Administration</h2>

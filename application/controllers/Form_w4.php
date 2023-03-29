@@ -210,7 +210,9 @@ class Form_w4 extends Public_Controller
                 if(isset($previous_form['manual'])) $this->load->view('form_w4/index_upload');
                 else{
                     if ($assign_on >= $compare_date) {
-                        $this->load->view('form_w4/index_ems_2020');
+                       // $this->load->view('form_w4/index_ems_2020');
+                        $this->load->view('form_w4/index_ems_2023');
+
                     } else {
                         $this->load->view('form_w4/index');
                     }
@@ -394,7 +396,9 @@ class Form_w4 extends Public_Controller
                         $data['session']['company_detail']['CompanyName'],
                         $data['first_name'],
                         $data['last_name'],
-                        $data['users_sid']
+                        $data['users_sid'],
+                        [],
+                        $type
                     );
                 }
 
@@ -783,8 +787,7 @@ class Form_w4 extends Public_Controller
 
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
             $data['pre_form'] = $previous_form;
-
-            $this->load->view('form_w4/print_w4_2020', $data);
+            $this->load->view('form_w4/print_w4_2023', $data);
         } else {
             redirect('login', "refresh");
         }
@@ -797,7 +800,7 @@ class Form_w4 extends Public_Controller
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
             $data['pre_form'] = $previous_form;
 
-            $this->load->view('form_w4/download_w4_2020', $data);
+            $this->load->view('form_w4/download_w4_2023', $data);
 
         } else {
             redirect('login', "refresh");

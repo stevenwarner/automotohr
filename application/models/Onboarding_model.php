@@ -1,11 +1,14 @@
 <?php
 
-class Onboarding_model extends CI_Model {
-    function __construct() {
+class Onboarding_model extends CI_Model
+{
+    function __construct()
+    {
         parent::__construct();
     }
 
-    function get_company_welcome_videos($company_sid) {
+    function get_company_welcome_videos($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employee_sid', NULL);
@@ -22,7 +25,8 @@ class Onboarding_model extends CI_Model {
         return $return_data;
     }
 
-    function get_company_welcome_video($welcome_video_sid) {
+    function get_company_welcome_video($welcome_video_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $welcome_video_sid);
         $this->db->where('employee_sid', NULL);
@@ -39,7 +43,8 @@ class Onboarding_model extends CI_Model {
         return $return_data;
     }
 
-    function get_all_office_locations($company_sid) {
+    function get_all_office_locations($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('onboarding_office_locations');
@@ -49,21 +54,22 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_custom_office_records($company_sid, $user_sid, $user_type, $custom_type, $active_only = 0) {
+    function get_custom_office_records($company_sid, $user_sid, $user_type, $custom_type, $active_only = 0)
+    {
         $this->db->select('*');
         $this->db->where('custom_type', $custom_type);
         $this->db->where('user_type', $user_type);
-        
+
         if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         } else {
             $this->db->where('applicant_sid', $user_sid);
         }
-        
+
         if ($active_only == 1) {
-           $this->db->where('status', 1); 
+            $this->db->where('status', 1);
         }
-        
+
         $this->db->where('is_custom', 1);
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('onboarding_custom_assignment');
@@ -73,21 +79,25 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function insert_office_location($data_to_insert) {
+    function insert_office_location($data_to_insert)
+    {
         $this->db->insert('onboarding_office_locations', $data_to_insert);
     }
 
-    function custom_assignment_insert_data($data_to_insert) {
+    function custom_assignment_insert_data($data_to_insert)
+    {
         $this->db->insert('onboarding_custom_assignment', $data_to_insert);
         return $this->db->insert_id();
     }
 
-    function custom_assignment_update_record($sid, $data_array) {
+    function custom_assignment_update_record($sid, $data_array)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('onboarding_custom_assignment', $data_array);
     }
 
-    function get_edit_location($company_sid, $location_sid) {
+    function get_edit_location($company_sid, $location_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $location_sid);
@@ -98,7 +108,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_custom_record($sid) {
+    function get_custom_record($sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $sid);
         $records_obj = $this->db->get('onboarding_custom_assignment');
@@ -108,7 +119,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_e_signature($company_sid, $employer_sid) {
+    function get_e_signature($company_sid, $employer_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_sid', $employer_sid);
@@ -119,12 +131,14 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function update_location($sid, $data_array) {
+    function update_location($sid, $data_array)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('onboarding_office_locations', $data_array);
     }
 
-    function getOfficeHours($company_sid, $hours_sid) {
+    function getOfficeHours($company_sid, $hours_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $hours_sid);
@@ -135,12 +149,14 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function updateOfficeHours($sid, $data_array) {
+    function updateOfficeHours($sid, $data_array)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('onboarding_office_timings', $data_array);
     }
 
-    function checkEmployeer($company_sid, $employer_sid) {
+    function checkEmployeer($company_sid, $employer_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
         $this->db->from('onboarding_people_to_meet');
@@ -153,7 +169,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function checkemployerBeforeEdit($company_sid, $employer_sid) {
+    function checkemployerBeforeEdit($company_sid, $employer_sid)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
@@ -164,7 +181,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function getPersonToMeet($company_sid, $person_sid) {
+    function getPersonToMeet($company_sid, $person_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $person_sid);
@@ -175,12 +193,14 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function updatePersonToMeet($sid, $data_array) {
+    function updatePersonToMeet($sid, $data_array)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('onboarding_people_to_meet', $data_array);
     }
 
-    function getItemToBring($company_sid, $item_sid) {
+    function getItemToBring($company_sid, $item_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $item_sid);
@@ -191,18 +211,21 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function updateItemToBring($sid, $data_array) {
+    function updateItemToBring($sid, $data_array)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('onboarding_what_to_bring', $data_array);
     }
 
-    function delete_office_location($company_sid, $office_location_sid) {
+    function delete_office_location($company_sid, $office_location_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $office_location_sid);
         $this->db->delete('onboarding_office_locations');
     }
 
-    function get_all_getting_started_sections($company_sid, $section_sids = null, $section_unique_ids = null) {
+    function get_all_getting_started_sections($company_sid, $section_sids = null, $section_unique_ids = null)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
 
@@ -221,7 +244,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_company_instructions($company_sid, $employee_sid = 0, $applicant_sid = 0) {
+    function get_company_instructions($company_sid, $employee_sid = 0, $applicant_sid = 0)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
 
@@ -250,7 +274,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function insert_update_welcome_video($data, $sid = 0) {
+    function insert_update_welcome_video($data, $sid = 0)
+    {
         if ($sid > 0) {
             $this->db->where('sid', $sid);
             $this->db->update('onboarding_welcome_video', $data);
@@ -259,7 +284,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function delete_welcome_video($sid, $company_sid) {
+    function delete_welcome_video($sid, $company_sid)
+    {
         $this->db->where('sid', $sid);
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', NULL);
@@ -267,14 +293,16 @@ class Onboarding_model extends CI_Model {
         $this->db->delete('onboarding_welcome_video');
     }
 
-    function undefault_welcome_video_default_status($data, $company_sid) {
+    function undefault_welcome_video_default_status($data, $company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', NULL);
         $this->db->where('employee_sid', NULL);
         $this->db->update('onboarding_welcome_video', $data);
     }
 
-    function change_welcome_video_status($data, $sid, $company_sid) {
+    function change_welcome_video_status($data, $sid, $company_sid)
+    {
         $this->db->where('sid', $sid);
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', NULL);
@@ -282,7 +310,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update('onboarding_welcome_video', $data);
     }
 
-    function insert_update_onboarding_instructions($data, $sid) {
+    function insert_update_onboarding_instructions($data, $sid)
+    {
         if ($sid > 0) {
             $this->db->where('sid', $sid);
             $this->db->update('onboarding_instructions', $data);
@@ -291,7 +320,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function save_update_setup_onboarding_instructions($instructions, $user_type, $user_sid, $company_sid, $modified_by_sid) {
+    function save_update_setup_onboarding_instructions($instructions, $user_type, $user_sid, $company_sid, $modified_by_sid)
+    {
         $data = array();
         $data['instructions'] = $instructions;
         $data['company_sid'] = $company_sid;
@@ -322,16 +352,19 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function insert_getting_started_section($data_to_insert) {
+    function insert_getting_started_section($data_to_insert)
+    {
         $this->db->insert('onboarding_getting_started_sections', $data_to_insert);
     }
 
-    function update_getting_started_section($section_sid, $data_to_update) {
+    function update_getting_started_section($section_sid, $data_to_update)
+    {
         $this->db->where('sid', $section_sid);
         $this->db->update('onboarding_getting_started_sections', $data_to_update);
     }
 
-    function get_single_getting_started_section($section_sid) {
+    function get_single_getting_started_section($section_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $section_sid);
         $record_obj = $this->db->get('onboarding_getting_started_sections');
@@ -345,17 +378,20 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function delete_getting_started_section($company_sid, $section_sid) {
+    function delete_getting_started_section($company_sid, $section_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $section_sid);
         $this->db->delete('onboarding_getting_started_sections');
     }
 
-    function insert_office_timings($data_to_insert) {
+    function insert_office_timings($data_to_insert)
+    {
         $this->db->insert('onboarding_office_timings', $data_to_insert);
     }
 
-    function get_all_office_timings($company_sid) {
+    function get_all_office_timings($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('onboarding_office_timings');
@@ -365,17 +401,20 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function delete_office_timing($company_sid, $office_timing_sid) {
+    function delete_office_timing($company_sid, $office_timing_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $office_timing_sid);
         $this->db->delete('onboarding_office_timings');
     }
 
-    function insert_what_to_bring_item($data_to_insert) {
+    function insert_what_to_bring_item($data_to_insert)
+    {
         $this->db->insert('onboarding_what_to_bring', $data_to_insert);
     }
 
-    function get_all_what_to_bring_items($company_sid) {
+    function get_all_what_to_bring_items($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('onboarding_what_to_bring');
@@ -385,7 +424,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_target_what_to_bring_item($sid) {
+    function get_target_what_to_bring_item($sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $sid);
         $records_obj = $this->db->get('onboarding_what_to_bring');
@@ -399,32 +439,34 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function disable_default_record($company_sid, $user_type, $user_sid, $custom_type) {
+    function disable_default_record($company_sid, $user_type, $user_sid, $custom_type)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
-        
+
         if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         } else {
             $this->db->where('applicant_sid', $user_sid);
         }
-        
+
         $this->db->where('custom_type', $custom_type);
         $this->db->where('is_custom', 0);
         $this->db->set('status', 0);
         $this->db->update('onboarding_custom_assignment');
     }
 
-    function enable_default_record($company_sid, $user_type, $user_sid, $custom_type, $parent_sid) {
+    function enable_default_record($company_sid, $user_type, $user_sid, $custom_type, $parent_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
-        
+
         if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         } else {
             $this->db->where('applicant_sid', $user_sid);
         }
-        
+
         $this->db->where('custom_type', $custom_type);
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('is_custom', 0);
@@ -432,17 +474,18 @@ class Onboarding_model extends CI_Model {
         $this->db->update('onboarding_custom_assignment');
     }
 
-    function default_record_item_exist($company_sid, $user_type, $user_sid, $custom_type, $parent_sid) {
+    function default_record_item_exist($company_sid, $user_type, $user_sid, $custom_type, $parent_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
-        
+
         if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         } else {
             $this->db->where('applicant_sid', $user_sid);
         }
-        
+
         $this->db->where('custom_type', $custom_type);
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('is_custom', 0);
@@ -458,17 +501,20 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function delete_what_to_bring_item($company_sid, $what_to_bring_item_sid) {
+    function delete_what_to_bring_item($company_sid, $what_to_bring_item_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $what_to_bring_item_sid);
         $this->db->delete('onboarding_what_to_bring');
     }
 
-    function insert_useful_links_record($data_to_insert) {
+    function insert_useful_links_record($data_to_insert)
+    {
         $this->db->insert('onboarding_useful_links', $data_to_insert);
     }
 
-    function get_all_links($company_sid) {
+    function get_all_links($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('onboarding_useful_links');
@@ -477,7 +523,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_edit_link($company_sid, $useful_link_sid) {
+    function get_edit_link($company_sid, $useful_link_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $useful_link_sid);
@@ -487,18 +534,21 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function update_usefull_link($sid, $data_array) {
+    function update_usefull_link($sid, $data_array)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('onboarding_useful_links', $data_array);
     }
 
-    function delete_useful_link($company_sid, $useful_link_sid) {
+    function delete_useful_link($company_sid, $useful_link_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $useful_link_sid);
         $this->db->delete('onboarding_useful_links');
     }
 
-    function delete_ems_notification($company_sid, $ems_notification_sid) {
+    function delete_ems_notification($company_sid, $ems_notification_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $ems_notification_sid);
         $this->db->delete('ems_dashboard_notification');
@@ -506,7 +556,8 @@ class Onboarding_model extends CI_Model {
         $this->db->delete('ems_dashboard_notification_assigned');
     }
 
-    function get_all_employees($company_sid) {
+    function get_all_employees($company_sid)
+    {
         $this->db->select('first_name');
         $this->db->select('last_name');
         $this->db->select('sid');
@@ -519,7 +570,7 @@ class Onboarding_model extends CI_Model {
         $this->db->where('active', 1);
         $this->db->where('archived', 0);
         $this->db->where('terminated_status', 0);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -527,11 +578,13 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function insert_people_to_meet_record($data_to_insert) {
+    function insert_people_to_meet_record($data_to_insert)
+    {
         $this->db->insert('onboarding_people_to_meet', $data_to_insert);
     }
 
-    function get_all_people_to_meet($company_sid) {
+    function get_all_people_to_meet($company_sid)
+    {
         $this->db->select('onboarding_people_to_meet.*');
         $this->db->select('users.first_name');
         $this->db->select('users.last_name');
@@ -548,13 +601,15 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function delete_people_to_meet_record($company_sid, $person_to_meet_sid) {
+    function delete_people_to_meet_record($company_sid, $person_to_meet_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $person_to_meet_sid);
         $this->db->delete('onboarding_people_to_meet');
     }
 
-    function get_applicant_information($applicant_sid) {
+    function get_applicant_information($applicant_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $applicant_sid);
 
@@ -576,13 +631,15 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function update_applicant_information($company_sid, $applicant_sid, $data_to_update) {
+    function update_applicant_information($company_sid, $applicant_sid, $data_to_update)
+    {
         $this->db->where('employer_sid', $company_sid);
         $this->db->where('sid', $applicant_sid);
         $this->db->update('portal_job_applications', $data_to_update);
     }
 
-    function get_applicant_emergency_contacts($user_type, $user_sid) {
+    function get_applicant_emergency_contacts($user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
@@ -592,18 +649,21 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function insert_applicant_emergency_contact($data_to_insert) {
+    function insert_applicant_emergency_contact($data_to_insert)
+    {
         $this->db->insert('emergency_contacts', $data_to_insert);
     }
 
-    function delete_emergency_contact($users_type, $users_sid, $contact_sid) {
+    function delete_emergency_contact($users_type, $users_sid, $contact_sid)
+    {
         $this->db->where('users_type', $users_type);
         $this->db->where('users_sid', $users_sid);
         $this->db->where('sid', $contact_sid);
         $this->db->delete('emergency_contacts');
     }
 
-    function get_license_details($user_type, $user_sid, $license_type) {
+    function get_license_details($user_type, $user_sid, $license_type)
+    {
         $this->db->select('*');
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
@@ -621,7 +681,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function save_license_information($user_type, $user_sid, $license_type, $license_details,$dateOfBirth = array()) {
+    function save_license_information($user_type, $user_sid, $license_type, $license_details, $dateOfBirth = array())
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
         $this->db->where('license_type', $license_type);
@@ -641,21 +702,21 @@ class Onboarding_model extends CI_Model {
             }
 
             $this->db->update('license_information', $license_details);
-            if(!empty($dateOfBirth) && $user_sid != null && ($user_type == 'applicant' || $user_type == 'Applicant') ){
+            if (!empty($dateOfBirth) && $user_sid != null && ($user_type == 'applicant' || $user_type == 'Applicant')) {
                 $this->db->where('sid', $user_sid)
                     ->update('portal_job_applications', $dateOfBirth);
             }
-
         } else {
             $this->db->insert('license_information', $license_details);
-            if(!empty($dateOfBirth) && $user_sid != null && ($user_type == 'applicant' || $user_type == 'Applicant') ){
+            if (!empty($dateOfBirth) && $user_sid != null && ($user_type == 'applicant' || $user_type == 'Applicant')) {
                 $this->db->where('sid', $user_sid)
                     ->update('portal_job_applications', $dateOfBirth);
             }
         }
     }
 
-    function get_dependant_information($user_type, $user_sid) {
+    function get_dependant_information($user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('users_sid', $user_sid);
         $this->db->where('users_type', $user_type);
@@ -673,25 +734,28 @@ class Onboarding_model extends CI_Model {
                     $records_arr[$key] = $new_data;
                 }
             }
-            
+
             return $records_arr;
         } else {
             return array();
         }
     }
 
-    function insert_dependent_information($data_to_save) {
+    function insert_dependent_information($data_to_save)
+    {
         $this->db->insert('dependant_information', $data_to_save);
     }
 
-    function delete_dependent_information($user_type, $user_sid, $dependent_sid) {
-//        $this->db->where('users_type', $user_type);
-//        $this->db->where('users_sid', $user_sid);
+    function delete_dependent_information($user_type, $user_sid, $dependent_sid)
+    {
+        //        $this->db->where('users_type', $user_type);
+        //        $this->db->where('users_sid', $user_sid);
         $this->db->where('sid', $dependent_sid);
         $this->db->delete('dependant_information');
     }
 
-    function save_bank_details($user_type, $user_sid, $bank_details) {
+    function save_bank_details($user_type, $user_sid, $bank_details)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
         $this->db->from('bank_account_details');
@@ -715,7 +779,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_bank_details($user_type, $user_sid) {
+    function get_bank_details($user_type, $user_sid)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
 
@@ -730,7 +795,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function save_eeoc($user_type, $user_sid, $eeoc_details) {
+    function save_eeoc($user_type, $user_sid, $eeoc_details)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
         $this->db->from('portal_eeo_form');
@@ -754,7 +820,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_eeoc($user_type, $user_sid) {
+    function get_eeoc($user_type, $user_sid)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
 
@@ -769,7 +836,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function update_eeoc($user_type, $user_sid, $dataToUpdate) {
+    function update_eeoc($user_type, $user_sid, $dataToUpdate)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
         $this->db->from('portal_eeo_form');
@@ -782,7 +850,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function save_required_equipment($user_type, $user_sid, $equipment_details) {
+    function save_required_equipment($user_type, $user_sid, $equipment_details)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
         $this->db->from('onboarding_required_equipments');
@@ -806,7 +875,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_required_equipment($user_type, $user_sid) {
+    function get_required_equipment($user_type, $user_sid)
+    {
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
 
@@ -821,24 +891,28 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function update_full_employement_application($applicant_sid, $application_data) {
+    function update_full_employement_application($applicant_sid, $application_data)
+    {
         $this->db->where('sid', $applicant_sid);
         $this->db->set('full_employment_application', serialize($application_data));
         $this->db->update('portal_job_applications');
     }
 
-    function mark_applicant_for_onboarding($applicant_sid) {
+    function mark_applicant_for_onboarding($applicant_sid)
+    {
         $this->db->where('sid', $applicant_sid);
         $this->db->set('is_onboarding', 1);
         $this->db->update('portal_job_applications');
     }
 
-    function update_applicant_status_type($applicant_sid,$employee_data) {
+    function update_applicant_status_type($applicant_sid, $employee_data)
+    {
         $this->db->where('sid', $applicant_sid);
-        $this->db->update('portal_job_applications',$employee_data);
+        $this->db->update('portal_job_applications', $employee_data);
     }
 
-    function save_onboarding_applicant($company_sid, $applicant_sid, $data_to_save) {
+    function save_onboarding_applicant($company_sid, $applicant_sid, $data_to_save)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', $applicant_sid);
         $this->db->from('onboarding_applicants');
@@ -862,16 +936,19 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function update_emailSent_date($unique_sid, $data){
-        $this->db->where('unique_sid',$unique_sid);
+    function update_emailSent_date($unique_sid, $data)
+    {
+        $this->db->where('unique_sid', $unique_sid);
         $this->db->update('onboarding_applicants', $data);
     }
 
-    function save_onboarding_links_config($data_to_insert) {
+    function save_onboarding_links_config($data_to_insert)
+    {
         $this->db->insert('useful_links_assignment', $data_to_insert);
     }
 
-    function is_assign_link_configuration($link_sid, $user_sid, $company_sid, $user_type) {
+    function is_assign_link_configuration($link_sid, $user_sid, $company_sid, $user_type)
+    {
         $this->db->where('link_sid', $link_sid);
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -884,7 +961,7 @@ class Onboarding_model extends CI_Model {
 
         $this->db->from('useful_links_assignment');
         $count = $this->db->count_all_results();
-        
+
         if ($count > 0) {
             return true;
         } else {
@@ -892,14 +969,16 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function inactive_useful_configuration_links($link_sid, $company_sid) {
+    function inactive_useful_configuration_links($link_sid, $company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('link_sid', $link_sid);
         $this->db->set('link_status', 0);
         $this->db->update('useful_links_assignment');
     }
 
-    function configuration_link_update_status($user_sid, $company_sid, $user_type) {
+    function configuration_link_update_status($user_sid, $company_sid, $user_type)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
 
@@ -908,12 +987,13 @@ class Onboarding_model extends CI_Model {
         } else {
             $this->db->where('employee_sid', $user_sid);
         }
-        
+
         $this->db->set('assign_status', 0);
         $this->db->update('useful_links_assignment');
     }
 
-    function active_useful_configuration_link($link_sid, $user_sid, $company_sid, $user_type, $data_to_update) {
+    function active_useful_configuration_link($link_sid, $user_sid, $company_sid, $user_type, $data_to_update)
+    {
         $this->db->where('link_sid', $link_sid);
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -928,7 +1008,8 @@ class Onboarding_model extends CI_Model {
         // echo $this->db->last_query().'<br><pre>'; echo '</pre>';
     }
 
-    function save_onboarding_config($company_sid, $user_type, $user_sid, $section, $data_to_save) {
+    function save_onboarding_config($company_sid, $user_type, $user_sid, $section, $data_to_save)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -964,10 +1045,11 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_company_info($company_sid) {
+    function get_company_info($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $company_sid);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $record_obj = $this->db->get('users');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -979,7 +1061,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_details_by_unique_sid($unique_sid, $onboarding_status = 'in_process') {
+    function get_details_by_unique_sid($unique_sid, $onboarding_status = 'in_process')
+    {
         $this->db->select('*');
         $this->db->where('unique_sid', $unique_sid);
         $this->db->where('onboarding_status', $onboarding_status);
@@ -1002,11 +1085,12 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_assign_useful_links($user_type, $user_sid, $company_sid) {
+    function get_assign_useful_links($user_type, $user_sid, $company_sid)
+    {
         $this->db->select('link_sid, link_description');
         $this->db->where('user_type', $user_type);
         $this->db->where('company_sid', $company_sid);
-        
+
         if ($user_type == 'applicant') {
             $this->db->where('applicant_sid', $user_sid);
         } else {
@@ -1021,7 +1105,8 @@ class Onboarding_model extends CI_Model {
         return $record_arr;
     }
 
-    function onboarding_assign_useful_links($user_sid, $company_sid, $type = 'applicant') {
+    function onboarding_assign_useful_links($user_sid, $company_sid, $type = 'applicant')
+    {
         $this->db->select('link_sid, link_title, link_url, link_description');
         $this->db->where('user_type', $type);
 
@@ -1040,16 +1125,17 @@ class Onboarding_model extends CI_Model {
         return $record_arr;
     }
 
-    function get_onboarding_configuration_welcome_video($company_sid, $user_sid, $user_type) {
+    function get_onboarding_configuration_welcome_video($company_sid, $user_sid, $user_type)
+    {
         $this->db->select('video_source, video_url, is_active');
         $this->db->where('company_sid', $company_sid);
-        
+
         if ($user_type == 'applicant') {
             $this->db->where('applicant_sid', $user_sid);
         } else if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         }
-        
+
         $record_obj = $this->db->get('onboarding_welcome_video');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -1078,16 +1164,17 @@ class Onboarding_model extends CI_Model {
         return $return_data;
     }
 
-    function get_onboarding_setup_welcome_video($company_sid, $user_sid, $user_type) {
+    function get_onboarding_setup_welcome_video($company_sid, $user_sid, $user_type)
+    {
         $this->db->select('sid, video_source, video_url, is_active, is_custom');
         $this->db->where('company_sid', $company_sid);
-        
+
         if ($user_type == 'applicant') {
             $this->db->where('applicant_sid', $user_sid);
         } else if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         }
-        
+
         $record_obj = $this->db->get('onboarding_welcome_video');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -1109,13 +1196,13 @@ class Onboarding_model extends CI_Model {
                 $welcome_video = $company_record_arr[0];
                 $welcome_video_insert_applicant_data = array();
                 $welcome_video_insert_applicant_data['company_sid'] = $company_sid;
-                
+
                 if ($user_type == 'applicant') {
                     $welcome_video_insert_applicant_data['applicant_sid'] = $user_sid;
                 } else if ($user_type == 'employee') {
                     $welcome_video_insert_applicant_data['employee_sid'] = $user_sid;
                 }
-                
+
                 $welcome_video_insert_applicant_data['is_active'] = $welcome_video['is_active'];
                 $welcome_video_insert_applicant_data['video_source'] = $welcome_video['video_source'];
                 $welcome_video_insert_applicant_data['video_url'] = $welcome_video['video_url'];
@@ -1134,13 +1221,14 @@ class Onboarding_model extends CI_Model {
         return $return_data;
     }
 
-    function get_welcome_videos_collection($company_sid) {
+    function get_welcome_videos_collection($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', NULL);
         $this->db->where('employee_sid', NULL);
         $this->db->where('is_active', 1);
-        
+
         $record_obj = $this->db->get('onboarding_welcome_video');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -1148,21 +1236,22 @@ class Onboarding_model extends CI_Model {
 
         if (!empty($record_arr)) {
             $return_data = $record_arr;
-        } 
+        }
 
         return $return_data;
     }
 
-    function is_welcome_video_exist($company_sid, $user_type, $user_sid) {
+    function is_welcome_video_exist($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         if ($user_type == 'applicant') {
             $this->db->where('applicant_sid', $user_sid);
-        } else if ($user_type == 'employee'){
+        } else if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         }
 
-        
+
         $record_obj = $this->db->get('onboarding_welcome_video');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -1170,12 +1259,13 @@ class Onboarding_model extends CI_Model {
 
         if (!empty($record_arr)) {
             $return_data = $record_arr[0];
-        } 
+        }
 
         return $return_data;
     }
 
-    function get_assign_welcome_video($sid, $company_sid) {
+    function get_assign_welcome_video($sid, $company_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $sid);
         $this->db->where('company_sid', $company_sid);
@@ -1183,7 +1273,7 @@ class Onboarding_model extends CI_Model {
         $this->db->where('employee_sid', NULL);
         $this->db->where('is_active', 1);
 
-        
+
         $record_obj = $this->db->get('onboarding_welcome_video');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -1191,12 +1281,13 @@ class Onboarding_model extends CI_Model {
 
         if (!empty($record_arr)) {
             $return_data = $record_arr[0];
-        } 
+        }
 
         return $return_data;
     }
 
-    function get_onboarding_configuration($user_type, $user_sid) {
+    function get_onboarding_configuration($user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -1208,7 +1299,7 @@ class Onboarding_model extends CI_Model {
         foreach ($records_arr as $key => $record) {
             $items = unserialize($record['items']);
             $section = $record['section'];
-//            echo '<br>section: '.$section;
+            //            echo '<br>section: '.$section;
             switch ($section) {
                 case 'sections':
                     $table_name = 'onboarding_getting_started_sections';
@@ -1253,7 +1344,7 @@ class Onboarding_model extends CI_Model {
                     $this->db->where('active', 1);
                     $this->db->where('archived', 0);
                     $this->db->where('terminated_status', 0);
-                    $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+                    $this->db->order_by(SORT_COLUMN, SORT_ORDER);
                     $employer_obj = $this->db->get('users');
                     $employer_arr = $employer_obj->result_array();
                     $employer_obj->free_result();
@@ -1272,7 +1363,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    public function get_onboarding_applicants($applicant_sid) {
+    public function get_onboarding_applicants($applicant_sid)
+    {
         $this->db->select('*');
         $this->db->where('applicant_sid', $applicant_sid);
 
@@ -1287,7 +1379,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    public function get_ems_notifications($company_sid, $applicant_sid) {
+    public function get_ems_notifications($company_sid, $applicant_sid)
+    {
         $this->db->select('title,description,video_source,video_status,video_url,image_status,assigned_to,image_code');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('status', 1);
@@ -1307,7 +1400,8 @@ class Onboarding_model extends CI_Model {
         return $final_result;
     }
 
-    public function initialize_section_status_information($company_sid, $user_type, $user_sid) {
+    public function initialize_section_status_information($company_sid, $user_type, $user_sid)
+    {
         $sections = array();
         $sections[] = 'general_information';
         $sections[] = 'bank_details';
@@ -1341,7 +1435,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    public function increment_section_save_count($user_sid, $user_type, $section) {
+    public function increment_section_save_count($user_sid, $user_type, $section)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('section', $section);
@@ -1349,14 +1444,16 @@ class Onboarding_model extends CI_Model {
         $this->db->update('onboarding_applicants_progress');
     }
 
-    public function decrement_section_save_count($applicant_sid, $section) {
+    public function decrement_section_save_count($applicant_sid, $section)
+    {
         $this->db->where('applicant_sid', $applicant_sid);
         $this->db->where('section', $section);
         $this->db->set('save_count', 'save_count - 1', false);
         $this->db->update('onboarding_applicants_progress');
     }
 
-    public function get_onboarding_progress_percentage($user_type, $user_sid, $total_sections_count) {
+    public function get_onboarding_progress_percentage($user_type, $user_sid, $total_sections_count)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('save_count >', 0);
@@ -1367,7 +1464,8 @@ class Onboarding_model extends CI_Model {
         return $progress;
     }
 
-    public function get_hr_documents($company_sid) {
+    public function get_hr_documents($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('hr_documents');
@@ -1381,7 +1479,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    public function get_documents_information($documents_sids = array()) {
+    public function get_documents_information($documents_sids = array())
+    {
         if (!empty($documents_sids)) {
             $this->db->select('*');
             $this->db->where_in('sid', $documents_sids);
@@ -1396,7 +1495,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    public function get_employee_info($company_sid, $employee_sid) {
+    public function get_employee_info($company_sid, $employee_sid)
+    {
         $this->db->select('sid');
         $this->db->select('access_level');
         $this->db->select('first_name');
@@ -1411,7 +1511,7 @@ class Onboarding_model extends CI_Model {
         $this->db->select('job_title');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('sid', $employee_sid);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -1423,7 +1523,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    public function insert_default_sections($company_sid) {
+    public function insert_default_sections($company_sid)
+    {
         $section_data = array();
         $section_data['company_sid'] = $company_sid;
         $section_data['section_title'] = 'Welcome';
@@ -1465,7 +1566,8 @@ class Onboarding_model extends CI_Model {
         $this->db->insert('onboarding_getting_started_sections', $section_data);
     }
 
-    public function sign_document($company_sid, $user_type, $user_sid, $document_assignment_sid, $data_to_update) {
+    public function sign_document($company_sid, $user_type, $user_sid, $document_assignment_sid, $data_to_update)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -1473,7 +1575,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update('documents_assignment', $data_to_update);
     }
 
-    public function get_employee_information($company_sid, $employee_sid) {
+    public function get_employee_information($company_sid, $employee_sid)
+    {
         $this->db->select('sid');
         $this->db->select('first_name');
         $this->db->select('last_name');
@@ -1488,7 +1591,7 @@ class Onboarding_model extends CI_Model {
         $this->db->select('emp_offer_letter_key');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('sid', $employee_sid);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -1500,7 +1603,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    public function get_security_access_levels() {
+    public function get_security_access_levels()
+    {
         $this->db->select('access_level');
         $this->db->where('status', 1);
         $access_levels = $this->db->get('security_access_level')->result_array();
@@ -1513,7 +1617,8 @@ class Onboarding_model extends CI_Model {
         return $my_return;
     }
 
-    public function check_if_user_already_exists($email_address, $company_sid) {
+    public function check_if_user_already_exists($email_address, $company_sid)
+    {
         $this->db->select('sid');
         $this->db->where('email', $email_address);
         $this->db->where('parent_sid', $company_sid);
@@ -1527,7 +1632,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    public function get_job_list_data($job_list_sid) {
+    public function get_job_list_data($job_list_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $job_list_sid);
         $records_obj = $this->db->get('portal_applicant_jobs_list');
@@ -1541,13 +1647,15 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function emergency_contacts_details($sid) {
+    function emergency_contacts_details($sid)
+    {
         $this->db->where('sid', $sid);
         $result = $this->db->get('emergency_contacts')->result_array();
         return $result;
     }
 
-    function edit_emergency_contacts($data, $sid) {
+    function edit_emergency_contacts($data, $sid)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('emergency_contacts', $data);
         $result = $this->db->affected_rows();
@@ -1563,18 +1671,21 @@ class Onboarding_model extends CI_Model {
         return $result;
     }
 
-    function dependant_details($sid) {
+    function dependant_details($sid)
+    {
         $this->db->where('sid', $sid);
         $result = $this->db->get('dependant_information')->result_array();
         return $result;
     }
 
-    function update_dependant_info($dependant_id, $dependantData) {
+    function update_dependant_info($dependant_id, $dependantData)
+    {
         $this->db->where('sid', $dependant_id)
-                ->update('dependant_information', $dependantData);
+            ->update('dependant_information', $dependantData);
     }
 
-    function get_single_office_locations($location_sid) {
+    function get_single_office_locations($location_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $location_sid);
         $records_obj = $this->db->get('onboarding_office_locations');
@@ -1588,7 +1699,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_updated_sections($company_sid, $user_type, $user_sid) {
+    function check_updated_sections($company_sid, $user_type, $user_sid)
+    {
         $data_to_return = array();
         $data_to_return['getting_started'] = 1;
         $data_to_return['my_profile'] = $this->check_if_profile_updated($company_sid, $user_type, $user_sid);
@@ -1602,7 +1714,8 @@ class Onboarding_model extends CI_Model {
         return $data_to_return;
     }
 
-    function check_if_profile_updated($company_sid, $user_type, $user_sid) {
+    function check_if_profile_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         $this->db->where('sid', $user_sid);
         $this->db->where('employer_sid', $company_sid);
@@ -1614,7 +1727,8 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function check_if_e_signature_updated($company_sid, $user_type, $user_sid) {
+    function check_if_e_signature_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -1625,7 +1739,8 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function check_if_documents_updated($company_sid, $user_type, $user_sid) {
+    function check_if_documents_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -1641,7 +1756,8 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function check_if_licenses_updated($company_sid, $user_type, $user_sid) {
+    function check_if_licenses_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         $this->db->where('users_type', $user_type);
         $this->db->where('users_sid', $user_sid);
@@ -1649,7 +1765,8 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function check_if_direct_deposit_updated($company_sid, $user_type, $user_sid) {
+    function check_if_direct_deposit_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('users_type', $user_type);
@@ -1658,7 +1775,8 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function check_if_dependents_updated($company_sid, $user_type, $user_sid) {
+    function check_if_dependents_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('users_type', $user_type);
@@ -1667,7 +1785,8 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function check_if_emergency_contacts_updated($company_sid, $user_type, $user_sid) {
+    function check_if_emergency_contacts_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         //$this->db->where('company_sid', $company_sid);
         $this->db->where('users_type', $user_type);
@@ -1676,13 +1795,14 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function get_all_offer_letters($company_sid, $employeeSid = false) {
+    function get_all_offer_letters($company_sid, $employeeSid = false)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('archive', 0);
         $this->db->group_start();
         $this->db->where('is_specific', 0);
-        if($employeeSid) $this->db->or_where('is_specific', $employeeSid);
+        if ($employeeSid) $this->db->or_where('is_specific', $employeeSid);
         $this->db->group_end();
         $this->db->from('offer_letter');
 
@@ -1693,7 +1813,8 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function check_if_eeoc_form_updated($company_sid, $user_type, $user_sid) {
+    function check_if_eeoc_form_updated($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('sid');
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
@@ -1701,7 +1822,8 @@ class Onboarding_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function check_company_eeoc_form_status($company_sid) {
+    function check_company_eeoc_form_status($company_sid)
+    {
         $this->db->select('eeo_form_status');
         $this->db->where('user_sid', $company_sid);
         $this->db->from('portal_employer');
@@ -1719,7 +1841,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_company_ssn_dob($company_sid) {
+    function check_company_ssn_dob($company_sid)
+    {
         $this->db->select('ssn_required,dob_required');
         $this->db->where('user_sid', $company_sid);
         $this->db->from('portal_employer');
@@ -1735,29 +1858,34 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function assign_online_videos($data) {
+    function assign_online_videos($data)
+    {
         $this->db->insert('learning_center_online_videos_assignments', $data);
         return $this->db->insert_id();
     }
 
-    function update_assign_online_videos($sid, $data) {
+    function update_assign_online_videos($sid, $data)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('learning_center_online_videos_assignments', $data);
     }
 
-    function update_specific_online_videos($user_sid, $user_type, $data) {
+    function update_specific_online_videos($user_sid, $user_type, $data)
+    {
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_type', $user_type);
         $this->db->update('learning_center_online_videos_assignments', $data);
     }
 
-    function unassign_online_videos($user_sid, $user_type, $data) {
+    function unassign_online_videos($user_sid, $user_type, $data)
+    {
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_type', $user_type);
         $this->db->update('learning_center_online_videos_assignments', $data);
     }
 
-    function check_already_assign($user_sid, $user_type, $id) {
+    function check_already_assign($user_sid, $user_type, $id)
+    {
         $this->db->select('sid');
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_type', $user_type);
@@ -1766,24 +1894,28 @@ class Onboarding_model extends CI_Model {
         return $result_array;
     }
 
-    function assign_training($data) {
+    function assign_training($data)
+    {
         $this->db->insert('learning_center_training_sessions_assignments', $data);
         return $this->db->insert_id();
     }
 
-    function update_specific_training_session($user_sid, $user_type, $data) {
+    function update_specific_training_session($user_sid, $user_type, $data)
+    {
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_type', $user_type);
         $this->db->update('learning_center_training_sessions_assignments', $data);
     }
 
-    function unassign_training_session($user_sid, $user_type, $data) {
+    function unassign_training_session($user_sid, $user_type, $data)
+    {
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_type', $user_type);
         $this->db->update('learning_center_training_sessions_assignments', $data);
     }
 
-    function check_already_assign_training($user_sid, $user_type, $id) {
+    function check_already_assign_training($user_sid, $user_type, $id)
+    {
         $this->db->select('sid');
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_type', $user_type);
@@ -1792,12 +1924,14 @@ class Onboarding_model extends CI_Model {
         return $result_array;
     }
 
-    function update_assign_training($sid, $data) {
+    function update_assign_training($sid, $data)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('learning_center_training_sessions_assignments', $data);
     }
 
-    function get_w4_form($user_type, $user_sid) {
+    function get_w4_form($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
         $this->db->where('status', 1);
@@ -1814,10 +1948,11 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_w9_form_assigned($user_type, $user_sid) {
+    function get_w9_form_assigned($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-//        $this->db->where('status', 1);
+        //        $this->db->where('status', 1);
         $this->db->from('applicant_w9form');
 
         $records_obj = $this->db->get();
@@ -1831,7 +1966,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_w9_form($user_type, $user_sid) {
+    function get_w9_form($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('status', 1);
@@ -1848,7 +1984,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_w4_form_exist($user_type, $user_sid) {
+    function check_w4_form_exist($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
         $this->db->from('form_w4_original');
@@ -1864,7 +2001,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_w9_form_exist($user_type, $user_sid) {
+    function check_w9_form_exist($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->from('applicant_w9form');
@@ -1880,10 +2018,11 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_original_w4_form_assigned($user_type, $user_sid) {
+    function get_original_w4_form_assigned($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
-//        $this->db->where('status', 1);
+        //        $this->db->where('status', 1);
         $this->db->from('form_w4_original');
 
         $records_obj = $this->db->get();
@@ -1897,7 +2036,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_original_w4_form($user_type, $user_sid) {
+    function get_original_w4_form($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
         $this->db->where('status', 1);
@@ -1914,7 +2054,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function deactivate_w4_forms($user_type, $user_sid) {
+    function deactivate_w4_forms($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
         $this->db->set('status', 0);
@@ -1922,7 +2063,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update();
     }
 
-    function activate_w4_forms($user_type, $user_sid) {
+    function activate_w4_forms($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
         $this->db->set('status', 1);
@@ -1930,7 +2072,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update();
     }
 
-    function deactivate_i9_forms($user_type, $user_sid) {
+    function deactivate_i9_forms($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->set('status', 0);
@@ -1938,7 +2081,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update();
     }
 
-    function activate_i9_forms($user_type, $user_sid) {
+    function activate_i9_forms($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->set('status', 1);
@@ -1946,7 +2090,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update();
     }
 
-    function deactivate_w9_forms($user_type, $user_sid) {
+    function deactivate_w9_forms($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->set('status', 0);
@@ -1954,7 +2099,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update();
     }
 
-    function activate_w9_forms($user_type, $user_sid) {
+    function activate_w9_forms($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->set('status', 1);
@@ -1962,14 +2108,16 @@ class Onboarding_model extends CI_Model {
         $this->db->update();
     }
 
-    function insert_w4_form_record($data_to_insert) {
+    function insert_w4_form_record($data_to_insert)
+    {
         $this->db->insert('form_w4_original', $data_to_insert);
     }
 
-    function get_i9_form_assigned($user_type, $user_sid) {
+    function get_i9_form_assigned($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-//        $this->db->where('status', 1);
+        //        $this->db->where('status', 1);
         $this->db->from('applicant_i9form');
 
         $records_obj = $this->db->get();
@@ -1983,7 +2131,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_i9_form($user_type, $user_sid) {
+    function get_i9_form($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('status', 1);
@@ -2000,15 +2149,18 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function insert_i9_form_record($data_to_insert) {
+    function insert_i9_form_record($data_to_insert)
+    {
         $this->db->insert('applicant_i9form', $data_to_insert);
     }
 
-    function insert_w9_form_record($data_to_insert) {
+    function insert_w9_form_record($data_to_insert)
+    {
         $this->db->insert('applicant_i9form', $data_to_insert);
     }
 
-    function get_old_system_documents($user_type, $user_sid) {
+    function get_old_system_documents($user_type, $user_sid)
+    {
         if ($user_type == 'applicant') {
             $this->db->select('sid');
             $this->db->where('applicant_sid', $user_sid);
@@ -2044,17 +2196,20 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function insert_dashboard_notification($data) {
+    function insert_dashboard_notification($data)
+    {
         $this->db->insert('ems_dashboard_notification', $data);
         return $this->db->insert_id();
     }
 
-    function insert_assigned_configuration($data) {
+    function insert_assigned_configuration($data)
+    {
         $this->db->insert('ems_dashboard_notification_assigned', $data);
         return $this->db->insert_id();
     }
 
-    function get_all_ems_notification($company_sid) {
+    function get_all_ems_notification($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('ems_dashboard_notification');
@@ -2063,25 +2218,27 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function update_ems_notification($id, $data) {
+    function update_ems_notification($id, $data)
+    {
         $this->db->where('sid', $id);
         $this->db->update('ems_dashboard_notification', $data);
     }
 
-    function get_ems_notification_by_id($sid) {
+    function get_ems_notification_by_id($sid)
+    {
         $this->db->select('*');
         $this->db->where('ems_dashboard_notification.sid', $sid);
-//        $this->db->join('ems_dashboard_notification_assigned','ems_dashboard_notification_assigned.ems_notification_sid = ems_dashboard_notification.sid','left');
+        //        $this->db->join('ems_dashboard_notification_assigned','ems_dashboard_notification_assigned.ems_notification_sid = ems_dashboard_notification.sid','left');
         $records_obj = $this->db->get('ems_dashboard_notification');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $records_arr[0]['assigned_emp'] = array();
-        
+
         if ($records_arr[0]['assigned_to'] == 'specific') {
             $this->db->select('employee_sid');
             $this->db->where('ems_dashboard_notification_assigned.ems_notification_sid', $sid);
             $result = $this->db->get('ems_dashboard_notification_assigned')->result_array();
-            
+
             foreach ($result as $sid) {
                 $records_arr[0]['assigned_emp'][] = $sid['employee_sid'];
             }
@@ -2090,37 +2247,40 @@ class Onboarding_model extends CI_Model {
         return $records_arr;
     }
 
-    function delete_assigned_configuration($selected, $sid) {
+    function delete_assigned_configuration($selected, $sid)
+    {
         $this->db->where('ems_notification_sid', $sid);
         $this->db->where('employee_sid', $selected);
         $this->db->delete('ems_dashboard_notification_assigned');
     }
 
-    function get_equipment_info($type, $users_sid) {
+    function get_equipment_info($type, $users_sid)
+    {
         $this->db->where('users_type', $type);
         $this->db->where('users_sid', $users_sid);
         $this->db->where('delete_flag', 0);
         return $this->db->get('equipment_information')->result_array();
     }
-    
-    function get_assigned_custom_office_record_sids($company_sid, $user_sid, $user_type, $custom_type, $is_custom = 0) {
-        if($is_custom != 2) {
+
+    function get_assigned_custom_office_record_sids($company_sid, $user_sid, $user_type, $custom_type, $is_custom = 0)
+    {
+        if ($is_custom != 2) {
             $this->db->select('parent_sid');
             $this->db->where('is_custom', $is_custom);
         } else {
             $this->db->select('*');
         }
-        
+
         $this->db->where('custom_type', $custom_type);
         $this->db->where('user_type', $user_type);
         $this->db->where('status', 1);
-        
+
         if ($user_type == 'employee') {
             $this->db->where('employee_sid', $user_sid);
         } else {
             $this->db->where('applicant_sid', $user_sid);
         }
-        
+
         $this->db->where('company_sid', $company_sid);
         $records_obj = $this->db->get('onboarding_custom_assignment');
         $records_arr = $records_obj->result_array();
@@ -2128,52 +2288,55 @@ class Onboarding_model extends CI_Model {
 
         return $records_arr;
     }
-    
-    function get_user_name($company_sid, $user_sid) {
+
+    function get_user_name($company_sid, $user_sid)
+    {
         $this->db->select('first_name, last_name');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('sid', $user_sid);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $record_obj = $this->db->get('users');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
-        } else { 
+        } else {
             return array();
         }
     }
 
-    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1) {
+    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1)
+    {
         $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        
-        if($fetch_offer_letter){
+
+        if ($fetch_offer_letter) {
             $this->db->where('documents_assigned.document_type <>', 'offer_letter');
         }
 
         if ($status) {
             $this->db->where('status', $status);
         }
-        
-        $this->db->join('documents_management','documents_management.sid = documents_assigned.document_sid','left');
+
+        $this->db->join('documents_management', 'documents_management.sid = documents_assigned.document_sid', 'left');
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
         return $record_arr;
     }
 
-    function set_offer_letter_verification_key ($sid, $verification_key, $type = 'applicant') {
+    function set_offer_letter_verification_key($sid, $verification_key, $type = 'applicant')
+    {
         $this->db->where('sid', $sid);
 
-        if($type == 'applicant'){
+        if ($type == 'applicant') {
             $dataToUpdate = array();
             $dataToUpdate['verification_key'] = $verification_key;
             $this->db->update('portal_job_applications', $dataToUpdate);
-        }else{
+        } else {
 
             $dataToUpdate = array();
             $dataToUpdate['emp_offer_letter_key'] = $verification_key;
@@ -2181,7 +2344,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_offer_letter($company_sid, $offer_letter_sid) {
+    function get_offer_letter($company_sid, $offer_letter_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $offer_letter_sid);
@@ -2197,7 +2361,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_if_document_already_assigned($user_type, $user_sid, $document_type, $document_sid) {
+    function check_if_document_already_assigned($user_type, $user_sid, $document_type, $document_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('document_type', $document_type);
@@ -2205,7 +2370,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2213,27 +2378,32 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function insert_documents_assignment_record_history($data_to_insert) {
+    function insert_documents_assignment_record_history($data_to_insert)
+    {
         $this->db->insert('documents_assigned_history', $data_to_insert);
     }
 
-    function update_assign_offer_letter($user_type, $user_sid, $document_type, $data_to_update) {
+    function update_assign_offer_letter($user_type, $user_sid, $document_type, $data_to_update)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('document_type', $document_type);
         $this->db->update('documents_assigned', $data_to_update);
     }
 
-    function insert_documents_assignment_record($data_to_insert) {
+    function insert_documents_assignment_record($data_to_insert)
+    {
         $this->db->insert('documents_assigned', $data_to_insert);
         return $this->db->insert_id();
     }
 
-    function save_email_logs($data) {
+    function save_email_logs($data)
+    {
         $this->db->insert('email_log', $data);
     }
 
-    function get_required_document_info ($company_sid, $user_sid, $user_type, $document_sid) {
+    function get_required_document_info($company_sid, $user_sid, $user_type, $document_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_sid', $user_sid);
@@ -2245,7 +2415,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2253,18 +2423,19 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_applicant_exist ($verification_key, $type = 'a') {
+    function check_applicant_exist($verification_key, $type = 'a')
+    {
         $this->db->select('*');
-        if($type == 'a'){
+        if ($type == 'a') {
             $this->db->where('verification_key', $verification_key);
             $record_obj = $this->db->get('portal_job_applications');
-        } else{
+        } else {
             $this->db->where('emp_offer_letter_key', $verification_key);
             $record_obj = $this->db->get('users');
         }
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2272,7 +2443,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_applicant_offer_letter_exist($company_sid, $user_type, $user_sid, $document_type) {
+    function check_applicant_offer_letter_exist($company_sid, $user_type, $user_sid, $document_type)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2282,7 +2454,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr;
         } else {
@@ -2290,7 +2462,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_my_offer_letter_exist($company_sid, $user_type, $user_sid, $document_type) {
+    function check_my_offer_letter_exist($company_sid, $user_type, $user_sid, $document_type)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2301,7 +2474,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2309,7 +2482,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function check_offer_letter_moved($document_sid, $document_type) {
+    function check_offer_letter_moved($document_sid, $document_type)
+    {
         $this->db->select('*');;
         $this->db->where('doc_sid', $document_sid);
         $this->db->where('document_type', $document_type);
@@ -2317,7 +2491,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned_history');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return 'yes';
         } else {
@@ -2325,7 +2499,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function disable_all_previous_letter ($company_sid, $user_type, $user_sid, $document_type) {
+    function disable_all_previous_letter($company_sid, $user_type, $user_sid, $document_type)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('company_sid', $company_sid);
@@ -2335,14 +2510,15 @@ class Onboarding_model extends CI_Model {
         $this->db->update('documents_assigned');
     }
 
-    function get_offer_letter_feature_info ($document_sid) {
+    function get_offer_letter_feature_info($document_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $document_sid);
 
         $record_obj = $this->db->get('offer_letter');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2350,7 +2526,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function update_upload_status($company_sid, $user_type, $user_sid, $document_type, $document_sid, $uploaded_file) {
+    function update_upload_status($company_sid, $user_type, $user_sid, $document_type, $document_sid, $uploaded_file)
+    {
 
         $now = date('Y-m-d H:i:s');
         $this->db->where('user_type', $user_type);
@@ -2365,14 +2542,15 @@ class Onboarding_model extends CI_Model {
         $this->db->update('documents_assigned');
     }
 
-    function get_applicant_company_info ($company_sid) {
+    function get_applicant_company_info($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $company_sid);
 
         $record_obj = $this->db->get('users');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2380,14 +2558,15 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_assign_offer_letter_info ($offer_letter_sid) {
+    function get_assign_offer_letter_info($offer_letter_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $offer_letter_sid);
 
         $record_obj = $this->db->get('offer_letter');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2395,12 +2574,14 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function revoke_applicant_offer_letter ($offer_letter_sid, $data_to_update) {
+    function revoke_applicant_offer_letter($offer_letter_sid, $data_to_update)
+    {
         $this->db->where('sid', $offer_letter_sid);
         $this->db->update('documents_assigned', $data_to_update);
     }
 
-    function get_assigned_offer_letter ($company_sid, $user_type, $user_sid) {
+    function get_assigned_offer_letter($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2411,28 +2592,29 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             $record_arr['signers'] = [];
             //
             $a = $this->db
-            ->select('group_concat(assigned_to_sid) as signers')
-            ->where('document_assigned_sid', $record_arr[0]['sid'])
-            ->get('authorized_document_assigned_manager');
+                ->select('group_concat(assigned_to_sid) as signers')
+                ->where('document_assigned_sid', $record_arr[0]['sid'])
+                ->get('authorized_document_assigned_manager');
             //
             $b = $a->row_array();
             $a = $a->free_result();
             //
-            if(!empty($b)){
+            if (!empty($b)) {
                 $record_arr[0]['signers'] = $b['signers'];
-            } 
+            }
             return $record_arr[0];
         } else {
             return array();
         }
     }
 
-    function get_assigned_and_signed_offer_letter ($company_sid, $user_type, $user_sid) {
+    function get_assigned_and_signed_offer_letter($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2447,7 +2629,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2455,7 +2637,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function is_offer_letter_assign ($company_sid, $user_type, $user_sid) {
+    function is_offer_letter_assign($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2466,7 +2649,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return 1;
         } else {
@@ -2474,7 +2657,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_signed_offer_letter_from_history ($company_sid, $user_type, $user_sid) {
+    function get_signed_offer_letter_from_history($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2488,7 +2672,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('documents_assigned_history');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr;
         } else {
@@ -2496,7 +2680,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_applicant_resume_history ($company_sid, $user_sid) {
+    function get_applicant_resume_history($company_sid, $user_sid)
+    {
         $this->db->select('old_resume_s3_name');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_sid', $user_sid);
@@ -2505,7 +2690,7 @@ class Onboarding_model extends CI_Model {
         $this->db->where('request_status <>', 0);
         $this->db->where('old_resume_s3_name <>', NULL);
         $this->db->order_by('sid', 'DESC');
-        
+
         $record_obj = $this->db->get('resume_request_logs');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -2516,11 +2701,12 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_current_resume ($company_sid, $applicant_sid) {
+    function get_current_resume($company_sid, $applicant_sid)
+    {
         $this->db->select('resume');
         $this->db->where('sid', $applicant_sid);
         $this->db->where('employer_sid', $company_sid);
-        
+
         $record_obj = $this->db->get('portal_job_applications');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -2531,7 +2717,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_current_resume_old ($company_sid, $user_sid) {
+    function get_current_resume_old($company_sid, $user_sid)
+    {
         $this->db->select('resume');
         $this->db->where('sid', $user_sid);
         $this->db->where('employer_sid', $company_sid);
@@ -2539,23 +2726,24 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('portal_job_applications');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0]['resume'];
         } else {
-             $this->db->select('portal_applicant_jobs_list.resume');
+            $this->db->select('portal_applicant_jobs_list.resume');
             $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
             $this->db->where('portal_job_applications.sid', $applicant_sid);
             $this->db->where('portal_job_applications.employer_sid', $company_sid);
             $record_obj = $this->db->get('portal_job_applications');
             $record_arr = $record_obj->result_array();
             $record_obj->free_result();
-            if(sizeof($record_arr)) return $record_arr[0]['resume'];
+            if (sizeof($record_arr)) return $record_arr[0]['resume'];
             return array();
         }
     }
 
-    function get_this_resume_history ($company_sid, $user_sid, $job_sid, $job_type) {
+    function get_this_resume_history($company_sid, $user_sid, $job_sid, $job_type)
+    {
         $this->db->select('old_resume_s3_name');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_sid', $user_sid);
@@ -2564,7 +2752,7 @@ class Onboarding_model extends CI_Model {
         $this->db->where('request_status <>', 0);
         $this->db->where('old_resume_s3_name <>', NULL);
         $this->db->order_by('sid', 'DESC');
-        
+
         $record_obj = $this->db->get('resume_request_logs');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -2573,15 +2761,16 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_current_resume_by_job_detail($portal_job_applications_sid,$company_sid){
+    function get_current_resume_by_job_detail($portal_job_applications_sid, $company_sid)
+    {
         $this->db->select('portal_applicant_jobs_list.sid,portal_applicant_jobs_list.job_sid,portal_job_listings.title,portal_applicant_jobs_list.resume,portal_applicant_jobs_list.desired_job_title,portal_applicant_jobs_list.last_update')
-        ->where('portal_applicant_jobs_list.portal_job_applications_sid', $portal_job_applications_sid)
-        ->where('portal_applicant_jobs_list.company_sid', $company_sid)
-        ->where('portal_applicant_jobs_list.resume <>', '')
-        ->where('portal_applicant_jobs_list.resume <>', NULL)
-        ->order_by('portal_applicant_jobs_list.last_update','DESC')
-        ->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
-        
+            ->where('portal_applicant_jobs_list.portal_job_applications_sid', $portal_job_applications_sid)
+            ->where('portal_applicant_jobs_list.company_sid', $company_sid)
+            ->where('portal_applicant_jobs_list.resume <>', '')
+            ->where('portal_applicant_jobs_list.resume <>', NULL)
+            ->order_by('portal_applicant_jobs_list.last_update', 'DESC')
+            ->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
+
         $record_obj = $this->db->get('portal_applicant_jobs_list');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -2604,21 +2793,22 @@ class Onboarding_model extends CI_Model {
      * @return array
      *
      */
-    function get_old_resume($company_sid, $user_type, $user_sid) {
+    function get_old_resume($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('resume_request_logs.sid,resume_request_logs.requested_date as request_date,resume_request_logs.job_sid,portal_job_listings.title,resume_request_logs.old_resume_s3_name,resume_request_logs.job_type,portal_applicant_jobs_list.desired_job_title')
-        ->where('resume_request_logs.company_sid', $company_sid)
-        ->where('resume_request_logs.user_type', $user_type)
-        ->where('resume_request_logs.user_sid', $user_sid)
-        ->where('resume_request_logs.old_resume_s3_name <>',null)
-        ->where('resume_request_logs.old_resume_s3_name <>','error')
-        // $this->db->where('resume_request_logs.job_sid <>',0);
-        ->join('portal_job_listings', 'portal_job_listings.sid = resume_request_logs.job_sid', 'left')
-        ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = resume_request_logs.job_sid', 'left')
-        ->order_by('resume_request_logs.sid', 'DESC');
+            ->where('resume_request_logs.company_sid', $company_sid)
+            ->where('resume_request_logs.user_type', $user_type)
+            ->where('resume_request_logs.user_sid', $user_sid)
+            ->where('resume_request_logs.old_resume_s3_name <>', null)
+            ->where('resume_request_logs.old_resume_s3_name <>', 'error')
+            // $this->db->where('resume_request_logs.job_sid <>',0);
+            ->join('portal_job_listings', 'portal_job_listings.sid = resume_request_logs.job_sid', 'left')
+            ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = resume_request_logs.job_sid', 'left')
+            ->order_by('resume_request_logs.sid', 'DESC');
         $record_obj = $this->db->get('resume_request_logs');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         return sizeof($record_arr) ? $record_arr : array();
 
         if (!empty($record_arr)) {
@@ -2628,7 +2818,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_old_resume_old($company_sid, $user_type, $user_sid) {
+    function get_old_resume_old($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('old_resume_s3_name');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2638,7 +2829,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('resume_request_logs');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr;
         } else {
@@ -2646,7 +2837,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_current_request_date($company_sid, $user_type, $user_sid) {
+    function get_current_request_date($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('requested_date');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2657,7 +2849,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('resume_request_logs');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0]['requested_date'];
         } else {
@@ -2665,14 +2857,16 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function reset_old_resume($company_sid, $user_sid) {
+    function reset_old_resume($company_sid, $user_sid)
+    {
         $this->db->where('sid', $user_sid);
         $this->db->where('employer_sid', $company_sid);
         $this->db->set('resume', NULL);
         $this->db->update('portal_job_applications');
     }
 
-    function deactivate_old_resume_request($company_sid, $user_type, $user_sid, $job_sid, $job_type) {
+    function deactivate_old_resume_request($company_sid, $user_type, $user_sid, $job_sid, $job_type)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -2683,7 +2877,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update('resume_request_logs');
     }
 
-    function deactivate_old_resume_request_old($company_sid, $user_type, $user_sid) {
+    function deactivate_old_resume_request_old($company_sid, $user_type, $user_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -2691,7 +2886,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update('resume_request_logs');
     }
 
-    function get_user_resume_request($company_sid, $user_type, $user_sid, $job_sid, $job_type) {
+    function get_user_resume_request($company_sid, $user_type, $user_sid, $job_sid, $job_type)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2703,7 +2899,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('resume_request_logs');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2711,7 +2907,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_user_resume_request_old($company_sid, $user_type, $user_sid) {
+    function get_user_resume_request_old($company_sid, $user_type, $user_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2721,19 +2918,21 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('resume_request_logs');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
             return array();
         }
     }
-    
-    function insert_resume_request ($data_to_insert) {
+
+    function insert_resume_request($data_to_insert)
+    {
         $this->db->insert('resume_request_logs', $data_to_insert);
     }
 
-    function update_resume_request ($company_sid, $user_sid, $user_type, $job_sid, $job_type, $data_to_update) {
+    function update_resume_request($company_sid, $user_sid, $user_type, $job_sid, $job_type, $data_to_update)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -2744,7 +2943,8 @@ class Onboarding_model extends CI_Model {
         $this->db->update('resume_request_logs', $data_to_update);
     }
 
-    function update_resume_request_old ($company_sid, $user_sid, $user_type, $data_to_update) {
+    function update_resume_request_old($company_sid, $user_sid, $user_type, $data_to_update)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -2753,13 +2953,15 @@ class Onboarding_model extends CI_Model {
         $this->db->update('resume_request_logs', $data_to_update);
     }
 
-    function update_applicant_resume ($applicant_sid, $resume) {
+    function update_applicant_resume($applicant_sid, $resume)
+    {
         $this->db->where('sid', $applicant_sid);
         $this->db->set('resume', $resume);
         $this->db->update('portal_job_applications');
     }
 
-    function get_send_resume_template ($company_sid) {
+    function get_send_resume_template($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('template_code', 'send-resume-request');
@@ -2768,7 +2970,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('portal_email_templates');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0];
         } else {
@@ -2776,25 +2978,26 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_single_job_detail($portal_job_applications_sid,$company_sid,$job_sid,$job_type = ''){
+    function get_single_job_detail($portal_job_applications_sid, $company_sid, $job_sid, $job_type = '')
+    {
         $this->db->select('resume');
 
         if ($job_type == 'job') {
             $this->db->where('job_sid', $job_sid);
-        } else if ($job_type == 'desired_job') { 
+        } else if ($job_type == 'desired_job') {
             $this->db->where('sid', $job_sid);
-        } else if ($job_type == 'job_not_applied') { 
+        } else if ($job_type == 'job_not_applied') {
             $this->db->where('job_sid', $job_sid);
             $this->db->where('desired_job_title', NULL);
         }
 
         $this->db->where('portal_job_applications_sid', $portal_job_applications_sid);
         $this->db->where('company_sid', $company_sid);
-        
+
         $record_obj = $this->db->get('portal_applicant_jobs_list');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0]['resume'];
         } else {
@@ -2802,23 +3005,25 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function update_resume_applicant_job_list($portal_job_applications_sid, $company_sid, $job_sid, $job_type, $resume){
+    function update_resume_applicant_job_list($portal_job_applications_sid, $company_sid, $job_sid, $job_type, $resume)
+    {
         if ($job_type == 'job') {
             $this->db->where('job_sid', $job_sid);
-        } else if ($job_type == 'desired_job') { 
+        } else if ($job_type == 'desired_job') {
             $this->db->where('sid', $job_sid);
-        } else if ($job_type == 'job_not_applied') { 
+        } else if ($job_type == 'job_not_applied') {
             $this->db->where('job_sid', $job_sid);
             $this->db->where('desired_job_title', NULL);
         }
 
         $this->db->where('portal_job_applications_sid', $portal_job_applications_sid);
-        $this->db->where('company_sid',$company_sid);
-        
-        $this->db->update('portal_applicant_jobs_list', array( 'resume' => $resume, 'last_update' => date('Y-m-d')));
+        $this->db->where('company_sid', $company_sid);
+
+        $this->db->update('portal_applicant_jobs_list', array('resume' => $resume, 'last_update' => date('Y-m-d')));
     }
 
-    function get_job_title ($job_sid, $user_sid) {
+    function get_job_title($job_sid, $user_sid)
+    {
         $this->db->select('Title');
         $this->db->where('sid', $job_sid);
         // $this->db->where('user_sid', $user_sid);
@@ -2826,7 +3031,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('portal_job_listings');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0]['Title'];
         } else {
@@ -2834,7 +3039,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_desired_job_title ($job_listing_sid, $company_sid) {
+    function get_desired_job_title($job_listing_sid, $company_sid)
+    {
         $this->db->select('desired_job_title');
         $this->db->where('sid', $job_listing_sid);
         $this->db->where('company_sid', $company_sid);
@@ -2842,7 +3048,7 @@ class Onboarding_model extends CI_Model {
         $record_obj = $this->db->get('portal_applicant_jobs_list');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0]['desired_job_title'];
         } else {
@@ -2850,7 +3056,8 @@ class Onboarding_model extends CI_Model {
         }
     }
 
-    function get_current_assigned_offer_letter($company_sid, $user_type, $user_sid = null, $status = 1) {
+    function get_current_assigned_offer_letter($company_sid, $user_type, $user_sid = null, $status = 1)
+    {
         $this->db->select('documents_assigned.*,offer_letter.acknowledgment_required,offer_letter.download_required,offer_letter.signature_required');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -2862,7 +3069,7 @@ class Onboarding_model extends CI_Model {
             $this->db->where('status', $status);
         }
 
-        $this->db->join('offer_letter','offer_letter.sid = documents_assigned.document_sid','left');
+        $this->db->join('offer_letter', 'offer_letter.sid = documents_assigned.document_sid', 'left');
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
@@ -2875,10 +3082,118 @@ class Onboarding_model extends CI_Model {
     }
 
     //
-    function delete_from_oirignal_table($sid){
+    function delete_from_oirignal_table($sid)
+    {
         $this->db
-        ->where('sid', $sid)
-        ->delete('documents_assigned');
+            ->where('sid', $sid)
+            ->delete('documents_assigned');
     }
 
+
+
+    function get_company_disclosure($company_sid, $employee_sid = 0, $applicant_sid = 0)
+    {
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+
+        if ($employee_sid > 0) {
+            $this->db->where('employee_sid', $employee_sid);
+        }
+
+        if ($applicant_sid > 0) {
+            $this->db->where('applicant_sid', $applicant_sid);
+        }
+
+        $records_obj = $this->db->get('onboarding_disclosure');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if ($employee_sid > 0 || $applicant_sid > 0) {
+            if (empty($records_arr)) {
+                $this->db->select('*');
+                $this->db->where('company_sid', $company_sid);
+                $records_obj = $this->db->get('onboarding_disclosure');
+                $records_arr = $records_obj->result_array();
+                $records_obj->free_result();
+            }
+        }
+
+        return $records_arr;
+    }
+
+    function insert_update_onboarding_disclosure($data, $sid)
+    {
+        if ($sid > 0) {
+            $this->db->where('sid', $sid);
+            $this->db->update('onboarding_disclosure', $data);
+        } else {
+            $this->db->insert('onboarding_disclosure', $data);
+        }
+    }
+
+
+    function save_update_setup_onboarding_disclosure($disclosure, $user_type, $user_sid, $company_sid, $modified_by_sid)
+    {
+        $data = array();
+        $data['disclosure'] = $disclosure;
+        $data['company_sid'] = $company_sid;
+        $data['date_modified'] = date('Y-m-d H:i:s');
+        $data['modified_by_sid'] = $modified_by_sid;
+
+        $this->db->select('sid');
+        $this->db->where('company_sid', $company_sid);
+
+        if ($user_type == 'applicant') {
+            $data['applicant_sid'] = $user_sid;
+            $this->db->where('applicant_sid', $user_sid);
+        } else {
+            $data['employee_sid'] = $user_sid;
+            $this->db->where('employee_sid', $user_sid);
+        }
+
+        $records_obj = $this->db->get('onboarding_disclosure');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (empty($records_arr)) { // record does not exist, add it to database
+            $this->db->insert('onboarding_disclosure', $data);
+        } else {
+            $sid = $records_arr['0']['sid'];
+            $this->db->where('sid', $sid);
+            $this->db->update('onboarding_disclosure', $data);
+        }
+    }
+
+
+    public function get_notification_email_configuration($companySid)
+    {
+        return $this->db
+            ->where('company_sid', $companySid)
+            ->where('general_information_status', 1)
+            ->get('notifications_emails_configuration')->count_all_results();
+    }
+
+
+    /**
+     * 
+     */
+    public function getPrimaryAddress(
+        int $companyId
+    )
+    {
+        return $this->db
+        ->select(
+            '
+                location_address,
+                location_telephone,
+                location_fax
+            '
+        )
+        ->where([
+            'company_sid' => $companyId,
+            'is_primary' => 1
+        ])
+        ->get('onboarding_office_locations')
+        ->row_array();
+    }
 }

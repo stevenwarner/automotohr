@@ -9,7 +9,7 @@
 
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile'.'/'.$employer['sid'])?>"><i class="fa fa-chevron-left"></i>Employee Profile</a>
                                     <?php echo $title; ?>
                                 </span>
@@ -42,6 +42,7 @@
                                                     <option value="1" <?= $termination_record['termination_reason'] == 1 ? 'selected="selected"' : '';?>>Resignation</option>
                                                     <option value="2" <?= $termination_record['termination_reason'] == 2 ? 'selected="selected"' : '';?>>Fired</option>
                                                     <option value="3" <?= $termination_record['termination_reason'] == 3 ? 'selected="selected"' : '';?>>Tenure Completed</option>
+                                                    <option value="18" <?= $termination_record['termination_reason'] == 18 ? 'selected="selected"' : '';?>>Store Closure</option>
                                                 </select>
                                                 <?php echo form_error('terminated_status'); ?>
                                             </li>

@@ -1,11 +1,14 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Copy_employees extends Admin_Controller {
+class Copy_employees extends Admin_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/copy_employees_model');
+        $this->load->model('manage_admin/merge_employees_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
@@ -19,7 +22,8 @@ class Copy_employees extends Admin_Controller {
      *
      * @return VOID
      */
-    public function index_old () {
+    public function index_old()
+    {
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'copy_employees');
 
@@ -31,7 +35,8 @@ class Copy_employees extends Admin_Controller {
         $this->render('manage_admin/company/copy_employees', 'admin_master');
     }
 
-    public function index () {
+    public function index()
+    {
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'copy_employees');
 
@@ -43,82 +48,85 @@ class Copy_employees extends Admin_Controller {
         $this->render('manage_admin/company/copy_employees', 'admin_master');
     }
 
-    public function get_corporate_companies ($corporate_sid) {
+    public function get_corporate_companies($corporate_sid)
+    {
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'copy_employees');
 
         $corporate_companies = $this->copy_employees_model->get_corporate_companies_by_id($corporate_sid);
 
-        if(!empty($corporate_companies)) {
+        if (!empty($corporate_companies)) {
             foreach ($corporate_companies as $key => $corporate_company) {
                 $company_sid = $corporate_company['company_sid'];
                 $company_name = $this->copy_employees_model->get_company_name_by_id($company_sid);
                 if (!empty($company_name)) {
                     $corporate_companies[$key]['company_name'] = $company_name;
-                } 
+                }
             }
         }
 
         echo json_encode($corporate_companies);
     }
 
-    public function get_companies_employees ($company_sid, $employee_type, $page, $to_company_sid) {
-      
+    public function get_companies_employees($company_sid, $employee_type, $page, $to_company_sid, $employee_sortby, $employee_sort_orderby, $employee_keyword = '')
+    {
+
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'copy_employees');
-        
-        if(!$this->input->is_ajax_request() || $this->input->method(true) !== 'GET'){
+
+        if (!$this->input->is_ajax_request() || $this->input->method(true) !== 'GET') {
             exit(0);
-        } 
-       
+        }
+        //
+        $employee_keyword = str_replace('--', ' ', $employee_keyword);
+
         $resp = array();
         $resp['status'] = FALSE;
         $resp['response'] = 'Invalid request';
-        
-        if(!isset($company_sid) || !isset($employee_type)|| !isset($page)){
+
+        if (!isset($company_sid) || !isset($employee_type) || !isset($page)) {
             $resp['response'] = 'Indexes are missing from request';
             echo json_encode($resp);
-        } 
-        
-        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 10);
-        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid);
-       
-        if(empty($company_employees)){
+        }
+
+        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50, $employee_sortby, $employee_sort_orderby, $employee_keyword);
+        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid, $employee_keyword);
+
+        if (empty($company_employees)) {
             $company_name = $this->copy_employees_model->get_company_name_by_id($company_sid);
-            $resp['response'] = 'No desire employees found in this <b>'.$company_name.'</b>.';
+            $resp['response'] = 'No desire employees found in this <b>' . $company_name . '</b>.';
             echo json_encode($resp);
         } else {
             $resp['status'] = TRUE;
             $resp['response'] = 'Proceed';
-            if($page == 1){
-                $resp['limit'] = 10;
+            if ($page == 1) {
+                $resp['limit'] = 50;
                 $resp['records'] = $company_employees;
-                $resp['totalPages'] = ceil( $employees_count / $resp['limit'] );
+                $resp['totalPages'] = ceil($employees_count / $resp['limit']);
                 $resp['totalRecords'] = $employees_count;
             } else {
-               $resp['records'] = $company_employees; 
+                $resp['records'] = $company_employees;
             }
-            
+
             echo json_encode($resp);
         }
-        
-        
     }
 
-    public function copy_companies_employees () {
+    public function copy_companies_employees()
+    {
         check_access_permissions(db_get_admin_access_level_details($this->ion_auth->user()->row()->id), 'manage_admin', 'copy_applicants');
-        
-        if(!$this->input->is_ajax_request() || $this->input->method(true) !== 'POST'|| !sizeof($this->input->post())) {
-           exit(0); 
-        } 
-        
+
+        if (!$this->input->is_ajax_request() || $this->input->method(true) !== 'POST' || !sizeof($this->input->post())) {
+            exit(0);
+        }
+
         $resp = array();
         $resp['status'] = FALSE;
         $resp['response'] = 'Invalid request';
-        
+
         $formpost = $this->input->post(NULL, TRUE);
-        
-        if(!isset($formpost['employee_sid']) || !isset($formpost['employee_name']) || !isset($formpost['from_company']) || !isset($formpost['to_company'])){
+
+        if (!isset($formpost['employee_sid']) || !isset($formpost['employee_name']) || !isset($formpost['from_company']) || !isset($formpost['to_company'])) {
             $resp['response'] = 'Indexes are missing from request';
             echo json_encode($resp);
         } else {
@@ -126,38 +134,196 @@ class Copy_employees extends Admin_Controller {
             $to_company = $formpost['to_company'];
             $from_company = $formpost['from_company'];
             $user_type = 'employee';
+            $transferredNote = $formpost['transferred_note'];
 
 
             $employee = $this->copy_employees_model->fetch_employee_by_sid($employee_sid);
             $company_name = $this->copy_employees_model->get_company_name_by_id($to_company);
 
-            // _e($employee, true, true);
+            $employee_name = $employee['first_name'] . ' ' . $employee['last_name'];
 
-            $employee_name = $employee['first_name'].' '.$employee['last_name'];
-     
             if (empty($employee)) {
                 $resp['response'] = 'No employee found.';
                 echo json_encode($resp);
             }
-            
+
             $date = date('Y-m-d H:i:s', strtotime('now'));
 
-            if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) { 
-                $resp['status'] = FALSE;
-                $resp['response'] = 'Employee <b>'.$employee_name.'</b> already exist in company <b>'.$company_name.'</b>';
+            if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
+                $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
+                $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
+
+                $secondary_employee_email    = $employee['email'];
+                //
+                //Update Primary Employee Profile
+                $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
+
+                // now move all other information
+
+                // 1) Employee emergency contacts
+                $emergency_contacts = $this->merge_employees_model->update_employee_emergency_contacts($primary_employee_sid, $secondary_employee_sid);
+
+                // 2) Employee equipment information
+                $equipment_information = $this->merge_employees_model->update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid);
+
+                // 3) Employee dependant information
+                $dependant_information = $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid);
+
+                // 4) Employee license information
+                $license_information = $this->merge_employees_model->update_employee_license_information($primary_employee_sid, $secondary_employee_sid);
+
+                // 5) Employee background check
+                $this->merge_employees_model->update_employee_background_check($primary_employee_sid, $secondary_employee_sid);
+
+                // 6) Employee portal misc notes
+                $this->merge_employees_model->update_employee_misc_notes($primary_employee_sid, $secondary_employee_sid);
+
+                // 7) Employee private_message
+                $this->merge_employees_model->update_employee_private_message($primary_employee_sid, $secondary_employee_email);
+
+                // 8) Employee portal rating
+                $this->merge_employees_model->update_employee_rating($primary_employee_sid, $secondary_employee_sid);
+
+                // 9) Employee calendar events
+                $this->merge_employees_model->update_employee_schedule_event($primary_employee_sid, $secondary_employee_sid);
+
+                // 10) Employee portal attachments
+                $this->merge_employees_model->update_employee_attachments($primary_employee_sid, $secondary_employee_sid);
+
+                // 11) Employee reference checks
+                $this->merge_employees_model->update_employee_reference_checks($primary_employee_sid, $secondary_employee_sid);
+
+                // 12) Employee Onboarding Configuration
+                $this->merge_employees_model->update_onboarding_configuration($primary_employee_sid, $secondary_employee_sid);
+
+                // 13) Employee Documents
+                $documents = $this->merge_employees_model->update_documents_new($primary_employee_sid, $secondary_employee_sid, $to_company);
+
+                // 14) Employee Direct Deposit Information
+                $bank_details = $this->merge_employees_model->update_employee_direct_deposit_information($primary_employee_sid, $secondary_employee_sid);
+
+                // 15) Employee E-Signature Data
+                $e_signature_data = $this->merge_employees_model->update_employee_e_signature($primary_employee_sid, $secondary_employee_sid);
+
+                // 16) Employee EEOC Form
+                $eeoc = $this->merge_employees_model->update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid);
+                //
+                $merge_secondary_employee_data = [
+                    'user_profile' => $secondary_employee_data,
+                    'emergency_contacts' => $emergency_contacts,
+                    'equipment_information' => $equipment_information,
+                    'dependant_information' => $dependant_information,
+                    'license_information' => $license_information,
+                    'direct_deposit_information' => $bank_details,
+                    'e_signature' => $e_signature_data,
+                    'eeoc' => $eeoc,
+                    'group' => "",
+                    'documents' => $documents
+                ];
+                //
+                $this->merge_employees_model->save_merge_secondary_employee_info($merge_secondary_employee_data, $primary_employee_sid, $secondary_employee_sid);
+                //
+                $logRecord =
+                    $this->db
+                    ->select('sid')
+                    ->where([
+                        'from_company_sid' => $from_company,
+                        'to_company_sid' => $to_company,
+                        'previous_employee_sid' => $secondary_employee_sid,
+                        'new_employee_sid' => $primary_employee_sid
+                    ])
+                    ->get('employees_transfer_log')
+                    ->row_array();
+                //
+                if ($logRecord) {
+                    //
+                    $this->db
+                        ->where('sid', $logRecord['sid'])
+                        ->update('employees_transfer_log', [
+                            'employee_copy_date' => getSystemDate()
+                        ]);
+                } else {
+                    //
+                    $insert_employee_log = array();
+                    $insert_employee_log['from_company_sid'] = $from_company;
+                    $insert_employee_log['previous_employee_sid'] = $secondary_employee_sid;
+                    $insert_employee_log['to_company_sid'] = $to_company;
+                    $insert_employee_log['new_employee_sid'] = $primary_employee_sid;
+                    $insert_employee_log['last_update'] = $insert_employee_log['employee_copy_date'] = getSystemDate();
+
+                    $this->db->insert('employees_transfer_log', $insert_employee_log);
+                }
+
+                // Deactivate employee and add post fix username
+                $this->db
+                    ->where('sid', $secondary_employee_sid)
+                    ->update('users', [
+                        'active' => 0,
+                        'username' => $secondary_employee_data['username'] . '_' . time()
+                    ]);
+                // Update the transfer date
+                $transferDate = getSystemDate(DB_DATE);
+                $this->db->where('sid', $primary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
+                $this->db->where('sid', $secondary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
+
+                // Add transferred status to moved employee
+                $ins = [];
+                $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
+                $ins['details'] = $transferredNote . '<br/>' . 'Employee is moved from "' . (getUserColumnById($from_company, 'CompanyName')) . '".';
+                $ins['employee_status'] = 9;
+                $ins['employee_sid'] = $primary_employee_sid;
+                $ins['changed_by'] = 0;
+                $ins['ip_address'] = getUserIP();
+                $ins['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $ins['termination_reason'] = 0;
+                $ins['termination_date'] = null;
+
+                $this->copy_employees_model->add_terminate_user_table($ins);
+
+                // Add transferred status to primary employee
+                $ins = [];
+                $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
+                $ins['details'] = 'Employee is moved to "' . (getUserColumnById($to_company, 'CompanyName')) . '".';
+                $ins['employee_status'] = 9;
+                $ins['employee_sid'] = $secondary_employee_sid;
+                $ins['changed_by'] = 0;
+                $ins['ip_address'] = getUserIP();
+                $ins['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $ins['termination_reason'] = 0;
+                $ins['termination_date'] = null;
+
+                $this->copy_employees_model->add_terminate_user_table($ins);
+
+                //
+                $array['status'] = "success";
+                $array['message'] = "Success! Employee is successfully merged!";
+                $this->session->set_flashdata('message', '<b>Success:</b> Employee Merged Successfully!');
+                //
+                //  return print_r(json_encode($array));
+
                 echo json_encode($resp);
             } else {
 
                 $user_to_insert = array();
 
                 foreach ($employee as $key => $value) {
-                    if ($key == 'username') {echo $key;
-                        if ($this->copy_employees_model->check_employee_username_exist($employee['username'])) { 
-                            $user_to_insert[$key] = $value.'_'.generateRandomString(5);
+                    if ($key == 'username') {
+                        if ($this->copy_employees_model->check_employee_username_exist($employee['username'])) {
+
+                            // update old username
+                            $oldUserUpdateData['username'] = substr($employee['username'] . '_' . time(), 0, 254);
+                            $oldUserUpdateData['active'] = 0;
+
+                            if ($this->copy_employees_model->update_user_olddata($employee['sid'], $oldUserUpdateData) != $oldUserUpdateData['username']) {
+                                $oldUserUpdateData['username'] = substr($employee['username'] . '_' . $employee['parent_sid'] . '_' . generateRandomString(5), 0, 254);
+                                $oldUserUpdateData['active'] = 0;
+                            }
+
+                            $user_to_insert[$key] = $value;
                         }
                     } else {
-                       $user_to_insert[$key] = $value; 
-                    } 
+                        $user_to_insert[$key] = $value;
+                    }
                 }
 
                 $user_to_insert['parent_sid'] = $to_company;
@@ -179,7 +345,7 @@ class Copy_employees extends Admin_Controller {
                     unset($insert_e_signature['sid']);
 
                     $this->copy_employees_model->copy_new_employee_e_signature($insert_e_signature);
-                } 
+                }
 
                 $specific_videos = $this->copy_employees_model->get_employee_specific_video($user_type, $employee_sid);
 
@@ -196,7 +362,7 @@ class Copy_employees extends Admin_Controller {
 
                         $this->copy_employees_model->copy_new_employee_video($insert_specific_video);
                     }
-                } 
+                }
 
                 $specific_training_sessions = $this->copy_employees_model->get_employee_specific_training_sessions($user_type, $employee_sid);
 
@@ -228,7 +394,7 @@ class Copy_employees extends Admin_Controller {
                     unset($insert_occupational_license['sid']);
 
                     $this->copy_employees_model->copy_new_employee_license($insert_occupational_license);
-                } 
+                }
 
                 $drivers_license = $this->copy_employees_model->get_license_details($user_type, $employee_sid, 'drivers');
 
@@ -310,8 +476,8 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_equipment['sid']);
 
                         $this->copy_employees_model->copy_new_employee_equipment($insert_equipment);
-                    }  
-                }    
+                    }
+                }
 
                 $assigned_documents = $this->copy_employees_model->get_assigned_documents($from_company, $user_type, $employee_sid, 0);
 
@@ -330,12 +496,12 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_assigned_document['download_required']);
                         unset($insert_assigned_document['signature_required']);
 
-                        if(empty($insert_assigned_document['archive'])) {
+                        if (empty($insert_assigned_document['archive'])) {
                             $insert_assigned_document['archive'] = 0;
                         }
 
                         $this->copy_employees_model->copy_new_employee_assign_document($insert_assigned_document);
-                    }   
+                    }
                 }
 
                 $assigned_offer_letters = $this->copy_employees_model->get_assigned_offers($from_company, $user_type, $employee_sid, 0);
@@ -356,7 +522,7 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_offer_letter['signature_required']);
 
                         $this->copy_employees_model->copy_new_employee_offer_letter($insert_offer_letter);
-                    } 
+                    }
                 }
 
                 $eev_w4 = $this->copy_employees_model->is_exist_in_eev_document('w4', $from_company, $employee_sid);
@@ -375,7 +541,7 @@ class Copy_employees extends Admin_Controller {
 
                     $this->copy_employees_model->copy_new_employee_eev_form($insert_eev_w4);
                 } else {
-                    $w4_form = $this->copy_employees_model->fetch_form_for_front_end('w4', 'employee', $employee_sid); 
+                    $w4_form = $this->copy_employees_model->fetch_form_for_front_end('w4', 'employee', $employee_sid);
 
                     if (!empty($w4_form)) {
 
@@ -413,7 +579,7 @@ class Copy_employees extends Admin_Controller {
                     if (!empty($w9_form)) {
 
                         $insert_w9_form = array();
-                        
+
                         foreach ($w9_form as $key => $value) {
                             $insert_w9_form[$key] = $value;
                         }
@@ -430,7 +596,7 @@ class Copy_employees extends Admin_Controller {
 
                 if (!empty($eev_i9)) {
                     $insert_eev_i9 = array();
-                        
+
                     foreach ($eev_i9 as $key => $value) {
                         $insert_eev_i9[$key] = $value;
                     }
@@ -445,7 +611,7 @@ class Copy_employees extends Admin_Controller {
                     if (!empty($i9_form)) {
 
                         $insert_i9_form = array();
-                        
+
                         foreach ($i9_form as $key => $value) {
                             $insert_i9_form[$key] = $value;
                         }
@@ -455,7 +621,7 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_i9_form['sid']);
 
                         $this->copy_employees_model->copy_new_employee_i9_form($insert_i9_form);
-                    }  
+                    }
                 }
 
                 $extra_attached_documents = $this->copy_employees_model->get_all_extra_attached_document($employee_sid, $user_type);
@@ -473,7 +639,7 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_extra_document['sid']);
 
                         $this->copy_employees_model->copy_new_employee_extra_attachment($insert_extra_document);
-                    }        
+                    }
                 }
 
                 $documents_history = $this->copy_employees_model->get_all_documents_history($employee_sid, $user_type);
@@ -482,7 +648,7 @@ class Copy_employees extends Admin_Controller {
                     foreach ($documents_history as $key => $doc_history) {
 
                         $insert_doc_history = array();
-                        
+
                         foreach ($doc_history as $key => $value) {
                             $insert_doc_history[$key] = $value;
                         }
@@ -492,7 +658,7 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_doc_history['sid']);
 
                         $this->copy_employees_model->copy_new_employee_documents_history($insert_doc_history);
-                    }  
+                    }
                 }
 
                 $w4_history = $this->copy_employees_model->get_w4_history($employee_sid, $user_type);
@@ -500,7 +666,7 @@ class Copy_employees extends Admin_Controller {
                 if (!empty($w4_history)) {
                     foreach ($w4_history as $key => $history) {
                         $insert_w4_history = array();
-                        
+
                         foreach ($history as $key => $value) {
                             $insert_w4_history[$key] = $value;
                         }
@@ -510,7 +676,7 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_w4_history['sid']);
 
                         $this->copy_employees_model->copy_new_employee_w4_history($insert_w4_history);
-                    }   
+                    }
                 }
 
                 $w9_history = $this->copy_employees_model->get_w9_history($employee_sid, $user_type);
@@ -518,7 +684,7 @@ class Copy_employees extends Admin_Controller {
                 if (!empty($w9_history)) {
                     foreach ($w9_history as $key => $history) {
                         $insert_w9_history = array();
-                        
+
                         foreach ($history as $key => $value) {
                             $insert_w9_history[$key] = $value;
                         }
@@ -528,7 +694,7 @@ class Copy_employees extends Admin_Controller {
                         unset($insert_w9_history['sid']);
 
                         $this->copy_employees_model->copy_new_employee_w9_history($insert_w9_history);
-                    } 
+                    }
                 }
 
                 $i9_history = $this->copy_employees_model->get_i9_history($employee_sid, $user_type);
@@ -536,7 +702,7 @@ class Copy_employees extends Admin_Controller {
                 if (!empty($i9_history)) {
                     foreach ($i9_history as $key => $history) {
                         $insert_i9_history = array();
-                        
+
                         foreach ($history as $key => $value) {
                             $insert_i9_history[$key] = $value;
                         }
@@ -554,7 +720,7 @@ class Copy_employees extends Admin_Controller {
                 if (!empty($resume_history)) {
                     foreach ($resume_history as $key => $history) {
                         $insert_resume_history = array();
-                        
+
                         foreach ($history as $key => $value) {
                             $insert_resume_history[$key] = $value;
                         }
@@ -566,24 +732,58 @@ class Copy_employees extends Admin_Controller {
                         $this->copy_employees_model->copy_new_employee_request_log($insert_resume_history);
                     }
                 }
-                
+
                 $insert_employee_log = array();
                 $insert_employee_log['from_company_sid'] = $from_company;
                 $insert_employee_log['previous_employee_sid'] = $employee_sid;
                 $insert_employee_log['to_company_sid'] = $to_company;
                 $insert_employee_log['new_employee_sid'] = $new_employee_sid;
+                $insert_employee_log['employee_copy_date'] = $date;
 
                 $this->copy_employees_model->maintain_employee_log_data($insert_employee_log);
-                
+
+                //
+                $insert_employee_change_status = array();
+                $insert_employee_change_status['status_change_date'] = date('Y-m-d', strtotime('now'));
+                $insert_employee_change_status['details'] = $transferredNote . '<br/>' . 'Employee is moved from "' . (getUserColumnById($from_company, 'CompanyName')) . '".';;
+                $insert_employee_change_status['employee_status'] = 9;
+                $insert_employee_change_status['employee_sid'] = $new_employee_sid;
+                $insert_employee_change_status['changed_by'] = 0;
+                $insert_employee_change_status['ip_address'] = getUserIP();
+                $insert_employee_change_status['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $insert_employee_change_status['termination_reason'] = 0;
+                $insert_employee_change_status['termination_date'] = null;
+
+                $this->copy_employees_model->add_terminate_user_table($insert_employee_change_status);
+
+                // Add transferred status to primary employee
+                $ins = [];
+                $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
+                $ins['details'] = 'Employee is moved to "' . (getUserColumnById($to_company, 'CompanyName')) . '".';
+                $ins['employee_status'] = 9;
+                $ins['employee_sid'] = $employee_sid;
+                $ins['changed_by'] = 0;
+                $ins['ip_address'] = getUserIP();
+                $ins['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $ins['termination_reason'] = 0;
+                $ins['termination_date'] = null;
+
+                $this->copy_employees_model->add_terminate_user_table($ins);
+
+                // Update the transfer date
+                $transferDate = getSystemDate(DB_DATE);
+                $this->db->where('sid', $employee_sid)->update('users', ['transfer_date' => $transferDate]);
+                $this->db->where('sid', $new_employee_sid)->update('users', ['transfer_date' => $transferDate]);
 
                 $resp['status'] = TRUE;
-                $resp['response'] = 'Employee <b>'.$employee_name.'</b> successfully copied in company <b>'.$company_name.'</b>';
+                $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
                 echo json_encode($resp);
-            }    
+            }
         }
-    } 
+    }
 
-    public function example ($employee_sid ) {
+    public function example($employee_sid)
+    {
         $to_company = 001;
         $from_company = 704;
         $user_type = 'employee';
@@ -595,25 +795,26 @@ class Copy_employees extends Admin_Controller {
             $resp['response'] = 'No employee found.';
             echo json_encode($resp);
         }
-        
+
         $date = date('Y-m-d H:i:s', strtotime('now'));
 
-        if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) { 
+        if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
             $resp['status'] = FALSE;
-            $resp['response'] = 'Employee <b>'.$employee_name.'</b> already exist in company <b>'.$company_name.'</b>';
+            $resp['response'] = 'Employee <b>' . $employee_name . '</b> already exist in company <b>' . $company_name . '</b>';
             echo json_encode($resp);
         }
 
         $user_to_insert = array();
 
         foreach ($employee as $key => $value) {
-            if ($key == 'username') {echo $key;
-                if ($this->copy_employees_model->check_employee_username_exist($employee['username'])) { 
-                    $user_to_insert[$key] = $value.'_'.generateRandomString(5);
+            if ($key == 'username') {
+                echo $key;
+                if ($this->copy_employees_model->check_employee_username_exist($employee['username'])) {
+                    $user_to_insert[$key] = $value . '_' . generateRandomString(5);
                 }
             } else {
-               $user_to_insert[$key] = $value; 
-            } 
+                $user_to_insert[$key] = $value;
+            }
         }
 
         $user_to_insert['parent_sid'] = $to_company;
@@ -635,7 +836,7 @@ class Copy_employees extends Admin_Controller {
             unset($insert_e_signature['sid']);
 
             $this->copy_employees_model->copy_new_employee_e_signature($insert_e_signature);
-        } 
+        }
 
         $specific_videos = $this->copy_employees_model->get_employee_specific_video($user_type, $employee_sid);
 
@@ -652,7 +853,7 @@ class Copy_employees extends Admin_Controller {
 
                 $this->copy_employees_model->copy_new_employee_video($insert_specific_video);
             }
-        } 
+        }
 
         $specific_training_sessions = $this->copy_employees_model->get_employee_specific_training_sessions($user_type, $employee_sid);
 
@@ -684,7 +885,7 @@ class Copy_employees extends Admin_Controller {
             unset($insert_occupational_license['sid']);
 
             $this->copy_employees_model->copy_new_employee_license($insert_occupational_license);
-        } 
+        }
 
         $drivers_license = $this->copy_employees_model->get_license_details($user_type, $employee_sid, 'drivers');
 
@@ -766,8 +967,8 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_equipment['sid']);
 
                 $this->copy_employees_model->copy_new_employee_equipment($insert_equipment);
-            }  
-        }    
+            }
+        }
 
         $assigned_documents = $this->copy_employees_model->get_assigned_documents($from_company, $user_type, $employee_sid, 0);
 
@@ -786,12 +987,12 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_assigned_document['download_required']);
                 unset($insert_assigned_document['signature_required']);
 
-                if(empty($insert_assigned_document['archive'])) {
+                if (empty($insert_assigned_document['archive'])) {
                     $insert_assigned_document['archive'] = 0;
                 }
 
                 $this->copy_employees_model->copy_new_employee_assign_document($insert_assigned_document);
-            }   
+            }
         }
 
         $assigned_offer_letters = $this->copy_employees_model->get_assigned_offers($from_company, $user_type, $employee_sid, 0);
@@ -812,7 +1013,7 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_offer_letter['signature_required']);
 
                 $this->copy_employees_model->copy_new_employee_offer_letter($insert_offer_letter);
-            } 
+            }
         }
 
         $eev_w4 = $this->copy_employees_model->is_exist_in_eev_document('w4', $from_company, $employee_sid);
@@ -831,7 +1032,7 @@ class Copy_employees extends Admin_Controller {
 
             $this->copy_employees_model->copy_new_employee_eev_form($insert_eev_w4);
         } else {
-            $w4_form = $this->copy_employees_model->fetch_form_for_front_end('w4', 'employee', $employee_sid); 
+            $w4_form = $this->copy_employees_model->fetch_form_for_front_end('w4', 'employee', $employee_sid);
 
             if (!empty($w4_form)) {
 
@@ -869,7 +1070,7 @@ class Copy_employees extends Admin_Controller {
             if (!empty($w9_form)) {
 
                 $insert_w9_form = array();
-                
+
                 foreach ($w9_form as $key => $value) {
                     $insert_w9_form[$key] = $value;
                 }
@@ -886,7 +1087,7 @@ class Copy_employees extends Admin_Controller {
 
         if (!empty($eev_i9)) {
             $insert_eev_i9 = array();
-                
+
             foreach ($eev_i9 as $key => $value) {
                 $insert_eev_i9[$key] = $value;
             }
@@ -901,7 +1102,7 @@ class Copy_employees extends Admin_Controller {
             if (!empty($i9_form)) {
 
                 $insert_i9_form = array();
-                
+
                 foreach ($i9_form as $key => $value) {
                     $insert_i9_form[$key] = $value;
                 }
@@ -911,7 +1112,7 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_i9_form['sid']);
 
                 $this->copy_employees_model->copy_new_employee_i9_form($insert_i9_form);
-            }  
+            }
         }
 
         $extra_attached_documents = $this->copy_employees_model->get_all_extra_attached_document($employee_sid, $user_type);
@@ -929,7 +1130,7 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_extra_document['sid']);
 
                 $this->copy_employees_model->copy_new_employee_extra_attachment($insert_extra_document);
-            }        
+            }
         }
 
         $documents_history = $this->copy_employees_model->get_all_documents_history($employee_sid, $user_type);
@@ -938,7 +1139,7 @@ class Copy_employees extends Admin_Controller {
             foreach ($documents_history as $key => $doc_history) {
 
                 $insert_doc_history = array();
-                
+
                 foreach ($doc_history as $key => $value) {
                     $insert_doc_history[$key] = $value;
                 }
@@ -948,7 +1149,7 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_doc_history['sid']);
 
                 $this->copy_employees_model->copy_new_employee_documents_history($insert_doc_history);
-            }  
+            }
         }
 
         $w4_history = $this->copy_employees_model->get_w4_history($employee_sid, $user_type);
@@ -956,7 +1157,7 @@ class Copy_employees extends Admin_Controller {
         if (!empty($w4_history)) {
             foreach ($w4_history as $key => $history) {
                 $insert_w4_history = array();
-                
+
                 foreach ($history as $key => $value) {
                     $insert_w4_history[$key] = $value;
                 }
@@ -966,7 +1167,7 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_w4_history['sid']);
 
                 $this->copy_employees_model->copy_new_employee_w4_history($insert_w4_history);
-            }   
+            }
         }
 
         $w9_history = $this->copy_employees_model->get_w9_history($employee_sid, $user_type);
@@ -974,7 +1175,7 @@ class Copy_employees extends Admin_Controller {
         if (!empty($w9_history)) {
             foreach ($w9_history as $key => $history) {
                 $insert_w9_history = array();
-                
+
                 foreach ($history as $key => $value) {
                     $insert_w9_history[$key] = $value;
                 }
@@ -984,7 +1185,7 @@ class Copy_employees extends Admin_Controller {
                 unset($insert_w9_history['sid']);
 
                 $this->copy_employees_model->copy_new_employee_w9_history($insert_w9_history);
-            } 
+            }
         }
 
         $i9_history = $this->copy_employees_model->get_i9_history($employee_sid, $user_type);
@@ -992,7 +1193,7 @@ class Copy_employees extends Admin_Controller {
         if (!empty($i9_history)) {
             foreach ($i9_history as $key => $history) {
                 $insert_i9_history = array();
-                
+
                 foreach ($history as $key => $value) {
                     $insert_i9_history[$key] = $value;
                 }
@@ -1010,7 +1211,7 @@ class Copy_employees extends Admin_Controller {
         if (!empty($resume_history)) {
             foreach ($resume_history as $key => $history) {
                 $insert_resume_history = array();
-                
+
                 foreach ($history as $key => $value) {
                     $insert_resume_history[$key] = $value;
                 }
@@ -1022,7 +1223,7 @@ class Copy_employees extends Admin_Controller {
                 $this->copy_employees_model->copy_new_employee_request_log($insert_resume_history);
             }
         }
-        
+
         $insert_employee_log = array();
         $insert_employee_log['from_company_sid'] = $from_company;
         $insert_employee_log['previous_employee_sid'] = $employee_sid;
@@ -1034,9 +1235,5 @@ class Copy_employees extends Admin_Controller {
 
         echo 'employee copy successfully';
         die('stop');
-
     }
-
 }
-
-

@@ -119,6 +119,9 @@ class General_info extends Public_Controller {
                 $this->load->view('general_information/index.php');
                 $this->load->view('main/footer');
             } else {
+                //
+                $this->load->model('2022/User_model', 'em');
+                //
                 $perform_action = $this->input->post('perform_action');
 
                 switch ($perform_action) {
@@ -142,6 +145,15 @@ class General_info extends Public_Controller {
                         $data_to_serialize['license_expiration_date'] = $license_expiration_date;
                         $data_to_serialize['license_indefinite'] = $license_indefinite;
                         $data_to_serialize['license_notes'] = $license_notes;
+
+                        //
+                        $this->em->handleGeneralDocumentChange(
+                            'driversLicense',
+                            $this->input->post(null, true),
+                            $license_file,
+                            $employee_sid,
+                            $this->session->userdata('logged_in')['employer_detail']['sid']
+                        );
                         
                         $data_to_save = array();
                         $data_to_save['users_sid'] = $employee_sid;
@@ -206,7 +218,6 @@ class General_info extends Public_Controller {
                         //
                         checkAndInsertCompletedDocument($cpArray);
 
-
                         // Only send if dosend is true
                         if($doSend == true){
 
@@ -251,6 +262,15 @@ class General_info extends Public_Controller {
                         $data_to_save['users_type'] = 'employee';
                         $data_to_save['license_type'] = 'occupational';
                         $data_to_save['license_details'] = serialize($data_to_serialize);
+
+                        //
+                        $this->em->handleGeneralDocumentChange(
+                            'occupationalLicense',
+                            $this->input->post(null, true),
+                            $license_file,
+                            $employee_sid,
+                            $this->session->userdata('logged_in')['employer_detail']['sid']
+                        );
 
                         if ($license_file != 'error' && !empty($license_file)) {
                             $data_to_save['license_file'] = $license_file;
@@ -402,6 +422,15 @@ class General_info extends Public_Controller {
                         redirect(base_url('general_info'), "location");
                         break;
                     case 'delete_dependent':
+                        //
+                        $this->em->saveDifference([
+                                'user_sid' => $employee_sid,
+                                'employer_sid' => ($employee_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
+                                ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
+                                'history_type' => 'dependent',
+                                'profile_data' => json_encode(['action' => 'delete']),
+                                'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                        ]);
                         $dependent_sid = $this->input->post('dependent_sid');
                         $this->general_info_model->delete_dependent_information($dependent_sid);
                         $this->session->set_flashdata('message', '<strong>Success</strong> Dependent Deleted!');
@@ -497,6 +526,16 @@ class General_info extends Public_Controller {
                         //     $data['session']['employer_detail']['last_name'],
                         //     $employee_sid
                         // );
+
+                        //
+                        $this->em->saveDifference([
+                            'user_sid' => $employee_sid,
+                            'employer_sid' => ($employee_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
+                            ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
+                            'history_type' => 'emergencyContact',
+                            'profile_data' => json_encode(['action' => 'delete']),
+                            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                        ]);
                         $this->session->set_flashdata('message', '<strong>Success</strong> Emergency Contact Successfully Deleted!');
                         redirect(base_url('general_info'), "location");
                         break;       
@@ -649,6 +688,17 @@ class General_info extends Public_Controller {
                 $this->load->view('general_information/edit_dependents_information.php');
                 $this->load->view('main/footer');
             } else {
+                //
+                $this->load->model('2022/User_model', 'em');
+                //
+                $this->em->handleGeneralDocumentChange(
+                    'dependent',
+                    $this->input->post(null, true),
+                    null,
+                    $employee_sid,
+                    $this->session->userdata('logged_in')['employer_detail']['sid']
+                );
+                //
                 $formpost = $this->input->post(null, true);
                 $dependantDataToSave['dependant_details'] = serialize($formpost);
                 $this->general_info_model->update_dependant_info($dependant_sid, $dependantDataToSave);
@@ -753,6 +803,16 @@ class General_info extends Public_Controller {
                 $this->load->view('main/footer');
 
             } else {
+                //
+                $this->load->model('2022/User_model', 'em');
+                //
+                $this->em->handleGeneralDocumentChange(
+                    'emergencyContact',
+                    $this->input->post(null, true),
+                    null,
+                    $employee_sid,
+                    $this->session->userdata('logged_in')['employer_detail']['sid']
+                );
 
                 $first_name = $this->input->post('first_name');
                 $last_name = $this->input->post('last_name');

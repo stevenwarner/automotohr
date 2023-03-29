@@ -1298,3 +1298,21 @@ if(!function_exists('downloadAWSFileToBrowser')){
         }
     }
 }
+
+// Display error
+// Created on: 29-09-2022
+if (!function_exists('_e')) {
+    function _e($e, $print = FALSE, $die = FAlSE, $isHidden = FALSE)
+    {
+        if ($isHidden) echo '<!-- ';
+        echo '<pre>';
+        if ($print) echo '<br />*****************************<br />';
+        if (is_array($e)) print_r($e);
+        else if (is_object($e)) var_dump($e);
+        else echo ($e);
+        if ($print) echo '<br />*****************************<br />';
+        echo '</pre>';
+        if ($isHidden) echo ' -->';
+        if ($die) exit(0);
+    }
+}

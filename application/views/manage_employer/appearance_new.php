@@ -6,7 +6,7 @@
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><a class="dashboard-link-btn" href="<?php echo base_url('my_settings'); ?>"><i class="fa fa-chevron-left"></i>Career Page Settings</a>Select Your Theme</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><a class="dashboard-link-btn" href="<?php echo base_url('my_settings'); ?>"><i class="fa fa-chevron-left"></i>Career Page Settings</a>Select Your Theme</span>
                         </div>
                         <div class="carousel">
                             <div class="mask">

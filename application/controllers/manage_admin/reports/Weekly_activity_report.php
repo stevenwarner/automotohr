@@ -125,13 +125,22 @@ class Weekly_activity_report extends Admin_Controller
                 $this->form_validation->set_rules('start_date', 'start_date', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('end_date', 'end_date', 'required|trim|xss_clean');
                 break;
+            case 'get_weekly_active_companies':
+                $this->form_validation->set_rules('week_span', 'week_span', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('start_date', 'start_date', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('end_date', 'end_date', 'required|trim|xss_clean');
+                break;    
+            case 'get_company_employee_report':
+                $this->form_validation->set_rules('start_date', 'start_date', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('end_date', 'end_date', 'required|trim|xss_clean');
+                break;       
             default:
                 //do nothing
                 break;
         }
 
         if ($this->form_validation->run() == false) {
-
+            res(['data'=>[]]);
         } else {
             $perform_action = $this->input->post('perform_action');
             switch ($perform_action) {
@@ -172,9 +181,59 @@ class Weekly_activity_report extends Admin_Controller
 
                     $this->load->view('manage_admin/reports/activity_report_partial', $my_data);
 
-                    //print_r($return_data);
+                    break;
+
+                case 'get_weekly_active_companies':
+                    $week_span = $this->input->post('week_span');
+
+                    $start_date = $this->input->post('start_date');
+                    $end_date = $this->input->post('end_date');
+
+
+                    $start_date = new DateTime($start_date);
+
+                    $end_date = new DateTime($end_date);
+
+                    $week_start = $start_date->format('Y-m-d');
+                    $week_start = $week_start . ' 00:00:00';
+
+                    $week_end = $end_date->format('Y-m-d');
+                    $week_end = $week_end . ' 23:59:59';
+
+                    $companies = $this->employer_login_duration_model->GetTrackerCompanies($week_start, $week_end);
+
+                    $my_data['companies'] = $companies;
+                    $my_data['start_date'] = $this->input->post('start_date');
+                    $my_data['end_date'] = $this->input->post('end_date');
+                    $my_data['report_type'] = 'weekly';
+
+                    echo $this->load->view('manage_admin/reports/weekly_activity_report_partial', $my_data, true);
 
                     break;
+
+                case 'get_company_employee_report':
+                    //
+                    $post = $this->input->post(NULL, TRUE);
+                    $company_sid = $this->input->post('company_sid');
+                    //
+                    $start_date = $this->input->post('start_date');
+                    $end_date = $this->input->post('end_date');
+                    //
+                    $start_date = new DateTime($start_date);
+                    $end_date = new DateTime($end_date);
+                    //
+                    $week_start = $start_date->format('Y-m-d');
+                    $week_start = $week_start . ' 00:00:00';
+                    //
+                    $week_end = $end_date->format('Y-m-d');
+                    $week_end = $week_end . ' 23:59:59';
+                    //
+                    $records = $this->employer_login_duration_model->generate_company_employes_activity_log_detail($company_sid, $week_start, $week_end);
+                    //
+                    res(['data'=>array_values($records)]);
+
+                    break;    
+
                 default:
                     //do nothing
                     break;

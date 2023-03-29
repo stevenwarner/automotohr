@@ -529,12 +529,12 @@ class Background_check extends CI_Controller {
 
                     if (!empty($system_notification_emails)) {
                         foreach ($system_notification_emails as $system_notification_email) {
-                            sendMailWithAttachment(FROM_EMAIL_DEV, $system_notification_email['email'], 'Background check activation for a company', $new_body, $fromName, $_FILES['document']);
+                            sendMailWithAttachment(FROM_EMAIL_NOTIFICATIONS, $system_notification_email['email'], 'Background check activation for a company', $new_body, $fromName, $_FILES['document']);
                         }
                     }
                     //Send Emails Through System Notifications Email - End
-                    //sendMailWithAttachment(FROM_EMAIL_DEV, 'ahassan@egenienext.com', 'Background check activation for a company', $body, $fromName, $_FILES["document"]);
-                    //sendMail(FROM_EMAIL_DEV, 'ahassan@egenienext.com', 'Background check activation for a company', $body, 'Background check activation');
+                    //sendMailWithAttachment(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'Background check activation for a company', $body, $fromName, $_FILES["document"]);
+                    //sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'Background check activation for a company', $body, 'Background check activation');
                     $this->session->set_flashdata('message', '<b>Success:</b> Your application to run Background Checks have been forwarded.');
                     redirect(base_url($application_Type . '/' . $application_Id));
                 } else {
@@ -612,7 +612,7 @@ class Background_check extends CI_Controller {
                 $body['backgroundCheckDetails'] = $backgroundCheckData;
                 $body['date_applied'] = date('Y-m-d H:i:s');
                 $body = serialize($body);
-                //sendMail(FROM_EMAIL_DEV, 'ahassan@egenienext.com', 'Background check activation for a company', $body, 'Background check activation');
+                //sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'Background check activation for a company', $body, 'Background check activation');
                 $this->session->set_flashdata('message', '<b>Success:</b> Your application to run Background Checks have been forwarded.');
                 redirect(base_url('applicant_profile/' . $application_Id));
             }
@@ -720,7 +720,7 @@ class Background_check extends CI_Controller {
                         "referenceCodes4": "' . $user_sid . '",
                         "referenceCodes5": "' . $user_name . '",                            
                         "copyOfReport": {
-                            "requestCopy": "' . FROM_EMAIL_DEV . '",
+                            "requestCopy": "' . FROM_EMAIL_NOTIFICATIONS . '",
                             "byEmail": 1
                         },
                         "position": {

@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-8">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                         </div>
                         <div class="job-title-text">
                             <p>Fields marked with an asterisk (<span class="staric">*</span>) are mandatory.</p>
@@ -144,15 +144,6 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                    Enable E.E.O. Form <small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Apply Now Dialog Box</small>
-                                    <input class="" type="checkbox" id="eeo_form_status" name="eeo_form_status" value="1" <?php echo ($portal['eeo_form_status'] == 1 ? 'checked="checked" ' : ''); ?> />
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group autoheight">
-                                <label class="control control--checkbox">
                                     Enable Print Button <small class="help_text">Enable Print option for "APPLICANT FULL EMPLOYMENT APPLICATION" Form</small>
                                     <input class="" type="checkbox" id="full_employment_app_print" name="full_employment_app_print" value="1" <?php echo ($portal['full_employment_app_print'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
@@ -172,15 +163,6 @@
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="form-group autoheight">
                                     <label class="control control--checkbox">
-                                        Enable E.E.O Form for On-boarding <small class="help_text">Enable "E.E.O" form at On-Boarding</small>
-                                        <input class="" type="checkbox" id="onboarding_eeo_form_status" name="onboarding_eeo_form_status" value="1" <?php echo (isset($onboarding_eeo_form_status) && $onboarding_eeo_form_status == 1 ? 'checked="checked" ' : ''); ?> />
-                                        <div class="control__indicator"></div>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                <div class="form-group autoheight">
-                                    <label class="control control--checkbox">
                                         Enable Safety data sheet at On-Boarding<small class="help_text">Enable Safety Sheets</small>
                                         <input class="" type="checkbox" id="safety_sheet" name="safety_sheet" value="1" <?php echo (isset($safety_sheet) && $safety_sheet == 1 ? 'checked="checked" ' : ''); ?> />
                                         <div class="control__indicator"></div>
@@ -188,15 +170,6 @@
                                 </div>
                             </div>
                         <?php } ?>
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group autoheight">
-                                <label class="control control--checkbox">
-                                    Enable E.E.O. Form For Profile <small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form in Employee and Applicant Profile Right Nav Bar</small>
-                                    <input class="" type="checkbox" id="eeo_form_profile_status" name="eeo_form_profile_status" value="1" <?php echo ($portal['eeo_form_profile_status'] == 1 ? 'checked="checked" ' : ''); ?> />
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </div>
-                        </div>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
@@ -363,6 +336,109 @@
                             </div>
                         </div>
                         <?php endif; ?>
+
+
+
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>EEOC <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form For Applicants<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Apply Now Dialog Box</small>
+                                    <input class="" type="checkbox" id="eeo_form_status" name="eeo_form_status" value="1" <?php echo ($portal['eeo_form_status'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <?php if (check_company_ems_status($this->session->userdata('logged_in')["company_detail"]["sid"])) { ?>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        Enable E.E.O Form for On-boarding <small class="help_text">Enable "E.E.O" form at Applicant On-Boarding</small>
+                                        <input class="" type="checkbox" id="onboarding_eeo_form_status" name="onboarding_eeo_form_status" value="1" <?php echo (isset($onboarding_eeo_form_status) && $onboarding_eeo_form_status == 1 ? 'checked="checked" ' : ''); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        <?php } ?>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form On Applicant Document Center<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Applicant Document Center</small>
+                                    <input class="" type="checkbox" id="eeo_on_applicant_document_center" name="eeo_on_applicant_document_center" value="1" <?php echo ($portal['eeo_on_applicant_document_center'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form On Employee Right Bar <small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form in Employee Right Bar</small>
+                                    <input class="" type="checkbox" id="eeo_form_profile_status" name="eeo_form_profile_status" value="1" <?php echo ($portal['eeo_form_profile_status'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form On Employee Document Center<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Employee Document Center</small>
+                                    <input class="" type="checkbox" id="eeo_on_employee_document_center" name="eeo_on_employee_document_center" value="1" <?php echo ($portal['eeo_on_employee_document_center'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form On Document Center<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Document Center</small>
+                                    <input class="" type="checkbox" id="eeo_on_document_center" name="eeo_on_document_center" value="1" <?php echo ($portal['eeo_on_document_center'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <p>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    Make the following selected options available on EEO for employee/applicant.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                VETERAN <small class="help_text">If enabled then the "VETERAN" section will be visible to employee/applicant on EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_vet" name="dl_vet" <?php echo (isset($portal['dl_vet']) && $portal['dl_vet'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                DISABILITY <small class="help_text">If enabled then the "voluntary self-identification of disability" section will be visible to employee/applicant on EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_vol" name="dl_vol" <?php echo (isset($portal['dl_vol']) && $portal['dl_vol'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                GENDER  <small class="help_text">If enabled then the "GENDER" section will be visible to employee/applicant on EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_gen" name="dl_gen" <?php echo (isset($portal['dl_gen']) && $portal['dl_gen'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">
                                 <div class="form-group autoheight">

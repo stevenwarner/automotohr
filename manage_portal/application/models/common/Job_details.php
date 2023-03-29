@@ -241,6 +241,7 @@ class Job_details extends CI_Model {
             $this->db->where('active', 1);
             $this->db->where('published_on_career_page', 1);
             $this->db->from('portal_job_listings');
+            return $this->db->count_all_results();
         return $this->db->get()->num_rows();
     }
 
@@ -278,6 +279,7 @@ class Job_details extends CI_Model {
             $this->db->select('*');
             $this->db->where('questionnaire_sid', $sid);
             $this->db->from('portal_questions');
+            return $this->db->count_all_results();
         return $this->db->get()->num_rows();
     }
 
@@ -292,6 +294,7 @@ class Job_details extends CI_Model {
             $this->db->select('*');
             $this->db->where('questions_sid', $sid);
             $this->db->from('portal_question_option');
+            return $this->db->count_all_results();
         return $this->db->get()->num_rows();
     }
 
@@ -437,6 +440,7 @@ class Job_details extends CI_Model {
                 $this->db->where('job_sid', $job_sid);
                 $this->db->where('portal_job_applications_sid', $applicant_sid);
                 $this->db->from('portal_applicant_jobs_list');
+                return $this->db->count_all_results();
                 return $this->db->get()->num_rows();
             }
         }
@@ -1100,9 +1104,9 @@ class Job_details extends CI_Model {
                     $this->db->like('portal_job_listings.Title', $keyword);
                 }
 
-                if ($limit !== null && $offset !== null) {
-                    $this->db->limit($limit, $offset);
-                }
+                // if ($limit !== null && $offset !== null) {
+                //     $this->db->limit($limit, $offset);
+                // }
 
                 $this->db->where('users.active', 1);
                 $this->db->where('users.career_site_listings_only', 0);
@@ -1216,10 +1220,7 @@ class Job_details extends CI_Model {
         ')
         ->from('portal_job_listings')
         ->where_in('user_sid', $companyId)
-        ->where('portal_job_listings.active', 1)
-        // ->where('portal_job_listings.organic_feed', 1)
-        // ->where('portal_job_listings.published_on_career_page', 1)
-        ;
+        ->where('portal_job_listings.active', 1);
         //
         $results = $q->get();
         //
@@ -1247,5 +1248,138 @@ class Job_details extends CI_Model {
         $r['stateIds'] = array_keys($r['stateIds']);
         //
         return $r;
+    }
+
+    //
+    public function getStoreData($storeIds){
+        //
+        $stores = [];
+        //
+        $portalEmployer =
+        $this->db
+        ->select('user_sid, job_title_location, sub_domain, enable_company_logo')
+        ->where_in('user_sid', $storeIds)
+        ->get('portal_employer')
+        ->result_array();
+        //
+        if ($portalEmployer) {
+            foreach ($portalEmployer as $store) {
+                if (!isset($stores[$store['user_sid']])) {
+                    $stores[$store['user_sid']] = [];
+                }
+                //
+                $stores[$store['user_sid']] = $store;
+            }
+        }
+        //
+        $users =
+        $this->db
+        ->select('sid, Logo')
+        ->where_in('sid', $storeIds)
+        ->get('users')
+        ->result_array();
+        //
+        if ($users) {
+            foreach ($users as $store) {
+                if (!isset($stores[$store['user_sid']])) {
+                    $stores[$store['user_sid']] = [];
+                }
+                $stores[$store['sid']]['Logo'] = $store['Logo'];
+            }
+        }
+
+        //
+        return $stores;
+    }
+
+    //
+    public function getScreeningQuestionares($screeningQuestionIds)
+    {
+        //
+        $ra = [];
+        //
+        $sqa = 
+        $this->db
+        ->select('sid, name, employer_sid, passing_score, auto_reply_pass, email_text_pass, auto_reply_fail, email_text_fail')
+        ->where_in('sid', $screeningQuestionIds)
+        ->from('portal_screening_questionnaires')
+        ->get()
+        ->result_array();
+        //
+        if (!$sqa) {
+            return [];
+        }
+        //
+        $questions = $this->getQuestionnaireQuestions($screeningQuestionIds);
+        //
+        foreach ($sqa as $sq) {
+            //
+            if (!isset($ra[$sq['sid']])) {
+                $ra[$sq['sid']] = $sq;
+                $ra[$sq['sid']]['questions'] = [];
+                $ra[$sq['sid']]['questions_count'] = 0;
+                $ra[$sq['sid']]['answers'] = [];
+            }
+            //
+            $ra[$sq['sid']]['questions_count'] = isset($questions[$sq['sid']]) ? count($questions[$sq['sid']]['questions']) : 0;
+            //
+            if ($ra[$sq['sid']]['questions_count'] == 0) {
+                continue;
+            }
+            $ra[$sq['sid']]['questions'] = $questions[$sq['sid']]['questions'];
+        }
+        //
+        return $ra;
+    }
+
+    public function getQuestionnaireQuestions($screeningQuestionIds)
+    {
+        $questions = $this->db
+        ->where_in('questionnaire_sid', $screeningQuestionIds)
+        ->get('portal_questions')
+        ->result_array();
+        //
+        if (empty($questions)) {
+            return [];
+        }
+        //
+        $ra = [];
+        //
+        foreach ($questions as $question) {
+            //
+            if (!isset($ra[$question['questionnaire_sid']])) {
+                $ra[$question['questionnaire_sid']] = [
+                    'questions' => []
+                ];
+            }
+            //
+            $ra[$question['questionnaire_sid']]['questions'][$question['sid']] = $question;
+        }
+        //
+        return $ra;
+    }
+  
+    public function getScreeningAnswers($screeningQuestionIds)
+    {
+        $answers = $this->db
+        ->where_in('questions_sid', $screeningQuestionIds)
+        ->get('portal_question_option')
+        ->result_array();
+        //
+        if (empty($answers)) {
+            return [];
+        }
+        //
+        $ra = [];
+        //
+        foreach ($answers as $answer) {
+            //
+            if (!isset($ra[$answer['questions_sid']])) {
+                $ra[$answer['questions_sid']] = [];
+            }
+            $ra[$answer['questions_sid']][] = $answer;
+        }
+        //
+        return $ra;
     }
 }

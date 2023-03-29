@@ -19,7 +19,7 @@ class Cron_demo_payment extends CI_Controller{
         $test = '/usr/local/bin/php -q /'.DOC_ROOT.'cron.php /cron_payments/index/kg9bMWfIuhP0jCwfQ51x9g5HMtPvZr3qMVYgYJdN3w1MhWpi0l4Hx4sB2QHbIEqqVejAWAF0qmY2oOmUf1oSPC5cXqUKASbl9MEM';
         if ($verification_key == 'kg9bMWfIuhP0jCwfQ51x9g5HMtPvZr3qMVYgYJdN3w1MhWpi0l4Hx4sB2QHbIEqqVejAWAF0qmY2oOmUf1oSPC5cXqUKASbl9MEM') {
             $result = $this->makePaymentUsingCC('CARD-2DC802384M690860AK7NYZRA', 'USD', 1, 'Demo Payment');
-            sendMail(REPLY_TO, FROM_EMAIL_DEV, 'Payment data', print_r( $result, true ), 'techical support', REPLY_TO);                                            
+            sendMail(REPLY_TO, TO_EMAIL_DEV, 'Payment data', print_r( $result, true ), 'techical support', REPLY_TO);                                            
         }
     }
 

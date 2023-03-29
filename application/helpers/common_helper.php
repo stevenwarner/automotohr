@@ -66,6 +66,30 @@ if (!function_exists('getCompanyNameBySid')) {
     }
 }
 
+if (!function_exists('getDefaultApproverName')) {
+    function getDefaultApproverName($company_sid, $email)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db->select('contact_name');
+        $CI->db->where('company_sid', $company_sid);
+        $CI->db->where('email', $email);
+        $CI->db->where('notifications_type', "default_approvers");
+        $CI->db->where('status', "active");
+        $record_obj = $CI->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = ucwords($record_arr["contact_name"]);
+        }
+
+        return $return_data;
+    }
+}
+
 if (!function_exists('getCompanyLogoBySid')) {
     function getCompanyLogoBySid($company_sid)
     {
@@ -1538,6 +1562,12 @@ if (!function_exists('convert_email_template')) {
         $emailTemplateBody = str_replace('{{click_here}}', $click_here, $emailTemplateBody);
         $emailTemplateBody = str_replace('{{login_button}}', $replacement_array['login_button'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{login_link}}', $login_link, $emailTemplateBody);
+
+        $emailTemplateBody = str_replace('{{contact_name}}', $replacement_array['contact_name'], $emailTemplateBody);
+        $emailTemplateBody = str_replace('{{from_name}}', $replacement_array['from_name'], $emailTemplateBody);
+
+
+
         return $emailTemplateBody;
     }
 }
@@ -1614,10 +1644,12 @@ if (!function_exists('return_value_if_key_exists')) {
             $CI->db->where('company_sid', $company_id);
             $result = $CI->db->get('kpa_onboarding')->row_array();
 
-            if ($result['status'] == 1 && !empty($result['kpa_url'])) {
-                return 1;
-            } else {
-                return 0;
+            if ($result) {
+                if ($result['status'] == 1 && !empty($result['kpa_url'])) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }
         }
     }
@@ -3054,7 +3086,12 @@ if (!function_exists('log_and_sendEmail')) {
             'email' => $to,
             'message' => $body,
             'username' => $senderName,
-            'temp_id' => $temp_id
+            'temp_id' => $temp_id,
+            'temp_data' => json_encode([
+                'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
+                'REQUEST_URI' => $_SERVER['REQUEST_URI'],
+                'argv' => $_SERVER['argv']
+            ])
         );
         //
         save_email_log_common($emailData);
@@ -4231,7 +4268,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
                 }
             } */
             //Send Emails Through System Notifications Email - End
-            //log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
+            //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
             //Send to Company Billing Contacts
             if (!empty($company_billing_contacts)) {
                 foreach ($company_billing_contacts as $company_billing_contact) {
@@ -4257,7 +4294,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
                 $message_body .= '<p>' . $invoice_html . '</p>';
                 $message_body .= '<p>' . STORE_NAME . '</p>';
                 $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-                //log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
+                //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
                 //Send Emails Through System Notifications Email - Start
                 $system_notification_emails = get_system_notification_emails('billing_and_invoice_emails');
 
@@ -4284,7 +4321,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
               $message_body .= '<p>' . $invoice_html . '</p>';
               $message_body .= '<p>' . STORE_NAME . '</p>';
               $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-              log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
+              log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
               //Email to Company Admin
               $message_body = '';
               $message_body .= '<p>' . 'Dear ' . ucwords($admin_details['first_name'] . ' ' . $admin_details['last_name']) . '</p>';
@@ -4293,7 +4330,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
               $message_body .= '<p>' . $invoice_html . '</p>';
               $message_body .= '<p>' . STORE_NAME . '</p>';
               $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-              log_and_sendEmail(FROM_EMAIL_DEV, $admin_details['email'], $subject, $message_body, STORE_NAME);
+              log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $admin_details['email'], $subject, $message_body, STORE_NAME);
               }
              */
 
@@ -4359,7 +4396,9 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
-        if (empty($to) || $to == NULL) {return 0;}
+        if (empty($to) || $to == NULL) {
+            return 0;
+        }
 
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
@@ -4664,7 +4703,7 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
             $body = str_replace('{{company_name}}', $applicationData['company_name'], $body);
             $email = $template[0];
             $from = REPLY_TO;
-            $subject = $email['subject'];
+            $subject = str_replace('{{company_name}}', $applicationData['company_name'], $email['subject']);
             $from_name = $email['from_name'];
             $message_data = array();
             $message_data['to_id'] = $applicationData['email'];
@@ -4689,7 +4728,7 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
                 . $secret_key . '</div>';
 
             sendMail(REPLY_TO, $applicationData['email'], $subject, $autoemailbody, $from_name, REPLY_TO);
-            //sendMail(REPLY_TO, 'ahassan@egenienext.com', $subject, $autoemailbody, $from_name, REPLY_TO);
+            //sendMail(REPLY_TO, 'mubashir.saleemi123@gmail.com', $subject, $autoemailbody, $from_name, REPLY_TO);
 
             $sent_to_pm = common_save_message($message_data, NULL);
             $email_log_autoresponder = array();
@@ -4705,7 +4744,7 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
             $email_log_autoresponder['job_or_employee_id'] = $applicationData['sid'];
             $save_email_log = save_email_log_autoresponder($email_log_autoresponder);
         } /* else {
-          mail('ahassan@egenienext.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
+          mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
           } */
     }
 }
@@ -8361,7 +8400,7 @@ if (!function_exists('sc_remove')) {
             }
             return $input;
         }
-        return preg_replace(SC_REGEX, ' ', utf8_decode($input));
+        return preg_replace(SC_REGEX, '', utf8_decode($input));
     }
 }
 
@@ -9685,9 +9724,9 @@ if (!function_exists('parse_timezone')) {
         else if ($find == 'time') return $timezone[0];
         else if ($find == 'continent') return $timezone[1];
         else if ($find == 'abbr') return $timezone[3];
-        else if ($find == 'name') return timezone_name_from_abbr($timezone[3]);
+        else if ($find == 'name') return getTimeZoneFromAbbr($timezone[3]);
         else if ($find == 'time_in_seconds') {
-            $tmp = new DateTime('now', new DateTimeZone(timezone_name_from_abbr($timezone[3])));
+            $tmp = new DateTime('now', new DateTimeZone(getTimeZoneFromAbbr($timezone[3])));
             return $tmp->getOffset();
         } else return $timezone[2];
         //
@@ -9731,22 +9770,22 @@ if (!function_exists('reset_timezone')) {
         // _e($from_zone, true);
         // _e(timezone_name_from_abbr($from_zone), true);
         // Let's create date
-        $date_obj = DateTime::createFromFormat($from_format, $datetime, new DateTimeZone(timezone_name_from_abbr($from_zone)));
+        $date_obj = DateTime::createFromFormat($from_format, $datetime, new DateTimeZone(getTimeZoneFromAbbr($from_zone)));
         if ($date_obj) {
             if ($from_zone != 'UTC') {
                 // Convert it to utc
-                $utc = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr('UTC')));
+                $utc = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr('UTC')));
                 // Get utc date
                 $return_array['UTC'] = parse_datetime($utc->format($to_format));
             }
             //
             if (isset($from_zone)) {
-                $fromzone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($from_zone)));
+                $fromzone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($from_zone)));
                 $return_array[$from_zone] = parse_datetime($fromzone->format($to_format));
             }
             //
-            if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
-            else $tozone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
+            if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
+            else $tozone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
             $return_array[$new_zone] = parse_datetime($tozone->format($to_format));
             $return_array['date_time_string'] = $tozone->format($format);
         } else {
@@ -9979,7 +10018,7 @@ if (!function_exists('get_current_datetime')) {
         }
 
         // Get the current selected timezone
-        $date = new DateTime(date('Y-m-d'), new DateTimeZone(timezone_name_from_abbr($timezone)));
+        $date = new DateTime(date('Y-m-d'), new DateTimeZone(getTimeZoneFromAbbr($timezone)));
         return $date->format($to_format) . (isset($extra) ? $extra : '');
     }
 }
@@ -11189,15 +11228,18 @@ if (!function_exists('getFileData')) {
 }
 
 if (!function_exists('remakeEmployeeName')) {
-    function remakeEmployeeName($o, $i = TRUE)
+    function remakeEmployeeName($o, $i = TRUE, $onlyName = false)
     {
-        // echo '<pre>';
-        // print_r($o);
         //
         $first_name = isset($o['first_name']) ? $o['first_name'] : (isset($o['to_first_name']) ? $o['to_first_name'] : '');
+        $middleName = isset($o['middle_name']) ? ' ' . $o['middle_name'] : (isset($o['to_middle_name']) ? ' ' . $o['to_middle_name'] : '');
         $last_name = isset($o['last_name']) ? $o['last_name'] : (isset($o['to_last_name']) ? $o['to_last_name'] : '');
         //
-        $r = $i ? $first_name . ' ' . $last_name : '';
+        $r = $i ? $first_name . $middleName . ' ' . $last_name : '';
+        //
+        if ($onlyName) {
+            return $r;
+        }
         //
         if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
         //
@@ -11368,75 +11410,87 @@ if (!function_exists('isDocumentCompleted')) {
             $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $document['document_description']) ? true : false;
             //
             if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
+            //
             $is_document_completed = 0;
             //
-            if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
+            $is_magic_tag_exist = 0;
+            //
+            if (str_replace(EFFECT_MAGIC_CODE_LIST, '', $document['document_description']) != $document['document_description']) {
+                $is_magic_tag_exist = 1;
+            }
+            // Check for uploaded manual dcoument
+            if ($document['document_sid'] == 0) {
+                continue;
+            } else {
+                //
+                if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
 
-                if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1) {
-                    if ($is_magic_tag_exist == 1) {
+                    if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
                         if ($document['uploaded'] == 1) {
                             $is_document_completed = 1;
                         } else {
                             $is_document_completed = 0;
                         }
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['acknowledged'] == 1 && $document['downloaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
+                    } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1) {
+                        if ($is_magic_tag_exist == 1) {
+                            if ($document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['acknowledged'] == 1 && $document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['download_required'] == 1 && $document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['acknowledgment_required'] == 1) {
+                        if ($document['acknowledged'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['download_required'] == 1) {
+                        if ($document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($is_magic_tag_exist == 1) {
+                        if ($document['user_consent'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
                     }
-                } else if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['download_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['acknowledgment_required'] == 1) {
-                    if ($document['acknowledged'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['download_required'] == 1) {
-                    if ($document['downloaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($is_magic_tag_exist == 1) {
-                    if ($document['user_consent'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                }
 
-                if ($is_document_completed == 0) {
-                    unset($documents[$k0]);
-                    continue;
+                    if ($is_document_completed == 0) {
+                        unset($documents[$k0]);
+                        continue;
+                    }
                 }
             }
         }
@@ -11656,12 +11710,8 @@ if (!function_exists('cleanDocumentsByPermission')) {
     ) {
         //
         if (!count($data)) return;
-        if ($employerDetails['access_level_plus'] == 1) return;
-        if ($employerDetails['pay_plan_flag'] == 1) return;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
-        //
-        // if($role == 'admin') return;
         //
         if ($withCategories) {
             //
@@ -11671,43 +11721,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if (!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )) {
+                            //
+                            unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                     }
                     //
                     $data['categories_no_action_documents'][$k0]['documents'] = array_values($data['categories_no_action_documents'][$k0]['documents']);
@@ -11721,42 +11751,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if (!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )) {
+                            //
+                            unset($v1['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($v1['documents'][$k2]);
                     }
                     //
                     $data['categories_documents_completed'][$k0] = array_values($v1['documents']);
@@ -11770,43 +11781,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if (!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )) {
+                            //
+                            unset($v1['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($v1['documents'][$k2]);
                     }
                     //
                     $data['no_action_document_categories'][$k0] = array_values($v1['documents']);
@@ -11818,42 +11809,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['completed_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if (!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )) {
+                            unset($documents[$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($documents[$k2]);
                     }
                     //
                     $data['completed_documents'] = array_values($documents);
@@ -11865,42 +11836,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['no_action_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if (!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )) {
+                            unset($documents[$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($documents[$k2]);
                     }
                     //
                     $data['no_action_documents'] = array_values($documents);
@@ -11912,43 +11863,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data as $k0 => $documents) {
                     //
                     foreach ($documents['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if (!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )) {
+                            $documents['documents_count']--;
+                            unset($documents['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        $documents['documents_count']--;
-                        unset($documents['documents'][$k2]);
                     }
                     //
                     $data[$k0]['documents_count'] = $documents['documents_count'];
@@ -11957,52 +11888,28 @@ if (!function_exists('cleanDocumentsByPermission')) {
             }
         } else {
             //
+            // _e($data,true,true);
             foreach ($data as $k0 => $documents) {
                 //
                 if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title'])) continue;
                 //
                 foreach ($documents as $k1 => $document) {
-                    //
-                    if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                        continue;
+                    if (!hasPermissionToDocument(
+                        $document['allowed_employees'],
+                        $document['allowed_departments'],
+                        $document['allowed_teams'],
+                        $document['is_available_for_na'],
+                        $document['is_confidential'],
+                        $document['confidential_employees'],
+                        $employerDetails['access_level_plus'],
+                        $employerDetails['pay_plan_flag'],
+                        $role,
+                        $dt['Departments'],
+                        $dt['Teams'],
+                        $employerDetails['sid']
+                    )) {
+                        unset($documents[$k1]);
                     }
-
-                    //
-                    if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                        continue;
-                    }
-
-                    //
-                    if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                        //
-                        $b = explode(',', $document['allowed_departments']);
-                        //
-                        if (in_array('-1', $b)) continue;
-                        //
-                        $yes = false;
-                        //
-                        foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                        if ($yes) continue;
-                    }
-
-                    //
-                    if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                        //
-                        $b = explode(',', $document['allowed_teams']);
-                        // _e('--------------------------');
-                        // _e($b);
-                        // _e($dt['Teams']);
-                        // _e('--------------------------');
-                        //
-                        if (in_array('-1', $b)) continue;
-                        //
-                        $yes = false;
-                        //
-                        foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                        if ($yes) continue;
-                    }
-                    //
-                    unset($documents[$k1]);
                 }
                 //
                 $data[$k0] = array_values($documents);
@@ -12020,51 +11927,27 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
     ) {
         //
         if (!count($documents)) return $documents;
-        if ($employerDetails['access_level_plus'] == 1) return $documents;
-        if ($employerDetails['pay_plan_flag'] == 1) return $documents;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
-        // if($role == 'admin') return $documents;
-        //
         foreach ($documents as $k0 => $document) {
-            //
-            if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                continue;
+            if (!hasPermissionToDocument(
+                $document['allowed_employees'],
+                $document['allowed_departments'],
+                $document['allowed_teams'],
+                $document['is_available_for_na'],
+                $document['is_confidential'],
+                $document['confidential_employees'],
+                $employerDetails['access_level_plus'],
+                $employerDetails['pay_plan_flag'],
+                $role,
+                $dt['Departments'],
+                $dt['Teams'],
+                $employerDetails['sid']
+            )) {
+                //
+                unset($documents[$k0]);
             }
-
-            //
-            if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                continue;
-            }
-
-            //
-            if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                //
-                $b = explode(',', $document['allowed_departments']);
-                //
-                if (in_array('-1', $b)) continue;
-                //
-                $yes = false;
-                //
-                foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                if ($yes) continue;
-            }
-
-            //
-            if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                //
-                $b = explode(',', $document['allowed_teams']);
-                //
-                if (in_array('-1', $b)) continue;
-                //
-                $yes = false;
-                //
-                foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                if ($yes) continue;
-            }
-            //
-            unset($documents[$k0]);
         }
         //
         $documents = array_values($documents);
@@ -12072,6 +11955,7 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
         return $documents;
     }
 }
+
 
 if (!function_exists('hasAnswer')) {
     function hasAnswer($question, $type, $index = 0, &$a)
@@ -12194,7 +12078,8 @@ if (!function_exists('')) {
                 }
             }
             //
-            $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
+            // $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
+            $printURL = str_replace(array_keys($replace), $replace, $printURL);
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
         }
         //_e($document, true);
@@ -12547,7 +12432,13 @@ if (!function_exists('formatDateToDB')) {
         $fromFormat = 'm/d/Y',
         $toFormat = 'Y-m-d'
     ) {
-        if (empty($date)) return $date;
+        //
+        if (empty($date)) {
+            return $date;
+        }
+        //
+        $date = formatDateBeforeProcess($date, $fromFormat);
+        //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
@@ -12754,7 +12645,8 @@ function getStatusColor($index)
         'placed_important' => 'rgb(77, 160, 0)',
         'not_contacted_important' => 'rgb(82, 82, 82)',
         'future_opportunity_important' => '#00008B',
-        'left_message_important' => '#B2B200'
+        'left_message_important' => '#B2B200',
+        'donothire' => '#a94442'
     ];
     //
     $index = ltrim(trim($index), '.');
@@ -12969,12 +12861,10 @@ if (!function_exists('getSelect')) {
 if (!function_exists('getImageURL')) {
     function getImageURL($img)
     {
-        /*
-        if ($img == '' || $img == null || !preg_match('/jpg|jpeg|png|gif/i', strtolower($img))) {
-           return base_url('assets/images/img-applicant.jpg');  
-        } else return AWS_S3_BUCKET_URL.$img;
-    */
-
+        //
+        $img = str_replace(AWS_S3_BUCKET_URL, "", $img);
+        $img = str_replace(AWS_S3_BUCKET_URL . 'test.png', "", $img);
+        //
         if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
             return AWS_S3_BUCKET_URL . $img;
         } else {
@@ -14102,22 +13992,49 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         //
         $CI = &get_instance();
         //
-        $CI->db->select('*');
+        $CI->db->select('
+            name, 
+            description,
+            status,
+            sort_order,
+            sid
+        ');
         $CI->db->where('company_sid', 0);
         //
         $default_categories = $CI->db->get('documents_category_management')->result_array();
+
+        // Get company industry
+        $industryId = $CI->db->select('job_category_industries_sid')->where('sid', $company_sid)->get('users')->row_array()['job_category_industries_sid'];
+        //
+        if ($industryId != 0) {
+            //
+            $default_categories2 =
+                $CI->db
+                ->select('
+                default_categories.category_name as name,
+                default_categories.description,
+                "1" as status,
+                "1" as sort_order,
+                categories_document_industry.category_sid as sid
+            ')
+                ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
+                ->where('categories_document_industry.industry_sid', $industryId)
+                ->get('categories_document_industry')->result_array();
+
+            //
+            $default_categories = array_merge($default_categories, $default_categories2);
+        }
         //
         if (empty($default_categories)) {
             return;
         }
-        //
         // Only execute below code if system have default categories
         //
-        $CI->db->select('sid, name, status, created_by_sid, updated_by_sid');
+        $CI->db->select('sid, name, status, created_by_sid, updated_by_sid, default_category_sid');
         $CI->db->where('company_sid', $company_sid);
         //
         $company_categories = $CI->db->get('documents_category_management')->result_array();
-        //
+        // When company doesn't have any categories
         if (empty($company_categories)) {
             // Only execute if company have no categories
             foreach ($default_categories as $category) {
@@ -14135,45 +14052,42 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
                     $CI->db->insert('documents_category_management', $data_to_insert);
                 }
             }
-        } else {
-            // Only execute if company already have categories
-            $process_catogeries = array();
-            foreach ($default_categories as $default_category) {
+            //
+            return true;
+        }
+        // Get all company categories names
+        $already_exist = array_column($company_categories, "name");
+        // Only execute if company already have categories
+        foreach ($default_categories as $default_category) {
+            //
+            $DCName = strtolower(str_replace(" ", "_", $default_category['name']));
+            // Check if not already added
+            if (!in_array($default_category['name'], $already_exist) && $default_category['status'] == 1) {
+                $data_to_insert = array();
+                $data_to_insert['company_sid']  = $company_sid;
+                $data_to_insert['name'] = $default_category['name'];
+                $data_to_insert['status']  = $default_category['status'];
+                $data_to_insert['description']  = $default_category['description'];
+                $data_to_insert['sort_order']  = $default_category['sort_order'];
+                $data_to_insert['created_by_sid']  = 0;
+                $data_to_insert['created_date'] = date('Y-m-d H:i:s', strtotime('now'));
+                $data_to_insert['default_category_sid'] = $default_category['sid'];
                 //
-                $DCName = strtolower(str_replace(" ", "_", $default_category['name']));
-                $already_exist = array_column($company_categories, "name");
+                $CI->db->insert('documents_category_management', $data_to_insert);
+            } else {
                 //
-                if (!in_array($default_category['name'], $already_exist)) {
-
-                    if ($default_category['status'] == 1) {
-                        $data_to_insert = array();
-                        $data_to_insert['company_sid']  = $company_sid;
-                        $data_to_insert['name'] = $default_category['name'];
-                        $data_to_insert['status']  = $default_category['status'];
-                        $data_to_insert['description']  = $default_category['description'];
-                        $data_to_insert['sort_order']  = $default_category['sort_order'];
-                        $data_to_insert['created_by_sid']  = 0;
-                        $data_to_insert['created_date'] = date('Y-m-d H:i:s');
-                        $data_to_insert['default_category_sid'] = $default_category['sid'];
-                        //
-                        $CI->db->insert('documents_category_management', $data_to_insert);
-                    }
-                } else {
+                foreach ($company_categories as $company_category) {
                     //
-                    foreach ($company_categories as $company_category) {
-                        //
-                        $CCName = strtolower(str_replace(" ", "_", $company_category['name']));
-                        //
-                        if ($DCName == $CCName && $company_category['created_by_sid'] == 0 && $company_category['updated_by_sid'] == 0) {
-                            if ($default_category['status'] != $company_category['status']) {
-                                $data_to_update = array();
-                                $data_to_update['status']  = $default_category['status'];
-                                $data_to_update['updated_by_sid']  = 0;
-                                $data_to_update['updated_date']  = date('Y-m-d');
-                                //
-                                $CI->db->where('sid', $company_category['sid']);
-                                $CI->db->update('documents_category_management', $data_to_update);
-                            }
+                    $CCName = strtolower(str_replace(" ", "_", $company_category['name']));
+                    //
+                    if ($DCName == $CCName && $company_category['created_by_sid'] == 0 && $company_category['updated_by_sid'] == 0) {
+                        if ($default_category['status'] != $company_category['status']) {
+                            $data_to_update = array();
+                            $data_to_update['updated_by_sid']  = 0;
+                            $data_to_update['updated_date']  = date('Y-m-d', strtotime('now'));
+                            //
+                            $CI->db->where('sid', $company_category['sid']);
+                            $CI->db->update('documents_category_management', $data_to_update);
                         }
                     }
                 }
@@ -14531,15 +14445,20 @@ if (!function_exists('isPayrollOrPlus')) {
      * Only payroll and plus is allowed to 
      * manage payroll module. The function was
      * created on 12/09/2021
-     * 
+     *
+     * @param bool $strict Optional- Only checks access level if true
      * @return
      */
-    function isPayrollOrPlus()
+    function isPayrollOrPlus($strict = false)
     {
         // Get instance
         $CI = &get_instance();
         // Get the session
         $ses = $CI->session->userdata('logged_in');
+        //
+        if ($strict) {
+            return $ses['employer_detail']['access_level_plus'] == 1 ? true : false;
+        }
         // Check if the logged in user
         // is a plus or payroll
         if (
@@ -14690,7 +14609,8 @@ if (!function_exists('_m')) {
      */
     function _m($string, $type = 'js', $version = '1.0.0')
     {
-        return $string . (MINIFIED) . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
+        //
+        return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
     }
 }
 
@@ -14708,6 +14628,7 @@ if (!function_exists('GetEmployeeStatusText')) {
         $arr[6] = 'Inactive';
         $arr[7] = 'Leave';
         $arr[8] = 'Rehired';
+        $arr[9] = 'Transferred';
         //
         return $arr[$index];
     }
@@ -15623,10 +15544,9 @@ if (!function_exists('get_document_action_date')) {
         if ($assigned_document['status'] == 1) {
             if ($type == "assigned") {
                 $return_date = $assigned_document['assigned_date'];
-
             } else if ($type == "completed") {
                 $return_date = check_document_completed_date($assigned_document);
-            } 
+            }
         }
         //
         if (!empty($return_date) && $return_date != '0000-00-00 00:00:00') {
@@ -15638,7 +15558,7 @@ if (!function_exists('get_document_action_date')) {
     }
 }
 
-if(!function_exists('generateEmailButton')){
+if (!function_exists('generateEmailButton')) {
     /**
      * Generate button for email
      * 
@@ -15657,7 +15577,878 @@ if(!function_exists('generateEmailButton')){
         $link = '',
         $text = 'Click Here',
         $color = '#ffffff'
-    ){
-        return '<a style="color: '.($color).'; background-color: '.($bgColor).'; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">'.($text).'</a>';
+    ) {
+        return '<a style="color: ' . ($color) . '; background-color: ' . ($bgColor) . '; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">' . ($text) . '</a>';
+    }
+}
+
+if (!function_exists('get_encryption_initialize_array')) {
+    /**
+     * CReturn encryption initialize array
+     *
+     * @return
+     * 
+     */
+    function get_encryption_initialize_array()
+    {
+        $CI = &get_instance();
+        //
+        return array(
+            'cipher' => 'aes-256',
+            'mode' => 'ctr',
+            'key' => $CI->config->item('encryption_key'),
+            'driver' => 'openssl'
+        );
+    }
+}
+
+
+if (!function_exists('hasPermissionToDocument')) {
+    /**
+     * Check the document permission
+     * 
+     * 
+     * @param array   $allowedEmployees
+     * @param array   $allowedDepartments
+     * @param array   $allowedTeams
+     * @param array   $allowedRoles
+     * @param integer $isConfidential
+     * @param array   $confidentialEmployees
+     * @param integer $isAdminPlus
+     * @param integer $isPayPlan
+     * @param string  $role
+     * @param array   $departments
+     * @param array   $teams
+     * @param integer $employeeId
+     * 
+     * @return booloan
+     */
+    function hasPermissionToDocument(
+        $allowedEmployees,
+        $allowedDepartments,
+        $allowedTeams,
+        $allowedRoles,
+        $isConfidential,
+        $confidentialEmployees,
+        $isAdminPlus,
+        $isPayPlan,
+        $role,
+        $departments,
+        $teams,
+        $employeeId
+    ) {
+        // Check the confidential as priority
+        if ($confidentialEmployees) {
+            //
+            if ($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))) {
+                return true;
+            }
+            //
+            return false;
+        }
+        // Check for plus
+        if ($isAdminPlus || $isPayPlan) {
+            return true;
+        }
+        // Check for the role
+        if (!empty($allowedRoles) && in_array($role, explode(',', $allowedRoles))) {
+            return true;
+        }
+        // Check for the employee
+        if (
+            !empty($allowedEmployees) &&
+            (in_array($employeeId, explode(',', $allowedEmployees)) ||
+                in_array("-1", explode(',', $allowedEmployees))
+            )
+        ) {
+            return true;
+        }
+        // Check for the department
+        if (
+            !empty($departments) &&
+            !empty($allowedDepartments) &&
+            (in_array("-1", explode(',', $allowedDepartments)) ||
+                array_intersect($departments, $allowedDepartments)
+            )
+        ) {
+            return true;
+        }
+        // Check for the teams
+        if (
+            !empty($teams) &&
+            !empty($allowedTeams) &&
+            (in_array("-1", explode(',', $allowedTeams)) ||
+                array_intersect($teams, $allowedTeams)
+            )
+        ) {
+            return true;
+        }
+        //
+        return false;
+    }
+}
+
+
+if (!function_exists('addColumnsForDocumentAssigned')) {
+    /**
+     * 
+     */
+    function addColumnsForDocumentAssigned(
+        &$dataArray,
+        $document = []
+    ) {
+        // Get CI instance
+        $_this = &get_instance();
+        //
+        $data = $document ? $document : $_this->input->post(null, true);
+        //
+        if (isset($data['setting_is_confidential'])) {
+            $data['is_confidential'] = $data['setting_is_confidential'];
+        }
+        //
+        if (isset($data['confidentialSelectedEmployees'])) {
+            $data['confidential_employees'] = $data['confidentialSelectedEmployees'];
+        }
+        //
+        $dataArray['is_confidential'] = ($data['is_confidential'] == 'on' || $data['is_confidential'] == 1) ? 1 : 0;
+        //
+        $dataArray['confidential_employees'] = NULL;
+        //
+        if ($data['confidential_employees']) {
+            $dataArray['confidential_employees'] = $data['confidential_employees'];
+        }
+    }
+}
+
+
+if (!function_exists('loadFileData')) {
+    function loadFileData($filePath)
+    {
+        //
+        $h = fopen($filePath, 'r');
+        //
+        $contents = fread($h, filesize($filePath));
+        //
+        fclose($h);
+        //
+        return $contents;
+    }
+}
+
+
+if (!function_exists('checkDateFormate')) {
+    /**
+     * Check the date format to 
+     * avoid 500
+     * 
+     * @param string $dateIm
+     * @param string $format
+     * @return string
+     */
+    function checkDateFormate($dateIn, $format = 'm-d-Y')
+    {
+        // Check for empty
+        if (empty($dateIn) || $dateIn == "N/A") {
+            return "";
+        }
+        // Check for valid syntax
+        if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $dateIn)) {
+            return "";
+        }
+        //
+        $dateArray = explode("-", $dateIn);
+        //
+        if ($dateArray[0] > 12) {
+            return "";
+        }
+        //
+        return $dateIn;
+    }
+}
+
+
+if (!function_exists('getAssetTag')) {
+    /**
+     * Set the tage depending on the
+     * devlopment mode
+     *
+     * @param string $tag
+     * @return string
+     */
+    function getAssetTag($tag = '1.0.1')
+    {
+        return MINIFIED === '.min' ? $tag : time();
+    }
+}
+/**
+ * 
+ */
+if (!function_exists('checkDontHireText')) {
+    function checkDontHireText($empIds)
+    {
+        $CI = &get_instance();
+        //
+        $records =
+            $CI->db
+            ->select('
+            terminated_employees.employee_sid,
+            terminated_employees.termination_date,
+            terminated_employees.employee_status,
+            terminated_employees.do_not_hire,
+            ' . (getUserFields()) . '
+        ')
+            ->join('users', 'users.sid = terminated_employees.changed_by')
+            ->where_in('terminated_employees.employee_sid', $empIds)
+            ->order_by('terminated_employees.sid', 'DESC')
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            // Check if last record was found
+            if (!isset($tmp[$record['employee_sid']])) {
+                //
+                $tmp[$record['employee_sid']] = [];
+                //
+                if ($record['employee_status'] == 1 && $record['do_not_hire'] == 1) {
+                    //
+                    $tmp[$record['employee_sid']] = [
+                        'full_name' => remakeEmployeeName($record),
+                        'action_date' => formatDateToDB($record['termination_date'], DB_DATE, DATE)
+                    ];
+                }
+            }
+        }
+        //
+        return $tmp;
+    }
+}
+
+if (!function_exists('doNotHireWarning')) {
+    /**
+     * Employee do not hire
+     *
+     * @param int   $employeeId
+     * @param array $list
+     * @param int   $fontSize
+     * @return array
+     */
+    function doNotHireWarning($employeeId, $list, $fontSize = 20)
+    {
+        //
+        $returnArray = [
+            'message' => '',
+            'row' => ''
+        ];
+        //
+        if (empty($list)) {
+            return $returnArray;
+        }
+        // Check if employee exists
+        if (!isset($list[$employeeId]) || empty($list[$employeeId])) {
+            return $returnArray;
+        }
+        //
+        $returnArray['message'] = '<p class="text-danger" style="font-size: ' . $fontSize . 'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked this employee as DO NOT HIRE on the ' . ($list[$employeeId]['action_date']) . '"></i></p>';
+        $returnArray['row'] = 'bg-danger';
+        //
+        return $returnArray;
+    }
+}
+
+
+if (!function_exists('formatDateBeforeProcess')) {
+    /**
+     * Format date to correct
+     *
+     * @param string $date
+     * @param string $format
+     * @return string
+     */
+    function formatDateBeforeProcess(
+        string $date,
+        string $format
+    ) {
+        //
+        if (
+            $format == 'm/d/Y' &&
+            preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $date)
+        ) {
+            return DateTime::createFromFormat(
+                'm-d-Y',
+                $date
+            )->format('m/d/Y');
+        }
+        //
+        return $date;
+    }
+}
+
+if (!function_exists('getDatesBetweenDates')) {
+    /**
+     * Get dates array between dates
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $requestedHours
+     * @return array
+     */
+    function getDatesBetweenDates(
+        string $startDate,
+        string $endDate,
+        int $requestedHours = 0
+    ) {
+        //
+        $datesArray = [];
+        //
+        $period = new DatePeriod(
+            new DateTime($startDate),
+            new DateInterval('P1D'),
+            new DateTime($endDate)
+        );
+
+        //
+        foreach ($period as $key => $value) {
+            $count++;
+            //
+            $datesArray[] = [
+                'date' => $value->format('Y-m-d'),
+                'time' => 0
+            ];
+        }
+        //
+        $datesArray[] = ['date' => $endDate, 'time' => 0];
+        //
+        $requestedMinutes = $requestedHours * 60;
+        $requestedMinutesChunk = $requestedMinutes / count($datesArray);
+        //
+        foreach ($datesArray as $index => $value) {
+            //
+            if ($requestedMinutes == 0) {
+                $requestedMinutesChunk = 0;
+            }
+            //
+            $datesArray[$index]['time'] = $requestedMinutesChunk;
+            //
+            $requestedMinutes -= $requestedMinutesChunk;
+        }
+        //
+        return $datesArray;
+    }
+}
+
+
+if (!function_exists('getCurrentLoginEmployeeId')) {
+    /**
+     * Get the logged in employee index
+     *
+     * @param string $index
+     * @return string|array
+     */
+    function getCurrentLoginEmployeeDetails($index = '')
+    {
+        //
+        $CI = &get_instance();
+        //
+        return $index != '' ? $CI->session->userdata('logged_in')['employer_detail'][$index] : $CI->session->userdata('logged_in')['employer_detail'];
+    }
+}
+
+if (!function_exists('getCurrentYearHolidaysFromGoogle')) {
+    /**
+     * Get current year holidays
+     *
+     * @return array
+     */
+    function getCurrentYearHolidaysFromGoogle()
+    {
+        //
+        $CI = &get_instance();
+        //
+        $holidays = json_decode(
+            getFileData("https://www.googleapis.com/calendar/v3/calendars/en.usa%23holiday%40group.v.calendar.google.com/events?key=" . (getCreds('AHR')->GoogleAPIKey) . ""),
+            true
+        )['items'];
+        // Extract current year holidays
+        $holidays = array_filter(
+            $holidays,
+            function ($holiday) {
+                $year = date('Y');
+                return preg_match("/$year/", $holiday['start']['date']);
+            }
+        );
+        //
+        $ra = [];
+        //
+        $year = date('Y');
+        // Let's insert to database
+        foreach ($holidays as $holiday) {
+            //
+            $ia = [];
+            $ia['holiday_year'] = $year;
+            $ia['holiday_title'] = trim($holiday['summary']);
+            $ia['from_date'] = trim($holiday['start']['date']);
+            $ia['to_date'] = trim($holiday['end']['date']);
+            $ia['event_link'] = trim($holiday['htmlLink']);
+            $ia['status'] = trim($holiday['status']);
+            $ia['icon'] = NULL;
+            $ia['created_at'] = $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('noe'));
+            //
+            $ra[] = $ia;
+            //
+            if (!$CI->db->where([
+                'holiday_title' => $ia['holiday_title'],
+                'holiday_year' => $year
+            ])->count_all_results('timeoff_holiday_list')) {
+                //
+                $CI->db->insert(
+                    'timeoff_holiday_list',
+                    $ia
+                );
+            }
+        }
+        //
+        return $ra;
+    }
+}
+
+
+if (!function_exists('isDevServer')) {
+    function isDevServer()
+    {
+        return strpos($_SERVER['SERVER_NAME'], '.com') === false ? true : false;
+    }
+}
+
+if (!function_exists('getSystemDate')) {
+    /**
+     * Get the current datetime
+     *
+     * @param string $format
+     * @param string $timestamp
+     * @return string
+     */
+    function getSystemDate(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
+    {
+        return date($format, strtotime($timestamp));
+    }
+}
+
+
+if (!function_exists('getTimeZoneFromAbbr')) {
+    /**
+     * Get the timezone from abbr
+     *
+     * If the invalid abbr is pass then the
+     * system defaults to server's timezone
+     *
+     * @param string $abbr
+     * @return string
+     */
+    function getTimeZoneFromAbbr(string $abbr)
+    {
+        //
+        $abbr = strtoupper(trim($abbr));
+        // set the abbr array
+        $timeZoneArray = [
+            'SAMT' => 'GST',
+            'TRT' => 'EAT',
+            'FET' => 'EAT',
+            'KUYT' => 'GST'
+        ];
+        //
+        $abbr = isset($timeZoneArray[$abbr]) ? $timeZoneArray[$abbr] : $abbr;
+        //
+        $timeZone = timezone_name_from_abbr($abbr);
+        //
+        if (!$timeZone) {
+            $timeZone = timezone_name_from_abbr(STORE_DEFAULT_TIMEZONE_ABBR);
+        }
+        //
+        return $timeZone;
+    }
+}
+
+//
+if (!function_exists('getCompanyEmsStatusBySid')) {
+    function getCompanyEmsStatusBySid($company_sid, $doRedirect = true)
+    {
+        $CI = &get_instance();
+        //
+        $CI->db->where('sid', $company_sid);
+        $CI->db->where('ems_status', 1);
+        //
+        $response = $CI->db->count_all_results('users');
+        if ($response <= 0 && $doRedirect) {
+            return redirect('/dashboard');
+        }
+        return $response;
+    }
+}
+
+
+//
+if (!function_exists('get_eeoc_options_status')) {
+    function get_eeoc_options_status($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('dl_vol,dl_vet,dl_gen');
+        $CI->db->where('user_sid', $company_sid);
+        return $CI->db->get('portal_employer')->row_array();
+    }
+}
+
+//
+if (!function_exists('get_employee_transfer_date')) {
+    function get_employee_transfer_date($employee_sid)
+    {
+        //
+
+        $CI = &get_instance();
+        $CI->db->select('employee_copy_date');
+        $CI->db->where('new_employee_sid', $employee_sid);
+        $record_obj = $CI->db->get('employees_transfer_log');
+        //
+        if (!empty($record_obj)) {
+            $data = $record_obj->row_array();
+            $record_obj->free_result();
+            return formatDateToDB($data['employee_copy_date'], DB_DATE_WITH_TIME, DATE);
+        }
+    }
+}
+
+//
+if (!function_exists('get_company_departments_teams')) {
+    /**
+     * Get company department and teams
+     *
+     * @param int $companyId
+     * @param string $id Optional
+     * @param int $teamId Optional
+     * @return array|string
+     */
+    function get_company_departments_teams(int $companyId, string $id = '', int $teamId = 0)
+    {
+        //
+        $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="jsSelect2" style="width: 100%;">';
+        $select .= '<option value="0">Please select a team</option>';
+        $select .= '{{options}}';
+        $select .= '</select>';
+        //
+        $CI = &get_instance();
+        $CI->db->select('name,sid');
+        $CI->db->where('company_sid', $companyId);
+        $CI->db->where('is_deleted', 0);
+        $departments = $CI->db->get('departments_management')->result_array();
+        //
+        if (!$departments) {
+            return $id ? $select : [];
+        }
+        //
+        $departmentIds = array_column($departments, 'sid');
+        //
+        $tmp = [];
+        //
+        foreach ($departments as $department) {
+            $tmp[$department['sid']] = [
+                'id' => $department['sid'],
+                'name' => $department['name'],
+                'teams' => []
+            ];
+        }
+        //
+        $departments = $tmp;
+        // Get teams by department ids
+        $CI->db->select('name,sid,department_sid');
+        $CI->db->where_in('department_sid', $departmentIds);
+        $CI->db->where('is_deleted', 0);
+        $CI->db->where('status', 1);
+        //
+        $teams = $CI->db->get('departments_team_management')->result_array();
+        //
+        if ($teams) {
+            //
+            foreach ($teams as $team) {
+                $departments[$team['department_sid']]['teams'][] = [
+                    'sid' => $team['sid'],
+                    'name' => $team['name']
+                ];
+            }
+        }
+        //
+        if (!empty($id)) {
+            //
+            $options = '';
+            //
+            foreach ($departments as $department) {
+                $options .= '<optgroup label="' . ($department['name']) . '">';
+                if ($department['teams']) {
+                    foreach ($department['teams'] as $team) {
+                        $options .= '<option value="' . ($team['sid']) . '" ' . ($teamId == $team['sid'] ? "selected" : "") . '>' . ($team['name']) . '</option>';
+                    }
+                }
+                $options .= '</optgroup>';
+            }
+            //
+            $select = str_replace('{{options}}', $options, $select);
+        }
+
+        //
+        return $id ? $select : $departments;
+    }
+}
+
+if (!function_exists('getDepartmentColumnByTeamId')) {
+    function getDepartmentColumnByTeamId(
+        int $teamId,
+        string $column
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        return $CI->db->select($column)
+            ->where('sid', $teamId)
+            ->get('departments_team_management')
+            ->row_array()[$column];
+    }
+}
+
+if (!function_exists('handleEmployeeDepartmentAndTeam')) {
+    function handleEmployeeDepartmentAndTeam(
+        int $employeeId,
+        int $teamId
+    ) {
+        //
+        if (!$employeeId || !$teamId || $employeeId == 0 || $teamId == 0) {
+            return false;
+        }
+        // Get department id
+        $departmentId = getDepartmentColumnByTeamId($teamId, 'department_sid');
+        //
+        if (!$departmentId) {
+            return false;
+        }
+        //
+        $CI = &get_instance();
+        // Update users
+        $CI->db
+            ->where('sid', $employeeId)
+            ->update(
+                'users',
+                [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId
+                ]
+            );
+        // Make entry in teams table
+        $CI->db
+            ->insert(
+                'departments_employee_2_team',
+                [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId,
+                    'employee_sid' => $employeeId,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        //
+        return true;
+    }
+}
+
+
+if (!function_exists('_secret')) {
+    function _secret(string $str, bool $isDate = false, bool $checkPlus = false)
+    {
+        //
+        if (empty($str)) {
+            return $str;
+        }
+        //
+        if ($checkPlus) {
+            //
+            $CI = &get_instance();
+            //
+            if (
+                $CI->session->userdata('logged_in')['employer_detail']['access_level_plus'] == 1
+                || $CI->session->userdata('logged_in')['employer_detail']['pay_plan_plus'] == 1
+            ) {
+                return $str;
+            }
+        }
+        // Check if it's a date
+        if (strpos($str, ',') !== false && $isDate) {
+            return preg_replace('/[0-9]{4}/', '####', $str);
+        }
+        //
+        if (
+            (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/i', $str)
+                || preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i', $str)
+                || preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/i', $str)
+                || preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/i', $str)
+            ) && $isDate
+        ) {
+            return preg_replace('/[0-9]{4}/', '####', $str);
+        }
+        //
+        return '###-##-' . substr($str, -4);
+    }
+}
+
+
+if (!function_exists('isSecret')) {
+    function isSecret(string $str)
+    {
+
+        return strpos(strtolower($str), '#') !== false ? true : false;
+    }
+}
+
+if (!function_exists('getCompanyEEOCFormStatus')) {
+    function getCompanyEEOCFormStatus($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('eeo_form_status');
+        $CI->db->where('user_sid', $company_sid);
+        $CI->db->from('portal_employer');
+        $portalData = $CI->db->get()->row_array();
+
+        if (!empty($portalData)) {
+            return $portalData['eeo_form_status'];
+        } else {
+            return 0;
+        }
+    }
+}
+
+//
+if (!function_exists('get_company_helpbox_info')) {
+
+    function get_company_helpbox_info($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->where('company_id', $company_sid);
+        $records_obj = $CI->db->get('helpbox_info_for_company');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }
+}
+
+if (!function_exists('db_get_employee_profile_byemail')) {
+    function db_get_employee_profile_byemail($email, $companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid,first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag');
+        $CI->db->where('email', $email);
+        $CI->db->where('parent_sid', $companySid);
+        return $CI->db->get('users')->result_array();
+    }
+}
+
+if (!function_exists('get_user_anniversary_date')) {
+    /**
+     * Get employee annivversary date
+     * 
+     * @param string $joinedAt 
+     * @param string $registrationDate 
+     * @param string $rehiredDate
+     * @param string $compareDate Optional
+     * @param bool   $onlyText Optional
+     * @return string|array
+     */
+    function get_user_anniversary_date(
+        $joinedAt,
+        $registrationDate,
+        $rehiredDate,
+        string $compareDate = '',
+        bool $onlyText = true
+    ) {
+        //
+        $r = [];
+        $r['joiningDate'] =
+            $r['timeSpentInCompany'] =
+            $r['timeSpentInCompanyAgo'] =
+            $r['text'] = '';
+        //
+        $joiningDate = null;
+        //
+        if ($rehiredDate && $rehiredDate != '0000-00-00') {
+            $joiningDate = $rehiredDate;
+        } elseif ($joinedAt && $joinedAt != '0000-00-00') {
+            $joiningDate = $joinedAt;
+        } elseif ($registrationDate && $registrationDate != '0000-00-00 00:00:00') {
+            $joiningDate = trim(explode(' ', $registrationDate)[0]);
+        } else {
+            return $onlyText ? '' : $r;
+        }
+
+        //
+        $timeSpentString = '';
+        $timeSpentString2 = '';
+        $datetime1 = date_create($joiningDate);
+        $datetime2 = date_create($compareDate ?? getSystemDate(DB_DATE));
+
+        $interval = $datetime1->diff($datetime2);
+        //
+        $years = $interval->format('%y');
+        $months = $interval->format('%m');
+        $days = $interval->format('%d');
+
+        if ($years > 0) {
+            $timeSpentString2 = $years . ' ' . ($years > 1 ? 'years' : 'year') . ' ago';
+            $timeSpentString .= $years . ' ' . ($years > 1 ? 'years' : 'year');
+        }
+        if ($months > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $months . ' ' . ($months > 1 ? 'months' : 'month') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') .  $months . ' ' . ($months > 1 ? 'months' : 'month');
+        }
+        if ($days > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $days . ' ' . ($days > 1 ? 'days' : 'day') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') . $days . ' ' . ($days > 1 ? 'days' : 'day');
+        }
+        //
+        $return_date = formatDateToDB($joiningDate, DB_DATE, DATE);
+        $r['joiningDate'] = $return_date;
+        $r['timeSpentInCompany'] = $timeSpentString;
+        $r['timeSpentInCompanyAgo'] = $timeSpentString2;
+        $r['text'] = $return_date . " (Joined " . $timeSpentString2 . ")";
+        //
+        if ($onlyText) {
+            return "<strong>Employee Anniversary Date: " . $r['text'] . "<strong>";
+        }
+        //
+        return $r;
+    }
+}
+
+//
+if (!function_exists('get_user_datescolumns')) {
+    function get_user_datescolumns($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('joined_at,registration_date');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->result_array();
+    }
+}
+
+
+//
+if (!function_exists('showLanguages')) {
+    function showLanguages($languages)
+    {
+        return rtrim(ucwords(implode(', ', (explode(',', $languages))), '\, '), ', ');
     }
 }

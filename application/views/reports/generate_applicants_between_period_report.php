@@ -10,7 +10,7 @@
                         <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('reports'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Back</a>
                                     <?php echo $title; ?></span>
@@ -203,7 +203,7 @@
                                                                         if(isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', '.db_get_state_name($applicant['Location_State'])['state_name'];
                                                                     ?>
                                                                     <tr>
-                                                                        <td style="color:<?php echo (($applicant['Title'] != 'Job Deleted' && $applicant['Title'] != 'Job Not Applied') ? 'green' : 'red'); ?>"><?php echo ucwords($applicant['Title'].$city.$state); ?></td>
+                                                                    <td style="color:<?php echo (($applicant['Title'] != 'Job Deleted' && $applicant['Title'] != 'Job Not Applied' && $applicant['Title'] != '') ? 'green' : 'red'); ?>"><?php echo  $applicant['Title'] ? ucwords($applicant['Title'] . $city . $state) : 'Job Not Applied' ?></td>
                                                                         <td><?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?></td>
                                                                         <?php if (isset($is_hired_report) && $is_hired_report == true) { ?>
                                                                             <td><?=reset_datetime(array('datetime' => $applicant['hired_date'], '_this' => $this)); ?></td>
@@ -252,8 +252,9 @@
         });
         $("#startdate").datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() + 1);
@@ -280,8 +281,9 @@
         $("#enddate").datepicker({
             dateFormat: 'mm-dd-yy',
             setDate: new Date(),
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() - 1);

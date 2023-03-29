@@ -1,4 +1,4 @@
-<div class="js-page-partial" id="js-offer-letter-area-add">	
+<div class="js-page-partial" id="js-offer-letter-area-add">
 	<div class="row">
 		<div class="col-sm-12">
 			<!-- 1 -->
@@ -13,11 +13,11 @@
 					<input type="radio" class="js-template-type" name="js-template-type" value="generated" data-type="offer_letter_add" /> Generate &nbsp;
 					<div class="control__indicator"></div>
 				</label>
-				<?php if(checkIfAppIsEnabled('hybrid_document')){ ?>
-				<label class="control control--radio">
-					<input type="radio" class="js-template-type" name="js-template-type" value="hybrid_document" data-type="offer_letter_add" /> Hybrid &nbsp;
-					<div class="control__indicator"></div>
-				</label>
+				<?php if (checkIfAppIsEnabled('hybrid_document')) { ?>
+					<label class="control control--radio">
+						<input type="radio" class="js-template-type" name="js-template-type" value="hybrid_document" data-type="offer_letter_add" /> Hybrid &nbsp;
+						<div class="control__indicator"></div>
+					</label>
 				<?php } ?>
 				<label class="control control--radio">
 					<input type="radio" class="js-template-type" name="js-template-type" value="template" data-type="offer_letter_add" /> Select Template &nbsp;
@@ -31,12 +31,12 @@
 				<label>Template(s) </label>
 				<select id="js-templates-add" class="js-templates">
 					<option value="0">[Select Offer Letter / Pay Plan Template]</option>
-					<?php 
-						if(sizeof($offer_letters)){
-							foreach ($offer_letters as $k => $v) {
-								echo '<option value="'.( $v['sid'] ).'">'.( $v['letter_name'] ).' ('.( ucwords($v['letter_type']) ).')</option>';
-							}
+					<?php
+					if (sizeof($offer_letters)) {
+						foreach ($offer_letters as $k => $v) {
+							echo '<option value="' . ($v['sid']) . '">' . ($v['letter_name']) . ' (' . (ucwords($v['letter_type'])) . ')</option>';
 						}
+					}
 					?>
 				</select>
 			</div>
@@ -63,7 +63,7 @@
 			<div class="form-group js-for-uploaded">
 				<label>Browse Document<span class="staric">*</span></label>
 				<input style="display: none;" type="file" name="document" id="upload_document" />
-                <p class="cs-error js-error"></p>
+				<p class="cs-error js-error"></p>
 			</div>
 			<!-- 3 -->
 			<div class="form-group">
@@ -103,21 +103,34 @@
 				<label>Sort Order</label>
 				<input type="text" class="form-control" id="js-template-sort-order" />
 			</div>
+			<!-- 7 -->
+			<div class="form-group js-for-generated">
+				<label>Authorized Management Signers</label>
+				<select id="js-template-signers" multiple="true">
+					<?php
+					if (sizeof($managers_list)) {
+						foreach ($managers_list as $k => $v) {
+							echo '<option value="' . ($v['sid']) . '">' . (remakeEmployeeName($v)) . '</option>';
+						}
+					}
+					?>
+				</select>
+			</div>
 			<!-- 8 -->
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h5>
-								<strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
-								<p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>
+								<strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true" data-target="visibilty"></i>
+								<p class="jsHintBody" data-hint="visibilty"><br /><?= getUserHint('visibility_hint'); ?></p>
 							</h5>
 						</div>
 						<div class="panel-body">
 							<!-- Payroll -->
 							<label class="control control--checkbox">
 								Visible To Payroll
-								<input type="checkbox" name="visible_to_payroll" class="js-payroll-offer-letter-add" value="1"/>
+								<input type="checkbox" name="visible_to_payroll" class="js-payroll-offer-letter-add" value="1" />
 								<div class="control__indicator"></div>
 							</label>
 							<hr />
@@ -148,20 +161,28 @@
 				</div>
 			</div>
 			<!-- 9 -->
-			<?php $this->load->view('hr_documents_management/partials/assigner'); ?>
-			<!-- 7 -->
-			<div class="form-group js-for-generated">
-				<label>Authorized Management Signers</label>
-				<select id="js-template-signers" multiple="true">
-					<?php 
-						if(sizeof($managers_list)){
-							foreach ($managers_list as $k => $v) {
-								echo '<option value="'.( $v['sid'] ).'">'.( remakeEmployeeName( $v ) ).'</option>';
-							}
-						}
-					?>
-				</select>
-			</div>
+
+			<?php //$this->load->view('hr_documents_management/partials/approvers_section'); ?>
+			<?php $this->load->view(
+                'hr_documents_management/partials/test_approvers_section', 
+                [
+                    "appCheckboxIdx" => "jsHasApprovalFlowAOL", 
+                    "containerIdx" => "jsApproverFlowContainerAOL", 
+                    "addEmployeeIdx" => "jsAddDocumentApproversAOL", 
+                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", 
+                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", 
+                    "approverNoteIdx" => "jsApproversNoteAOL"
+                ]
+            ); ?>
+
+			<br>
+
+			<!--  Document Settings - Confidenti -->
+			<?php $this->load->view('hr_documents_management/partials/settings', [
+				'is_confidential' =>  0
+			]); ?>
+
+			
 			<!-- 8 -->
 			<div class="form-group">
 				<label>Send an email notification?</label>
@@ -171,7 +192,7 @@
 					<div class="control__indicator"></div>
 				</label>
 				<label class="control control--radio">
-					<input type="radio"  class="js-template-send-email" name="js-template-send-email" value="yes" /> Yes &nbsp;
+					<input type="radio" class="js-template-send-email" name="js-template-send-email" value="yes" /> Yes &nbsp;
 					<div class="control__indicator"></div>
 				</label>
 			</div>
@@ -184,7 +205,7 @@
 					<div class="control__indicator"></div>
 				</label>
 				<label class="control control--radio">
-					<input type="radio"  class="js-template-required" name="js-template-required" value="1" /> Yes &nbsp;
+					<input type="radio" class="js-template-required" name="js-template-required" value="1" /> Yes &nbsp;
 					<div class="control__indicator"></div>
 				</label>
 			</div>
@@ -197,7 +218,7 @@
 					<div class="control__indicator"></div>
 				</label>
 				<label class="control control--radio">
-					<input type="radio"  class="js-template-signature-required" name="js-template-signature-required" value="1" /> Yes &nbsp;
+					<input type="radio" class="js-template-signature-required" name="js-template-signature-required" value="1" /> Yes &nbsp;
 					<div class="control__indicator"></div>
 				</label>
 			</div>

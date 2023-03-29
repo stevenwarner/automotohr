@@ -8,7 +8,7 @@
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Calender / Events</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Calender / Events</span>
                         </div><?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="job-feature-main m_job">
                             <div class="portalmid">
@@ -463,7 +463,12 @@
     $(document).ready(function () {
         var eventt = new Event('main');
         //populating date and time in Popup
-        $(".datepicker").datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $(".datepicker").datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
         $('#eventendtime').datetimepicker({
             datepicker: false,
             format: 'g:iA',

@@ -5,7 +5,7 @@
                 <div class="heading-title page-title">
                     <h1 class="page-title"><i class="fa fa-dashboard"></i><?php echo $title; ?></h1>
                     <a class="black-btn pull-right" href="<?php echo base_url('dashboard/reports/' . $company_sid); ?>">
-                        <i class="fa fa-long-arrow-left"></i> 
+                        <i class="fa fa-long-arrow-left"></i>
                         Back to Reports
                     </a>
                 </div>
@@ -20,15 +20,15 @@
                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                 <div class="field-row">
                                     <label class="text-left">Source</label>
-                                    <?php $source = $this->uri->segment(4) != 'all' ? urldecode($this->uri->segment(4)) : '';?>
-                                    <select name="applicant_status" id="source" >
+                                    <?php $source = $this->uri->segment(4) != 'all' ? urldecode($this->uri->segment(4)) : ''; ?>
+                                    <select name="applicant_status" id="source">
                                         <option <?php echo $source == 'all' ? 'selected="selected"' : ''; ?> value="all">All</option>
                                         <option <?php echo $source == 'automotosocial' ? 'selected="selected"' : ''; ?> value="automotosocial">Automoto Social</option>
                                         <option <?php echo $source == 'jobs2careers' ? 'selected="selected"' : ''; ?> value="jobs2careers">Jobs2Careers</option>
                                         <option <?php echo $source == 'jobs2careers' ? 'selected="selected"' : ''; ?> value="ziprecruiter">ZipRecruiter</option>
                                         <option <?php echo $source == 'career_website' ? 'selected="selected"' : ''; ?> value="career_website">Career Website</option>
-                                        <option <?php echo $source == 'glassdoor' ? 'selected="selected"' : ''; ?> value="glassdoor" >Glassdoor</option>
-                                        <option <?php echo $source == 'indeed' ? 'selected="selected"' : ''; ?> value="indeed" >Indeed</option>
+                                        <option <?php echo $source == 'glassdoor' ? 'selected="selected"' : ''; ?> value="glassdoor">Glassdoor</option>
+                                        <option <?php echo $source == 'indeed' ? 'selected="selected"' : ''; ?> value="indeed">Indeed</option>
                                         <option <?php echo $source == 'juju' ? 'selected="selected"' : ''; ?> value="juju">Juju</option>
                                     </select>
                                 </div>
@@ -36,25 +36,15 @@
                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                 <div class="field-row">
                                     <label>Date From </label>
-                                    <?php $start_date = $this->uri->segment(5) != 'all' && $this->uri->segment(5) != '' ? urldecode($this->uri->segment(5)) : date('m-d-Y');?>
-                                    <input class="invoice-fields"
-                                           placeholder="<?php echo date('m-d-Y'); ?>"
-                                           type="text"
-                                           name="start_date_applied"
-                                           id="start_date_applied"
-                                           value="<?php echo set_value('start_date_applied', $start_date); ?>"/>
+                                    <?php $start_date = $this->uri->segment(5) != 'all' && $this->uri->segment(5) != '' ? urldecode($this->uri->segment(5)) : date('m-d-Y'); ?>
+                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                 <div class="field-row">
                                     <label>Date To </label>
-                                    <?php $end_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : date('m-d-Y');?>
-                                    <input class="invoice-fields"
-                                           placeholder="<?php echo date('m-d-Y'); ?>"
-                                           type="text"
-                                           name="end_date_applied"
-                                           id="end_date_applied"
-                                           value="<?php echo set_value('end_date_applied', $end_date); ?>"/>
+                                    <?php $end_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : date('m-d-Y'); ?>
+                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
                                 </div>
                             </div>
                         </div>
@@ -89,14 +79,14 @@
                         <div class="row">
                             <div class="bt-panel">
                                 <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                                    <i class="fa fa-print" aria-hidden="true"></i> 
+                                    <i class="fa fa-print" aria-hidden="true"></i>
                                     Print
                                 </a>
                                 <form method="post" id="export" name="export">
                                     <input type="hidden" name="submit" value="Export" />
                                     <button type="submit" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export To Excel</button>
                                 </form>
-                            </div>                                                               
+                            </div>
                         </div>
                     </div>
                 <?php } ?>
@@ -111,17 +101,17 @@
                                         <h1 class="hr-registered">Applicant Origination Report</h1>
                                     </span>
                                     <span class="pull-right">
-                                        <h1 class="hr-registered">Total Records Found : <?php echo $applicants_count;?></h1>
+                                        <h1 class="hr-registered">Total Records Found : <?php echo $applicants_count; ?></h1>
                                     </span>
                                 </div>
                                 <div class="hr-innerpadding">
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <span class="pull-left">
-                                                <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count?></p>
+                                                <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count ?></p>
                                             </span>
                                             <span class="pull-right" style="margin-top: 20px; margin-bottom: 20px;">
-                                                <?php echo $page_links?>
+                                                <?php echo $page_links ?>
                                             </span>
                                         </div>
                                     </div>
@@ -130,46 +120,47 @@
                                             <div class="table-responsive">
                                                 <table class="table table-bordered table-striped table-hover table-condensed" id="example">
                                                     <thead>
-                                                    <tr>
-                                                        <th class="col-xs-2">Date Applied</th>
-                                                        <th class="col-xs-2">Name</th>
-                                                        <th class="col-xs-3">Job Title</th>
-                                                        <th class="col-xs-2">IP Address</th>
-                                                        <th class="col-xs-3">Applicant Source</th>
-                                                    </tr>
+                                                        <tr>
+                                                            <th class="col-xs-2">Date Applied</th>
+                                                            <th class="col-xs-2">Name</th>
+                                                            <th class="col-xs-3">Job Title</th>
+                                                            <th class="col-xs-2">IP Address</th>
+                                                            <th class="col-xs-3">Applicant Source</th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <?php if (!empty($applicants)) { ?>
-                                                        <?php foreach ($applicants as $applicant) { ?>
+                                                        <?php if (!empty($applicants)) { ?>
+                                                            <?php foreach ($applicants as $applicant) { ?>
+                                                                <tr>
+                                                                    <td style="white-space: nowrap; vertical-align: top;">
+                                                                        <!--                                                                    --><?php //echo DateTime::createFromFormat('Y-m-d H:i:s', $applicant['date_applied'])->format('M d Y, D h:i:s'); 
+                                                                                                                                                    ?>
+                                                                        <?php echo reset_datetime(array(
+                                                                            'datetime' => $applicant['date_applied'],
+                                                                            // 'from_format' => 'h:iA', // Y-m-d H:i:s
+                                                                            // 'format' => 'h:iA', //
+                                                                            'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR, // PST
+                                                                            'from_timezone' => $executive_user['timezone'], //
+                                                                            '_this' => $this
+                                                                        )) ?>
+                                                                    </td>
+                                                                    <td style="white-space: nowrap; vertical-align: top;"><?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?></td>
+                                                                    <td style="white-space: nowrap; vertical-align: top;"><?php echo ucwords($applicant['Title']); ?></td>
+                                                                    <td style="white-space: nowrap; vertical-align: top;"><?php echo $applicant['ip_address']; ?></td>
+                                                                    <td style="vertical-align: top;">
+                                                                        <div class="table-responsive applicant_source_link_in_table">
+                                                                            <?php echo $applicant['applicant_source']; ?>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                        <?php } else { ?>
                                                             <tr>
-                                                                <td style="white-space: nowrap; vertical-align: top;">
-<!--                                                                    --><?php //echo DateTime::createFromFormat('Y-m-d H:i:s', $applicant['date_applied'])->format('M d Y, D h:i:s'); ?>
-                                                                    <?php echo reset_datetime(array(
-                                                                        'datetime' => $applicant['date_applied'],
-                                                                        // 'from_format' => 'h:iA', // Y-m-d H:i:s
-                                                                        // 'format' => 'h:iA', //
-                                                                        'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR, // PST
-                                                                        'from_timezone' => $executive_user['timezone'], //
-                                                                        '_this' => $this
-                                                                    )) ?>
-                                                                </td>
-                                                                <td style="white-space: nowrap; vertical-align: top;"><?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?></td>
-                                                                <td style="white-space: nowrap; vertical-align: top;"><?php echo ucwords($applicant['Title']); ?></td>
-                                                                <td style="white-space: nowrap; vertical-align: top;"><?php echo $applicant['ip_address']; ?></td>
-                                                                <td style="vertical-align: top;">
-                                                                    <div class="table-responsive applicant_source_link_in_table">
-                                                                        <?php echo $applicant['applicant_source']; ?>
-                                                                    </div>
+                                                                <td class="text-center" colspan="6">
+                                                                    <span class="no-data">No applicants Found</span>
                                                                 </td>
                                                             </tr>
                                                         <?php } ?>
-                                                    <?php } else { ?>
-                                                        <tr>
-                                                            <td class="text-center" colspan="6">
-                                                                <span class="no-data">No applicants Found</span>
-                                                            </td>
-                                                        </tr>
-                                                    <?php } ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -179,7 +170,7 @@
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <span class="pull-right">
-                                                <?php echo $page_links?>
+                                                <?php echo $page_links ?>
                                             </span>
                                         </div>
                                     </div>
@@ -194,29 +185,30 @@
                         <div class="row">
                             <div class="bt-panel">
                                 <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                                    <i class="fa fa-print" aria-hidden="true"></i> 
+                                    <i class="fa fa-print" aria-hidden="true"></i>
                                     Print
                                 </a>
                                 <form method="post" id="export" name="export">
                                     <input type="hidden" name="submit" value="Export" />
                                     <button type="submit" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export To Excel</button>
                                 </form>
-                            </div>                                                               
+                            </div>
                         </div>
                     </div>
                 <?php } ?>
-            </div>               					
+            </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
     $(document).keypress(function(e) {
-        if(e.which == 13) {
+        if (e.which == 13) {
             // enter pressed
             $('#btn_apply_filters').click();
         }
     });
-    function generate_search_url(){
+
+    function generate_search_url() {
 
         var start_date_applied = $('#start_date_applied').val();
         var end_date_applied = $('#end_date_applied').val();
@@ -232,39 +224,44 @@
 
         $('#btn_apply_filters').attr('href', url);
     }
-    $(document).ready(function () {
+    $(document).ready(function() {
 
-        $('#btn_apply_filters').on('click', function(e){
+        $('#btn_apply_filters').on('click', function(e) {
             e.preventDefault();
             generate_search_url();
             window.location = $(this).attr('href').toString();
         });
-//        $('#btn_apply_filters').click(function(){
-//            var select = $('#source').val();
-//            if(select==''){
-////                alertify.error('Please select the source');
-//                alert('Please Select the Source');
-//                return false;
-//            }
-//        });
+        //        $('#btn_apply_filters').click(function(){
+        //            var select = $('#source').val();
+        //            if(select==''){
+        ////                alertify.error('Please select the source');
+        //                alert('Please Select the Source');
+        //                return false;
+        //            }
+        //        });
 
-        $('#keyword').on('keyup', function () {
+        $('#keyword').on('keyup', function() {
             generate_search_url();
         });
 
         $('#keyword').trigger('keyup');
 
         $('#source').selectize({
-            onChange: function (value) {
+            onChange: function(value) {
                 generate_search_url();
             }
         });
 
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy'
+        }).val();
 
         $('#start_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) {
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#end_date_applied').datepicker('option', 'minDate', value);
 
@@ -274,7 +271,10 @@
 
         $('#end_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) {
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#start_date_applied').datepicker('option', 'maxDate', value);
 
@@ -284,16 +284,20 @@
 
 
         // Search Area Toggle Function    
-        jQuery('.hr-search-criteria').click(function () {
+        jQuery('.hr-search-criteria').click(function() {
             jQuery(this).next().slideToggle('1000');
             jQuery(this).toggleClass("opened");
         });
 
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
     });
 
-    function print_page(elem)
-    {
+    function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
 

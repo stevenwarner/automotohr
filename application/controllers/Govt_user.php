@@ -157,12 +157,14 @@ class Govt_user extends Public_Controller {
 
             $previous_form = $this->govt_user_model->fetch_i9form($user_type, $employee_sid);
             $data['pre_form'] = $previous_form;
+            $data['section_access'] = "complete_pdf";
+            //
             if($action == 'download'){
-                $this->load->view('manage_employer/govt_users/form_i9_pdf', $data);
+                $this->load->view('2022/federal_fillable/form_i9_download', $data);
             }elseif($action == 'print'){
-                $this->load->view('form_i9/print_i9_form', $data);
+                $this->load->view('2022/federal_fillable/form_i9_print', $data);
             }else{
-                $this->load->view('form_i9/index-pdf', $data);
+                $this->load->view('2022/federal_fillable/form_i9_preview', $data);
             }
         } else {
             redirect('login', "refresh");

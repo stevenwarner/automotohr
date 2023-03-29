@@ -2007,6 +2007,8 @@ class Dashboard_model extends CI_Model
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('is_executive_admin', 0);
         $this->db->where('active', 1);
+        $this->db->order_by('first_name', 'ASC');
+        
         return $this->db->get('users')->result_array();
     }
 
@@ -3188,9 +3190,10 @@ class Dashboard_model extends CI_Model
     {
         //
         $a = $this->db
-            ->select('deactive_by_name, portal_job_listings_sid')
+            ->select('deactive_by_name, portal_job_listings_sid, deactive_date')
             ->where_in('portal_job_listings_sid', $jobIds)
-            ->order_by('sid', 'asc')
+            ->where('deactive_date IS NOT NULL', NULL)
+            ->where('active', 0)
             ->get('portal_job_listings_record');
         //
         $b = $a->result_array();

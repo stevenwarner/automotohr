@@ -1,11 +1,13 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 
-	
 
 
-class employers extends Admin_Controller {
-    function __construct() {
+
+class employers extends Admin_Controller
+{
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/company_model');
@@ -14,7 +16,8 @@ class employers extends Admin_Controller {
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index($keyword = null, $status = 2, $company = null, $contact_name = null, $page_number = 1) {
+    public function index($keyword = null, $status = 'all', $company = null, $contact_name = null, $page_number = 1)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'list_employers';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -32,7 +35,7 @@ class employers extends Admin_Controller {
         $keyword = $keyword == null ? 'all' : trim(urldecode($keyword));
         $company = $company == null ? 'all' : trim(urldecode($company));
         $contact_name = $contact_name == null ? 'all' : trim(urldecode($contact_name));
-        $status = $status == null ? 2 : $status;
+        $status = $status == null ? 'all' : $status;
         $employers_count = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, true, $company, $contact_name);
         $employers = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, false, $company, $contact_name);
         // echo "<pre>"; print_r($employers); die();
@@ -64,7 +67,10 @@ class employers extends Admin_Controller {
         $config['num_tag_close'] = '</li>';
         $this->pagination->initialize($config);
         $this->data['links'] = $this->pagination->create_links();
-//        $total_employers = $this->company_model->count_all_employers();
+        //        $total_employers = $this->company_model->count_all_employers();
+
+        // print_r($employers);
+        // die();
         $this->data['employers'] = $employers;
         $this->data['total_employers'] = $employers_count;
         $this->data['total_rows'] = $employers_count;
@@ -83,11 +89,12 @@ class employers extends Admin_Controller {
                 $this->company_model->perform_multiple_action($form_type, $form_action, $form_rows);
             }
 
-            redirect('manage_admin/employers/' . $keyword . '/' . $status . '/' . $company. '/' . $contact_name . '/', $page_number, 'refresh');
+            redirect('manage_admin/employers/' . $keyword . '/' . $status . '/' . $company . '/' . $contact_name . '/', $page_number, 'refresh');
         }
     }
 
-    private function index_old() {
+    private function index_old()
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'list_employers';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -118,11 +125,11 @@ class employers extends Admin_Controller {
         }
 
         // calculate between from the start and get
-//        if (isset($search_data['start']) && $search_data['start'] != "" && isset($search_data['end']) && $search_data['end'] != "") {
-//            $start_date = explode('-', $search_data['start']);
-//            $start_date = $start_date[2] . '-' . $start_date[0] . '-' . $start_date[1] . ' 00:00:00';
-//            $end_date = explode('-', $search_data['end']);
-//            $end_date = $end_date[2] . '-' . $end_date[0] . '-' . $end_date[1] . ' 00:00:00';
+        //        if (isset($search_data['start']) && $search_data['start'] != "" && isset($search_data['end']) && $search_data['end'] != "") {
+        //            $start_date = explode('-', $search_data['start']);
+        //            $start_date = $start_date[2] . '-' . $start_date[0] . '-' . $start_date[1] . ' 00:00:00';
+        //            $end_date = explode('-', $search_data['end']);
+        //            $end_date = $end_date[2] . '-' . $end_date[0] . '-' . $end_date[1] . ' 00:00:00';
 
         if (isset($search_data['start']) || isset($search_data['end'])) {
             if (isset($search_data['start']) && $search_data['start'] != "") {
@@ -275,7 +282,8 @@ class employers extends Admin_Controller {
         $this->render('manage_admin/company/listing_view_employers', 'admin_master');
     }
 
-    public function edit_employer($sid = NULL) {
+    public function edit_employer($sid = NULL)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'edit_employers';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -312,7 +320,6 @@ class employers extends Admin_Controller {
             if ($employer_detail) {
                 $this->data['data'] = $employer_detail[0];
                 $this->data['data']['last_status_text'] = $this->company_model->GetCurrentEmployeeStatus($employer_detail[0]["sid"]);
-
             } else {
                 $this->session->set_flashdata('message', 'Employer does not exists!');
                 redirect('manage_admin/employers', 'refresh');
@@ -323,8 +330,10 @@ class employers extends Admin_Controller {
         } else {
             $sid = $this->input->post('sid');
             $action = $this->input->post('submit');
-            $data = array('username' => $this->input->post('username'),
-                            'email' => $this->input->post('email'));
+            $data = array(
+                'username' => $this->input->post('username'),
+                'email' => $this->input->post('email')
+            );
 
             //
             $employeeData = $this->company_model->GetEmployeeById($sid, 'extra_info');
@@ -345,6 +354,18 @@ class employers extends Admin_Controller {
             $data['complynet_status'] = $this->input->post('complynet_status');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
+
+            $data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
+            $data['eeoc_code'] = $this->input->post('eeoc_code');
+            $data['salary_benefits'] = $this->input->post('salary_benefits');
+
+
+
+            //
+            if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
+                $data['complynet_job_title'] = $this->input->post('complynet_job_title');
+            }
+
             //
             if ($data['gender'] != "other") {
                 $updateGender = array();
@@ -352,41 +373,41 @@ class employers extends Admin_Controller {
                 $this->company_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
             }
             //
-            if(!empty($this->input->post('nick_name', true))){
+            if (!empty($this->input->post('nick_name', true))) {
                 $data['nick_name'] = $this->input->post('nick_name', true);
             }
             //
-            if(!empty($this->input->post('middle_name', true))){
+            if (!empty($this->input->post('middle_name', true))) {
                 $data['middle_name'] = $this->input->post('middle_name', true);
             }
             //
-            if(!empty($this->input->post('hourly_rate', true))){
+            if (!empty($this->input->post('hourly_rate', true))) {
                 $data['hourly_rate'] = $this->input->post('hourly_rate', true);
             }
             //
-            if(!empty($this->input->post('hourly_technician', true))){
+            if (!empty($this->input->post('hourly_technician', true))) {
                 $data['hourly_technician'] = $this->input->post('hourly_technician', true);
             }
             //
-            if(!empty($this->input->post('flat_rate_technician', true))){
+            if (!empty($this->input->post('flat_rate_technician', true))) {
                 $data['flat_rate_technician'] = $this->input->post('flat_rate_technician', true);
             }
             //
-            if(!empty($this->input->post('semi_monthly_salary', true))){
+            if (!empty($this->input->post('semi_monthly_salary', true))) {
                 $data['semi_monthly_salary'] = $this->input->post('semi_monthly_salary', true);
             }
             //
-            if(!empty($this->input->post('semi_monthly_draw', true))){
+            if (!empty($this->input->post('semi_monthly_draw', true))) {
                 $data['semi_monthly_draw'] = $this->input->post('semi_monthly_draw', true);
             }
 
-            if(IS_PTO_ENABLED == 1){
+            if (IS_PTO_ENABLED == 1) {
                 $data['user_shift_hours'] = $this->input->post('shift_hours', true);
                 $data['user_shift_minutes'] = $this->input->post('shift_mins', true);
             }
 
-            if(IS_NOTIFICATION_ENABLED == 1){
-                if(!sizeof($this->input->post('notified_by', true))) $data['notified_by'] = 'email';
+            if (IS_NOTIFICATION_ENABLED == 1) {
+                if (!sizeof($this->input->post('notified_by', true))) $data['notified_by'] = 'email';
                 else $data['notified_by'] = implode(',', $this->input->post('notified_by', true));
             }
 
@@ -399,7 +420,7 @@ class employers extends Admin_Controller {
             }
             //
             // Added on: 21-12-2021
-            if(!empty($this->input->post('rehire_date'))) {
+            if (!empty($this->input->post('rehire_date'))) {
 
                 $rehireDate = DateTime::createFromFormat('m-d-Y', $this->input->post('rehire_date', true))->format('Y-m-d');
                 //
@@ -411,7 +432,7 @@ class employers extends Admin_Controller {
                 //
                 $data['rehire_date'] = $rehireDate;
                 $data['general_status'] = 'rehired';
-                $data['active'] = 0;
+                $data['active'] = 1;
             }
             //
             $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture'); // Picture Upload and Update
@@ -422,13 +443,18 @@ class employers extends Admin_Controller {
                 $pictures = NULL;
             }
 
-            if(IS_TIMEZONE_ACTIVE){
+            if (IS_TIMEZONE_ACTIVE) {
                 //Added on: 25-06-2019
                 $timezone = $this->input->post('timezone', true);
-                if($timezone != '') $data['timezone'] = $timezone;
+                if ($timezone != '') $data['timezone'] = $timezone;
             }
 
+
             $this->company_model->update_user($sid, $data, 'Employer');
+
+            //
+            $teamId = $this->input->post('teamId');
+            handleEmployeeDepartmentAndTeam($sid, $teamId);
 
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');
@@ -438,7 +464,8 @@ class employers extends Admin_Controller {
         }
     }
 
-    public function add_employer($company_sid = null) {
+    public function add_employer($company_sid = null)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'edit_employers';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -480,9 +507,13 @@ class employers extends Admin_Controller {
                 $access_level = $this->input->post('security_access_level');
                 $registration_date = $this->input->post('registration_date');
                 $action = $this->input->post('action');
+                $gender = $this->input->post('gender');
+                $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
-                if($registration_date !=NULL) {
+                
+
+                if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
                     $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 } else {
@@ -505,14 +536,31 @@ class employers extends Admin_Controller {
                 $insert_data['alternative_email'] = $alternative_email;
                 $insert_data['access_level'] = $access_level;
                 $insert_data['salt'] = $salt;
+                $insert_data['gender'] = $gender;
+                $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+
+                $insert_data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
+                $insert_data['eeoc_code'] = $this->input->post('eeoc_code');
+                $insert_data['salary_benefits'] = $this->input->post('salary_benefits');
+
+                //
+                if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
+                    $insert_data['complynet_job_title'] = $this->input->post('complynet_job_title');
+                }
+
+
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
+                //
+                //
+                $teamId = $this->input->post('teamId');
+                handleEmployeeDepartmentAndTeam($sid, $teamId);
 
                 if ($profile_picture != 'error') {
-                    $pictures = array('profile_picture'=>$profile_picture);
-                    $this->company_model->update_user($sid,$pictures);
+                    $pictures = array('profile_picture' => $profile_picture);
+                    $this->company_model->update_user($sid, $pictures);
                 } else {
                     $pictures = NULL;
                 }
@@ -541,7 +589,8 @@ class employers extends Admin_Controller {
         }
     }
 
-    function employer_task() {
+    function employer_task()
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'show_employer_multiple_actions';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -556,7 +605,8 @@ class employers extends Admin_Controller {
         }
     }
 
-    function employer_login() {
+    function employer_login()
+    {
 
         $redirect_url = 'manage_admin';
         $function_name = 'employerlogin';
@@ -602,16 +652,16 @@ class employers extends Admin_Controller {
                 $portal_detail = $result['portal'];
                 $sess_array = array();
                 $data['cart'] = db_get_cart_content($empData['parent_sid']);
-                $sess_array = array (
-                                        'company_detail' => $companyData,
-                                        'employer_detail' => $empData,
-                                        'portal_detail' => $portal_detail,
-                                        'cart' => $data['cart'],
-                                        'is_super' => 1,
-                                        'clocked_status' => $result['clocked_status']
-                                    );
+                $sess_array = array(
+                    'company_detail' => $companyData,
+                    'employer_detail' => $empData,
+                    'portal_detail' => $portal_detail,
+                    'cart' => $data['cart'],
+                    'is_super' => 1,
+                    'clocked_status' => $result['clocked_status']
+                );
 
-                $this->db->where('company_id',$sess_array['company_detail']['sid']);
+                $this->db->where('company_id', $sess_array['company_detail']['sid']);
                 $config = $this->db->get('incident_type_configuration')->num_rows();
                 $sess_array['incident_config'] = $config;
                 $sess_array['resource_center'] = $sess_array['company_detail']['enable_resource_center'];
@@ -639,7 +689,8 @@ class employers extends Admin_Controller {
         }
     }
 
-    function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME) {
+    function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME)
+    {
         require_once(APPPATH . 'libraries/aws/aws.php');
 
         if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
@@ -651,7 +702,7 @@ class employers extends Admin_Controller {
             $prefix = str_pad($company_sid, 4, '0', STR_PAD_LEFT);
             $new_file_name = $prefix . '-' . $file_name . '-' . generateRandomString(3) . '.' . $file_ext;
 
-            if($_FILES[$file_input_id]['size'] == 0) {
+            if ($_FILES[$file_input_id]['size'] == 0) {
                 $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                 return 'error';
             }
@@ -664,26 +715,40 @@ class employers extends Admin_Controller {
         }
     }
 
-    public function change_status() {
+    public function change_status()
+    {
+
         $action = $this->input->post('action');
         $employer_id = $this->input->post('sid');
 
-        if($action == 'deactive') {
-            $data = array('active'=>0);
-            $this->company_model->update_user_status($employer_id,$data);
-        } elseif($action == 'active') {
-            $data = array('active'=>1);
-            $this->company_model->update_user_status($employer_id,$data);
+        $data_to_insert = array();
+        $data_to_insert['status_change_date'] = date('Y-m-d');
+        $data_to_insert['employee_sid'] =  $employer_id;
+        $data_to_insert['changed_by'] = 0;
+        $data_to_insert['ip_address'] = getUserIP();
+        $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+
+        if ($action == 'deactive') {
+            $data_to_insert['employee_status'] = 6;
+            $this->company_model->terminate_user($employer_id, $data_to_insert);
+            $data = array('active' => 0, 'general_status' => 'inactive');
+            $this->company_model->update_user_status($employer_id, $data);
+        } elseif ($action == 'active') {
+            $data_to_insert['employee_status'] = 5;
+            $this->company_model->terminate_user($employer_id, $data_to_insert);
+            $data = array('active' => 1, 'general_status' => 'active');
+            $this->company_model->update_user_status($employer_id, $data);
         }
     }
 
-    function send_login_credentials() {
+    function send_login_credentials()
+    {
         $action = $this->input->post('action');
         $sid = $this->input->post('sid');
         $company_name = $this->input->post('name');
         $employee_details = $this->company_model->get_employee_details($sid);
 
-        if(!empty($employee_details)) {
+        if (!empty($employee_details)) {
             $first_name = $employee_details[0]['first_name'];
             $last_name = $employee_details[0]['last_name'];
             $username = $employee_details[0]['username'];
@@ -691,7 +756,7 @@ class employers extends Admin_Controller {
             $email = $employee_details[0]['email'];
             $salt = $employee_details[0]['salt'];
 
-            if($salt == NULL || $salt == '') {
+            if ($salt == NULL || $salt == '') {
                 $salt = generateRandomString(48);
                 $data = array('salt' => $salt);
                 $this->company_model->update_user($sid, $data);
@@ -720,40 +785,42 @@ class employers extends Admin_Controller {
     }
 
     //
-    function email_check($email){
+    function email_check($email)
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->form_validation->set_message('email_check', 'The %s already exists.');
         //
-        if(!isset($email)){
+        if (!isset($email)) {
             return false;
         }
         //
-        if(isset($post['sid'])){
+        if (isset($post['sid'])) {
             $parent_sid = $this->db
-            ->select('parent_sid')
-            ->where('sid', $post['sid'])
-            ->get('users')
-            ->row_array()['parent_sid'];
+                ->select('parent_sid')
+                ->where('sid', $post['sid'])
+                ->get('users')
+                ->row_array()['parent_sid'];
         }
         //
         $this->db
-        ->where('LOWER(email)', strtolower($email));
+            ->where('LOWER(email)', strtolower($email));
         //
-        if(isset($post['sid'])){
+        if (isset($post['sid'])) {
             $this->db->where('sid <> ', $post['sid']);
             $this->db->where('parent_sid', $parent_sid);
         }
         //
-        if($this->db->count_all_results('users')){
+        if ($this->db->count_all_results('users')) {
             return false;
         }
         //
         return true;
     }
 
-    public function AssignBulkDocuments($sid = NULL) {
+    public function AssignBulkDocuments($sid = NULL)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'AssignBulkDocuments';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -773,7 +840,7 @@ class employers extends Admin_Controller {
         $this->data['security_access_levels'] = $security_access_levels;
         $this->load->library('form_validation');
 
-        
+
 
         if ($this->form_validation->run() === FALSE) {
             if ($employee_detail) {
@@ -796,80 +863,81 @@ class employers extends Admin_Controller {
      * @return JSON
      *
      */
-    function upload_assign_document(){
+    function upload_assign_document()
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('assign_bulk_documents', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('assign_bulk_documents', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
         // user is not signed in
         if ($this->input->server('REQUEST_METHOD') != 'POST' || !$this->session->userdata('logged_in')) $this->response($return_array);
         //
-        
+
         //
         $file = $_FILES['file'];
         $formpost = $this->input->post(NULL, TRUE);
-        if(!sizeof($file)) $this->response( $return_array );
-        if($file['error'] != 0) $this->response( $return_array );
+        if (!sizeof($file)) $this->response($return_array);
+        if ($file['error'] != 0) $this->response($return_array);
         //
-		$userId                 = $formpost['employeeId'];
-		$userType               = $formpost['type'];
+        $userId                 = $formpost['employeeId'];
+        $userType               = $formpost['type'];
         $document_title         = $file['name'];
         $companyId              = $formpost['companyId'];;
         $employerId             = 0;
-		$document_description   = '';
+        $document_description   = '';
 
-        $gen_document_title = substr($document_title, 0, strrpos( $document_title, '.'));
+        $gen_document_title = substr($document_title, 0, strrpos($document_title, '.'));
         $gen_document_title = ucwords((preg_replace('/[^A-Za-z0-9\-]/', ' ', $gen_document_title)));
-       
-		//
-		if($_SERVER['HTTP_HOST'] == 'localhost') $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
-		else $uploaded_document_s3_name = upload_file_to_aws('file', $companyId, str_replace(' ', '_', $document_title), $employerId, AWS_S3_BUCKET_NAME);
-		// $uploaded_document_s3_name = upload_file_to_aws('file', $companyId, str_replace(' ', '_', $document_title), $employerId, AWS_S3_BUCKET_NAME);
-		//
-		$uploaded_document_original_name = $document_title;
-		//
-		$file_info = pathinfo($uploaded_document_original_name);
-		//
-		$data_to_insert = array();
-		$data_to_insert['status'] = 1;
-		$data_to_insert['user_sid'] = $userId;
-		$data_to_insert['user_type'] = $userType;
-		$data_to_insert['company_sid'] = $companyId;
-		$data_to_insert['assigned_by'] = $employerId;
-		$data_to_insert['document_sid'] = 0;
+
+        //
+        if ($_SERVER['HTTP_HOST'] == 'localhost') $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
+        else $uploaded_document_s3_name = upload_file_to_aws('file', $companyId, str_replace(' ', '_', $document_title), $employerId, AWS_S3_BUCKET_NAME);
+        // $uploaded_document_s3_name = upload_file_to_aws('file', $companyId, str_replace(' ', '_', $document_title), $employerId, AWS_S3_BUCKET_NAME);
+        //
+        $uploaded_document_original_name = $document_title;
+        //
+        $file_info = pathinfo($uploaded_document_original_name);
+        //
+        $data_to_insert = array();
+        $data_to_insert['status'] = 1;
+        $data_to_insert['user_sid'] = $userId;
+        $data_to_insert['user_type'] = $userType;
+        $data_to_insert['company_sid'] = $companyId;
+        $data_to_insert['assigned_by'] = $employerId;
+        $data_to_insert['document_sid'] = 0;
         $data_to_insert['user_consent'] = 1;
-        
+
         if (isset($_POST['signed_date']) && $_POST['signed_date'] != '') {
-            $data_to_insert['signature_timestamp'] = DateTime::createFromFormat('m/d/Y', $_POST['signed_date'])->format('Y-m-d').' 00:00:00';
+            $data_to_insert['signature_timestamp'] = DateTime::createFromFormat('m/d/Y', $_POST['signed_date'])->format('Y-m-d') . ' 00:00:00';
         }
 
-		$data_to_insert['document_type'] = 'uploaded';
-		$data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
-		$data_to_insert['document_title'] = $gen_document_title;
-		$data_to_insert['document_description'] = $document_description;
-		//
-		if (isset($file_info['extension'])) {
-			$data_to_insert['document_extension'] = $file_info['extension'];
-		}
-		//
-		if ($uploaded_document_s3_name != 'error') {
-		    $data_to_insert['uploaded'] = 1;
-		    $data_to_insert['uploaded_file'] = $uploaded_document_s3_name;
-		    $data_to_insert['uploaded_date'] = date('Y-m-d H:i:s');
-		    $data_to_insert['document_s3_name'] = $uploaded_document_s3_name;
-		    $data_to_insert['document_original_name'] = $uploaded_document_original_name;
-		} else {
-			$return_array['Response'] = 'Error';
-			$this->response($return_array);
-		}
+        $data_to_insert['document_type'] = 'uploaded';
+        $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
+        $data_to_insert['document_title'] = $gen_document_title;
+        $data_to_insert['document_description'] = $document_description;
+        //
+        if (isset($file_info['extension'])) {
+            $data_to_insert['document_extension'] = $file_info['extension'];
+        }
+        //
+        if ($uploaded_document_s3_name != 'error') {
+            $data_to_insert['uploaded'] = 1;
+            $data_to_insert['uploaded_file'] = $uploaded_document_s3_name;
+            $data_to_insert['uploaded_date'] = date('Y-m-d H:i:s');
+            $data_to_insert['document_s3_name'] = $uploaded_document_s3_name;
+            $data_to_insert['document_original_name'] = $uploaded_document_original_name;
+        } else {
+            $return_array['Response'] = 'Error';
+            $this->response($return_array);
+        }
 
         if (isset($_POST['is_offer_letter'])) {
             $user_info = '';
 
-            $user_info = $this->company_model->get_employee_information($companyId, $userId); 
+            $user_info = $this->company_model->get_employee_information($companyId, $userId);
 
-            $offer_letter_name = $gen_document_title; 
+            $offer_letter_name = $gen_document_title;
 
             $data_to_insert['document_title']       = $offer_letter_name;
             $data_to_insert['document_type']        = 'offer_letter';
@@ -888,7 +956,7 @@ class employers extends Admin_Controller {
                         $this->company_model->insert_documents_assignment_record_history($previous_offer_letter);
                     }
                 }
-            } 
+            }
 
             $this->company_model->disable_all_previous_letter($companyId, $userType, $userId, 'offer_letter');
         } else {
@@ -905,20 +973,20 @@ class employers extends Admin_Controller {
                 } else {
                     $data_to_insert['visible_to_payroll'] = 0;
                 }
-            }    
+            }
         }
 
-		//
+        //
         $insert_id = $this->company_model->insertDocumentsAssignmentRecord($data_to_insert);
-        $this->company_model->add_update_categories_2_documents($insert_id,$this->input->post('categories'),"documents_assigned");
+        $this->company_model->add_update_categories_2_documents($insert_id, $this->input->post('categories'), "documents_assigned");
 
         $return_array['Status'] = true;
-		$return_array['Response'] = 'Proceed';
-		$this->response($return_array);
-
+        $return_array['Response'] = 'Proceed';
+        $this->response($return_array);
     }
 
-    public function employee_status_detail($sid = NULL) {
+    public function employee_status_detail($sid = NULL)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'employee_status';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -960,7 +1028,8 @@ class employers extends Admin_Controller {
         }
     }
 
-    public function change_employee_status($sid = NULL) {
+    public function change_employee_status($sid = NULL)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'employee_status';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1007,10 +1076,10 @@ class employers extends Admin_Controller {
             if ($status == 1) {
                 $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); //date('Y-m-d', strtotime($termination_date));
             }
-            
+
             $data_to_insert['involuntary_termination'] = $involuntary;
             $data_to_insert['do_not_hire'] = $rehire;
-            $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
+            $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y'); // date('Y-m-d', strtotime($status_change_date));
             $data_to_insert['details'] = htmlentities($termination_details);
             $data_to_insert['employee_sid'] = $sid;
             $data_to_insert['changed_by'] = 0;
@@ -1019,9 +1088,9 @@ class employers extends Admin_Controller {
             $data_to_update = array();
 
             if ($status == 1) {
-                if($system_access == 1){
+                if ($system_access == 1) {
                     $data_to_update['active'] = 0;
-                }elseif(date('m-d-Y') >= $termination_date){
+                } elseif (date('m-d-Y') >= $termination_date) {
                     $data_to_update['active'] = 0;
                 }
                 $data_to_update['terminated_status'] = 1;
@@ -1033,18 +1102,18 @@ class employers extends Admin_Controller {
                 } else if ($status == 6) {
                     $data_to_update['active'] = 0;
                     $data_to_update['general_status'] = 'inactive';
-                }else if ($status == 7) {
+                } else if ($status == 7) {
                     $data_to_update['general_status'] = 'leave';
-                }else if ($status == 4) {
+                } else if ($status == 4) {
                     $data_to_update['general_status'] = 'suspended';
                     $data_to_update['active'] = 0;
-                }else if ($status == 3) {
+                } else if ($status == 3) {
                     $data_to_update['general_status'] = 'deceased';
                     $data_to_update['active'] = 0;
-                }else if ($status == 2) {
+                } else if ($status == 2) {
                     $data_to_update['general_status'] = 'retired';
                     $data_to_update['active'] = 0;
-                }else if ($status == 8) {
+                } else if ($status == 8) {
                     $data_to_update['active'] = 1;
                     $data_to_update['general_status'] = 'rehired';
                     $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
@@ -1053,13 +1122,23 @@ class employers extends Admin_Controller {
             }
 
             $this->company_model->terminate_user($sid, $data_to_insert);
-            $this->company_model->change_terminate_user_status($sid, $data_to_update);
+
+            if ($status == 9) {
+                $data_transfer_log_update['to_company_sid'] = $company_detail[0]['sid'];;
+                $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
+                $this->company_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+            }
+            if ($status != 9) {
+                $this->company_model->change_terminate_user_status($sid, $data_to_update);
+            }
+
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }
     }
 
-    public function edit_employee_status($sid, $status_id) {
+    public function edit_employee_status($sid, $status_id)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'employee_status';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1112,14 +1191,14 @@ class employers extends Admin_Controller {
             $data_to_insert['termination_reason'] = empty($termination_reason) ? 0 : $termination_reason;
 
             if ($status == 1) {
-                $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y');// date('Y-m-d', strtotime($termination_date));
-            }else{
+                $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); // date('Y-m-d', strtotime($termination_date));
+            } else {
                 $data_to_insert['termination_date'] = NULL;
             }
 
             $data_to_insert['involuntary_termination'] = $involuntary;
             $data_to_insert['do_not_hire'] = $rehire;
-            $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
+            $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y'); // date('Y-m-d', strtotime($status_change_date));
             $data_to_insert['details'] = htmlentities($termination_details);
             $data_to_insert['employee_sid'] = $sid;
             $data_to_insert['changed_by'] = 0;
@@ -1128,11 +1207,11 @@ class employers extends Admin_Controller {
             $data_to_update = array();
 
             if ($status == 1) {
-                if($system_access == 1){
+                if ($system_access == 1) {
                     $data_to_update['active'] = 0;
-                }elseif(date('m-d-Y') >= $termination_date){
+                } elseif (date('m-d-Y') >= $termination_date) {
                     $data_to_update['active'] = 0;
-                }else{
+                } else {
                     $data_to_update['active'] = 1;
                 }
                 $data_to_update['terminated_status'] = 1;
@@ -1144,31 +1223,45 @@ class employers extends Admin_Controller {
                 } else if ($status == 6) {
                     $data_to_update['active'] = 0;
                     $data_to_update['general_status'] = 'inactive';
-                }else if ($status == 7) {
+                } else if ($status == 7) {
                     $data_to_update['general_status'] = 'leave';
-                }else if ($status == 4) {
+                } else if ($status == 4) {
                     $data_to_update['active'] = 0;
                     $data_to_update['general_status'] = 'suspended';
-                }else if ($status == 3) {
+                } else if ($status == 3) {
                     $data_to_update['active'] = 0;
                     $data_to_update['general_status'] = 'deceased';
-                }else if ($status == 2) {
+                } else if ($status == 2) {
                     $data_to_update['active'] = 0;
                     $data_to_update['general_status'] = 'retired';
-                }else if ($status == 8) {
+                } else if ($status == 8) {
                     $data_to_update['active'] = 1;
                     $data_to_update['general_status'] = 'rehired';
                     $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
                 }
                 $data_to_update['terminated_status'] = 0;
-                
             }
             //
             $this->company_model->update_terminate_user($status_id, $data_to_insert);
             //
+
+            if ($status == 9) {
+
+                $data_transfer_log_update['to_company_sid'] = $company_detail[0]['sid'];;
+                $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
+
+                $this->company_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+
+                //
+                $this->db->where('sid', $sid)->update('users', ['transfer_date' => $data_transfer_log_update['employee_copy_date']]);
+            }
+
+
             // Check its current status then update in user primary data
-            if($this->company_model->check_for_main_status_update($sid, $status_id)){
-                $this->company_model->change_terminate_user_status($sid, $data_to_update);
+            if ($this->company_model->check_for_main_status_update($sid, $status_id)) {
+                if ($status != 9) {
+                    $this->company_model->change_terminate_user_status($sid, $data_to_update);
+                }
             }
             //
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
@@ -1176,14 +1269,15 @@ class employers extends Admin_Controller {
         }
     }
 
-    public function employee_documents($sid) {
+    public function employee_documents($sid)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'AssignBulkDocuments';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         // Param2: Redirect URL, Param3: Function Name
-        check_access_permissions($security_details, $redirect_url, $function_name); 
+        check_access_permissions($security_details, $redirect_url, $function_name);
         //
         $employee_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employee_detail[0]['parent_sid'], 'company');
@@ -1221,21 +1315,25 @@ class employers extends Admin_Controller {
                 $category_documents = $this->hr_documents_management_model->get_all_documents_in_category($category_sid, 0);
 
                 if ($category_status) {
-                    $active_categories[] = array('sid' => $category_sid,
+                    $active_categories[] = array(
+                        'sid' => $category_sid,
                         'name' => $category['name'],
                         'sort_order' => $category['sort_order'],
                         'description' => $category['description'],
                         'created_date' => $category['created_date'],
                         'documents_count' => count($category_documents),
-                        'documents' => $category_documents);
+                        'documents' => $category_documents
+                    );
                 } else {
-                    $in_active_categories[] = array('sid' => $category_sid,
+                    $in_active_categories[] = array(
+                        'sid' => $category_sid,
                         'name' => $category['name'],
                         'sort_order' => $category['sort_order'],
                         'description' => $category['description'],
                         'created_date' => $category['created_date'],
                         'documents_count' => count($category_documents),
-                        'documents' => $category_documents);
+                        'documents' => $category_documents
+                    );
                 }
             }
         }
@@ -1257,7 +1355,7 @@ class employers extends Admin_Controller {
             $EEVDocument['w4']['title'] = "W4 Fillable";
             $EEVDocument['w4']['assign_date'] = $w4_form['sent_date'];
             $EEVDocument['w4']['sign_date'] = $w4_form['signature_timestamp'];
-            $EEVDocument['w4']['url'] = base_url("form_w4/download_w4_form_2020/employee")."/".$user_sid;
+            $EEVDocument['w4']['url'] = base_url("form_w4/download_w4_form_2020/employee") . "/" . $user_sid;
         }
         //
         $this->data['EEVDocument'] = $EEVDocument;
@@ -1277,10 +1375,10 @@ class employers extends Admin_Controller {
         $user_completed_payroll_documents       = array();
 
 
-       
+
         $assigned_documents = $documents;
         // _e($assigned_documents, true, true);
-        $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);   
+        $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);
 
         // echo "<pre>";
         // print_r($active_documents);
@@ -1325,24 +1423,24 @@ class employers extends Admin_Controller {
 
             if ($assigned_document['document_sid'] == 0) {
                 $doc_visible_check = $this->hr_documents_management_model->get_manual_doc_visible_payroll_check($assigned_document['sid']);
-                $assigned_document['visible_to_payroll'] = $doc_visible_check;  
+                $assigned_document['visible_to_payroll'] = $doc_visible_check;
             }
 
             $payroll_sids = $this->hr_documents_management_model->get_payroll_documents_sids();
             $documents_management_sids = $payroll_sids['documents_management_sids'];
             $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
 
-            if (in_array($assigned_document['document_sid'],$documents_management_sids)) {
-                $assigned_document['pay_roll_catgory'] = 1; 
-            } else if (in_array($assigned_document['sid'],$documents_assigned_sids)) {
-                $assigned_document['pay_roll_catgory'] = 1; 
+            if (in_array($assigned_document['document_sid'], $documents_management_sids)) {
+                $assigned_document['pay_roll_catgory'] = 1;
+            } else if (in_array($assigned_document['sid'], $documents_assigned_sids)) {
+                $assigned_document['pay_roll_catgory'] = 1;
             } else {
-                $assigned_document['pay_roll_catgory'] = 0; 
+                $assigned_document['pay_roll_catgory'] = 0;
             }
 
             if ($assigned_document['document_type'] != 'offer_letter') {
                 if ($assigned_document['status'] == 1) {
-                    if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) { 
+                    if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) {
 
                         if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                             if ($assigned_document['uploaded'] == 1) {
@@ -1405,60 +1503,58 @@ class employers extends Admin_Controller {
                                 $is_document_completed = 0;
                             }
                         }
-                        
-                        if ($is_document_completed > 0) { 
+
+                        if ($is_document_completed > 0) {
                             if ($assigned_document['pay_roll_catgory'] == 0) {
 
                                 $signed_document_sids[] = $assigned_document['document_sid'];
                                 $signed_documents[] = $assigned_document;
                                 unset($assigned_documents[$key]);
-                            } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                            } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                 $signed_document_sids[] = $assigned_document['document_sid'];
-                                $completed_payroll_documents[] = $assigned_document; 
+                                $completed_payroll_documents[] = $assigned_document;
                                 unset($assigned_documents[$key]);
                             }
-                            
                         } else {
-                             if ($assigned_document['pay_roll_catgory'] == 1) {
-                                $uncompleted_payroll_documents[] = $assigned_document; 
+                            if ($assigned_document['pay_roll_catgory'] == 1) {
+                                $uncompleted_payroll_documents[] = $assigned_document;
                                 unset($assigned_documents[$key]);
                             }
 
-                            $assigned_sids[] = $assigned_document['document_sid'];   
+                            $assigned_sids[] = $assigned_document['document_sid'];
                         }
-           
                     } else {
-                        if ($is_document_authorized == 1) { 
+                        if ($is_document_authorized == 1) {
                             //
                             if ($authorized_sign_status == 1) {
                                 if ($assigned_document['pay_roll_catgory'] == 0) {
                                     $signed_document_sids[] = $assigned_document['document_sid'];
                                     $signed_documents[] = $assigned_document;
                                     unset($assigned_documents[$key]);
-                                } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                     $signed_document_sids[] = $assigned_document['document_sid'];
-                                    $completed_payroll_documents[] = $assigned_document; 
+                                    $completed_payroll_documents[] = $assigned_document;
                                     unset($assigned_documents[$key]);
                                 }
                             } else {
                                 if ($assigned_document['pay_roll_catgory'] == 1) {
-                                    $uncompleted_payroll_documents[] = $assigned_document; 
+                                    $uncompleted_payroll_documents[] = $assigned_document;
                                     unset($assigned_documents[$key]);
                                 }
                             }
                             //
-                            $assigned_sids[] = $assigned_document['document_sid'];  
+                            $assigned_sids[] = $assigned_document['document_sid'];
                             //
-                        } else if ($assigned_document['pay_roll_catgory'] == 0) { 
+                        } else if ($assigned_document['pay_roll_catgory'] == 0) {
                             $assigned_sids[] = $assigned_document['document_sid'];
                             $no_action_required_sids[] = $assigned_document['document_sid'];
                             $no_action_required_documents[] = $assigned_document;
                             unset($assigned_documents[$key]);
                         } else if ($assigned_document['pay_roll_catgory'] == 1) {
                             if ($assigned_document['user_consent'] == 1 && $assigned_document['document_sid'] == 0) {
-                                $no_action_required_payroll_documents[] = $assigned_document; 
+                                $no_action_required_payroll_documents[] = $assigned_document;
                                 unset($assigned_documents[$key]);
-                            } 
+                            }
                         }
                     }
                 } else {
@@ -1476,7 +1572,7 @@ class employers extends Admin_Controller {
         }
 
         // Check for authorize tag
-        if(sizeof($completed_offer_letter)){
+        if (sizeof($completed_offer_letter)) {
             //
             $completed_offer_letter[0]['is_document_authorized'] = 0;
             $completed_offer_letter[0]['authorized_sign_status'] = 0;
@@ -1526,7 +1622,7 @@ class employers extends Admin_Controller {
         $this->data['completed_document_sids']                = $completed_document_sids; // completed Documemts Ids
         $this->data['completed_documents']                    = $completed_documents; // completed Documemts
         $this->data['no_action_required_documents']           = $no_action_required_documents; // no action required documents
-        $this->data['no_action_required_payroll_documents']   = $no_action_required_payroll_documents; 
+        $this->data['no_action_required_payroll_documents']   = $no_action_required_payroll_documents;
         $this->data['assigned_sids']                          = $assigned_sids;
         $this->data['user_type']                              = $user_type;
         $this->data['user_sid']                               = $user_sid;
@@ -1540,7 +1636,7 @@ class employers extends Admin_Controller {
 
 
         // _e($this->data, true, true);
-        
+
         if ($employee_detail) {
             $this->data['employee_detail'] = $employee_detail[0];
         } else {
@@ -1556,9 +1652,10 @@ class employers extends Admin_Controller {
      *
      * @param $array Array
      */
-    private function response($array){
+    private function response($array)
+    {
         header('Content-Type: application/json');
-        echo json_encode($array); exit(0);
+        echo json_encode($array);
+        exit(0);
     }
-
 }

@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('manage_ems'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Employee Management System
                                     </a>
@@ -38,6 +38,7 @@
                                     <?php } ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'pending_document')) { ?>
                                     <a href="<?php echo base_url('hr_documents_management/people_with_pending_documents'); ?>" class="btn btn-success">Employees With Pending <i class="fa fa-files-o" aria-hidden="true"></i></a>
+                                    <a href="<?php echo base_url('hr_documents_management/people_with_pending_federal_fillable'); ?>" class="btn btn-success">Employees With Pending Federal Fillable <i class="fa fa-files-o" aria-hidden="true"></i></a>
                                     <?php } ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'pending_document')) { ?>
                                     <a href="<?php echo base_url('hr_documents_management/people_with_pending_employer_documents'); ?>" class="btn btn-success">Managers With Pending <i class="fa fa-files-o" aria-hidden="true"></i></a>
@@ -127,6 +128,7 @@
                                                                                     <?php if($document['document_type'] == 'hybrid_document') { ?>
                                                                                         <button 
                                                                                             data-id="<?=$document['sid'];?>"
+                                                                                            data-from="company"
                                                                                             class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
                                                                                      <?php } else if($document['document_type'] == 'uploaded') {
                                                                                             $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
@@ -470,7 +472,11 @@
                                              <?php   if(!empty($offer_letters)) {
                                                             foreach ($offer_letters as $offer_letter) { ?>
                                                                     <tr>
-                                                                        <td class="col-xs-9"><?php echo $offer_letter['letter_name']; ?></td>
+                                                                        <td class="col-xs-9"><?php echo $offer_letter['letter_name']; ?>
+                                                                        <?php if($offer_letter['is_confidential']==1){ echo "<br><strong>(Confidential)</strong>";}?>
+                                                                           
+                                                                        
+                                                                    </td>
                                                                         <td class="col-xs-1">
                                                                         <?php if($offer_letter['letter_type'] != 'hybrid_document') { ?>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'add_edit_offer_letter')) { ?>
@@ -483,6 +489,7 @@
                                                                                 <button 
                                                                                     data-id="<?=$offer_letter['sid'];?>" 
                                                                                     data-type="offer_letter" 
+                                                                                    data-from="company_offer_letters"
                                                                                     class="btn btn-info btn-block btn-sm js-hybrid-preview">Preview</button>
                                                                             <?php } else if($offer_letter['letter_type'] == 'uploaded') {
                                                                                     $document_filename = !empty($offer_letter['uploaded_document_s3_name']) ? $offer_letter['uploaded_document_s3_name'] : '';
@@ -607,6 +614,7 @@
                                                                             <?php if($document['document_type'] == 'hybrid_document') { ?>
                                                                                 <button 
                                                                                     data-id="<?=$document['sid'];?>"
+                                                                                    data-from="company"
                                                                                     class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
                                                                              <?php } else if($document['document_type'] == 'uploaded') {
                                                                                     $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
