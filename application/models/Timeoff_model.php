@@ -134,7 +134,6 @@ class Timeoff_model extends CI_Model
                     $employee['registration_date'],
                     $employee['rehire_date']
                 );
-                
             }
         }
         return $employees;
@@ -276,6 +275,42 @@ class Timeoff_model extends CI_Model
         $updateArray,
         $policyId
     ) {
+        //
+        $oldPolicyData = [];
+        $newPolicyData = [];
+        // old data
+        $oldPolicyData = $this->getSinglePolicyDataById($policyId);
+        $oldPolicyData = array_merge($oldPolicyData, json_decode($oldPolicyData['accruals'], true));
+        unset($oldPolicyData['accruals']);
+        // new data
+        $newPolicyData = array_merge($updateArray, json_decode($updateArray['accruals'], true));
+        unset($newPolicyData['accruals']);
+        //
+        $diffArray = [];
+        //
+        foreach ($oldPolicyData as $key => $val) {
+            //
+            if ($val != $newPolicyData[$key]) {
+                $diffArray[$key] = [
+                    'old_value' => $val,
+                    'new_value' => $newPolicyData[$key]
+                ];
+            }
+        }
+      
+        //
+        $employee_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        if ($diffArray) {
+            $this->db->insert(
+                'timeoff_logs', [
+                    'policy_sid' => $policyId,
+                    'employee_sid' => $employee_sid,
+                    'change_json' => json_encode($diffArray),
+                    'created_at' => getSystemDate()
+                ]
+            );
+        }
+        //
         $this->db
             ->where('sid', $policyId)
             ->update(
@@ -1382,22 +1417,20 @@ class Timeoff_model extends CI_Model
             ->get($tbl)
             ->result_array();
 
-            if($tbl=='timeoff_request_timeline'){
+        if ($tbl == 'timeoff_request_timeline') {
 
-                if (!empty($historyResults)) {
-                    foreach ($historyResults as $index => $historyResult) {
-                        $historyResults[$index]['anniversary_text'] = get_user_anniversary_date(
-                            $historyResult['joined_at'],
-                            $historyResult['registration_date'],
-                            $historyResult['rehire_date']
-                        );
-                        
-                    }
+            if (!empty($historyResults)) {
+                foreach ($historyResults as $index => $historyResult) {
+                    $historyResults[$index]['anniversary_text'] = get_user_anniversary_date(
+                        $historyResult['joined_at'],
+                        $historyResult['registration_date'],
+                        $historyResult['rehire_date']
+                    );
                 }
-
             }
+        }
 
-            return $historyResults;
+        return $historyResults;
     }
 
     function fetchRequestHistoryInfo($request_sid)
@@ -3099,9 +3132,6 @@ class Timeoff_model extends CI_Model
                         $requests['registration_date'],
                         $requests['rehire_date']
                     );
-                    
-
-
                 }
 
                 $requests[$k]['breakdown'] = get_array_from_minutes(
@@ -4493,7 +4523,7 @@ class Timeoff_model extends CI_Model
             //
             if ($employer_detail['access_level_plus'] == 0 && $employer_detail['pay_plan_flag'] == 0) {
                 // Check if the employee is part of team
-                $isTeamMember = in_array($v['employee_sid'], $teamMembers); 
+                $isTeamMember = in_array($v['employee_sid'], $teamMembers);
                 // $this->isTeamMember($v['employee_sid'], $employer_id);
                 $isColleague = 0;
                 //
@@ -5737,4 +5767,36 @@ class Timeoff_model extends CI_Model
             ->get('timeoff_policies')
             ->row_array()['title'];
     }
+
+
+    //
+
+    function getSinglePolicyDataById($policyId)
+    {
+        return $this->db
+            ->select('type_sid,title,assigned_employees,for_admin,is_archived,is_included,is_unlimited,sort_order,off_days,accruals,policy_start_date,is_entitled_employee,policy_category_type,allowed_approvers')
+            ->where('sid', $policyId)
+            ->get('timeoff_policies')
+            ->row_array();
+    }
+
+
+   //
+   function getPolicyLog($policyId)
+   {
+       return $this->db
+           ->select('
+           timeoff_logs.change_json, 
+           timeoff_logs.created_at,
+           ' . (getUserFields()) . '
+       ')
+           ->join('users', 'users.sid = timeoff_logs.employee_sid', 'inner')
+           ->where('timeoff_logs.policy_sid', $policyId)
+           ->order_by('timeoff_logs.sid', 'DESC')
+           ->get('timeoff_logs')
+           ->result_array();
+   }
+
+
+
 }

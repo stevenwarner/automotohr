@@ -41,6 +41,15 @@ $(function () {
                 employeeId: employeeId,
                 public: 0
             }
+        },
+        PolicyLog: {
+            Main: {
+                action: "get_policy_log",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
+            }
         }
     },
         oldState = {},
@@ -429,6 +438,136 @@ $(function () {
         });
     }
 
+
+    //
+
+
+
+    // Policy Log
+
+
+    //
+    function getLogTemplate() {
+        let html = `
+        <div class="tabel-responsive">
+            <table class="table table-striped csCustomTableHeader">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Changes</th>
+                        <th>Changed On</th>
+                    </tr>
+                </thead>
+                <tbody id="jsPolicyLogTable"></tbody>
+            </table>
+        </div>
+    `;
+
+
+        return html;
+    }
+
+
+    //
+
+    function fetchPolicyLog(
+        policyId
+    ) {
+        //
+        ml(true, 'jsPolicyHistoryLoader');
+        //
+        $('#jsPolicyLogTable').html('');
+        //
+        xhr = $.post(handlerURL, Object.assign(callOBJ.PolicyLog.Main, {
+            policyId: policyId
+        }), (resp) => {
+            //
+            xhr = null;
+            //
+            if (resp.Redirect === true) {
+                alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+                    window.location.reload();
+                });
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                alertify.alert('WARNING!', resp.Response, () => { });
+                //
+                ml(false, 'jsPolicyHistoryLoader');
+                //
+                return;
+            }
+            //
+            let rows = '';
+            //
+            if (resp.Data.length === 0) {
+                rows = `
+                <tr>
+                    <td colspan="4">
+                        <p class="alert alert-info text-center">${resp.Response}</p>
+                    </td>
+                </tr>
+            `;
+            } else {
+                resp.Data.map((v) => {
+
+                    //
+                    var changedata = $.parseJSON(v.change_json);
+
+                    var fieldName = '';
+
+                    $(changedata).each(function (i, val) {
+                        $.each(val, function (k, v) {
+                            // console.log(k + " : " + v);
+                            console.log(k);
+                            fieldName = k;
+
+                            $.each(v, function (k2, v2) {
+                                console.log(k2 + " : " + v2);
+
+                            });
+
+                        });
+                    });
+
+                    //${v.change_json}
+
+                    rows += `
+                    <tr>
+                        <td>${remakeEmployeeName(v)}</td>
+                        <td>${v.change_json} fieldName</td>
+                        <td>${moment(v.created_at).format(timeoffDateFormatWithTime)}</td>
+                    </tr>
+                `;
+                });
+            }
+
+            //
+            $('#jsPolicyLogTable').html(rows);
+            //
+            ml(false, 'jsPolicyHistoryLoader');
+        });
+    }
+
+
+
+
+    $(document).on('click', '.jsPolicyLog', function () {
+        Modal({
+            Id: 1,
+            Title: `Policy Log for ${$(this).closest('.jsBox').data('name')}`,
+            Body: getLogTemplate(),
+            Loader: 'jsPolicyHistoryLoader'
+        }, () => {
+            // Fetch history
+            fetchPolicyLog($(this).closest('.jsBox').data('id'));
+        });
+    });
+
+
+
+
     //
     function getPolicyBox(v) {
         let title = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'Activate Policy' : 'Deactivate Policy',
@@ -445,6 +584,7 @@ $(function () {
         rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
 
         rows += `            <span class="pull-right">`;
+        rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyLog" title="View Log" placement="top"><i class="fa fa-eye"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistory" title="View history" placement="top"><i class="fa fa-history"></i></span>`;
         rows += `            </span>`;

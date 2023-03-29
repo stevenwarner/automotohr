@@ -2673,6 +2673,7 @@ class Time_off extends Public_Controller
                 }
                 // Get old row
                 $oldPolicy = $this->timeoff_model->getSinglePolicyById($post['policyId']);
+
                 // Set employees
                 $entitledEmployees = NULL;
                 //
@@ -6160,6 +6161,20 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed';
                 $this->resp();
                 break;
+
+                //
+                case "get_policy_log":
+                    //
+                    $policyHistory = $this->timeoff_model->getPolicyLog($post['policyId']);
+                    //
+                    if (empty($policyHistory)) {
+                        $this->res['Response'] = 'We are unable to find history against this policy.';
+                    }
+                    $this->res['Code'] = 'SUCCESS';
+                    $this->res['Status'] = true;
+                    $this->res['Data'] = $policyHistory;
+                    $this->resp();
+                    break;
         }
         //
         $this->resp();
