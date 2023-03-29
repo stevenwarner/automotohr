@@ -2034,9 +2034,9 @@ if (!function_exists('getEmployeeOnboardCheckForPayroll')) {
             $returnArray[] = 'Last name is required.';
         }
         //
-        if (GetVal($employeeArray['middle_name']) == 'Not Specified') {
-            $returnArray[] = 'Middle initial is required.';
-        }
+        // if (GetVal($employeeArray['middle_name']) == 'Not Specified') {
+        //     $returnArray[] = 'Middle initial is required.';
+        // }
         //
         if (GetVal($employeeArray['dob']) == 'Not Specified' || $employeeArray['dob'] == '000-00-00') {
             $returnArray[] = 'Date of birth is required.';

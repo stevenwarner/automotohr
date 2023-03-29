@@ -157,6 +157,7 @@ class Payroll_onboard extends CI_Controller
                 'users.ssn',
                 'users.first_name',
                 'users.last_name',
+                'users.email',
                 'users.PhoneNumber',
                 'payroll_employees.payroll_employee_id'
             ]);
@@ -185,6 +186,10 @@ class Payroll_onboard extends CI_Controller
                     //
                     if(!$employee['dob']){
                         $missing_fields[] = 'Date Of Birth';
+                    }
+                    //
+                    if(!$employee['email']){
+                        $missing_fields[] = 'Email';
                     }
                     //
                     $tmp[] = [
@@ -912,6 +917,10 @@ class Payroll_onboard extends CI_Controller
             "payroll_employee_jobs.payroll_job_id",
             "payroll_employee_jobs.version"
         ], 'payroll_employee_jobs');
+        //
+        if (!$ej['payroll_job_id']) {
+            return $this->CreateEmployeeJobOnGusto($companyId, $post['employeeId']);
+        }
         //
         $hire_date = GetHireDate($ed['registration_date'], $ed['joined_at'], $ed['rehire_date']);
         //

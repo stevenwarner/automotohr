@@ -129,6 +129,7 @@ class Payroll_ajax extends CI_Controller
                 "users.job_title",
                 "users.ssn",
                 "users.dob",
+                "users.email",
                 "users.middle_name",
                 "users.pay_plan_flag",
                 "users.on_payroll"
