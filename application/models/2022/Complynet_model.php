@@ -372,7 +372,7 @@ class Complynet_model extends CI_Model
             ->get('complynet_jobRole')
             ->row_array();
         //
-        if ($record) {
+        if ($record && $record['complynet_job_role_sid'] != 0) {
             return $record['complynet_job_role_sid'];
         }
         //

@@ -354,6 +354,13 @@ class employers extends Admin_Controller
             $data['complynet_status'] = $this->input->post('complynet_status');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
+
+            $data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
+            $data['eeoc_code'] = $this->input->post('eeoc_code');
+            $data['salary_benefits'] = $this->input->post('salary_benefits');
+
+
+
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                 $data['complynet_job_title'] = $this->input->post('complynet_job_title');
@@ -504,6 +511,7 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
+                
 
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
@@ -532,6 +540,10 @@ class employers extends Admin_Controller
                 $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+
+                $insert_data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
+                $insert_data['eeoc_code'] = $this->input->post('eeoc_code');
+                $insert_data['salary_benefits'] = $this->input->post('salary_benefits');
 
                 //
                 if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {

@@ -254,14 +254,14 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Cell Number', 'cell_number'); ?>
+                                                    <?php echo form_label('Mobile Number', 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
                                                                 <span class="input-group-text">+1</span>
                                                             </div>
                                                             <?php
-                                                            echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['cell_number'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"'); ?>
+                                                            echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['PhoneNumber'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"'); ?>
                                                         </div>
                                                         <?php echo form_error('cell_number'); ?>
                                                     </div>
@@ -489,7 +489,34 @@
                                                         </div>
                                                     </li>
 
+
+
                                                 <?php } ?>
+
+
+                                                <li>
+                                                    <label>Workers Compensation Code</label>
+                                                        <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
+
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                    <label>EEOC Code</label>
+                                                        <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
+
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                    <label>Salary Benefits</label>
+                                                        <div class="hr-fields-wrap">
+                                                        <textarea autocomplete="nope" class="hr-form-fileds" name="salary_benefits" id="salary_benefits"><?php echo $data['salary_benefits']; ?></textarea>
+                                                        </div>
+                                                    </li>
+
                                                 <?php if (IS_NOTIFICATION_ENABLED == 1) { ?>
                                                     <li>
                                                         <label>Notified By</label>

@@ -1415,6 +1415,9 @@ $route["payroll/company"]['get'] = "payroll/Payroll/CompanyOnboard";
 $route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
 $route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
+$route["payroll/manage-admin"]['get'] = "payroll/Payroll/ManageAdmins";
+$route["payroll/service-terms"]['get'] = "payroll/Payroll/ServiceTerms";
+$route["payroll/settings"]['get'] = "payroll/Payroll/Settings";
 $route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
 $route["payroll/history"]['get'] = "payroll/Payroll/PayrollHistory";
 $route["payroll/history/(:num)"]['get'] = "payroll/Payroll/PayrollSingleHistory/$1";
@@ -1509,6 +1512,10 @@ $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
 /**
  * 
  */
+$route['payroll/(:num)/admin']['post'] = "payroll/Payroll_onboard/AddAdmin/$1";
+$route['payroll/(:num)/service']['post'] = "payroll/Payroll_onboard/AcceptServiceTerms/$1";
+$route['payroll/(:num)/settings']['post'] = "payroll/Payroll_onboard/Settings/$1";
+
 $route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/OnboardCompany/$1";
 $route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";
 $route['payroll/onboard_employee/(:num)/(:num)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeFromPayroll/$1/$2";
@@ -1662,6 +1669,8 @@ $route['cn/job_role_view_details/(:num)']['get'] = "2022/Complynet/getRoleDetail
 //
 $route['cn/manage/job_role/(:num)/link']['post'] = "2022/Complynet/linkJobRoles/$1";
 $route['cn/manage/job_role/(:num)']['delete'] = "2022/Complynet/deleteJobRole/$1";
+// fix empty job roles
+$route['cn/fixEmptyJobRoles']['get'] = "2022/Complynet/fixEmptyJobRoles";
 
 //
 $route['employee_export_csv'] = 'employee_management/employee_export_csv';

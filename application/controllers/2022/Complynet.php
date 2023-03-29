@@ -873,4 +873,58 @@ class Complynet extends Admin_Controller
     {
         return (bool) $this->ion_auth->user()->row()->id;
     }
+
+    /**
+     * Fix empty job roles issue
+     */
+    public function fixEmptyJobRoles()
+    {
+        // Get all empty job roles
+        $roles = $this->db
+            ->select('sid, complynet_department_sid, job_title, complynet_job_role_sid')
+            ->where('complynet_job_role_sid', '0')
+            ->or_where('complynet_job_role_sid', '')
+            ->get('complynet_jobRole')
+            ->result_array();
+        //
+        if (!$roles) {
+            exit('No roles found');
+        }
+        //
+        $rolesByDepartment = [];
+        //
+        foreach ($roles as $role) {
+            //
+            $found = false;
+            //
+            if (!isset($rolesByDepartment[$role['complynet_department_sid']])) {
+                //
+                $rolesByDepartment[$role['complynet_department_sid']] = $this->clib->getJobRolesByDepartmentId($role['complynet_department_sid']);
+            }
+            //
+            foreach ($rolesByDepartment[$role['complynet_department_sid']] as $departmentRole) {
+                //
+                if ($departmentRole['Name'] == $role['job_title']) {
+                    $found = true;
+                    $this->db->where('sid', $role['sid'])->update('complynet_jobRole', ['complynet_job_role_sid' => $departmentRole['Id']]);
+                }
+            }
+            //
+            if (!$found) {
+                // Add role to ComplyNet
+                $response = $this->clib->addJobRole([
+                    'ParentId' => $role['complynet_department_sid'],
+                    'Name' => $role['job_title']
+                ]);
+                //
+                if ($response != 'A') {
+                    $this->db->where('sid', $role['sid'])->update('complynet_jobRole', ['complynet_job_role_sid' => $response]);
+                }
+            }
+        }
+
+        _e(count($rolesByDepartment));
+        //
+        exit('Roles processed.');
+    }
 }

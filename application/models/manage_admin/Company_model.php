@@ -206,6 +206,7 @@ class Company_model extends CI_Model
         $this->db->select('table_one.complynet_onboard');
         $this->db->select('table_one.parent_sid');
         $this->db->select('table_one.transfer_date');
+        $this->db->select('table_one.languages_speak');
 
         $this->db->select('table_one.complynet_job_title');
 

@@ -331,6 +331,7 @@ class Import_csv extends Public_Controller {
             case 'add_employees':
                 set_time_limit(0);
                 // Default array
+
                 $failCount = $insertCount = $existCount = 0;
                 //
                 foreach ($formpost['employees'] as $k0 => $v0) {
@@ -425,6 +426,15 @@ class Import_csv extends Public_Controller {
                     $insertArray['Location_Address'] = isset($v0['Location_Address']) ? trim($v0['Location_Address']) : '';
                     $insertArray['Location_City']    = isset($v0['Location_City']) ? trim($v0['Location_City']) : '';
                     $insertArray['Location_ZipCode'] = isset($v0['Location_ZipCode']) ? trim($v0['Location_ZipCode']) : '';
+
+                    $insertArray['eeoc_code']  = isset($v0['eeoc_code'])  ? trim(strtolower($v0['eeoc_code']))  : '';
+                    $insertArray['salary_benefits']  = isset($v0['salary_benefits'])  ? trim(strtolower($v0['salary_benefits']))  : '';
+                    $insertArray['workers_compensation_code']  = isset($v0['workers_compensation_code'])  ? trim(strtolower($v0['workers_compensation_code']))  : '';
+
+                    
+
+
+
                     // Check for state
                     if (isset($v0['Location_State'])) {
                         if($v0['Location_State'] != null || $v0['Location_State'] != '') {
@@ -806,11 +816,27 @@ class Import_csv extends Public_Controller {
         if(empty($pre_emp['employee_status']) && isset($v0['employment_type']) && !empty($v0['employment_type'])){
             $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
         }
-        //
+
+
+        if(empty($pre_emp['eeoc_code']) && isset($v0['eeoc_code']) && !empty($v0['eeoc_code'])){
+            $insertArray['eeoc_code'] = strtolower($v0['eeoc_code']);
+        }
+
+        if(empty($pre_emp['salary_benefits']) && isset($v0['salary_benefits']) && !empty($v0['salary_benefits'])){
+            $insertArray['salary_benefits'] = strtolower($v0['salary_benefits']);
+        }
+
+        if(empty($pre_emp['workers_compensation_code']) && isset($v0['workers_compensation_code']) && !empty($v0['workers_compensation_code'])){
+            $insertArray['workers_compensation_code'] = strtolower($v0['workers_compensation_code']);
+        }
+
+         //
         $this->manageEmployeeStatus($pre_emp['sid'], $v0);
-        
+
         // Update employee
+        if(!empty($insertArray)){
         $this->import_csv_model->UpdateNewUser($pre_emp['sid'], $insertArray);
+        }
 
     }
 

@@ -130,6 +130,24 @@
 
 
                                                 <li class="form-col-100 autoheight">
+                                                    <label>Workers Compensation Code</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="workers_compensation_code" id="workers_compensation_code">
+                                                </li>
+
+                                                <li class="form-col-100 autoheight">
+                                                    <label>EEOC Code</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="eeoc_code" id="eeoc_code" >
+                                                </li>
+
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Salary Benefits</label>
+                                                    <textarea autocomplete="nope" class="invoice-fields" name="salary_benefits" id="salary_benefits"></textarea>
+                                                </li>
+
+
+
+
+                                                <li class="form-col-100 autoheight">
 
                                                     <div class="row js-timezone-row">
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

@@ -357,7 +357,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                                 if (!empty($dt['teams'])) {
                                                                     foreach ($dt['teams'] as $dtt) {
                                                                 ?>
-                                                                        <option value="<?= $dtt['id']; ?>" <?=in_array($dtt['id'], explode(',',  $employer['team_sid'])) ? 'selected': '';?>><?= $dtt['name']; ?></option>
+                                                                        <option value="<?= $dtt['id']; ?>" <?= in_array($dtt['id'], explode(',',  $employer['team_sid'])) ? 'selected' : ''; ?>><?= $dtt['name']; ?></option>
                                                         <?php
                                                                     }
                                                                 }
@@ -418,8 +418,102 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <label>Semi Monthly Draw:</label>
                                                     <input class="invoice-fields" value="<?php echo set_value('semi_monthly_draw', isset($employer["semi_monthly_draw"]) ? $employer["semi_monthly_draw"] : ''); ?>" type="number" name="semi_monthly_draw">
                                                 </div>
-                                                <!--  -->
+                                                <?php if (isPayrollOrPlus(true)) { ?>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Workers Compensation Code:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('workers_compensation_code', isset($employer["workers_compensation_code"]) ? $employer["workers_compensation_code"] : ''); ?>" type="text" name="workers_compensation_code">
+                                                    </div>
+                                                    <!--  -->
+                                                <?php } ?>
                                             </div>
+                                            <?php if (isPayrollOrPlus(true)) { ?>
+
+                                                <div class="row">
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>EEOC Code:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('eeoc_code', isset($employer["eeoc_code"]) ? $employer["eeoc_code"] : ''); ?>" type="text" name="eeoc_code">
+                                                    </div>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Benefits Salary:</label>
+                                                        <input class="invoice-fields" name="salary_benefits" id="salary_benefits" value="<?php echo set_value('salary_benefits', isset($employer["salary_benefits"]) ? $employer["salary_benefits"] : ''); ?>" />
+
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
+
+                                            <?php
+                                            //
+                                            $hasOther = [];
+                                            //
+                                            if ($employer['languages_speak']) {
+                                                $hasOther = array_filter(explode(',', $employer['languages_speak']), function ($lan) {
+                                                    return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                });
+                                            }
+                                            ?>
+
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>I Speak:</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($employer['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($employer['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($employer['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                                <div class="col-sm-12">
+                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                    <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                </div>
+                                            </div>
+
+                                            <script>
+                                                $('[name="secondaryOption"]').click(function() {
+                                                    $('.jsOtherLanguage').toggleClass('dn');
+                                                });
+                                            </script>
+
+                                            <br />
+
+
                                             <?php if ($timeOff == 'enable') { ?>
                                                 <div class="row">
                                                     <!--  -->

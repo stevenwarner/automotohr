@@ -324,6 +324,27 @@
                                                     </div>
 
 
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                        <label>Workers Compensation Code</label>
+                                                          <input class="invoice-fields" value="" type="text" name="workers_compensation_code">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                        <label>EEOC Code</label>
+                                                          <input class="invoice-fields" value="" type="text" name="eeoc_code">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                        <label>Salary Benefits</label>
+                                                        <textarea autocomplete="nope" class="invoice-fields" name="salary_benefits" id="salary_benefits"></textarea>
+                                                        </div>
+                                                    </div>
+
+
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <div class="field-row">
                                                             <input name="action" type="hidden" id="submit_action" value="">
