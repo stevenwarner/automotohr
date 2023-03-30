@@ -19,7 +19,7 @@ indexes['cmi.score.success_status'] = 'score_success_status';
 indexes['adl.data._count'] = SCORM_XML.storage;
 indexes['adl.nav.request'] = 'continue';
 
-if (SCORM_TYPE == "advancedruntime") {
+if (SCORM_OBJECTIVES.length) {
     indexes['cmi.objectives._count'] = SCORM_OBJECTIVES.length;
     //
     for (var i=0; i < indexes['cmi.objectives._count']; i++){
@@ -55,6 +55,7 @@ window.API_1484_11 = {
         //
         // Get requested indexes value and return it
         // console.log(element+';;;')
+        console.log(element)
         console.log(indexes[element])
         return indexes[element];
     },
@@ -82,7 +83,9 @@ window.API_1484_11 = {
             if (!SCORM_CONTENT) {
                 //
                 // indexes['cmi.location'] = indexes['cmi.location'] + 1;
-                saveStepProgress('result&result');
+                SCORM_CONTENT = 'assessment';
+                saveStepProgress('result');
+                console.log("quiz ccccc")
             } else if (SCORM_CONTENT.indexOf('assessment') != -1) {
                 // 
                 unlockNextChapter();    
@@ -218,6 +221,9 @@ function saveStepProgress (type) {
     if (SCORM_CONTENT) {
         if (SCORM_CONTENT.indexOf('assessment') != -1) { 
             scormObject.type = 'quiz';
+            if (indexes['cmi.success_status'] == 'unknown') {
+                indexes['cmi.success_status'] = 'failed'
+            }
         } else if (SCORM_CONTENT.indexOf('assessment') == -1) {
             scormObject.type = 'content';
         }
