@@ -393,8 +393,10 @@ class Courses extends Public_Controller
                 $page = 'scorm';
                 //
                 if (preg_match('/2004/', $scormData["version"])) {
+                    $data['version'] = '2004';
                     $versionScript ="2022/js/courses/scorm/scorm-2004";  
                 } else {
+                    $data['version'] = '12';
                     $versionScript ="2022/js/courses/scorm/scorm-1.2";
                 }     
                 //

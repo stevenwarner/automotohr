@@ -79,7 +79,7 @@
                                         <div class="row">    
                                             <div class="col-md-12 col-xs-12"> 
                                                 <?php if (!empty($scormData)) { ?>
-                                                    <?php if (preg_match('/2004/', $scormData["version"])) { ?>
+                                                    <?php if ($version == '2004') { ?>
                                                         <table class="table table-striped table-condensed">
                                                             <caption></caption>
                                                             <thead>
