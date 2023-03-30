@@ -1443,15 +1443,15 @@
                                                                                 <?php } else { ?>
                                                                                     <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Generate CI</a>
                                                                                 <?php } ?>
+                                                                                <?php if ($invoice['payment_status'] == 'unpaid') { ?>
+                                                                                    <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" href="javascript:void(0);">Send Invoice</a>
+                                                                                <?php } ?>
                                                                                 <?php if ($invoice['payment_status'] == 'unpaid' && $invoice['discount_amount'] < $invoice['value']) { ?>
                                                                                     <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/misc/process_payment_admin_invoice') . '/' . $invoice['sid']; ?>">Process Payment</a>
                                                                                 <?php } elseif ($invoice['discount_amount'] == $invoice['value'] && $invoice['payment_status'] == 'unpaid') { ?>
                                                                                     <button type="button" class="hr-edit-btn invoice-links" onclick="fActivateInvoiceFeatures(<?php echo $invoice['company_sid']; ?>, <?php echo $invoice['sid'] ?>);"> Activate Invoice </button>
                                                                                 <?php } else { ?>
                                                                                     <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Process Payment</a>
-                                                                                <?php } ?>
-                                                                                <?php if ($invoice['payment_status'] == 'unpaid') { ?>
-                                                                                    <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" href="javascript:void(0);">Send Invoice</a>
                                                                                 <?php } ?>
                                                                             </td>
                                                                         </tr>
