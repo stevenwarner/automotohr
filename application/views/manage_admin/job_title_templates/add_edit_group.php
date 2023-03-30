@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -42,30 +42,32 @@
                                                                     <div class="heading-title page-title">
                                                                         <h1 class="page-title"><i class="fa fa-list-alt"></i>Mark Available Titles</h1>
                                                                     </div>
-                                                                    <table>
+                                                                    <table class="table table-striped">
                                                                         <thead>
-                                                                        <tr>
-                                                                            <th class="col-xs-1"></th>
-                                                                            <th class="col-xs-11">Title</th>
-                                                                        </tr>
+                                                                            <tr>
+                                                                                <th class="col-xs-1">
+                                                                                    <input type="checkbox" id="jsCheckAll" />
+                                                                                </th>
+                                                                                <th class="col-xs-11">Title</th>
+                                                                            </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                        <?php foreach($titles as $title){?>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <?php echo form_checkbox('templates[]', $title['sid'], set_checkbox('templates' , $title['sid'], in_array($title['sid'], $titlesArray)));?>
-                                                                                    <?php echo form_error('title'); ?>
-                                                                                </td>
-                                                                                <td><?php echo $title['title']?></td>
-                                                                            </tr>
-                                                                        <?php } ?>
+                                                                            <?php foreach ($titles as $title) { ?>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <?php echo form_checkbox('templates[]', $title['sid'], set_checkbox('templates', $title['sid'], in_array($title['sid'], $titlesArray))); ?>
+                                                                                        <?php echo form_error('title'); ?>
+                                                                                    </td>
+                                                                                    <td><?php echo $title['title'] ?></td>
+                                                                                </tr>
+                                                                            <?php } ?>
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <a href="<?php echo base_url('manage_admin/job_title_templates'); ?>" class="site-btn"><i class="fa fa-reply"></i>&nbsp;Back</a>
-                                                                <?php echo form_submit('save_group','Save', array('class'=>'site-btn'));?>
+                                                                <?php echo form_submit('save_group', 'Save', array('class' => 'site-btn')); ?>
                                                             </li>
                                                         </ul>
                                                         <?php echo form_close(); ?>
@@ -83,3 +85,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    $('#jsCheckAll').click(function(){
+        $('[name="templates[]"]').prop('checked', $(this).prop('checked'))
+    });
+</script>

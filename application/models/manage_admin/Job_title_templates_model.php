@@ -107,6 +107,26 @@ class job_title_templates_model extends CI_Model
         }
     }
 
+    public function GetTemplateById($sid)
+    {
+        $this->db->where('sid', $sid);
+        $return = $this->db->get('portal_job_title_templates')->result_array();
+
+        if (!empty($return)) {
+            return $return;
+        } else {
+            $template = array(
+                'sid' => '',
+                'title' => '',
+                'complynet_job_title' => '',
+                'status' => 0,
+                'archive_status' => ''
+            );
+
+            return $template;
+        }
+    }
+
     //Groups Related
     public function InsertGroup($sid, $name, $description, $status, $templates = array())
     {
@@ -165,6 +185,7 @@ class job_title_templates_model extends CI_Model
     public function GetAllActiveGroups()
     {
         $this->db->where('archive_status', 'active');
+        $this->db->order_by('name', 'asc');
 
         return $this->db->get('portal_job_listing_template_groups')->result_array();
     }

@@ -576,19 +576,24 @@ if ($_ssv) {
                                                     <a href="javascript:;" style="background: #549809;">Choose File</a>
                                                 </div>
                                             </li>
+                                            <?php $templateTitles = get_templet_jobtitles($applicant_info['employer_sid']); ?>
                                             <li class="form-col-50-right">
-                                                <label>Job Title: &nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $applicant_info['job_title_type'] == '0' ? 'checked' : '' ?>> Add Manual &nbsp;
-                                                    <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $applicant_info['job_title_type'] != '0' ? 'checked' : '' ?>> From Drop Down
+                                                <label>Job Title: &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <?php if ($templateTitles) { ?>
+                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $applicant_info['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
+                                                        <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $applicant_info['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title
+                                                    <?php } ?>
                                                 </label>
                                                 <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>" id="job_title">
                                                 <?php echo form_error('desired_job_title'); ?>
-                                                <?php $templateTitles = get_templet_jobtitles($applicant_info['employer_sid']); ?>
+                                                <?php if ($templateTitles) { ?>
                                                 <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
                                                     <option value="0">Please select job title</option>
                                                     <?php foreach ($templateTitles as $titleRow) { ?>
                                                         <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
                                                     <?php } ?>
                                                 </select>
+                                                <?php } ?>
 
                                             </li>
                                             <div class="row">
@@ -2778,7 +2783,7 @@ if ($_ssv) {
         $('.review_video_source[value="no_video"]').trigger('click');
     })
 
-
+    <?php if ($templateTitles) { ?>
 
     <?php if ($applicant_info['job_title_type'] != '0') { ?>
         $('#template_job_title').show();
@@ -2799,6 +2804,7 @@ if ($_ssv) {
         }
 
     });
+    <?php } ?>
 </script>
 
 <style>

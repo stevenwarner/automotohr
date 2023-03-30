@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Job_title_templates extends Admin_Controller {
-    public function __construct() {
+class Job_title_templates extends Admin_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/company_model');
@@ -9,30 +11,32 @@ class Job_title_templates extends Admin_Controller {
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index() {
+    public function index()
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'job_listing_templates';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-        check_access_permissions($security_details, $redirect_url, $function_name); 
+        check_access_permissions($security_details, $redirect_url, $function_name);
         $this->data['page_title'] = 'Job Title Listing';
-        $templates = $this->Job_title_templates_model->GetAllActiveTemplates(); 
+        $templates = $this->Job_title_templates_model->GetAllActiveTemplates();
         $this->data['templates'] = $templates;
         $groups = $this->Job_title_templates_model->GetAllActiveGroups();
         $this->data['groups'] = $groups;
         $this->render('manage_admin/job_title_templates/index', 'admin_master');
     }
 
-    public function add_edit($sid = NULL) {
+    public function add_edit($sid = NULL)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'add_edit_job_listing_templates';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-        check_access_permissions($security_details, $redirect_url, $function_name); 
+        check_access_permissions($security_details, $redirect_url, $function_name);
         $action = $this->input->post('action');
-        
+
         if ($action == 'save_job_title_template') {
             $sid = $this->input->post('sid');
             $title = $this->input->post('title');
@@ -71,7 +75,7 @@ class Job_title_templates extends Admin_Controller {
 
             $admin_id = $this->session->userdata('user_id');
             $security_details = db_get_admin_access_level_details($admin_id);
-            
+
             if (in_array('full_access', $security_details) || in_array('fswitchstatus', $security_details)) {
                 $this->Job_title_templates_model->SetStatusTemplate($sid, $status);
                 redirect('manage_admin/job_title_templates');
@@ -81,36 +85,39 @@ class Job_title_templates extends Admin_Controller {
         if ($sid == NULL) {
             $this->data['page_title'] = 'Add New Job Title';
 
-            $template = array('sid' => '',
+            $template = array(
+                'sid' => '',
                 'title' => '',
                 'description' => '',
                 'requirements' => '',
                 'status' => 0,
                 'archive_status' => '',
-                'sort_order' => 0);
+                'sort_order' => 0
+            );
 
             $this->data['template'] = $template;
             $this->render('manage_admin/job_title_templates/add_edit', 'admin_master');
         } else {
-            $template = $this->Job_title_templates_model->GetTemplate($sid);
+            $template = $this->Job_title_templates_model->GetTemplateById($sid);
             $this->data['template'] = $template[0];
             $this->data['page_title'] = 'Edit Job Title';
             $this->render('manage_admin/job_title_templates/add_edit', 'admin_master');
         }
     }
 
-    public function add_edit_group($sid = NULL) {
+    public function add_edit_group($sid = NULL)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'add_edit_group';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-        check_access_permissions($security_details, $redirect_url, $function_name); 
+        check_access_permissions($security_details, $redirect_url, $function_name);
         $action = $this->input->post('action');
-        
+
         if ($action == 'save_job_listing_template_group') {
             $sid = $this->input->post('sid');
-            
+
             if ($sid == '') {
                 $this->form_validation->set_rules('name', 'Name', 'trim|required|is_unique[portal_job_listing_template_groups.name]');
                 $this->form_validation->set_message('unique', 'Duplicate Group Name');
@@ -163,10 +170,10 @@ class Job_title_templates extends Admin_Controller {
             } else {
                 $status = 1;
             }
-            
+
             $admin_id = $this->session->userdata('user_id');
             $security_details = db_get_admin_access_level_details($admin_id);
-            
+
             if (in_array('full_access', $security_details) || in_array('fswitchstatus', $security_details)) {
                 $this->Job_title_templates_model->SetStatusGroup($sid, $status);
                 redirect('manage_admin/job_title_templates');
@@ -175,12 +182,14 @@ class Job_title_templates extends Admin_Controller {
 
         if ($sid == NULL) {
             $this->data['page_title'] = 'Add New Job Listing Template Group';
-            $group = array('sid' => '',
+            $group = array(
+                'sid' => '',
                 'name' => '',
                 'description' => '',
                 'templates' => array(),
                 'status' => 0,
-                'archive_status' => 'active');
+                'archive_status' => 'active'
+            );
 
             $this->data['group'] = $group;
             $this->data['templatesArray'] = array();
@@ -189,9 +198,9 @@ class Job_title_templates extends Admin_Controller {
             $group = $this->Job_title_templates_model->GetGroup($sid);
             $this->data['group'] = $group[0];
             $titlesArray = array();
-          //  print_r($group[0]);
-          //  die();
-            
+            //  print_r($group[0]);
+            //  die();
+
             if ($group[0]['titles'] != '') {
                 $titlesArray = unserialize($group[0]['titles']);
             }
@@ -199,7 +208,7 @@ class Job_title_templates extends Admin_Controller {
             if ($titlesArray == null) {
                 $titlesArray = array();
             }
-            
+
             $this->data['titlesArray'] = $titlesArray;
         }
 

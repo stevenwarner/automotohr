@@ -16456,13 +16456,13 @@ if (!function_exists('showLanguages')) {
 
 //
 if (!function_exists('get_templet_jobtitles')) {
-    function get_templet_jobtitles($comapanySid)
+    function get_templet_jobtitles($companyId)
     {
-        if (!empty($comapanySid)) {
+        if (!empty($companyId)) {
             // Get Group Id
             $CI = &get_instance();
             $CI->db->select('job_titles_template_group');
-            $CI->db->where('sid', $comapanySid);
+            $CI->db->where('sid', $companyId);
             //
             $company_info = $CI->db->get('users')->row_array();
             $gropuSid = $company_info['job_titles_template_group'];
@@ -16477,7 +16477,9 @@ if (!function_exists('get_templet_jobtitles')) {
             if ($GroupsData['titles'] != '') {
                 $titlesIdArray = unserialize($GroupsData['titles']);
             }
-
+            if (!$titlesIdArray) {
+                return [];
+            }
             // Get Job Titles
             $CI->db->where('archive_status', 'active');
             $CI->db->where_in('sid', $titlesIdArray);

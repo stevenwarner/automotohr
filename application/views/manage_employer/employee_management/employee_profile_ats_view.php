@@ -147,20 +147,23 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                <?php $templateTitles = get_templet_jobtitles($employer['parent_sid']);?>
+                                                    <?php $templateTitles = get_templet_jobtitles($employer['parent_sid']); ?>
 
                                                     <label>Job Title: &nbsp;&nbsp;&nbsp;
-                                                        <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $employer['job_title_type'] == '0' ? 'checked' : '' ?>> Add Manual &nbsp;
-                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $employer['job_title_type'] != '0' ? 'checked' : '' ?>> From Drop Down 
+                                                        <?php if ($templateTitles) { ?>
+                                                            <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $employer['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
+                                                            <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $employer['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title &nbsp;
+                                                        <?php } ?>
                                                     </label>
                                                     <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title" id="job_title">
-
-                                                    <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
-                                                        <option value="0">Please select job title</option>
-                                                        <?php foreach ($templateTitles as $titleRow) { ?>
-                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
-                                                        <?php } ?>
-                                                    </select>
+                                                    <?php if ($templateTitles) { ?>
+                                                        <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                            <option value="0">Please select job title</option>
+                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    <?php } ?>
                                                 </div>
 
 
@@ -2575,27 +2578,28 @@ if (checkIfAppIsEnabled('timeoff')) {
 
 
     //
+    <?php if ($templateTitles) { ?>
 
-
-    <?php if ($employer['job_title_type'] != '0') { ?>
-        $('#temppate_job_title').show();
-        $('#temppate_job_title').val('<?php echo $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
-        $('#job_title').hide();
-    <?php } ?>
-
-    $('.titleoption').click(function() {
-        var titleOption = $(this).val();
-        if (titleOption == 'dropdown') {
+        <?php if ($employer['job_title_type'] != '0') { ?>
             $('#temppate_job_title').show();
-            $('#temppate_job_title').val('<?php echo $employer['job_title_type'] == '0' ? '0' : $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+            $('#temppate_job_title').val('<?php echo $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
             $('#job_title').hide();
-        } else if (titleOption == 'manual') {
-            $('#temppate_job_title').hide();
-            $('#temppate_job_title').val('0');
-            $('#job_title').show();
-        }
+        <?php } ?>
 
-    });
+        $('.titleoption').click(function() {
+            var titleOption = $(this).val();
+            if (titleOption == 'dropdown') {
+                $('#temppate_job_title').show();
+                $('#temppate_job_title').val('<?php echo $employer['job_title_type'] == '0' ? '0' : $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+                $('#job_title').hide();
+            } else if (titleOption == 'manual') {
+                $('#temppate_job_title').hide();
+                $('#temppate_job_title').val('0');
+                $('#job_title').show();
+            }
+
+        });
+    <?php } ?>
 </script>
 
 <style>
