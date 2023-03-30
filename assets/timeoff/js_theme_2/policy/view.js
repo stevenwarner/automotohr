@@ -438,131 +438,30 @@ $(function () {
         });
     }
 
+     //
 
-    //
+      $(document).on('click', '.jsPolicyLog', function () {
+             
+        var policyId = $(this).closest('.jsBox').data('id');
 
-
-
-    // Policy Log
-
-
-    //
-    function getLogTemplate() {
-        let html = `
-        <div class="tabel-responsive">
-            <table class="table table-striped csCustomTableHeader">
-                <thead>
-                    <tr>
-                        <th>Employee</th>
-                        <th>Changes</th>
-                        <th>Changed On</th>
-                    </tr>
-                </thead>
-                <tbody id="jsPolicyLogTable"></tbody>
-            </table>
-        </div>
-    `;
-
-
-        return html;
-    }
-
-
-    //
-
-    function fetchPolicyLog(
-        policyId
-    ) {
-        //
-        ml(true, 'jsPolicyHistoryLoader');
-        //
-        $('#jsPolicyLogTable').html('');
-        //
-        xhr = $.post(handlerURL, Object.assign(callOBJ.PolicyLog.Main, {
-            policyId: policyId
-        }), (resp) => {
-            //
-            xhr = null;
-            //
-            if (resp.Redirect === true) {
-                alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
-                    window.location.reload();
-                });
-                return;
-            }
-            //
-            if (resp.Status === false) {
-                alertify.alert('WARNING!', resp.Response, () => { });
-                //
-                ml(false, 'jsPolicyHistoryLoader');
-                //
-                return;
-            }
-            //
-            let rows = '';
-            //
-            if (resp.Data.length === 0) {
-                rows = `
-                <tr>
-                    <td colspan="4">
-                        <p class="alert alert-info text-center">${resp.Response}</p>
-                    </td>
-                </tr>
-            `;
-            } else {
-                resp.Data.map((v) => {
-
-                    //
-                    var changedata = $.parseJSON(v.change_json);
-
-                    var fieldName = '';
-
-                    $(changedata).each(function (i, val) {
-                        $.each(val, function (k, v) {
-                            // console.log(k + " : " + v);
-                            console.log(k);
-                            fieldName = k;
-
-                            $.each(v, function (k2, v2) {
-                                console.log(k2 + " : " + v2);
-
-                            });
-
-                        });
-                    });
-
-                    //${v.change_json}
-
-                    rows += `
-                    <tr>
-                        <td>${remakeEmployeeName(v)}</td>
-                        <td>${v.change_json} fieldName</td>
-                        <td>${moment(v.created_at).format(timeoffDateFormatWithTime)}</td>
-                    </tr>
-                `;
-                });
-            }
-
-            //
-            $('#jsPolicyLogTable').html(rows);
-            //
-            ml(false, 'jsPolicyHistoryLoader');
-        });
-    }
-
-
-
-
-    $(document).on('click', '.jsPolicyLog', function () {
         Modal({
             Id: 1,
             Title: `Policy Log for ${$(this).closest('.jsBox').data('name')}`,
-            Body: getLogTemplate(),
+            Body: '<div id=\"jsPolicyLogTable\"></div>',
             Loader: 'jsPolicyHistoryLoader'
         }, () => {
+
             // Fetch history
-            fetchPolicyLog($(this).closest('.jsBox').data('id'));
+         $.post(handlerURL, {action: "get_policy_log", companyId: companyId,employerId: employerId, employeeId:employeeId,public: 0, policyId: policyId})
+                  .done(function (data) {
+                    $('#jsPolicyLogTable').html(data);
+                    //
+                    ml(false, 'jsPolicyHistoryLoader');
+                  });
+          
         });
+        
+
     });
 
 

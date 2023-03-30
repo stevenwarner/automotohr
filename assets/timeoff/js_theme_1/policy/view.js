@@ -321,6 +321,7 @@ $(function () {
             rows += `    <td>`;
             if (v.default_policy == 0) {
                 rows += `        <div class="action-employee">`;
+                rows += `            <span class="csCircleBtn csRadius50 jsTooltip jsPolicyLog" title="View Log" placement="top"><i class="fa fa-eye"></i></span>`;
                 rows += `            <a href="javascript:void(0)" class="action-edit js-edit-row-btn"><i class="fa fa-pencil-square-o fa-fw icon_blue" data-toggle="tooltip" title="Edit policy"></i></a>`;
                 rows += `            <a href="javascript:void(0)" class="action-activate custom-tooltip jsPolicyHistory"><i class="fa fa-history fa-fw" data-toggle="tooltip" title="View history"></i></a>`;
                 rows += `            <a href="javascript:void(0)" class="action-activate custom-tooltip ${cl}"><i class="fa ${icon} fa-fw" data-toggle="tooltip" title="${title}"></i></a>`;
@@ -471,5 +472,32 @@ $(function () {
             ml(false, 'jsPolicyHistoryLoader');
         });
     }
+
+
+    $(document).on('click', '.jsPolicyLog', function () {
+             
+        var policyId = $(this).closest('tr').data('id')
+
+        Modal({
+            Id: 1,
+            Title: `Policy Log for ${$(this).closest('.jsBox').data('name')}`,
+            Body: '<div id=\"jsPolicyLogTable\"></div>',
+            Loader: 'jsPolicyHistoryLoader'
+        }, () => {
+
+            // Fetch history
+         $.post(handlerURL, {action: "get_policy_log", companyId: companyId,employerId: employerId, employeeId:employeeId,public: 0, policyId: policyId})
+                  .done(function (data) {
+                    $('#jsPolicyLogTable').html(data);
+                    //
+                    ml(false, 'jsPolicyHistoryLoader');
+                  });
+          
+        });
+        
+
+    });
+
+
 
 });

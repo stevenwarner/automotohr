@@ -16452,3 +16452,52 @@ if (!function_exists('showLanguages')) {
         return rtrim(ucwords(implode(', ', (explode(',', $languages))), '\, '), ', ');
     }
 }
+
+
+
+
+//
+if (!function_exists('db_get_employees_profile')) {
+    function db_get_employees_profile($emp_id)
+    {
+        $employeeids = explode(',',$emp_id);
+   
+        $CI = &get_instance();
+        $CI->db->select('first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag');
+        $CI->db->where_in('sid', $employeeids);
+        return $CI->db->get('users')->result_array();
+    }
+}
+
+
+//
+if (!function_exists('getUserNameBySIDString')) {
+    function getUserNameBySIDString($sid)
+    {
+
+        $user_info = db_get_employees_profile($sid);
+
+         $usersName =[ ];
+ 
+        if (!empty($user_info)) {
+            
+         foreach ($user_info as $userRow){
+            array_push($usersName,remakeEmployeeName([
+                'first_name' => $userRow['first_name'],
+                'last_name' => $userRow['last_name'],
+                'access_level' => $userRow['access_level'],
+                'timezone' => isset($userRow['timezone']) ? $userRow['timezone'] : '',
+                'access_level_plus' => $userRow['access_level_plus'],
+                'is_executive_admin' => $userRow['is_executive_admin'],
+                'pay_plan_flag' => $userRow['pay_plan_flag'],
+                'job_title' => $userRow['job_title'],
+            ]));
+        }
+
+        } 
+
+        return $usersName;
+
+    }
+
+}

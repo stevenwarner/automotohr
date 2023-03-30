@@ -6164,16 +6164,13 @@ class Time_off extends Public_Controller
 
                 //
                 case "get_policy_log":
-                    //
-                    $policyHistory = $this->timeoff_model->getPolicyLog($post['policyId']);
-                    //
-                    if (empty($policyHistory)) {
-                        $this->res['Response'] = 'We are unable to find history against this policy.';
-                    }
-                    $this->res['Code'] = 'SUCCESS';
-                    $this->res['Status'] = true;
-                    $this->res['Data'] = $policyHistory;
-                    $this->resp();
+                   
+                   $policyHistory = $this->timeoff_model->getPolicyLog($post['policyId']);
+                  
+                   $data['policyHistory'] = $policyHistory;
+
+                    echo $this->load->view('timeoff/timeoff_log',$data, true);
+                    exit();
                     break;
         }
         //

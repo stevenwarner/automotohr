@@ -5788,9 +5788,11 @@ class Timeoff_model extends CI_Model
            ->select('
            timeoff_logs.change_json, 
            timeoff_logs.created_at,
+           timeoff_policies.title,
            ' . (getUserFields()) . '
        ')
            ->join('users', 'users.sid = timeoff_logs.employee_sid', 'inner')
+           ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_logs.policy_sid', 'inner')
            ->where('timeoff_logs.policy_sid', $policyId)
            ->order_by('timeoff_logs.sid', 'DESC')
            ->get('timeoff_logs')
