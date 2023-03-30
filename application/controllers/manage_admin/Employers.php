@@ -358,8 +358,14 @@ class employers extends Admin_Controller
             $data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
             $data['eeoc_code'] = $this->input->post('eeoc_code');
             $data['salary_benefits'] = $this->input->post('salary_benefits');
-
-
+            //
+            $data['languages_speak'] = null;
+            //
+            $languages_speak = $this->input->post('secondaryLanguages');
+            //
+            if ($languages_speak) {
+                $data['languages_speak'] = implode(',', $languages_speak);
+            }
 
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {

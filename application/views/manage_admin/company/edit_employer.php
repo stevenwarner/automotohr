@@ -497,7 +497,7 @@
                                                 <li>
                                                     <label>Workers Compensation Code</label>
                                                         <div class="hr-fields-wrap">
-                                                        <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
+                                                            <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
 
                                                         </div>
                                                     </li>
@@ -505,7 +505,7 @@
                                                     <li>
                                                     <label>EEOC Code</label>
                                                         <div class="hr-fields-wrap">
-                                                        <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
+                                                            <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
 
                                                         </div>
                                                     </li>
@@ -513,7 +513,7 @@
                                                     <li>
                                                     <label>Salary Benefits</label>
                                                         <div class="hr-fields-wrap">
-                                                        <textarea autocomplete="nope" class="hr-form-fileds" name="salary_benefits" id="salary_benefits"><?php echo $data['salary_benefits']; ?></textarea>
+                                                            <input type="text" class="hr-form-fileds" name="salary_benefits" id="salary_benefits" value="<?php echo $data['salary_benefits']; ?>">
                                                         </div>
                                                     </li>
 
@@ -561,6 +561,70 @@
                                                     <script>
                                                         $('.jsSelect2').select2();
                                                     </script>
+                                                </li>
+                                                <?php
+                                                    //
+                                                    $hasOther = [];
+                                                    //
+                                                    if ($data['languages_speak']) {
+                                                        $hasOther = array_filter(explode(',', $data['languages_speak']), function ($lan) {
+                                                            return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                        });
+                                                    }
+                                                ?>
+                                                <li>
+                                                    <label>I Speak:</label>
+                                                    <div class="hr-fields-wrap">
+                                                       <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($data['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($data['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($data['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                                            <div class="col-sm-12">
+                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                                <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                            </div>
+                                                        </div>
+
+                                                        <script>
+                                                            $('[name="secondaryOption"]').click(function() {
+                                                                $('.jsOtherLanguage').toggleClass('dn');
+                                                            });
+                                                        </script>
+                                                    </div>
                                                 </li>
                                                 <?php
                                                 $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);

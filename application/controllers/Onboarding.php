@@ -1421,6 +1421,15 @@ class Onboarding extends CI_Controller
             $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
             $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
             $primary_info['full_employment_application'] = serialize($full_emp_app);
+            //
+            $primary_info['languages_speak'] = null;
+            //
+            $languages_speak = $this->input->post('secondaryLanguages');
+            //
+            if ($languages_speak) {
+                $primary_info['languages_speak'] = implode(',', $languages_speak);
+            }
+            //
             $this->onboarding_model->update_applicant_information($company_sid, $applicant_sid, $primary_info);
             $this->onboarding_model->increment_section_save_count($applicant_sid, 'applicant', 'general_information');
             //
