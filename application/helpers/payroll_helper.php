@@ -1931,6 +1931,12 @@ if (!function_exists('PayrollURL')) {
         $urls['addSignatoryToGusto'] = 'v1/companies/' . ($key) . '/signatories';
         $urls['deleteSignatoryToGusto'] = 'v1/companies/' . ($key1) . '/signatories/' . $key;
         $urls['updateSignatoryToGusto'] = 'v1/companies/' . ($key1) . '/signatories/' . $key;
+        // Sync
+        $urls['getCompanyLocations'] = 'v1/companies/' . ($key) . '/locations';
+        $urls['getCompanyFederalTax'] = 'v1/companies/' . ($key) . '/federal_tax_details';
+        $urls['getCompanyIndustry'] = 'v1/companies/' . ($key) . '/industry_selection';
+        $urls['getCompanyTaxLiabilities'] = 'v1/companies/' . ($key) . '/external_payrolls/tax_liabilities';
+        $urls['getCompanyPaymentConfig'] = 'v1/companies/' . ($key) . '/payment_configs';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -2582,4 +2588,281 @@ function makeGustoErrorArray($errors)
     }
     //
     return $errorArray;
+}
+
+
+// -------------------------------------------------------
+// Company calls
+if (!function_exists('getCompanyLocations')) {
+    /**
+     * Get admin on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyLocations($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyLocations', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyLocations($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+if (!function_exists('getCompanyFederalTax')) {
+    /**
+     * Get company federal tax on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyFederalTax($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyFederalTax', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyFederalTax($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+
+if (!function_exists('getCompanyIndustry')) {
+    /**
+     * Get company industry on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyIndustry($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyIndustry', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyIndustry($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+
+if (!function_exists('getCompanyTaxLiabilities')) {
+    /**
+     * Get company tax liabilities on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyTaxLiabilities($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyTaxLiabilities', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyTaxLiabilities($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+
+if (!function_exists('getCompanyPaymentConfig')) {
+    /**
+     * Get company payment configs on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyPaymentConfig($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyPaymentConfig', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyPaymentConfig($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
 }
