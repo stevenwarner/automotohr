@@ -335,6 +335,9 @@ if (!function_exists('getEmployeeAccrual')) {
                 return $r;
             }
         }
+        //
+        $effactedDate = $compareDate;
+        //
         // Check if employee has worked for certain time
         // Employee doesn't meet the minimum allowed time
         if ($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
@@ -371,6 +374,8 @@ if (!function_exists('getEmployeeAccrual')) {
         // Check if time off needs to be reset
         // Check if reset date is not empty
         if (!empty($accruals['resetDate']) && $accruals['resetDate'] != '0000-00-00') {
+            //
+            $effactedDate = getFormatedDate(trim($accruals['resetDate']), 'd-m-Y');
             // //
             // $accruals['resetDate'] = trim($accruals['resetDate']);
             // // For hours
@@ -385,6 +390,15 @@ if (!function_exists('getEmployeeAccrual')) {
             //     $getConsumedTime = 0;
             // }
         }
+        //
+        $currentDate = getFormatedDate($todayDate, 'd-m-Y');
+        // 
+        if ($currentDate <= $effactedDate) {
+
+        }
+        _e($currentDate, true);
+        _e($effactedDate, true, true);
+        //
         // Convert rate into minutes
         // For days
         if ($accruals['rateType'] == 'days') $originalAloowedTime = $accrualRateInMinutes = $accrualRate * $durationInMinutes;
