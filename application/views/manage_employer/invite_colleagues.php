@@ -127,25 +127,51 @@
                                                     ); ?>
 
                                                 </li>
+                                                
+                                                
 
 
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Workers Compensation Code</label>
-                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="workers_compensation_code" id="workers_compensation_code">
+                                                <label>I Speak:</label>
                                                 </li>
-
                                                 <li class="form-col-100 autoheight">
-                                                    <label>EEOC Code</label>
-                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="eeoc_code" id="eeoc_code" >
+                                                <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="english" checked/> English
+                                                        <div class="control__indicator"></div>
+                                                    </label>
                                                 </li>
-
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Salary Benefits</label>
-                                                    <textarea autocomplete="nope" class="invoice-fields" name="salary_benefits" id="salary_benefits"></textarea>
+                                                <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="spanish" /> Spanish
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </li>
+                                                <li class="form-col-100 autoheight">
+                                                <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="russian" /> Russian
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </li>
+                                                <li class="form-col-100 autoheight">
+                                                <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryOption" value="other" /> Others
+                                                        <div class="control__indicator"></div>
+                                                    </label>
                                                 </li>
 
 
+                                                <li class="form-col-100 autoheight jsOtherLanguage dn">
+                                                <div class="col-sm-12">
+                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="" />
+                                                    <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                </div>
+                                                </li>
 
+                                            <script>
+                                                $('[name="secondaryOption"]').click(function() {
+                                                    $('.jsOtherLanguage').toggleClass('dn');
+                                                });
+                                            </script>
 
                                                 <li class="form-col-100 autoheight">
 

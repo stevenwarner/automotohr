@@ -438,7 +438,7 @@ class Employee_management extends Public_Controller
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
-
+                
                 //
                 $teamId = $this->input->post('teamId');
                 $departmenId = '';
@@ -448,9 +448,10 @@ class Employee_management extends Public_Controller
                 }
 
                 //
-                $workersCompensationCode = $this->input->post('workers_compensation_code');
-                $eeocCode = $this->input->post('eeoc_code');
-                $salaryBenefits = $this->input->post('salary_benefits');
+
+               // $workersCompensationCode = $this->input->post('workers_compensation_code');
+              //  $eeocCode = $this->input->post('eeoc_code');
+               // $salaryBenefits = $this->input->post('salary_benefits');
 
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -458,6 +459,16 @@ class Employee_management extends Public_Controller
                 $verification_key = random_key() . "_csvImport";
                 $salt = generateRandomString(48);
                 $user_information = array();
+
+                //
+                $user_information['languages_speak'] = null;
+                //
+                $languages_speak = $this->input->post('secondaryLanguages');
+                if ($languages_speak) {
+                    $user_information['languages_speak'] = implode(',', $languages_speak);
+                }
+
+
                 $user_information['gender'] =  $gender;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
@@ -483,9 +494,9 @@ class Employee_management extends Public_Controller
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
                 //
-                $user_information['workers_compensation_code'] = $workersCompensationCode;
-                $user_information['eeoc_code'] = $eeocCode;
-                $user_information['salary_benefits'] = $salaryBenefits;
+                $user_information['workers_compensation_code'] = '';//$workersCompensationCode;
+                $user_information['eeoc_code'] = '';//$eeocCode;
+                $user_information['salary_benefits'] ='';// $salaryBenefits;
 
 
                 if ($departmenId != '' && $teamId != '') {
@@ -497,6 +508,7 @@ class Employee_management extends Public_Controller
                     $user_information['profile_picture'] = $pictures;
                 }
 
+              
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
                     $employee_sid = $this->employee_model->add_employee($user_information);
