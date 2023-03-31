@@ -1303,6 +1303,8 @@ class Application_tracking_system_model extends CI_Model {
                 //
                 if($phoneKeywords) {
                     $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneKeywords, false);
+                    $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', '1'.$phoneKeywords, false);
+                    $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', '+1'.$phoneKeywords, false);
                 }
                 $this->db->group_end();
                

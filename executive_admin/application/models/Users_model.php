@@ -589,6 +589,8 @@ class Users_model extends CI_Model
             ->or_like('users.email', $query);
         if ($phoneQuery) {
             $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false);
+            $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '1'.$phoneQuery, false);
+            $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '+1'.$phoneQuery, false);
         }
         $this->db->group_end()
             ->limit($offset, $inset)
