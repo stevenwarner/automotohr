@@ -1300,7 +1300,10 @@ class Application_tracking_system_model extends CI_Model {
                 $this->db->group_start();
                 $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$keywords));
                 $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$keywords.'" ', null);
-                $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneKeywords, false);
+                //
+                if($phoneKeywords) {
+                    $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneKeywords, false);
+                }
                 $this->db->group_end();
                
             } else {   // this is an email
