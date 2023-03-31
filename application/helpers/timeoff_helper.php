@@ -393,8 +393,9 @@ if (!function_exists('getEmployeeAccrual')) {
         //
         $currentDate = getFormatedDate($todayDate, 'd-m-Y');
         // 
-        if ($currentDate <= $effactedDate) {
-
+        if ($currentDate >= $effactedDate) {
+            $effactedDate = preg_replace('/[0-9]{4}/', date('Y', strtotime($todayDate)), $effactedDate);
+            echo "This year effactedDate date = ". $effactedDate;
         }
         _e($currentDate, true);
         _e($effactedDate, true, true);
