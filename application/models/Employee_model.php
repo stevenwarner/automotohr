@@ -2010,7 +2010,7 @@
                 $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '1' . $phoneKeyword, false);
                 $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '+1' . $phoneKeyword, false);
             }
-            $this->db->end();
+            $this->db->group_end();
         }
 
         $this->db->where('sid != ' . $sid);
