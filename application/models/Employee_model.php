@@ -1998,8 +1998,20 @@
 
         // $this->db->where('is_executive_admin', 0);
         if ($keyword != null) {
+            $keyword = trim($keyword);
             $tK = preg_replace('/\s+/', '|', strtolower($keyword));
             $this->db->where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($keyword) . "' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+
+            //
+            $position = strpos($keyword, '@');
+            if ($position === false) {
+                $phonenumber =  str_replace(' ','-',$keyword);
+                $this->db->or_where('PhoneNumber  REGEXP "'.$keyword.'" ', null);
+                $this->db->or_where('PhoneNumber  REGEXP "'.$phonenumber .'" ', null);
+            }
+
+
+
         }
 
         $this->db->where('sid != ' . $sid);

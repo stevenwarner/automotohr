@@ -1284,23 +1284,30 @@ class Application_tracking_system_model extends CI_Model {
     }
 
     function filtration($keywords) {
+        $keywords = trim($keywords);
         if (!empty($keywords)) {
             $position = strpos($keywords, '@');
 
             if ($position === false) { // not an email
                 //
-                $testKeywords = preg_replace('/[^0-9]/i', '', $keywords);
+               // $testKeywords = preg_replace('/[^0-9]/i', '', $keywords);
                 //
                 // if (!empty($testKeywords) && is_numeric($testKeywords)){
                 //     $keywords = $testKeywords;
                 // }
                 // _e($keywords, true);
                 //
+
+                $phonenumber =  str_replace(' ','-',$keywords);
+
                 $this->db->group_start();
                 $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$keywords));
                 $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$keywords.'" ', null);
-                $this->db->or_where('portal_job_applications.phone_number', $keywords);
+                $this->db->or_where('portal_job_applications.phone_number REGEXP "'.$keywords.'" ', null);
+                $this->db->or_where('portal_job_applications.phone_number REGEXP "'.$phonenumber .'" ', null);
                 $this->db->group_end();
+
+               // com?
                
             } else {   // this is an email
                 $this->db->group_start();

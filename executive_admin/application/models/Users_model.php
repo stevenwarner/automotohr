@@ -486,29 +486,61 @@ class Users_model extends CI_Model {
      */
     function getSearchedUsersCount($executiveUserSid, $executiveCompanyIds, $query){
         // Get Employees
-        $employeeCount = $this->db
-        ->from('users')
-        ->join('users as company', 'company.sid = users.parent_sid', 'left')
-        ->group_start()
-        ->like('users.first_name', $query)
-        ->or_like('users.last_name', $query)
-        ->or_like('users.email', $query)
-        ->group_end()
-        ->where_in('users.parent_sid', $executiveCompanyIds, false)
-        ->count_all_results();
+        $query = trim($query);
+
+        $this->db->from('users');
+        $this->db->join('users as company', 'company.sid = users.parent_sid', 'left');
+        $this->db->group_start();
+        $this->db->like('users.first_name', $query);
+        $this->db->or_like('users.last_name', $query);
+
+        $position = strpos($query, '@');
+        if ($position === false) {
+            $phonenumber =  str_replace(' ','-',$query);
+            $this->db->or_where('users.PhoneNumber  REGEXP "'.$query.'" ', null);
+            $this->db->or_where('users.PhoneNumber  REGEXP "'.$phonenumber .'" ', null);
+        }else{
+         $this->db->or_like('users.email', $query);
+        }
+
+        $this->db->group_end();
+    
+        $this->db->where_in('users.parent_sid', $executiveCompanyIds, false);
+        $employeeCount =   $this->db->count_all_results();
 
         // Get Applicants
-        $applicantCount = $this->db
-        ->from('portal_job_applications')
-        ->join('users', 'users.sid = portal_job_applications.employer_sid', 'left')
-        ->group_start()
-        ->like('portal_job_applications.first_name', $query)
-        ->or_like('portal_job_applications.last_name', $query)
-        ->or_like('portal_job_applications.email', $query)
-        ->group_end()
-        ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
-        ->where('portal_job_applications.hired_sid IS NULL', NULL)
-        ->count_all_results();
+        $this->db->from('portal_job_applications');
+        $this->db->join('users', 'users.sid = portal_job_applications.employer_sid', 'left');
+      //  $this->db->group_start();
+       
+       if (!empty($query)) {
+           $position = strpos($query, '@');
+
+           if ($position === false) {
+              
+               $phonenumber =  str_replace(' ','-',$query);
+
+               $this->db->group_start();
+               $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$query));
+               $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$query.'" ', null);
+               $this->db->or_where('portal_job_applications.phone_number REGEXP "'.$query.'" ', null);
+               $this->db->or_where('portal_job_applications.phone_number REGEXP "'.$phonenumber .'" ', null);
+               $this->db->group_end();
+              
+           } else {   // this is an email
+               $this->db->group_start();
+               $this->db->like('portal_job_applications.email', trim($query));                
+               $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$query.'" ', null);
+               $this->db->group_end();
+           }
+       }
+
+
+
+      //  $this->db->group_end();
+        $this->db->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false);
+        $this->db->where('portal_job_applications.hired_sid IS NULL', NULL);
+        $applicantCount=$this->db->count_all_results();
         //
         return $employeeCount + $applicantCount;
     }
@@ -526,7 +558,7 @@ class Users_model extends CI_Model {
         $limit
     ){
         // Get Employees
-        $result = $this->db
+        $this->db
         ->select('
             users.sid,
             users.applicant_sid as applicant_sid,
@@ -548,23 +580,35 @@ class Users_model extends CI_Model {
             users.is_executive_admin,
             "employee" as user_type,
             "0" as job_count
-        ')
-        ->from('users')
-        ->join('users as company', 'company.sid = users.parent_sid', 'left')
-        ->group_start()
-        ->like('LOWER(CONCAT(users.first_name," ",users.last_name))', strtolower(urldecode($query)))
-        ->or_like('users.email', $query)
-        ->group_end()
-        ->limit( $offset, $inset)
-        ->order_by('first_name', 'ASC')
-        ->where_in('users.parent_sid', $executiveCompanyIds, false)
-        ->get();
+        ');
+      //  $this->db->from('users');
+        $this->db->join('users as company', 'company.sid = users.parent_sid', 'left');
+        $this->db->group_start();
+        $this->db->like('LOWER(CONCAT(users.first_name," ",users.last_name))', strtolower(urldecode($query)));
+        
+        
+        $position = strpos($query, '@');
+        if ($position === false) {
+            $phonenumber =  str_replace(' ','-',$query);
+            $this->db->or_where('users.PhoneNumber  REGEXP "'.$query.'" ', null);
+            $this->db->or_where('users.PhoneNumber  REGEXP "'.$phonenumber .'" ', null);
+        }else{
+         $this->db->or_like('users.email', $query);
+        }
+        
+        
+        $this->db->group_end();
+        $this->db->limit( $offset, $inset);
+        $this->db->order_by('first_name', 'ASC');
+        $this->db->where_in('users.parent_sid', $executiveCompanyIds, false);
+        $result =  $this->db->get('users');
+        //->result_array();
         //
         $employees = $result->result_array();
         $result = $result->free_result();
 
         // Get Applicants
-        $result = $this->db
+        $this->db
         ->select('
             "0" as sid,
             concat(portal_job_applications.first_name," ",portal_job_applications.last_name) as user_name,
@@ -577,18 +621,42 @@ class Users_model extends CI_Model {
             portal_job_applications.archived as is_archived,
             "applicant" as user_type,
             "0" as job_count
-        ')
-        ->from('portal_job_applications')
-        ->join('users', 'users.sid = portal_job_applications.employer_sid', 'left')
-        ->group_start()
-        ->like('LOWER(CONCAT(portal_job_applications.first_name," ",portal_job_applications.last_name))', strtolower(urldecode($query)))
-        ->or_like('portal_job_applications.email', $query)
-        ->group_end()
-        ->limit($offset, $inset)
-        ->order_by('user_name', 'ASC')
-        ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
-        ->where('portal_job_applications.hired_sid IS NULL', NULL)
-        ->get();
+        ');
+      // $this->db->from('portal_job_applications');
+        $this->db->join('users', 'users.sid = portal_job_applications.employer_sid', 'left');
+       // $this->db->group_start();
+       // $this->db->like('LOWER(CONCAT(portal_job_applications.first_name," ",portal_job_applications.last_name))', strtolower(urldecode($query)));
+        
+        $query = trim($query);
+        if (!empty($query)) {
+            $position = strpos($query, '@');
+
+            if ($position === false) {
+               
+                $phonenumber =  str_replace(' ','-',$query);
+
+                $this->db->group_start();
+                $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$query));
+                $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$query.'" ', null);
+                $this->db->or_where('portal_job_applications.phone_number REGEXP "'.$query.'" ', null);
+                $this->db->or_where('portal_job_applications.phone_number REGEXP "'.$phonenumber .'" ', null);
+                $this->db->group_end();
+               
+            } else {   // this is an email
+                $this->db->group_start();
+                $this->db->like('portal_job_applications.email', trim($query));                
+                $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$query.'" ', null);
+                $this->db->group_end();
+            }
+        }
+       
+       // $this->db->or_like('portal_job_applications.email', $query);
+      //  $this->db->group_end();
+        $this->db->limit($offset, $inset);
+        $this->db->order_by('user_name', 'ASC');
+        $this->db->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false);
+        $this->db->where('portal_job_applications.hired_sid IS NULL', NULL);
+        $result = $this->db->get('portal_job_applications');
         //
         $applicants = $result->result_array();
         $result = $result->free_result();
