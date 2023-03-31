@@ -485,6 +485,8 @@ class Users_model extends CI_Model {
      *
      */
     function getSearchedUsersCount($executiveUserSid, $executiveCompanyIds, $query){
+        //
+        $phoneQuery = preg_replace('/[^0-9]/', '', $query);
         // Get Employees
         $employeeCount = $this->db
         ->from('users')
@@ -493,6 +495,7 @@ class Users_model extends CI_Model {
         ->like('users.first_name', $query)
         ->or_like('users.last_name', $query)
         ->or_like('users.email', $query)
+        ->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false)
         ->group_end()
         ->where_in('users.parent_sid', $executiveCompanyIds, false)
         ->count_all_results();
@@ -505,6 +508,7 @@ class Users_model extends CI_Model {
         ->like('portal_job_applications.first_name', $query)
         ->or_like('portal_job_applications.last_name', $query)
         ->or_like('portal_job_applications.email', $query)
+        ->or_like('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneQuery, false)
         ->group_end()
         ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
         ->where('portal_job_applications.hired_sid IS NULL', NULL)
@@ -525,6 +529,7 @@ class Users_model extends CI_Model {
         $offset,
         $limit
     ){
+        $phoneQuery = preg_replace('/[^0-9]/', '', $query);
         // Get Employees
         $result = $this->db
         ->select('
@@ -554,6 +559,7 @@ class Users_model extends CI_Model {
         ->group_start()
         ->like('LOWER(CONCAT(users.first_name," ",users.last_name))', strtolower(urldecode($query)))
         ->or_like('users.email', $query)
+        ->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false)
         ->group_end()
         ->limit( $offset, $inset)
         ->order_by('first_name', 'ASC')
@@ -583,6 +589,7 @@ class Users_model extends CI_Model {
         ->group_start()
         ->like('LOWER(CONCAT(portal_job_applications.first_name," ",portal_job_applications.last_name))', strtolower(urldecode($query)))
         ->or_like('portal_job_applications.email', $query)
+        ->or_like('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneQuery, false)
         ->group_end()
         ->limit($offset, $inset)
         ->order_by('user_name', 'ASC')
