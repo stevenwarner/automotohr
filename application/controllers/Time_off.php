@@ -3059,6 +3059,7 @@ class Time_off extends Public_Controller
                     $post['companyId'],
                     $post['typeId']
                 );
+
                 //
                 if ($doTypeExists[1] > 0) {
                     $this->res['Response'] = "The type already in use. Please, use a different type title.";
@@ -6170,6 +6171,13 @@ class Time_off extends Public_Controller
                    $data['policyHistory'] = $policyHistory;
 
                     echo $this->load->view('timeoff/timeoff_log',$data, true);
+                    exit();
+                    break;
+
+                case "get_settings_log":
+                   
+                    $data['settingsHistory'] = $this->timeoff_model->getSettingsLog($post['companyId']);
+                    echo $this->load->view('timeoff/timeoff_settings_log',$data, true);
                     exit();
                     break;
         }

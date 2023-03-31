@@ -131,7 +131,9 @@
                         <div class="col-sm-6">
                             <hr />
                             <button id="js-save-btn" type="button" class="btn btn-orange btn-theme ml10">Update Settings</button>
+                            <button id="jsSettingsLog" type="button" class="btn btn-orange btn-theme ml10">View Log</button>
                         </div>
+                      
                     </div>
                 </div>
             </div>

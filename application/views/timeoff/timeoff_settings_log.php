@@ -1,9 +1,9 @@
 <?php 
-if(!empty($policyHistory)){
- foreach($policyHistory as $record) {?>
+if(!empty($settingsHistory)){
+ foreach($settingsHistory as $record) {?>
 <div class="panel panel-default">
     <div class="panel-heading">
-        <strong><?php echo $record['title']; ?></strong>
+        <strong><?php echo $record['CompanyName']; ?></strong>
     </div>
     <div class="panel-body">
         <p><strong><?php echo remakeEmployeeName($record);?></strong></p>
@@ -28,13 +28,14 @@ if(!empty($policyHistory)){
                         ?></th>
                         <td><p class="text-danger">
                         <?php
-                        
-                        if($key=='assigned_employees' || $key=='allowed_approvers'){
-                         if(!empty(getUserNameBySIDString($val['old_value']))){
-                          foreach (getUserNameBySIDString($val['old_value']) as $employeeName){
-                            echo $employeeName."<br>";
-                           }
-                        }
+                        if($key=='theme'){
+
+                            if($val['old_value']=='1'){
+                                echo "Theme1";
+    
+                            }elseif($val['old_value']=='2'){
+                                echo "Theme2";
+                            }
 
                         }else{
                         if($val['old_value']=='1'){
@@ -45,29 +46,31 @@ if(!empty($policyHistory)){
                         }else{
                             echo $val['old_value'];
                         }
-                        }
+                    }
                          ?>
                          </p></td>
                         <td>
                             <p class="text-success">
                         <?php
-                            if($key=='assigned_employees' || $key=='allowed_approvers'){
-                                if(!empty(getUserNameBySIDString($val['new_value']))){
-                                    foreach (getUserNameBySIDString($val['new_value']) as $employeeName){
-                                      echo $employeeName."<br>";
-                                     }
-                                  }
+                        if($key=='theme'){
 
-                            }else{
-                                if($val['new_value']=='1'){
-                                    echo "Yes";
-                                }elseif($val['new_value']=='0'){
-                                    echo "No";
-                                }else{
-                                echo $val['new_value'];
-                                }
+                            if($val['new_value']=='1'){
+                                echo "Theme1";
+    
+                            }elseif($val['new_value']=='2'){
+                                echo "Theme2";
                             }
-                             ?>
+
+                        }else{
+                           if($val['new_value']=='1'){
+                                echo "Yes";
+                            }elseif($val['new_value']=='0'){
+                                echo "No";
+                            }else{
+                               echo $val['new_value'];
+                            }
+                        }
+                               ?>
                              </p>
                         </td>
                     </tr>

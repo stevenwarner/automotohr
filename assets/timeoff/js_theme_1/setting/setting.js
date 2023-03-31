@@ -131,4 +131,29 @@ $(function() {
     $('[data-toggle="popovers"]').popover({
         trigger: 'hover'
     });
+
+
+    //
+    $(document).on('click', '#jsSettingsLog', function () {
+             
+        Modal({
+         Id: 1,
+         Title: `Settings Log`,
+         Body: '<div id=\"jsSettingsLogTable\"></div>',
+         Loader: 'setting'
+     }, () => {
+ 
+         
+      $.post(handlerURL, {action: "get_settings_log", companyId: companyId,employerId: employerId, employeeId:employeeId,public: 0})
+               .done(function (data) {
+                 $('#jsSettingsLogTable').html(data);
+                 //
+                 ml(false, 'setting');
+               });
+       
+     });
+ 
+ });
+
+
 })

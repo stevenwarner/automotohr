@@ -706,6 +706,7 @@ class Timeoff_model extends CI_Model
      */
     function updateCompanyType($typeId, $updateArray)
     {
+
         // Update PTO Group
         $this->db
             ->where('sid', $typeId)
@@ -1110,7 +1111,8 @@ class Timeoff_model extends CI_Model
      */
     function updateSettings($post)
     {
-        //
+
+       //
         $rt = [
             'setting' => [],
             'settingId' => 0
@@ -1126,6 +1128,29 @@ class Timeoff_model extends CI_Model
         $dataArray['off_days'] = !isset($post['offDays']) || $post['offDays'] == null ? '' : implode(',', $post['offDays']);
         $dataArray['theme'] = $post['theme'];
 
+
+        //
+        $oldSettingsData = [];
+        $newSettingsData  = [];
+
+        $oldSettingData = $this->getSingleSettingDataById($post['companyId']);
+        $newSettingsData = $dataArray;
+        unset($newSettingsData['pto_email_receiver']);
+     
+        $diffArray = [];
+        //
+
+        foreach ($oldSettingData as $key => $val) {
+            //
+            if ($val != $newSettingsData[$key]) {
+                $diffArray[$key] = [
+                    'old_value' => $val,
+                    'new_value' => $newSettingsData[$key]
+                ];
+            }
+        }
+
+            
         // Check if default time option is set
         if ($post['forAllEmployees'] == 1) {
             $this->db
@@ -1159,7 +1184,20 @@ class Timeoff_model extends CI_Model
                 ->where('company_sid', $post['companyId'])
                 ->update('timeoff_settings', $dataArray);
         }
-        //
+                  
+            //
+        $employee_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        if ($diffArray) {
+            $this->db->insert(
+                'timeoff_setting_logs', [
+                    'company_sid' => $post['companyId'],
+                    'employee_sid' => $employee_sid,
+                    'change_json' => json_encode($diffArray),
+                    'created_at' => getSystemDate()
+                ]
+            );
+        }
+
         $this->session->set_userdata('time_off_theme', $post['theme']);
         return $rt;
     }
@@ -5770,7 +5808,6 @@ class Timeoff_model extends CI_Model
 
 
     //
-
     function getSinglePolicyDataById($policyId)
     {
         return $this->db
@@ -5800,5 +5837,33 @@ class Timeoff_model extends CI_Model
    }
 
 
+   //
 
-}
+   function getSingleSettingDataById($companyId)
+   {
+       return $this->db
+           ->select('default_timeslot,pto_approval_check,send_email_to_supervisor,team_visibility_check,timeoff_format_sid,off_days,theme')
+           ->where('company_sid', $companyId)
+           ->get('timeoff_settings')
+           ->row_array();
+   }
+
+
+   //
+   function getSettingsLog($companyId)
+   {
+       return $this->db
+           ->select('
+           timeoff_setting_logs.change_json, 
+           timeoff_setting_logs.created_at,
+           users.CompanyName,
+           ' . (getUserFields()) . '
+       ')
+           ->join('users', 'users.sid = timeoff_setting_logs.employee_sid', 'inner')
+           ->where('timeoff_setting_logs.company_sid', $companyId)
+           ->order_by('timeoff_setting_logs.sid', 'DESC')
+           ->get('timeoff_setting_logs')
+           ->result_array();
+   }
+
+ }

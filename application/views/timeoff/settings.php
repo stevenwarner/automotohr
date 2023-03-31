@@ -142,6 +142,8 @@
                                 <div class="bottom-section-pto">
                                     <hr />
                                     <button id="js-save-btn" type="button" class="btn btn-success ml10">Update</button>
+                                    <button id="jsSettingsLog" type="button" class="btn btn-success ml10">View Log</button>
+
                                 </div>
                             </div>
                         </div>
