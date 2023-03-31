@@ -480,7 +480,7 @@ $(function () {
 
         Modal({
             Id: 1,
-            Title: `Policy Log for ${$(this).closest('.jsBox').data('name')}`,
+            Title: `Policy Log for ${$(this).closest('tr').data('name')}`,
             Body: '<div id=\"jsPolicyLogTable\"></div>',
             Loader: 'jsPolicyHistoryLoader'
         }, () => {
