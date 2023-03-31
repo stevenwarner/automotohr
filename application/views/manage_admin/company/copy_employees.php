@@ -114,6 +114,20 @@ foreach ($companies as $company)
                                                 </li>
 
                                                 <li>
+                                                    <label>Export Timeoff</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <label class="control control--checkbox vam">
+                                                            <strong class="text-danger">
+                                                                The selected employee(s) move with there Timeoff requests, policies and balances to other company.
+                                                            </strong>
+                                                            <input type="checkbox" id="jsMoveTimeoff" />
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                        
+                                                    </div>
+                                                </li>
+
+                                                <li>
                                                     <a class="site-btn" id="js-fetch-employees" href="#">Fetch Employees</a>
                                                 </li>
                                             </ul>
@@ -538,6 +552,7 @@ foreach ($companies as $company)
             employee.to_company = $('#js-to-company').val();
             employee.from_company = $('#js-from-company').val();
             employee.transferred_note = $("#transferred_note").val();
+            employee.timeoff = $('#jsMoveTimeoff').is(':checked') ? 1 : 0;
 
             var myurl = "<?php echo base_url('manage_admin/copy_employees/copy_companies_employees') ?>";
             $.post(myurl, employee, function(resp) {
