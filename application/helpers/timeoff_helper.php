@@ -335,6 +335,9 @@ if (!function_exists('getEmployeeAccrual')) {
                 return $r;
             }
         }
+        //
+        $effactedDate = $compareDate;
+        //
         // Check if employee has worked for certain time
         // Employee doesn't meet the minimum allowed time
         if ($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
@@ -370,7 +373,11 @@ if (!function_exists('getEmployeeAccrual')) {
         }
         // Check if time off needs to be reset
         // Check if reset date is not empty
-        if (!empty($accruals['resetDate']) && $accruals['resetDate'] != '0000-00-00') {
+        if (!empty($accruals['resetDate']) && $accruals['resetDate'] != '0000-00-00' && $accruals['resetDate'] != '0') {
+            //
+            if (strtotime(getSystemDate(DB_DATE)) >= trim($accruals['resetDate'])) {
+                $effactedDate = getFormatedDate(trim($accruals['resetDate']), 'd-m-Y');
+            }
             // //
             // $accruals['resetDate'] = trim($accruals['resetDate']);
             // // For hours
@@ -385,6 +392,43 @@ if (!function_exists('getEmployeeAccrual')) {
             //     $getConsumedTime = 0;
             // }
         }
+        //
+        if (strtotime($currentDate) >= strtotime($effactedDate)) {
+            //
+            $allowedTime = $accruals['applicableTime'] * 60;
+            //
+            if ($allowedTime != 0) {
+                // This section add allowed balance of current year
+                $company_sid = $_this->timeoff_model->getEmployeeCompanySid($employeeId);
+                $policyName = $_this->timeoff_model->getPolicyNameById($policyId);
+                //
+                $added_by = getCompanyAdminSid($company_sid);
+                $effactedDate = preg_replace('/[0-9]{4}/', date('Y', strtotime('now')), $effactedDate);
+                $effactedDate = getFormatedDate($effactedDate, 'Y-m-d');
+                //
+                $is_added = $_this->timeoff_model->checkAllowedBalanceAdded(
+                    $employeeId,
+                    $policyId,
+                    1,
+                    $effactedDate,
+                    $allowedTime
+                );
+                //
+                if ($is_added == 0) {
+                    $balanceToAdd = array();
+                    $balanceToAdd['user_sid'] = $employeeId;
+                    $balanceToAdd['policy_sid'] = $policyId;
+                    $balanceToAdd['added_by'] = $added_by;
+                    $balanceToAdd['is_added'] = 1;
+                    $balanceToAdd['added_time'] = $allowedTime;
+                    $balanceToAdd['note'] = 'On <b>' . date('M d, Y,', strtotime('now')) . ' at ' . date('g:i A,', strtotime('now')) . '</b> a balance of ' . $accruals['applicableTime'] . ' hours was added in accordance with the <b>"' . $policyName . '"</b> policy.';
+                    $balanceToAdd['effective_at'] = getFormatedDate($effactedDate, 'Y-m-d');
+                    //
+                    $_this->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
+                }
+            }
+        }
+        //
         // Convert rate into minutes
         // For days
         if ($accruals['rateType'] == 'days') $originalAloowedTime = $accrualRateInMinutes = $accrualRate * $durationInMinutes;
