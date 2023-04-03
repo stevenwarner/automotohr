@@ -406,7 +406,6 @@ if (!function_exists('getEmployeeAccrual')) {
                 //
                 $added_by = getCompanyAdminSid($company_sid);
                 $effactedDate = preg_replace('/[0-9]{4}/', date('Y', strtotime('now')), $effactedDate);
-                $effactedDate = getFormatedDate($effactedDate, 'Y-m-d');
                 //
                 $is_added = $_this->timeoff_model->checkAllowedBalanceAdded(
                     $employeeId,
