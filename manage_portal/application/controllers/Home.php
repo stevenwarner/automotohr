@@ -118,8 +118,9 @@ class Home extends CI_Controller
             if ($theme_name == 'theme-4') {
                 $pageName = $this->uri->segment(1);
                 $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs', 'jobs_page_title');
-                $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
+                $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
                 $data['jobs_page_title'] = $jobs_page_title;
+                $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));
 
                 if ($pageName == strtolower(str_replace(' ', '_', $jobs_page_title))) {
                     $pageName = 'jobs';
