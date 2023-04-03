@@ -1686,3 +1686,9 @@ $route['manage_admin/job_title_templates/edit/(:any)'] = 'manage_admin/job_title
 $route['manage_admin/job_title_groups'] = 'manage_admin/job_title_templates/index';
 $route['manage_admin/job_title_groups/add'] = 'manage_admin/job_title_templates/add_edit_group';
 $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit_group/$1';
+
+
+/**
+ * Cron job URLS
+ */
+$route['cron_fix_duplicate_eeo']['cli'] = "Cron_common/fixDuplicateEEOForms";

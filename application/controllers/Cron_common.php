@@ -793,4 +793,104 @@ class Cron_common extends CI_Controller
         //
         exit(0);
     }
+
+    /**
+     * Fix duplicate EEOC forms
+     */
+    public function fixDuplicateEEOForms()
+    {
+        //
+        $records =
+            $this->db
+            ->order_by('sid', 'desc')
+            ->get('portal_eeo_form')
+            ->result_array();
+        //
+        $multipleEEOC = [];
+        //
+        foreach ($records as $record) {
+            //
+            $slug = $record['users_type'] . '_' . $record['application_sid'];
+            //
+            if (!isset($multipleEEOC[$slug])) {
+                $multipleEEOC[$slug] = [];
+            }
+            //
+            $multipleEEOC[$slug][] = $record;
+        }
+
+        //
+        foreach ($multipleEEOC as $record) {
+            //
+            if (count($record) <= 1) {
+                continue;
+            }
+            //
+            $sid = $record[0]['sid'];
+            $updateArray = [];
+            $updateArray['us_citizen'] = $record['us_citizen'];
+            $updateArray['visa_status'] = $record['visa_status'];
+            $updateArray['group_status'] = $record['group_status'];
+            $updateArray['veteran'] = $record['veteran'];
+            $updateArray['disability'] = $record['disability'];
+            $updateArray['gender'] = $record['gender'];
+            // update tracker
+            $this->db
+                ->where([
+                    'document_type' => 'eeoc',
+                    'user_type' => $record[0]['users_type'],
+                    'user_sid' => $record[0]['application_sid']
+                ])
+                ->update('verification_documents_track', [
+                    'document_sid' => $sid
+                ]);
+            //
+            foreach ($record as $key => $value) {
+                //
+                if ($key == 0) {
+                    continue;
+                }
+
+                //
+                if (strlen(trim($updateArray['us_citizen'])) === 0 && strlen(trim($value['us_citizen'])) !== 0 ) {
+                    $updateArray['us_citizen'] = trim($value['us_citizen']);
+                }
+
+                //
+                if (strlen(trim($updateArray['visa_status'])) === 0 && strlen(trim($value['visa_status'])) !== 0 ) {
+                    $updateArray['visa_status'] = trim($value['visa_status']);
+                }
+                //
+                if (strlen(trim($updateArray['group_status'])) === 0 && strlen(trim($value['group_status'])) !== 0 ) {
+                    $updateArray['group_status'] = trim($value['group_status']);
+                }
+                //
+                if (strlen(trim($updateArray['veteran'])) === 0 && strlen(trim($value['veteran'])) !== 0 ) {
+                    $updateArray['veteran'] = trim($value['veteran']);
+                }
+                //
+                if (strlen(trim($updateArray['disability'])) === 0 && strlen(trim($value['disability'])) !== 0 ) {
+                    $updateArray['disability'] = trim($value['disability']);
+                }
+                //
+                if (strlen(trim($updateArray['gender'])) === 0 && strlen(trim($value['gender'])) !== 0 ) {
+                    $updateArray['gender'] = trim($value['gender']);
+                }
+
+                //
+                $insArray = $value;
+                $insArray['eeo_form_sid'] = $value['sid'];
+                unset($insArray['sid']);
+                // add to history
+                $this->db->insert('portal_eeo_form_history', $insArray);
+                // delete record
+                $this->db->where('sid', $value['sid'])->delete('portal_eeo_form');
+            }
+
+            $this->db->where('sid', $sid)->update('portal_eeo_form', $updateArray);
+        }
+
+        //
+        exit('All done');
+    }
 }
