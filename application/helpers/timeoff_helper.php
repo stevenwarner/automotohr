@@ -392,6 +392,7 @@ if (!function_exists('getEmployeeAccrual')) {
             //     $getConsumedTime = 0;
             // }
         }
+        $currentDate = getSystemDate('Y-m-d');
         //
         if (strtotime($currentDate) >= strtotime($effactedDate)) {
             //
