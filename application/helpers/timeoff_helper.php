@@ -393,6 +393,7 @@ if (!function_exists('getEmployeeAccrual')) {
             // }
         }
         $currentDate = getSystemDate('Y-m-d');
+        $effactedDate = formatDateToDB($effactedDate, 'm-d-Y', DB_DATE);
         //
         if (strtotime($currentDate) >= strtotime($effactedDate)) {
             //
@@ -423,7 +424,7 @@ if (!function_exists('getEmployeeAccrual')) {
                     $balanceToAdd['is_added'] = 1;
                     $balanceToAdd['added_time'] = $allowedTime;
                     $balanceToAdd['note'] = 'On <b>' . date('M d, Y,', strtotime('now')) . ' at ' . date('g:i A,', strtotime('now')) . '</b> a balance of ' . $accruals['applicableTime'] . ' hours was added in accordance with the <b>"' . $policyName . '"</b> policy.';
-                    $balanceToAdd['effective_at'] = getFormatedDate($effactedDate, 'Y-m-d');
+                    $balanceToAdd['effective_at'] = $effactedDate;
                     //
                     $_this->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
                 }
