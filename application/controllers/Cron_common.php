@@ -828,12 +828,12 @@ class Cron_common extends CI_Controller
             //
             $sid = $record[0]['sid'];
             $updateArray = [];
-            $updateArray['us_citizen'] = $record['us_citizen'];
-            $updateArray['visa_status'] = $record['visa_status'];
-            $updateArray['group_status'] = $record['group_status'];
-            $updateArray['veteran'] = $record['veteran'];
-            $updateArray['disability'] = $record['disability'];
-            $updateArray['gender'] = $record['gender'];
+            $updateArray['us_citizen'] = trim($record['us_citizen']);
+            $updateArray['visa_status'] = trim($record['visa_status']);
+            $updateArray['group_status'] = trim($record['group_status']);
+            $updateArray['veteran'] = trim($record['veteran']);
+            $updateArray['disability'] = trim($record['disability']);
+            $updateArray['gender'] = trim($record['gender']);
             // update tracker
             $this->db
                 ->where([
