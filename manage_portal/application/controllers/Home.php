@@ -475,8 +475,9 @@ class Home extends CI_Controller
 
                 $pageName = $this->uri->segment(1);
                 $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
-                $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
+                $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
                 $data['jobs_page_title'] = $jobs_page_title;
+                $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));
 
                 if ($pageName == strtolower(str_replace(' ', '_', $jobs_page_title))) {
                     $pageName = 'jobs';
@@ -556,8 +557,8 @@ class Home extends CI_Controller
                         $jobsPageBannerImage                                    = $this->theme_meta_model->fGetThemeMetaData($company_id, 'theme-4', 'jobs', 'jobs_page_banner');
                         $data['jobs_page_banner']                               = $jobsPageBannerImage;
                         $jobs_page_title                                        = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
-                        $jobs_page_title                                        = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-                        $data['jobs_page_title']                                = $jobs_page_title;
+                        $jobs_page_title                                        = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+                        $data['jobs_page_title']                                = strtolower(str_replace(' ', '_', $jobs_page_title));
                         $footer_content                                         = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'home', 'footer_content');
                         $footer_content['title']                                = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $footer_content['title']);
                         $footer_content['content']                              = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $footer_content['content']);
@@ -573,8 +574,8 @@ class Home extends CI_Controller
                         $previousTestimonialId = $this->testimonials_model->GetPreviousTestimonialId($company_id, $testimonialId);
                         $testimonialData = $this->testimonials_model->GetTestimonial($testimonialId);
                         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
-                        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-                        $data['jobs_page_title'] = $jobs_page_title;
+                        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+                        $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));;
                         $testimonialData['author_name'] = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $testimonialData['author_name']);
                         $testimonialData['short_description'] = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $testimonialData['short_description']);
                         $testimonialData['full_description'] = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $testimonialData['full_description']);
@@ -603,8 +604,8 @@ class Home extends CI_Controller
                                 $footer_content['content']                      = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $footer_content['content']);
                                 $data['footer_content']                         = $footer_content;
                                 $jobs_page_title                                = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
-                                $jobs_page_title                                = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-                                $data['jobs_page_title']                        = $jobs_page_title;
+                                $jobs_page_title                                = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+                                $data['jobs_page_title']                        = strtolower(str_replace(' ', '_', $jobs_page_title));;
                                 $data['pageData']                               = $pageData;
 
                                 if ($pageData['job_fair'] == 1) {
@@ -677,8 +678,8 @@ class Home extends CI_Controller
         $data['footer_content'] = $footer_content;
         $website = $data['company_details']['WebSite'];
         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs', 'jobs_page_title');
-        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-        $data['jobs_page_title'] = $jobs_page_title;
+        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+        $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));
 
         if (!empty($website)) {
             $data['dealership_website'] = $website;
@@ -764,8 +765,8 @@ class Home extends CI_Controller
         $enable_auto_responder_email = 0;
         $talent_data = $this->contact_model->get_talent_config($company_id);
         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
-        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-        $data['jobs_page_title'] = $jobs_page_title;
+        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+        $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));
 
         if (isset($talent_data[0])) {
             $data['talent_data'] = $talent_data[0];
@@ -1118,8 +1119,8 @@ class Home extends CI_Controller
 
         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs', 'jobs_page_title');
         $jobs_detail_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs_detail', 'jobs_detail_page_banner');
-        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-        $data['jobs_page_title'] = $jobs_page_title;
+        $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+        $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));
         $data['jobs_detail_page_banner_data'] = $jobs_detail_page_title;
 
         if ($data['status'] == 1 && $data['maintenance_mode'] == 0) {
@@ -2900,8 +2901,8 @@ class Home extends CI_Controller
         $data['footer_content']                                                 = $footer_content;
         $company_email_templates                                                = $data['company_email_templates'];
         $jobs_page_title                                                        = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
-        $jobs_page_title                                                        = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-        $data['jobs_page_title']                                                = $jobs_page_title;
+        $jobs_page_title                                                        = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+        $data['jobs_page_title']                                                = strtolower(str_replace(' ', '_', $jobs_page_title));
 
         if (!empty($website)) {
             $data['dealership_website']                                         = $website;
@@ -3635,8 +3636,8 @@ class Home extends CI_Controller
         }
 
         $jobs_page_title                                                        = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
-        $jobs_page_title                                                        = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
-        $data['jobs_page_title']                                                = $jobs_page_title;
+        $jobs_page_title                                                        = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
+        $data['jobs_page_title']                                                = strtolower(str_replace(' ', '_', $jobs_page_title));
 
         if ($sid != null && intval($sid) > 0) {
             $list                                                           = $this->job_details->fetch_company_jobs_new(NULL, $sid, TRUE, 1);
