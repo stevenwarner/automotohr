@@ -2081,7 +2081,11 @@ class Home extends CI_Controller
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;
         }
-        //
+        // update against all versions
+        $this->db->where([
+            'application_sid' => $document['application_sid'],
+            'users_type' => $document['users_type']
+        ])->update('portal_eeo_form', $upd);
         //
         $this->hr_documents_management_model->updateEEOC(
             $upd,
