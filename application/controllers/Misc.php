@@ -2721,7 +2721,7 @@ class Misc extends CI_Controller
             $employer_sid = $data['session']['employer_detail']['sid'];
             $data['title'] = "Credit Card Management";
 
-                  
+
             if (isset($_POST['save_card']) && $_POST['save_card'] == 'save_card') {
                 $formpost = $_POST;
                 $contractor_first_name = $data['session']['employer_detail']['first_name'];
@@ -2777,10 +2777,10 @@ class Misc extends CI_Controller
 
 
                     $emailTemplateBody =  'Dear Steven, <br><br>';
-                    $emailTemplateBody = $emailTemplateBody . " I wanted to inform you that ".$data['session']['employer_detail']['first_name'].' '.$data['session']['employer_detail']['last_name']." has recently added a new credit card to our company's account under the name ".$data['session']['employer_detail']['CompanyName'] ." . The card was added on ".formatDateToDB(date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME).". <br>"; 
+                    $emailTemplateBody = $emailTemplateBody . " I wanted to inform you that " . $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'] . " has recently added a new credit card to our company's account under the name " . $data['session']['company_detail']['CompanyName'] . " . The card was added on " . formatDateToDB(date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME) . ". <br>";
                     $emailTemplateBody = $emailTemplateBody . " I am writing to provide you with the details of the new card so that you can keep track of any transactions that may occur.<br>";
                     $emailTemplateBody = $emailTemplateBody . " Here is the card information you need to know: <br>";
-                    $emailTemplateBody = $emailTemplateBody . " Card Number: ".$carddetails['number'] ." <br>";
+                    $emailTemplateBody = $emailTemplateBody . " Card Number: " . $carddetails['number'] . " <br>";
                     $emailTemplateBody = $emailTemplateBody . " Best regards, <br>  AutomotoHR Team";
 
 
@@ -2788,20 +2788,15 @@ class Misc extends CI_Controller
                     $to = TO_EMAIL_STEVEN;
                     $subject = 'New Card Is Added'; //$emailTemplateData['subject'];
                     $from_name = ucwords(STORE_DOMAIN); //$emailTemplateData['from_name'];
-                
+
                     $body = EMAIL_HEADER
-                            . $emailTemplateBody
-                            . EMAIL_FOOTER;
+                        . $emailTemplateBody
+                        . EMAIL_FOOTER;
 
                     //
                     sendMail($from, $to, $subject, $body, $from_name);
+                    sendMail($from, DEV_EMAIL_PM, $subject, $body, $from_name);
 
-                    //
-                    $to =  "mubashar@automotohr.com";
-                    sendMail($from, $to, $subject, $body, $from_name);
-
-
-                  
                     $this->ext_model->cc_future_store($carddetails, $company_sid, $employer_sid);
                     $this->session->set_flashdata('success', 'Success, Your card has successfully saved!');
                     redirect('cc_management', "refresh");
@@ -2958,27 +2953,25 @@ class Misc extends CI_Controller
                     $this->ext_model->update_card($card_sid, $carddetails);
 
                     $emailTemplateBody =  'Dear Steven, <br><br>';
-                    $emailTemplateBody = $emailTemplateBody . " I am pleased to inform you that our company's account under the name ".$data['session']['employer_detail']['CompanyName']." has been recently updated by ".$data['session']['employer_detail']['first_name'].' '.$data['session']['employer_detail']['last_name'].".";
-                    $emailTemplateBody = $emailTemplateBody . " Under an existing credit card ".$data['card']['number']." . The change was made on ".formatDateToDB(date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME).".<br>";
+                    $emailTemplateBody = $emailTemplateBody . " I am pleased to inform you that our company's account under the name " . $data['session']['company_detail']['CompanyName'] . " has been recently updated by " . $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'] . ".";
+                    $emailTemplateBody = $emailTemplateBody . " Under an existing credit card " . $data['card']['number'] . " . The change was made on " . formatDateToDB(date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME) . ".<br>";
                     $emailTemplateBody = $emailTemplateBody . " Best regards, <br>";
                     $emailTemplateBody = $emailTemplateBody . " AutomotoHR Team ";
-                 
+
 
                     $from = FROM_EMAIL_NOTIFICATIONS; //$emailTemplateData['from_email'];
                     $to = TO_EMAIL_STEVEN;
                     $subject = 'Existing Card Is Updated'; //$emailTemplateData['subject'];
                     $from_name = ucwords(STORE_DOMAIN); //$emailTemplateData['from_name'];
-                
+
                     $body = EMAIL_HEADER
-                            . $emailTemplateBody
-                            . EMAIL_FOOTER;
+                        . $emailTemplateBody
+                        . EMAIL_FOOTER;
 
                     //
                     sendMail($from, $to, $subject, $body, $from_name);
-                     //
-                     $to =  "mubashar@automotohr.com";
-                    sendMail($from, $to, $subject, $body, $from_name);
-                   
+                    sendMail($from, DEV_EMAIL_PM, $subject, $body, $from_name);
+
                     $this->session->set_flashdata('success', 'Success, Your card has successfully updated!');
                     redirect('cc_management', "refresh");
                 } else {
