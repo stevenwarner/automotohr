@@ -147,9 +147,26 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Job Title:</label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title">
+                                                    <?php $templateTitles = get_templet_jobtitles($employer['parent_sid']); ?>
+
+                                                    <label>Job Title: &nbsp;&nbsp;&nbsp;
+                                                        <?php if ($templateTitles) { ?>
+                                                            <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $employer['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
+                                                            <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $employer['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title &nbsp;
+                                                        <?php } ?>
+                                                    </label>
+                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title" id="job_title">
+                                                    <?php if ($templateTitles) { ?>
+                                                        <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                            <option value="0">Please select job title</option>
+                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    <?php } ?>
                                                 </div>
+
+
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
@@ -498,9 +515,9 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                            <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                                                 <div class="col-sm-12">
-                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
                                                     <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
                                                 </div>
                                             </div>
@@ -2557,6 +2574,31 @@ if (checkIfAppIsEnabled('timeoff')) {
             }
         }
 
+    <?php } ?>
+
+
+    //
+    <?php if ($templateTitles) { ?>
+
+        <?php if ($employer['job_title_type'] != '0') { ?>
+            $('#temppate_job_title').show();
+            $('#temppate_job_title').val('<?php echo $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+            $('#job_title').hide();
+        <?php } ?>
+
+        $('.titleoption').click(function() {
+            var titleOption = $(this).val();
+            if (titleOption == 'dropdown') {
+                $('#temppate_job_title').show();
+                $('#temppate_job_title').val('<?php echo $employer['job_title_type'] == '0' ? '0' : $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+                $('#job_title').hide();
+            } else if (titleOption == 'manual') {
+                $('#temppate_job_title').hide();
+                $('#temppate_job_title').val('0');
+                $('#job_title').show();
+            }
+
+        });
     <?php } ?>
 </script>
 

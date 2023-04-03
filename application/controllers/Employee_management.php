@@ -414,6 +414,7 @@ class Employee_management extends Public_Controller
                 $this->load->view('manage_employer/invite_colleagues');
                 $this->load->view('main/footer');
             } else {
+
                 $session_data['session'] = $this->session->userdata('logged_in');
                 $company_information = $session_data["session"]["company_detail"];
                 $company_sid = $company_information['sid'];
@@ -486,6 +487,20 @@ class Employee_management extends Public_Controller
                 $user_information['workers_compensation_code'] = $workersCompensationCode;
                 $user_information['eeoc_code'] = $eeocCode;
                 $user_information['salary_benefits'] = $salaryBenefits;
+
+
+                //
+                if ($this->input->post('template_job_title') != '0') {
+                    $templetJobTitleData = $this->input->post('template_job_title');
+                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                    $user_information['job_title'] = $templetJobTitleDataArray[1];
+                    $user_information['job_title_type'] = $templetJobTitleDataArray[0];
+                    $user_information['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                } else {
+                    $data_to_insert['job_title_type'] = 0;
+                }
+
+
 
 
                 if ($departmenId != '' && $teamId != '') {
@@ -1586,6 +1601,7 @@ class Employee_management extends Public_Controller
                     }
                     $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
 
+
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
                         'last_name' => $this->input->post('last_name'),
@@ -1610,6 +1626,22 @@ class Employee_management extends Public_Controller
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status'),
                     );
+
+                    //
+                    if ($this->input->post('temppate_job_title') != '0') {
+                        $templetJobTitleData = $this->input->post('temppate_job_title');
+                        $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                        $data_to_insert['job_title'] = $templetJobTitleDataArray[1];
+                        $data_to_insert['job_title_type'] = $templetJobTitleDataArray[0];
+
+                        $userComplynetJobTitle = get_user_complynettitle($sid);
+                        if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
+                            $data_to_insert['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                        }
+                    } else {
+                        $data_to_insert['job_title_type'] = 0;
+                    }
+
                     //
                     if (isPayrollOrPlus(true)) {
                         $data_to_insert['workers_compensation_code'] = $this->input->post('workers_compensation_code', true);
@@ -1791,6 +1823,7 @@ class Employee_management extends Public_Controller
                     $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
+
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
@@ -2431,6 +2464,24 @@ class Employee_management extends Public_Controller
                 $newCompareData['employee_number'] = $post['employee_number'];
                 $newCompareData['department'] = $post['department'];
                 $newCompareData['office_location'] = $post['office_location'];
+
+                //
+                if ($this->input->post('template_job_title') != '0') {
+                    $templetJobTitleData = $this->input->post('template_job_title');
+                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                    $data['job_title'] = $templetJobTitleDataArray[1];
+                    $data['job_title_type'] = $templetJobTitleDataArray[0];
+
+                    $userComplynetJobTitle = get_user_complynettitle($sid);
+                    if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
+                        $data['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                    }
+                } else {
+                    $data['job_title_type'] = 0;
+                }
+
+
+
 
                 // $newCompareData['interests'] = $post['interests'];
                 // $newCompareData['short_bio'] = $post['short_bio'];

@@ -16452,3 +16452,73 @@ if (!function_exists('showLanguages')) {
         return rtrim(ucwords(implode(', ', (explode(',', $languages))), '\, '), ', ');
     }
 }
+
+
+//
+if (!function_exists('get_templet_jobtitles')) {
+    function get_templet_jobtitles($companyId)
+    {
+        if (!empty($companyId)) {
+            // Get Group Id
+            $CI = &get_instance();
+            $CI->db->select('job_titles_template_group');
+            $CI->db->where('sid', $companyId);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+            $gropuSid = $company_info['job_titles_template_group'];
+
+            // Get Gropup Data
+            $CI->db->where('sid', $gropuSid);
+            $CI->db->where('archive_status', 'active');
+            $GroupsData = $CI->db->get('portal_job_listing_template_groups')->row_array();
+
+            $titlesIdArray = array();
+
+            if ($GroupsData['titles'] != '') {
+                $titlesIdArray = unserialize($GroupsData['titles']);
+            }
+            if (!$titlesIdArray) {
+                return [];
+            }
+            // Get Job Titles
+            $CI->db->where('archive_status', 'active');
+            $CI->db->where_in('sid', $titlesIdArray);
+            $CI->db->order_by('sort_order', 'ASC');
+            $jobTitlesData = $CI->db->get('portal_job_title_templates')->result_array();
+
+            return $jobTitlesData;
+        }
+    }
+}
+
+
+//
+if (!function_exists('get_templet_complynettitle')) {
+    function get_templet_complynettitle($titleSid)
+    {
+        if (!empty($titleSid)) {
+            $CI = &get_instance();
+            $CI->db->select('complynet_job_title');
+            $CI->db->where('sid', $titleSid);
+            $CI->db->order_by('sort_order', 'ASC');
+            $jobComplynetData = $CI->db->get('portal_job_title_templates')->row_array();
+            return $jobComplynetData['complynet_job_title'];
+        }
+    }
+}
+
+
+
+//  Get User Complynet Job Title by Sid
+if (!function_exists('get_user_complynettitle')) {
+    function get_user_complynettitle($sid)
+    {
+        if (!empty($sid)) {
+            $CI = &get_instance();
+            $CI->db->select('complynet_job_title');
+            $CI->db->where('sid', $sid);
+            $jobComplynetData = $CI->db->get('users')->row_array();
+            return $jobComplynetData['complynet_job_title'];
+        }
+    }
+}

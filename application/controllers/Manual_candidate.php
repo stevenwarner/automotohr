@@ -78,7 +78,8 @@ class Manual_candidate extends Public_Controller
                 $formpost = $this->input->post(NULL, TRUE);
                 //
                 foreach ($formpost as $key => $value) { //Arranging company detial
-                    if ($key != 'action') { // exclude these values from array
+
+                    if ($key != 'action' && $key != 'title_option' && $key != 'template_job_title') { // exclude these values from array
                         if (is_array($value)) {
                             $value = implode(',', $value);
                         }
@@ -86,6 +87,17 @@ class Manual_candidate extends Public_Controller
                     }
                 }
                 //
+
+                if ($formpost['template_job_title'] != '0') {
+                    $templetJobTitleData = $formpost['template_job_title'];
+                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                    $user_data['desired_job_title'] = $templetJobTitleDataArray[1];
+                    $user_data['job_title_type'] = $templetJobTitleDataArray[0];
+                } else {
+                    $user_data['job_title_type'] = 0;
+                }
+
+
                 $user_data["employer_sid"] = $employer_id;
                 $job_sid = $user_data['job_sid'];
                 unset($user_data['job_sid']);
@@ -96,7 +108,7 @@ class Manual_candidate extends Public_Controller
                 $status = get_default_status_sid_and_text($company_sid);
                 //
                 if (!in_array($company_sid, array("0"))) {
-                // if (in_array($company_sid, array("7", "51", "57"))) {
+                    // if (in_array($company_sid, array("7", "51", "57"))) {
                     if ($candidate_sid == 'no_record_found') { // new manual candidate
                         $resume = upload_file_to_aws('resume', $company_sid, str_replace(' ', '_', $formpost['first_name'] . '_' . $formpost['last_name']) . '_resume_', $employer_sid);
 
@@ -127,18 +139,18 @@ class Manual_candidate extends Public_Controller
                             $insert_data['user_agent']                  = $_SERVER['HTTP_USER_AGENT'];
                             $insert_data['applicant_type']              = 'Manual Candidate';
                             $insert_data['applicant_source']            = 'career_website';
-                            if($resume != 'error'){
+                            if ($resume != 'error') {
                                 $insert_data['resume']                   = $resume;
-                            }else{
-                                $insert_data['resume'] = NULL; 
+                            } else {
+                                $insert_data['resume'] = NULL;
                             }
                             // Added on: 28-06-2019
-                            if($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
+                            if ($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
 
                             $output = $this->manual_candidate_model->add_applicant_job_details($insert_data);
                             $job_added_successfully = $output[1];
                         }
-                    } else { 
+                    } else {
 
                         $resume = upload_file_to_aws('resume', $company_sid, str_replace(' ', '_', $formpost['first_name'] . '_' . $formpost['last_name']) . '_resume_', $employer_sid);
 
@@ -157,14 +169,14 @@ class Manual_candidate extends Public_Controller
                         $insert_data['user_agent']                  = $_SERVER['HTTP_USER_AGENT'];
                         $insert_data['applicant_type']              = 'Manual Candidate';
                         $insert_data['applicant_source']            = 'career_website';
-                        if($resume != 'error'){
+                        if ($resume != 'error') {
                             $insert_data['resume']                   = $resume;
-                        }else{
-                            $insert_data['resume'] = NULL; 
+                        } else {
+                            $insert_data['resume'] = NULL;
                         }
-        
-                        if($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
-                   
+
+                        if ($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
+
                         $output = $this->manual_candidate_model->add_applicant_job_details($insert_data);
                         $job_added_successfully = $output[1];
                     }
@@ -199,13 +211,13 @@ class Manual_candidate extends Public_Controller
                             $insert_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
                             $insert_data['applicant_type'] = 'Manual Candidate';
                             $insert_data['applicant_source'] = 'career_website';
-                            
-                            if($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
+
+                            if ($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
 
                             $output = $this->manual_candidate_model->add_applicant_job_details($insert_data);
                             $job_added_successfully = $output[1];
                         }
-                    } else { 
+                    } else {
 
                         $insert_data = array();
                         $insert_data['portal_job_applications_sid'] = $candidate_sid;
@@ -218,8 +230,8 @@ class Manual_candidate extends Public_Controller
                         $insert_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
                         $insert_data['applicant_type'] = 'Manual Candidate';
                         $insert_data['applicant_source'] = 'career_website';
-                        
-                        if($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
+
+                        if ($user_data['desired_job_title'] != '') $insert_data['desired_job_title'] = $user_data['desired_job_title'];
 
                         $output = $this->manual_candidate_model->add_applicant_job_details($insert_data);
                         $job_added_successfully = $output[1];
@@ -243,14 +255,15 @@ class Manual_candidate extends Public_Controller
         }
     }
 
-    function add_to_other_job(){
+    function add_to_other_job()
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
-        $name = $data["session"]["employer_detail"]["first_name"]." ".$data["session"]["employer_detail"]["last_name"];
+        $name = $data["session"]["employer_detail"]["first_name"] . " " . $data["session"]["employer_detail"]["last_name"];
         $date_applied = date('Y-m-d H:i:s');
         $selected_candidates = $this->input->post('selected_candidates');
         $status = get_default_status_sid_and_text($company_sid);
-        foreach($selected_candidates as $candidate => $job){
+        foreach ($selected_candidates as $candidate => $job) {
             $resume = $this->manual_candidate_model->get_applicant_resume($candidate, $company_sid);
             //
             $insert_data = array();
@@ -263,7 +276,7 @@ class Manual_candidate extends Public_Controller
             $insert_data['ip_address'] = getUserIP();
             $insert_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
             $insert_data['applicant_type'] = 'Manual Candidate';
-            $insert_data['applicant_source'] = 'Manually Assigned By '.$name;
+            $insert_data['applicant_source'] = 'Manually Assigned By ' . $name;
             $insert_data['resume'] = $resume;
 
             $this->manual_candidate_model->add_applicant_job_details($insert_data);

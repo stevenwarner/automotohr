@@ -1676,3 +1676,13 @@ $route['compose_message_help'] = "Private_messages/compose_message_help";
 
 $route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
 $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';
+
+
+//Job Title Templates
+$route['manage_admin/job_title_templates'] = 'manage_admin/job_title_templates/index';
+$route['manage_admin/job_title_templates/add'] = 'manage_admin/job_title_templates/add_edit';
+$route['manage_admin/job_title_templates/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit/$1';
+
+$route['manage_admin/job_title_groups'] = 'manage_admin/job_title_templates/index';
+$route['manage_admin/job_title_groups/add'] = 'manage_admin/job_title_templates/add_edit_group';
+$route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit_group/$1';

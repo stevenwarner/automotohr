@@ -52,9 +52,21 @@
                                                     <?php echo form_error('email'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Job Title<span class="staric">*</span></label>
+                                                    <label>Job Title<span class="staric">*</span> &nbsp;&nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption" checked> Add Manual &nbsp;
+                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption">  From Drop Down 
+                                                    </label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="job_title" id="job_title" value="<?php echo set_value('job_title'); ?>">
                                                     <?php echo form_error('job_title'); ?>
+
+                                                    <?php $templateTitles = get_templet_jobtitles($company_id); ?>
+
+                                                    <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
+                                                        <option value="0">Please select job title</option>
+                                                        <?php foreach ($templateTitles as $titleRow) { ?>
+                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                        <?php } ?>
+                                                    </select>
+
                                                 </li>
                                                 <li class="form-col-100">
                                                     <label>Access Level:<span class="staric">*</span></label>
@@ -136,7 +148,7 @@
 
                                                 <li class="form-col-100 autoheight">
                                                     <label>EEOC Code</label>
-                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="eeoc_code" id="eeoc_code" >
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="eeoc_code" id="eeoc_code">
                                                 </li>
 
                                                 <li class="form-col-100 autoheight">
@@ -238,7 +250,7 @@
                                     </div> -->
                                     <div class="tick-list-box">
                                         <h2><?php echo STORE_NAME; ?> is Secure</h2>
-                                        <ul> 
+                                        <ul>
                                             <li>Transmissions encrypted by Amazon Web Services® SSL</li>
                                             <li>Information treated confidential by AutomotoHR</li>
                                             <!-- <li>Receive emails with your signed paperwork</li> -->
@@ -421,4 +433,20 @@
     }).val();
 
     $('.jsSelect2').select2();
+
+
+    $('.titleoption').click(function() {
+        var titleOption = $(this).val();
+        if (titleOption == 'dropdown') {
+            $('#template_job_title').show();
+            $('#job_title').hide();
+        } else if (titleOption == 'manual') {
+            $('#template_job_title').hide();
+            $('#template_job_title').val('0');
+            $('#job_title').show();
+        }
+
+    });
+
+
 </script>

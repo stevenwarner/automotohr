@@ -170,6 +170,20 @@
                                 <?php                   echo form_error('job_listing_template_group'); ?>
                                                     </div>
                                                 </li>
+
+
+                                                <li>
+                                                    <?php echo form_label('Job Titles Template Group', 'job_titles_template_group'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-select-dropdown">
+                                                        <?php echo form_dropdown('job_titles_template_group', $groupOptions, set_value('job_titles_template_group', $data['job_titles_template_group']), 'class="invoice-fields"'); ?>
+                                                        </div>
+                                <?php                   echo form_error('job_titles_template_group'); ?>
+                                                    </div>
+                                                </li>
+
+
+
                                                 <li>
                                                         <?php echo form_label('Website', 'WebSite'); ?>
                                                     <div class="hr-fields-wrap">
