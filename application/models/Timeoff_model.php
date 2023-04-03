@@ -2586,7 +2586,8 @@ class Timeoff_model extends CI_Model
              users.pay_plan_flag,
              users.job_title,
              timeoff_policies.title,
-             "1" as is_manual 
+             "1" as is_manual ,
+             "0" as is_allowed
          ')
             ->join('users', 'users.sid = timeoff_balances.added_by', 'inner')
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
@@ -2618,7 +2619,8 @@ class Timeoff_model extends CI_Model
             users.pay_plan_flag,
             users.job_title,
             timeoff_policies.title,
-            "0" as is_manual 
+            "0" as is_manual, 
+            "0" as is_allowed 
         ')
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
             ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
@@ -2668,7 +2670,18 @@ class Timeoff_model extends CI_Model
             }
             $b = array_merge($b, $c);
         }
-
+        //
+        $allowedBalance = $this->getEmployeeAllowedBalanceHistory($employeeId);
+        //
+        if (sizeof($allowedBalance)) {
+            $b = array_merge($b, $allowedBalance);
+            //
+            usort($b, function ($item1, $item2) {
+                $t1 = strtotime($item1['created_at']);
+                $t2 = strtotime($item2['created_at']);
+                return $t1 - $t2;
+            });
+        }
         //
         if (count($b)) {
             foreach ($b as $k => $v) {
@@ -2682,6 +2695,52 @@ class Timeoff_model extends CI_Model
         //
         return $b;
     }
+
+    /** 
+     * Get employee allowed balance history
+     * 
+     * @employee  Aleem Shaukat
+     * @date      03/04/2023
+     * 
+     * @param  Integer $companyId
+     * @param  Integer $employeeId
+     * 
+     * @return Array
+     */
+    function getEmployeeAllowedBalanceHistory($employeeId) {
+        //
+        $a = $this->db
+            ->select('
+             timeoff_allowed_balances.is_added,
+             timeoff_allowed_balances.added_time,
+             timeoff_allowed_balances.note,
+             timeoff_allowed_balances.effective_at,
+             timeoff_allowed_balances.created_at,
+             users.first_name,
+             users.last_name,
+             users.timezone,
+             users.access_level,
+             users.access_level_plus,
+             users.is_executive_admin,
+             users.pay_plan_flag,
+             users.job_title,
+             timeoff_policies.title,
+             "0" as is_manual, 
+             "1" as is_allowed 
+         ')
+            ->join('users', 'users.sid = timeoff_allowed_balances.added_by', 'inner')
+            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_allowed_balances.policy_sid', 'inner')
+            ->where('timeoff_allowed_balances.user_sid', $employeeId)
+            ->where('timeoff_policies.is_archived', 0)
+            ->order_by('timeoff_allowed_balances.sid', 'DESC')
+            ->get('timeoff_allowed_balances');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }    
+
 
     /** 
      * Add employee manaual balance
@@ -5736,5 +5795,55 @@ class Timeoff_model extends CI_Model
             ->where('sid', $policyId)
             ->get('timeoff_policies')
             ->row_array()['title'];
+    }
+
+    /**
+     * Get employee company sid
+     *
+     * @param int $employeeId
+     * @return int
+     */
+    public function getEmployeeCompanySid($employeeId)
+    {
+        return $this->db
+            ->select('parent_sid')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array()['parent_sid'];
+    }
+
+    /**
+     * Check the timeoff allowed balance of employee
+     *
+     * @param int    $employeeId
+     * @param int    $policyId
+     * @param int    $is_added
+     * @param string $effactedDate
+     * @param int $allowedTime
+     * 
+     * @return int
+     */
+    public function checkAllowedBalanceAdded(
+        $employeeId,
+        $policyId,
+        $is_added,
+        $effactedDate,
+        $allowedTime
+    ) {
+        //
+        return
+            $this->db
+            ->where('user_sid', $employeeId)
+            ->where('policy_sid', $policyId)
+            ->where('is_added', $is_added)
+            ->where('effective_at', $effactedDate)
+            ->where('added_time', $allowedTime)
+            ->count_all_results('timeoff_allowed_balances');
+    }
+
+    //
+    function addEmployeeAllowedBalance($balanceInfo)
+    {
+        $this->db->insert('timeoff_allowed_balances', $balanceInfo);
     }
 }

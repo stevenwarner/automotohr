@@ -373,7 +373,7 @@ if (!function_exists('getEmployeeAccrual')) {
         }
         // Check if time off needs to be reset
         // Check if reset date is not empty
-        if (!empty($accruals['resetDate']) && $accruals['resetDate'] != '0000-00-00') {
+        if (!empty($accruals['resetDate']) && $accruals['resetDate'] != '0000-00-00' && $accruals['resetDate'] != '0') {
             //
             $effactedDate = getFormatedDate(trim($accruals['resetDate']), 'd-m-Y');
             // //
@@ -393,12 +393,39 @@ if (!function_exists('getEmployeeAccrual')) {
         //
         $currentDate = getFormatedDate($todayDate, 'd-m-Y');
         // 
-        if ($currentDate >= $effactedDate) {
-            $effactedDate = preg_replace('/[0-9]{4}/', date('Y', strtotime($todayDate)), $effactedDate);
-            echo "This year effactedDate date = ". $effactedDate;
+        if (strtotime($currentDate) >= strtotime($effactedDate)) {
+            //
+            // This section add allowed balance of current year
+            $company_sid = $_this->timeoff_model->getEmployeeCompanySid($employeeId);
+            $policyName = $_this->timeoff_model->getPolicyNameById($policyId);
+            //
+            $added_by = getCompanyAdminSid($company_sid);
+            $effactedDate = preg_replace('/[0-9]{4}/', date('Y', strtotime('now')), $effactedDate);
+            $effactedDate = getFormatedDate($effactedDate, 'Y-m-d');
+            $allowedTime = $accruals['applicableTime'] * 60;
+            //
+            $is_added = $_this->timeoff_model->checkAllowedBalanceAdded(
+                $employeeId,
+                $policyId,
+                1,
+                $effactedDate,
+                $allowedTime
+            );
+            //
+            if ($is_added == 0) {
+                $balanceToAdd = array();
+                $balanceToAdd['user_sid'] = $employeeId;
+                $balanceToAdd['policy_sid'] = $policyId;
+                $balanceToAdd['added_by'] = $added_by;
+                $balanceToAdd['is_added'] = 1;
+                $balanceToAdd['added_time'] = $allowedTime;
+                $balanceToAdd['note'] = 'On <b>'.date('M d, Y,', strtotime('now')).' at '.date('g:i A,', strtotime('now')).'</b> a balance of '.$accruals['applicableTime'].' hours was added in accordance with the <b>"'.$policyName.'"</b> policy.';
+                $balanceToAdd['effective_at'] = getFormatedDate($effactedDate, 'Y-m-d');
+                //
+                $_this->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
+            }
+            
         }
-        _e($currentDate, true);
-        _e($effactedDate, true, true);
         //
         // Convert rate into minutes
         // For days
