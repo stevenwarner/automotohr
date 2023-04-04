@@ -4,11 +4,11 @@
     
 ?>
 <div class="main csPageWrap">
-    <div class="container">
+    <div class="container-fluid">
         <!-- row -->
         <div class="row">
             <div class="col-sm-12">
-                <a href="<?=base_url('dashboard');?>" class="btn btn-info csRadius5">
+                <a href="<?=base_url('employee_management_system');?>" class="btn btn-info csRadius5">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
                 </a>
             </div>

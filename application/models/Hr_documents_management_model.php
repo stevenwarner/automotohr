@@ -1672,28 +1672,51 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('application_sid', $user_sid);
         //
         $this->db->update('portal_eeo_form', $updateArray);
+
+        //
+        $this->CheckAndMoveToHistory($user_type, $user_sid);
     }
 
     //
     function CheckAndMoveToHistory($user_type, $user_sid)
     {
         //
-        $form = $this->db
+        $forms = $this->db
             ->where('users_type', $user_type)
             ->where('application_sid', $user_sid)
-            ->where('is_expired', 1)
+            ->order_by('sid', 'desc')
             ->get('portal_eeo_form')
-            ->row_array();
+            ->result_array();
         //
-        if (!count($form) || empty($form['us_citizen'])) {
+        if (empty($forms)) {
             return false;
         }
         //
-        $form['eeo_form_sid'] = $form['sid'];
+        $sid = 0;
         //
-        unset($form['sid']);
-        //
-        $this->db->insert('portal_eeo_form_history', $form);
+        foreach ($forms as $form) {
+            //
+            if ($sid == 0) {
+                $sid = $form['sid'];
+                //
+                $form['eeo_form_sid'] = $form['sid'];
+                //
+                unset($form['sid']);
+                //
+                $this->db->insert('portal_eeo_form_history', $form);
+                continue;
+            }
+            //
+            if (empty($form['us_citizen'])) {
+                $this->db->delete('portal_eeo_form', ['sid' => $form['sid']]);
+            }
+            //
+            $form['eeo_form_sid'] = $form['sid'];
+            //
+            unset($form['sid']);
+            //
+            $this->db->insert('portal_eeo_form_history', $form);
+        }
     }
 
     function activate_i9_forms($user_type, $user_sid)
@@ -1948,7 +1971,11 @@ class Hr_documents_management_model extends CI_Model
             $pending_w4         = $this->is_employee_w4_document_pending('employee', $employee_sid);
             $pending_w9         = $this->is_employee_w9_document_pending('employee', $employee_sid);
             $pending_i9         = $this->is_employee_i9_document_pending('employee', $employee_sid);
-            $pending_eeoc       = $this->is_eeoc_form_assign('employee', $employee_sid);
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
+                $pending_eeoc       = $this->is_eeoc_form_assign('employee', $employee_sid);
+            } else {
+                $pending_eeoc       = 0;
+            }
 
             // Get General Documents
             $this->addGeneralDocuments(
@@ -2024,12 +2051,12 @@ class Hr_documents_management_model extends CI_Model
 
             $record_obj = $this->db->get('users');
             $other_employees = [];
-            
-            if($record_obj !== FALSE && $record_obj->num_rows() > 0){
+
+            if ($record_obj !== FALSE && $record_obj->num_rows() > 0) {
                 $other_employees = $record_obj->result_array();
                 $record_obj->free_result();
             }
-            
+
 
             if (!empty($other_employees)) {
                 foreach ($other_employees as $other_key => $other_employee) {
@@ -7340,8 +7367,6 @@ class Hr_documents_management_model extends CI_Model
         //
         $b = $a->row_array();
         //
-        unset($a);
-        //
         if (empty($b)) {
             $this->db
                 ->insert("portal_eeo_form", [
@@ -7357,16 +7382,59 @@ class Hr_documents_management_model extends CI_Model
             //
             $sid = $this->db->insert_id();
             //
-            keepTrackVerificationDocument($assign_by_sid, "employee", 'assign', $sid, 'eeoc', $location);
-            //
         } else {
-            $sid = $b['sid'];
             //
             $data_to_update = array();
+            $data_to_update['status'] = 1;
+            $data_to_update['is_latest'] = 1;
+            $data_to_update['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
             $data_to_update['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-            $this->db->where('sid', $sid);
+            $this->db->where('application_sid', $id);
+            $this->db->where('users_type', $type);
             $this->db->update('portal_eeo_form', $data_to_update);
+            //
+            if ($a->num_rows > 1) {
+                $records =
+                    $this->db
+                    ->where('application_sid', $id)
+                    ->where('users_type', $type)
+                    ->order_by('sid', 'desc')
+                    ->get('portal_eeo_form')
+                    ->result_array();
+                //
+                $sid = 0;
+                //
+                foreach ($records as $record) {
+                    //
+                    if ($sid == 0) {
+                        $sid = $record['sid'];
+                        continue;
+                    }
+                    if (empty($record['us_citizen'])) {
+                        $this->db->delete('portal_eeo_form', ['sid' => $record['sid']]);
+                    }
+                    //
+                    $id = $record['sid'];
+                    //
+                    unset($record['sid']);
+                    //
+                    $record['eeo_form_sid'] = $id;
+                    //
+                    $this->db->insert('portal_eeo_form_history', $record);
+                }
+            } else {
+                //
+                $sid =
+                    $this->db
+                        ->select('sid')
+                        ->where('application_sid', $id)
+                        ->where('users_type', $type)
+                        ->get('portal_eeo_form')
+                        ->row_array()['sid'];
+            }
         }
+        //
+        keepTrackVerificationDocument($assign_by_sid, $type, 'assign', $sid, 'eeoc', $location);
         return $sid;
     }
 
@@ -7627,6 +7695,22 @@ class Hr_documents_management_model extends CI_Model
         } else {
             return 0;
         }
+    }
+
+    public function hasEEOCPermission($company_id, $column)
+    {
+        //
+        $record =
+            $this->db->select($column)
+            ->where('user_sid', $company_id)
+            ->get('portal_employer')
+            ->row_array();
+        //
+        if (empty($record)) {
+            return 0;
+        }
+        //
+        return $record[$column];
     }
 
     function get_user_eeo_form_info($sid, $type, $checkExpired = true)

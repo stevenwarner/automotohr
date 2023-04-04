@@ -32,7 +32,7 @@
         <!-- Filter -->
         <div class="csBalanceBox csShadow csRadius5 jsFilterBoxHolidays dn">
             <div class="col-sm-3">
-                <label>Types</label>
+                <label>Title</label>
                 <select class="invoice-fields" name="template" id="js-filter-types"></select>
             </div>
             <div class="col-sm-3">

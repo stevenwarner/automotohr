@@ -1,11 +1,18 @@
 <?php $company_name = ucwords($session['company_detail']['CompanyName']); ?>
 <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
 
-<div class="main" style="background: #fff;">
+<div class="main jsmaincontent" style="background: #fff;">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+
+                <div class="form-group col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                    <a href="<?= base_url('employee_management_system'); ?>" class="btn btn-info csRadius5">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                    </a>
+                </div>
+
                 <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
                     <a href="<?php echo $back_url; ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i> Documents</a>
                 </div>
@@ -832,25 +839,25 @@
                     'Are you Sure?',
                     'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
                     function() {
-                        $('.js-hybrid-iframe').remove();
-                        var draw = kendo.drawing;
-                        $('br').replaceWith('<div></div>');
-
-                        draw.drawDOM($("#jstopdf"), {
-                                avoidLinks: false,
-                                paperSize: "A4",
-                                multiPage: true,
-                                margin: { bottom: "2cm" },
-                                scale: 0.8
-                            })
-                            .then(function(root) {
-                                return draw.exportPDF(root);
-                            })
-                            .done(function(pdfdata) {
-                                $('.disabled_consent_btn').prop('disabled', true);
-                                $('#save_PDF').val(pdfdata);
-                                $('#user_consent_form').submit();
-                            });
+                        //      $('.js-hybrid-iframe').remove();
+                        //        var draw = kendo.drawing;
+                        //         $('br').replaceWith('<div></div>');
+                        $('#user_consent_form').submit();
+                        /* draw.drawDOM($("#jstopdf"), {
+                                 avoidLinks: false,
+                                 paperSize: "A4",
+                                 multiPage: true,
+                                 margin: { bottom: "2cm" },
+                                 scale: 0.8
+                             })
+                             .then(function(root) {
+                                 return draw.exportPDF(root);
+                             })
+                             .done(function(pdfdata) {
+                                 $('.disabled_consent_btn').prop('disabled', true);
+                                 $('#save_PDF').val(pdfdata);
+                                 $('#user_consent_form').submit();
+                             }); */
                     },
                     function() {
                         alertify.error('Cancelled!');

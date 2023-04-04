@@ -1,11 +1,11 @@
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
         <div class="row">
             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
             <div class="col-lg-12">
                 <div class="row">
-                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-arrow-left"> </i> Dashboard</a>
+                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                        <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"> </i> Dashboard</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                         <a href="<?php echo base_url('incident_reporting_system/list_incidents')?>" class="btn btn-info btn-block mb-2"><i class="fa fa-heartbeat"></i> Reported Incidents</a>

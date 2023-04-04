@@ -217,6 +217,10 @@
                                                                             <?php } ?>
                                                                         <?php } ?>
 
+                                                                        <?php if ($invoice['payment_status'] == 'unpaid') { ?>
+                                                                                <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" data-companysid="<?= $invoice['company_sid']; ?>" href="javascript:void(0);">Send Invoice</a>
+                                                                        <?php } ?>
+
                                                                         <?php if(check_access_permissions_for_view($security_details, 'process_payment_admin_invoice')) { ?>
                                                                             <?php if($invoice['payment_status'] == 'unpaid' && $invoice['discount_amount'] < $invoice['value']) { ?>
                                                                                 <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/misc/process_payment_admin_invoice') . '/' . $invoice['sid']; ?>">Process Payment</a>
@@ -226,6 +230,7 @@
                                                                                 <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Process Payment</a>
                                                                             <?php } ?>
                                                                         <?php } ?>
+                                                                      
 
                                                                         <?php if(check_access_permissions_for_view($security_details, 'delete_admin_invoice')) { ?>
                                                                             <?php if($invoice['payment_status'] == 'unpaid') { ?>
@@ -324,4 +329,54 @@
                //Cancel
             });
     }
+</script>
+
+
+<script>
+    $(function invoiceEmail() {
+        //
+        let invoiceIds = [];
+        //
+        $('.jsSendInvoice').click(function(event) { 
+            //
+            event.preventDefault();
+            //
+            let invoiceId = $(this).data('invoice');
+            let companyId = $(this).data('companysid');
+            //
+            if ($.inArray(invoiceId, invoiceIds) !== -1) {
+                return;
+            }
+            //
+            invoiceIds.push(invoiceId);
+            //
+            return alertify.confirm(
+                'Invoice will be sent through email to the people listed in "Billing And Invoice Notifications".<br /><br />Are you sure you want to do it?',
+                function() {
+                    startProcess(invoiceId,companyId);
+                }
+            );
+        });
+
+        //
+        function startProcess(invoiceId,companyId) {
+            //
+            $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Sending...');
+            //
+            $.post(
+                "<?= base_url('send_invoice_by_email'); ?>", {
+                    invoiceId: invoiceId,
+                    companyId: companyId
+                }
+            ).done(function(resp) {
+                $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Send Invoice');
+                invoiceIds.splice(invoiceIds.indexOf(invoiceId, 1));
+                //
+                if (resp.error) {
+                    return alertify.alert('Error!', resp.error, function(){});
+                }
+                return alertify.alert('Success!', resp.success, function(){});
+            });
+        }
+    });
 </script>

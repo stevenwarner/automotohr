@@ -63,6 +63,7 @@ $route['job_details/(:any)'] = 'home/job_details/$1';
 $route['preview_job/(:any)'] = 'home/preview_job/$1';
 //route for search
 //$route['jobs/([^/]*)/([^/]*)/(.*)'] = 'home/index/';
+$route['join our team/(.*)'] = 'home/index/';
 $route['jobs/(.*)'] = 'home/index/';
 $route['recommend_job/(:any)'] = 'home/recommend_job/$1';
 //route for pages

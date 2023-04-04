@@ -16,7 +16,7 @@ class employers extends Admin_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index($keyword = null, $status = 2, $company = null, $contact_name = null, $page_number = 1)
+    public function index($keyword = null, $status = 'all', $company = null, $contact_name = null, $page_number = 1)
     {
         $redirect_url = 'manage_admin';
         $function_name = 'list_employers';
@@ -35,7 +35,7 @@ class employers extends Admin_Controller
         $keyword = $keyword == null ? 'all' : trim(urldecode($keyword));
         $company = $company == null ? 'all' : trim(urldecode($company));
         $contact_name = $contact_name == null ? 'all' : trim(urldecode($contact_name));
-        $status = $status == null ? 2 : $status;
+        $status = $status == null ? 'all' : $status;
         $employers_count = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, true, $company, $contact_name);
         $employers = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, false, $company, $contact_name);
         // echo "<pre>"; print_r($employers); die();
@@ -69,8 +69,8 @@ class employers extends Admin_Controller
         $this->data['links'] = $this->pagination->create_links();
         //        $total_employers = $this->company_model->count_all_employers();
 
-       // print_r($employers);
-       // die();
+        // print_r($employers);
+        // die();
         $this->data['employers'] = $employers;
         $this->data['total_employers'] = $employers_count;
         $this->data['total_rows'] = $employers_count;
@@ -354,6 +354,40 @@ class employers extends Admin_Controller
             $data['complynet_status'] = $this->input->post('complynet_status');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
+
+            $data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
+            $data['eeoc_code'] = $this->input->post('eeoc_code');
+            $data['salary_benefits'] = $this->input->post('salary_benefits');
+            //
+            $data['languages_speak'] = null;
+            //
+            $languages_speak = $this->input->post('secondaryLanguages');
+            //
+            if ($languages_speak) {
+                $data['languages_speak'] = implode(',', $languages_speak);
+            }
+
+
+            if ($this->input->post('temppate_job_title') != '0') {
+                $templetJobTitleData = $this->input->post('temppate_job_title');
+                $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                $data['job_title'] = $templetJobTitleDataArray[1];
+                $data['job_title_type'] = $templetJobTitleDataArray[0];
+
+                if ($this->input->post('complynet_job_title') == 'null' && $this->input->post('complynet_job_title', true)) {
+                    $templetComplynetjobtitle = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                    $data['complynet_job_title'] = $templetComplynetjobtitle;
+                }
+            } else {
+                $data['job_title_type'] = 0;
+            }
+
+
+            //
+            if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
+                $data['complynet_job_title'] = $this->input->post('complynet_job_title');
+            }
+
             //
             if ($data['gender'] != "other") {
                 $updateGender = array();
@@ -420,7 +454,7 @@ class employers extends Admin_Controller
                 //
                 $data['rehire_date'] = $rehireDate;
                 $data['general_status'] = 'rehired';
-                $data['active'] = 0;
+                $data['active'] = 1;
             }
             //
             $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture'); // Picture Upload and Update
@@ -436,6 +470,7 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone', true);
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
+
 
             $this->company_model->update_user($sid, $data, 'Employer');
 
@@ -500,7 +535,6 @@ class employers extends Admin_Controller
 
 
 
-
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
                     $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -528,6 +562,16 @@ class employers extends Admin_Controller
                 $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+
+                $insert_data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
+                $insert_data['eeoc_code'] = $this->input->post('eeoc_code');
+                $insert_data['salary_benefits'] = $this->input->post('salary_benefits');
+
+                //
+                if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
+                    $insert_data['complynet_job_title'] = $this->input->post('complynet_job_title');
+                }
+
 
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
@@ -1100,7 +1144,16 @@ class employers extends Admin_Controller
             }
 
             $this->company_model->terminate_user($sid, $data_to_insert);
-            $this->company_model->change_terminate_user_status($sid, $data_to_update);
+
+            if ($status == 9) {
+                $data_transfer_log_update['to_company_sid'] = $company_detail[0]['sid'];;
+                $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
+                $this->company_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+            }
+            if ($status != 9) {
+                $this->company_model->change_terminate_user_status($sid, $data_to_update);
+            }
+
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }
@@ -1213,9 +1266,24 @@ class employers extends Admin_Controller
             //
             $this->company_model->update_terminate_user($status_id, $data_to_insert);
             //
+
+            if ($status == 9) {
+
+                $data_transfer_log_update['to_company_sid'] = $company_detail[0]['sid'];;
+                $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
+
+                $this->company_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+
+                //
+                $this->db->where('sid', $sid)->update('users', ['transfer_date' => $data_transfer_log_update['employee_copy_date']]);
+            }
+
+
             // Check its current status then update in user primary data
             if ($this->company_model->check_for_main_status_update($sid, $status_id)) {
-                $this->company_model->change_terminate_user_status($sid, $data_to_update);
+                if ($status != 9) {
+                    $this->company_model->change_terminate_user_status($sid, $data_to_update);
+                }
             }
             //
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');

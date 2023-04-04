@@ -36,6 +36,8 @@
                                                     <option value="3" <?= $status_data['employee_status'] == 3 ? 'selected="selected"': '';?>>Deceased</option>
                                                     <option value="1" <?= $status_data['employee_status'] == 1 ? 'selected="selected"': '';?>>Terminated</option>
                                                     <option value="6" <?= $status_data['employee_status'] == 6 ? 'selected="selected"': '';?>>Inactive</option>
+                                                    <option value="9" <?= $status_data['employee_status'] == 9 ? 'selected="selected"': '';?>>Transferred</option>
+
                                                 </select>
                                                 <?php echo form_error('status'); ?>
                                             </li>
@@ -48,6 +50,9 @@
                                                         <option value="1" <?= $status_data['termination_reason'] == 1 ? 'selected="selected"': '';?>>Resignation</option>
                                                         <option value="2" <?= $status_data['termination_reason'] == 2 ? 'selected="selected"': '';?>>Fired</option>
                                                         <option value="3" <?= $status_data['termination_reason'] == 3 ? 'selected="selected"': '';?>>Tenure Completed</option>
+                                                        <option value="18" <?= $status_data['termination_reason'] == 18 ? 'selected="selected"': '';?>>Store Closure</option>
+                                                        <option value="19" <?= $status_data['termination_reason'] == 19 ? 'selected="selected"': '';?>>Did Not Hire</option>
+                                                        <option value="20" <?= $status_data['termination_reason'] == 20 ? 'selected="selected"': '';?>>Separation</option>
                                                     </optgroup>
                                                     
                                                     <optgroup label="Voluntary">

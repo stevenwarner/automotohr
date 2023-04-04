@@ -14,11 +14,11 @@ class Payroll_ajax extends CI_Controller
     {
         parent::__construct();
         //
-        if(!$this->input->is_ajax_request()){
+        if (!$this->input->is_ajax_request()) {
             return SendResponse(401);
         }
         //
-        if($this->input->method(false) === 'post' && empty($this->input->post())){
+        if ($this->input->method(false) === 'post' && empty($this->input->post())) {
             return SendResponse(400);
         }
         // Call the model
@@ -35,19 +35,20 @@ class Payroll_ajax extends CI_Controller
     /**
      * Get the page html
      */
-    function GetPage($page, $companyId = 0){
+    function GetPage($page, $companyId = 0)
+    {
         //
         $data = [];
         //
         $page = stringToSlug(strtolower($page));
         //
-        if($page === 'status'){
+        if ($page === 'status') {
             //
             LoadModel('scm', $this);
             // Get company details
             $companyDetails = $this->scm->GetCompanyDetails($companyId, 'on_payroll, CompanyName');
             //
-           // Get company details
+            // Get company details
             $details = $this->pm->GetPayrollCompany($companyId);
             //
             $status = $details['onboarding_status'] == 0 ? "incomplete" : "complete";
@@ -65,34 +66,34 @@ class Payroll_ajax extends CI_Controller
                     $level = "federal_tax";
                     $level_id = 1;
                     break;
-                    
+
                 case 2:
                     $level = "bank_info";
                     $level_id = 2;
-                    break;  
-                    
+                    break;
+
                 case 3:
                     $level = "employee";
                     $level_id = 3;
-                    break;    
-                
+                    break;
+
                 case 4:
                     $level = "payroll";
                     $level_id = 4;
-                    break; 
-                    
+                    break;
+
                 case 5:
                     $level = "tax_details";
                     $level_id = 5;
                     break;
-                    
+
                 case 6:
                     $level = "bank_verification";
                     $level_id = 6;
-                    break;        
+                    break;
             }
             //
-            if(!isset($_SESSION['GUSTO_COMPANY'])){
+            if (!isset($_SESSION['GUSTO_COMPANY'])) {
                 // Get company details
                 $details = $this->pm->GetPayrollCompany($companyId);
                 //
@@ -116,7 +117,7 @@ class Payroll_ajax extends CI_Controller
             return SendResponse(200, true);
         }
         //
-        if($page === 'employees'){
+        if ($page === 'employees') {
             // Fetch employees
             $data['employees'] = $this->sem->GetCompanyEmployees($companyId, [
                 "users.sid",
@@ -126,22 +127,29 @@ class Payroll_ajax extends CI_Controller
                 "users.access_level_plus",
                 "users.is_executive_admin",
                 "users.job_title",
+                "users.ssn",
+                "users.dob",
+                "users.middle_name",
                 "users.pay_plan_flag",
                 "users.on_payroll"
+            ], [
+                'users.active' => 1,
+                'users.is_executive_admin' => 0,
+                'users.terminated_status' => 0
             ]);
         }
         //
-        if($page === 'onboard'){
+        if ($page === 'onboard') {
             //
             $data['hasPrimaryAdmin'] = $this->pm->HasPrimaryAdmin($companyId);
         }
         //
-        if($page === 'admin-view'){
+        if ($page === 'admin-view') {
             //
             $data['primaryAdmin'] = $this->pm->GetPrimaryAdmin($companyId);
         }
         // ADD Compamy to Gusto Platform
-        if($page === 'company-address'){
+        if ($page === 'company-address') {
             //
             LoadModel('scm', $this);
             // Get primary admin
@@ -149,8 +157,8 @@ class Payroll_ajax extends CI_Controller
             // Get company details
             $companyDetails = $this->scm->GetCompanyDetails($companyId, 'CompanyName, ssn as ein, on_payroll');
             //
-            if($companyDetails['on_payroll'] == '1'){
-                return SendResponse(200, ['errors'=> ['Company already in use for payroll']]);
+            if ($companyDetails['on_payroll'] == '1') {
+                return SendResponse(200, ['errors' => ['Company already in use for payroll']]);
             }
             // Let's onboard the company
             // Make request array
@@ -166,7 +174,7 @@ class Payroll_ajax extends CI_Controller
             $request['company']['name'] = $companyDetails['CompanyName'];
             $request['company']['ein'] = $companyDetails['ein'];
             //
-            $response = CreatePartnerCompany($request); 
+            $response = CreatePartnerCompany($request);
             //
             $employees_list = array();
             //
@@ -176,11 +184,11 @@ class Payroll_ajax extends CI_Controller
                 }
             }
             //
-            if(isset($response['errors'])){
+            if (isset($response['errors'])) {
                 //
                 $errors = [];
                 //
-                foreach($response['errors'] as $error){
+                foreach ($response['errors'] as $error) {
                     $errors[] = $error[0];
                 }
                 //
@@ -209,35 +217,35 @@ class Payroll_ajax extends CI_Controller
                 //
                 return SendResponse(200, [
                     'status' => true,
-                    'address_info' => $addressInfo, 
+                    'address_info' => $addressInfo,
                     'employees_list' => $employees_list,
-                    'Location_URL' => base_url("get_payroll_page/set_company_location")."/".$companyId
+                    'Location_URL' => base_url("get_payroll_page/set_company_location") . "/" . $companyId
                     // 'Location_URL' => getAPIUrl("locations")
                 ]);
             }
         }
         //
-        if($page === 'add-company-location'){
+        if ($page === 'add-company-location') {
             $data['location'] = array();
             $page = "company-details";
             $data['states'] = $this->pm->GetStates();
-            
+
             //
-            if($_GET["location_id"] > 0){
+            if ($_GET["location_id"] > 0) {
                 $data['location'] = $this->pm->GetCompanyLocationById($companyId, $_GET["location_id"]);
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'location_url' => getAPIUrl("locations"),
                 'location_id' => $_GET["location_id"],
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
 
         // After payroll enabled pages
         //
-        if($page === 'company-details'){
+        if ($page === 'company-details') {
             //
             $data['states'] = $this->pm->GetStates();
             $locations = $this->pm->GetCompanyLocations($companyId);
@@ -249,15 +257,15 @@ class Payroll_ajax extends CI_Controller
                 $location_type = 'listing';
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'location_type' => $location_type,
                 'location_url' => getAPIUrl("locations"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'set-company-location'){
+        if ($page === 'set-company-location') {
             //
             $post = $this->input->post(NULL, TRUE);
             // Get company details
@@ -273,8 +281,8 @@ class Payroll_ajax extends CI_Controller
             $request['zip'] = $post['Zipcode'];
             $request['state'] = db_get_state_code_only($post['State']);
             $request['phone_number'] = $post['PhoneNumber'];
-            $request['mailing_address'] = $post['MailingAddress'] ? true: false;
-            $request['filing_address'] = $post['FillingAddress'] ? true: false;
+            $request['mailing_address'] = $post['MailingAddress'] ? true : false;
+            $request['filing_address'] = $post['FillingAddress'] ? true : false;
             //
             $response = AddCompanyLocation($request, $details);
             // $response = [
@@ -293,12 +301,12 @@ class Payroll_ajax extends CI_Controller
             //     'mailing_address' => true
             // ];
             //
-            if(isset($response['errors'])){
+            if (isset($response['errors'])) {
                 //
                 $errors = ['errors' => MakeErrorArray($response['errors'])];
                 // Error took place
                 return SendResponse(200, $errors);
-            } else{
+            } else {
                 // All okay to go
                 $date = date('Y-m-d H:i:s', strtotime('now'));
                 //
@@ -328,21 +336,21 @@ class Payroll_ajax extends CI_Controller
             }
         }
         //
-        if($page === 'gusto-company-location-id'){
+        if ($page === 'gusto-company-location-id') {
             //
             $locationID = $this->pm->GetCompanyGustoLocationID($companyId);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'status' => true,
                 'locationID' => $locationID["gusto_location_id"]
             ]);
         }
         //
-        if($page === 'company-fedral-tax-info'){
+        if ($page === 'company-fedral-tax-info') {
             //
             $taxInfo = $this->pm->GetCompanyFedralTaxInfo($companyId);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'status' => true,
                 'API_KEY' => getAPIKey(),
                 'TAX_URL' => getAPIUrl("tax"),
@@ -350,11 +358,11 @@ class Payroll_ajax extends CI_Controller
             ]);
         }
         //
-        if($page === 'get-company-bank-info'){
+        if ($page === 'get-company-bank-info') {
             //
             $bankInfo = $this->pm->GetCompanyBankAccountDetail($companyId);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'BANK_URL' => getAPIUrl("bank_account"),
                 'status' => true,
@@ -362,7 +370,7 @@ class Payroll_ajax extends CI_Controller
             ]);
         }
         //
-        if($page === 'set-company-employee'){
+        if ($page === 'set-company-employee') {
             //
             $data['employee_sid'] = $_POST["employee_id"];
             //
@@ -399,26 +407,26 @@ class Payroll_ajax extends CI_Controller
             $missing_info = [];
             //
             // Validation
-            if (empty($request['first_name'])) { 
+            if (empty($request['first_name'])) {
                 $error_flag = 1;
                 array_push($missing_info, "First name is missing");
             }
-            if (empty($request['last_name'])) { 
+            if (empty($request['last_name'])) {
                 $error_flag = 1;
                 array_push($missing_info, "Last name is missing");
             }
-            if (empty($request['email'])) { 
+            if (empty($request['email'])) {
                 $error_flag = 1;
                 array_push($missing_info, "Email is missing");
             }
-            if (empty($request['date_of_birth'])) { 
+            if (empty($request['date_of_birth'])) {
                 $error_flag = 1;
                 array_push($missing_info, "Date of birth is missing");
             }
             //
             if ($error_flag == 1) {
                 //
-                return SendResponse(200,[
+                return SendResponse(200, [
                     'status' => false,
                     'errors' => $missing_info
                 ]);
@@ -429,11 +437,11 @@ class Payroll_ajax extends CI_Controller
                 //
                 $response = AddEmployeeToCompany($request, $company_details);
                 //
-                if(isset($response['errors'])){
+                if (isset($response['errors'])) {
                     //
                     $errors = [];
                     //
-                    foreach($response['errors'] as $error){
+                    foreach ($response['errors'] as $error) {
                         $errors[] = $error[0]['message'];
                     }
                     // Error took place
@@ -444,16 +452,15 @@ class Payroll_ajax extends CI_Controller
                 } else {
                     $this->pm->UpdateEmployee($_POST["employee_id"], ['on_payroll' => 1]);
                     //
-                    return SendResponse(200,[
+                    return SendResponse(200, [
                         'status' => true,
                         'employee_info' => $response
                     ]);
-                }    
+                }
             }
-            
         }
         //
-        if($page === 'delete-employee-from-gusto'){
+        if ($page === 'delete-employee-from-gusto') {
             //
             echo $_POST["employee_id"];
             // Get company details
@@ -461,13 +468,13 @@ class Payroll_ajax extends CI_Controller
             //
             $response = DeleteCompanyEmployee($_POST["employee_id"], $company_details);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'status' => true,
                 'employee_info' => $response
             ]);
         }
         //
-        if($page === 'get-company-all-employees'){
+        if ($page === 'get-company-all-employees') {
             $companyEmployees = $this->sem->GetCompanyEmployees($companyId, [
                 "users.sid",
                 "users.first_name",
@@ -487,7 +494,7 @@ class Payroll_ajax extends CI_Controller
             $employees_onboard = array();
             $payrollEmployeesList = array();
             //
-            foreach ($payrollEmployees as $pekey =>$pe) {
+            foreach ($payrollEmployees as $pekey => $pe) {
                 $employees_onboard[$pe['email']] = $pe['id'];
                 $payrollEmployeesList[$pekey] = $pe['email'];
             }
@@ -506,25 +513,25 @@ class Payroll_ajax extends CI_Controller
             //
             $company_name = getCompanyNameBySid($companyId);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 "company_name" => $company_name,
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
             //
         }
         //
-        if($page === 'get-company-bonboarding-status'){
+        if ($page === 'get-company-bonboarding-status') {
             $details = $this->pm->GetPayrollCompany($companyId);
             //
             $company_status = GetCompanyStatus($details);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'status' => true,
                 'company_status' => $company_status
             ]);
         }
         //
-        if($page === 'fedral-tax-detail'){
+        if ($page === 'fedral-tax-detail') {
             //
             $taxInfo = $this->pm->GetCompanyFedralTaxInfo($companyId);
             //
@@ -540,40 +547,40 @@ class Payroll_ajax extends CI_Controller
                 $page_type = "tax_form";
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'TAX_URL' => getAPIUrl("tax"),
                 'page_type' => $page_type,
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'edit-fedral-tax'){
+        if ($page === 'edit-fedral-tax') {
             //
             $taxInfo = $this->pm->GetCompanyFedralTaxInfo($companyId);
             //
             $page = "federal-tax-info";
             $data['taxInfo'] = $taxInfo;
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'TAX_URL' => getAPIUrl("tax"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'company-industry'){
+        if ($page === 'company-industry') {
             //
             $industries = $this->pm->GetJobIndustries($companyId);
             //
             $data['industries'] = $industries;
             //
-            return SendResponse(200,[
-                'html' => $this->load->view($this->path.$page, $data, true)
+            return SendResponse(200, [
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'company-bank-info'){
+        if ($page === 'company-bank-info') {
             //
             $bankInfo = $this->pm->GetCompanyBankAccount($companyId);
             //
@@ -585,31 +592,31 @@ class Payroll_ajax extends CI_Controller
                 $page_type = "detail";
             }
             //
-            
+
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'BANK_URL' => getAPIUrl("bank_account"),
                 'page_type' => $page_type,
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'edit-bank-info'){
+        if ($page === 'edit-bank-info') {
             //
             $bankInfo = $this->pm->GetCompanyBankAccount($companyId);
             //
             $data['bankInfo'] = $bankInfo;
-            $page = "company-bank-info";   
+            $page = "company-bank-info";
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'BANK_URL' => getAPIUrl("bank_account"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'start-employee-onboarding'){  
+        if ($page === 'start-employee-onboarding') {
             //
             $payrollEmployees = $this->pm->GetCompanyPayrollEmployees($companyId);
             //
@@ -644,13 +651,12 @@ class Payroll_ajax extends CI_Controller
                 if ($employee_level < 6) {
                     unset($companyEmployees[$key]);
                 }
-                
             }
             //
             $data['companyEmployees'] = $companyEmployees;
             //
-            return SendResponse(200,[
-                'html' => $this->load->view($this->path.$page, $data, true)
+            return SendResponse(200, [
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
             //
         }
@@ -689,12 +695,12 @@ class Payroll_ajax extends CI_Controller
             //
             $data['companyEmployees'] = $companyEmployees;
             //
-            return SendResponse(200,[
-                'html' => $this->load->view($this->path.$page, $data, true)
+            return SendResponse(200, [
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'get-company-employee-profile'){
+        if ($page === 'get-company-employee-profile') {
             //
             $data['locations'] = $this->pm->GetCompanyLocations($companyId);
             //
@@ -713,12 +719,12 @@ class Payroll_ajax extends CI_Controller
                 "users.rehire_date",
             ]);
             //
-            return SendResponse(200,[
-                'html' => $this->load->view($this->path.$page, $data, true)
+            return SendResponse(200, [
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'get-company-employee-address'){
+        if ($page === 'get-company-employee-address') {
             //
             $data['employee_sid'] = $_GET["employee_id"];
             //
@@ -735,10 +741,10 @@ class Payroll_ajax extends CI_Controller
                 "users.Location_Address_2"
             ]);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'EMPLOYEE_URL' => getAPIUrl("employees"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
@@ -748,10 +754,10 @@ class Payroll_ajax extends CI_Controller
             //
             $data['employee_job_info'] = $this->pm->GetEmployeeJobDetails($_GET["employee_id"]);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'JOB_ID' => $data['employee_job_info']['sid'],
                 'JOB_HIRE_DATE' => $data['employee_job_info']['hire_date'],
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
@@ -761,10 +767,10 @@ class Payroll_ajax extends CI_Controller
             //
             $data['federal_tax_info'] = $this->pm->GetEmployeeFederalTaxDetails($_GET["employee_id"]);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'EMPLOYEE_URL' => getAPIUrl("employees"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
@@ -774,10 +780,10 @@ class Payroll_ajax extends CI_Controller
             //
             $data['state_tax_info'] = $this->pm->GetEmployeeStateTaxDetails($_GET["employee_id"]);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'EMPLOYEE_URL' => getAPIUrl("employees"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
@@ -787,7 +793,7 @@ class Payroll_ajax extends CI_Controller
             //
             $data['payment_method'] = $this->pm->GetEmployeePaymentMethod($_GET["employee_id"]);
             //
-            if(empty($data['payment_method'])){
+            if (empty($data['payment_method'])) {
                 //
                 $data['payment_method'] = $this->GetEmployeePaymentMethod(
                     $companyId,
@@ -797,20 +803,20 @@ class Payroll_ajax extends CI_Controller
             //
             $splits = json_decode($data['payment_method']['splits'], true);
             //
-            if($splits){
-                foreach($splits as $k => $v){
+            if ($splits) {
+                foreach ($splits as $k => $v) {
                     //
                     $splits[$k] = array_merge($splits[$k], $this->db
-                    ->where('payroll_bank_uuid', $v['uuid'])
-                    ->get('payroll_employee_bank_accounts')
-                    ->row_array());
+                        ->where('payroll_bank_uuid', $v['uuid'])
+                        ->get('payroll_employee_bank_accounts')
+                        ->row_array());
                 }
                 //
                 $data['payment_method']['splits'] = json_encode($splits);
             }
             //
-            return SendResponse(200,[
-                'html' => $this->load->view($this->path.$page, $data, true)
+            return SendResponse(200, [
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
@@ -827,10 +833,10 @@ class Payroll_ajax extends CI_Controller
             //
             $data["bank_detail"] = $bank_detail;
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'EMPLOYEE_URL' => getAPIUrl("employees"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //get_company_payroll_setting
@@ -850,11 +856,11 @@ class Payroll_ajax extends CI_Controller
                 $page_type = "payroll_form";
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'COMPANIES_URL' => getAPIUrl("company"),
                 'page_type' => $page_type,
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //get_company_payroll_setting
@@ -865,10 +871,10 @@ class Payroll_ajax extends CI_Controller
             $page = "add_edit_payroll_info";
             $data['payrollInfo'] = $payrollInfo;
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'COMPANIES_URL' => getAPIUrl("company"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
@@ -887,97 +893,95 @@ class Payroll_ajax extends CI_Controller
 
                 if ($day == 1 && $x == 0) {
                     $weekdate = $dateTime->modify('+7 days')->format('Y-m-d');
-                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                    $row .= '<option value="' . $weekdate . '">' . date("m/d/Y", strtotime($weekdate)) . '</option>';
                 }
 
                 if ($day == 2 && $x == 0) {
                     $weekdate = $dateTime->modify('+8 days')->format('Y-m-d');
-                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                    $row .= '<option value="' . $weekdate . '">' . date("m/d/Y", strtotime($weekdate)) . '</option>';
                 }
 
                 if ($day == 3 && $x == 0) {
                     $weekdate = $dateTime->modify('+9 days')->format('Y-m-d');
-                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                    $row .= '<option value="' . $weekdate . '">' . date("m/d/Y", strtotime($weekdate)) . '</option>';
                 }
 
                 if ($day == 4 && $x == 0) {
                     $weekdate = $dateTime->modify('+10 days')->format('Y-m-d');
-                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                    $row .= '<option value="' . $weekdate . '">' . date("m/d/Y", strtotime($weekdate)) . '</option>';
                 }
 
                 if ($day == 5 && $x == 0) {
                     $weekdate = $dateTime->modify('+11 days')->format('Y-m-d');
-                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                    $row .= '<option value="' . $weekdate . '">' . date("m/d/Y", strtotime($weekdate)) . '</option>';
                 }
 
                 if ($x > 0) {
                     $weekdate = $dateTime->modify('+7 days')->format('Y-m-d');
-                    $row .= '<option value="'.$weekdate.'">'.date("m/d/Y", strtotime($weekdate)).'</option>';
+                    $row .= '<option value="' . $weekdate . '">' . date("m/d/Y", strtotime($weekdate)) . '</option>';
                 }
                 //8
             }
-            
-            return SendResponse(200,[
+
+            return SendResponse(200, [
                 'rows' =>  $row
             ]);
         }
         //
         if ($page === "get-twice-month-dates") {
-            
+
             $row = '<option value="0">Please select pay date</option>';
             //
             $currentDate =  date("d");
             //
             if ($currentDate < 11) {
-                $midDate = date("Y").'-'.date("m").'-15';
-                $row .= '<option value="'.$midDate.'">'.date("m/d/Y", strtotime($midDate)).'</option>';
+                $midDate = date("Y") . '-' . date("m") . '-15';
+                $row .= '<option value="' . $midDate . '">' . date("m/d/Y", strtotime($midDate)) . '</option>';
             }
             if ($currentDate < 25) {
                 $lastDate =  date('Y-m-t');
-                $row .= '<option value="'.$lastDate.'">'.date("m/d/Y", strtotime($lastDate)).'</option>';
+                $row .= '<option value="' . $lastDate . '">' . date("m/d/Y", strtotime($lastDate)) . '</option>';
             }
             //
             for ($x = 1; $x <= 7; $x++) {
-                $month = date('m',strtotime('first day of +'.$x.' month'));
-                $year =  date('Y',strtotime('first day of +'.$x.' month'));
+                $month = date('m', strtotime('first day of +' . $x . ' month'));
+                $year =  date('Y', strtotime('first day of +' . $x . ' month'));
                 //
-                $midDate = $year.'-'.$month.'-15';
-                $lastDate =  date('Y-m-t',strtotime('first day of +'.$x.' month'));
+                $midDate = $year . '-' . $month . '-15';
+                $lastDate =  date('Y-m-t', strtotime('first day of +' . $x . ' month'));
                 //
-                $row .= '<option value="'.$midDate.'">'.date("m/d/Y", strtotime($midDate)).'</option>';
-                $row .= '<option value="'.$lastDate.'">'.date("m/d/Y", strtotime($lastDate)).'</option>';
-
+                $row .= '<option value="' . $midDate . '">' . date("m/d/Y", strtotime($midDate)) . '</option>';
+                $row .= '<option value="' . $lastDate . '">' . date("m/d/Y", strtotime($lastDate)) . '</option>';
             }
             //
-            
-            return SendResponse(200,[
+
+            return SendResponse(200, [
                 'rows' =>  $row
             ]);
         }
         //
         if ($page === "get-other-semimonthly-dates") {
-            
+
             $row = '<option value="0">Please select pay date</option>';
             //
             $currentDate =  date("d");
             //
-            $dayOne =$_GET["dayOne"];
-            $dayTwo =$_GET["dayTwo"];
+            $dayOne = $_GET["dayOne"];
+            $dayTwo = $_GET["dayTwo"];
             //
             for ($x = 1; $x <= 7; $x++) {
-                $month = date('m',strtotime('first day of +'.$x.' month'));
-                $year =  date('Y',strtotime('first day of +'.$x.' month'));
+                $month = date('m', strtotime('first day of +' . $x . ' month'));
+                $year =  date('Y', strtotime('first day of +' . $x . ' month'));
                 //
-                $firstDate = $year.'-'.$month.'-'.$dayOne;
-                $SecondDate = $year.'-'.$month.'-'.$dayTwo;
+                $firstDate = $year . '-' . $month . '-' . $dayOne;
+                $SecondDate = $year . '-' . $month . '-' . $dayTwo;
                 //
-                $row .= '<option value="'.$firstDate.'">'.date("m/d/Y", strtotime($firstDate)).'</option>';
-                $row .= '<option value="'.$SecondDate.'">'.date("m/d/Y", strtotime($SecondDate)).'</option>';
-
+                $row .= '<option value="' . $firstDate . '">' . date("m/d/Y", strtotime($firstDate)) . '</option>';
+                $row .= '<option value="' . $SecondDate . '">' . date("m/d/Y", strtotime($SecondDate)) . '</option>';
             }
             //
-            
-            return SendResponse(200,[
+
+            return SendResponse(200, [
                 'row' =>  $row
             ]);
         }
@@ -989,18 +993,17 @@ class Payroll_ajax extends CI_Controller
             for ($x = 1; $x <= 7; $x++) {
                 $day = $_GET["day"];
                 if ($day == "last_day_of_month") {
-                    $day = date('t',strtotime('first day of +'.$x.' month'));
+                    $day = date('t', strtotime('first day of +' . $x . ' month'));
                 }
-                $month = date('m',strtotime('first day of +'.$x.' month'));
-                $year =  date('Y',strtotime('first day of +'.$x.' month'));
+                $month = date('m', strtotime('first day of +' . $x . ' month'));
+                $year =  date('Y', strtotime('first day of +' . $x . ' month'));
                 //
-                $nextDate = $year.'-'.$month.'-'.$day;
+                $nextDate = $year . '-' . $month . '-' . $day;
                 //
-                $row .= '<option value="'.$nextDate.'">'.date("m/d/Y", strtotime($nextDate)).'</option>';
-
+                $row .= '<option value="' . $nextDate . '">' . date("m/d/Y", strtotime($nextDate)) . '</option>';
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'rows' =>  $row
             ]);
         }
@@ -1008,26 +1011,25 @@ class Payroll_ajax extends CI_Controller
         if ($page === "get-upcoming-months") {
             //
             $row = '<option value="0">Please select a month</option>';
-            $row .= '<option value="'.date("m,Y").'">'.date("F Y").'</option>';
+            $row .= '<option value="' . date("m,Y") . '">' . date("F Y") . '</option>';
             //
             for ($x = 1; $x <= 7; $x++) {
-                
-                $displayMonth = date('F',strtotime('first day of +'.$x.' month'));
-                $month = date('m',strtotime('first day of +'.$x.' month'));
-                $year =  date('Y',strtotime('first day of +'.$x.' month'));
-                //
-                $row .= '<option value="'.$month.','.$year.'">'.$displayMonth.' '.$year.'</option>';
 
+                $displayMonth = date('F', strtotime('first day of +' . $x . ' month'));
+                $month = date('m', strtotime('first day of +' . $x . ' month'));
+                $year =  date('Y', strtotime('first day of +' . $x . ' month'));
+                //
+                $row .= '<option value="' . $month . ',' . $year . '">' . $displayMonth . ' ' . $year . '</option>';
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'rows' =>  $row
             ]);
         }
         //
         if ($page === "get-selected-month-dates") {
             //
-            $values = explode(",",$_GET["value"]); 
+            $values = explode(",", $_GET["value"]);
             //
             $currentMonth = date('m');
             $currentYear = date('Y');
@@ -1039,29 +1041,28 @@ class Payroll_ajax extends CI_Controller
                 $start = date('d');
                 $end = date('t');
             } else {
-                $midDate = '15-'.$values[0].'-'.$values[1];
+                $midDate = '15-' . $values[0] . '-' . $values[1];
                 $end = date("t", strtotime($midDate));
             }
             //
             $row = '<option value="0">Please select a month</option>';
             //
             for ($x = $start; $x <= $end; $x++) {
-                
-                $monthDate = $values[1].'-'.$values[0].'-'.$x;
-                //
-                $row .= '<option value="'.$monthDate.'">'.date("m/d/Y", strtotime($monthDate)).'</option>';
 
+                $monthDate = $values[1] . '-' . $values[0] . '-' . $x;
+                //
+                $row .= '<option value="' . $monthDate . '">' . date("m/d/Y", strtotime($monthDate)) . '</option>';
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'rows' =>  $row
             ]);
         }
         //
         if ($page === "get-payroll-deadline") {
             //
-            $applyDate = $_GET["date"]; 
-            $type = $_GET["type"]; 
+            $applyDate = $_GET["date"];
+            $type = $_GET["type"];
             //
             $deadline = '';
             $row = '';
@@ -1071,8 +1072,8 @@ class Payroll_ajax extends CI_Controller
                 $deadlineSafe1 =  date("m/d", strtotime('-7 days', strtotime($applyDate)));
                 $deadlineSafe2 =  date("m/d", strtotime('-6 days', strtotime($deadlineSafe1)));
                 //
-                $row .= '<option value="'.date("Y-m-d", strtotime($deadlineSafe1)).'">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
-                $row .= '<option value="'.date("Y-m-d", strtotime($applyDate)).'">'.date("m/d", strtotime($deadline)).' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($deadlineSafe1)) . '">' . $deadlineSafe2 . ' - ' . $deadlineSafe1 . '</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($applyDate)) . '">' . date("m/d", strtotime($deadline)) . ' - ' . date("m/d", strtotime($applyDate)) . '</option>';
                 $row .= '<option value="other">Other</option>';
             } else if ($type == "Every other week") {
                 //
@@ -1080,8 +1081,8 @@ class Payroll_ajax extends CI_Controller
                 $deadlineSafe2 =  date("m/d", strtotime('-13 days', strtotime($deadlineSafe1)));
                 $deadlineCurrent =  date("m/d", strtotime('-13 days', strtotime($applyDate)));
                 //
-                $row .= '<option value="'.date("Y-m-d", strtotime($deadlineSafe1)).'">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
-                $row .= '<option value="'.date("Y-m-d", strtotime($applyDate)).'">'.$deadlineCurrent.' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($deadlineSafe1)) . '">' . $deadlineSafe2 . ' - ' . $deadlineSafe1 . '</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($applyDate)) . '">' . $deadlineCurrent . ' - ' . date("m/d", strtotime($applyDate)) . '</option>';
                 $row .= '<option value="other">Other</option>';
             } else if ($type == "Twice per month") {
                 //
@@ -1089,36 +1090,36 @@ class Payroll_ajax extends CI_Controller
                 $deadlineSafe2 =  date("m/d", strtotime('-13 days', strtotime($deadlineSafe1)));
                 $deadlineCurrent =  date("m/d", strtotime('-14 days', strtotime($applyDate)));
                 //
-                $row .= '<option value="'.date("Y-m-d", strtotime($deadlineSafe1)).'">'.$deadlineSafe2.' - '.$deadlineSafe1.'</option>';
-                $row .= '<option value="'.date("Y-m-d", strtotime($applyDate)).'">'.$deadlineCurrent.' - '.date("m/d", strtotime($applyDate)).'</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($deadlineSafe1)) . '">' . $deadlineSafe2 . ' - ' . $deadlineSafe1 . '</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($applyDate)) . '">' . $deadlineCurrent . ' - ' . date("m/d", strtotime($applyDate)) . '</option>';
                 $row .= '<option value="other">Other</option>';
             } else if ($type == "Monthly") {
                 //
-                $firstMonthdate = date('m/1',strtotime('-30 days', strtotime($applyDate)));
-                $lastMonthdate =  date('m/t',strtotime('-30 days', strtotime($applyDate)));
+                $firstMonthdate = date('m/1', strtotime('-30 days', strtotime($applyDate)));
+                $lastMonthdate =  date('m/t', strtotime('-30 days', strtotime($applyDate)));
                 $deadlineCurrentStart =  date("m/d", strtotime('-30 days', strtotime($applyDate)));
                 $deadlineCurrentEnd =  date("m/d", strtotime($applyDate));
                 //
-                $row .= '<option value="'.date("Y-m-d", strtotime($lastMonthdate)).'">'.$firstMonthdate.' - '.$lastMonthdate.'</option>';
-                $row .= '<option value="'.date("Y-m-d", strtotime($deadlineCurrentEnd)).'">'.$deadlineCurrentStart.' - '.$deadlineCurrentEnd.'</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($lastMonthdate)) . '">' . $firstMonthdate . ' - ' . $lastMonthdate . '</option>';
+                $row .= '<option value="' . date("Y-m-d", strtotime($deadlineCurrentEnd)) . '">' . $deadlineCurrentStart . ' - ' . $deadlineCurrentEnd . '</option>';
                 $row .= '<option value="other">Other</option>';
             } else if ($type == "Quarterly") {
                 //
                 $month =  date("m", strtotime($applyDate));
                 //
                 if (in_array($month, [1, 2, 3])) {
-                    $row .= '<option value="'.date("Y-m-d", strtotime($applyDate)).'">January - March</option>';
+                    $row .= '<option value="' . date("Y-m-d", strtotime($applyDate)) . '">January - March</option>';
                 } else if (in_array($month, [4, 5, 6])) {
-                    $row .= '<option value="'.date("Y-m-d", strtotime($applyDate)).'">April - June</option>';
+                    $row .= '<option value="' . date("Y-m-d", strtotime($applyDate)) . '">April - June</option>';
                 } else if (in_array($month, [7, 8, 9])) {
-                    $row .= '<option value="'.date("Y-m-d", strtotime($applyDate)).'">July - September</option>';
+                    $row .= '<option value="' . date("Y-m-d", strtotime($applyDate)) . '">July - September</option>';
                 } else if (in_array($month, [10, 11, 12])) {
-                    $row .= '<option value="'.date("Y-m-d", strtotime($applyDate)).'">October - December</option>';
-                }    
+                    $row .= '<option value="' . date("Y-m-d", strtotime($applyDate)) . '">October - December</option>';
+                }
                 //';
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'deadline' =>  date("m/d/Y", strtotime('-6 days', strtotime($applyDate))),
                 'row' => $row
             ]);
@@ -1126,8 +1127,8 @@ class Payroll_ajax extends CI_Controller
         //
         if ($page === "get-other-payperiod-dates") {
             //
-            $applyDate = $_GET["date"]; 
-            $type = $_GET["frequency"]; 
+            $applyDate = $_GET["date"];
+            $type = $_GET["frequency"];
             //
             $row = '';
             $start = 1;
@@ -1139,14 +1140,14 @@ class Payroll_ajax extends CI_Controller
                 $end = 30;
             }
             //
-            $row .= '<option value="'.$applyDate.'">'.date("m/d/Y", strtotime($applyDate)).'</option>';
+            $row .= '<option value="' . $applyDate . '">' . date("m/d/Y", strtotime($applyDate)) . '</option>';
             //
             for ($x = $start; $x <= $end; $x++) {
-                $newdate = date("Y-m-d", strtotime('-'.$x.' days', strtotime($applyDate)));
-                $row .= '<option value="'.$newdate.'">'.date("m/d/Y", strtotime($newdate)).'</option>';
+                $newdate = date("Y-m-d", strtotime('-' . $x . ' days', strtotime($applyDate)));
+                $row .= '<option value="' . $newdate . '">' . date("m/d/Y", strtotime($newdate)) . '</option>';
             }
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'row' =>  $row
             ]);
         }
@@ -1156,61 +1157,61 @@ class Payroll_ajax extends CI_Controller
             $data['states'] = $this->pm->GetStates();
             $data['signatory_info'] = $this->pm->GetSignatoryInfo($companyId);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'SIGN_URL' => getAPIUrl("company"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
         if ($page === "get-company-sign-document-page") {
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'IP_ADDRESS' => $_SERVER['REMOTE_ADDR'],
                 'API_KEY' => getAPIKey(),
                 'SIGN_URL' => getAPIUrl("company"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
         if ($page === "get-company-tax-detail-link-page") {
             //
-            return SendResponse(200,[
-                'html' => $this->load->view($this->path.$page, $data, true)
+            return SendResponse(200, [
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
         if ($page === "get-company-bank-verification-page") {
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 'API_KEY' => getAPIKey(),
                 'COMPANY_URL' => getAPIUrl("company"),
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
         if ($page === "get-prosess-complete-page") {
             //
-            return SendResponse(200,[
-                'html' => $this->load->view($this->path.$page, $data, true)
+            return SendResponse(200, [
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
         }
         //
-        if($page === 'get-payroll-admin'){
+        if ($page === 'get-payroll-admin') {
             //
             $data['primaryAdmin'] = $this->pm->GetPrimaryAdmin($companyId);
             //
             $company_name = getCompanyNameBySid($companyId);
             //
-            return SendResponse(200,[
+            return SendResponse(200, [
                 "company_name" => $company_name,
-                'html' => $this->load->view($this->path.$page, $data, true)
+                'html' => $this->load->view($this->path . $page, $data, true)
             ]);
             //
         }
 
         //
-        if($page === 'get-api-creds'){
+        if ($page === 'get-api-creds') {
             //
             $data = [];
             $data['API_KEY'] = getAPIKey();
@@ -1219,7 +1220,7 @@ class Payroll_ajax extends CI_Controller
             return SendResponse(200, $data);
         }
         header("content-type: text/html");
-        echo $this->load->view($this->path.$page, $data, true);
+        echo $this->load->view($this->path . $page, $data, true);
         exit(0);
         //
         // SendResponse(200, $this->load->view($this->path.$page, $data, true), 'html');
@@ -1228,16 +1229,17 @@ class Payroll_ajax extends CI_Controller
     /**
      * 
      */
-    function SaveAdmin($companyId){
+    function SaveAdmin($companyId)
+    {
         //
         $post = $this->input->post(null, true);
         //
-        if(!count($post)){
+        if (!count($post)) {
             return SendResponse(401);
         }
         // Let's double check if company payroll
         // admin doesn't exists
-        if($this->pm->HasPrimaryAdmin($companyId)){
+        if ($this->pm->HasPrimaryAdmin($companyId)) {
             return SendResponse(200, true);
         }
         //
@@ -1253,7 +1255,8 @@ class Payroll_ajax extends CI_Controller
     /**
      * 
      */
-    function GetEmployees(){
+    function GetEmployees()
+    {
         //
         $onPayroll = (int)$this->input->get('on_payroll', true);
         //
@@ -1272,16 +1275,16 @@ class Payroll_ajax extends CI_Controller
             'normal_employees_count' => 0
         ];
         //
-        if(!empty($data)){
+        if (!empty($data)) {
             // 
-            foreach($data as $employee){
+            foreach ($data as $employee) {
                 //
                 $responseArray[$onPayroll && $employee['on_payroll'] ? 'payroll_employees_count' : 'normal_employees_count']++;
                 //
-                if($onPayroll && $employee['on_payroll']){
+                if ($onPayroll && $employee['on_payroll']) {
                     $responseArray['list'][] = $employee;
-                } 
-                if(!$onPayroll && !$employee['on_payroll']){
+                }
+                if (!$onPayroll && !$employee['on_payroll']) {
                     $responseArray['list'][] = $employee;
                 }
             }
@@ -1293,7 +1296,8 @@ class Payroll_ajax extends CI_Controller
     /**
      * 
      */
-    private function GetEmployeePaymentMethod($companyId, $employeeId){
+    private function GetEmployeePaymentMethod($companyId, $employeeId)
+    {
         //
         $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
         // Get company details

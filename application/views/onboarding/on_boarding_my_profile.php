@@ -339,6 +339,74 @@ if($_ssv){
                             </div>
                         </div>
 
+                        <?php
+                            //
+                            $hasOther = [];
+                            //
+                            if ($user_information['languages_speak']) {
+                                $hasOther = array_filter(explode(',', $user_information['languages_speak']), function ($lan) {
+                                    return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                });
+                            }
+                        ?>
+
+                        <div class="row">
+                            <!--  -->
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label>I Speak:</label>
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!--  -->
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($user_information['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!--  -->
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($user_information['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!--  -->
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($user_information['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!--  -->
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <input type="text" class="form-control" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                            </div>
+                        </div>
+
+                        <script>
+                            $('[name="secondaryOption"]').click(function() {
+                                $('.jsOtherLanguage').toggleClass('dn');
+                            });
+                        </script>
+
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="form-group autoheight">

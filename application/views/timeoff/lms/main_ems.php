@@ -1,6 +1,6 @@
 <!-- Main area -->
 <div class="csContent">
-    <div class="col-sm-9">
+    <div class="col-sm-12">
         <div class="panel panel-success">
             <div class="panel-heading">
                 <ul>

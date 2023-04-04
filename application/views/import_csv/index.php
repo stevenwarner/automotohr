@@ -40,6 +40,10 @@
     $importColumnsArray[] = 'Rehire Reason';
     $importColumnsArray[] = 'Termination Date';
     $importColumnsArray[] = 'Termination Reason';
+
+    $importColumnsArray[] = 'EEOC Code';
+    $importColumnsArray[] = 'Salary Benefits';
+    $importColumnsArray[] = 'Workers Compensation Code';
     //
     $importValueArray = '';
     $importValueArray .= 'Jason, josi, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
@@ -184,6 +188,11 @@
         employmentTitles = <?=json_encode(array('employmenttype', 'employment', 'employmentstatus'));?>;
         middlenameTitles = <?=json_encode(array('middlename', 'middleinitial', 'middlenameinitial'));?>;
         nicknameTitles = <?=json_encode(array('nick_name', 'nickname'));?>;
+
+        eeoccodeTitles = <?=json_encode(array('eeoc_code', 'eeoccode'));?>;
+        salarybenefitsTitles = <?=json_encode(array('salary_benefits', 'salarybenefits'));?>;
+        workerscompensationcodeTitles = <?=json_encode(array('workers_compensation_code', 'workerscompensationcode'));?>;
+
 
         loader('hide');
         // 
@@ -430,9 +439,19 @@
             for(i; i < len; i++) if(index == array[i].trim()) return 'middle_name';
             i = 0; len = nicknameTitles.length; array = nicknameTitles;
             for(i; i < len; i++) if(index == array[i].trim()) return 'nick_name';
+            
+            i = 0; len = eeoccodeTitles.length; array = eeoccodeTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'eeoc_code';
+            i = 0; len = salarybenefitsTitles.length; array = salarybenefitsTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'salary_benefits';
+            i = 0; len = workerscompensationcodeTitles.length; array = workerscompensationcodeTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'workers_compensation_code';
+
             return -1;
         }
 
+
+    
         //
         var chunkOBJ = {
             current: 0,

@@ -1,5 +1,5 @@
 <!--  -->
-<div class="container-fluid">
+<div class="container">
     <div class="csPageWrap">
         <!-- Heading -->
         <div class="row">
@@ -11,6 +11,7 @@
         </div>
         <!-- Body -->
         <div class="row">
+            <br>
             <div class="col-sm-12">
                 <p class="csF16">
                     <strong><?=STORE_NAME;?></strong> is partnering directly with Gusto to help ease your payroll pain! Simply click on the button below to start your payroll journey with the safety of our trusted partner.

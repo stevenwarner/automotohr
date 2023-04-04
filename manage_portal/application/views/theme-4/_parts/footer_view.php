@@ -277,5 +277,12 @@ $('#privay_policy_apply_now').on('hide.bs.modal', function (e) {
 });
 </script>
 <?php $this->load->view('common/send_applicant_to_remarket'); ?>
+<style>
+
+.goog-te-gadget-simple .VIpgJd-ZVi9od-xl07Ob-lTBxed {
+    color: #fff !important;
+}
+
+</style>
 </body>
 </html>

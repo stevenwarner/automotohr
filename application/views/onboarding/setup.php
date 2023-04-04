@@ -60,7 +60,20 @@ if ($user_type == 'applicant') {
                                         <img src="<?php echo isset($user_info['pictures']) && $user_info['pictures'] != NULL && $user_info['pictures'] != '' ? AWS_S3_BUCKET_URL . $user_info['pictures'] : base_url('assets/images/default_pic.jpg'); ?>" alt="Profile Picture" />
                                     </figure>
                                     <div class="text">
+                                        <?php
+                                        $userInfoNew = get_user_datescolumns($user_info['sid']);
+                                        ?>
                                         <h2><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></h2>
+                                        <h3 style="margin-top: -10px;margin-bottom: 5px">
+                                            <span>
+                                                <?= get_user_anniversary_date(
+                                                    $userInfoNew[0]['joined_at'],
+                                                    $userInfoNew[0]['registration_date'],
+                                                    $userInfoNew[0]['rehire_date']
+                                                );
+                                                ?>
+                                            </span>
+                                        </h3>
                                         <div class="start-rating">
                                             <?php if ($user_type == 'applicant') { ?>
                                                 <input readonly="readonly" id="input-21b" value="<?php echo isset($user_average_rating) ? $user_average_rating : 0; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs" />
@@ -461,7 +474,7 @@ if ($user_type == 'applicant') {
                                         <hr />
                                         <div class="row grid-columns" id="custom_office_location_section">
                                             <?php if (!empty($office_locations)) { ?>
-                                                <?php foreach ($office_locations as $key => $location) { 
+                                                <?php foreach ($office_locations as $key => $location) {
                                                     //
                                                     $shouldBeChecked = false;
                                                     //
@@ -471,7 +484,7 @@ if ($user_type == 'applicant') {
                                                         $shouldBeChecked = $location['is_primary'] == 1 ? true : $shouldBeChecked;
                                                     }
 
-                                                    ?>
+                                                ?>
                                                     <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
                                                         <label class="package_label" for="location_<?php echo $location['sid']; ?>">
                                                             <div class="img-thumbnail text-center package-info-box">
@@ -484,7 +497,7 @@ if ($user_type == 'applicant') {
                                                                         <button onclick="show_office_details('<?php echo $location['location_title']; ?>','<?php echo $location['location_address']; ?>','<?php echo $location['location_telephone']; ?>','<?php echo $location['location_fax']; ?>');" type="button" class="btn btn-default btn-sm btn-block">View Detail</button>
                                                                     </div>
                                                                 </div>
-                                                                <input <?php echo set_checkbox('location[]', $location['sid'], $shouldBeChecked ); ?> class="select-package" data-type="location" id="location_<?php echo $location['sid']; ?>" name="locations[]" type="checkbox" value="<?php echo $location['sid']; ?>" />
+                                                                <input <?php echo set_checkbox('location[]', $location['sid'], $shouldBeChecked); ?> class="select-package" data-type="location" id="location_<?php echo $location['sid']; ?>" name="locations[]" type="checkbox" value="<?php echo $location['sid']; ?>" />
 
                                                             </div>
                                                         </label>
@@ -870,7 +883,7 @@ if ($user_type == 'applicant') {
                                                                                     <!-- <input <?php //echo set_checkbox('links[]', $link['sid'], in_array($link['sid'], $links)); 
                                                                                                 ?> data-type="link" id="link_<?php //echo $link['sid']; 
                                                                                                                                 ?>" name="links[]" type="checkbox" value="<?php //echo $link['sid']; 
-                                                                                                                                                                                                                                                                ?>" /> -->
+                                                                                                                                                                            ?>" /> -->
                                                                                     <input data-type="link" id="link_<?php echo $link['sid']; ?>" name="links[]" type="checkbox" value="<?php echo $link['sid']; ?>" <?php if (!empty($links)) {
                                                                                                                                                                                                                             foreach ($links as $key => $value) {
                                                                                                                                                                                                                                 if ($value['link_sid'] == $link['sid']) { ?>checked="checked" <?php }
@@ -1347,71 +1360,73 @@ if ($user_type == 'applicant') {
                                                                                         <?php } ?>
                                                                                     </td>
                                                                                 </tr>
-                                                                                <tr>
-                                                                                    <td class="col-lg-2">
-                                                                                        EEOC FORM
-                                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . (empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on') . '.gif'); ?>">
-                                                                                    </td>
-                                                                                    <td class="col-lg-1 text-center">
-                                                                                        <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
-                                                                                    </td>
-                                                                                    <td class="col-lg-2 text-center">
-                                                                                        <?php if (empty($eeo_form_info)) { ?>
-                                                                                            <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
-                                                                                        <?php } else { ?>
-                                                                                            <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
-                                                                                            <div class="text-center">
-                                                                                                <?php
-                                                                                                if (!empty($eeo_form_info['last_sent_at'])) {
-                                                                                                    echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
-                                                                                                } else {
-                                                                                                    echo "N/A";
-                                                                                                }
-                                                                                                ?>
-                                                                                            </div>
-                                                                                        <?php } ?>
-                                                                                    </td>
-                                                                                    <td class="col-lg-6 text-center">
-                                                                                        </form>
-                                                                                        <?php if (!empty($eeo_form_info)) { ?>
-                                                                                            <?php if ($eeo_form_info['status']) { ?>
-                                                                                                <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
-                                                                                                    <input type="hidden" name="company_sid" value="<?= $company_sid; ?>" />
-                                                                                                    <input type="hidden" name="user_sid" value="<?= $user_sid; ?>" />
-                                                                                                    <input type="hidden" name="user_type" value="<?= $user_type; ?>" />
-                                                                                                </form>
-                                                                                                <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
-                                                                                                <?php if ($eeo_form_info['is_expired'] != 1) { ?>
-                                                                                                    <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?= ucwords($user_info['first_name'] . ' ' . $user_info['last_name']); ?>" placement="top">
-                                                                                                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                                                                                        Send Email Notification
-                                                                                                    </a>
+                                                                                <?php if ($onboarding_eeo_form_status) { ?>
+                                                                                    <tr>
+                                                                                        <td class="col-lg-2">
+                                                                                            EEOC FORM
+                                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . (empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on') . '.gif'); ?>">
+                                                                                        </td>
+                                                                                        <td class="col-lg-1 text-center">
+                                                                                            <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
+                                                                                        </td>
+                                                                                        <td class="col-lg-2 text-center">
+                                                                                            <?php if (empty($eeo_form_info)) { ?>
+                                                                                                <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
+                                                                                            <?php } else { ?>
+                                                                                                <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
+                                                                                                <div class="text-center">
+                                                                                                    <?php
+                                                                                                    if (!empty($eeo_form_info['last_sent_at'])) {
+                                                                                                        echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
+                                                                                                    } else {
+                                                                                                        echo "N/A";
+                                                                                                    }
+                                                                                                    ?>
+                                                                                                </div>
+                                                                                            <?php } ?>
+                                                                                        </td>
+                                                                                        <td class="col-lg-6 text-center">
+                                                                                            </form>
+                                                                                            <?php if (!empty($eeo_form_info)) { ?>
+                                                                                                <?php if ($eeo_form_info['status']) { ?>
+                                                                                                    <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
+                                                                                                        <input type="hidden" name="company_sid" value="<?= $company_sid; ?>" />
+                                                                                                        <input type="hidden" name="user_sid" value="<?= $user_sid; ?>" />
+                                                                                                        <input type="hidden" name="user_type" value="<?= $user_type; ?>" />
+                                                                                                    </form>
+                                                                                                    <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
+                                                                                                    <?php if ($eeo_form_info['is_expired'] != 1) { ?>
+                                                                                                        <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?= ucwords($user_info['first_name'] . ' ' . $user_info['last_name']); ?>" placement="top">
+                                                                                                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                                                                                            Send Email Notification
+                                                                                                        </a>
+                                                                                                    <?php } ?>
+                                                                                                <?php } else { ?>
+                                                                                                    <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC" />
+                                                                                                        <input type="hidden" name="company_sid" value="<?= $company_sid; ?>" />
+                                                                                                        <input type="hidden" name="user_sid" value="<?= $user_sid; ?>" />
+                                                                                                        <input type="hidden" name="user_type" value="<?= $user_type; ?>" />
+                                                                                                    </form>
+                                                                                                    <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
+                                                                                                <?php } ?>
+                                                                                                <?php if (isset($eeo_form_info['sid'])) { ?>
+                                                                                                    <!--  -->
+                                                                                                    <button onclick="show_document_track('eeoc', <?= $eeo_form_info['sid']; ?>);" class="btn btn-success" title="View action trail for EEOC form" placement="top">EEOC Trail</button>
+                                                                                                    <!--  -->
+                                                                                                    <button onclick="VerificationDocumentHistory('eeoc', <?= $eeo_form_info['sid']; ?>);" class="btn btn-success" title="View history for EEOC form" placement="top">EEOC History</button>
                                                                                                 <?php } ?>
                                                                                             <?php } else { ?>
-                                                                                                <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC" />
-                                                                                                    <input type="hidden" name="company_sid" value="<?= $company_sid; ?>" />
-                                                                                                    <input type="hidden" name="user_sid" value="<?= $user_sid; ?>" />
-                                                                                                    <input type="hidden" name="user_type" value="<?= $user_type; ?>" />
-                                                                                                </form>
-                                                                                                <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
+                                                                                                <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?= ucwords($user_info['first_name'] . ' ' . $user_info['last_name']); ?>" placement="top">Assign</a>
                                                                                             <?php } ?>
-                                                                                            <?php if (isset($eeo_form_info['sid'])) { ?>
-                                                                                                <!--  -->
-                                                                                                <button onclick="show_document_track('eeoc', <?= $eeo_form_info['sid']; ?>);" class="btn btn-success" title="View action trail for EEOC form" placement="top">EEOC Trail</button>
-                                                                                                <!--  -->
-                                                                                                <button onclick="VerificationDocumentHistory('eeoc', <?= $eeo_form_info['sid']; ?>);" class="btn btn-success" title="View history for EEOC form" placement="top">EEOC History</button>
-                                                                                            <?php } ?>
-                                                                                        <?php } else { ?>
-                                                                                            <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Assign EEOC form to <?= ucwords($user_info['first_name'] . ' ' . $user_info['last_name']); ?>" placement="top">Assign</a>
-                                                                                        <?php } ?>
 
-                                                                                        <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
-                                                                                            <p>Last completed on <strong><?= DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s'); ?></strong></p>
-                                                                                        <?php } ?>
-                                                                                    </td>
-                                                                                </tr>
+                                                                                            <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
+                                                                                                <p>Last completed on <strong><?= DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s'); ?></strong></p>
+                                                                                            <?php } ?>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                <?php } ?>
                                                                             </tbody>
                                                                         </table>
                                                                     </div>

@@ -211,6 +211,32 @@
                             </div>
                             <?php }?>
 
+
+                            <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) {?>
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="dash-box">
+                                    <div class="dashboard-widget-box">
+                                        <figure><i class="fa fa-info-circle"></i></figure>
+                                        <h2 class="post-title">
+                                            <a href="<?php echo base_url('onboarding_block/manage_company_help_box'); ?>">Company Help Box</a>
+                                        </h2>
+                                        <div class="count-box">
+                                            <small>&nbsp;</small>
+                                        </div>
+                                        <div class="button-panel">
+                                            <a href="<?php echo base_url('onboarding_block/manage_company_help_box'); ?>"
+                                                class="site-btn">Manage</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php }?>
+
+
+
+
+
+
                             <!--end of all-divs-->
 
                             <!--end of form div-->

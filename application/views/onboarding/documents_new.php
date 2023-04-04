@@ -47,7 +47,7 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
 
 ?>
 
-<div class="main">
+<div class="main jsmaincontent">
     <div class="container">
         <div class="row">
            <?php if($this->uri->segment(1) != 'hr_documents_management'){ ?>
@@ -79,7 +79,7 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                         <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>"
-                            class="btn btn-info btn-block mb-2"><i class="fa fa-arrow-left"> </i> Dashboard</a>
+                            class="btn btn-info csRadius5"><i class="fa fa-arrow-left"> </i> Dashboard</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>

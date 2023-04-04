@@ -20,8 +20,9 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
     if ($primary_phone_number_cc === '+1') $primary_phone_number_cc = 'N/A';
 }
 
-if (isset($employer["dob"]) && $employer["dob"] != '' && $employer["dob"] != '0000-00-00') $dob = DateTime::createFromFormat('Y-m-d', $employer['dob'])->format('m-d-Y');
-else $dob = '';
+if (isset($employer["dob"]) && $employer["dob"] != '' && $employer["dob"] != '0000-00-00') {
+    $dob = DateTime::createFromFormat('Y-m-d', $employer['dob'])->format('m-d-Y');
+} else $dob = '';
 //
 if ($_ssv) {
     //
@@ -146,9 +147,26 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Job Title:</label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title">
+                                                    <?php $templateTitles = get_templet_jobtitles($employer['parent_sid']); ?>
+
+                                                    <label>Job Title: &nbsp;&nbsp;&nbsp;
+                                                        <?php if ($templateTitles) { ?>
+                                                            <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $employer['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
+                                                            <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $employer['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title &nbsp;
+                                                        <?php } ?>
+                                                    </label>
+                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title" id="job_title">
+                                                    <?php if ($templateTitles) { ?>
+                                                        <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                            <option value="0">Please select job title</option>
+                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    <?php } ?>
                                                 </div>
+
+
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
@@ -200,7 +218,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Social Security Number: <?= $ssn_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                    <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?> value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
+                                                    <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?> value="<?php echo isset($employer["ssn"]) ? _secret($employer["ssn"], false, true) : ''; ?>">
                                                     <?php echo form_error('SSN'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -221,6 +239,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <label>Employment Type:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="employee-type" id="employee-type">
+                                                            <option value="0">Select Employment Type</option>
                                                             <?php if (!empty($employment_types)) { ?>
                                                                 <?php foreach ($employment_types as $key => $employment_type) { ?>
                                                                     <option value="<?= $key ?>" <?php if (strtolower($employer['employee_type']) == $key) {
@@ -284,7 +303,14 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Date of Birth:<?= $dob_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                    <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?= $dob_required == 1 ? 'required' : ''; ?> name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
+                                                    <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?= $dob_required == 1 ? 'required' : ''; ?> name="DOB" value="<?php echo $dob != '' ?
+
+                                                                                                                                                                                                _secret(formatDateToDB(
+                                                                                                                                                                                                    $employer['dob'],
+                                                                                                                                                                                                    checkDateFormate($emploTyer['dob']) ? 'm-d-Y' : DB_DATE,
+                                                                                                                                                                                                    'm-d-Y'
+
+                                                                                                                                                                                                ), true, true) : ''; ?>">
                                                     <?php echo form_error('DOB'); ?>
                                                 </div>
                                                 <!--  -->
@@ -336,39 +362,26 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             </div>
                                             <div class="row">
                                                 <!--  -->
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Department:</label>
-                                                    <div class="hr-select-dropdown">
-                                                        <select class="invoice-fields" name="department" id="department" onchange="get_teams(this.value)">
-                                                            <option value="0">Select Department</option>
-                                                            <?php if (!empty($departments)) { ?>
-                                                                <?php foreach ($departments as $department) { ?>
-                                                                    <option value="<?php echo $department["sid"]; ?>" <?php if ($employer['department_sid'] == $department["sid"]) {
-                                                                                                                            echo 'selected';
-                                                                                                                        } ?>>
-                                                                        <?php echo $department["name"]; ?>
-                                                                    </option>
-                                                                <?php } ?>
-                                                            <?php } else { ?>
-                                                                <option value="0">No Department Found</option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div>
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
+                                                    <label>Department/Team:</label>
+                                                    <select class="invoice-fields" name="department" id="department">
+                                                        <option value="0">Select Department/Team</option>
+                                                        <?php if (!empty($departmentWithTeams)) {
+                                                            foreach ($departmentWithTeams as $dt) {
+                                                        ?>
+                                                                <optgroup label="<?= $dt['name']; ?>"></optgroup>
+                                                                <?php
+                                                                if (!empty($dt['teams'])) {
+                                                                    foreach ($dt['teams'] as $dtt) {
+                                                                ?>
+                                                                        <option value="<?= $dtt['id']; ?>" <?= in_array($dtt['id'], explode(',',  $employer['team_sid'])) ? 'selected' : ''; ?>><?= $dtt['name']; ?></option>
+                                                        <?php
+                                                                    }
+                                                                }
+                                                            }
+                                                        } ?>
+                                                    </select>
                                                 </div>
-                                                <!--  -->
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Team:</label>
-                                                    <div class="hr-select-dropdown">
-                                                        <p style="display: none;" id="team_sid">
-                                                            <?php echo $employer['team_sid']; ?>
-                                                        </p>
-                                                        <select class="invoice-fields" name="teams[]" id="teams" multiple="true">
-                                                            <option value="">Select Team</option>
-                                                            <option value="">Please Select your Department</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <!--  -->
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -422,8 +435,102 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <label>Semi Monthly Draw:</label>
                                                     <input class="invoice-fields" value="<?php echo set_value('semi_monthly_draw', isset($employer["semi_monthly_draw"]) ? $employer["semi_monthly_draw"] : ''); ?>" type="number" name="semi_monthly_draw">
                                                 </div>
-                                                <!--  -->
+                                                <?php if (isPayrollOrPlus(true)) { ?>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Workers Compensation Code:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('workers_compensation_code', isset($employer["workers_compensation_code"]) ? $employer["workers_compensation_code"] : ''); ?>" type="text" name="workers_compensation_code">
+                                                    </div>
+                                                    <!--  -->
+                                                <?php } ?>
                                             </div>
+                                            <?php if (isPayrollOrPlus(true)) { ?>
+
+                                                <div class="row">
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>EEOC Code:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('eeoc_code', isset($employer["eeoc_code"]) ? $employer["eeoc_code"] : ''); ?>" type="text" name="eeoc_code">
+                                                    </div>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Benefits Salary:</label>
+                                                        <input class="invoice-fields" name="salary_benefits" id="salary_benefits" value="<?php echo set_value('salary_benefits', isset($employer["salary_benefits"]) ? $employer["salary_benefits"] : ''); ?>" />
+
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
+
+                                            <?php
+                                            //
+                                            $hasOther = [];
+                                            //
+                                            if ($employer['languages_speak']) {
+                                                $hasOther = array_filter(explode(',', $employer['languages_speak']), function ($lan) {
+                                                    return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                });
+                                            }
+                                            ?>
+
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>I Speak:</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($employer['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($employer['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($employer['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
+                                                <div class="col-sm-12">
+                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
+                                                    <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                </div>
+                                            </div>
+
+                                            <script>
+                                                $('[name="secondaryOption"]').click(function() {
+                                                    $('.jsOtherLanguage').toggleClass('dn');
+                                                });
+                                            </script>
+
+                                            <br />
+
+
                                             <?php if ($timeOff == 'enable') { ?>
                                                 <div class="row">
                                                     <!--  -->
@@ -1952,7 +2059,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                 var id = allteams[i].sid;
                                 var name = allteams[i].name;
                                 // if (team_id == id) {
-                                    
+
                                 if (jQuery.inArray(id, team_sids) !== -1) {
                                     html += '<option value="' + id + '" selected="selected">' +
                                         name + '</option>';
@@ -2043,8 +2150,8 @@ if (checkIfAppIsEnabled('timeoff')) {
     $('#eventdate').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
     $("#eventdate").datepicker("setDate", new Date());
     $('#add_event').click(function() {
@@ -2467,6 +2574,31 @@ if (checkIfAppIsEnabled('timeoff')) {
             }
         }
 
+    <?php } ?>
+
+
+    //
+    <?php if ($templateTitles) { ?>
+
+        <?php if ($employer['job_title_type'] != '0') { ?>
+            $('#temppate_job_title').show();
+            $('#temppate_job_title').val('<?php echo $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+            $('#job_title').hide();
+        <?php } ?>
+
+        $('.titleoption').click(function() {
+            var titleOption = $(this).val();
+            if (titleOption == 'dropdown') {
+                $('#temppate_job_title').show();
+                $('#temppate_job_title').val('<?php echo $employer['job_title_type'] == '0' ? '0' : $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+                $('#job_title').hide();
+            } else if (titleOption == 'manual') {
+                $('#temppate_job_title').hide();
+                $('#temppate_job_title').val('0');
+                $('#job_title').show();
+            }
+
+        });
     <?php } ?>
 </script>
 

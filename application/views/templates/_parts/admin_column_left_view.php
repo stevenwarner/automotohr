@@ -67,7 +67,7 @@ if (
     $this->uri->segment(2) == 'copy_employees' ||
     $this->uri->segment(1) == 'migrate_company_groups' ||
     $this->uri->segment(2) == 'merge_employees' ||
-    $this->uri->segment(2) == 'cn' ||
+    $this->uri->segment(1) == 'cn' ||
     $this->uri->segment(2) == 'pending_documents' ||
     ($this->uri->segment(2) == 'documents' && $this->uri->segment(3) > 0)
 
@@ -149,6 +149,7 @@ if (
     $this->uri->segment(2) == 'turnover_cost_calculator_logs' ||
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
+    $this->uri->segment(2) == 'job_title_templates' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
         ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_templates' ||
@@ -462,7 +463,7 @@ if (
                         <?php } ?>
                         <?php if (check_access_permissions_for_view($security_details, 'complynet')) { ?>
                             <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('cn/dashboard')) !== false) {
+                                <a <?php if (strpos(base_url(uri_string()), site_url('cn/dashboard')) !== false || strpos(base_url(uri_string()), site_url('cn/manage/job_roles')) !== false) {
                                         echo 'class="active"';
                                     } ?> href="<?php echo site_url('cn/dashboard'); ?>">ComplyNet</a>
                             </div>
@@ -690,6 +691,19 @@ if (
                                     Templates</a>
                             </div>
                         <?php } ?>
+
+
+                            <div class="menu-item">
+                                <a <?php
+                                    if (base_url(uri_string()) == site_url('manage_admin/job_title_templates') || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_templates') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_templates')) || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_template_groups') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_template_groups'))) {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('manage_admin/job_title_templates'); ?>">Job Titles</a>
+                            </div>
+
+
+
+
                         <?php if (check_access_permissions_for_view($security_details, 'job_categories_manager')) { ?>
                             <div class="menu-item">
                                 <a <?php

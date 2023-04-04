@@ -112,15 +112,159 @@
                                                     </div>
                                                 </li>
 
+
                                                 <li>
                                                     <?php echo form_label('Job Title', 'job_title'); ?>
+
                                                     <div class="hr-fields-wrap">
-                                                        <?php
-                                                        echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds"');
-                                                        echo form_error('job_title');
-                                                        ?>
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12">
+                                                                <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12" style="padding-left:0px;padding-right:0px;">
+                                                                    <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $data['job_title_type'] == '0' ? 'checked' : '' ?>> <strong>Add Manual &nbsp;</strong>
+                                                                    <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $data['job_title_type'] != '0' ? 'checked' : '' ?>> <strong> From Drop Down </strong>
+                                                                     
+                                                                    <br>
+                                                                    <?php
+
+                                                                    $templateTitles = get_templet_jobtitles($data['parent_sid']);
+                                                                    echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds" id="job_title"');
+                                                                    echo form_error('job_title');
+                                                                    ?>
+
+                                                                    <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                                        <option value="0">Please select job title</option>
+                                                                        <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                                        <?php } ?>
+                                                                    </select>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </li>
+
+
+                                                <?php if (isCompanyOnComplyNet($data['parent_sid']) != 0) { ?>
+                                                    <li>
+                                                        <label>ComplyNet Job Title</label>
+                                                        <div class="hr-fields-wrap">
+                                                            <div class="hr-select-dropdown">
+                                                                <select name="complynet_job_title" id="complynet_job_title" class="invoice-fields">
+                                                                    <option <?= $data["complynet_job_title"] == null ? 'selected' : ''; ?> value="null">
+                                                                        Please select job title
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'BDC Person' ? 'selected' : ''; ?> value="BDC Person">
+                                                                        BDC Person
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Body Shop Estimator' ? 'selected' : ''; ?> value="Body Shop Estimator">
+                                                                        Body Shop Estimator
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Body Shop Manager' ? 'selected' : ''; ?> value="Body Shop Manager">
+                                                                        Body Shop Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Body Shop Tech' ? 'selected' : ''; ?> value="Body Shop Tech">
+                                                                        Body Shop Tech
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Cashier' ? 'selected' : ''; ?> value="Cashier">
+                                                                        Cashier
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'CFO' ? 'selected' : ''; ?> value="CFO">
+                                                                        CFO
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Detail Manager' ? 'selected' : ''; ?> value="Detail Manager">
+                                                                        Detail Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Detailer' ? 'selected' : ''; ?> value="Detailer">
+                                                                        Detailer
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'F&I Manager' ? 'selected' : ''; ?> value="F&I Manager">
+                                                                        F&I Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'F&I Writer' ? 'selected' : ''; ?> value="F&I Writer">
+                                                                        F&I Writer
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Fixed Operations Director' ? 'selected' : ''; ?> value="Fixed Operations Director">
+                                                                        Fixed Operations Director
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'GM' ? 'selected' : ''; ?> value="GM">
+                                                                        GM
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'HR Assistant' ? 'selected' : ''; ?> value="HR Assistant">
+                                                                        HR Assistant
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'HR Manager' ? 'selected' : ''; ?> value="HR Manager">
+                                                                        HR Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'IT' ? 'selected' : ''; ?> value="IT">
+                                                                        IT
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Office Employee' ? 'selected' : ''; ?> value="Office Employee">
+                                                                        Office Employee
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Office Manager' ? 'selected' : ''; ?> value="Office Manager">
+                                                                        Office Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Owner' ? 'selected' : ''; ?> value="Owner">
+                                                                        Owner
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Parts Desk' ? 'selected' : ''; ?> value="Parts Desk">
+                                                                        Parts Desk
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Parts Driver' ? 'selected' : ''; ?> value="Parts Driver">
+                                                                        Parts Driver
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Parts Manager' ? 'selected' : ''; ?> value="Parts Manager">
+                                                                        Parts Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Parts Sales' ? 'selected' : ''; ?> value="Parts Sales">
+                                                                        Parts Sales
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Parts Shipper' ? 'selected' : ''; ?> value="Parts Shipper">
+                                                                        Parts Shipper
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Porter' ? 'selected' : ''; ?> value="Porter">
+                                                                        Porter
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Receptionist' ? 'selected' : ''; ?> value="Receptionist">
+                                                                        Receptionist
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Sales Employee' ? 'selected' : ''; ?> value="Sales Employee">
+                                                                        Sales Employee
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Sales Manager' ? 'selected' : ''; ?> value="Sales Manager">
+                                                                        Sales Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Sales Person' ? 'selected' : ''; ?> value="Sales Person">
+                                                                        Sales Person
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Service Advisor' ? 'selected' : ''; ?> value="Service Advisor">
+                                                                        Service Advisor
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Service Director' ? 'selected' : ''; ?> value="Service Director">
+                                                                        Service Director
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Service Manager' ? 'selected' : ''; ?> value="Service Manager">
+                                                                        Service Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Service Office' ? 'selected' : ''; ?> value="Service Office">
+                                                                        Service Office
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Service Tech' ? 'selected' : ''; ?> value="Service Tech">
+                                                                        Service Tech
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Warranty Clerk' ? 'selected' : ''; ?> value="Warranty Clerk">
+                                                                        Warranty Clerk
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                <?php } ?>
+
+
+
+
 
                                                 <li>
                                                     <?php echo form_label('Direct Business Number', 'direct_business_number'); ?>
@@ -133,14 +277,14 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Cell Number', 'cell_number'); ?>
+                                                    <?php echo form_label('Mobile Number', 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
                                                                 <span class="input-group-text">+1</span>
                                                             </div>
                                                             <?php
-                                                            echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['cell_number'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"'); ?>
+                                                            echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['PhoneNumber'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"'); ?>
                                                         </div>
                                                         <?php echo form_error('cell_number'); ?>
                                                     </div>
@@ -368,7 +512,34 @@
                                                         </div>
                                                     </li>
 
+
+
                                                 <?php } ?>
+
+
+                                                <li>
+                                                    <label>Workers Compensation Code</label>
+                                                        <div class="hr-fields-wrap">
+                                                            <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
+
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <label>EEOC Code</label>
+                                                        <div class="hr-fields-wrap">
+                                                            <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
+
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <label>Salary Benefits</label>
+                                                        <div class="hr-fields-wrap">
+                                                            <input type="text" class="hr-form-fileds" name="salary_benefits" id="salary_benefits" value="<?php echo $data['salary_benefits']; ?>">
+                                                        </div>
+                                                    </li>
+
                                                 <?php if (IS_NOTIFICATION_ENABLED == 1) { ?>
                                                     <li>
                                                         <label>Notified By</label>
@@ -414,6 +585,83 @@
                                                         $('.jsSelect2').select2();
                                                     </script>
                                                 </li>
+                                                <?php
+                                                    //
+                                                    $hasOther = [];
+                                                    //
+                                                    if ($data['languages_speak']) {
+                                                        $hasOther = array_filter(explode(',', $data['languages_speak']), function ($lan) {
+                                                            return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                        });
+                                                    }
+                                                ?>
+                                                <li>
+                                                    <label>I Speak:</label>
+                                                    <div class="hr-fields-wrap">
+                                                       <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($data['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($data['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($data['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                                            <div class="col-sm-12">
+                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                                <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                            </div>
+                                                        </div>
+
+                                                        <script>
+                                                            $('[name="secondaryOption"]').click(function() {
+                                                                $('.jsOtherLanguage').toggleClass('dn');
+                                                            });
+                                                        </script>
+                                                    </div>
+                                                </li>
+                                                <?php
+                                                $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);
+                                                //
+                                                if (!empty($isOnComplyNet)) { ?>
+                                                    <li>
+                                                        <label>ComplyNet Status:</label>
+                                                        <div class="hr-field-wrap">
+                                                            <?= $isOnComplyNet; ?>
+                                                        </div>
+                                                    </li>
+                                                <?php
+                                                }
+                                                ?>
                                                 <li>
                                                     <?php echo form_label('', ''); ?>
                                                     <div class="hr-fields-wrap">
@@ -774,5 +1022,92 @@
                 $(this).parent().find('input').val().toLowerCase().trim()
             )
         });
+    });
+</script>
+
+<!--  -->
+<link rel="stylesheet" href="<?= base_url("assets/css/SystemModel.css"); ?>">
+<script src="<?= base_url("assets/js/SystemModal.js"); ?>"></script>
+
+<script>
+    // ComplyNet
+    $(document).on("click", ".jsAddEmployeeToComplyNet", function(event) {
+        //
+        event.preventDefault();
+        //
+        let employeeId = $(this).data("id");
+        let companyId = $(this).data("cid");
+
+        //
+        return alertify.confirm(
+            "Are you sure you want to sync this employee with ComplyNet.<br />In case the employee is not found on ComplyNet, the system will add the employee to ComplyNet.",
+            function() {
+                addEmployeeToComplyNet(companyId, employeeId)
+            }
+        );
+    });
+
+    function addEmployeeToComplyNet(companyId, employeeId) {
+        //
+
+        Modal({
+                Id: "jsModelEmployeeToComplyNet",
+                Title: "Add Employee To ComplyNet",
+                Body: '<div class="container"><div id="jsModelEmployeeToComplyNetBody"><p class="alert alert-info text-center">Please wait while we are syncing employee with ComplyNet. It may take a few moments.</p></div></div>',
+                Loader: "jsModelEmployeeToComplyNetLoader",
+            },
+            function() {
+                //
+                $.post(window.location.origin + "/cn/" + companyId + "/employee/sync", {
+                        employeeId: employeeId,
+                        companyId: companyId,
+                    })
+                    .success(function(resp) {
+                        //
+                        if (resp.hasOwnProperty("errors")) {
+                            //
+                            let errors = '';
+                            errors += '<strong class="text-danger">';
+                            errors += '<p><em>In order to sync employee with ComplyNet the following details are required.';
+                            errors += ' Please fill these details from employee\'s profile.</em></p><br />';
+                            errors += resp.errors.join("<br />");
+                            errors += '</strong>';
+                            //
+                            $('#jsModelEmployeeToComplyNetBody').html(errors);
+                        } else {
+                            $('#jsModelEmployeeToComplyNet .jsModalCancel').trigger('click');
+                            alertify.alert(
+                                'Success',
+                                'You have successfully synced the employee with ComplyNet',
+                                window.location.reload
+                            );
+                        }
+                    })
+                    .fail(window.location.reload);
+                ml(false, "jsModelEmployeeToComplyNetLoader");
+            }
+        );
+    }
+
+
+
+    <?php if ($data['job_title_type'] != '0') { ?>
+        $('#temppate_job_title').show();
+        $('#temppate_job_title').val('<?php echo $data['job_title_type'] . '#' . $data['job_title']; ?>');
+        $('#job_title').hide();
+    <?php } ?>
+
+    $('.titleoption').click(function() {
+        var titleOption = $(this).val();
+        if (titleOption == 'dropdown') {
+            $('#temppate_job_title').show();
+            $('#temppate_job_title').val('<?php echo $data['job_title_type'] == '0' ? '0' : $data['job_title_type'] . '#' . $data['job_title']; ?>');
+            $('#job_title').hide();
+        } else if (titleOption == 'manual') {
+            $('#temppate_job_title').hide();
+            $('#temppate_job_title').val('0');
+            $('#job_title').show();
+        }
+
     });
 </script>

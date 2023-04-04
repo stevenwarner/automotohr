@@ -148,6 +148,8 @@
                                     <label>Employees<span class="hr-required red"> * </span></label>
                                     <select require multiple="multiple" name="employees[]" id="uploaded-employees" style="display: block">
                                         <option value="" selected>Please Select Employee</option>
+                                        <option value="" selected>All</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -237,7 +239,12 @@
                     up_emp.clearOptions();
                     up_emp.load(function(callback) {
                         var arr = [{}];
-                        var j = 0;
+                        var j = 1;
+
+                        arr[0] = {
+                                value: '-1',
+                                text: 'All'
+                            }
 
                         for (var i = 0; i < employees.length; i++) {
                             arr[j++] = {
@@ -246,7 +253,6 @@
                                 // text: employees[i].first_name + ' ' + employees[i].last_name
                             }
                         }
-
                         callback(arr);
                         up_emp.refreshItems();
                     });

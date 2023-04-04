@@ -4,7 +4,7 @@
          <!-- Main Page Box -->
          <div class="csPageWrap" style="margin: 20px auto;">
             <!--  -->
-            <?php $this->load->view("{$pp}left_sidebar"); ?>
+            <?php // $this->load->view("{$pp}left_sidebar"); ?>
             <!-- Right Content Area -->
             <?php $this->load->view("{$pp}settings_blue"); ?>
         </div>

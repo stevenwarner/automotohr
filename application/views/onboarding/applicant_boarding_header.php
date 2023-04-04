@@ -177,7 +177,9 @@
             <div class="col-xs-12">
                 <div class="arrow-links">
                     <?php 
-                        if ($enable_learbing_center && $company_eeoc_form_status == 1) {
+                        $eeo_form_status = getCompanyEEOCFormStatus($session['company_detail']['sid']);
+                        //
+                        if ($enable_learbing_center && ($company_eeoc_form_status == 1 && $eeo_form_status == 1)) {
                             $width = round(100 / 8, 4);
                         } else if (!$enable_learbing_center && $company_eeoc_form_status == 0) {
                             $width = round(100 / 6, 3);
@@ -241,7 +243,7 @@
                         <!--                                </a>-->
                         <!--                            </li>-->
 
-                        <?php if ($company_eeoc_form_status == 1) {?>
+                        <?php if ($company_eeoc_form_status == 1 && $eeo_form_status == 1) {?>
                         <li class="<?php echo $url_segment == 'eeoc_form' ? 'active' : ''; ?> <?php echo $complete_steps['eeoc_form'] > 0 ? 'done1' : ''; ?>"
                             style="width: <?php echo $width ?>%;">
                             <a href="<?php echo base_url('onboarding/eeoc_form/' . $unique_sid); ?>">

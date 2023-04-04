@@ -1263,9 +1263,6 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                 section1_first_name: {
                     required: true
                 },
-                section1_middle_initial: {
-                    required: true
-                },
                 section1_address: {
                     required: true
                 },
@@ -1303,9 +1300,6 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                 },
                 section1_first_name: {
                     required: 'First Name is required.'
-                },
-                section1_middle_initial: {
-                    required: 'Middle Initial is required.'
                 },
                 section1_address: {
                     required: 'Address is required'

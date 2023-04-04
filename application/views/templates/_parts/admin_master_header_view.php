@@ -29,6 +29,8 @@
 
         <!--select2-->
         <?php 
+        if(!isset($customSelect2)){
+
             if (strpos($_SERVER['REQUEST_URI'], "manage_admin/my-events") !== false){
         ?>
             <link href="<?php echo site_url('assets/css/select2.css'); ?>" rel="stylesheet" />
@@ -39,7 +41,7 @@
             <link href="<?php echo site_url('assets/manage_admin/css/select2.css'); ?>" rel="stylesheet" />
             <script src="<?php echo site_url('assets/manage_admin/js/select2.min.js'); ?>"></script>
         <?php        
-            }
+            }}
         ?>
         <!-- Include MultiSelect -->
         <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>">

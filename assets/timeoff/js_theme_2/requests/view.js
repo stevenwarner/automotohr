@@ -1,331 +1,331 @@
-$(function() {
+$(function () {
+    //
+    let callOBJ = {
+        Requests: {
+            Main: {
+                action: "get_requests",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                level: level,
+                type: "pending",
+                filter: {
+                    employees: "all",
+                    policies: "all",
+                    status: "all",
+                    order: "upcoming",
+                    startDate: "",
+                    endDate: "",
+                },
+                public: 0,
+            },
+        },
+    },
+        xhr = null,
+        allComments = {};
+
+    //
+    $("#js-filter-status").select2();
+    $("#js-filter-sort").select2({
+        minimumResultsForSearch: -1
+    });
+    //
+    // fetchTimeOffs();
+
+    // Set Filter
+    //
+    $("#js-filter-from-date").datepicker({
+        dateFormat: "mm-dd-yy",
+        changeYear: true,
+        changeMonth: true,
+        onSelect: function (v) {
+            $("#js-filter-to-date").datepicker("option", "minDate", v);
+        },
+    });
+
+    //
+    $("#js-filter-to-date")
+        .datepicker({
+            dateFormat: "mm-dd-yy",
+            changeYear: true,
+            changeMonth: true,
+        })
+        .datepicker("option", "minDate", $("#js-filter-from-date").val());
+
+    // Filter buttons
+    $(document).on("click", ".js-apply-filter-btn", applyFilter);
+    $(document).on("click", ".js-reset-filter-btn", resetFilter);
+    $(document).on("change", ".jsEditResetCheckbox", applyFilter);
+    //
+    $(".jsReportTab").click(function (e) {
+        //
+        e.preventDefault();
+        //
+        callOBJ.Requests.Main.type = $(this).data("key");
+        //
+        $(".jsReportTab").parent().removeClass("active").removeClass('csActiveTab');
+        $(this).parent().addClass("active").addClass('csActiveTab');
+        //
+        fetchTimeOffs();
+    });
+
+    $('.jsReportTab[data-key="pending"]').trigger('click');
+
+    $("#js-filter-sort").change(function () {
+        callOBJ.Requests.Main.filter.order = $(this).val();
+        fetchTimeOffs();
+    });
+
+    //
+    function resetFilter(e) {
+        //
+        e.preventDefault();
+        //
+        $("#js-filter-employee").select2("val", "all");
+        $("#js-filter-policies").select2("val", "all");
+        $("#js-filter-status").select2("val", "all");
+        $("#js-filter-sort").select2("val", "upcoming");
+        $("#js-filter-from-date").val("");
+        $("#js-filter-end-date").val("");
+        //
+        callOBJ.Requests.Main.filter.employees = "all";
+        callOBJ.Requests.Main.filter.policies = "all";
+        callOBJ.Requests.Main.filter.status = "all";
+        callOBJ.Requests.Main.filter.order = "upcoming";
+        callOBJ.Requests.Main.filter.startDate = "";
+        callOBJ.Requests.Main.filter.endDate = "";
+        //
+        fetchTimeOffs();
+    }
+
+    //
+    function applyFilter(e) {
+        //
+        e.preventDefault();
+        //
+        callOBJ.Requests.Main.filter.employees = $("#js-filter-employee").val();
+        callOBJ.Requests.Main.filter.policies = $("#js-filter-policies").val();
+        callOBJ.Requests.Main.filter.status = $("#js-filter-status").val();
+        callOBJ.Requests.Main.filter.order = $("#js-filter-sort").val();
+        callOBJ.Requests.Main.filter.startDate = $("#js-filter-from-date").val();
+        callOBJ.Requests.Main.filter.endDate = $("#js-filter-to-date").val();
+        //
+        fetchTimeOffs();
+    }
+
+    // Fetch plans
+    function fetchTimeOffs() {
+        //
+        if (window.timeoff.employees === undefined) {
+            setTimeout(fetchTimeOffs, 1000);
+            return;
+        }
+        //
+        if (xhr != null) return;
+        //
+        ml(true, "requests");
+        //
+        $(".js-error-row").remove();
+        //
+        xhr = $.post(handlerURL, callOBJ.Requests.Main, function (resp) {
             //
-            let callOBJ = {
-                    Requests: {
-                        Main: {
-                            action: "get_requests",
+            xhr = null;
+            //
+            if (resp.Redirect === true) {
+                alertify.alert(
+                    "WARNING!",
+                    "Your session expired. Please, re-login to continue.",
+                    () => {
+                        $('.js-apply-filter-btn').click();
+                    }
+                );
+                return;
+            }
+            //
+            if (resp.Status === false && callOBJ.Balances.Main.page == 1) {
+                $(".js-ip-pagination").html("");
+                $("#js-data-area").html(
+                    `<tr class="js-error-row"><td colspan="${$(".js-table-head").find("th").length
+                    }"><p class="alert alert-info text-center">${resp.Response
+                    }</p></td></tr>`
+                );
+                //
+                ml(false, "requests");
+                //
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                //
+                $(".js-ip-pagination").html("");
+                //
+                ml(false, "requests");
+                //
+                return;
+            }
+            //
+            setTable(resp);
+        });
+    }
+
+    //
+    function setTable(resp) {
+        //
+        let rows = "";
+        allComments = {};
+        //
+        if (resp.Data.length == 0) {
+            $(".jsBoxWrap").html(`<p class="alert alert-info text-center">No time-offs found.</p>`);
+            ml(false, "requests");
+            return;
+        }
+        //
+        let sortedRequests = {};
+        //
+        $.each(resp.Data, function (i, v) {
+            //
+            let userRow = getUserById(
+                v.employee_sid,
+                window.timeoff.employees,
+                "user_id"
+            );
+            if (Object.keys(userRow).length == 0) return;
+            //
+            // Reset policies
+            // Create index if not exists
+            if (sortedRequests[v.request_from_date] == undefined) sortedRequests[v.request_from_date] = [];
+            v['userRow'] = userRow;
+            //
+            sortedRequests[v.request_from_date].push(v);
+        });
+
+        $.each(sortedRequests, function (i, v) {
+
+            rows += '<div class="csContentHead">';
+            // rows += `	<h4>${moment(i, timeoffDateFormatD).format(timeoffDateFormat)}</h4>`;
+            // rows += '	<div class="row">';
+            v.map(function (v0) {
+                rows += getRequestBox(v0, v0['userRow']);
+            });
+            // rows += '	</div>';
+            rows += '</div>';
+
+        });
+        //
+        $(".jsBoxWrap").html(rows);
+        //
+        $('.jsTooltip').tooltip({ placement: 'top' });
+        //
+        $(".jsCommentsPopover").popover({
+            html: true,
+            placement: "right auto",
+            trigger: "hover",
+            template: '<div class="popover"><div class="arrow"></div><div class="popover-content"></div></div>'
+        }).on('inserted.bs.popover', function (e) {
+            //
+            let rows = '<ul>';
+            //
+            allComments[$(this).closest('.jsBox').data('id')][0].map(function (li) {
+                rows += `<li><strong>${li.msg}</strong> <br /> ${li.employeeName} ${li.employeeRole} <br /> ${moment(li.time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)} <br /> ${li.employeeCanApprove}</li>`;
+            });
+            //
+            rows += '</ul>';
+            $(this).next(".popover").find(".popover-content").html(rows);
+        });
+
+        //
+        ml(false, "requests");
+    }
+
+    //
+    $(document).on("click", ".jsArchiveTimeOff", function (e) {
+        //
+        e.preventDefault();
+        //
+        let requestId = $(this).closest(".jsBox").data("id");
+        //
+        alertify
+            .confirm(
+                "Do you really want to archive this time off?",
+                () => {
+                    //
+                    ml(true, "requests");
+                    //
+                    $.post(
+                        handlerURL,
+                        Object.assign({
+                            action: "archive_request",
                             companyId: companyId,
                             employerId: employerId,
                             employeeId: employeeId,
-                            level: level,
-                            type: "pending",
-                            filter: {
-                                employees: "all",
-                                policies: "all",
-                                status: "all",
-                                order: "upcoming",
-                                startDate: "",
-                                endDate: "",
-                            },
-                            public: 0,
-                        },
-                    },
-                },
-                xhr = null,
-                allComments = {};
-
-            //
-            $("#js-filter-status").select2();
-            $("#js-filter-sort").select2({
-                minimumResultsForSearch: -1
-            });
-            //
-            fetchTimeOffs();
-
-            // Set Filter
-            //
-            $("#js-filter-from-date").datepicker({
-                dateFormat: "mm-dd-yy",
-                changeYear: true,
-                changeMonth: true,
-                onSelect: function(v) {
-                    $("#js-filter-to-date").datepicker("option", "minDate", v);
-                },
-            });
-
-            //
-            $("#js-filter-to-date")
-                .datepicker({
-                    dateFormat: "mm-dd-yy",
-                    changeYear: true,
-                    changeMonth: true,
-                })
-                .datepicker("option", "minDate", $("#js-filter-from-date").val());
-
-            // Filter buttons
-            $(document).on("click", ".js-apply-filter-btn", applyFilter);
-            $(document).on("click", ".js-reset-filter-btn", resetFilter);
-            $(document).on("change", ".jsEditResetCheckbox", applyFilter);
-            //
-            $(".jsReportTab").click(function(e) {
-                //
-                e.preventDefault();
-                //
-                callOBJ.Requests.Main.type = $(this).data("key");
-                //
-                $(".jsReportTab").parent().removeClass("active");
-                $(this).parent().addClass("active");
-                //
-                fetchTimeOffs();
-            });
-
-            $("#js-filter-sort").change(function() {
-                callOBJ.Requests.Main.filter.order = $(this).val();
-                fetchTimeOffs();
-            });
-
-            //
-            function resetFilter(e) {
-                //
-                e.preventDefault();
-                //
-                $("#js-filter-employee").select2("val", "all");
-                $("#js-filter-policies").select2("val", "all");
-                $("#js-filter-status").select2("val", "all");
-                $("#js-filter-sort").select2("val", "upcoming");
-                $("#js-filter-from-date").val("");
-                $("#js-filter-end-date").val("");
-                //
-                callOBJ.Requests.Main.filter.employees = "all";
-                callOBJ.Requests.Main.filter.policies = "all";
-                callOBJ.Requests.Main.filter.status = "all";
-                callOBJ.Requests.Main.filter.order = "upcoming";
-                callOBJ.Requests.Main.filter.startDate = "";
-                callOBJ.Requests.Main.filter.endDate = "";
-                //
-                fetchTimeOffs();
-            }
-
-            //
-            function applyFilter(e) {
-                //
-                e.preventDefault();
-                //
-                callOBJ.Requests.Main.filter.employees = $("#js-filter-employee").val();
-                callOBJ.Requests.Main.filter.policies = $("#js-filter-policies").val();
-                callOBJ.Requests.Main.filter.status = $("#js-filter-status").val();
-                callOBJ.Requests.Main.filter.order = $("#js-filter-sort").val();
-                callOBJ.Requests.Main.filter.startDate = $("#js-filter-from-date").val();
-                callOBJ.Requests.Main.filter.endDate = $("#js-filter-to-date").val();
-                //
-                fetchTimeOffs();
-            }
-
-            // Fetch plans
-            function fetchTimeOffs() {
-                //
-                if (window.timeoff.employees === undefined) {
-                    setTimeout(fetchTimeOffs, 1000);
-                    return;
-                }
-                //
-                if (xhr != null) return;
-                //
-                ml(true, "requests");
-                //
-                $(".js-error-row").remove();
-                //
-                xhr = $.post(handlerURL, callOBJ.Requests.Main, function(resp) {
-                    //
-                    xhr = null;
-                    //
-                    if (resp.Redirect === true) {
-                        alertify.alert(
-                            "WARNING!",
-                            "Your session expired. Please, re-login to continue.",
-                            () => {
+                        }, { requestId: requestId, archive: 1 }),
+                        (resp) => {
+                            //
+                            alertify.alert("SUCCESS!", resp.Response, () => {
                                 $('.js-apply-filter-btn').click();
-                            }
-                        );
-                        return;
-                    }
-                    //
-                    if (resp.Status === false && callOBJ.Balances.Main.page == 1) {
-                        $(".js-ip-pagination").html("");
-                        $("#js-data-area").html(
-                            `<tr class="js-error-row"><td colspan="${
-$(".js-table-head").find("th").length
-}"><p class="alert alert-info text-center">${
-resp.Response
-}</p></td></tr>`
-                        );
-                        //
-                        ml(false, "requests");
-                        //
-                        return;
-                    }
-                    //
-                    if (resp.Status === false) {
-                        //
-                        $(".js-ip-pagination").html("");
-                        //
-                        ml(false, "requests");
-                        //
-                        return;
-                    }
-                    //
-                    setTable(resp);
-                });
-            }
-
-            //
-            function setTable(resp) {
-                //
-                let rows = "";
-                allComments = {};
-                //
-                if (resp.Data.length == 0) {
-                    $(".jsBoxWrap").html(`<p class="alert alert-info text-center">No time-offs found.</p>`);
-                    ml(false, "requests");
-                    return;
-                }
-                //
-                let sortedRequests = {};
-                //
-                $.each(resp.Data, function(i, v) {
-                    //
-                    let userRow = getUserById(
-                        v.employee_sid,
-                        window.timeoff.employees,
-                        "user_id"
+                            });
+                        }
                     );
-                    if (Object.keys(userRow).length == 0) return;
-                    //
-                    // Reset policies
-                    // Create index if not exists
-                    if (sortedRequests[v.request_from_date] == undefined) sortedRequests[v.request_from_date] = [];
-                    v['userRow'] = userRow;
-                    //
-                    sortedRequests[v.request_from_date].push(v);
-                });
+                },
+                () => { }
+            )
+            .set("labels", {
+                ok: "YES",
+                cancel: "NO",
+            })
+            .setHeader("CONFIRM!");
+    });
 
-                $.each(sortedRequests, function(i, v) {
-
-                    rows += '<div class="csContentHead">';
-                    // rows += `	<h4>${moment(i, timeoffDateFormatD).format(timeoffDateFormat)}</h4>`;
-                    // rows += '	<div class="row">';
-                    v.map(function(v0) {
-                        rows += getRequestBox(v0, v0['userRow']);
-                    });
-                    // rows += '	</div>';
-                    rows += '</div>';
-
-                });
-                //
-                $(".jsBoxWrap").html(rows);
-                //
-                $('.jsTooltip').tooltip({ placement: 'top' });
-                //
-                $(".jsCommentsPopover").popover({
-                    html: true,
-                    placement: "right auto",
-                    trigger: "hover",
-                    template: '<div class="popover"><div class="arrow"></div><div class="popover-content"></div></div>'
-                }).on('inserted.bs.popover', function(e) {
+    //
+    $(document).on("click", ".jsActiveTimeOff", function (e) {
+        //
+        e.preventDefault();
+        //
+        let requestId = $(this).closest(".jsBox").data("id");
+        //
+        alertify
+            .confirm(
+                "Do you really want to activate this time off?",
+                () => {
                     //
-                    let rows = '<ul>';
+                    ml(true, "requests");
                     //
-                    allComments[$(this).closest('.jsBox').data('id')][0].map(function(li) {
-                        rows += `<li><strong>${li.msg}</strong> <br /> ${li.employeeName} ${li.employeeRole} <br /> ${moment(li.time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)} <br /> ${li.employeeCanApprove}</li>`;
-                    });
-                    //
-                    rows += '</ul>';
-                    $(this).next(".popover").find(".popover-content").html(rows);
-                });
-
-                //
-                ml(false, "requests");
-            }
-
-            //
-            $(document).on("click", ".jsArchiveTimeOff", function(e) {
-                //
-                e.preventDefault();
-                //
-                let requestId = $(this).closest(".jsBox").data("id");
-                //
-                alertify
-                    .confirm(
-                        "Do you really want to archive this time off?",
-                        () => {
+                    $.post(
+                        handlerURL,
+                        Object.assign({
+                            action: "archive_request",
+                            companyId: companyId,
+                            employerId: employerId,
+                            employeeId: employeeId,
+                        }, { requestId: requestId, archive: 0 }),
+                        (resp) => {
                             //
-                            ml(true, "requests");
-                            //
-                            $.post(
-                                handlerURL,
-                                Object.assign({
-                                    action: "archive_request",
-                                    companyId: companyId,
-                                    employerId: employerId,
-                                    employeeId: employeeId,
-                                }, { requestId: requestId, archive: 1 }),
-                                (resp) => {
-                                    //
-                                    alertify.alert("SUCCESS!", resp.Response, () => {
-                                        $('.js-apply-filter-btn').click();
-                                    });
-                                }
-                            );
-                        },
-                        () => {}
-                    )
-                    .set("labels", {
-                        ok: "YES",
-                        cancel: "NO",
-                    })
-                    .setHeader("CONFIRM!");
-            });
+                            alertify.alert("SUCCESS!", resp.Response, () => {
+                                $('.js-apply-filter-btn').click();
+                            });
+                        }
+                    );
+                },
+                () => { }
+            )
+            .set("labels", {
+                ok: "YES",
+                cancel: "NO",
+            })
+            .setHeader("CONFIRM!");
+    });
 
-            //
-            $(document).on("click", ".jsActiveTimeOff", function(e) {
-                //
-                e.preventDefault();
-                //
-                let requestId = $(this).closest(".jsBox").data("id");
-                //
-                alertify
-                    .confirm(
-                        "Do you really want to activate this time off?",
-                        () => {
-                            //
-                            ml(true, "requests");
-                            //
-                            $.post(
-                                handlerURL,
-                                Object.assign({
-                                    action: "archive_request",
-                                    companyId: companyId,
-                                    employerId: employerId,
-                                    employeeId: employeeId,
-                                }, { requestId: requestId, archive: 0 }),
-                                (resp) => {
-                                    //
-                                    alertify.alert("SUCCESS!", resp.Response, () => {
-                                        $('.js-apply-filter-btn').click();
-                                    });
-                                }
-                            );
-                        },
-                        () => {}
-                    )
-                    .set("labels", {
-                        ok: "YES",
-                        cancel: "NO",
-                    })
-                    .setHeader("CONFIRM!");
-            });
-
-            //
-            $(document).on("click", ".jsHistoryTimeOff", function(e) {
-                        //
-                        e.preventDefault();
-                        //
-                        let requestId = $(this).closest(".jsBox").data("id");
-                        //
-                        Modal({
-                                    Id: "jsTimeOffHistory",
-                                    Title: "Time-off History",
-                                    Body: ` 
+    //
+    $(document).on("click", ".jsHistoryTimeOff", function (e) {
+        //
+        e.preventDefault();
+        //
+        let requestId = $(this).closest(".jsBox").data("id");
+        //
+        Modal({
+            Id: "jsTimeOffHistory",
+            Title: "Time-off History",
+            Body: ` 
                 <div class="row">
                     <div class="col-sm-3">
                         <div id="jsData"></div>
@@ -348,38 +348,38 @@ resp.Response
                     </div>
                 </div>
             `,
-                                    Loader: "jsTimeOffHistoryLoader",
-                                },
+            Loader: "jsTimeOffHistoryLoader",
+        },
+            () => {
+                //
+                ml(true, "jsTimeOffHistoryLoader");
+                //
+                $("#jsPolicyHistoryTable").html("");
+                //
+                $.post(
+                    handlerURL,
+                    Object.assign({
+                        action: "get_request_history",
+                        companyId: companyId,
+                        employerId: employerId,
+                        employeeId: employeeId,
+                    }, {
+                        requestId: requestId,
+                    }),
+                    (resp) => {
+                        //
+                        if (resp.Redirect === true) {
+                            alertify.alert(
+                                "WARNING!",
+                                "Your session expired. Please, re-login to continue.",
                                 () => {
-                                    //
-                                    ml(true, "jsTimeOffHistoryLoader");
-                                    //
-                                    $("#jsPolicyHistoryTable").html("");
-                                    //
-                                    $.post(
-                                            handlerURL,
-                                            Object.assign({
-                                                action: "get_request_history",
-                                                companyId: companyId,
-                                                employerId: employerId,
-                                                employeeId: employeeId,
-                                            }, {
-                                                requestId: requestId,
-                                            }),
-                                            (resp) => {
-                                                //
-                                                if (resp.Redirect === true) {
-                                                    alertify.alert(
-                                                        "WARNING!",
-                                                        "Your session expired. Please, re-login to continue.",
-                                                        () => {
-                                                            $('.js-apply-filter-btn').click();
-                                                        }
-                                                    );
-                                                    return;
-                                                }
-                                                //
-                                                $("#jsData").html(`
+                                    $('.js-apply-filter-btn').click();
+                                }
+                            );
+                            return;
+                        }
+                        //
+                        $("#jsData").html(`
                             <div class="employee-info">
                                 <figure>
                                     <img src="${$(`.jsBox[data-id="${requestId}"]`).find('.csBoxContentEmpSection img').prop('src')}" class="img-circle emp-image" />
@@ -392,7 +392,7 @@ resp.Response
                         `);
                         //
                         if (resp.Status === false) {
-                            alertify.alert("WARNING!", resp.Response, () => {});
+                            alertify.alert("WARNING!", resp.Response, () => { });
                             //
                             ml(false, "jsTimeOffHistoryLoader");
                             //
@@ -454,18 +454,17 @@ resp.Response
                                 rows += '        <div class="employee-info">';
                                 rows += "            <figure>";
                                 rows += `                <img src="${getImageURL(
-                    v.image
-                )}" class="img-circle emp-image" />`;
+                                    v.image
+                                )}" class="img-circle emp-image" />`;
                                 rows += "            </figure>";
                                 rows += '            <div class="text">';
                                 rows += `                <h4>${v.first_name} ${v.last_name} </h4>`;
                                 rows += `                <p>${remakeEmployeeName(v, false)}</p>`;
-                                rows += `                <p><a href="${baseURL}employee_profile/${
-                    v.userId
-                }" target="_blank">Id: ${getEmployeeId(
-                    v.userId,
-                    v.employee_number
-                )}</a></p>`;
+                                rows += `                <p><a href="${baseURL}employee_profile/${v.userId
+                                    }" target="_blank">Id: ${getEmployeeId(
+                                        v.userId,
+                                        v.employee_number
+                                    )}</a></p>`;
                                 rows += "            </div>";
                                 rows += "        </div></td>";
                                 rows += `                <td>`;
@@ -476,19 +475,18 @@ resp.Response
                         <img src="${baseURL}assets/images/upcoming-time-off-icon.png" class="emp-image" alt="emp-1">             
                     </div>             
                     <div class="text">                  
-                        <h4>${
-                          note.details.startDate == note.details.endDate
-                            ? moment(note.details.startDate).format(
-                                timeoffDateFormat
-                              )
-                            : moment(note.details.startDate).format(
-                                timeoffDateFormat
-                              ) +
-                              " - " +
-                              moment(note.details.endDate).format(
-                                timeoffDateFormat
-                              )
-                        }</h4>                  
+                        <h4>${note.details.startDate == note.details.endDate
+                                            ? moment(note.details.startDate).format(
+                                                timeoffDateFormat
+                                            )
+                                            : moment(note.details.startDate).format(
+                                                timeoffDateFormat
+                                            ) +
+                                            " - " +
+                                            moment(note.details.endDate).format(
+                                                timeoffDateFormat
+                                            )
+                                        }</h4>                  
                         <span>${note.details.policyTitle}</span><br />          
                         <span>${get_array_from_minutes(note.details.time, v.user_shift_hours, 'H:M').text}</span>
                     </div>       
@@ -514,9 +512,9 @@ resp.Response
     });
 
     //
-    $(document).on('click', '.jsRequestBtn', function() {
+    $(document).on('click', '.jsRequestBtn', function () {
         //
-       
+
         let tab = callOBJ.Requests.Main.type;
         let obj = {
             action: 'request_status',
@@ -533,13 +531,13 @@ resp.Response
             let request_sid = $(this).closest('.jsBox').data('id');
             let request_type = $(this).data('type');
             ml(true, `request${request_sid}`);
-            
-            let myurl = handlerURL+"/requests_status/"+companyId+"/"+request_sid+"/"+request_type;
-           
+
+            let myurl = handlerURL + "/requests_status/" + companyId + "/" + request_sid + "/" + request_type;
+
             $.ajax({
                 type: "GET",
                 url: myurl,
-                async : false,
+                async: false,
                 success: function (resp) {
                     ml(false, `request${request_sid}`);
                     if (resp.Status === true) {
@@ -555,12 +553,12 @@ resp.Response
                             });
                     } else {
                         //
-                        sendUpdateStatusRequest(obj); 
+                        sendUpdateStatusRequest(obj);
                     }
                 },
                 error: function (resp) {
 
-                }   
+                }
             });
         } else {
             //
@@ -569,17 +567,17 @@ resp.Response
 
     });
 
-    function sendUpdateStatusRequest (obj) {
+    function sendUpdateStatusRequest(obj) {
         ml(true, `request${obj.requestId}`);
         //
         $.post(
             handlerURL,
             obj,
-            function(resp) {
+            function (resp) {
                 alertify.alert(
                     'SUCCESS!',
                     resp.Response,
-                    function() {
+                    function () {
                         $('.js-apply-filter-btn').click();
                         ml(false, `request${obj.requestId}`);
                     }
@@ -609,17 +607,17 @@ resp.Response
             if (action.status == "pending") return "";
             if (action.status == "approved") {
                 msg += ` has approved the time-off at ${moment(his.created_at).format(
-          timeoffDateFormatWithTime
-        )}`;
+                    timeoffDateFormatWithTime
+                )}`;
                 il = '<i class="fa fa-check-circle text-success"></i>';
             } else if (action.status == "rejected") {
                 msg += ` has rejected the time-off at ${moment(his.created_at).format(
-          timeoffDateFormatWithTime
-        )}`;
+                    timeoffDateFormatWithTime
+                )}`;
                 il = '<i class="fa fa-times-circle text-danger"></i>';
-            }  else if (action.status == "cancelled" || action.status == "cancel") {
+            } else if (action.status == "cancelled" || action.status == "cancel") {
                 msg += ` has cancelled the time-off at ${moment(his.created_at).format(
-                  timeoffDateFormatWithTime
+                    timeoffDateFormatWithTime
                 )}`;
                 il = '<i class="fa fa-times-circle text-danger"></i>';
             }
@@ -629,11 +627,10 @@ resp.Response
             //
             rows += `
                 <div class="csApproverBox" title="Approver" data-content="${msg}">
-                    <img src="${
-                      his.image == null || his.image == ""
-                        ? awsURL + "test_file_01.png"
-                        : awsURL + his.image
-                    }" style="width: 40px; height: 40px;" />
+                    <img src="${his.image == null || his.image == ""
+                    ? awsURL + "test_file_01.png"
+                    : awsURL + his.image
+                }" style="width: 40px; height: 40px;" />
                     ${il}
                 </div>
             `;
@@ -666,8 +663,8 @@ resp.Response
                     approvel_rights = 'Time-off approved 100%';
                 } else if (action.canApprove == 0) {
                     approvel_rights = 'Time-off approved 50%';
-                } 
-            } 
+                }
+            }
             //
             let
                 obj = {
@@ -703,10 +700,10 @@ resp.Response
         //
         if (history.length == 0) return status;
         //
-        history.map((his,i) => {
+        history.map((his, i) => {
             let action = JSON.parse(his.note);
-            
-            if(his.action == 'update' && i == 0){
+
+            if (his.action == 'update' && i == 0) {
                 msg += `${remakeEmployeeName(his)}`;
                 if (action.status == "approved") {
                     status = 'approved';
@@ -720,7 +717,7 @@ resp.Response
                 }
 
             }
-            
+
         });
 
         let
@@ -760,7 +757,7 @@ resp.Response
         let rows = '';
         let allow_update = v.allow_update;
         //
-        rows += `<div class="col-sm-3 col-xs-12">`;
+        rows += `<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">`;
         rows += `    <div class="csBox csShadow csRadius5 p0 jsBox" data-id="${v.sid}"  data-status="${v.status}" data-userid="${v.employee_sid}" data-name="${userRow.first_name} ${userRow.last_name}" >`;
         rows += `        <!-- Box Loader -->`;
         rows += `        <div class="csIPLoader jsIPLoader dn" data-page="request${v.sid}"><i class="fa fa-circle-o-notch fa-spin"></i></div>`;
@@ -789,7 +786,7 @@ resp.Response
         rows += `            <div class="csBoxContentDateSection">`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
         rows += `                    <h3>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatB)}</h3>`;
-        rows += `                    <p>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
+        rows += `                    <p>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}, ${moment(v.request_from_date, timeoffDateFormatD).format('Y')}</p>`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-2 col-xs-2 pl0 pr0">`;
         rows += `                    <strong class="text-center">`;
@@ -798,14 +795,14 @@ resp.Response
         rows += `                </div>`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
         rows += `                    <h3>${moment(v.request_to_date, timeoffDateFormatD).format(timeoffDateFormatB)}</h3>`;
-        rows += `                    <p>${moment(v.request_to_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
+        rows += `                    <p>${moment(v.request_to_date, timeoffDateFormatD).format(timeoffDateFormatBD)}, ${moment(v.request_to_date, timeoffDateFormatD).format('Y')}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
         rows += `            <!-- Section 2 -->`;
         rows += `            <div class="csBoxContentInfoSection">`;
         rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${v.breakdown.text} of ${v.title}</strong></p>`;
+        rows += `                    <p><strong>${v.breakdown.text} of ${v.title} (<strong class="text-${v.categoryType == 1 ? 'success' : 'danger'}">${v.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</strong></p>`;
         rows += `                    <p>Requested on ${moment(v.created_at, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
@@ -816,7 +813,7 @@ resp.Response
         rows += `                    <img src="${getImageURL(userRow.image)}" class="csRoundImg"  />`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-9 col-xs-9 pr0">`;
-        rows += `                    <p><strong>${userRow.first_name} ${userRow.last_name}<br /></strong> ${remakeEmployeeName(userRow, false)}</p>`;
+        rows += `                    <p><strong style="font-size: 20px;">${userRow.first_name} ${userRow.last_name}<br /></strong> ${remakeEmployeeName(userRow, false)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
@@ -841,28 +838,28 @@ resp.Response
             rows += `                    <p class="csBoxContentComentName">`;
             rows += `                       ${comments[0].employeeName}`;
             if (employerId == comments[0].employeeSid) {
-            rows += `                       <i class="fa fa-pencil jsEditNote" title="Edit Comment" data-empSid="${comments[0].employeeSid}" data-reqSid="${v.sid}"></i>`;
+                rows += `                       <i class="fa fa-pencil jsEditNote" title="Edit Comment" data-empSid="${comments[0].employeeSid}" data-reqSid="${v.sid}"></i>`;
             }
             rows += `                    </p>`;
             rows += `                    <p class="csBoxContentComentTag"> ${comments[0].employeeRole}</p>`;
             rows += `                    <p class="csBoxContentComentTag">${moment(comments[0].time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
-            if(comments[0].msg.length != 0){   
-            rows += `                    <div>${strip_tags(comments[0].msg).substr(0, 25)}</div>`;
-            } 
-            
-            if(comments[0].status == 'approved'){
+            if (comments[0].msg.length != 0) {
+                rows += `                    <div>${strip_tags(comments[0].msg).substr(0, 25)}</div>`;
+            }
+
+            if (comments[0].status == 'approved') {
                 rows += `                    <div class="text-success"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
             } else {
                 rows += `                    <div class="text-danger"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
             }
-            
-                if (allComments[v.sid] === undefined) allComments[v.sid] = [];
-                // comments[0].v.history
-                allComments[v.sid].push(comments);
-                rows += `                    <span class="jsCommentsPopover" title="p">`;
-                rows += `                        <i class="fa fa-comment"></i>`;
-                rows += `                    </span>`;
-                
+
+            if (allComments[v.sid] === undefined) allComments[v.sid] = [];
+            // comments[0].v.history
+            allComments[v.sid].push(comments);
+            rows += `                    <span class="jsCommentsPopover" title="p">`;
+            rows += `                        <i class="fa fa-comment"></i>`;
+            rows += `                    </span>`;
+
             rows += `                </div>`;
             rows += `                <div class="clearfix"></div>`;
             rows += `            </div>`;
@@ -916,7 +913,7 @@ resp.Response
                     rows += `            </div>`;
                 }
             }
-        }    
+        }
         rows += `        </div>`;
         rows += `    </div>`;
         rows += `</div>`;
@@ -925,7 +922,7 @@ resp.Response
     }
 
     //
-    $(document).on('click', '.jsEditNote', function() {
+    $(document).on('click', '.jsEditNote', function () {
         let request_sid = $(this).closest('.jsBox').data('id');
         let employeeSid = $(this).attr('data-empSid');
         let obj = {
@@ -939,23 +936,23 @@ resp.Response
         $.post(
             handlerURL,
             obj,
-            function(resp) {
+            function (resp) {
                 $("#jsRequestSid").val(request_sid);
                 $("#jsEmployeeSid").val(employeeSid);
                 $("#jsNoteSection").val(resp.Comment);
                 $("#jsAddNoteModal").modal("show");
             }
         );
-        
+
     });
 
     //
-    $(document).on('click', '#jsSaveEmployeeNote', function() {
+    $(document).on('click', '#jsSaveEmployeeNote', function () {
         //
         $('#jsAddNoteModalLoader').show();
         // 
-        if ($("#jsNoteSection").val().trim().length == 0){
-            alertify.alert("Notice","Comment is required!")
+        if ($("#jsNoteSection").val().trim().length == 0) {
+            alertify.alert("Notice", "Comment is required!")
         } else {
             $('#jsSaveEmployeeNote').prop('disabled', true);
             //
@@ -971,17 +968,17 @@ resp.Response
             $.post(
                 handlerURL,
                 obj,
-                function(resp) {
+                function (resp) {
                     alertify.alert(
                         'SUCCESS!',
                         resp.Response,
-                        function() {
+                        function () {
                             $("#jsAddNoteModal").modal('hide');
                             fetchTimeOffs();
                         }
                     )
                 }
             );
-        } 
+        }
     });
 });
