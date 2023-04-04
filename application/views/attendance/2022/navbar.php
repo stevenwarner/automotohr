@@ -45,6 +45,15 @@
         'icon' => 'bar-chart',
         'segment' => 'report'
     ];
+
+    $navpills[] = [
+        'title' => 'Map Location',
+        'url' => '/maplocation',
+        'slug' => '',
+        'icon' => 'map-marker',
+        'segment' => 'maplocation'
+    ];
+
     $navpills[] = [
         'title' => 'Settings',
         'url' => '/settings',
