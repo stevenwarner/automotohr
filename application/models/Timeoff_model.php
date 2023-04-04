@@ -2732,7 +2732,7 @@ class Timeoff_model extends CI_Model
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_allowed_balances.policy_sid', 'inner')
             ->where('timeoff_allowed_balances.user_sid', $employeeId)
             ->where('timeoff_policies.is_archived', 0)
-            ->order_by('timeoff_allowed_balances.sid', 'DESC')
+            ->order_by('timeoff_allowed_balances.effective_at', 'DESC')
             ->get('timeoff_allowed_balances');
         //
         $b = $a->result_array();
