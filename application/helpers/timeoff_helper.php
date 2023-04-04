@@ -510,7 +510,7 @@ if (!function_exists('getEmployeeAccrual')) {
         }
 
         $currentDate = getSystemDate('Y-m-d');
-        $effectedDate = formatDateToDB($effectedDate, 'm-d-Y', DB_DATE);
+        $effectedDate = checkDateFormate( $effectedDate ) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
         //
         if (strtotime($currentDate) >= strtotime($effectedDate)) {
 
