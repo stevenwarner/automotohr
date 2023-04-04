@@ -2679,7 +2679,7 @@ class Timeoff_model extends CI_Model
             usort($b, function ($item1, $item2) {
                 $t1 = strtotime($item1['created_at']);
                 $t2 = strtotime($item2['created_at']);
-                return $t1 - $t2;
+                return $t2 - $t1;
             });
         }
         //
