@@ -1692,3 +1692,6 @@ $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_te
  * Cron job URLS
  */
 $route['cron_fix_duplicate_eeo']['cli'] = "Cron_common/fixDuplicateEEOForms";
+$route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
+
+$route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";

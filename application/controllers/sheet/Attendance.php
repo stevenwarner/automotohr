@@ -740,4 +740,77 @@ class Attendance extends Public_Controller {
         exit(0);
     }
 
+
+
+
+
+    public function mapLocation () {
+        //
+        $this->args['session'] = $this->ses;
+        $this->args['employee'] = $this->ses['employer_detail'];
+        $this->args['companyId'] = $this->companyId;
+        $this->args['security_details'] = db_get_access_level_details($this->ses['employer_detail']['sid']);
+        $this->args['title'] = 'Report | AutomotoHR';
+        // 
+        $this->load->model('single/Employee_model', 'sem');
+        // Get employee's list
+        $employees = $this->sem->GetCompanyEmployees($this->companyId, true);
+        // Filter
+        //
+        $selectedEmployeeIds = $this->input->get("id", true) ? array_filter($this->input->get("id", true)) : [];
+        // Set filter
+        $fromDate = $this->input->get('from', true) ? $this->input->get('from', true) : '';
+        $toDate = $this->input->get('to', true) ? $this->input->get('to', true) : '';
+        //
+        if(empty($fromDate) || empty($toDate)){
+            $SysToDate = $SysFromDate = $fromDate = $toDate = date('Y-m-d', strtotime('now'));
+        } else{
+            //
+            $SysFromDate = formatDateToDB($fromDate);
+            $SysToDate = formatDateToDB($toDate);
+            //
+            $fromDate = reset_datetime([
+                'datetime' => $fromDate.' 00:00:00',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => DB_DATE,
+                'from_timezone' => $this->args['employee']['timezone'],
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+            $toDate = reset_datetime([
+                'datetime' => $toDate.' 23:59:59',
+                'from_format' => 'm/d/Y H:i:s',
+                'format' => DB_DATE,
+                'from_timezone' => $this->args['employee']['timezone'],
+                'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                '_this' => $this
+            ]);
+        }
+        //
+        $this->args['from_date'] = $SysFromDate;
+        $this->args['to_date'] = $SysToDate;
+       $this->args['employees'] = $employees;
+        $this->args['selected_employee_ids'] = $selectedEmployeeIds;
+        //
+
+        $clockedInEmployees = $this->atm->GetEmployeeMapLocations(
+            $this->companyId, 
+            $fromDate, 
+            $toDate,
+            $this->args['selected_employee_ids'],
+            'employee_sid'
+        );
+
+        //
+        $this->args['lists'] = array_column($clockedInEmployees,"location");
+        //
+        $this->load
+        ->view($this->header, $this->args)
+        ->view('attendance/2022/maplocation')
+        ->view($this->footer);
+    }
+
+
+
+
 }
