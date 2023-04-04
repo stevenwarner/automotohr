@@ -6,7 +6,7 @@
                     <ul>
                         <li>
                 <?php       if($pageData['job_opportunities'] == '1') { ?>
-                                <a href="<?php echo base_url($jobs_page_title); ?>" class="site-btn bg-color"><?php echo $pageData['job_opportunities_text']; ?></a>
+                                <a href="<?php echo base_url(str_replace('','_',strtolower($jobs_page_title))); ?>" class="site-btn bg-color"><?php echo $pageData['job_opportunities_text']; ?></a>
                 <?php       }
 
                             if(!empty($job_fairs) && $pageData['job_fair'] == '1') { 
