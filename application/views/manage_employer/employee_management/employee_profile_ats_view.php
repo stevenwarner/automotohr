@@ -127,7 +127,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <?php echo form_error('email'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Mobile number:</label>
+                                                    <label>Phone number:</label>
                                                     <?= $input_group_start; ?>
                                                     <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>" type="text" name="PhoneNumber">
                                                     <?= $input_group_end; ?>

@@ -42,6 +42,15 @@
                                                                                                                                                             ?>">
                                                     <?php echo form_error('last_name'); ?>
                                                 </li>
+                                                 <li class="form-col-100 autoheight">
+                                                    <label>Phone Number</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="PhoneNumber" id="PhoneNumber" value="<?php
+                                                                                                                                                    if (isset($formpost['PhoneNumber'])) {
+                                                                                                                                                        echo $formpost['PhoneNumber'];
+                                                                                                                                                    }
+                                                                                                                                                    ?>">
+                                                    <?php echo form_error('PhoneNumber'); ?>
+                                                </li>
                                                 <li class="form-col-100 autoheight">
                                                     <label>E-Mail<span class="staric">*</span></label>
                                                     <input type="email" autocomplete="nope" class="invoice-fields" name="email" id="email" value="<?php
@@ -413,6 +422,15 @@
                 },
             },
             submitHandler: function(form) {
+                //
+                var phoneNumber = $('#PhoneNumber').val().trim();
+                //
+                if (phoneNumber != '') {
+                    if (phoneNumber.match(/[^0-9+-\s+]/) !== null) {
+                        alertify.alert('Phone number must contain only digits and dashes.');
+                        return false;
+                    }
+                }
                 form.submit();
             }
         });

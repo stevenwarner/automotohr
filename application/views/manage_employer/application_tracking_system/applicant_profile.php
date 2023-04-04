@@ -140,7 +140,7 @@ if ($_ssv) {
                                             <p class="dummy-invoice-fields"><?php echo $applicant_info["email"] ?></p>
                                         </div>
                                         <div class="col-md-6 col-xs-12">
-                                            <label class="csF16">Mobile Number</label>
+                                            <label class="csF16">Phone Number</label>
                                             <p class="dummy-invoice-fields"><?= $primary_phone_number_cc; ?></p>
                                         </div>
                                     </div><br>
@@ -445,7 +445,7 @@ if ($_ssv) {
 
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>mobile number:</label>
+                                                <label>Phone number:</label>
                                                 <?= $input_group_start; ?>
                                                 <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('phone_number', $primary_phone_number); ?>" type="text" name="phone_number">
                                                 <?= $input_group_end; ?>
