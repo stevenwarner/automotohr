@@ -44,6 +44,18 @@
     $importColumnsArray[] = 'EEOC Code';
     $importColumnsArray[] = 'Salary Benefits';
     $importColumnsArray[] = 'Workers Compensation Code';
+
+    //
+    $importColumnsArray[] = 'Marital Status';
+    $importColumnsArray[] = 'License Type';
+    $importColumnsArray[] = 'License Authority';
+    $importColumnsArray[] = 'License Class';
+    $importColumnsArray[] = 'License Number';
+    $importColumnsArray[] = 'License Issue Date';
+    $importColumnsArray[] = 'DOB';
+    $importColumnsArray[] = 'License Expiration Date';
+    $importColumnsArray[] = 'License Notes';
+
     //
     $importValueArray = '';
     $importValueArray .= 'Jason, josi, K, Snow, email@abc.com, +1234567892, 123 Street, California, 90001, CA, United States, Male, 05/05/1984, 111-22-2222, 12365478, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager, PST, https://yourwebsite.com/files/resume.pdf, https://yourwebsite.com/files/cover_letter.pdf, second@email.com, +1234567891, other@mail.com, +1234567899, Office Location, https://yourwebsite.com/linkedIn, Sales, Outbound, 3/7/2016, 8, 0, email, Active, Full-time, 03/08/2019, Rehired reason goes here, , ,<br/>';
@@ -192,6 +204,18 @@
         eeoccodeTitles = <?=json_encode(array('eeoc_code', 'eeoccode'));?>;
         salarybenefitsTitles = <?=json_encode(array('salary_benefits', 'salarybenefits'));?>;
         workerscompensationcodeTitles = <?=json_encode(array('workers_compensation_code', 'workerscompensationcode'));?>;
+
+
+       //
+       maritalstatusTitles = <?=json_encode(array('marital_status', 'maritalstatus'));?>;
+       licensetypeTitles = <?=json_encode(array('license_type', 'licensetype'));?>;
+       licenseauthorityTitles = <?=json_encode(array('license_authority', 'licenseauthority'));?>;
+       licenseclassitles = <?=json_encode(array('license_class', 'licenseclass'));?>;
+       licensenumberTitles = <?=json_encode(array('license_number', 'licensenumber'));?>;
+       licenseissuedateTitles = <?=json_encode(array('license_issue_date', 'licenseissuedate'));?>;
+       dobTitles = <?=json_encode(array('dob', 'dateofbirth'));?>;
+       licenseexpirationdateTitles = <?=json_encode(array('license_expiration_date', 'licenseexpirationdate'));?>;
+       licensenotesTitles = <?=json_encode(array('license_notes', 'licensenotes'));?>;
 
 
         loader('hide');
@@ -446,6 +470,27 @@
             for(i; i < len; i++) if(index == array[i].trim()) return 'salary_benefits';
             i = 0; len = workerscompensationcodeTitles.length; array = workerscompensationcodeTitles;
             for(i; i < len; i++) if(index == array[i].trim()) return 'workers_compensation_code';
+            
+            //
+            i = 0; len = maritalstatusTitles.length; array = maritalstatusTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'marital_status';
+            i = 0; len = licensetypeTitles.length; array = licensetypeTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'license_type';
+            i = 0; len = licenseauthorityTitles.length; array = licenseauthorityTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'license_authority';
+            i = 0; len = licenseclassitles.length; array = licenseclassitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'license_class';
+            i = 0; len = licensenumberTitles.length; array = licensenumberTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'license_number';
+            i = 0; len = licenseissuedateTitles.length; array = licenseissuedateTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'license_issue_date';
+            i = 0; len = dobTitles.length; array = dobTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'dob';
+            i = 0; len = licenseexpirationdateTitles.length; array = licenseexpirationdateTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'license_expiration_date';
+            i = 0; len = licensenotesTitles.length; array = licensenotesTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'license_notes';
+
 
             return -1;
         }

@@ -16522,3 +16522,16 @@ if (!function_exists('get_user_complynettitle')) {
         }
     }
 }
+
+
+//
+if (!function_exists('get_employee_drivers_license')) {
+    function get_employee_drivers_license($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('license_details');
+        $CI->db->where('users_sid', $emp_id);
+        $CI->db->where('license_type ', 'drivers');
+        return $CI->db->get('license_information')->row_array();
+    }
+}

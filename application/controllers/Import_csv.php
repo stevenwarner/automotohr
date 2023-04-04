@@ -293,7 +293,7 @@ class Import_csv extends Public_Controller {
             }
 
             $this->load->view('main/header', $data);
-        $this->load->view('import_csv/index');
+            $this->load->view('import_csv/index');
             $this->load->view('main/footer');
         } else {
             redirect('login', "refresh");
@@ -337,9 +337,61 @@ class Import_csv extends Public_Controller {
                 foreach ($formpost['employees'] as $k0 => $v0) {
                     // Set default insert array
                     $insertArray = array();
+                    $insertDriverinfo = array();
+                    $licenseDetails =array();
+
                     if(count($v0) <=1){
                         continue;
                     }
+
+                    //
+                    if(isset($v0['license_type']) && !empty($v0['license_type'])){
+                        $licenseDetails['license_type'] = $v0['license_type'];
+                        unset($v0['license_type']);
+                    }
+                    if(isset($v0['license_authority']) && !empty($v0['license_authority'])){
+                        $licenseDetails['license_authority'] = $v0['license_authority'];
+                        unset($v0['license_authority']);
+                    }
+                    if(isset($v0['license_class']) && !empty($v0['license_class'])){
+                        $licenseDetails['license_class'] = $v0['license_class'];
+                        unset($v0['license_class']);
+                    }
+                    if(isset($v0['license_number']) && !empty($v0['license_number'])){
+                        $licenseDetails['license_number'] = $v0['license_number'];
+                        unset($v0['license_number']);
+                    }
+                    if(isset($v0['license_issue_date']) && !empty($v0['license_issue_date']) && $v0['license_issue_date'] != NULL && preg_match('/[0-9]{2}/', $v0['license_issue_date'])){
+                       $formatForDate = 'm/d/Y';
+                       //
+                       $t = explode('/', $v0['license_issue_date']);
+                       if(strlen(end($t)) == 2) {
+                           $formatForDate = 'm/d/y';
+                       }
+
+                        $licenseDetails['license_issue_date'] = formatDateToDB($v0['license_issue_date'], $formatForDate );
+                        unset($v0['license_issue_date']);
+                    }
+
+                   
+                    if(isset($v0['license_expiration_date']) && !empty($v0['license_expiration_date']) && $v0['license_expiration_date'] != NULL && preg_match('/[0-9]{2}/', $v0['license_expiration_date'])){
+                       
+                        $formatForDate = 'm/d/Y';
+                        //
+                        $t = explode('/', $v0['license_expiration_date']);
+                        if(strlen(end($t)) == 2) {
+                            $formatForDate = 'm/d/y';
+                        }
+                        $licenseDetails['license_expiration_date'] = formatDateToDB($v0['license_expiration_date'], $formatForDate );
+                        unset($v0['license_expiration_date']);
+                    }
+
+                    if(isset($v0['license_notes']) && !empty($v0['license_notes'])){
+                        $licenseDetails['license_notes'] = $v0['license_notes'];
+                        unset($v0['license_notes']);
+                    }
+
+
                     //
                     if(!isset($v0['status']) && isset($v0['termination_date']) && !empty($v0['termination_date'])){
                         $v0['status'] = "terminated";
@@ -384,7 +436,12 @@ class Import_csv extends Public_Controller {
                     // In case of exist update the employee
                     // only add the misisng information
                     if (!empty($employeeArray)) {
-                        $this->updateUser($employeeArray,$v0);
+                        $employeeOldSid = $this->updateUser($employeeArray,$v0);
+                                                
+                        // Update Driver Information
+                        $insertDriverinfo['license_details'] =  serialize($licenseDetails);
+                        $this->import_csv_model->updatLicenseDetails($insertDriverinfo, $employeeOldSid);
+                     
                         $existCount++; 
                         continue;
                     }
@@ -596,6 +653,16 @@ class Import_csv extends Public_Controller {
                     //
                     // Manage employee status
                     $this->manageEmployeeStatus($employeeId, $v0);
+
+                    // Add Driver Information
+
+                   $insertDriverinfo['users_sid'] =  $employeeId ;
+                   $insertDriverinfo['license_type'] =  'drivers' ;
+                   $insertDriverinfo['users_type '] =  'employee' ;
+                   $insertDriverinfo['license_details'] =  serialize($licenseDetails);
+                   
+                   $this->import_csv_model->InsertLicenseDetails($insertDriverinfo);
+
                     //
                     $insertCount++;
                 }
@@ -837,8 +904,10 @@ class Import_csv extends Public_Controller {
         if(!empty($insertArray)){
         $this->import_csv_model->UpdateNewUser($pre_emp['sid'], $insertArray);
         }
-
-    }
+        //
+      return $pre_emp['sid'];
+    
+}
 
     /**
      * Send JSON response
