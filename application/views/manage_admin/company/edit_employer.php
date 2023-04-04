@@ -277,7 +277,7 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Mobile Number', 'cell_number'); ?>
+                                                    <?php echo form_label('Phone Number', 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
