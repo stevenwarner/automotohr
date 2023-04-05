@@ -7,14 +7,14 @@
 </style>
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>assets/css/chosen.css"/>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>assets/js/chosen.jquery.js"></script>
-<div class="main">
+<div class="main jsmaincontent">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="row">
-                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('private_messages'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-arrow-left"></i> back</a>
+                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-3">
+                        <a href="<?php echo base_url('private_messages'); ?>" class="btn btn-info btn-block csRadius5"><i class="fa fa-arrow-left"></i> back</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                         <a class="btn btn-success btn-block mb-2" href="<?=base_url('private_messages')?>"><i class="fa fa-envelope-o"></i> Inbox <?php if($total_messages>0 ) { ?><span>(<?= $total_messages ?>)</span><?php } ?></a>

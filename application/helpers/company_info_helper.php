@@ -2754,7 +2754,12 @@ if (!function_exists('getComplyNetLink')) {
         // Load ComplyNet library
         $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
         // Get the hash
-        return $CI->complynet_lib->getUserHash($record['email']);
+        $response = $CI->complynet_lib->getUserHash($record['email']);
+        //
+        if ($response == 'Array') {
+            return '';
+        }
+        return $response;
     }
 }
 
@@ -2869,7 +2874,10 @@ if (!function_exists('checkEmployeeMissingData')) {
         if (!$employee['PhoneNumber']) {
             $errors[] = 'Phone number is missing.';
         }
-        if (!$employee['job_title']) {
+        // if (!$employee['job_title']) {
+        //     $errors[] = 'Job title is missing.';
+        // }
+        if (!$employee['complynet_job_title']) {
             $errors[] = 'Job title is missing.';
         }
         if (!$employee['department_sid']) {
@@ -2926,5 +2934,36 @@ if (!function_exists('findTheRightEmployee')) {
         }
         //
         return $found;
+    }
+}
+
+
+if (!function_exists('getUserColumnById')) {
+    /**
+     * Get the column from user
+     * The function will only return a single column and
+     * it will return empty in case no data is found.
+     * 
+     * @param int $id
+     * @param string $column Optional
+     * @return string
+     */
+    function getUserColumnById (
+        int $id,
+        string $column = 'sid'
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        $record =
+        $CI->db->select($column)
+        ->where('sid', $id)
+        ->get('users')
+        ->row_array();
+        //
+        if (empty($record)) {
+            return '';
+        }
+        return $record[$column];
     }
 }

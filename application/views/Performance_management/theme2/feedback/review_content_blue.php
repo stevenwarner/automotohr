@@ -62,7 +62,7 @@ question.multiple_choice = "<?=$question['answer']['multiple_choice'];?>";
     ?>
 </script>
 
-<div class="col-md-9 col-sm-12">
+<div class="col-md-12 col-sm-12">
     <!--  -->
     <div class="csIPLoader jsIPLoader" data-page="save_question">
         <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>

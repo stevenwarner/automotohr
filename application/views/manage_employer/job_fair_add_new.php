@@ -404,6 +404,8 @@
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
+                                                <a href="javascript:;" class="btn btn-danger btn-xs delete-field" data-attr="<?php echo $field['sid'];?>"><i class="fa fa-trash"></i></a>
+                                                <a href="<?php echo base_url('job_fair_configuration/edit_custom_field/'.$id.'/'.$field['sid'])?>" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
                                             </div>
                                         </div>
                         <?php       } else { ?>

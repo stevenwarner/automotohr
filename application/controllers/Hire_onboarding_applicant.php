@@ -250,8 +250,11 @@ class Hire_onboarding_applicant extends CI_Controller
         }
         
         //
-
-       //
+        $employer_data['languages_speak'] = $applicant_profile_info['languages_speak'];
+        $employer_data['salary_benefits'] = $applicant_profile_info['salary_benefits'];
+        $employer_data['workers_compensation_code'] = $applicant_profile_info['workers_compensation_code'];
+        $employer_data['eeoc_code'] = $applicant_profile_info['eeoc_code'];
+        //
         $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
         $employer_data['department_sid'] = $departmentsTeams['department_sid'];
         $employer_data['team_sid'] = $departmentsTeams['team_sid'];
@@ -592,6 +595,30 @@ class Hire_onboarding_applicant extends CI_Controller
         //
         if ((empty($employee_profile_info['dob']) || $employee_profile_info['dob'] == NULL) && !empty($applicant_profile_info['dob'])) {
             $employer_data['dob'] = $applicant_profile_info['dob'];
+            $update_flag = 1;
+        }
+
+        //
+        if ((empty($employee_profile_info['languages_speak']) || $employee_profile_info['languages_speak'] == NULL) && !empty($applicant_profile_info['languages_speak'])) {
+            $employer_data['languages_speak'] = $applicant_profile_info['languages_speak'];
+            $update_flag = 1;
+        }
+
+        //
+        if ((empty($employee_profile_info['salary_benefits']) || $employee_profile_info['salary_benefits'] == NULL) && !empty($applicant_profile_info['salary_benefits'])) {
+            $employer_data['salary_benefits'] = $applicant_profile_info['salary_benefits'];
+            $update_flag = 1;
+        }
+
+        //
+        if ((empty($employee_profile_info['workers_compensation_code']) || $employee_profile_info['workers_compensation_code'] == NULL) && !empty($applicant_profile_info['workers_compensation_code'])) {
+            $employer_data['workers_compensation_code'] = $applicant_profile_info['workers_compensation_code'];
+            $update_flag = 1;
+        }
+
+        //
+        if ((empty($employee_profile_info['eeoc_code']) || $employee_profile_info['eeoc_code'] == NULL) && !empty($applicant_profile_info['eeoc_code'])) {
+            $employer_data['eeoc_code'] = $applicant_profile_info['eeoc_code'];
             $update_flag = 1;
         }
 

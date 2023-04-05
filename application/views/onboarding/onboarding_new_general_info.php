@@ -65,8 +65,8 @@ if($_ssv){
 ?>
 <style>.csbgbl{-webkit-filter: blur(5px); filter: blur(5px)}</style>
 
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
       
 
         <div class="row">

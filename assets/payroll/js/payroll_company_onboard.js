@@ -59,7 +59,7 @@ $(function PayrollCompanyOnboard() {
     /**
      * Triggers company onboard process
      */
-    $('.jsPayrollCompanyOnboard, .jsAddCompanyToGusto').click(function(event) {
+    $('.jsPayrollCompanyOnboard, .jsAddCompanyToGusto').click(function (event) {
         //
         event.preventDefault();
         //
@@ -81,11 +81,11 @@ $(function PayrollCompanyOnboard() {
     /**
      * Trigger when cancel is pressed
      */
-    $(document).on('click', '.jsPayrollCancel', function(event) {
+    $(document).on('click', '.jsPayrollCancel', function (event) {
         //
         event.preventDefault();
         //
-        return alertify.confirm('Any unsaved changes to this content will be lost. Are you sure you want to close this page?', function() {
+        return alertify.confirm('Any unsaved changes to this content will be lost. Are you sure you want to close this page?', function () {
             //
             xhr = null;
             //
@@ -94,7 +94,7 @@ $(function PayrollCompanyOnboard() {
         }).setHeader('Confirm!');
     });
 
-    $('.jsSyncWithGusto').click(function(event) {
+    $('.jsSyncWithGusto').click(function (event) {
         var company_sid = $(this).data("company_sid");
         //
         companyId = company_sid;
@@ -122,7 +122,7 @@ $(function PayrollCompanyOnboard() {
             Title: '<span class="' + modalId + 'Title"></span>',
             Body: '<div id="' + modalId + 'Body"></div>',
             Loader: modalLoader,
-            Container: 'container-fluid',
+            Container: 'container',
             CancelClass: 'btn-cancel csW'
         }, WelcomeJourney);
     }
@@ -142,14 +142,14 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/welcome'),
-            })
-            .done(function(resp) {
+            method: "GET",
+            url: GetURL('get_payroll_page/welcome'),
+        })
+            .done(function (resp) {
                 //
                 xhr = null;
                 //
-                LoadContent(resp, function() {
+                LoadContent(resp, function () {
                     //
                     $('.jsPayrollLoadSelectEmployees').click(EmployeeSelectPage);
                     //
@@ -176,14 +176,14 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/employees/' + companyId),
-            })
-            .done(function(resp) {
+            method: "GET",
+            url: GetURL('get_payroll_page/employees/' + companyId),
+        })
+            .done(function (resp) {
                 //
                 xhr = null;
                 //
-                LoadContent(resp, function() {
+                LoadContent(resp, function () {
                     //
                     $('.jsPayrollBackToWelcome').click(WelcomeJourney);
                     //
@@ -217,7 +217,7 @@ $(function PayrollCompanyOnboard() {
             var ids = [];
             //
             if ($('.jsPayrollEmployees:checked').length) {
-                $('.jsPayrollEmployees:checked').map(function() { ids.push($(this).val()); });
+                $('.jsPayrollEmployees:checked').map(function () { ids.push($(this).val()); });
             }
             //
             SaveItem('PayrollEmployees' + companyId, ids);
@@ -230,14 +230,14 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/onboard/' + companyId),
-            })
-            .done(function(resp) {
+            method: "GET",
+            url: GetURL('get_payroll_page/onboard/' + companyId),
+        })
+            .done(function (resp) {
                 //
                 xhr = null;
                 //
-                LoadContent(resp, function() {
+                LoadContent(resp, function () {
                     //
                     if ($('.jsPayrollMoveCompanyToPayroll').length) {
                         $('.jsPayrollMoveCompanyToPayroll').click(InitialOnboard);
@@ -271,14 +271,14 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/admin/' + companyId),
-            })
-            .done(function(resp) {
+            method: "GET",
+            url: GetURL('get_payroll_page/admin/' + companyId),
+        })
+            .done(function (resp) {
                 //
                 xhr = null;
                 //
-                LoadContent(resp, function() {
+                LoadContent(resp, function () {
                     //
                     $('.jsPayrollSaveAdmin').click(SavePayrollAdmin);
                     //  
@@ -326,13 +326,13 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         $.ajax({
-                method: "POST",
-                url: GetURL('save_payroll_admin/' + companyId),
-                data: o
-            })
-            .done(function() {
+            method: "POST",
+            url: GetURL('save_payroll_admin/' + companyId),
+            data: o
+        })
+            .done(function () {
                 //
-                return alertify.alert('Success', 'You have successfully added the payroll admin.', function() {
+                return alertify.alert('Success', 'You have successfully added the payroll admin.', function () {
                     OnboardPage();
                 });
             })
@@ -354,14 +354,14 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/admin_view/' + companyId),
-            })
-            .done(function(resp) {
+            method: "GET",
+            url: GetURL('get_payroll_page/admin_view/' + companyId),
+        })
+            .done(function (resp) {
                 //
                 xhr = null;
                 //
-                LoadContent(resp, function() {
+                LoadContent(resp, function () {
                     //
                     $('.jsPayrollBackToOnboard').click(OnboardPage);
                     //  
@@ -406,11 +406,11 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         xhr = $.ajax({
-                method: "post",
-                url: GetURL('payroll/onboard_company/' + companyId),
-                data: { companyId: companyId }
-            })
-            .done(function(resp) {
+            method: "post",
+            url: GetURL('payroll/onboard_company/' + companyId),
+            data: { companyId: companyId }
+        })
+            .done(function (resp) {
                 //
                 xhr = null;
                 //
@@ -454,11 +454,11 @@ $(function PayrollCompanyOnboard() {
         $("#jsIPLoaderTextArea").text("Please wait we are adding employee " + (CURRENT_EMPLOYEE + 1) + " out of " + (preSelected.length) + "");
         //
         xhr = $.ajax({
-                method: "POST",
-                url: GetURL('payroll/onboard_employee/' + companyId),
-                data: { employee_id: preSelected[CURRENT_EMPLOYEE] }
-            })
-            .done(function() {
+            method: "POST",
+            url: GetURL('payroll/onboard_employee/' + companyId),
+            data: { employee_id: preSelected[CURRENT_EMPLOYEE] }
+        })
+            .done(function () {
                 xhr = null;
                 if (CURRENT_EMPLOYEE < (preSelected.length - 1)) {
                     CURRENT_EMPLOYEE++;
@@ -471,7 +471,7 @@ $(function PayrollCompanyOnboard() {
 
     function FinishCompanyOnboarding() {
         $('#' + modalId).hide();
-        alertify.alert('Success!', 'Payroll is activated against this store.', function() {
+        alertify.alert('Success!', 'Payroll is activated against this store.', function () {
             location.reload();
         });
     }
@@ -482,14 +482,14 @@ $(function PayrollCompanyOnboard() {
         ml(true, modalLoader);
         //
         xhr = $.ajax({
-                method: "GET",
-                url: GetURL('get_payroll_page/get_prosess_complete_page/' + companyId),
-            })
-            .done(function(resp) {
+            method: "GET",
+            url: GetURL('get_payroll_page/get_prosess_complete_page/' + companyId),
+        })
+            .done(function (resp) {
                 //
                 xhr = null;
                 //
-                LoadContent(resp.html, function() {
+                LoadContent(resp.html, function () {
                     //
                     ml(false, modalLoader);
                     //

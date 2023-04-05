@@ -111,6 +111,7 @@ define('FROM_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN); // automotoHR admin email
 define('TO_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN); // automotoHR admin email
 define('TO_EMAIL_ALEX', 'amiller@theautomotivepartners.com'); // automotoHR Alex Emal
 define('FROM_EMAIL_DEV', 'dev@' . STORE_DOMAIN); // automotoHR developer email
+define('DEV_EMAIL_PM', 'mubashar@' . STORE_DOMAIN); // automotoHR developer email
 define('FROM_EMAIL_ACCOUNTS', 'accounts@' . STORE_DOMAIN); // automotoHR developer email
 define('TO_EMAIL_DEV', 'dev@' . STORE_DOMAIN); // automotoHR developer email
 define('FROM_STORE_NAME', STORE_NAME . '.com'); // automotoHR developer email
@@ -464,11 +465,11 @@ define('IS_TIMEZONE_ACTIVE', TRUE);
 
 // 12-07-2019
 // Twilio Sandbox credentials
-define('TWILIO_SANDBOX_SID', 'AC4c4ff03b21dc4691b623456eae03787e');
-define('TWILIO_SANDBOX_TOKEN', '5a91af234c615b4d87e5dcf741cc0448');
+define('TWILIO_SANDBOX_SID', 'AC625d8274289680ae299d41c4253460d1');
+define('TWILIO_SANDBOX_TOKEN', 'd8109cb5ac959835b414b5645879451c');
 // Twilio live credentials
 define('TWILIO_SID', 'AC625d8274289680ae299d41c4253460d1');
-define('TWILIO_TOKEN', '4acba7fdbbeeb03d526c040274a3f050');
+define('TWILIO_TOKEN', 'd8109cb5ac959835b414b5645879451c');
 
 // Twilio Message Services SIDs
 // Sandbox Message Service SID

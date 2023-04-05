@@ -302,7 +302,8 @@ class Companies extends Admin_Controller
                 'payment_type' => $this->input->post('payment_type'),
                 'past_due' => $this->input->post('past_due'),
                 'user_shift_minutes' => $this->input->post('shift_mins'),
-                'user_shift_hours' => $this->input->post('shift_hours')
+                'user_shift_hours' => $this->input->post('shift_hours'),
+                'job_titles_template_group' => $this->input->post('job_titles_template_group')
             );
             //
             if (IS_TIMEZONE_ACTIVE) $data['timezone'] = $this->input->post('company_timezone', true);
@@ -542,7 +543,7 @@ class Companies extends Admin_Controller
                     mail(TO_EMAIL_DEV, 'company id not found', 'company id not found while adding a new company and creating email templates.');
                 }
                 //
-                if(!isDevServer()){
+                if (!isDevServer()) {
                     //Add Company Portal Templates Information - End
                     $auth_details = $this->company_model->fetch_details(THEME_AUTH);
                     $auth_user = $auth_details['auth_user'];
@@ -552,13 +553,13 @@ class Companies extends Admin_Controller
                     $json_client->set_output('json');
                     $json_client->set_port(2083);
                     $json_client->password_auth($auth_user, $auth_pass);
-    
+
                     $args = array(
                         'dir' => 'public_html/manage_portal/',
                         'rootdomain' => STORE_DOMAIN,
                         'domain' => $company_username
                     );
-    
+
                     if ($_SERVER['SERVER_NAME'] != 'localhost') {
                         $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
                         sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'New Api Result', $result);
@@ -621,6 +622,8 @@ class Companies extends Admin_Controller
         if ($administrator_sid == NULL || $administrator_sid == 0) {
             $result = false;
         } else {
+            $this->company_model->executive_admin_user_delete($administrator_sid);
+            //
             $result = $this->company_model->executive_admin_delete($administrator_sid);
         }
 
@@ -1920,6 +1923,7 @@ class Companies extends Admin_Controller
             redirect('manage_admin/companies', 'refresh');
         }
     }
+
 
     function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME)
     {
@@ -3273,5 +3277,90 @@ class Companies extends Admin_Controller
             //
             redirect(base_url('manage_admin/companies/default_document_category_listing/' . $company_sid));
         }
+    }
+
+
+
+    //
+    function manage_company_help_box($company_sid = null)
+    {
+        $redirect_url = 'manage_admin/companies';
+        $function_name = 'edit_company';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+        if ($company_sid != null) {
+            $this->data['page_title'] = 'Manage Help Box Info';
+            $this->data['company_sid'] = $company_sid;
+            $contact_info = $this->company_model->get_helpbox_info($company_sid);
+
+            if (sizeof($contact_info) == 0) {
+                $contact_info[0]['box_title'] = '';
+                $contact_info[0]['box_support_email'] = '';
+                $contact_info[0]['box_support_phone_number'] = '';
+                $contact_info[0]['box_status'] = '0';
+                $contact_info[0]['button_text'] = '';
+            }
+
+            $this->data['contact_info'] = $contact_info;
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('helpboxtitle', 'Title', 'required|trim|xss_clean');
+            $this->form_validation->set_rules('helpButtonText', 'Button Text', 'required|trim|xss_clean');
+            $this->form_validation->set_rules('helpboxemail', 'Email', 'required|trim|valid_email|xss_clean');
+            $this->form_validation->set_rules('helpboxphonenumber', 'Phone Number', 'trim|xss_clean');
+            $this->form_validation->set_rules('helpboxstatus', 'Status', 'required|trim|xss_clean');
+
+            if ($this->form_validation->run() === TRUE) {
+                $helpboxTitle = $this->input->post('helpboxtitle');
+                $helpboxEmail = $this->input->post('helpboxemail');
+                $helpboxPhoneNumber = $this->input->post('helpboxphonenumber');
+                $helpboxStatus = $this->input->post('helpboxstatus');
+                $helpButtonText = $this->input->post('helpButtonText');
+
+                $this->company_model->add_update_helpbox_info($company_sid, $helpboxTitle, $helpboxEmail, $helpboxPhoneNumber, $helpboxStatus, $helpButtonText);
+                $this->session->set_flashdata('message', '<strong>Success:</strong> You have successfully updated the details.');
+                redirect('manage_admin/companies/manage_company_help_box/' . $company_sid, 'refresh');
+            }
+
+            $this->render('manage_admin/company/manage_company_help_box');
+        } else {
+            redirect('manage_admin/companies', 'refresh');
+        }
+    }
+
+    public function send_invoice_by_email()
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $emails = get_notification_email_contacts($post['companyId'], 'billing_invoice');
+        //
+        if (!$emails) {
+            return SendResponse(200, ['error' => 'No emails found in billing. Please add them first']);
+        }
+        //
+        //
+        $subject = 'A new Invoice Generated!';
+        foreach ($emails as $email) {
+            $message_body = '';
+            $message_body .= '<p>' . 'Dear ' . ucwords($email['contact_name']) . '</p>';
+            $message_body .= '<p>' . 'A new invoice has been automatically generated' . '</p>';
+            $message_body .= '<p>' . 'Invoice Details are as Follows: ' . '</p>';
+            $message_body .= generate_invoice_html($post['invoiceId']);
+            $message_body .= '<p>Please, click on the following link to pay the invoice.</p>';
+            $message_body .= getButtonForEmail([
+                '{{url}}' => base_url('pay/invoice/' . $post['invoiceId']),
+                '{{color}}' => '#003087',
+                '{{text}}' => 'View & Pay Invoice',
+            ]);
+            //
+            $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
+            //
+            log_and_sendEmail(FROM_EMAIL_ACCOUNTS, $email['email'], $subject, $message_body, STORE_NAME);
+        }
+        //
+        return SendResponse(200, ['success' => 'Email sent!']);
     }
 }

@@ -14445,15 +14445,20 @@ if (!function_exists('isPayrollOrPlus')) {
      * Only payroll and plus is allowed to 
      * manage payroll module. The function was
      * created on 12/09/2021
-     * 
+     *
+     * @param bool $strict Optional- Only checks access level if true
      * @return
      */
-    function isPayrollOrPlus()
+    function isPayrollOrPlus($strict = false)
     {
         // Get instance
         $CI = &get_instance();
         // Get the session
         $ses = $CI->session->userdata('logged_in');
+        //
+        if ($strict) {
+            return $ses['employer_detail']['access_level_plus'] == 1 ? true : false;
+        }
         // Check if the logged in user
         // is a plus or payroll
         if (
@@ -14623,6 +14628,7 @@ if (!function_exists('GetEmployeeStatusText')) {
         $arr[6] = 'Inactive';
         $arr[7] = 'Leave';
         $arr[8] = 'Rehired';
+        $arr[9] = 'Transferred';
         //
         return $arr[$index];
     }
@@ -16261,5 +16267,266 @@ if (!function_exists('getQuizKey')) {
     ) {
         //
         return str_replace(' ', '$$ba$$', $question);
+    }
+}
+
+if (!function_exists('_secret')) {
+    function _secret(string $str, bool $isDate = false, bool $checkPlus = false)
+    {
+        //
+        if (empty($str)) {
+            return $str;
+        }
+        //
+        if ($checkPlus) {
+            //
+            $CI = &get_instance();
+            //
+            if (
+                $CI->session->userdata('logged_in')['employer_detail']['access_level_plus'] == 1
+                || $CI->session->userdata('logged_in')['employer_detail']['pay_plan_plus'] == 1
+            ) {
+                return $str;
+            }
+        }
+        // Check if it's a date
+        if (strpos($str, ',') !== false && $isDate) {
+            return preg_replace('/[0-9]{4}/', '####', $str);
+        }
+        //
+        if (
+            (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/i', $str)
+                || preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i', $str)
+                || preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/i', $str)
+                || preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/i', $str)
+            ) && $isDate
+        ) {
+            return preg_replace('/[0-9]{4}/', '####', $str);
+        }
+        //
+        return '###-##-' . substr($str, -4);
+    }
+}
+
+
+if (!function_exists('isSecret')) {
+    function isSecret(string $str)
+    {
+
+        return strpos(strtolower($str), '#') !== false ? true : false;
+    }
+}
+
+if (!function_exists('getCompanyEEOCFormStatus')) {
+    function getCompanyEEOCFormStatus($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('eeo_form_status');
+        $CI->db->where('user_sid', $company_sid);
+        $CI->db->from('portal_employer');
+        $portalData = $CI->db->get()->row_array();
+
+        if (!empty($portalData)) {
+            return $portalData['eeo_form_status'];
+        } else {
+            return 0;
+        }
+    }
+}
+
+//
+if (!function_exists('get_company_helpbox_info')) {
+
+    function get_company_helpbox_info($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->where('company_id', $company_sid);
+        $records_obj = $CI->db->get('helpbox_info_for_company');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }
+}
+
+if (!function_exists('db_get_employee_profile_byemail')) {
+    function db_get_employee_profile_byemail($email, $companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid,first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag');
+        $CI->db->where('email', $email);
+        $CI->db->where('parent_sid', $companySid);
+        return $CI->db->get('users')->result_array();
+    }
+}
+
+if (!function_exists('get_user_anniversary_date')) {
+    /**
+     * Get employee annivversary date
+     * 
+     * @param string $joinedAt 
+     * @param string $registrationDate 
+     * @param string $rehiredDate
+     * @param string $compareDate Optional
+     * @param bool   $onlyText Optional
+     * @return string|array
+     */
+    function get_user_anniversary_date(
+        $joinedAt,
+        $registrationDate,
+        $rehiredDate,
+        string $compareDate = '',
+        bool $onlyText = true
+    ) {
+        //
+        $r = [];
+        $r['joiningDate'] =
+            $r['timeSpentInCompany'] =
+            $r['timeSpentInCompanyAgo'] =
+            $r['text'] = '';
+        //
+        $joiningDate = null;
+        //
+        if ($rehiredDate && $rehiredDate != '0000-00-00') {
+            $joiningDate = $rehiredDate;
+        } elseif ($joinedAt && $joinedAt != '0000-00-00') {
+            $joiningDate = $joinedAt;
+        } elseif ($registrationDate && $registrationDate != '0000-00-00 00:00:00') {
+            $joiningDate = trim(explode(' ', $registrationDate)[0]);
+        } else {
+            return $onlyText ? '' : $r;
+        }
+
+        //
+        $timeSpentString = '';
+        $timeSpentString2 = '';
+        $datetime1 = date_create($joiningDate);
+        $datetime2 = date_create($compareDate ?? getSystemDate(DB_DATE));
+
+        $interval = $datetime1->diff($datetime2);
+        //
+        $years = $interval->format('%y');
+        $months = $interval->format('%m');
+        $days = $interval->format('%d');
+
+        if ($years > 0) {
+            $timeSpentString2 = $years . ' ' . ($years > 1 ? 'years' : 'year') . ' ago';
+            $timeSpentString .= $years . ' ' . ($years > 1 ? 'years' : 'year');
+        }
+        if ($months > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $months . ' ' . ($months > 1 ? 'months' : 'month') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') .  $months . ' ' . ($months > 1 ? 'months' : 'month');
+        }
+        if ($days > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $days . ' ' . ($days > 1 ? 'days' : 'day') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') . $days . ' ' . ($days > 1 ? 'days' : 'day');
+        }
+        //
+        $return_date = formatDateToDB($joiningDate, DB_DATE, DATE);
+        $r['joiningDate'] = $return_date;
+        $r['timeSpentInCompany'] = $timeSpentString;
+        $r['timeSpentInCompanyAgo'] = $timeSpentString2;
+        $r['text'] = $return_date . " (Joined " . $timeSpentString2 . ")";
+        //
+        if ($onlyText) {
+            return "<strong>Employee Anniversary Date: " . $r['text'] . "<strong>";
+        }
+        //
+        return $r;
+    }
+}
+
+//
+if (!function_exists('get_user_datescolumns')) {
+    function get_user_datescolumns($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('joined_at,registration_date');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->result_array();
+    }
+}
+
+
+//
+if (!function_exists('showLanguages')) {
+    function showLanguages($languages)
+    {
+        return rtrim(ucwords(implode(', ', (explode(',', $languages))), '\, '), ', ');
+    }
+}
+
+
+//
+if (!function_exists('get_templet_jobtitles')) {
+    function get_templet_jobtitles($companyId)
+    {
+        if (!empty($companyId)) {
+            // Get Group Id
+            $CI = &get_instance();
+            $CI->db->select('job_titles_template_group');
+            $CI->db->where('sid', $companyId);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+            $gropuSid = $company_info['job_titles_template_group'];
+
+            // Get Gropup Data
+            $CI->db->where('sid', $gropuSid);
+            $CI->db->where('archive_status', 'active');
+            $GroupsData = $CI->db->get('portal_job_listing_template_groups')->row_array();
+
+            $titlesIdArray = array();
+
+            if ($GroupsData['titles'] != '') {
+                $titlesIdArray = unserialize($GroupsData['titles']);
+            }
+            if (!$titlesIdArray) {
+                return [];
+            }
+            // Get Job Titles
+            $CI->db->where('archive_status', 'active');
+            $CI->db->where_in('sid', $titlesIdArray);
+            $CI->db->order_by('sort_order', 'ASC');
+            $jobTitlesData = $CI->db->get('portal_job_title_templates')->result_array();
+
+            return $jobTitlesData;
+        }
+    }
+}
+
+
+//
+if (!function_exists('get_templet_complynettitle')) {
+    function get_templet_complynettitle($titleSid)
+    {
+        if (!empty($titleSid)) {
+            $CI = &get_instance();
+            $CI->db->select('complynet_job_title');
+            $CI->db->where('sid', $titleSid);
+            $CI->db->order_by('sort_order', 'ASC');
+            $jobComplynetData = $CI->db->get('portal_job_title_templates')->row_array();
+            return $jobComplynetData['complynet_job_title'];
+        }
+    }
+}
+
+
+
+//  Get User Complynet Job Title by Sid
+if (!function_exists('get_user_complynettitle')) {
+    function get_user_complynettitle($sid)
+    {
+        if (!empty($sid)) {
+            $CI = &get_instance();
+            $CI->db->select('complynet_job_title');
+            $CI->db->where('sid', $sid);
+            $jobComplynetData = $CI->db->get('users')->row_array();
+            return $jobComplynetData['complynet_job_title'];
+        }
     }
 }

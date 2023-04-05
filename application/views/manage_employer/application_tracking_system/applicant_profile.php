@@ -344,6 +344,33 @@ if ($_ssv) {
                                                 <?= GetVal($applicant_info['semi_monthly_draw']); ?>
                                             </p>
                                         </div>
+                                        <?php if (isPayrollOrPlus(true)) { ?>
+                                            <div class="col-md-6 col-xs-12">
+                                                <label class="csF16">Workers Compensation Code</label>
+                                                <p class="dummy-invoice-fields">
+                                                    <?= GetVal($applicant_info['workers_compensation_code']); ?>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6 col-xs-12">
+                                                <label class="csF16">EEOC Code</label>
+                                                <p class="dummy-invoice-fields">
+                                                    <?= GetVal($applicant_info['eeoc_code']); ?>
+                                                </p>
+                                            </div>
+
+                                            <div class="col-md-6 col-xs-12">
+                                                <label class="csF16">Benefits Salary</label>
+                                                <p class="dummy-invoice-fields">
+                                                    <?= GetVal($applicant_info['salary_benefits']); ?>
+                                                </p>
+                                            </div>
+                                        <?php } ?>
+                                            <div class="col-sm-12">
+                                                <label class="csF16">I Speak</label>
+                                                <p class="dummy-invoice-fields">
+                                                    <?=$applicant_info['languages_speak'] ? showLanguages($applicant_info['languages_speak']) : 'Not Specified';?>
+                                                </p>
+                                            </div>
                                         <br>
                                     </div><br>
                                     <?php if (isset($applicant_info["YouTube_Video"]) && $applicant_info["YouTube_Video"] != "") {
@@ -576,10 +603,25 @@ if ($_ssv) {
                                                     <a href="javascript:;" style="background: #549809;">Choose File</a>
                                                 </div>
                                             </li>
+                                            <?php $templateTitles = get_templet_jobtitles($applicant_info['employer_sid']); ?>
                                             <li class="form-col-50-right">
-                                                <label>Job Title:</label>
-                                                <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>">
+                                                <label>Job Title: &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <?php if ($templateTitles) { ?>
+                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $applicant_info['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
+                                                        <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $applicant_info['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title
+                                                    <?php } ?>
+                                                </label>
+                                                <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>" id="job_title">
                                                 <?php echo form_error('desired_job_title'); ?>
+                                                <?php if ($templateTitles) { ?>
+                                                <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
+                                                    <option value="0">Please select job title</option>
+                                                    <?php foreach ($templateTitles as $titleRow) { ?>
+                                                        <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                    <?php } ?>
+                                                </select>
+                                                <?php } ?>
+
                                             </li>
                                             <div class="row">
                                                 <!--  -->
@@ -613,8 +655,101 @@ if ($_ssv) {
                                                     <label>Semi Monthly Draw:</label>
                                                     <input class="invoice-fields" value="<?php echo set_value('semi_monthly_draw', isset($applicant_info["semi_monthly_draw"]) ? $applicant_info["semi_monthly_draw"] : ''); ?>" type="number" name="semi_monthly_draw">
                                                 </div>
+                                                <?php if (isPayrollOrPlus(true)) { ?>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Workers Compensation Code:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('workers_compensation_code', isset($applicant_info["workers_compensation_code"]) ? $applicant_info["workers_compensation_code"] : ''); ?>" type="text" name="workers_compensation_code">
+                                                    </div>
+                                                    <!--  -->
+                                                <?php } ?>
                                                 <!--  -->
                                             </div>
+                                            <?php if (isPayrollOrPlus(true)) { ?>
+
+                                                <div class="row">
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>EEOC Code:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('eeoc_code', isset($applicant_info["eeoc_code"]) ? $applicant_info["eeoc_code"] : ''); ?>" type="text" name="eeoc_code">
+                                                    </div>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Benefits Salary:</label>
+                                                        <input class="invoice-fields" name="salary_benefits" id="salary_benefits" value="<?php echo set_value('salary_benefits', isset($applicant_info["salary_benefits"]) ? $applicant_info["salary_benefits"] : ''); ?>" />
+
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
+
+                                            <?php
+                                                //
+                                                $hasOther = [];
+                                                //
+                                                if ($applicant_info['languages_speak']) {
+                                                    $hasOther = array_filter(explode(',', $applicant_info['languages_speak']), function ($lan) {
+                                                        return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                    });
+                                                }
+                                            ?>
+
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>I Speak:</label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($applicant_info['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($applicant_info['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($applicant_info['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <!--  -->
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                                <div class="col-sm-12">
+                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                    <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                </div>
+                                            </div>
+
+                                            <script>
+                                                $('[name="secondaryOption"]').click(function() {
+                                                    $('.jsOtherLanguage').toggleClass('dn');
+                                                });
+                                            </script>
+
+                                            <br />
                                             <li class="form-col-100">
                                                 <div class="row">
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -1878,14 +2013,14 @@ if ($_ssv) {
         $('.eventdate').datepicker({
             dateFormat: 'mm-dd-yy',
             changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $('#eventdate').datepicker({
             dateFormat: 'mm-dd-yy',
             changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $("#eventdate").datepicker("setDate", new Date());
         $('.selected').click(function() {
@@ -2767,6 +2902,29 @@ if ($_ssv) {
         $('.review_video_source:checked').trigger('click');
         $('.review_video_source[value="no_video"]').trigger('click');
     })
+
+    <?php if ($templateTitles) { ?>
+
+    <?php if ($applicant_info['job_title_type'] != '0') { ?>
+        $('#template_job_title').show();
+        $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
+        $('#job_title').hide();
+    <?php } ?>
+
+    $('.titleoption').click(function() {
+        var titleOption = $(this).val();
+        if (titleOption == 'dropdown') {
+            $('#template_job_title').show();
+            $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] == '0' ? '0' : $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
+            $('#job_title').hide();
+        } else if (titleOption == 'manual') {
+            $('#template_job_title').hide();
+            $('#template_job_title').val('0');
+            $('#job_title').show();
+        }
+
+    });
+    <?php } ?>
 </script>
 
 <style>

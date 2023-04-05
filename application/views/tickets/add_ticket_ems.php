@@ -1,5 +1,11 @@
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
+    <div class="row">
+            <div class="col-sm-12">
+                <a href="<?=base_url('employee_management_system');?>" class="btn btn-info csRadius5">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                </a>
+            </div>
         <div class="row">
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                 <div class="row">

@@ -18,7 +18,7 @@
             <div class="clearfix"></div>
             <br />
             <!-- Left Sidebar -->
-            <?php $this->load->view("{$pp}left_sidebar"); ?>
+            <?php //$this->load->view("{$pp}left_sidebar"); ?>
             <!-- Right Content Area -->
             <?php $this->load->view("{$pp}reviews_list_blue"); ?>
         </div>

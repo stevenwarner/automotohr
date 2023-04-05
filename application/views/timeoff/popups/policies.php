@@ -30,7 +30,7 @@
     let policyFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startPolicyProcess(employeeId, employeeName) {
+    async function startPolicyProcess(employeeId, employeeName,anniversarytext) {
         // Load Modal
         let rows = `
         <!-- Modal -->
@@ -39,6 +39,7 @@
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #81b431; color: #ffffff;">
                         <h4 class="modal-title">Balance Breakdown for ${employeeName} (As Of Today)</h4>
+                        ${anniversarytext}
                     </div>
                     <div class="modal-body">
                         <div>
@@ -112,7 +113,7 @@
             policy.map((pi) => {
                 policyOptions += `
                 <tr ${ pi.Reason != '' ? 'class="bg-danger"' : '' }>
-                    <td>${pi.Title}${ pi.Reason != '' ? ` <i class="fa fa-question-circle jsPopover" title="Why?" data-content="${pi.Reason}"></i>` : '' }</td>
+                    <td>${pi.Title} (<strong class="text-${pi.CategoryType == 1 ? 'success' : 'danger'}">${pi.CategoryType == 1 ? 'Paid' : 'Unpaid'}</strong>) ${ pi.Reason != '' ? ` <i class="fa fa-question-circle jsPopover" title="Why?" data-content="${pi.Reason}"></i>` : '' }</td>
                     <td>${pi.AllowedTime !== undefined && pi.AllowedTime.M.minutes != 0 && pi.Reason == '' && pi.EmploymentStatus != 'probation' ? pi.AllowedTime.text : 'Unlimited'}</td>
                     <td>${pi.Balance !== undefined ? pi.Balance.text : '0'}</td>
                     <td>${pi.CarryOverTime !== undefined ? pi.CarryOverTime.text : '0'}</td>

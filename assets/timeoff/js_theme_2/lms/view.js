@@ -31,7 +31,8 @@ $(function () {
         minimumResultsForSearch: -1
     });
     //
-    fetchTimeOffs();
+    // fetchTimeOffs();
+    // $('.jsReportTab[data-key="pending"]').trigger('click');
 
     // Set Filter
     //
@@ -64,11 +65,14 @@ $(function () {
         //
         callOBJ.Requests.Main.type = $(this).data("key");
         //
-        $(".jsReportTab").parent().removeClass("active");
-        $(this).parent().addClass("active");
+        //
+        $(".jsReportTab").parent().removeClass("active").removeClass('csActiveTab');
+        $(this).parent().addClass("active").addClass('csActiveTab');
         //
         fetchTimeOffs();
     });
+
+    $('.jsReportTab[data-key="pending"]').trigger('click');
 
     //
     $(".jsArchiveTab").hide(0);
@@ -355,6 +359,7 @@ $(function () {
                                         v.userId,
                                         v.employee_number
                                     )}</a></p>`;
+                                rows += `                <p>${v.anniversary_text}</p>`;
                                 rows += "            </div>";
                                 rows += "        </div></td>";
                                 rows += `                <td>`;
@@ -767,7 +772,7 @@ $(function () {
             else if (v.status != 'pending' || v.level_status != 'pending') expired = 1;
         }
 
-        rows += `<div class="col-sm-4 col-xs-12">`;
+        rows += `<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">`;
         rows += `    <div class="csBox csShadow csRadius5 p0 jsBox" data-id="${v.sid}" data-status="${v.status}" data-userid="${v.employee_sid}" data-name="${userRow.first_name} ${userRow.last_name}" data-view="${expired}"
         >`;
         rows += `        <!-- Box Loader -->`;
@@ -804,7 +809,7 @@ $(function () {
         rows += `            <div class="csBoxContentDateSection">`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
         rows += `                    <h3>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatB)}</h3>`;
-        rows += `                    <p>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
+        rows += `                    <p>${moment(v.request_from_date, timeoffDateFormatD).format(timeoffDateFormatBD)}, ${moment(v.request_from_date, timeoffDateFormatD).format('Y')}</p>`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-2 col-xs-2 pl0 pr0">`;
         rows += `                    <strong class="text-center">`;
@@ -813,14 +818,14 @@ $(function () {
         rows += `                </div>`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
         rows += `                    <h3>${moment(v.request_to_date, timeoffDateFormatD).format(timeoffDateFormatB)}</h3>`;
-        rows += `                    <p>${moment(v.request_to_date, timeoffDateFormatD).format(timeoffDateFormatBD)}</p>`;
+        rows += `                    <p>${moment(v.request_to_date, timeoffDateFormatD).format(timeoffDateFormatBD)}, ${moment(v.request_to_date, timeoffDateFormatD).format('Y')}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
         rows += `            <!-- Section 2 -->`;
         rows += `            <div class="csBoxContentInfoSection">`;
         rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${v.breakdown.text} of ${v.title}</strong></p>`;
+        rows += `                    <p><strong>${v.breakdown.text} of ${v.title} (<strong class="text-${v.categoryType == 1 ? 'success' : 'danger'}">${v.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</strong></p>`;
         rows += `                    <p>Requested on ${moment(v.created_at, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
@@ -831,7 +836,7 @@ $(function () {
         rows += `                    <img src="${getImageURL(userRow.image)}" class="csRoundImg"  />`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-10 col-xs-10 pr0" style="padding-left: 26px;">`;
-        rows += `                    <p><strong>${userRow.first_name} ${userRow.last_name}</strong> ${remakeEmployeeName(userRow, false)}</p>`;
+        rows += `                    <p><strong style="font-size: 20px;">${userRow.first_name} ${userRow.last_name}</strong> ${remakeEmployeeName(userRow, false)} <br>  ${userRow.anniversary_text}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;
@@ -1418,7 +1423,7 @@ $(function () {
                 $("#jsEmployeeSid").val(employeeSid);
                 $("#jsNoteSection").val(resp.Comment);
                 //
-                if(window.location.pathname.match(/lms/ig) !== null){
+                if (window.location.pathname.match(/lms/ig) !== null) {
                     $('#document_modal_title').css('color', '#fff')
                 }
                 $("#jsAddNoteModal").modal("show");

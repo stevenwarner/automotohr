@@ -36,7 +36,7 @@
         <?php } else { ?>
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/bootstrap.css">
         <?php } ?>
-        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css?v=1.0.0">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css?v=1.0.1">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/font-awesome.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/responsive.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/star-rating.css">
@@ -1247,7 +1247,8 @@
                                                     <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
-                                                            <a href="<?php echo base_url('complynet') ?>">
+                                                            <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
+                                                            <a href="<?php echo $complyNetLink ?? base_url('complynet') ?>">
                                                                 <figure><i class="fa fa-book"></i></figure>
                                                                 Complynet
                                                             </a>

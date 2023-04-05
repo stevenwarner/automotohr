@@ -32,12 +32,23 @@ $(function() {
                 loadTimeLineGraph(
                     resp.Data.Timeoffs
                 );
-                loadHourGraph(
-                    resp.Data.Balance.Remaining.H.hours,
-                    resp.Data.Balance.Consumed.H.hours,
-                    resp.Data.Balance.Remaining.text,
-                    resp.Data.Balance.Consumed.text
-                );
+                //
+                if (resp.Data.Balance.Consumed == 0) {
+                    loadHourGraph(
+                        0,
+                        0,
+                        'Hours',
+                        'Hours'
+                    );
+                }
+                else {
+                        loadHourGraph(
+                        resp.Data.Balance.Remaining.H.hours,
+                        resp.Data.Balance.Consumed.H.hours,
+                        resp.Data.Balance.Remaining.text,
+                        resp.Data.Balance.Consumed.text
+                    );
+                    }
 
                 //
                 ml(false, 'graph');

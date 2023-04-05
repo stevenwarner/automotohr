@@ -190,7 +190,8 @@ class Employee_management extends Public_Controller
             $keyword = '';
             $order_by = '';
             $order = '';
-            $employee_type = 'active';
+            $employee_type = 'all';
+
 
             if (isset($_GET['keyword'])) {
                 $keyword = $_GET['keyword'];
@@ -204,6 +205,7 @@ class Employee_management extends Public_Controller
                 $employee_type = "all";
             }
 
+
             if (isset($_GET['order_by'])) {
                 $order_by = $_GET['order_by'];
             } else {
@@ -216,12 +218,19 @@ class Employee_management extends Public_Controller
                 $order = "";
             }
 
+            if (isset($_GET['logincred'])) {
+                $logincred = $_GET['logincred'];
+            } else {
+                $logincred = "all";
+            }
+
             $data['archived'] = 0;
             $data['ems_status'] = $ems_status;
             $data['keyword'] = $keyword;
             $data['employee_type'] = $employee_type;
             $data['order_by'] = $order_by;
             $data['order'] = $order;
+            $data['logincred'] = $logincred;
             //
             if (empty($order_by)) {
                 $order_by = 'sid';
@@ -265,8 +274,29 @@ class Employee_management extends Public_Controller
                 $searchList = $employees_list;
                 $data['department_sid'] = $department_sid;
             }
-            $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
 
+            //  $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+
+            $employees = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList, $employee_type, $logincred);
+
+            $employeesOnly = array();
+            $executivesOnly = array();
+            //
+            foreach ($employees as $ekey => $employee) {
+                if ($employee["is_executive_admin"] == 1) {
+                    $is_executive = $this->employee_model->checkExecutiveAdmin($employee["email"]);
+                    //
+                    if ($is_executive == 'no') {
+                        unset($employees[$ekey]);
+                    } else {
+                        array_push($executivesOnly, $employees[$ekey]);
+                    }
+                } else {
+                    array_push($employeesOnly, $employees[$ekey]);
+                }
+            }
+
+            $data['employees'] = array_merge($employeesOnly, $executivesOnly);
 
             $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_id);
 
@@ -276,12 +306,15 @@ class Employee_management extends Public_Controller
 
             $data['portal_email_templates'] = $portal_email_templates;
 
-            $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
-            $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
-            $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+            //  $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+            //   $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+            //    $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             //
-            $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword, 0, $order_by, $order);
-            $data['employees'] = array_merge($data['employees'], $data['executive_admins']);
+
+
+            //    $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword, 0, $order_by, $order);
+            // $data['employees'] = array_merge($data['employees'], $data['executive_admins']);
+
             $data['all_company_employees'] = array_merge($data['all_company_employees'], $data['executive_admins']);
             //
             $data['title'] = 'Employee / Team Members';
@@ -317,6 +350,7 @@ class Employee_management extends Public_Controller
             if ($data['session']['employer_detail']['access_level_plus'] != 1 && $data['session']['employer_detail']['pay_plan_flag'] != 1) {
                 $data['teamMemberIds'] = $this->timeoff_model->getEmployeeTeamMemberIds($data['session']['employer_detail']['sid']);
             }
+
             //
             $data["transferIds"] = $this->employee_model->getAllTransferEmployeeSids($company_id);
             //
@@ -380,6 +414,7 @@ class Employee_management extends Public_Controller
                 $this->load->view('manage_employer/invite_colleagues');
                 $this->load->view('main/footer');
             } else {
+
                 $session_data['session'] = $this->session->userdata('logged_in');
                 $company_information = $session_data["session"]["company_detail"];
                 $company_sid = $company_information['sid'];
@@ -413,6 +448,11 @@ class Employee_management extends Public_Controller
                     $departmenId = getDepartmentColumnByTeamId($teamId, 'department_sid');
                 }
 
+                //
+                $workersCompensationCode = $this->input->post('workers_compensation_code');
+                $eeocCode = $this->input->post('eeoc_code');
+                $salaryBenefits = $this->input->post('salary_benefits');
+
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $start_date = reset_datetime(array('datetime' => $registration_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d H:i:s'));
@@ -443,6 +483,26 @@ class Employee_management extends Public_Controller
                 $user_information['employee_type'] = $employment_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
+                //
+                $user_information['workers_compensation_code'] = $workersCompensationCode;
+                $user_information['eeoc_code'] = $eeocCode;
+                $user_information['salary_benefits'] = $salaryBenefits;
+
+
+                //
+                if ($this->input->post('template_job_title') != '0') {
+                    $templetJobTitleData = $this->input->post('template_job_title');
+                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                    $user_information['job_title'] = $templetJobTitleDataArray[1];
+                    $user_information['job_title_type'] = $templetJobTitleDataArray[0];
+                    $user_information['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                } else {
+                    $data_to_insert['job_title_type'] = 0;
+                }
+
+
+
+
                 if ($departmenId != '' && $teamId != '') {
                     $user_information['department_sid'] = $departmenId;
                     $user_information['team_sid'] = $teamId;
@@ -463,7 +523,7 @@ class Employee_management extends Public_Controller
                         $team_information['employee_sid'] = $employee_sid;
                         $team_information['created_at'] = date('Y-m-d H:i:s');
                         $this->employee_model->add_employee_to_team($team_information);
-                     }
+                    }
 
 
 
@@ -486,7 +546,7 @@ class Employee_management extends Public_Controller
                         $team_information['employee_sid'] = $employee_sid;
                         $team_information['created_at'] = date('Y-m-d H:i:s');
                         $this->employee_model->add_employee_to_team($team_information);
-                     }
+                    }
 
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
@@ -1124,7 +1184,7 @@ class Employee_management extends Public_Controller
                     $fullEmploymentForm = unserialize($data['employer']['full_employment_application']);
                     // Check for DOB
                     if (!empty($fullEmploymentForm['TextBoxDOB']) && empty($data['employer']['dob'])) {
-                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat(checkDateFormate($fullEmploymentForm['TextBoxDOB']), 'M d Y, D', $fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
+                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat(checkDateFormate($fullEmploymentForm['TextBoxDOB']) ? 'm-d-Y' : 'M d Y, D', $fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
                     }
                     // Check for SSN
                     if (!empty($fullEmploymentForm['TextBoxSSN']) && empty($data['employer']['ssn'])) {
@@ -1422,8 +1482,8 @@ class Employee_management extends Public_Controller
                     $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     $addresses = $this->employee_model->get_company_addresses($company_id);
                     $data['addresses'] = $addresses;
-                    $departments = $this->employee_model->get_all_departments($company_id);
-                    $data['departments'] = $departments;
+                    $data['departmentWithTeams'] =
+                        $this->employee_model->getCompanyDepartmentsWithTeam($company_id);
                     $data['is_new_calendar'] = $this->call_old_event();
                     // Time off policies
                     $this->load->model('timeoff_model');
@@ -1533,15 +1593,14 @@ class Employee_management extends Public_Controller
                     $date_of_birth = $this->input->post('DOB');
                     $gender = $this->input->post('gender');
 
-                    if (!empty($date_of_birth)) {
-                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
-                    } else {
-                        $DOB = '';
+                    //
+                    $teamId = $this->input->post('department', true);
+                    //
+                    if (!$teamId) {
+                        $teamId = 0;
                     }
+                    $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
 
-                    $notified_by = $this->input->post('notified_by', true);
-                    if ($notified_by == '' || !sizeof($notified_by)) $notified_by = 'email';
-                    else $notified_by = implode(',', $notified_by);
 
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
@@ -1561,13 +1620,61 @@ class Employee_management extends Public_Controller
                         'extra_info' => $extra_info,
                         'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                         'email' => $this->input->post('email'),
-                        'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
-                        'department_sid' => $this->input->post('department'),
-                        'team_sid' => implode(',', $this->input->post('teams')),
+                        'department_sid' => $departmentId,
+                        'team_sid' => $teamId,
                         'gender' => $gender,
-                        'marital_status' => $this->input->post('marital_status')
+                        'marital_status' => $this->input->post('marital_status'),
                     );
+
+                    //
+                    if ($this->input->post('temppate_job_title') != '0') {
+                        $templetJobTitleData = $this->input->post('temppate_job_title');
+                        $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                        $data_to_insert['job_title'] = $templetJobTitleDataArray[1];
+                        $data_to_insert['job_title_type'] = $templetJobTitleDataArray[0];
+
+                        $userComplynetJobTitle = get_user_complynettitle($sid);
+                        if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
+                            $data_to_insert['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                        }
+                    } else {
+                        $data_to_insert['job_title_type'] = 0;
+                    }
+
+                    //
+                    if (isPayrollOrPlus(true)) {
+                        $data_to_insert['workers_compensation_code'] = $this->input->post('workers_compensation_code', true);
+                        $data_to_insert['eeoc_code'] = $this->input->post('eeoc_code', true);
+                        $data_to_insert['salary_benefits'] = $this->input->post('salary_benefits', true);
+                    }
+
+                    //
+                    $data_to_insert['languages_speak'] = null;
+                    //
+                    $languages_speak = $this->input->post('secondaryLanguages');
+                    if ($languages_speak) {
+                        $data_to_insert['languages_speak'] = implode(',', $languages_speak);
+                    }
+
+                    if (!isSecret($date_of_birth)) {
+                        if (!empty($date_of_birth)) {
+                            $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
+                        } else {
+                            $DOB = '';
+                        }
+                        $data_to_insert['dob'] = $DOB;
+                    }
+
+                    if (!isSecret($this->input->post('SSN'))) {
+                        $data_to_insert['ssn'] = $this->input->post('SSN', true);
+                    }
+
+                    $notified_by = $this->input->post('notified_by', true);
+                    if ($notified_by == '' || !sizeof($notified_by)) $notified_by = 'email';
+                    else $notified_by = implode(',', $notified_by);
+
+
                     //
                     if ($gender != "other") {
                         $updateGender = array();
@@ -1666,7 +1773,6 @@ class Employee_management extends Public_Controller
                         $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
                     }
                     //
-                    if ($DOB != '' && !preg_match(XSYM_PREG, $DOB)) $data_to_insert['dob'] = $DOB;
 
                     if (IS_NOTIFICATION_ENABLED == 1 && $this->input->post('notified_by', true) && $data['phone_sid'] != '') $data_to_insert['notified_by'] = $notified_by;
 
@@ -1687,7 +1793,7 @@ class Employee_management extends Public_Controller
                         //
                         $data_to_insert['rehire_date'] = $rehireDate;
                         $data_to_insert['general_status'] = 'rehired';
-                        $data_to_insert['active'] = 0;
+                        $data_to_insert['active'] = 1;
                     }
                     // Added on: 25-06-2019
                     if (IS_TIMEZONE_ACTIVE) {
@@ -1696,7 +1802,7 @@ class Employee_management extends Public_Controller
                     }
                     //Ful Employment Application Form Update data
                     $full_emp_app = isset($employee_detail['full_employment_application']) && !empty($employee_detail['full_employment_application']) ? unserialize($employee_detail['full_employment_application']) : array();
-                    if (isset($_POST['DOB']) && !empty($_POST['DOB'])) {
+                    if (isset($_POST['DOB']) && !empty($_POST['DOB']) && !isSecret($_POST['DOB'])) {
                         $full_emp_app['TextBoxDOB'] = $this->input->post('DOB');
                     }
                     //
@@ -1709,7 +1815,7 @@ class Employee_management extends Public_Controller
                         $data_to_insert['middle_name'] = $this->input->post('middle_name');
                     }
                     //
-                    if (isset($_POST['SSN']) && !empty($_POST['SSN'])) {
+                    if (isset($_POST['SSN']) && !empty($_POST['SSN']) && !isSecret($_POST['SSN'])) {
                         $full_emp_app['TextBoxSSN'] = $this->input->post('SSN');
                     }
                     //
@@ -1717,6 +1823,7 @@ class Employee_management extends Public_Controller
                     $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
+
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
@@ -2254,12 +2361,6 @@ class Employee_management extends Public_Controller
                 $date_of_birth = $this->input->post('dob');
                 $gender = $this->input->post('gender');
 
-                if (!empty($date_of_birth)) {
-                    $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
-                } else {
-                    $DOB = '';
-                }
-
                 $data = array(
                     'first_name' => $this->input->post('first_name'),
                     'last_name' => $this->input->post('last_name'),
@@ -2277,11 +2378,36 @@ class Employee_management extends Public_Controller
                     'extra_info' => $extra_info,
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
-                    'ssn' => $this->input->post('ssn'),
-                    'dob' => $DOB,
                     'marital_status' => $this->input->post('marital_status'),
                     'gender' => $gender
+
                 );
+
+                //
+                $data['languages_speak'] = null;
+                //
+                $languages_speak = $this->input->post('secondaryLanguages');
+                if ($languages_speak) {
+                    $data['languages_speak'] = implode(',', $languages_speak);
+                }
+
+                //
+                if (!isSecret($date_of_birth)) {
+
+                    if (!empty($date_of_birth)) {
+                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
+                    } else {
+                        $DOB = '';
+                    }
+                    //
+                    $data['dob'] = $DOB;
+                }
+
+                //
+                if (!isSecret($this->input->post('ssn', true))) {
+                    $data['ssn'] = $this->input->post('ssn', true);
+                }
+
                 //
                 if ($gender != "other") {
                     $updateGender = array();
@@ -2338,6 +2464,24 @@ class Employee_management extends Public_Controller
                 $newCompareData['employee_number'] = $post['employee_number'];
                 $newCompareData['department'] = $post['department'];
                 $newCompareData['office_location'] = $post['office_location'];
+
+                //
+                if ($this->input->post('template_job_title') != '0') {
+                    $templetJobTitleData = $this->input->post('template_job_title');
+                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                    $data['job_title'] = $templetJobTitleDataArray[1];
+                    $data['job_title_type'] = $templetJobTitleDataArray[0];
+
+                    $userComplynetJobTitle = get_user_complynettitle($sid);
+                    if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
+                        $data['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                    }
+                } else {
+                    $data['job_title_type'] = 0;
+                }
+
+
+
 
                 // $newCompareData['interests'] = $post['interests'];
                 // $newCompareData['short_bio'] = $post['short_bio'];
@@ -3717,7 +3861,7 @@ class Employee_management extends Public_Controller
         $sids = $this->input->post('sids');
         $action = $this->input->post('action');
         //
-        if(!empty($sids)){
+        if (!empty($sids)) {
             //
             $employee_sids = explode(',', $sids);
             //
@@ -3757,7 +3901,7 @@ class Employee_management extends Public_Controller
                         //
                         log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
                     }
-                } 
+                }
             }
             //
             echo "success";
@@ -3767,4 +3911,138 @@ class Employee_management extends Public_Controller
         }
     }
 
+
+
+    //
+    public function employee_export_csv()
+    {
+        if ($this->session->userdata('logged_in')) {
+            //
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'dashboard', 'employee_management'); // Param2: Redirect URL, Param3: Function Name
+            $company_id = $data['session']['company_detail']['sid'];
+            $data['employer_id'] = $employer_id = $data['session']['employer_detail']['sid'];
+            $ems_status = $data['session']['company_detail']['ems_status'];
+            $keyword = '';
+            $order_by = '';
+            $order = '';
+            $employee_type = 'all';
+
+            if (isset($_GET['keyword'])) {
+                $keyword = $_GET['keyword'];
+            } else {
+                $keyword = "";
+            }
+
+            if (isset($_GET['employee_type'])) {
+                $employee_type = $_GET['employee_type'];
+            } else {
+                $employee_type = "all";
+            }
+
+            if (isset($_GET['order_by'])) {
+                $order_by = $_GET['order_by'];
+            } else {
+                $order_by = "";
+            }
+
+            if (isset($_GET['order'])) {
+                $order = $_GET['order'];
+            } else {
+                $order = "";
+            }
+
+            if (isset($_GET['logincred'])) {
+                $logincred = $_GET['logincred'];
+            } else {
+                $logincred = "all";
+            }
+
+            //
+            if (empty($order_by)) {
+                $order_by = 'sid';
+            }
+            if (empty($order)) {
+                $order = 'desc';
+            }
+
+            $searchList = [];
+
+            if (isset($_GET['department']) && $_GET['department'] > 0) {
+                $employees_list = array();
+                $department_sid = $_GET['department'];
+                $department_supervisor = $this->employee_model->get_all_department_supervisor($department_sid);
+                if (!empty($department_supervisor)) {
+                    array_push($employees_list, $department_supervisor);
+                }
+
+                $department_teamleads = $this->employee_model->get_all_department_teamleads($company_id, $department_sid);
+                if (!empty($department_teamleads)) {
+                    foreach ($department_teamleads as $teamlead) {
+                        array_push($employees_list, $teamlead['team_lead']);
+                    }
+                }
+
+                $department_employees = $this->employee_model->get_all_employees_from_department($department_sid);
+                if (!empty($department_employees)) {
+                    foreach ($department_employees as $department_employee) {
+                        array_push($employees_list, $department_employee['employee_sid']);
+                    }
+                }
+
+                $employees_list = array_unique($employees_list);
+                //
+                $searchList = $employees_list;
+            }
+
+            $employees = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList, $employee_type, $logincred);
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=Employees_credentials_' . date('Y-m-d-H-i-s') . '.csv');
+
+            $output = fopen('php://output', 'w');
+
+
+            fputcsv($output, array('Employees', 'Designation', 'Password', 'Joining Date', 'Rehire Date'));
+
+            if (sizeof($employees) > 0) {
+
+                foreach ($employees as $employeeRow) {
+
+                    $input = array();
+
+                    $middle_initial = !empty($employeeRow['middle_name']) ? ' ' . $employeeRow['middle_name'] : '';
+                    //
+                    if (!empty($employeeRow['first_name']) || !empty($employeeRow['last_name'])) {
+                        $name = $employeeRow['first_name'] . $middle_initial . ' ' . $employeeRow['last_name'];
+                    }
+
+                    //
+                    $aclevel = '[' . $employeeRow['access_level'];
+                    $aclevel .= ($employeeRow['access_level_plus'] && $employeeRow['pay_plan_flag']) ? ' Plus / Payroll' : ($employeeRow['access_level_plus'] ? ' Plus' : ($employeeRow['pay_plan_flag'] ? ' Payroll' : ''));
+                    $aclevel .= ']';
+                    $name = $name . ' ' . $aclevel;
+                    //
+
+                    $joiningDate = get_employee_latest_joined_date($employeeRow["registration_date"], $employeeRow["joined_at"], "", true);
+                    $rehireDate = get_employee_latest_joined_date("", "", $employeeRow["rehire_date"], true);
+
+
+                    $input['Employees'] = $name;
+                    $input['Designation'] = $employeeRow['job_title'];
+                    $input['Password'] = $employeeRow['password'] ? 'Yes' : 'NO';
+                    $input['Joining Date'] = $joiningDate ? $joiningDate : 'N/A';
+                    $input['Rehire Date'] = $rehireDate ? $rehireDate : 'N/A';
+                    fputcsv($output, $input);
+                }
+            }
+
+            redirect(base_url('employee_management') . '?employee_type=' . $employee_type . '&department=' . $department_sid . '&keyword=' . $keyword . '&order_by=' . $order_by . '&logincred=' . $logincred, "refresh");
+        } else {
+            redirect(base_url('login'), 'refresh');
+        }
+    }
 }

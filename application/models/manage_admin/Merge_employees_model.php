@@ -526,13 +526,13 @@ class Merge_employees_model extends CI_Model
             foreach ($primary_general_docs as $obj) {
                 $already_sid[] = $obj['sid'];
             }
-        
+
             //
             $this->db->select('*');
             $this->db->where('user_sid', $secondary_employee_sid);
             $this->db->where('user_type', 'employee');
             $secondary_general_docs = $this->db->get('documents_assigned')->result_array();
-             //
+            //
             if (!empty($secondary_general_docs)) {
                 foreach ($secondary_general_docs as $secondary_doc) {
                     if (!in_array($secondary_doc['sid'], $already_sid)) {
@@ -767,8 +767,8 @@ class Merge_employees_model extends CI_Model
     }
 
 
-//
-    function update_documents_new($primary_employee_sid, $secondary_employee_sid,$primary_company_sid)
+    //
+    function update_documents_new($primary_employee_sid, $secondary_employee_sid, $primary_company_sid)
     {
         $return_array = [
             'W4' => '',
@@ -879,13 +879,13 @@ class Merge_employees_model extends CI_Model
             foreach ($primary_general_docs as $obj) {
                 $already_sid[] = $obj['sid'];
             }
-        
+
             //
             $this->db->select('*');
             $this->db->where('user_sid', $secondary_employee_sid);
             $this->db->where('user_type', 'employee');
             $secondary_general_docs = $this->db->get('documents_assigned')->result_array();
-             //
+            //
             if (!empty($secondary_general_docs)) {
                 foreach ($secondary_general_docs as $secondary_doc) {
                     if (!in_array($secondary_doc['sid'], $already_sid)) {
@@ -906,5 +906,77 @@ class Merge_employees_model extends CI_Model
     }
 
 
-
+    public function updateEmployeeStatus(
+        int $primaryEmployeeId,
+        int $secondaryEmployeeId
+    ) {
+        // get employee status of primary employee
+        $records = $this->db
+            ->where('employee_sid', $secondaryEmployeeId)
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return 0;
+        }
+        //
+        $lastRecord = [];
+        //
+        foreach ($records as $record) {
+            //
+            $lastRecord = $record;
+            //
+            $sid = $record['sid'];
+            //
+            unset($record['sid']);
+            //
+            $record['employee_sid'] = $primaryEmployeeId;
+            //
+            $this->db
+                ->where([
+                    'sid' => $sid
+                ])
+                ->update('terminated_employees', $record);
+            //
+            if ($record['employee_status'] == 9) {
+                $this->db
+                    ->where('sid', $primaryEmployeeId)
+                    ->update('users', [
+                        'transfer_date' => $record['status_change_date']
+                    ]);
+            }
+        }
+        //
+        $lastStatus = strtolower(GetEmployeeStatusText($lastRecord['employee_status']));
+        //
+        $upd = [];
+        //
+        if ($lastStatus == 'terminated') {
+            $upd['terminated_status'] = 1;
+            $upd['active'] = 0;
+            $upd['termination_date'] = $lastRecord['termination_date'];
+        } elseif ($lastStatus == 'rehired') {
+            $upd['terminated_status'] = 0;
+            $upd['active'] = 1;
+            $upd['rehired_date'] = $lastRecord['termination_date'];
+        } elseif ($lastStatus == 'active') {
+            $upd['terminated_status'] = 0;
+            $upd['active'] = 1;
+        } elseif ($lastStatus == 'inactive') {
+            $upd['terminated_status'] = 0;
+            $upd['active'] = 0;
+        } elseif ($lastStatus == 'transferred') {
+            $upd['terminated_status'] = 0;
+            $upd['active'] = 1;
+            $upd['transfer_date'] = $lastRecord['status_change_date'];
+        }
+        //
+        if ($upd) {
+            $this->db
+                ->where('sid', $primaryEmployeeId)
+                ->update('users', $upd);
+        }
+        //
+        return count($records);
+    }
 }

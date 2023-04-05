@@ -1,14 +1,8 @@
 <div>
-    <div class="container-fluid">
+    <div class="container-fluid jsmaincontent">
         <div class="row">
-            <!--  -->
-            <div class="col-sm-12 col-md-3">
-                <div class="_csMt30 _csMb30">
-                    <?php $this->load->view('2022/sidebar'); ?>
-                </div>
-            </div>
             <!-- Main Area -->
-            <div class="col-sm-12 col-md-9">
+            <div class="col-sm-12 col-md-12">
                 <div class="_csMt30 _csMb30">
                     <!--  -->
                     <div class="row">
