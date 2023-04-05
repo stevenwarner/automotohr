@@ -703,6 +703,7 @@ class Complynet_model extends CI_Model
             $companyId,
             $employeeId
         );
+
         //
         if (empty($employee)) {
             if ($doReturn) {
@@ -722,6 +723,8 @@ class Complynet_model extends CI_Model
         //
         $email = strtolower($employee['email']);
         //
+        $employeeSidNew = strtolower($employee['sid']);
+        //
         $company = $this->getIntegratedCompany(
             $companyId
         );
@@ -731,14 +734,20 @@ class Complynet_model extends CI_Model
         //
         $this->load->library('Complynet/Complynet_lib', '', 'clib');
         //
-        if ($this->isEmployeeAdded($email, $companyId)) {
+       // if ($this->isEmployeeAdded($email, $companyId)) {
+
+        if ($this->isEmployeeAddedNew($employeeSidNew, $companyId)) {
             $errorArray[] = 'Employee already synced with ComplyNet.';
             if ($doReturn) {
                 return $errorArray;
             }
             return SendResponse(200, ['errors' => $errorArray]);
         }
+        
+
+             
         $employee['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
+        
         //
         if (checkEmployeeMissingData($employee)) {
             if ($doReturn) {
@@ -746,6 +755,8 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['errors' => checkEmployeeMissingData($employee)]);
         }
+        
+
         //
         $complyDepartmentId = $this->getEmployeeDepartmentId(
             $employee['sid']
@@ -763,6 +774,10 @@ class Complynet_model extends CI_Model
             $complyDepartmentId,
             $employee['complynet_job_title']
         );
+
+
+
+
         //
         if ($complyJobRoleId === 0) {
             $errorArray[] = 'Job role not found.';
@@ -779,6 +794,9 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['errors' => $errorArray]);
         }
+
+
+
 
         // Check employee by email
         $employeeObj = $this->clib->getEmployeeByEmail($email);
@@ -821,6 +839,12 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['success' => true]);
         }
+
+
+
+        
+//////////////////////////////
+/*
         // Check employee by username
         $employeeObj = $this->clib->getEmployeeByEmail($employee['username']);
         // found by username as well
@@ -862,6 +886,13 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['success' => true]);
         }
+
+        */
+//////////////////////
+
+
+
+
         // Try to save with email address
         $ins = [];
         $ins['firstName'] = $employee['first_name'];
@@ -875,8 +906,10 @@ class Complynet_model extends CI_Model
         $ins['jobRoleId'] = $complyJobRoleId;
         $ins['PhoneNumber'] = $employee['PhoneNumber'];
         $ins['TwoFactor'] = false;
+        
         //
         $response = $this->clib->addEmployee($ins);
+        
         // Lets save the user
         if (preg_match('/created user/i', $response)) {
             // fetch user
@@ -1272,4 +1305,20 @@ class Complynet_model extends CI_Model
         //
         return true;
     }
+
+//
+    public function isEmployeeAddedNew(
+        int $employeeSid,
+        int $companyId
+    ) {
+        //
+        return $this->db
+            ->where([
+                'company_sid' => $companyId,
+                'employee_sid' => $employeeSid
+            ])
+            ->count_all_results('complynet_employees');
+    }
+
+
 }

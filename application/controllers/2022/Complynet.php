@@ -436,8 +436,12 @@ class Complynet extends Admin_Controller
             foreach ($employees as $employee) {
                 //
                 $email = strtolower($employee['email']);
+
                 //
-                if ($this->complynet_model->isEmployeeAdded($email, $this->companyId)) {
+              //  if ($this->complynet_model->isEmployeeAdded($email, $this->companyId)) {
+                    if ($this->complynet_model->isEmployeeAddedNew($employee['sid'], $this->companyId)) {
+
+                    
                     continue;
                 }
                 //
