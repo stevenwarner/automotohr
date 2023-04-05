@@ -1658,3 +1658,13 @@ $route['lms_courses/create']['get'] = "2022/Courses/create";
 $route['lms_courses/handler']['post'] = "2022/Courses/handler";
 $route['lms_courses/my_courses']['get'] = "2022/Courses/my_courses_list";
 $route['lms_courses/my_course/(:any)']['get'] = "2022/Courses/my_course/$1";
+
+
+/**
+ * Courses Routes for manage Admin
+ */
+$route['manage_admin/courses']['get'] = 'manage_admin/2022/Courses/index';
+$route['manage_admin/add_course']['get'] = 'manage_admin/2022/Courses/add';
+$route['manage_admin/edit_course/(:any)']['get'] = 'manage_admin/2022/Courses/edit/$1';
+$route['manage_admin/preview_course/(:any)']['get'] = 'manage_admin/2022/Courses/preview/$1';
+$route['manage_admin/manage_course/(:any)']['get'] = 'manage_admin/2022/Courses/manage/$1';

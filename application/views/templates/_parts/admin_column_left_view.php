@@ -149,6 +149,9 @@ if (
     $this->uri->segment(2) == 'turnover_cost_calculator_logs' ||
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
+    base_url(uri_string()) == site_url('manage_admin/courses') ||
+    base_url(uri_string()) == site_url('manage_admin/add_course') ||
+    $this->uri->segment(2) == 'manage_course' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
         ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_templates' ||
@@ -548,7 +551,7 @@ if (
                     </div>
                 </li>
             <?php } ?>
-            <?php $functions_names = array('system_settings', 'social_settings', 'demo_affiliate_configurations', 'admin_status_bar', 'security_settings', 'email_templates', 'free_demo_enquiries', 'email_enquiries_log', 'notification_email_log', 'notification_email_log_view', 'private_messages', 'job_listing_templates', 'job_categories_manager', 'interview_questionnaires', 'system_notification_emails', 'blocked_applicants', 'block_ips', 'modules', 'document_categories_manager'); ?>
+            <?php $functions_names = array('system_settings', 'social_settings', 'demo_affiliate_configurations', 'admin_status_bar', 'security_settings', 'email_templates', 'free_demo_enquiries', 'email_enquiries_log', 'notification_email_log', 'notification_email_log_view', 'private_messages', 'job_listing_templates', 'job_categories_manager', 'interview_questionnaires', 'system_notification_emails', 'blocked_applicants', 'block_ips', 'modules', 'document_categories_manager','courses','add_course', 'manage_course'); ?>
             <?php if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
                 <li>
                     <a class="<?php echo $system_configuration_menu ? 'hr-opened-menu' : 'hr-closed-menu'; ?>" href="javascript:;">System Configuration</a>
@@ -754,6 +757,19 @@ if (
                                         echo 'class="active"';
                                     }
                                     ?> href="<?php echo site_url('manage_admin/blocked_ips'); ?>">Blocked IPs</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'courses')) { ?>
+                            <div class="menu-item">
+                                <a <?php
+                                    if (
+                                        base_url(uri_string()) == site_url('manage_admin/courses') ||
+                                        base_url(uri_string()) == site_url('manage_admin/add_course') ||
+                                        $this->uri->segment(2) == 'manage_course'
+                                    ) {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('manage_admin/courses'); ?>">Courses</a>
                             </div>
                         <?php } ?>
                     </div>
