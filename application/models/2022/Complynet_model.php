@@ -382,7 +382,7 @@ class Complynet_model extends CI_Model
             $departmentId
         );
         //
-        $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle)));
+        $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle))); // Software Engineer -> softwareengineer
         //
         $complyRoleId = 0;
         //
@@ -920,61 +920,7 @@ class Complynet_model extends CI_Model
         }
         //
         if (preg_match('/unavailable/i', $response)) {
-            $ins = [];
-            $ins['firstName'] = $employee['first_name'];
-            $ins['lastName'] = $employee['last_name'];
-            $ins['userName'] = $employee['username'];
-            $ins['email'] = $email;
-            $ins['password'] = 'password';
-            $ins['companyId'] = $complyCompanyId;
-            $ins['locationId'] = $complyLocationId;
-            $ins['departmentId'] = $complyDepartmentId;
-            $ins['jobRoleId'] = $complyJobRoleId;
-            $ins['PhoneNumber'] = $employee['PhoneNumber'];
-            $ins['TwoFactor'] = false;
-            //
-            $response = $this->clib->addEmployee($ins);
-            // Lets save the user
-            if (preg_match('/created user/i', $response)) {
-                // fetch user
-                $employeeObj = $this->clib->getEmployeeByEmail($email);
-                $employeeObj[0] = findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId);
-                //
-                if (!$employeeObj[0]) {
-                    if ($doReturn) {
-                        return ['failed to find employee'];
-                    }
-                    return SendResponse(200, ['errors' => ['failed to find employee']]);
-                }
-                // Just link it
-                $ins = [];
-                $ins['company_sid'] = $companyId;
-                $ins['complynet_employee_sid'] = $employeeObj[0]['Id'];
-                $ins['complynet_company_sid'] = $complyCompanyId;
-                $ins['complynet_location_sid'] = $complyLocationId;
-                $ins['complynet_department_sid'] = $complyDepartmentId;
-                $ins['complynet_job_role_sid'] = $complyJobRoleId;
-                $ins['employee_sid'] = $employeeId;
-                $ins['email'] = $email;
-                $ins['complynet_json'] = json_encode($employeeObj);
-                $ins['created_at'] = $ins['updated_at'] = getSystemDate();
-                //
-                $this->db->insert(
-                    'complynet_employees',
-                    $ins
-                );
-                //
-                $this->db
-                    ->where('sid', $employeeId)
-                    ->update('users', [
-                        'complynet_onboard' => 1
-                    ]);
-                //
-                if ($doReturn) {
-                    return [];
-                }
-                return SendResponse(200, ['success' => true]);
-            }
+          // send email to devs with details
         }
 
         //
