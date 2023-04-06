@@ -888,7 +888,7 @@ class Misc extends CI_Controller
 
         $logArray = [];
         $logArray['ccid'] = substr($params['cc_card_no'], -4);
-        $logArray['request'] = json_encode($card);
+        $logArray['request_json'] = json_encode($card);
         
         try {
             $response = $card->create($apiContext);

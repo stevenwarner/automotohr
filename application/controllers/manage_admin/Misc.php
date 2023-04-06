@@ -120,7 +120,7 @@ class Misc extends Admin_Controller
 
         $logArray = [];
         $logArray['ccid'] = substr($params['cc_card_no'], -4);
-        $logArray['request'] = json_encode($card);
+        $logArray['request_json'] = json_encode($card);
         
         $card->setMerchantId("AHR_$company_sid");
         try {
