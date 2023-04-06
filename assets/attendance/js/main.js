@@ -255,10 +255,10 @@ $(function () {
                     breakTime.map(function (break_record, index) {
 
                         if (break_record.action == 'break_in') {
-                            breakIn = break_record.action_date_time;
+                            breakIn = convertUTCToCurrentTimezone(break_record.action_date_time);
                         }
                         if (break_record.action == 'break_out' && breakIn != '') {
-                            breakDifference = moment.duration(moment(break_record.action_date_time).diff(breakIn));
+                            breakDifference = moment.duration(moment(convertUTCToCurrentTimezone(break_record.action_date_time)).diff(breakIn));
                             varDif = breakDifference.hours() + '-' + breakDifference.minutes() + '-' + breakDifference.seconds();
                             console.log(varDif);
                             totalBreakduration.add(breakDifference.hours(), 'hours');
@@ -282,7 +282,7 @@ $(function () {
 
                 if (resp.success.last_status == "clock_in") {
                     // Get Current Date Time 
-                    var checkinTime = resp.success.action_date_time;
+                    var checkinTime = convertUTCToCurrentTimezone(resp.success.action_date_time);
                     var difference = moment.duration(moment().diff(moment(checkinTime, 'Y-M-D H:m:s')));
                     //
                     diffHours = difference.hours();
@@ -641,4 +641,14 @@ $(function () {
     InitCurrentClock();
     //
     // navigator.permissions.query({ name: 'geolocation' }).then(console.log);
+
+
+    function convertUTCToCurrentTimezone(utcDate) {
+        var currentTimeZone =  Intl.DateTimeFormat().resolvedOptions().timeZone;
+        //
+        return  moment.utc(utcDate, "YYYY-MM-DD HH:mm:ss").tz(currentTimeZone).format('YYYY-MM-DD HH:mm:ss');
+
+}
+
+
 });

@@ -33,9 +33,8 @@ $markers = [];
     <div class="row">
         <div class="container-fluid">
             <!-- Side Bar -->
-            <?php $this->load->view('employee_info_sidebar_ems'); ?>
             <!-- Main Content Area -->
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <!-- Heading -->
                 <div class="row">
                     <div class="col-xs-12 col-md-8">
