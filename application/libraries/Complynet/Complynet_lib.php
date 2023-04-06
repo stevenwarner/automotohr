@@ -300,7 +300,8 @@ class Complynet_lib
         string $url,
         string $method = "GET",
         array $postFields = [],
-        bool $execute = true
+        bool $execute = true,
+        int $iteration = 1
     ) {
         //
         $curl = curl_init();
@@ -346,8 +347,19 @@ class Complynet_lib
         //
         curl_close($curl);
         //
+        $execute = $iteration == 2 ? false : true;
+        $iteration++;
+        //
         if (is_array($response) && !$response && $execute)  {
-            return $this->execute($url, $method, $postFields, false);
+            return $this->execute($url, $method, $postFields, $execute, $iteration); 
+        } else if (!is_array($response) && empty($response) && $execute) {
+            return $this->execute($url, $method, $postFields, $execute, $iteration);
+        } else if ($info['http_code'] == 500 && $execute) {
+            return $this->execute($url, $method, $postFields, $execute, $iteration);
+        }   
+        //
+        if ($info['http_code'] == 500) {
+            $response['error'] = '500 internal server occured on ComplyNet.';
         }
         //
         return $response;
