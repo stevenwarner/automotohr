@@ -267,11 +267,13 @@ class Payroll extends CI_Controller
      */
     function MyPayStubs()
     {
+
+        //
+        $data['load_view'] = check_blue_panel_status(false, 'self');
         //
         $this->checkLogin($this->data);
         //
         $this->data['title'] = 'Payroll | Pay Stubs';
-        $this->data['load_view'] = 0;
         //
         $this->data['PageScripts'] = [];
         //

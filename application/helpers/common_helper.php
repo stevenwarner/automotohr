@@ -16452,3 +16452,32 @@ if (!function_exists('showLanguages')) {
         return rtrim(ucwords(implode(', ', (explode(',', $languages))), '\, '), ', ');
     }
 }
+
+
+    //
+    function isGustoAdmin($email, $companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid');
+        $CI->db->from('payroll_company_admin');
+        $CI->db->where('email_address ', $email);
+        $CI->db->where('company_sid', $companySid);
+        $rows = $CI->db->count_all_results();
+        return $rows; 
+    }
+
+      //
+    if (!function_exists('getActiveEmployees')) {
+        function getActiveEmployees($company_sid)
+        {
+            $CI = &get_instance();
+    
+                $CI->db->select('*');
+                $where = array(
+                    'parent_sid' => $company_sid,
+                    'active' => 1,
+                    'terminated_status' => 0
+                );
+             return $CI->db->get_where('users', $where)->result_array();
+        }
+    }

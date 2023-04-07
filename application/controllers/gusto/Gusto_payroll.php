@@ -107,10 +107,14 @@ class Gusto_payroll extends CI_Controller
             }
         }
         //
+        //$data['session'] = $this->session->userdata('logged_in');
+        //  $company_sid = $data['session']['company_detail']['sid'];
+
+
         return SendResponse(
             200,
             [
-                'view' => $this->load->view('gusto/admins/view', ['admins' => $admins], true)
+                'view' => $this->load->view('gusto/admins/view', ['admins' => $admins, 'companySid' => $companyId], true)
             ]
         );
     }
@@ -136,7 +140,7 @@ class Gusto_payroll extends CI_Controller
         return SendResponse(
             200,
             [
-                'view' => $this->load->view('gusto/signatories/view', ['signatories' => $signatories], true)
+                'view' => $this->load->view('gusto/signatories/view', ['signatories' => $signatories, 'companySid' => $companyId], true)
             ]
         );
     }
@@ -277,11 +281,11 @@ class Gusto_payroll extends CI_Controller
     /**
      * Sync
      */
-    public function syncDataDataWithGusto($companyId) {
+    public function syncDataDataWithGusto($companyId)
+    {
         // get company details
         $this->gusto_payroll_model->syncCompanyDataWithGusto($companyId);
 
         _e('I am here at end', true, true);
-
     }
 }

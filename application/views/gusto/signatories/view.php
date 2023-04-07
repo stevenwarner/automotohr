@@ -208,6 +208,43 @@ $fields = [
                 </div>
             </div>
             <!--  -->
+
+            <?php $companyUsersData = getActiveEmployees($companySid); ?>
+            <?php if (!empty($companyUsersData)) { ?>
+                <div class="row">
+                    <div class="form-group col-sm-6 text-left;">
+                    <label><strong style="font-size: 18px;">Active Employees</strong> <span class="text-danger" style="font-size:12px;"> &nbsp;&nbsp;[Please click on employee to fill the form]</span></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 text-left;" style="max-height:180px; overflow-x: hidden; overflow-y: auto;">
+                        <ul class="list-group list-group-flush">
+                            <?php
+                            foreach ($companyUsersData as $rowData) {
+                                $stateCode = '';
+                                $dob = '';
+                                if ($rowData['Location_State'] != '' && $rowData['Location_State'] != null) {
+                                    $stateCode = db_get_state_code_only($rowData['Location_State']);
+                                }
+
+                                if ($rowData['dob'] != '' && $rowData['dob'] != null) {
+                                    $dob = date('m/d/Y', strtotime($rowData['dob']));
+                                }
+                            ?>
+
+                                <li class="list-group-item adminesignatories" style="cursor: pointer;border-bottom:" data-fname='<?php echo $rowData['first_name']; ?>' data-lname='<?php echo $rowData['last_name']; ?>' data-email='<?php echo $rowData['email']; ?>' data-middlename='<?php echo $rowData['middle_name']; ?>' data-ssn='<?php echo $rowData['ssn']; ?>' data-jobtitle='<?php echo $rowData['job_title']; ?>' data-dob='<?php echo $dob; ?>' data-phonenumber='<?php echo $rowData['PhoneNumber']; ?>' data-locationaddress='<?php echo $rowData['Location_Address']; ?>' data-locationaddress2='<?php echo $rowData['Location_Address2']; ?>' data-locationzipcode='<?php echo $rowData['Location_ZipCode']; ?>' data-locationcity='<?php echo $rowData['Location_City']; ?>' data-statecode='<?php echo $stateCode; ?>'>
+                                    <?php echo remakeEmployeeName($rowData); ?>
+                                </li>
+                            <?php } ?>
+
+                        </ul>
+                    </div>
+                </div>
+
+            <?php } ?>
+            <br><br>
+
+
             <div class="row">
                 <div class="col-sm-12">
                     <form action="javascript:void(0)">

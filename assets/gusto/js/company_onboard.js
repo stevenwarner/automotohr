@@ -445,4 +445,41 @@ $(function companyOnboard() {
                 ml(false, 'jsManageGustoSignatoriesModalLoader');
             });
     }
+
+
+    //
+    $(document).on('click', '.adminemployees', function (event) {
+        //
+        event.preventDefault();
+        //
+        $('#jsAdminFirstName').val($(this).data('fname'));
+        $('#jsAdminLastName').val($(this).data('lname'));
+        $('#jsAdminEmailAddress').val($(this).data('email'));
+           
+    });
+
+  //
+  $(document).on('click', '.adminesignatories', function (event) {
+    //
+    event.preventDefault();
+
+    //
+    $('#jsSignatoryAddFirstName').val($(this).data('fname'));
+    $('#jsSignatoryAddLastName').val($(this).data('lname'));
+    $('#jsSignatoryAddMiddleInitial').val($(this).data('middlename'));
+    $('#jsSignatoryAddSsn').val($(this).data('ssn'));
+    $('#jsSignatoryAddEmail').val($(this).data('email'));
+    $('#jsSignatoryAddTitle').val($(this).data('jobtitle'));
+    $('#jsSignatoryAddBirthDay').val($(this).data('dob'));
+    $('#jsSignatoryAddPhone').val($(this).data('phonenumber'));
+    $('#jsSignatoryAddStreet1').val($(this).data('locationaddress'));
+    $('#jsSignatoryAddStreet2').val($(this).data('locationaddress2'));
+    $('#jsSignatoryAddState').val($(this).data('statecode'));
+    $('#jsSignatoryAddCity').val($(this).data('locationcity'));
+    $('#jsSignatoryAddZip').val($(this).data('locationzipcode'));
+    
+    });
+
+    
+
 });
