@@ -385,6 +385,14 @@ class Complynet_model extends CI_Model
         $complyRoleId = 0;
         //
         if (empty($complyJobTitles) || isset($complyJobTitles['error'])) {
+            $reportError = array();
+            $reportError['department_sid'] = $departmentId;
+            $reportError['response'] = $complyJobTitles;
+            //
+            $message = 'JobRole not found on ComplayNet against department ID <strong>'.$departmentId.'</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
             return $complyRoleId;
         }
         //
@@ -419,6 +427,18 @@ class Complynet_model extends CI_Model
             ]);
             //
             if (empty($complyRoleId) || isset($complyRoleId['error'])) {
+                //
+                $reportError = array();
+                $reportError['response'] = $complyRoleId;
+                $reportError['complynetObject'] = json_decode([
+                    'ParentId' => $departmentId,
+                    'Name' => $jobTitle
+                ]);
+                //
+                $message = 'JobRole not created on ComplayNet.';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
                 return $complyRoleId;
             }
             //
@@ -519,6 +539,15 @@ class Complynet_model extends CI_Model
         );
         //
         if (isset($complyDepartments['error'])) {
+            //
+            $reportError = array();
+            $reportError['location_ID'] = $complyLocationId;
+            $reportError['response'] = $complyDepartments;
+            //
+            $message = 'Department not found on ComplayNet against location ID <strong>'.$complyLocationId.'</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
             return "System failed to link department with ComplyNet";
         }
         // Convert department to index
@@ -564,6 +593,18 @@ class Complynet_model extends CI_Model
                     ]);
                     //
                     if (isset($response['error'])) {
+                        $reportError = array();
+                        $reportError['location_ID'] = $complyLocationId;
+                        $reportError['response'] = $response;
+                        $reportError['complynetObject'] = json_decode([
+                            'ParentId' => $complyLocationId,
+                            'Name' => $value['name']
+                        ]);
+                        //
+                        $message = 'Department not created on ComplayNet against location ID <strong>'.$complyLocationId.'</strong>';
+                        //
+                        $this->sendEmailToDeveloper($message, $reportError);
+                        //
                         continue;
                     }
                     //
@@ -812,7 +853,16 @@ class Complynet_model extends CI_Model
         // Check employee by email
         $employeeObj = $this->clib->getEmployeeByEmail($email);
         //
-        if (isset($employeeObj['error']) {
+        if (isset($employeeObj['error'])) {
+            //
+            $reportError = array();
+            $reportError['email'] = $email;
+            $reportError['response'] = $employeeObj;
+            //
+            $message = 'Employee not found on ComplayNet against email <strong>'.$email.'</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
             return 'System failed to link employee with ComplyNet.';
         }
         // found
@@ -872,7 +922,16 @@ class Complynet_model extends CI_Model
         $response = $this->clib->addEmployee($ins);
         //
         if (isset($response['error'])) {
-            return "System failed to link employee with ComplyNet".
+            $reportError = array();
+            $reportError['employee'] = $employee;
+            $reportError['response'] = $response;
+            $reportError['complynetObject'] = json_decode($ins);
+            //
+            $message = 'Employee not created on ComplayNet for company <strong>'.getCompanyNameBySid($companyId).'</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            return "System failed to link employee with ComplyNet";
         }
         // Lets save the user
         if (preg_match('/created user/i', $response)) {
@@ -880,6 +939,15 @@ class Complynet_model extends CI_Model
             $employeeObj = $this->clib->getEmployeeByEmail($email);
             //
             if (isset($employeeObj['error'])) {
+                //
+                $reportError = array();
+                $reportError['email'] = $email;
+                $reportError['response'] = $employeeObj;
+                //
+                $message = 'Employee not found on ComplayNet against email <strong>'.$email.'</strong>';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
                 if ($doReturn) {
                     return ['failed to find employee'];
                 }
@@ -930,11 +998,9 @@ class Complynet_model extends CI_Model
             $reportError['response'] = $response;
             $reportError['complynetObject'] = json_decode($ins);
             //
-            mail(
-                'mubashar.ahmed@egenienext.com',
-                'Employee not created on ComplayNet for company <strong>'.getCompanyNameBySid($companyId).'</strong>',
-                json_encode($reportError)
-            );
+            $message = 'Employee not created on ComplayNet for company <strong>'.getCompanyNameBySid($companyId).'</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
         }
 
         //
@@ -1063,12 +1129,30 @@ class Complynet_model extends CI_Model
             $response = $this->clib->updateUser($upd);
             //
             if (gettype($response) == 'string' || isset($response['error'])) {
+                //
+                $reportError = array();
+                $reportError['response'] = $response;
+                $reportError['complynetObject'] = json_decode($upd);
+                //
+                $message = 'Unable to update employee details on ComplyNet.';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
                 return "Unable to update details on ComplyNet.";
             }
             //
             $employeeObj = $this->clib->getEmployeeByEmail($employeeDetails['email']);
             //
             if (isset($employeeObj['error'])) {
+                //
+                $reportError = array();
+                $reportError['email'] = $employeeDetails['email'];
+                $reportError['response'] = $employeeObj;
+                //
+                $message = 'Employee not found on ComplayNet against email <strong>'.$employeeDetails['email'].'</strong>';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
                 return "Unable to update details on ComplyNet.";
             }
             // Find the right person
@@ -1235,5 +1319,13 @@ class Complynet_model extends CI_Model
         }
         //
         return true;
+    }
+
+    private function sendEmailToDeveloper ($message, $data) {
+        mail(
+            'mubashar.ahmed@egenienext.com',
+            $message,
+            json_encode($data)
+        );
     }
 }
