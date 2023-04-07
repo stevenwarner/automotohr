@@ -372,6 +372,10 @@ class Complynet_model extends CI_Model
             ->get('complynet_jobRole')
             ->row_array();
         //
+        if ($record && $record['complynet_job_role_sid'] == 0) {
+            return $this->syncJobRoles($departmentId, $jobTitle);
+        }
+        //
         if ($record && $record['complynet_job_role_sid'] != 0) {
             return $record['complynet_job_role_sid'];
         }
@@ -397,7 +401,7 @@ class Complynet_model extends CI_Model
         }
         //
         $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle))); // Software Engineer -> softwareengineer
-        //
+        //https://www.youtube.com/watch?v=fQ4nbLpktys
         foreach ($complyJobTitles as $title) {
             //
             $slugComply = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($title['Name'])));
@@ -1327,5 +1331,103 @@ class Complynet_model extends CI_Model
             $message,
             json_encode($data)
         );
+    }
+
+    public function syncJobRoles ($departmentId, $jobTitle) {
+        //
+        $complyRoleId = 0;
+        //
+        $this->load->library('Complynet/Complynet_lib', '', 'clib');
+        //
+        $complyJobTitles = $this->clib->getJobRolesByDepartmentId(
+            $departmentId
+        );
+        //
+        if (isset($complyJobTitles['error'])) {
+            $reportError = array();
+            $reportError['department_sid'] = $departmentId;
+            $reportError['response'] = $complyJobTitles;
+            //
+            $message = 'JobRole not found on ComplayNet against department ID <strong>'.$departmentId.'</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            return $complyRoleId;
+        }
+        //
+        if (!empty($complyJobTitles)) {
+            foreach ($complyJobTitles as $title) {
+                //
+                $record = $this->db
+                    ->select('sid, complynet_job_role_sid')
+                    ->where([
+                        'complynet_department_sid' => $departmentId,
+                        'job_title' => $jobTitle
+                    ])
+                    ->get('complynet_jobRole')
+                    ->row_array();    
+                //
+                if (empty($record)) {
+                    $ins = [];
+                    $ins['complynet_department_sid'] = $departmentId;
+                    $ins['complynet_job_role_sid'] = $title['Id'];
+                    $ins['complynet_job_role_name'] = $title['Name'];
+                    $ins['job_title'] = $jobTitle;
+                    $ins['status'] = 1;
+                    $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert('complynet_jobRole', $ins);
+                } else if (!empty($record) && $record['complynet_job_role_sid'] == 0) {
+                    $this->db
+                        ->where('sid', $record['sid'])
+                        ->update('complynet_jobRole', [
+                            'complynet_job_role_sid' => $title['Id']
+                        ]);
+                }
+                //
+                $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle)));
+                $slugComply = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($title['Name'])));
+                //
+                if ($slug == $slugComply) {
+                    $complyRoleId = $title['Id'];
+                }
+            }
+        }
+        //
+        if ($complyRoleId === 0) {
+            // Let's add the job role
+            $complyRoleId = $this->clib->addJobRole([
+                'ParentId' => $departmentId,
+                'Name' => $jobTitle
+            ]);
+            //
+            if (empty($complyRoleId) || isset($complyRoleId['error'])) {
+                //
+                $reportError = array();
+                $reportError['response'] = $complyRoleId;
+                $reportError['complynetObject'] = json_decode([
+                    'ParentId' => $departmentId,
+                    'Name' => $jobTitle
+                ]);
+                //
+                $message = 'JobRole not created on ComplayNet.';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
+                return $complyRoleId;
+            }
+            //
+            $ins = [];
+            $ins['complynet_department_sid'] = $departmentId;
+            $ins['complynet_job_role_sid'] = $complyRoleId;
+            $ins['complynet_job_role_name'] = $jobTitle;
+            $ins['job_title'] = $jobTitle;
+            $ins['status'] = 1;
+            $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('complynet_jobRole', $ins);
+        }
+        //
+        return $complyRoleId;
     }
 }
