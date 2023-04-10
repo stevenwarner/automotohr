@@ -213,12 +213,15 @@ $fields = [
             <?php if (!empty($companyUsersData)) { ?>
                 <div class="row">
                     <div class="form-group col-sm-6 text-left;">
-                    <label><strong style="font-size: 18px;">Active Employees</strong> <span class="text-danger" style="font-size:12px;"> &nbsp;&nbsp;[Please click on employee to fill the form]</span></label>
+                        <label><strong style="font-size: 18px;">Employees</strong> <span class="text-danger">(Please select an employee to fill the form data)</span></label>
                     </div>
                 </div>
+                <hr>
                 <div class="row">
-                    <div class="col-sm-6 text-left;" style="max-height:180px; overflow-x: hidden; overflow-y: auto;">
-                        <ul class="list-group list-group-flush">
+                    <div class="col-sm-12">
+
+                        <select name='activeemployees' id="adminesignatories">
+                            <option value="">Please select an employee to fill the form</option>
                             <?php
                             foreach ($companyUsersData as $rowData) {
                                 $stateCode = '';
@@ -231,18 +234,14 @@ $fields = [
                                     $dob = date('m/d/Y', strtotime($rowData['dob']));
                                 }
                             ?>
+                                <option value="<?php echo $rowData['first_name']; ?>#<?php echo $rowData['last_name']; ?>#<?php echo $rowData['email']; ?>#<?php echo $rowData['middle_name']; ?>#<?php echo $rowData['ssn']; ?>#<?php echo $rowData['job_title']; ?>#<?php echo $dob; ?>#<?php echo $rowData['PhoneNumber']; ?>#<?php echo $rowData['Location_Address']; ?>#<?php echo $rowData['Location_Address2']; ?>#<?php echo $rowData['Location_ZipCode']; ?>#<?php echo $rowData['Location_City']; ?>#<?php echo $stateCode; ?>"><?php echo remakeEmployeeName($rowData); ?></option>
 
-                                <li class="list-group-item adminesignatories" style="cursor: pointer;border-bottom:" data-fname='<?php echo $rowData['first_name']; ?>' data-lname='<?php echo $rowData['last_name']; ?>' data-email='<?php echo $rowData['email']; ?>' data-middlename='<?php echo $rowData['middle_name']; ?>' data-ssn='<?php echo $rowData['ssn']; ?>' data-jobtitle='<?php echo $rowData['job_title']; ?>' data-dob='<?php echo $dob; ?>' data-phonenumber='<?php echo $rowData['PhoneNumber']; ?>' data-locationaddress='<?php echo $rowData['Location_Address']; ?>' data-locationaddress2='<?php echo $rowData['Location_Address2']; ?>' data-locationzipcode='<?php echo $rowData['Location_ZipCode']; ?>' data-locationcity='<?php echo $rowData['Location_City']; ?>' data-statecode='<?php echo $stateCode; ?>'>
-                                    <?php echo remakeEmployeeName($rowData); ?>
-                                </li>
                             <?php } ?>
-
-                        </ul>
+                        </select>
                     </div>
                 </div>
-
+                <hr>
             <?php } ?>
-            <br><br>
 
 
             <div class="row">
@@ -323,3 +322,7 @@ $fields = [
         </div>
     <?php } ?>
 </div>
+
+<script>
+    $('#adminesignatories').select2();
+</script>

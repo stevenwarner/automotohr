@@ -446,40 +446,48 @@ $(function companyOnboard() {
             });
     }
 
-
     //
-    $(document).on('click', '.adminemployees', function (event) {
+    $(document).on('change', '#jsadminemployees', function (event) {
         //
         event.preventDefault();
         //
-        $('#jsAdminFirstName').val($(this).data('fname'));
-        $('#jsAdminLastName').val($(this).data('lname'));
-        $('#jsAdminEmailAddress').val($(this).data('email'));
-           
+
+        let employeeData = $(this).val();
+        if (employeeData != '') {
+            const employeeDataArray = employeeData.split("#");
+            $('#jsAdminFirstName').val(employeeDataArray[0]);
+            $('#jsAdminLastName').val(employeeDataArray[1]);
+            $('#jsAdminEmailAddress').val(employeeDataArray[2]);
+        }
+
     });
 
-  //
-  $(document).on('click', '.adminesignatories', function (event) {
     //
-    event.preventDefault();
+    $(document).on('change', '#adminesignatories', function (event) {
+        //
+        event.preventDefault();
+        let employeeData = $(this).val();
+        //
+        if (employeeData != '') {
+            const employeeDataArray = employeeData.split("#");
 
-    //
-    $('#jsSignatoryAddFirstName').val($(this).data('fname'));
-    $('#jsSignatoryAddLastName').val($(this).data('lname'));
-    $('#jsSignatoryAddMiddleInitial').val($(this).data('middlename'));
-    $('#jsSignatoryAddSsn').val($(this).data('ssn'));
-    $('#jsSignatoryAddEmail').val($(this).data('email'));
-    $('#jsSignatoryAddTitle').val($(this).data('jobtitle'));
-    $('#jsSignatoryAddBirthDay').val($(this).data('dob'));
-    $('#jsSignatoryAddPhone').val($(this).data('phonenumber'));
-    $('#jsSignatoryAddStreet1').val($(this).data('locationaddress'));
-    $('#jsSignatoryAddStreet2').val($(this).data('locationaddress2'));
-    $('#jsSignatoryAddState').val($(this).data('statecode'));
-    $('#jsSignatoryAddCity').val($(this).data('locationcity'));
-    $('#jsSignatoryAddZip').val($(this).data('locationzipcode'));
-    
+            $('#jsSignatoryAddFirstName').val(employeeDataArray[0]);
+            $('#jsSignatoryAddLastName').val(employeeDataArray[1]);
+            $('#jsSignatoryAddEmail').val(employeeDataArray[3]);
+            $('#jsSignatoryAddMiddleInitial').val(employeeDataArray[4]);
+            $('#jsSignatoryAddSsn').val(employeeDataArray[5]);
+            $('#jsSignatoryAddTitle').val(employeeDataArray[6]);
+            $('#jsSignatoryAddPhone').val(employeeDataArray[8]);
+            $('#jsSignatoryAddBirthDay').val(employeeDataArray[7]);
+            $('#jsSignatoryAddStreet1').val(employeeDataArray[9]);
+            $('#jsSignatoryAddStreet2').val(employeeDataArray[10]);
+            $('#jsSignatoryAddState').val(employeeDataArray[12]);
+            $('#jsSignatoryAddCity').val(employeeDataArray[12]);
+            $('#jsSignatoryAddZip').val(employeeDataArray[11]);
+        }
+
     });
 
-    
+
 
 });

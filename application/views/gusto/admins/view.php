@@ -62,25 +62,25 @@
         <?php if (!empty($companyUsersData)) { ?>
             <div class="row">
                 <div class="form-group col-sm-6 text-left;">
-                    <label><strong style="font-size: 18px;">Active Employees</strong> <span class="text-danger" style="font-size:12px;"> &nbsp;&nbsp;[Please click on employee to fill the form]</span></label>
+                    <label><strong style="font-size: 18px;">Employees</strong> <span class="text-danger">(Please select an employee to fill the form data)</span></label>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6 text-left;" style="max-height:180px; overflow-x: hidden; overflow-y: auto;">
-                    <ul class="list-group list-group-flush">
+                <div class="col-sm-12">
+
+                    <select name='activeemployees' id="jsadminemployees" class="adminemployees">
+                        <option value="">Please select an employee to fill the form</option>
                         <?php
                         foreach ($companyUsersData as $rowData) {
                         ?>
-                            <li class="list-group-item adminemployees" style="cursor: pointer;border-bottom:" data-fname='<?php echo $rowData['first_name']; ?>' data-lname='<?php echo $rowData['last_name']; ?>' data-email='<?php echo $rowData['email']; ?>'>
-                                <?php echo remakeEmployeeName($rowData); ?>
-                            </li>
+                            <option value="<?php echo $rowData['first_name']; ?>#<?php echo $rowData['last_name']; ?>#<?php echo $rowData['email']; ?>"><?php echo remakeEmployeeName($rowData); ?></option>
                         <?php } ?>
-                    </ul>
+                    </select>
                 </div>
             </div>
 
+            <hr>
         <?php } ?>
-        <br><br>
         <div class="row">
             <div class="col-sm-12">
                 <form action="javascript:void(0)">
@@ -111,3 +111,8 @@
     </div>
 
 </div>
+
+
+<script>
+    $('#jsadminemployees').select2();
+</script>

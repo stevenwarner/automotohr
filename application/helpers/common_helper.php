@@ -16454,7 +16454,8 @@ if (!function_exists('showLanguages')) {
 }
 
 
-    //
+//
+if (!function_exists('isGustoAdmin')) {
     function isGustoAdmin($email, $companySid)
     {
         $CI = &get_instance();
@@ -16463,21 +16464,28 @@ if (!function_exists('showLanguages')) {
         $CI->db->where('email_address ', $email);
         $CI->db->where('company_sid', $companySid);
         $rows = $CI->db->count_all_results();
-        return $rows; 
+        return $rows;
     }
+}
 
-      //
-    if (!function_exists('getActiveEmployees')) {
-        function getActiveEmployees($company_sid)
-        {
-            $CI = &get_instance();
-    
-                $CI->db->select('*');
-                $where = array(
-                    'parent_sid' => $company_sid,
-                    'active' => 1,
-                    'terminated_status' => 0
-                );
-             return $CI->db->get_where('users', $where)->result_array();
-        }
+//
+if (!function_exists('getActiveEmployees')) {
+    function getActiveEmployees($company_sid)
+    {
+        $CI = &get_instance();
+
+        $CI->db->select('
+            sid, first_name, last_name, middle_name, nick_name,
+            email, PhoneNumber, dob, job_title, access_level, access_level_plus,
+            Location_Address, Location_Address_2, Location_City, Location_State,
+            Location_City, Location_ZipCode, Location_Country
+        ');
+        $where = array(
+            'parent_sid' => $company_sid,
+            'active' => 1,
+            'is_executive_admin'  => 0,
+            'terminated_status' => 0
+        );
+        return $CI->db->get_where('users', $where)->result_array();
     }
+}
