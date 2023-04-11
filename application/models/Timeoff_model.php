@@ -4484,6 +4484,8 @@ class Timeoff_model extends CI_Model
         //
         if ($startDate == $endDate) {
             $this->db->or_where("'$startDate' BETWEEN timeoff_requests.request_from_date AND timeoff_requests.request_to_date");
+        } else if($type == 'week') {
+            if ($startDate != '' && $startDate != 'all') $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
         } else {
             if ($startDate != '' && $startDate != 'all') $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
             if ($endDate != '' && $endDate != 'all') $this->db->where('timeoff_requests.request_to_date <= "' . ($endDate) . '"', null);
