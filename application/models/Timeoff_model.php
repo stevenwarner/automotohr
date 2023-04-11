@@ -4458,8 +4458,8 @@ class Timeoff_model extends CI_Model
         if ($type == 'day') {
             $startDate = $endDate = $year . '-' . $month . '-' . $day;
         } else {
-            $startDate = substr($calendarStartDate, 0, 4) . '-' . $week_start;
-            $endDate = substr($calendarEndDate, 0, 4) . '-' . $week_end;
+            $startDate = $calendarStartDate;
+            $endDate = $calendarEndDate;
         }
         $shift_start_time = "09:00";
         //
