@@ -18,7 +18,8 @@ class Hr_documents_management extends Public_Controller
     }
 
     public function index()
-    {getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
+    {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
 
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -3458,7 +3459,7 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) { 
+                    if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                             $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
 
@@ -3478,7 +3479,7 @@ class Hr_documents_management extends Public_Controller
                                 $sendGroupEmail = 1;
                             }
                         }
-                    }    
+                    }
                 }
             }
 
@@ -5250,7 +5251,7 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) { 
+                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                             $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
 
@@ -5270,7 +5271,7 @@ class Hr_documents_management extends Public_Controller
                                 $sendGroupEmail = 1;
                             }
                         }
-                    }    
+                    }
                 }
             }
 
@@ -7647,10 +7648,10 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['group_sid'] = $group_assign_sid;
                 $data_to_insert['assigned_by_sid'] = $employer_sid;
                 $data_to_insert['applicant_sid'] = 0;
-              if(in_array('-1',$employees)){
-                $Allemployees = $this->hr_documents_management_model->fetch_all_company_employees($company_sid);
-                $employees = array_column($Allemployees,'sid');
-                 }
+                if (in_array('-1', $employees)) {
+                    $Allemployees = $this->hr_documents_management_model->fetch_all_company_employees($company_sid);
+                    $employees = array_column($Allemployees, 'sid');
+                }
 
                 if (!empty($employees)) {
                     foreach ($employees as $key => $employee) {
@@ -13648,7 +13649,7 @@ class Hr_documents_management extends Public_Controller
         }
         //
         if (empty($info)) {
-            echo 'The employee is inactive.<br> Please activate the employee to send an email notification.';
+            echo 'The ' . ($post['userType']) . ' is assigned the EEO form, but since the ' . ($post['userType']) . ' has been marked as deactivated or terminated, the system is unable to send an email notification.';
             exit(0);
         }
         $this->load->model('Hr_documents_management_model', 'HRDMM');
@@ -14088,7 +14089,7 @@ class Hr_documents_management extends Public_Controller
         $employer_sid = $data["session"]["employer_detail"]["sid"];
         $security_sid = $employer_detail['sid'];
         getCompanyEmsStatusBySid($company_detail['sid']);
-        
+
 
         $security_details = db_get_access_level_details($security_sid);
         $data['security_details'] = $security_details;

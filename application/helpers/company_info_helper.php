@@ -2948,7 +2948,7 @@ if (!function_exists('getUserColumnById')) {
      * @param string $column Optional
      * @return string
      */
-    function getUserColumnById (
+    function getUserColumnById(
         int $id,
         string $column = 'sid'
     ) {
@@ -2956,14 +2956,102 @@ if (!function_exists('getUserColumnById')) {
         $CI = &get_instance();
         //
         $record =
-        $CI->db->select($column)
-        ->where('sid', $id)
-        ->get('users')
-        ->row_array();
+            $CI->db->select($column)
+            ->where('sid', $id)
+            ->get('users')
+            ->row_array();
         //
         if (empty($record)) {
             return '';
         }
         return $record[$column];
+    }
+}
+
+
+if (!function_exists('checkAndSetEEOCForUser')) {
+    /**
+     * Remove duplicate records at run time
+     *
+     * @param int $userId
+     * @param string $userType
+     * @return int
+     */
+    function checkAndSetEEOCForUser(int $userId, string $userType)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // get all records of user
+        $records =
+            $CI->db
+            ->where([
+                'application_sid' => $userId,
+                'users_type' => $userType
+            ])
+            ->order_by('sid', 'desc')
+            ->get('portal_eeo_form')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return 0;
+        }
+        // save last record
+        $lastRecord = $records[0];
+        // update tracker
+        $CI->db
+            ->where([
+                'document_type' => 'eeoc',
+                'user_type' => $userType,
+                'user_sid' => $userId
+            ])
+            ->update('verification_documents_track', [
+                'document_sid' => $lastRecord['sid']
+            ]);
+
+        //
+        foreach ($records as $key => $value) {
+            //
+            if ($key == 0) {
+                continue;
+            }
+
+            //
+            if (strlen(trim($lastRecord['us_citizen'])) === 0 && strlen(trim($value['us_citizen'])) !== 0) {
+                $lastRecord['us_citizen'] = trim($value['us_citizen']);
+            }
+
+            //
+            if (strlen(trim($lastRecord['visa_status'])) === 0 && strlen(trim($value['visa_status'])) !== 0) {
+                $lastRecord['visa_status'] = trim($value['visa_status']);
+            }
+            //
+            if (strlen(trim($lastRecord['group_status'])) === 0 && strlen(trim($value['group_status'])) !== 0) {
+                $lastRecord['group_status'] = trim($value['group_status']);
+            }
+            //
+            if (strlen(trim($lastRecord['veteran'])) === 0 && strlen(trim($value['veteran'])) !== 0) {
+                $lastRecord['veteran'] = trim($value['veteran']);
+            }
+            //
+            if (strlen(trim($lastRecord['disability'])) === 0 && strlen(trim($value['disability'])) !== 0) {
+                $lastRecord['disability'] = trim($value['disability']);
+            }
+            //
+            if (strlen(trim($lastRecord['gender'])) === 0 && strlen(trim($value['gender'])) !== 0) {
+                $lastRecord['gender'] = trim($value['gender']);
+            }
+            //
+            $insArray = $value;
+            $insArray['eeo_form_sid'] = $value['sid'];
+            unset($insArray['sid']);
+            // add to history
+            $CI->db->insert('portal_eeo_form_history', $insArray);
+            // delete record
+            $CI->db->where('sid', $value['sid'])->delete('portal_eeo_form');
+        }
+        //
+        $CI->db->where('sid', $lastRecord['sid'])->update('portal_eeo_form', $lastRecord);
+        //
+        return $lastRecord['sid'];
     }
 }

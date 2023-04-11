@@ -2060,6 +2060,15 @@ class Home extends CI_Controller
         $this->load->model('hr_documents_management_model');
         //
         $document = $this->hr_documents_management_model->getEEOC($post['id']);
+        // hijack the control and set the EEO
+        $eeoFormId = checkAndSetEEOCForUser($document['application_sid'], $document['users_type']);
+        //
+        if ($eeoFormId != 0) {
+            // fetch the new form details
+            $document = $this->hr_documents_management_model->getEEOC($eeoFormId);
+        } else {
+            $eeoFormId = $post['id'];
+        }
         //
         $employeeId = $this->session->userdata('logged_in')['employer_detail']['sid'];
         //
@@ -2087,20 +2096,11 @@ class Home extends CI_Controller
             'users_type' => $document['users_type']
         ])->update('portal_eeo_form', $upd);
         //
-        $this->hr_documents_management_model->updateEEOC(
-            $upd,
-            [
-                'sid' => $post['id']
-            ]
-        );
-        //
-        $document = $this->hr_documents_management_model->getEEOC($post['id']);
-        //
         $dataToUpdate = array();
         $dataToUpdate['gender'] = strtolower($post['gender']);
         update_user_gender($document['application_sid'], 'employee', $dataToUpdate);
         //
-        keepTrackVerificationDocument($employee_sid, 'employee', $action, $post['id'], 'eeoc', $post['location']);
+        keepTrackVerificationDocument($employee_sid, 'employee', $action, $eeoFormId, 'eeoc', $post['location']);
         //
         echo 'success';
         exit(0);

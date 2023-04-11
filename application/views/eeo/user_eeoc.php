@@ -206,7 +206,9 @@ if ($user_type == 'applicant') {
                             });
                         } else {
                             //
-                            alertify.alert('Error!', resp)
+                            alertify.alert('Error!', resp, function() {
+                                window.location.reload();
+                            })
                         }
                     });
                 }
