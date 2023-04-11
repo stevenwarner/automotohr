@@ -134,7 +134,6 @@ class Timeoff_model extends CI_Model
                     $employee['registration_date'],
                     $employee['rehire_date']
                 );
-                
             }
         }
         return $employees;
@@ -1382,22 +1381,20 @@ class Timeoff_model extends CI_Model
             ->get($tbl)
             ->result_array();
 
-            if($tbl=='timeoff_request_timeline'){
+        if ($tbl == 'timeoff_request_timeline') {
 
-                if (!empty($historyResults)) {
-                    foreach ($historyResults as $index => $historyResult) {
-                        $historyResults[$index]['anniversary_text'] = get_user_anniversary_date(
-                            $historyResult['joined_at'],
-                            $historyResult['registration_date'],
-                            $historyResult['rehire_date']
-                        );
-                        
-                    }
+            if (!empty($historyResults)) {
+                foreach ($historyResults as $index => $historyResult) {
+                    $historyResults[$index]['anniversary_text'] = get_user_anniversary_date(
+                        $historyResult['joined_at'],
+                        $historyResult['registration_date'],
+                        $historyResult['rehire_date']
+                    );
                 }
-
             }
+        }
 
-            return $historyResults;
+        return $historyResults;
     }
 
     function fetchRequestHistoryInfo($request_sid)
@@ -2707,7 +2704,8 @@ class Timeoff_model extends CI_Model
      * 
      * @return Array
      */
-    function getEmployeeAllowedBalanceHistory($employeeId) {
+    function getEmployeeAllowedBalanceHistory($employeeId)
+    {
         //
         $a = $this->db
             ->select('
@@ -2739,7 +2737,7 @@ class Timeoff_model extends CI_Model
         $a = $a->free_result();
         //
         return $b;
-    }    
+    }
 
 
     /** 
@@ -3158,9 +3156,6 @@ class Timeoff_model extends CI_Model
                         $requests['registration_date'],
                         $requests['rehire_date']
                     );
-                    
-
-
                 }
 
                 $requests[$k]['breakdown'] = get_array_from_minutes(
@@ -4455,41 +4450,18 @@ class Timeoff_model extends CI_Model
         $employer_id,
         $event_type,
         $access_level,
-        $employer_detail
+        $employer_detail,
+        $calendarStartDate,
+        $calendarEndDate
     ) {
-        $shift_start_time = "09:00";
-        if ($week_start > $week_end) {
-            // $year = date('Y', strtotime($year . '-01-01 -1 year'));
-        }
         //
-        if ($month == 12 && $type != "day") {
-            $endYear = addTimeToDate($year . "-12-31", "1Y", "Y");
-        } else {
-            $endYear = $year;
-        }
-        //
-        if ($month == 1 && $type != "day") {
-            $startYear = subTimeToDate($year . "-01-01", "1Y", "Y");
-        } else {
-            $startYear = $year;
-        }
-        // check for type
         if ($type == 'day') {
-            $startDate = $startYear . '-' . $month . '-' . $day;
-            $endDate = $endYear . '-' . $month . '-' . $day;
-        } else { // month, week
-            $startDate = $startYear . '-' . $week_start;
-            $endDate   = $endYear . '-' . $week_end;
-            //
-            if (substr($week_start, 0, 2) == '11' && substr($week_start, 3, 4) == '29') {
-                $startDate = $year . '-' . $week_start;
-                $endDate = date('Y', strtotime('' . ($year) . '+1 year')) . '-' . $week_end;
-            }
-            if (substr($week_start, 0, 2) == '12' && substr($week_start, 3, 4) == '27') {
-                $startDate = date('Y', strtotime("$year -1 year")) . '-' . $week_start;
-                $endDate   = $year . '-' . $week_end;
-            }
+            $startDate = $endDate = $year . '-' . $month . '-' . $day;
+        } else {
+            $startDate = substr($calendarStartDate, 0, 4) . '-' . $week_start;
+            $endDate = substr($calendarEndDate, 0, 4) . '-' . $week_end;
         }
+        $shift_start_time = "09:00";
         //
         $r = array();
         //
@@ -4552,7 +4524,7 @@ class Timeoff_model extends CI_Model
             //
             if ($employer_detail['access_level_plus'] == 0 && $employer_detail['pay_plan_flag'] == 0) {
                 // Check if the employee is part of team
-                $isTeamMember = in_array($v['employee_sid'], $teamMembers); 
+                $isTeamMember = in_array($v['employee_sid'], $teamMembers);
                 // $this->isTeamMember($v['employee_sid'], $employer_id);
                 $isColleague = 0;
                 //

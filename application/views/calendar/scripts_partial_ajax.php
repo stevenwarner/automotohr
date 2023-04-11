@@ -2442,6 +2442,9 @@ echo '</style>';
                 default:
                     calendar_OBJ.current.type = 'month';
             }
+            // set start and end year year
+            calendar_OBJ.current.start_date = e.start.format('Y-MM-DD');
+            calendar_OBJ.current.end_date = e.end.format('Y-MM-DD');
             // for start day to end day
             calendar_OBJ.current.week_start = moment(e.start).format('MM-DD');
             calendar_OBJ.current.week_end = moment(e.end).format('MM-DD');
@@ -2455,6 +2458,7 @@ echo '</style>';
             // set current date
             calendar_OBJ.current.date_str = moment(e.intervalStart, site_date_format).format(site2_date_format);
             calendar_OBJ.current.date_array = calendar_OBJ.current.date_str.split('-');
+            console.log()
             // Check for incoming 
             if (i_triggered === true) {
                 calendar_ref.fullCalendar('gotoDate', i_event_array.event_date);
@@ -2506,6 +2510,8 @@ echo '</style>';
                 year: date_array[0],
                 month: date_array[1],
                 day: date_array[2],
+                start_date: calendar_OBJ.current.start_date || null,
+                end_date: calendar_OBJ.current.end_date || null,
                 week_start: calendar_OBJ.current.week_start || null,
                 week_end: calendar_OBJ.current.week_end || null,
                 company_id: "<?= $company_id; ?>",
