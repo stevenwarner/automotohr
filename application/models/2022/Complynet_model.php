@@ -1014,6 +1014,13 @@ class Complynet_model extends CI_Model
             $message = 'Employee not created on ComplyNet for company <strong>' . getCompanyNameBySid($companyId) . '</strong>';
             //
             $this->sendEmailToDeveloper($message, $reportError);
+            //
+            if ($doReturn) {
+                return $response;
+            }
+            return SendResponse(200, ['errors' => [
+                $response
+            ]]);
         }
 
         //
@@ -1052,7 +1059,7 @@ class Complynet_model extends CI_Model
     ) {
         // Check if user is on ComplyNet
         if (!$this->db->where('employee_sid', $employeeId)->count_all_results('complynet_employees')) {
-           return false;
+            return false;
         }
         // Get the employee details
         $employeeDetails = $this->db
