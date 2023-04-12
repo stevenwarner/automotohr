@@ -12552,7 +12552,7 @@ class Hr_documents_management extends Public_Controller
             //
             shell_exec("cd $dir; zip -r $dt *");
             //
-            return redirect('download_document_zip/'.$download_file, 'refresh');
+            redirect('download_document_zip/'.$download_file, 'auto');
         }
 
         $this->zip->download($download_file);
