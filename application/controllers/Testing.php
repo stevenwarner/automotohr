@@ -14,6 +14,12 @@ class Testing extends CI_Controller
 
     public function fix_merge()
     {
+        $this->load->model('2022/complynet_model', 'complynet_model');
+        echo $this->complynet_model->syncJobRoles(
+            '90AE8942-8150-4423-90A1-9FF8160A1376',
+            'Body Shop Manager'
+        );
+        die('END');
         $this->tm->get_merge_employee();
     }
 

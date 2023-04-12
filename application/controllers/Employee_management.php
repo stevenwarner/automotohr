@@ -1860,14 +1860,15 @@ class Employee_management extends Public_Controller
                     // ComplyNet interjection
                     if (isCompanyOnComplyNet($company_id)) {
                         //
-                        $this->load->model('2022/complynet_model', 'complynet_model');
-                        //
-                        $complynetResponse = $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
-                            'first_name' => $employee_detail['first_name'],
-                            'last_name' => $employee_detail['last_name'],
-                            'email' => $employee_detail['email'],
-                            'PhoneNumber' => $employee_detail['PhoneNumber']
-                        ]);
+                        // $this->load->model('2022/complynet_model', 'complynet_model');
+                        // //
+                        // $complynetResponse = $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
+                        //     'first_name' => $employee_detail['first_name'],
+                        //     'last_name' => $employee_detail['last_name'],
+                        //     'email' => $employee_detail['email'],
+                        //     'PhoneNumber' => $employee_detail['PhoneNumber'],
+                        //     'job_title' => $employee_detail['job_title']
+                        // ]);
                     }
 
                     //

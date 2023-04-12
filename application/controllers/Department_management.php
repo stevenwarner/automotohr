@@ -148,8 +148,10 @@ class Department_management extends Public_Controller
                         }
 
                         // Check and add to complynet
-                        $this->load->model('2022/complynet_model');
-                        $this->complynet_model->syncDepartments($company_sid);
+                        if (isCompanyOnComplyNet($company_sid)) {
+                            $this->load->model('2022/complynet_model');
+                            $this->complynet_model->syncDepartments($company_sid);
+                        }
 
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Created Successfully!');
                         redirect('department_management', 'refresh');

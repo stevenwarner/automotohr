@@ -2865,9 +2865,9 @@ if (!function_exists('checkEmployeeMissingData')) {
         if (!$employee['last_name']) {
             $errors[] = 'Last name is missing.';
         }
-        if (!$employee['username']) {
-            $errors[] = 'Username is missing.';
-        }
+        // if (!$employee['username']) {
+        //     $errors[] = 'Username is missing.';
+        // }
         if (!$employee['email']) {
             $errors[] = 'Email is missing.';
         }
@@ -2878,7 +2878,7 @@ if (!function_exists('checkEmployeeMissingData')) {
         //     $errors[] = 'Job title is missing.';
         // }
         if (!$employee['complynet_job_title']) {
-            $errors[] = 'Job title is missing.';
+            $errors[] = 'ComplyNet Job title is missing.';
         }
         if (!$employee['department_sid']) {
             $errors[] = 'Department is missing.';
