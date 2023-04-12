@@ -12552,24 +12552,10 @@ class Hr_documents_management extends Public_Controller
             //
             shell_exec("cd $dir; zip -r $dt *");
             //
-            //
-            $strFile = file_get_contents($dt);
-            //
-            header("Content-type: application/force-download");
-            header('Content-Disposition: attachment; filename="' . $download_file . '"');
-
-            header('Content-Length: ' . filesize($dt));
-            echo $strFile;
-            while (ob_get_level()) {
-                ob_end_clean();
-            }
-            readfile($dt);
-            exit(0);
+            return redirect('download_document_zip/'.$download_file, 'refresh');
         }
 
         $this->zip->download($download_file);
-        //
-
     }
 
     /**
@@ -15520,5 +15506,28 @@ class Hr_documents_management extends Public_Controller
         $resp['Response'] = 'The document has been sent successfully.';
         //
         $this->res($resp);
+    }
+
+
+    /**
+     * Dowload document zip file
+     *
+     * @param string $fileName
+     */
+    public function downloadDocumentZipFile($fileName)
+    {
+        //
+        $fileWithPath = ROOTPATH.'temp_files/employee_export/'.$fileName;
+        // Download file
+        header('Content-type: application/zip');
+        header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
+        header("Content-length: " . filesize($fileWithPath));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        ob_clean();
+        flush();
+        readfile($fileWithPath);
+        exit;
     }
 }

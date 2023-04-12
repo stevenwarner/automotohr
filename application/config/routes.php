@@ -1695,3 +1695,7 @@ $route['cron_fix_duplicate_eeo']['cli'] = "Cron_common/fixDuplicateEEOForms";
 $route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
 
 $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
+
+
+// Download document zip file
+$route['download_document_zip/(:any)']['get'] = 'Hr_documents_management/downloadDocumentZipFile/$1';
