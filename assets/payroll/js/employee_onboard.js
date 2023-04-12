@@ -147,7 +147,7 @@ $(function EmployeeOnboard() {
     /**
      * 
      */
-    $(document).on('click', '.jsPayrollEmployeeEdit', function(event) {
+    $(document).on('click', '.jsPayrollEmployeeEdit', function(event) { 
         //
         event.preventDefault();
         //

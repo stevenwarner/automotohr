@@ -1771,8 +1771,9 @@ class Payroll extends CI_Controller
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
             'refresh_token',
-            'gusto_company_uid'
+            'gusto_company_sid'
         ]);
+        
         // Get employee UUID
         $employeeUid = $this->pm->GetPayrollColumn(
             'payroll_employees',
@@ -1797,6 +1798,9 @@ class Payroll extends CI_Controller
         $query = '?processed=true';
         //
         $response = GetUnProcessedPayrolls($query, $company);
+
+//_e($response,true,true);
+
         //
         if (isset($response['errors'])) {
             return [];
