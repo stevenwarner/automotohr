@@ -501,7 +501,7 @@ class Employee_management extends Public_Controller
 
 
                 //
-                if ($this->input->post('template_job_title') != '0') {
+                if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
                     $templetJobTitleData = $this->input->post('template_job_title');
                     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                     $user_information['job_title'] = $templetJobTitleDataArray[1];
@@ -1860,14 +1860,13 @@ class Employee_management extends Public_Controller
                     // ComplyNet interjection
                     if (isCompanyOnComplyNet($company_id)) {
                         //
-                        // $this->load->model('2022/complynet_model', 'complynet_model');
-                        // //
+                        $this->load->model('2022/complynet_model', 'complynet_model');
+                        //
                         // $complynetResponse = $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
                         //     'first_name' => $employee_detail['first_name'],
                         //     'last_name' => $employee_detail['last_name'],
                         //     'email' => $employee_detail['email'],
-                        //     'PhoneNumber' => $employee_detail['PhoneNumber'],
-                        //     'job_title' => $employee_detail['job_title']
+                        //     'PhoneNumber' => $employee_detail['PhoneNumber']
                         // ]);
                     }
 
@@ -2479,7 +2478,7 @@ class Employee_management extends Public_Controller
                 $newCompareData['office_location'] = $post['office_location'];
 
                 //
-                if ($this->input->post('template_job_title') != '0') {
+                if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
                     $templetJobTitleData = $this->input->post('template_job_title');
                     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                     $data['job_title'] = $templetJobTitleDataArray[1];

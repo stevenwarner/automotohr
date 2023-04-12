@@ -16132,7 +16132,7 @@ if (!function_exists('get_company_departments_teams')) {
      * @param int $teamId Optional
      * @return array|string
      */
-    function get_company_departments_teams(int $companyId, string $id = '', int $teamId = 0)
+    function get_company_departments_teams(int $companyId, string $id = '', $teamId = 0)
     {
         //
         $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="jsSelect2" style="width: 100%;">';

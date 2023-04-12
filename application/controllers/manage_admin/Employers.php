@@ -368,7 +368,7 @@ class employers extends Admin_Controller
             }
 
 
-            if ($this->input->post('temppate_job_title') != '0') {
+            if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
                 $templetJobTitleData = $this->input->post('temppate_job_title');
                 $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                 $data['job_title'] = $templetJobTitleDataArray[1];
