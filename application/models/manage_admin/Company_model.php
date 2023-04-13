@@ -248,7 +248,7 @@ class Company_model extends CI_Model
             $this->db->group_start();
 
             for ($i = 0; $i < count($multiple_keywords); $i++) {
-                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/','',$multiple_keywords[$i];
+                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/','',$multiple_keywords[$i]);
                 $this->db->or_like('table_one.email', $multiple_keywords[$i]);
                 $this->db->or_like('table_one.username', $multiple_keywords[$i]);
                 if ($phoneRegex) {
