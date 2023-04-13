@@ -8,6 +8,13 @@ class Adp_model extends CI_Model
      */
     private $employeeColumns;
 
+
+    /**
+     * Applicants columns supported by ADP
+     * @var array
+     */
+    private $applicantColumns;
+
     public function __construct()
     {
         parent::__construct();
@@ -49,16 +56,7 @@ class Adp_model extends CI_Model
                     ]
                 ]
             ],
-            'first_name' => [
-                'tag' => 'Workers - Demographic Data Management',
-                'name' => 'legalName',
-                'url' => 'events/hr/v1/worker.marital-status.change',
-                'body' => [
-                    "maritalStatusCode" => [
-                        'codeValue' => 'S'
-                    ]
-                ]
-            ],
+
             'rehire_date' => [
                 'tag' => 'Workers - Lifecycle Management',
                 'name' => 'rehireDate',
@@ -70,11 +68,12 @@ class Adp_model extends CI_Model
                     ],
                     'workerStatus' => [
                         "reasonCode" => [
-                            'codeValue' => 'active'
+                            'codeValue' => 'CURR'
                         ]
                     ]
                 ]
             ],
+
             'Location_Address' => [
                 'tag' => 'Workers - Personal Communication Management',
                 'name' => 'lineOne',
@@ -202,7 +201,7 @@ class Adp_model extends CI_Model
             ],
             'ssn' => [
                 'tag' => 'Workers - Identification Management',
-                'name' => 'idValue',
+                'name' => 'ssn',
                 'url' => '​events/​hr/​v1/​worker.government-id.change',
                 'body' => [
                     "governmentID" => [
@@ -271,6 +270,170 @@ class Adp_model extends CI_Model
                     ]
                 ]
             ],
+            'termination_date' => [
+                'tag' => 'Workers - Work Assignment Management',
+                'name' => 'termination_date',
+                'url' => '/events/hr/v1/worker.work-assignment.terminate',
+                'body' => [
+                    "workAssignment" => [
+                        'terminationDate' => '2023-01-01',
+                        'lastWorkedDate' => '2023-01-01',
+                        'assignmentStatus' => [
+                            'reasonCode' => [
+                                'assignmentStatus' => 'A00',
+                            ],
+
+                        ]
+                    ]
+                ]
+            ],
+            'first_name' => [
+                'tag' => 'Workers - Demographic Data Management',
+                'name' => 'first_name',
+                'url' => '/events/hr/v1/worker.legal-name.change',
+                'body' => [
+                    "worker" => [
+                        "person" => [
+                            "legalName" => [
+                                "preferredSalutations" => [
+
+                                    "salutationCode" => [
+                                        "longName" => "Mr."
+                                    ]
+
+                                ],
+                                "generationAffixCode" => [
+                                    "longName" => "Honourable"
+                                ],
+                                "titleAffixCodes" => [
+
+                                    "affixCode" => [
+                                        "longName" => "Dr."
+                                    ]
+
+                                ],
+                                "givenName" => " ",
+                                "middleName" => "Z",
+                                "familyName1" => "June",
+                                "formattedName" => "June Mr,Z Ryana"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'last_name' => [
+                'tag' => 'Workers - Demographic Data Management',
+                'name' => 'last_name',
+                'url' => '/events/hr/v1/worker.legal-name.change',
+                'body' => [
+                    "worker" => [
+                        "person" => [
+                            "legalName" => [
+                                "preferredSalutations" => [
+
+                                    "salutationCode" => [
+                                        "longName" => "Mr."
+                                    ]
+
+                                ],
+                                "generationAffixCode" => [
+                                    "longName" => "Honourable"
+                                ],
+                                "titleAffixCodes" => [
+
+                                    "affixCode" => [
+                                        "longName" => "Dr."
+                                    ]
+
+                                ],
+                                "givenName" => " ",
+                                "middleName" => "Z",
+                                "familyName1" => "June",
+                                "formattedName" => "June Mr,Z Ryana"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'middle_name' => [
+                'tag' => 'Workers - Demographic Data Management',
+                'name' => 'middle_name',
+                'url' => '/events/hr/v1/worker.legal-name.change',
+                'body' => [
+                    "worker" => [
+                        "person" => [
+                            "legalName" => [
+                                "preferredSalutations" => [
+
+                                    "salutationCode" => [
+                                        "longName" => "Mr."
+                                    ]
+
+                                ],
+                                "generationAffixCode" => [
+                                    "longName" => "Honourable"
+                                ],
+                                "titleAffixCodes" => [
+
+                                    "affixCode" => [
+                                        "longName" => "Dr."
+                                    ]
+
+                                ],
+                                "givenName" => " ",
+                                "middleName" => "Z",
+                                "familyName1" => "June",
+                                "formattedName" => "June Mr,Z Ryana"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        //
+        $this->applicantColumns = [
+            'onboarding' => [
+                'tag' => 'Applicant Onboarding',
+                'name' => 'onboarding',
+                'url' => '/hcm/v2/applicant.onboard',
+                'body' => [
+                    "applicantOnboarding" => [
+                        "onboardingTemplateCode" => [
+                            "code" => "{{onboardingTemplateCode}}"
+                        ],
+                        "onboardingStatus" => [
+                            "statusCode" => [
+                                "code" => "inprogress"
+                            ]
+                        ]
+                    ],
+                    "applicantPersonalProfile" => [
+                        "birthName" => [
+                            "givenName" => "{{firstName}}",
+                            "familyName" => "{{lastName}}"
+                        ],
+                        "governmentIDs" => [
+
+                            "id" => "",
+                            "nameCode" => [
+                                "code" => "SSN"
+                            ],
+                            "statusCode" => [
+                                "code" => "AppliedFor"
+                            ]
+
+                        ]
+                    ],
+                    "applicantWorkerProfile" => [
+                        "hireDate" => "{{timestamp}}"
+                    ],
+                    "applicantPayrollProfile" => [
+                        "payrollGroupCode" => "{{companyCode}}"
+                    ],
+                    "applicantTaxProfile" => []
+                ]
+            ]
         ];
     }
 
@@ -340,6 +503,8 @@ class Adp_model extends CI_Model
                 $extraValueArray['Location_Country'] = isset($newDataCustom['Location_Country']) ? $newDataCustom['Location_Country'] : $oldData['Location_Country'];
             } elseif ($field == 'phone_number') {
                 $formatedPhone = '';
+                // echo $value;
+                //    die();
                 if (phonenumber_validate($value)) {
                     $formatedPhone = phonenumber_format($value, 1);
                     $formatedPhonearray = explode(' ', $formatedPhone);
@@ -356,7 +521,12 @@ class Adp_model extends CI_Model
                 if ($formatedPhone == '') {
                     continue;
                 }
+            } else if ($field == 'first_name' || $field == 'last_name' || $field == 'middle_name') {
+                $extraValueArray['first_name'] = isset($newDataCustom['first_name']) ? $newDataCustom['first_name'] : $oldData['first_name'];
+                $extraValueArray['last_name'] = isset($newDataCustom['last_name']) ? $newDataCustom['last_name'] : $oldData['last_name'];
+                $extraValueArray['middle_name'] = isset($newDataCustom['middle_name']) ? $newDataCustom['middle_name'] : $oldData['middle_name'];
             }
+
             // If no value is present
             // don't push it ADP
             if (!$value) {
@@ -420,6 +590,7 @@ class Adp_model extends CI_Model
      */
     public function getCompanyAdpMode(int $companyId)
     {
+        return 'uat';
         $record = $this->db
             ->select('mode')
             ->where('company_sid', $companyId)

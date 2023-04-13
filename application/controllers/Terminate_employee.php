@@ -121,6 +121,26 @@ class Terminate_employee extends Public_Controller
                 $data_to_insert['termination_reason'] = empty($termination_reason) ? 0 : $termination_reason;
                 if ($status == 1) {
                     $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); //date('Y-m-d', strtotime($termination_date));
+
+                    //
+                    if (checkEmployeeAdpStatus($sid)) {
+                        // load the model
+                        $this->load->model('2022/Adp_model', 'adp_model');
+                        //
+                        $this->adp_model->handleMultipleColumns(
+                            [
+                                'termination_date' => ''
+
+                            ],
+                            [
+                                'termination_date' => $termination_date,
+
+                            ],
+                            $sid,
+                            $employer['parent_sid'],
+                            $employer_sid
+                        );
+                    }
                 }
 
                 $data_to_insert['involuntary_termination'] = $involuntary;
@@ -225,6 +245,7 @@ class Terminate_employee extends Public_Controller
             }
 
             $status_documents = $this->terminate_employee_model->get_status_documents($status_id);
+           
             $data['id'] = $sid;
             $data['title'] = $title;
             $data['session'] = $session;
@@ -260,6 +281,28 @@ class Terminate_employee extends Public_Controller
 
                 if ($status == 1) {
                     $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); // date('Y-m-d', strtotime($termination_date));
+               
+                //
+                if (checkEmployeeAdpStatus($sid)) {
+                    // load the model
+                    $this->load->model('2022/Adp_model', 'adp_model');
+                    //
+                    $this->adp_model->handleMultipleColumns(
+                        [
+                            'termination_date' => $status_data[0]['termination_date']
+
+                        ],
+                        [
+                            'termination_date' => $termination_date,
+
+                        ],
+                        $sid,
+                        $employer['parent_sid'],
+                        $employer_sid
+                    );
+                }
+
+               
                 } else {
                     $data_to_insert['termination_date'] = NULL;
                 }
@@ -306,6 +349,29 @@ class Terminate_employee extends Public_Controller
                         $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'rehired';
                         $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
+
+
+                        if (checkEmployeeAdpStatus($sid)) {
+                            // load the model
+                            $this->load->model('2022/Adp_model', 'adp_model');
+                            //
+                            $this->adp_model->handleMultipleColumns(
+                                [
+                                    'rehire_date' => ''
+        
+                                ],
+                                [
+                                    'rehire_date' => $data_to_insert['status_change_date'],
+        
+                                ],
+                                $sid,
+                                $employer['parent_sid'],
+                                $employer_sid
+                            );
+                        }
+        
+
+
                     }
                     $data_to_update['terminated_status'] = 0;
                 }

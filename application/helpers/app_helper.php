@@ -51,6 +51,9 @@ if (!function_exists('generateRequestBody')) {
      */
     function generateRequestBody(array $field, string $associateOID, $value, $extraValueArray)
     {
+        // print_r($field);
+        //  die('sdfsdf');
+
         //
         $requestBody = [];
         $requestBody['events'] = [];
@@ -73,13 +76,13 @@ if (!function_exists('generateRequestBody')) {
                 'codeValue' => strtoupper(substr($value, 0, 1))
             ];
         }
-
+        
         // Rehire Date
         if ($field['name'] == 'rehireDate') {
             $requestBody['events'][0]['data']['transform']['effectiveDateTime'] = $value;
             $requestBody['events'][0]['data']['transform']['worker']['workerDates'] =  [];
             $requestBody['events'][0]['data']['transform']['worker']['workerDates']['rehireDate'] =  $value;
-            $requestBody['events'][0]['data']['transform']['worker']['workerStatus']['reasonCode']['codeValue'] = 'Active';
+            $requestBody['events'][0]['data']['transform']['worker']['workerStatus']['reasonCode']['codeValue'] = 'CURR';
         }
 
         // legal Address
@@ -107,7 +110,7 @@ if (!function_exists('generateRequestBody')) {
             $requestBody['events'][0]['data']['transform']['worker']['legalAddress']['postalCode'] =  $extraValueArray['Location_ZipCode'];
         }
 
-        // SSN
+        // SSN 
         if ($field['name'] == 'ssn') {
             $requestBody['events'][0]['data']['transform']['worker']['person'] =  [];
             $requestBody['events'][0]['data']['transform']['worker']['person']['governmentID']['idValue'] =  $value;
@@ -116,7 +119,7 @@ if (!function_exists('generateRequestBody')) {
         }
 
         // Phone Number
-        if ($field['name'] == 'phone_number') {
+        if ($field['name'] == 'landlines') {
             $requestBody['events'][0]['data']['transform']['worker']['communication'] =  [];
             $requestBody['events'][0]['data']['transform']['worker']['communication']['landlines']['nameCode']['codeValue'] =  'Home Phone';
             $requestBody['events'][0]['data']['transform']['worker']['communication']['landlines']['nameCode']['shortName'] =  'Home Phone';
@@ -126,12 +129,33 @@ if (!function_exists('generateRequestBody')) {
             $requestBody['events'][0]['data']['transform']['worker']['communication']['landlines']['formattedNumber'] = $extraValueArray['formattedNumber'];
         }
         //Email
-        if ($field['name'] == 'email') {
+        if ($field['name'] == 'emails') {
             $requestBody['events'][0]['data']['transform']['worker']['communication'] =  [];
             $requestBody['events'][0]['data']['transform']['worker']['communication']['emails']['nameCode']['codeValue'] =  'E-mail';
             $requestBody['events'][0]['data']['transform']['worker']['communication']['emails']['nameCode']['shortName'] =  'E-mail';
             $requestBody['events'][0]['data']['transform']['worker']['communication']['emails']['emailUri'] =  $value;
             $requestBody['events'][0]['data']['transform']['worker']['communication']['emails']['itemID'] =  "139470108012_1";
+        }
+
+        //  Terminate
+        if ($field['name'] == 'termination_date') {
+            $requestBody['events'][0]['data']['transform']['worker']['workAssignment'] =  [];
+            $requestBody['events'][0]['data']['transform']['worker']['workAssignment']['terminationDate'] =  $value;
+            $requestBody['events'][0]['data']['transform']['worker']['workAssignment']['lastWorkedDate'] = $value;
+            $requestBody['events'][0]['data']['transform']['worker']['workAssignment']['assignmentStatus']['reasonCode'] =  "A00";
+        }
+
+        //Legal Name  
+        if ($field['name'] == 'first_name' || $field['name'] == 'last_name' || $field['name'] == 'middle_name') {
+            $requestBody['events'][0]['data']['transform']['worker']['person'] =  [];
+            $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['preferredSalutations']['salutationCode']['longName'] =  'Mr.';
+            $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['generationAffixCode']['longName'] =  'Honourable';
+            $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['titleAffixCodes']['affixCode']['longName'] =  'Dr.';
+
+            $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['givenName'] =  '';
+            $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['middleName'] =  $extraValueArray['middle_name'];
+            $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['familyName1'] =  $extraValueArray['first_name'];
+            $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['formattedName'] =  $extraValueArray['first_name'] . ' ' . $extraValueArray['last_name'];
         }
 
         //

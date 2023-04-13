@@ -1785,7 +1785,10 @@ class Employee_management extends Public_Controller
                                 'Location_Country' => $employee_detail['Location_Country'],
                                 'ssn' => $employee_detail['ssn'],
                                 'phone_number' => $employee_detail['PhoneNumber'],
-                                'email' => $employee_detail['email']
+                                'email' => $employee_detail['email'],
+                                'first_name' => $employee_detail['first_name'],
+                                'last_name' => $employee_detail['last_name'],
+                                'middle_name' => $employee_detail['middle_name']
                             ],
                             [
                                 'dob' => $this->input->post('dob', true),
@@ -1799,8 +1802,10 @@ class Employee_management extends Public_Controller
                                 'Location_Country' => $this->input->post('Location_Country', true),
                                 'ssn' => $this->input->post('SSN', true),
                                 'phone_number' => $this->input->post('PhoneNumber', true),
-                                'email' => $this->input->post('email', true)
-
+                                'email' => $this->input->post('email', true),
+                                'first_name' => $this->input->post('first_name', true),
+                                'last_name' => $this->input->post('last_name', true),
+                                'middle_name' => $this->input->post('middle_name', true)
                             ],
                             $sid,
                             $company_id,
@@ -1808,6 +1813,7 @@ class Employee_management extends Public_Controller
                         );
                     }
 
+                   // echo $employee_detail['first_name'];
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
@@ -2449,7 +2455,8 @@ class Employee_management extends Public_Controller
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
                
                 // only run for employee
-                if (checkEmployeeAdpStatus($sid)) {
+                   if (checkEmployeeAdpStatus($sid)) {
+                    
                     // load the model
                     $this->load->model('2022/Adp_model', 'adp_model');
                     //
@@ -2458,6 +2465,7 @@ class Employee_management extends Public_Controller
                             'dob' => $employee_detail['dob'],
                             'gender' => $employee_detail['gender'],
                             'marital_status' => $employee_detail['marital_status'],
+                            'rehire_date' => $employee_detail['rehire_date'],
                             'Location_Address' => $employee_detail['Location_Address'],
                             'Location_City' => $employee_detail['Location_City'],
                             'Location_State' => $employee_detail['Location_State'],
@@ -2465,21 +2473,27 @@ class Employee_management extends Public_Controller
                             'Location_Country' => $employee_detail['Location_Country'],
                             'ssn' => $employee_detail['ssn'],
                             'phone_number' => $employee_detail['PhoneNumber'],
-                            'email' => $employee_detail['email']
+                            'email' => $employee_detail['email'],
+                            'first_name' => $employee_detail['first_name'],
+                            'last_name' => $employee_detail['last_name'],
+                            'middle_name' => $employee_detail['middle_name']
                         ],
                         [
                             'dob' => $this->input->post('dob', true),
                             'gender' => $this->input->post('gender', true),
                             'marital_status' => $this->input->post('marital_status', true),
+                            'rehire_date' => $this->input->post('rehireDate', true),
                             'Location_Address' => $this->input->post('Location_Address', true),
                             'Location_City' => $this->input->post('Location_City', true),
                             'Location_State' => $this->input->post('Location_State', true),
                             'Location_ZipCode' => $this->input->post('Location_ZipCode', true),
                             'Location_Country' => $this->input->post('Location_Country', true),
-                            'ssn' => $this->input->post('ssn', true),
+                            'ssn' => $this->input->post('SSN', true),
                             'phone_number' => $this->input->post('PhoneNumber', true),
-                            'email' => $this->input->post('email', true)
-
+                            'email' => $this->input->post('email', true),
+                            'first_name' => $this->input->post('first_name', true),
+                            'last_name' => $this->input->post('last_name', true),
+                            'middle_name' => $this->input->post('middle_name', true)
                         ],
                         $sid,
                         $company_id,

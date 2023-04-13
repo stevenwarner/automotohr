@@ -448,7 +448,7 @@ class employers extends Admin_Controller
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
 
-
+             
             // only run for employee
             if (checkEmployeeAdpStatus($sid)) {
                 // load the model
@@ -460,23 +460,26 @@ class employers extends Admin_Controller
                         'marital_status' => $employer_detail[0]['marital_status'],
                         'rehire_date' => $employer_detail[0]['rehire_date'],
                         'phone_number' => $employer_detail[0]['PhoneNumber'],
-                        'email' => $employer_detail[0]['email']
+                        'email' => $employer_detail[0]['email'],
+                        'first_name' => $employer_detail[0]['first_name'],
+                        'last_name' => $employer_detail[0]['last_name'],
+                        'middle_name' => $employer_detail[0]['middle_name']
                     ],
                     [
                         'gender' => $this->input->post('gender', true),
                         'marital_status' => $this->input->post('marital_status', true),
                         'rehire_date' => $this->input->post('rehire_date', true),
                         'phone_number' => $this->input->post('cell_number', true),
-                        'email' => $this->input->post('email', true)
+                        'email' => $this->input->post('email', true),
+                        'first_name' => $this->input->post('first_name', true),
+                        'last_name' => $this->input->post('last_name', true),
+                        'middle_name' => $this->input->post('middle_name', true)
                     ],
                     $sid,
                     $company_id,
                     $employer_id
                 );
             }
-
-
-
 
 
             $this->company_model->update_user($sid, $data, 'Employer');
