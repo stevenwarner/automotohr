@@ -352,6 +352,7 @@ class employers extends Admin_Controller
             $data['access_level'] = $this->input->post('security_access_level');
             $data['access_level_plus'] = $this->input->post('access_level_plus');
             $data['complynet_status'] = $this->input->post('complynet_status');
+            $data['employee_type'] = $this->input->post('employee_type');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
 
@@ -531,6 +532,7 @@ class employers extends Admin_Controller
                 $action = $this->input->post('action');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+                $employee_type = $this->input->post('employee_type');
                 $salt = generateRandomString(48);
 
 
@@ -549,6 +551,7 @@ class employers extends Admin_Controller
                 $insert_data['email'] = $email;
                 $insert_data['first_name'] = $first_name;
                 $insert_data['last_name'] = $last_name;
+                $insert_data['employee_type'] = $employee_type;
                 $insert_data['job_title'] = $job_title;
                 $insert_data['cell_number'] = $cell_number;
                 $insert_data['registration_date'] = $registration_date;
@@ -571,7 +574,6 @@ class employers extends Admin_Controller
                 if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                     $insert_data['complynet_job_title'] = $this->input->post('complynet_job_title');
                 }
-
 
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');

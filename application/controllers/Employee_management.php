@@ -426,7 +426,7 @@ class Employee_management extends Public_Controller
                 $job_title = $this->input->post('job_title');
                 $access_level = $this->input->post('access_level');
                 $registration_date = $this->input->post('registration_date');
-                $employee_type = $this->input->post('employeeType');
+                $employee_type = $this->input->post('employee-type');
                 $username = $this->input->post('username');
                 $location_country = $this->input->post('Location_Country');
                 $location_state = $this->input->post('Location_State');
@@ -491,7 +491,7 @@ class Employee_management extends Public_Controller
                 $user_information['CompanyDescription'] = $company_description;
                 $user_information['salt'] = $salt;
                 $user_information['employee_status'] = $employment_status;
-                $user_information['employee_type'] = $employment_type;
+                $user_information['employee_type'] = $employee_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
                 //

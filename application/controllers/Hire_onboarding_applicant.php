@@ -206,7 +206,6 @@ class Hire_onboarding_applicant extends CI_Controller
         $employer_data['YouTubeVideo'] = $applicant_profile_info['YouTube_Video'];
         $employer_data['job_title'] = $applicant_profile_info['jobTitle'];
         $employer_data['employee_status'] = $applicant_profile_info['employee_status'];
-        $employer_data['employee_type'] = $applicant_profile_info['employee_type'];
         $employer_data['applicant_sid'] = $applicant_sid;
         $employer_data['email'] = $applicant_email;
         $employer_data['parent_sid'] = $company_sid;
@@ -215,6 +214,18 @@ class Hire_onboarding_applicant extends CI_Controller
         $employer_data['username'] = $username;
         $employer_data['joined_at'] = $joining_date;
         $employer_data['created_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        //
+        $employee_type = '';
+        //
+        if ($applicant_profile_info['employee_type'] == 'part-time') {
+            $employee_type = 'parttime';
+        } else if ($applicant_profile_info['employee_type'] == 'full-time') {
+            $employee_type = 'fulltime';
+        } else {
+           $employee_type = $applicant_profile_info['employee_type']; 
+        }
+        $employer_data['employee_type'] = $employee_type;
+        //
         if (!empty($password)) {
             $employer_data['password'] = do_hash($password, 'md5');
         }
@@ -256,8 +267,8 @@ class Hire_onboarding_applicant extends CI_Controller
         $employer_data['eeoc_code'] = $applicant_profile_info['eeoc_code'];
         //
         $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
-        $employer_data['department_sid'] = $departmentsTeams['department_sid'];
-        $employer_data['team_sid'] = $departmentsTeams['team_sid'];
+        $employer_data['department_sid'] = !empty($departmentsTeams['department_sid']) ? $departmentsTeams['department_sid'] : 0;
+        $employer_data['team_sid'] = !empty($departmentsTeams['team_sid']) ? $departmentsTeams['team_sid'] : 0;
 
         // insert employer data to table and get its ID
         $employee_result = $this->hire_onboarding_applicant_model->insert_company_employee($employer_data, $applicant_sid, $applicant_job_sid);
