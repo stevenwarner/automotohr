@@ -514,7 +514,7 @@ class Users_model extends CI_Model
     function getSearchedUsersCount($executiveUserSid, $executiveCompanyIds, $query)
     {
         //
-        $phoneQuery = preg_replace('/[^0-9]/', '', $query);
+        $phoneQuery = preg_match('/@/', $query) ? '' : preg_replace('/[^0-9]/', '', $query);
         // Get Employees
         $employeeCount = $this->db
             ->from('users')
@@ -522,9 +522,11 @@ class Users_model extends CI_Model
             ->group_start()
             ->like('users.first_name', $query)
             ->or_like('users.last_name', $query)
-            ->or_like('users.email', $query)
-            ->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false)
-            ->group_end()
+            ->or_like('users.email', $query);
+            if ($phoneQuery) {
+                $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false);
+            }
+            $this->db->group_end()
             ->where_in('users.parent_sid', $executiveCompanyIds, false)
             ->count_all_results();
 
@@ -535,9 +537,11 @@ class Users_model extends CI_Model
             ->group_start()
             ->like('portal_job_applications.first_name', $query)
             ->or_like('portal_job_applications.last_name', $query)
-            ->or_like('portal_job_applications.email', $query)
-            ->or_like('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneQuery, false)
-            ->group_end()
+            ->or_like('portal_job_applications.email', $query);
+            if ($phoneQuery) {
+                $this->db->or_like('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneQuery, false);
+            }
+            $this->db->group_end()
             ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
             ->where('portal_job_applications.hired_sid IS NULL', NULL)
             ->count_all_results();
@@ -557,7 +561,7 @@ class Users_model extends CI_Model
         $offset,
         $limit
     ) {
-        $phoneQuery = preg_replace('/[^0-9]/', '', $query);
+        $phoneQuery = preg_match('/@/', $query) ? '' : preg_replace('/[^0-9]/', '', $query);
         // Get Employees
         $this->db
             ->select('

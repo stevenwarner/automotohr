@@ -466,7 +466,7 @@ class Dashboard extends CI_Controller {
         $executiveCompanyIds = $this->Users_model->getExecutiveCompanies($data['executive_user']['sid']);
         //
         if(!$executiveCompanyIds){
-            $this->resp['Response'] = 'You don\'t have any comapnies to manage.';
+            $this->resp['Response'] = 'You don\'t have any companies to manage.';
             $this->response();
         }
         //
