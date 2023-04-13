@@ -1,32 +1,103 @@
 var SCORM_TYPE = SCORM_XML.type;
 var SCORM_VERSION = SCORM_XML.version;
 var SCORM_OBJECTIVES = SCORM_XML.objectives;
+var SCORM_INTERACTIONS = [];
 var CHAPTER_START_TIME = 0;
 //
 var indexes = {};
+LAST_LOCATION = '5';
 //
-indexes['cmi.exit'] = "";
-indexes['cmi.location'] = LAST_LOCATION;
-indexes['cmi.session_time'] = '0';
-indexes['cmi.completion_status'] = 'unknown';
-indexes['cmi.success_status'] = 'unknown';
-indexes['cmi.progress_measure'] = '0';
-indexes['cmi.score.max'] = 'score_max';
-indexes['cmi.score.min'] = 'score_min';
-indexes['cmi.score.raw'] = 'score_raw';
-indexes['cmi.score.scaled'] = 'score_scaled';
+indexes['cmi._version'] = '';
+indexes['cmi.comments_from_learner._children'] = '';
+indexes['cmi.comments_from_learner._count'] = '0';
+indexes['cmi.comments_from_learner.n.comment'] = '';
+indexes['cmi.comments_from_learner.n.location'] = '';
+indexes['cmi.comments_from_learner.n.timestamp'] = '';
+indexes['cmi.comments_from_lms._children'] = '';
+indexes['cmi.comments_from_lms._count'] = '0';
+indexes['cmi.comments_from_lms.n.comment'] = '';
+indexes['cmi.comments_from_lms.n.location'] = '';
+indexes['cmi.comments_from_lms.n.timestamp'] = ''; 
+indexes['cmi.completion_status'] = 'not attempted'; 
+indexes['cmi.completion_threshold'] = ''; 
+indexes['cmi.credit'] = 'RO'; 
+indexes['cmi.entry'] = ''; 
+indexes['cmi.exit'] = ''; 
+indexes['cmi.launch_data'] = ''; 
+indexes['cmi.learner_id'] = ''; 
+indexes['cmi.learner_name'] = ''; 
+indexes['cmi.learner_preference._children'] = ''; 
+indexes['cmi.learner_preference.audio_level'] = ''; 
+indexes['cmi.learner_preference.language'] = ''; 
+indexes['cmi.learner_preference.delivery_speed'] = ''; 
+indexes['cmi.learner_preference.audio_captioning'] = ''; 
+indexes['cmi.location'] = LAST_LOCATION; 
+indexes['cmi.max_time_allowed'] = ''; 
+indexes['cmi.mode'] = ''; 
+indexes['cmi.progress_measure'] = '';
+indexes['cmi.scaled_passing_score'] = ''; 
+indexes['cmi.score._children'] = ''; 
+indexes['cmi.score.scaled'] = ''; 
+indexes['cmi.score.raw'] = ''; 
+indexes['cmi.score.min'] = ''; 
+indexes['cmi.score.max'] = ''; 
 indexes['cmi.score.success_status'] = 'score_success_status';
+indexes['cmi.session_time'] = ''; 
+indexes['cmi.success_status'] = 'unknown'; 
+indexes['cmi.suspend_data'] = SUSPEND_DATA; 
+indexes['cmi.time_limit_action'] = ''; 
+indexes['cmi.total_time'] = ''; 
 indexes['adl.data._count'] = SCORM_XML.storage;
-indexes['adl.nav.request'] = 'continue';
+indexes['adl.nav.request'] = ''; 
+indexes['adl.nav.request_valid.continue'] = '';
+indexes['adl.nav.request_valid.previous'] = ''; 
+indexes['adl.nav.request_valid.choice.{target=}'] = '';
+indexes['adl.nav.request_valid.jump.{target=}'] = ''; 
 
 if (SCORM_OBJECTIVES.length) {
     indexes['cmi.objectives._count'] = SCORM_OBJECTIVES.length;
+    indexes['cmi.objectives._children'] = ''; 
     //
     for (var i=0; i < indexes['cmi.objectives._count']; i++){
         var obj = SCORM_OBJECTIVES[i]
-        indexes['cmi.objectives.'+i+".id"] = obj;
-        indexes['cmi.objectives.'+i+".progress_measure"] = "";
-        indexes['cmi.objectives.'+i+".completion_status"] = "";
+        indexes['cmi.objectives.'+i+'.id'] = obj; 
+        indexes['cmi.objectives.'+i+'.score._children'] = ''; 
+        indexes['cmi.objectives.'+i+'.score.scaled'] = ''; 
+        indexes['cmi.objectives.'+i+'.score.raw'] = '';
+        indexes['cmi.objectives.'+i+'.score.min'] = '';
+        indexes['cmi.objectives.'+i+'.score.max'] = ''; 
+        indexes['cmi.objectives.'+i+'.success_status'] = ''; 
+        indexes['cmi.objectives.'+i+'.completion_status'] = ''; 
+        indexes['cmi.objectives.'+i+'.progress_measure'] = ''; 
+        indexes['cmi.objectives.'+i+'.description'] = ''; 
+    }
+}
+
+if (SCORM_INTERACTIONS.length) {
+    indexes['cmi.interactions._children'] = ''; 
+    indexes['cmi.interactions._count'] = SCORM_INTERACTIONS.length; 
+    //
+    for (var i=0; i < indexes['cmi.interactions._count']; i++){
+        indexes['cmi.interactions.'+i+'.id'] = ''; 
+        indexes['cmi.interactions.'+i+'.type'] = ''; 
+        indexes['cmi.interactions.'+i+'.timestamp'] = ''; 
+        indexes['cmi.interactions.'+i+'.correct'] = '';
+        indexes['cmi.interactions.'+i+'.weighting'] = ''; 
+        indexes['cmi.interactions.'+i+'.learner_response'] = ''; 
+        indexes['cmi.interactions.'+i+'.result'] = 'neutral'; 
+        indexes['cmi.interactions.'+i+'.latency'] = ''; 
+        indexes['cmi.interactions.'+i+'.description'] = ''; 
+        //
+        if (SCORM_INTERACTIONS[i]['objectives'].length) {
+            indexes['cmi.interactions'+i+'objectives._count'] = SCORM_INTERACTIONS[i]['objectives'].length;
+            //
+            for (var j=0; j < indexes['cmi.interactions'+i+'objectives._count']; j++){
+                indexes['cmi.interactions.'+i+'.objectives.'+j+'.id'] = ''; 
+                indexes['cmi.interactions.'+i+'.correct_responses.'+j+'.pattern'] = '';
+            }
+        }
+         
+        
     }
 }
 //
@@ -73,6 +144,8 @@ window.API_1484_11 = {
             saveStepProgress('note');
         } else if (element == 'cmi.location' && value > 0) {
             saveStepProgress('location');
+        } else if (element == 'cmi.location' && typeof value === 'string' && value !== null) {
+            saveStepProgress('location');
         }
         //
         
@@ -85,8 +158,7 @@ window.API_1484_11 = {
                 // indexes['cmi.location'] = indexes['cmi.location'] + 1;
                 SCORM_CONTENT = 'assessment';
                 saveStepProgress('result');
-                console.log("quiz ccccc")
-            } else if (SCORM_CONTENT.indexOf('assessment') != -1) {
+            } else if (SCORM_CONTENT && SCORM_CONTENT.indexOf('assessment') != -1) {
                 // 
                 unlockNextChapter();    
             }
@@ -103,8 +175,9 @@ window.API_1484_11 = {
     Commit: function(){
         //
         console.log("commit step");
+        // saveStepProgress('suspend_data');
         // Check if Objective is not assessment and objective is fullfill then unlock the next chapter
-        if (SCORM_CONTENT.indexOf('assessment') == -1) {
+        if (SCORM_CONTENT && SCORM_CONTENT.indexOf('assessment') == -1) {
             unlockNextChapter();
         }
     },
@@ -219,12 +292,12 @@ function saveStepProgress (type) {
     scormObject = {};
     //
     if (SCORM_CONTENT) {
-        if (SCORM_CONTENT.indexOf('assessment') != -1) { 
+        if (SCORM_CONTENT && SCORM_CONTENT.indexOf('assessment') != -1) { 
             scormObject.type = 'quiz';
             if (indexes['cmi.success_status'] == 'unknown') {
                 indexes['cmi.success_status'] = 'failed'
             }
-        } else if (SCORM_CONTENT.indexOf('assessment') == -1) {
+        } else if (SCORM_CONTENT && SCORM_CONTENT.indexOf('assessment') == -1) {
             scormObject.type = 'content';
         }
     }    
@@ -239,6 +312,7 @@ function saveStepProgress (type) {
     scormObject.progress_measure = indexes['cmi.progress_measure'];
     scormObject.date = moment().utc().format('MMM DD YYYY, ddd');
     scormObject.spent_seconds = current_time.diff(CHAPTER_START_TIME, 'seconds');
+    scormObject.suspend_data = indexes['cmi.suspend_data'];
     //
     if (scormObject.type == "quiz") {
         scormObject.score_max = indexes['cmi.score.max'];

@@ -177,6 +177,7 @@
 	        $this->scorm_array['lastLocation'] = 0;
 	        $this->scorm_array['lastChapter'] = 0;
 	        $this->scorm_array['launchFile'] = '';
+	        $this->scorm_array['suspend_data'] = '';
 	        $this->scorm_array['paramKey'] = '';
 	        $this->scorm_array['items'] = [];
 	        $this->scorm_array['sequencing'] = [];

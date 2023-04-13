@@ -269,6 +269,7 @@
     var SCORM_LEVEL = parseInt(SCORM_XML.lastChapter);
     var LAST_CHAPTER = SCORM_XML.lastChapter;
     var LAST_LOCATION = SCORM_XML.lastLocation != 0 ? SCORM_XML.lastLocation : '';
+    var SUSPEND_DATA = SCORM_XML.suspend_data.length  ? SCORM_XML.suspend_data : '';
     //
     var BASE_URI = "<?php echo rtrim(base_url(), '/'); ?>/lms_courses/handler";
     var COMPANY_SID = <?php echo $session['company_detail']['sid'] ?? 0 ?>;

@@ -388,7 +388,7 @@ class Courses extends Public_Controller
                 //
                 $data['scorm'] = $scormData;
                 // _e($checkMyScorm,true);
-                // _e($scormData,true,true);
+                _e($scormData,true,true);
                 //
                 $page = 'scorm';
                 //
@@ -1115,7 +1115,9 @@ class Courses extends Public_Controller
                 } else {
                     $oldData['lastLocation'] = $newData['location'];
                 }
+                //
             }
+            $oldData['suspend_data'] = $newData['suspend_data'];
         }
         //
         return $oldData;

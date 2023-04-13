@@ -20,81 +20,86 @@
                                     <div style="min-height: 790px;">
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <div class="add-new-company" id="menu-form">
-                                                    <form action="" method="POST" id="add_feed" autocomplete="off">
-                                                        <div class="row">
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <div class="field-row">
-                                                                    <label for="anchor-title">Title <span class="hr-required">*</span></label>
-                                                                    <?php echo form_input('title', set_value('title'), 'class="hr-form-fileds" id="title"'); ?>
-                                                                    <?php echo form_error('title'); ?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <div class="field-row">
-                                                                    <label for="type">Status</label>
-                                                                    <select name="status" id="status" class="hr-form-fileds">
-                                                                        <option value="1">Active</option>
-                                                                        <option value="0">In Active</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <div class="field-row">
-                                                                    <label for="type">Jobs</label>
-                                                                    <select name="type" id="type" class="hr-form-fileds">
-                                                                        <?php foreach ($job_titles as $jobTitle) { ?>
-                                                                            <option value="<?php echo $jobTitle['sid'];?>"><?php echo $jobTitle['title'];?></option>
-                                                                        <?php } ?>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                <div class="field-row field-row-autoheight">
-                                                                    <label for="desc">Description</label>
-                                                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                                    <textarea class="ckeditor textarea" name="desc" id="desc" rows="8" cols="60" required>
-                                                                        <?php echo set_value('desc'); ?>
-                                                                    </textarea>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                <h4 class="hr-registered">Course Type</h4>
-                                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                    <div class="field-row">
-                                                                        <label class="control control--radio">Scorm
-                                                                            <input type="radio" name="coursr_type" class="video_source" value="scorm" checked="">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                    <div class="field-row">
-                                                                        <label class="control control--radio">Manual
-                                                                            <input type="radio" name="coursr_type" class="video_source" value="manual" >
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <input type="hidden" value="add" name="perform_action">
-
-                                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
-                                                                <input type="submit" class="search-btn" id="form-submit" value="Save and Return" name="form-submit">
-                                                                <input type="submit" class="search-btn btn-warning" id="more" value="Save and Add More" name="more">
+                                                <div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                            <div class="field-row">
+                                                                <label for="title">Title <span class="hr-required">*</span></label>
+                                                                <?php echo form_input('title', set_value('title'), 'class="hr-form-fileds" id="jsCourseTitle"'); ?>
+                                                                <?php echo form_error('title'); ?>
                                                             </div>
                                                         </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr />
-                                        <div class="row">
-                                            <div class="col-xs-12">
+                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                            <div class="field-row">
+                                                                <label for="status">Status</label>
+                                                                <select name="status" id="jsCourseStatus" class="hr-form-fileds">
+                                                                    <option value="1">Active</option>
+                                                                    <option value="0">In Active</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
 
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                            <div class="field-row">
+                                                                <label for="jobtitle">Jobs</label>
+                                                                <select multiple="multiple" name="jobtitle[]" id="jsJobTitle" class="hr-form-fileds">
+                                                                    <?php foreach ($job_titles as $jobTitle) { ?>
+                                                                        <option value="<?php echo $jobTitle['sid'];?>"><?php echo $jobTitle['title'];?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                            <div class="field-row field-row-autoheight">
+                                                                <label for="desc">Description</label>
+                                                                <textarea name="desc" cols="40" rows="10" class="hr-form-fileds field-row-autoheight" spellcheck="false" id="jsCourseDescription"></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                            <h4 class="hr-registered">Course Type</h4>
+                                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                <div class="field-row">
+                                                                    <label class="control control--radio">Manual
+                                                                        <input type="radio" name="jsCourseChoice" class="jsCourseType" value="manual" checked="">
+                                                                        <div class="control__indicator"></div>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                <div class="field-row">
+                                                                    <label class="control control--radio">Scorm
+                                                                        <input type="radio" name="jsCourseChoice" class="jsCourseType" value="scorm">
+                                                                        <div class="control__indicator"></div>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 jsScormFields">
+                                                            <div class="field-row">
+                                                                <label for="status">Scorm Version</label>
+                                                                <select name="status" id="status" class="hr-form-fileds">
+                                                                    <option value="12">1.2</option>
+                                                                    <option value="20042nd">2004 2nd Edition</option>
+                                                                    <option value="20043rd">2004 3rd Edition</option>
+                                                                    <option value="20044th">2004 4td Edition</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 jsScormFields">
+                                                            <h4 class="hr-registered">Upload Scorm</h4>
+                                                            <input type="file" name="attachment" id="jsUploadScormFile" class="hidden" />
+                                                        </div>
+                                                        <input type="hidden" value="add" name="perform_action">
+
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
+                                                            <button class="search-btn" id="jsSaveCourseInfo">
+                                                                Add Course
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -107,3 +112,6 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    
+</script>

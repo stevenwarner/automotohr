@@ -1677,6 +1677,7 @@ $route['manage_admin/add_course']['get'] = 'manage_admin/2022/Courses/add';
 $route['manage_admin/edit_course/(:any)']['get'] = 'manage_admin/2022/Courses/edit/$1';
 $route['manage_admin/preview_course/(:any)']['get'] = 'manage_admin/2022/Courses/preview/$1';
 $route['manage_admin/manage_course/(:any)']['get'] = 'manage_admin/2022/Courses/manage/$1';
+$route['manage_admin/courses/handler']['post'] = 'manage_admin/2022/Courses/handler';
 
 $route['cn/manage/job_roles']['get'] = "2022/Complynet/manageJobRoles";
 $route['cn/job_role_view/(:num)']['get'] = "2022/Complynet/getSystemJobRoles/$1";

@@ -14,7 +14,7 @@
                                         <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
                                         
                                             <?php if(check_access_permissions_for_view($security_details, 'create_course')) { ?>
-                                                <a class="btn btn-success pull-right" href="<?php echo base_url() . 'manage_admin/add_course' ?>">Add New Course</a>
+                                                <a class="btn btn-success pull-right" href="<?php echo base_url() . 'manage_admin/add_course' ?>">Add a New Course</a>
                                             <?php } ?>
                                     </div>
                                 
@@ -25,8 +25,8 @@
                                                 <table class="table table-bordered table-hover table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>Course Title</th>
-                                                            <th colspan="6" class="text-center">Actions</th>
+                                                            <th class="col-xs-6">Course Title</th>
+                                                            <th class="text-center col-xs-6">Actions</th>
                                                         </tr> 
                                                     </thead>
                                                     <tbody>
@@ -34,51 +34,47 @@
                                                         <?php foreach ($courses as $course) { ?>
                                                             <tr id='<?php echo $course['sid']; ?>'>
                                                                 <td>
-                                                                    <?php echo $course['title']; ?>
+                                                                    <?php 
+                                                                        $version = $course['type'] == 'Scorm' ? ' ['.$course['version'].']': '';
+
+                                                                        echo $course['title'].' ('.$course['type'].')'.$version; 
+                                                                    ?>
                                                                 </td>
                                                                 <td>
                                                                     <?php if ($course['status'] == 1) { ?>
-                                                                        <a href="javascript:;" class="btn btn-warning btn-sm deactive_course" id="<?php echo $course['sid']; ?>" title="Disable Course" data-attr="<?php echo $course['sid']; ?>">
+                                                                        <a href="javascript:;" class="btn btn-danger btn-sm deactive_course" id="<?php echo $course['sid']; ?>" data-toggle="tooltip" data-placement="top" data-original-title="Disable Course" data-attr="<?php echo $course['sid']; ?>">
                                                                             <i class="fa fa-ban"></i>
                                                                         </a>
                                                                     <?php   } else { ?>
-                                                                        <a href="javascript:;" class="btn btn-success btn-sm active_course" id="<?php echo $course['sid']; ?>" title="Enable Course" data-attr="<?php echo $course['sid']; ?>">
+                                                                        <a href="javascript:;" class="btn btn-success btn-sm active_course" id="<?php echo $course['sid']; ?>" data-container="body" data-toggle="tooltip" data-placement="top" data-original-title="Enable Course" data-attr="<?php echo $course['sid']; ?>">
                                                                             <i class="fa fa-shield"></i>
                                                                         </a>
                                                                     <?php   } ?>
-                                                                </td>
 
-                                                                <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
-                                                                    <td>
+                                                                    <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
                                                                         <a href="<?php echo base_url() . 'manage_admin/edit_course/' . $course['sid']; ?>" class="btn btn-success btn-sm" title="Edit Course">
                                                                             <i class="fa fa-pencil"></i>
                                                                         </a>
-                                                                    </td>
-                                                                <?php } ?>
+                                                                    <?php } ?>
 
-                                                                <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
-                                                                    <td>
+                                                                    <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
                                                                         <a href="<?php echo base_url() . 'manage_admin/preview_course/' . $course['sid']; ?>" class="btn btn-info btn-sm" title="Preview Course">
                                                                             <i class="fa fa-eye"></i>
                                                                         </a>
-                                                                    </td>
-                                                                <?php } ?>
+                                                                    <?php } ?>
 
-                                                                <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
-                                                                    <td>
+                                                                    <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
                                                                         <a class="btn btn-success btn-sm" href="javascript:;">
                                                                             Quick Edit
                                                                         </a>
-                                                                    </td>
-                                                                <?php } ?>
+                                                                    <?php } ?>
 
-                                                                <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
-                                                                    <td>
+                                                                    <?php if(check_access_permissions_for_view($security_details, 'manage_course')) { ?>
                                                                         <a class="btn btn-success btn-sm" href="javascript:;">
                                                                             Bulk Assign
                                                                         </a>
-                                                                    </td>
-                                                                <?php } ?>
+                                                                    <?php } ?>
+                                                                </td>    
                                                             </tr>
                                                         <?php } ?>
                                                         <?php } else { ?>
@@ -98,14 +94,14 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <div class="heading-title">
-                                                    <h1 class="page-title">Regular Company Access Configuration</h1>
+                                                    <h1 class="page-title"></h1>
                                                 </div>
                                                 <div class="clearfix"></div>
                                                 <div class="table-responsive">
                                                     <table class="table table-stripped table-hover table-bordered">
                                                         <thead>
                                                             <tr>
-                                                                <th class="text-left col-xs-4">Corporate Company Name</th>
+                                                                <th class="text-left col-xs-4">Company Name</th>
                                                                 <th class="text-center col-xs-2">Action</th>
                                                             </tr>
                                                         </thead>
