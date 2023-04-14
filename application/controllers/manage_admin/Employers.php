@@ -346,7 +346,7 @@ class employers extends Admin_Controller
             $data['job_title'] = $this->input->post('job_title');
             $data['direct_business_number'] = $this->input->post('direct_business_number');
             $data['cell_number'] = $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('cell_number');
-            $data['PhoneNumber'] = $data['PhoneNumber'];
+            $data['PhoneNumber'] = $data['cell_number'];
             $data['alternative_email'] = $this->input->post('alternative_email');
             $data['extra_info'] = serialize($extraInfo);
             $registration_date = $this->input->post('registration_date');
