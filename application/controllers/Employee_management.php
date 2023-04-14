@@ -450,9 +450,9 @@ class Employee_management extends Public_Controller
 
                 //
 
-               // $workersCompensationCode = $this->input->post('workers_compensation_code');
-              //  $eeocCode = $this->input->post('eeoc_code');
-               // $salaryBenefits = $this->input->post('salary_benefits');
+                // $workersCompensationCode = $this->input->post('workers_compensation_code');
+                //  $eeocCode = $this->input->post('eeoc_code');
+                // $salaryBenefits = $this->input->post('salary_benefits');
 
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -495,9 +495,9 @@ class Employee_management extends Public_Controller
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
                 //
-                $user_information['workers_compensation_code'] = '';//$workersCompensationCode;
-                $user_information['eeoc_code'] = '';//$eeocCode;
-                $user_information['salary_benefits'] ='';// $salaryBenefits;
+                $user_information['workers_compensation_code'] = ''; //$workersCompensationCode;
+                $user_information['eeoc_code'] = ''; //$eeocCode;
+                $user_information['salary_benefits'] = ''; // $salaryBenefits;
 
 
                 //
@@ -523,7 +523,7 @@ class Employee_management extends Public_Controller
                     $user_information['profile_picture'] = $pictures;
                 }
 
-              
+
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
                     $employee_sid = $this->employee_model->add_employee($user_information);
@@ -1862,12 +1862,12 @@ class Employee_management extends Public_Controller
                         //
                         $this->load->model('2022/complynet_model', 'complynet_model');
                         //
-                        // $complynetResponse = $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
-                        //     'first_name' => $employee_detail['first_name'],
-                        //     'last_name' => $employee_detail['last_name'],
-                        //     'email' => $employee_detail['email'],
-                        //     'PhoneNumber' => $employee_detail['PhoneNumber']
-                        // ]);
+                        $complynetResponse = $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
+                            'first_name' => $employee_detail['first_name'],
+                            'last_name' => $employee_detail['last_name'],
+                            'email' => $employee_detail['email'],
+                            'PhoneNumber' => $employee_detail['PhoneNumber']
+                        ]);
                     }
 
                     //
@@ -2505,6 +2505,20 @@ class Employee_management extends Public_Controller
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
                 //
                 $this->dashboard_model->update_user($sid, $data);
+
+                // ComplyNet interjection
+                if (isCompanyOnComplyNet($company_id)) {
+                    //
+                    $this->load->model('2022/complynet_model', 'complynet_model');
+                    //
+                    $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
+                        'first_name' => $employee_detail['first_name'],
+                        'last_name' => $employee_detail['last_name'],
+                        'email' => $employee_detail['email'],
+                        'PhoneNumber' => $employee_detail['PhoneNumber']
+                    ]);
+                }
+
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
 

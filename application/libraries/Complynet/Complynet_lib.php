@@ -350,16 +350,16 @@ class Complynet_lib
         $execute = $iteration == 2 ? false : true;
         $iteration++;
         //
-        if (is_array($response) && !$response && $execute)  {
-            return $this->execute($url, $method, $postFields, $execute, $iteration); 
-        } else if (!is_array($response) && empty($response) && $execute) {
-            return $this->execute($url, $method, $postFields, $execute, $iteration);
-        } else if ($info['http_code'] == 500 && $execute) {
-            return $this->execute($url, $method, $postFields, $execute, $iteration);
-        }   
+        // if (is_array($response) && !$response && $execute)  {
+        //     return $this->execute($url, $method, $postFields, $execute, $iteration); 
+        // } else if (!is_array($response) && empty($response) && $execute) {
+        //     return $this->execute($url, $method, $postFields, $execute, $iteration);
+        // } else if ($info['http_code'] == 500 && $execute) {
+        //     return $this->execute($url, $method, $postFields, $execute, $iteration);
+        // }   
         //
         if ($info['http_code'] == 500) {
-            $response['error'] = '500 internal server occured on ComplyNet.';
+            $response['error'] = '500 internal server occurred on ComplyNet.';
         }
         //
         return $response;
