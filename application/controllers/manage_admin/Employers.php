@@ -473,8 +473,26 @@ class employers extends Admin_Controller
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
 
+            //
+            $oldData = $this->db
+                ->select('first_name, last_name, email, PhoneNumber, parent_sid')
+                ->where('sid', $sid)->get('users');
+
 
             $this->company_model->update_user($sid, $data, 'Employer');
+
+            // ComplyNet interjection
+            if (isCompanyOnComplyNet($oldData['parent_sid'])) {
+                //
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                //
+                $this->complynet_model->updateEmployeeOnComplyNet($oldData['parent_sid'], $sid, [
+                    'first_name' => $oldData['first_name'],
+                    'last_name' => $oldData['last_name'],
+                    'email' => $oldData['email'],
+                    'PhoneNumber' => $oldData['PhoneNumber']
+                ]);
+            }
 
             //
             $teamId = $this->input->post('teamId');
