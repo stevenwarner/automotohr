@@ -346,6 +346,7 @@ class employers extends Admin_Controller
             $data['job_title'] = $this->input->post('job_title');
             $data['direct_business_number'] = $this->input->post('direct_business_number');
             $data['cell_number'] = $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('cell_number');
+            $data['PhoneNumber'] = $data['cell_number'];
             $data['alternative_email'] = $this->input->post('alternative_email');
             $data['extra_info'] = serialize($extraInfo);
             $registration_date = $this->input->post('registration_date');
@@ -472,8 +473,25 @@ class employers extends Admin_Controller
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
 
+            //
+            $oldData = $this->db
+                ->select('first_name, last_name, email, PhoneNumber, parent_sid')
+                ->where('sid', $sid)->get('users')->row_array();
 
             $this->company_model->update_user($sid, $data, 'Employer');
+
+            // ComplyNet interjection
+            if (isCompanyOnComplyNet($oldData['parent_sid'])) {
+                //
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                //
+                $this->complynet_model->updateEmployeeOnComplyNet($oldData['parent_sid'], $sid, [
+                    'first_name' => $oldData['first_name'],
+                    'last_name' => $oldData['last_name'],
+                    'email' => $oldData['email'],
+                    'PhoneNumber' => $oldData['PhoneNumber']
+                ]);
+            }
 
             //
             $teamId = $this->input->post('teamId');

@@ -2742,10 +2742,9 @@ if (!function_exists('getComplyNetLink')) {
         // Get email
         $record =
             $CI->db->select('email')->where([
-                'parent_sid' => $companyId,
-                'sid' => $employeeId
+                'employee_sid' => $employeeId
             ])
-            ->get('users')
+            ->get('complynet_employees')
             ->row_array();
         //
         if (empty($record)) {
