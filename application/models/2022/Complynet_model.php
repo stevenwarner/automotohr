@@ -898,6 +898,7 @@ class Complynet_model extends CI_Model
             $ins['complynet_job_role_sid'] = $complyJobRoleId;
             $ins['employee_sid'] = $employeeId;
             $ins['email'] = $email;
+            $ins['alt_id'] = 'AHR'.$employeeId;
             $ins['complynet_json'] = json_encode($employeeObj);
             $ins['created_at'] = $ins['updated_at'] = getSystemDate();
             //
@@ -986,6 +987,7 @@ class Complynet_model extends CI_Model
             $ins['complynet_job_role_sid'] = $complyJobRoleId;
             $ins['employee_sid'] = $employeeId;
             $ins['email'] = $email;
+            $ins['alt_id'] = 'AHR' . $employeeId;
             $ins['complynet_json'] = json_encode($employeeObj);
             $ins['created_at'] = $ins['updated_at'] = getSystemDate();
             //
