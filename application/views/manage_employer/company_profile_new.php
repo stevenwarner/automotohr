@@ -413,6 +413,15 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
+                                U.S. citizen <small class="help_text">If enabled then the "U.S. citizen or permanent resident" section will be required for EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_citizen" name="dl_citizen" <?php echo (isset($portal['dl_citizen']) && $portal['dl_citizen'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
                                 VETERAN <small class="help_text">If enabled then the "VETERAN" section will be visible to employee/applicant on EEOC.</small>
                                     <input class="" type="checkbox" id="dl_vet" name="dl_vet" <?php echo (isset($portal['dl_vet']) && $portal['dl_vet'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>

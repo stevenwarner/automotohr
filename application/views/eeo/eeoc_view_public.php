@@ -40,7 +40,14 @@
                             <thead>
                                 <tr class="bg-gray">
                                     <th colspan="5">
-                                        <strong>I am a U.S. citizen or permanent resident </strong>
+                                        <?php 
+                                            $required_label = '';
+                                            
+                                            if ($dl_citizen == 1) {
+                                                $required_label = '<span style="color: red; font-size: 16px;"> * </span>';
+                                            }
+                                        ?>
+                                        <strong>I am a U.S. citizen or permanent resident <?php echo $required_label; ?></strong>
                                     </th>
                                 </tr>
                             </thead>
@@ -346,6 +353,8 @@
             //
             $('.jsSaveEEOC').click(function() {
                 //
+                var citizenFlag = <?php echo $dl_citizen; ?>
+                //
                 var obj = {
                     id: <?= $id; ?>,
                     citizen: $('input[name="citizen"]:checked').val(),
@@ -356,7 +365,7 @@
                 };
 
                 //
-                if (obj.citizen === undefined) {
+                if (citizenFlag == 1 && obj.citizen === undefined) {
                     alertify.alert('Please, select a citizen.');
                     return;
                 }

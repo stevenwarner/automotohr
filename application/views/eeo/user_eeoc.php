@@ -218,6 +218,8 @@ if ($user_type == 'applicant') {
         //
         $('.jsSaveEEOC').click(function() {
             //
+            var citizenFlag = <?php echo $dl_citizen; ?>
+            //
             var obj = {
                 id: <?= $id; ?>,
                 citizen: $('input[name="citizen"]:checked').val(),
@@ -227,6 +229,12 @@ if ($user_type == 'applicant') {
                 gender: $('input[name="gender"]:checked').val(),
                 location: "<?= $location; ?>"
             };
+
+            //
+            if (citizenFlag == 1 && obj.citizen === undefined) {
+                alertify.alert('Please, select a citizen.');
+                return;
+            }
 
 
             $.post(

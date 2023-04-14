@@ -2030,16 +2030,17 @@ class Home extends CI_Controller
         $f1 = $this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_applicant_document_center');
         $data['eeo_form_status'] = $f1;
         //
-        $data['company_sid'] = $data['session']['company_detail']['sid'];
-        $data['company_name'] = $data['session']['company_detail']['CompanyName'];
-        $data['id'] = $id;
-        $data['user_sid'] = $user_sid;
-        $data['user_type'] = $user_type;
-        $data['first_name'] = $document['user']['first_name'];
-        $data['last_name'] = $document['user']['last_name'];
-        $data['email'] = $document['user']['email'];
-        $data['eeo_form_info'] = $document;
-        $data['location'] = "Public Link";
+        $data['company_sid']        = $data['session']['company_detail']['sid'];
+        $data['company_name']       = $data['session']['company_detail']['CompanyName'];
+        $data['id']                 = $id;
+        $data['user_sid']           = $user_sid;
+        $data['user_type']          = $user_type;
+        $data['first_name']         = $document['user']['first_name'];
+        $data['last_name']          = $document['user']['last_name'];
+        $data['email']              = $document['user']['email'];
+        $data['eeo_form_info']      = $document;
+        $data['location']           = "Public Link";
+        $data['dl_citizen']         = getEEOCCitizenShipFlag($data['company_sid']);
         //
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         $this->load->view('eeo/eeoc_view_public');

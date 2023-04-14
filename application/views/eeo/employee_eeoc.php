@@ -27,7 +27,7 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                                 <i class="fa fa-print" aria-hidden="true"></i>
                                 Print PDF
                             </a>
-                        <?php } ?>
+                        <?php } ?>l; 
                     </div>
                 </div>
                 <hr>
@@ -43,6 +43,8 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
             //
             $('.jsSaveEEOC').click(function() {
                 //
+                var citizenFlag = <?php echo $dl_citizen; ?>
+
                 var obj = {
                     id: <?= $id; ?>,
                     citizen: $('input[name="citizen"]:checked').val(),
@@ -54,7 +56,7 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                 };
 
                 //
-                if (obj.citizen === undefined) {
+                if (citizenFlag == 1 && obj.citizen === undefined) {
                     alertify.alert('Please, select a citizen.');
                     return;
                 }

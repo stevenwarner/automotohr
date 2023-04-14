@@ -27,8 +27,15 @@
 <div class="row">
     <br>
     <div class="col-sm-12">
+        <?php 
+            $required_label = '';
+            
+            if ($dl_citizen == 1) {
+                $required_label = '<span style="color: red; font-size: 16px;"> * </span>';
+            }
+        ?>
         <div class="bg-gray p10">
-            <strong>I am a U.S. citizen or permanent resident </strong>
+            <strong>I am a U.S. citizen or permanent resident <?php echo $required_label; ?></strong>
         </div>
         <br />
         <label class="control control--radio">
