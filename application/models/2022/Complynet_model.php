@@ -930,6 +930,7 @@ class Complynet_model extends CI_Model
         $ins['departmentId'] = $complyDepartmentId;
         $ins['jobRoleId'] = $complyJobRoleId;
         $ins['PhoneNumber'] = $employee['PhoneNumber'];
+        $ins['AltId'] = 'AHR'.$employeeId;
         $ins['TwoFactor'] = false;
         //
         $response = $this->clib->addEmployee($ins);
