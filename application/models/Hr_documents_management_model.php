@@ -5331,6 +5331,8 @@ class Hr_documents_management_model extends CI_Model
             'W4' => [],
             'W9' => [],
             'I9' => [],
+            'I9sd' => [],
+            'W9sd' => [],
             'direct_deposit' => '',
             'dependents' => '',
             'emergency_contacts' => '',
@@ -5367,6 +5369,10 @@ class Hr_documents_management_model extends CI_Model
             $this->getEmployeeI9Form($cId, $id, $r);
             $this->getEmployeeW9Form($cId, $id, $r);
             $this->getEmployeeW4Form($cId, $id, $r);
+            //
+            $this->getEmployeeI9sd($id, $r);
+            $this->getEmployeeW9sd($id, $r);
+
             $this->getEmployeeGeneralDocuments($cId, $id, $r, true);
         }
         //
@@ -5449,6 +5455,41 @@ class Hr_documents_management_model extends CI_Model
         //
         if (count($b)) $data['I9'] = $b;
     }
+
+    //
+    private function getEmployeeI9sd($id, &$data)
+    {
+        //
+        $a = $this->db
+            ->select('*')
+            ->where('employee_sid', $id)
+            ->where('form_type', 'i9_assigned')
+            ->get('eev_required_documents');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        if (count($b)) $data['I9sd'] = $b;
+    }
+
+
+
+    //
+    private function getEmployeeW9sd($id, &$data)
+    {
+        //
+        $a = $this->db
+            ->select('*')
+            ->where('employee_sid', $id)
+            ->where('form_type', 'w9_assigned')
+            ->get('eev_required_documents');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        if (count($b)) $data['W9sd'] = $b;
+    }
+
 
     //
     function getEmployeeW9Form($cId, $id, &$data)

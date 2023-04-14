@@ -63,6 +63,8 @@
             'I9': "<?= isset($documents['I9']['sid']) ? "false" : "null"; ?>",
             'W9': "<?= isset($documents['W9']['sid']) ? "false" : "null"; ?>",
             'W4': "<?= isset($documents['W4']['sid']) ? "false" : "null"; ?>",
+            'I9sd': "<?= isset($documents['I9sd']['sid']) ? "false" : "null"; ?>",
+            'W9sd': "<?= isset($documents['W9sd']['sid']) ? "false" : "null"; ?>",
             'direct_deposit': "<?= !empty($documents['direct_deposit']) ? "false" : "null"; ?>",
             'dependents': "<?= !empty($documents['dependents']) ? "false" : "null"; ?>",
             'emergency_contacts': "<?= !empty($documents['emergency_contacts']) ? "false" : "null"; ?>",
@@ -88,11 +90,21 @@
         //
         $(function() {
             let assigned = <?= json_encode($documents['Assigned']); ?>;
+            let assignedI9Sd = <?= json_encode($documents['I9sd']); ?>;
+            let assignedW9Sd = <?= json_encode($documents['W9sd']); ?>;
+
             let assignedLength = assigned.length;
             let dt = 10;
             let dc = 0;
             let gd = 0;
             let token = "<?= $token; ?>";
+            //
+            var currentAssignedI9Sd = 1;
+            var totalAssignedI9Sd = assignedI9Sd.length;
+
+            //
+            var currentAssignedW9Sd = 1;
+            var totalAssignedW9Sd = assignedW9Sd.length;
 
             // General Information Documents
             if (has['direct_deposit'] != "null") assignedLength++;
@@ -104,6 +116,10 @@
             if (has['I9'] != "null") assignedLength++;
             if (has['W9'] != "null") assignedLength++;
             if (has['W4'] != "null") assignedLength++;
+            assignedLength += totalAssignedI9Sd;
+            //
+            assignedLength += totalAssignedW9Sd;
+
             //
             $('#js-dt').text(assignedLength);
 
@@ -132,6 +148,8 @@
             } else if (has['occupational_license'] != "null") {
                 //
                 exportGDocument('occupational_license');
+            } else if ($has['Isd'] != "null") {
+                exportI9SupportingDocuments();
             } else {
                 nextDocument();
             }
@@ -217,7 +235,8 @@
                 //
                 if (s == 'occupational_license' && has['occupational_license'] == "null") {
                     //
-                    startMoveProcess(getDocument());
+                    // startMoveProcess(getDocument());
+                    exportI9SupportingDocuments();
                     return;
                 }
                 //
@@ -301,6 +320,41 @@
                 //
                 return sc;
             }
+
+            //
+            function exportI9SupportingDocuments() {
+
+                if (currentAssignedI9Sd > totalAssignedI9Sd) {
+                    return nextDocument();
+                }
+                dc++;
+                uploadI9SdDocument({
+                    title: assignedI9Sd[currentAssignedI9Sd - 1].document_name,
+                    orig_filename: assignedI9Sd[currentAssignedI9Sd - 1].document_name,
+                    s3_filename: assignedI9Sd[currentAssignedI9Sd - 1].s3_filename
+                });
+
+            }
+
+
+            //
+            function exportW9SupportingDocuments() {
+
+
+                if (currentAssignedW9Sd > totalAssignedW9Sd) {
+                    return nextDocument();
+                }
+                dc++;
+                uploadW9SdDocument({
+                    title: assignedW9Sd[currentAssignedW9Sd - 1].document_name,
+                    orig_filename: assignedW9Sd[currentAssignedW9Sd - 1].document_name,
+                    s3_filename: assignedW9Sd[currentAssignedW9Sd - 1].s3_filename
+                });
+
+            }
+
+
+
 
             //
             function startMoveProcess(dct) {
@@ -438,6 +492,64 @@
                     }, 1000);
                 });
             }
+
+            //
+            function uploadI9SdDocument(d) {
+                //
+                if (XHR !== null) {
+                    setTimeout(() => {
+                        uploadI9SdDocument(d);
+                    }, 1000);
+                    return;
+                }
+                //
+                XHR = $.post("<?= base_url('hr_documents_management/upload'); ?>", {
+                    token: token,
+                    data: d,
+                    typo: 'I9sd',
+                    employeeSid: "<?= $user_sid; ?>",
+                    userFullNameSlug: "<?= $slug; ?>"
+                }, () => {
+                    XHR = null;
+                    currentAssignedI9Sd++;
+                    exportI9SupportingDocuments();
+                }).fail(() => {
+                    setTimeout(() => {
+                        uploadI9SdDocument(d);
+                    }, 1000);
+                });
+            }
+
+
+            //
+            function uploadW9SdDocument(d) {
+                //
+                if (XHR !== null) {
+                    setTimeout(() => {
+                        uploadW9SdDocument(d);
+                    }, 1000);
+                    return;
+                }
+                //
+                XHR = $.post("<?= base_url('hr_documents_management/upload'); ?>", {
+                    token: token,
+                    data: d,
+                    typo: 'W9sd',
+                    employeeSid: "<?= $user_sid; ?>",
+                    userFullNameSlug: "<?= $slug; ?>"
+                }, () => {
+                    XHR = null;
+                    currentAssignedW9Sd++;
+                    exportW9SupportingDocuments();
+                }).fail(() => {
+                    setTimeout(() => {
+                        uploadW9SdDocument(d);
+                    }, 1000);
+                });
+            }
+
+
+
 
             //
             function generateZip(d) {
