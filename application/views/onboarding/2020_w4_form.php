@@ -1306,9 +1306,6 @@
             w4_first_name: {
                 required: true
             },
-            w4_middle_name: {
-                required: true
-            },
             user_consent: {
                 required: true
             },
@@ -1319,9 +1316,6 @@
         messages: {
             w4_first_name: {
                 required: 'First Name is required'
-            },
-            w4_middle_name: {
-                required: 'Middle Name is required'
             },
             user_consent: {
                 required: 'Please check to accept the consent'
