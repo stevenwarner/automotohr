@@ -8827,11 +8827,11 @@ class Onboarding extends CI_Controller
                         'rules' => 'xss_clean|trim|required'
                     );
 
-                    $order_field = array(
-                        'field' => 'w4_middle_name',
-                        'label' => 'Middle Name',
-                        'rules' => 'xss_clean|trim|required'
-                    );
+                    // $order_field = array(
+                    //     'field' => 'w4_middle_name',
+                    //     'label' => 'Middle Name',
+                    //     'rules' => 'xss_clean|trim|required'
+                    // );
 
                     if (isset($_GET['submit']) && $_GET['submit'] == 'Download PDF') {
                         $view = $this->load->view('form_w4/form_w4', $data, TRUE);
@@ -8870,7 +8870,7 @@ class Onboarding extends CI_Controller
                     } else {
 
                         $first_name = $this->input->post('w4_first_name');
-                        $middle_name = $this->input->post('w4_middle_name');
+                        $middle_name = $this->input->post('w4_middle_name') ?? '';
                         $last_name = $this->input->post('w4_last_name');
                         $ss_number = $this->input->post('ss_number');
                         $home_address = $this->input->post('home_address');
