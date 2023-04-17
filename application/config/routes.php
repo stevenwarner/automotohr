@@ -1699,3 +1699,9 @@ $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
 // Download document zip file
 $route['download_document_zip/(:any)']['get'] = 'Hr_documents_management/downloadDocumentZipFile/$1';
+
+
+// benefits
+$route['manage_admin/benefits'] = 'manage_admin/benefits/index';
+$route['manage_admin/benefits/add'] = 'manage_admin/benefits/add_edit';
+$route['manage_admin/benefits/edit/(:any)'] = 'manage_admin/benefits/add_edit/$1';

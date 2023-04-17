@@ -149,6 +149,7 @@ if (
     $this->uri->segment(2) == 'turnover_cost_calculator_logs' ||
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
+    $this->uri->segment(2) == 'benefits' ||
     $this->uri->segment(2) == 'job_title_templates' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
@@ -658,7 +659,7 @@ if (
                                     //echo 'class="active"';
                                     //}
                                     ?> href="<?php //echo site_url('manage_admin/sms_enquiries'); 
-                                            ?>">SMS Enquiries
+                                                ?>">SMS Enquiries
                                     Log</a>
                             </div>
                         <?php } ?>
@@ -693,13 +694,13 @@ if (
                         <?php } ?>
 
 
-                            <div class="menu-item">
-                                <a <?php
-                                    if (base_url(uri_string()) == site_url('manage_admin/job_title_templates') || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_templates') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_templates')) || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_template_groups') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_template_groups'))) {
-                                        echo 'class="active"';
-                                    }
-                                    ?> href="<?php echo site_url('manage_admin/job_title_templates'); ?>">Job Titles</a>
-                            </div>
+                        <div class="menu-item">
+                            <a <?php
+                                if (base_url(uri_string()) == site_url('manage_admin/job_title_templates') || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_templates') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_templates')) || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_template_groups') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_template_groups'))) {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('manage_admin/job_title_templates'); ?>">Job Titles</a>
+                        </div>
 
 
 
@@ -770,7 +771,19 @@ if (
                                     ?> href="<?php echo site_url('manage_admin/blocked_ips'); ?>">Blocked IPs</a>
                             </div>
                         <?php } ?>
+
+
+                        <div class="menu-item">
+                            <a <?php
+                                if (base_url(uri_string()) == site_url('manage_admin/benefits') || $this->uri->segment(2) == 'benifits') {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('manage_admin/benefits'); ?>">Benefits</a>
+                        </div>
+
+
                     </div>
+
                 </li>
             <?php } ?>
             <?php $functions_names = array('activation_orders', 'accurate_background', 'manage_document'); ?>
