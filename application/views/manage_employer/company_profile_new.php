@@ -406,7 +406,7 @@
                             <div class="form-group autoheight">
                                 <p>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                    Make the following selected options available on EEO for employee/applicant.
+                                    Make the following selected options mandatory the following field(s).
                                 </p>
                             </div>
                         </div>
@@ -419,6 +419,16 @@
                                 </label>
                             </div>
                         </div>
+                        <hr />
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <p>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    Make the following selected options available on EEO for employee/applicant.
+                                </p>
+                            </div>
+                        </div>
+                        
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
