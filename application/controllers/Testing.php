@@ -11,7 +11,7 @@ class Testing extends CI_Controller
     }
 
     public function test()
-    {
+    {/*
         $this->load->model('users_model');
 
         //
@@ -25,8 +25,64 @@ class Testing extends CI_Controller
         foreach ($companies as $company) {
             $this->users_model->fixOnboardingAddress($company['sid']);
         }
+        */
+
+
+
+
+
+        $applicant = [
+            'onboarding' => [
+                'tag' => 'Applicant Onboarding',
+                'name' => 'onboarding',
+                'url' => '/hcm/v2/applicant.onboard',
+                'body' => [
+                    "applicantOnboarding" => [
+                        "onboardingTemplateCode" => [
+                            "code" => "{{onboardingTemplateCode}}"
+                        ],
+                        "onboardingStatus" => [
+                            "statusCode" => [
+                                "code" => "inprogress"
+                            ]
+                        ]
+                    ],
+                    "applicantPersonalProfile" => [
+                        "birthName" => [
+                            "givenName" => "{{firstName}}",
+                            "familyName" => "{{lastName}}"
+                        ],
+                        "governmentIDs" => [
+
+                            "id" => "",
+                            "nameCode" => [
+                                "code" => "SSN"
+                            ],
+                            "statusCode" => [
+                                "code" => "AppliedFor"
+                            ]
+
+                        ]
+                    ],
+                    "applicantWorkerProfile" => [
+                        "hireDate" => "{{timestamp}}"
+                    ],
+                    "applicantPayrollProfile" => [
+                        "payrollGroupCode" => "{{companyCode}}"
+                    ],
+                    "applicantTaxProfile" => []
+                ]
+            ]
+        ];
+        //
+        $this->load->model('2022/Adp_model');
+
+        $this->Adp_model->onboardApplicantToAdp($applicant);
         
     }
+
+
+
 
     public function fix_merge () {
         $this->tm->get_merge_employee();

@@ -390,51 +390,6 @@ class Adp_model extends CI_Model
                 ]
             ]
         ];
-
-        //
-        $this->applicantColumns = [
-            'onboarding' => [
-                'tag' => 'Applicant Onboarding',
-                'name' => 'onboarding',
-                'url' => '/hcm/v2/applicant.onboard',
-                'body' => [
-                    "applicantOnboarding" => [
-                        "onboardingTemplateCode" => [
-                            "code" => "{{onboardingTemplateCode}}"
-                        ],
-                        "onboardingStatus" => [
-                            "statusCode" => [
-                                "code" => "inprogress"
-                            ]
-                        ]
-                    ],
-                    "applicantPersonalProfile" => [
-                        "birthName" => [
-                            "givenName" => "{{firstName}}",
-                            "familyName" => "{{lastName}}"
-                        ],
-                        "governmentIDs" => [
-
-                            "id" => "",
-                            "nameCode" => [
-                                "code" => "SSN"
-                            ],
-                            "statusCode" => [
-                                "code" => "AppliedFor"
-                            ]
-
-                        ]
-                    ],
-                    "applicantWorkerProfile" => [
-                        "hireDate" => "{{timestamp}}"
-                    ],
-                    "applicantPayrollProfile" => [
-                        "payrollGroupCode" => "{{companyCode}}"
-                    ],
-                    "applicantTaxProfile" => []
-                ]
-            ]
-        ];
     }
 
     /**
@@ -563,6 +518,29 @@ class Adp_model extends CI_Model
             $this->db->insert('adp_queue', $ins);
         }
         return true;
+    }
+
+
+    //
+    public function onboardApplicantToAdp($json) {
+      //  _e($json,true,true);
+   //     die($json);
+        // set insert array
+        $mode = 'uat' ;
+        $ins = [
+            'employee_sid' => 0,
+            'associate_oid' => 0,
+            'key_index' => 'onboarding',
+            'key_value' => "",
+            'request_url' => 'https://' . ($mode == 'uat' ?  'uat-' : '') . 'api.adp.com/hcm/v2/applicant.onboard',
+            'request_body' => json_encode($json['onboarding']['body']),
+            'request_method' => 'POST',
+            'status' => 1
+        ];
+        //
+        $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+        //
+        $this->db->insert('adp_queue', $ins);
     }
 
     /**
