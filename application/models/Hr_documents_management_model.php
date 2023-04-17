@@ -1274,6 +1274,9 @@ class Hr_documents_management_model extends CI_Model
 
     function get_eeo_form_info($sid, $type)
     {
+        //
+        checkAndSetEEOCForUser($sid, $type);
+        //
         $this->db->select('*');
         $this->db->where('application_sid', $sid);
         $this->db->where('users_type', $type);
@@ -7363,6 +7366,7 @@ class Hr_documents_management_model extends CI_Model
             ->select('*')
             ->where('application_sid', $id)
             ->where('users_type', $type)
+            ->order_by('sid', 'desc')
             ->get('portal_eeo_form');
         //
         $b = $a->row_array();
@@ -7374,6 +7378,7 @@ class Hr_documents_management_model extends CI_Model
                     'users_type' => $type,
                     'status' => 1,
                     'is_expired' => 0,
+                    'is_latest' => 1,
                     'portal_applicant_jobs_list_sid' => $jobId,
                     'last_sent_at' => date('Y-m-d H:i:s', strtotime('now')),
                     'assigned_at' => date('Y-m-d H:i:s', strtotime('now')),
@@ -7387,54 +7392,28 @@ class Hr_documents_management_model extends CI_Model
             $data_to_update = array();
             $data_to_update['status'] = 1;
             $data_to_update['is_latest'] = 1;
+            $data_to_update['is_expired'] = 0;
+            $data_to_update['last_completed_on'] = null;
             $data_to_update['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
             $data_to_update['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
             $this->db->where('application_sid', $id);
             $this->db->where('users_type', $type);
             $this->db->update('portal_eeo_form', $data_to_update);
             //
-            if ($a->num_rows > 1) {
-                $records =
-                    $this->db
+            $sid =
+                $this->db
+                    ->select('sid')
                     ->where('application_sid', $id)
                     ->where('users_type', $type)
                     ->order_by('sid', 'desc')
                     ->get('portal_eeo_form')
-                    ->result_array();
-                //
-                $sid = 0;
-                //
-                foreach ($records as $record) {
-                    //
-                    if ($sid == 0) {
-                        $sid = $record['sid'];
-                        continue;
-                    }
-                    if (empty($record['us_citizen'])) {
-                        $this->db->delete('portal_eeo_form', ['sid' => $record['sid']]);
-                    }
-                    //
-                    $id = $record['sid'];
-                    //
-                    unset($record['sid']);
-                    //
-                    $record['eeo_form_sid'] = $id;
-                    //
-                    $this->db->insert('portal_eeo_form_history', $record);
-                }
-            } else {
-                //
-                $sid =
-                    $this->db
-                        ->select('sid')
-                        ->where('application_sid', $id)
-                        ->where('users_type', $type)
-                        ->get('portal_eeo_form')
-                        ->row_array()['sid'];
-            }
+                    ->row_array()['sid'];
+            //
+            checkAndSetEEOCForUser($id, $type);
         }
         //
         keepTrackVerificationDocument($assign_by_sid, $type, 'assign', $sid, 'eeoc', $location);
+        //
         return $sid;
     }
 

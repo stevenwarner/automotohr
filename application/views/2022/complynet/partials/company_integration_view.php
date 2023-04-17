@@ -188,35 +188,35 @@
                                 //
                                 $errorArray = [];
                                 //
-                                if (empty($emp['first_name'])) {
+                                if (!$emp['first_name']) {
                                     $errorArray[] = '<strong class="text-danger">First name is missing</strong>';
                                 }
                                 //
-                                if (empty($emp['last_name'])) {
+                                if (!$emp['last_name']) {
                                     $errorArray[] = '<strong class="text-danger">Last name is missing</strong>';
                                 }
                                 //
-                                if (empty($emp['email'])) {
+                                if (!$emp['email']) {
                                     $errorArray[] = '<strong class="text-danger">Email address is missing</strong>';
                                 }
                                 //
-                                if (empty($emp['complynet_job_title'])) {
-                                    $errorArray[] = '<strong class="text-danger">Job title is missing</strong>';
-                                }
-                                //
-                                if (empty($emp['username'])) {
-                                    $errorArray[] = '<strong class="text-danger">Username is missing</strong>';
-                                }
-                                //
-                                if (empty($emp['PhoneNumber'])) {
+                                if (!$emp['PhoneNumber']) {
                                     $errorArray[] = '<strong class="text-danger">Phone number is missing</strong>';
                                 }
                                 //
-                                if ($emp['department_sid'] == '0') {
+                                if (!$emp['complynet_job_title']) {
+                                    $errorArray[] = '<strong class="text-danger">ComplyNet Job title is missing</strong>';
+                                }
+                                //
+                                // if (!$emp['username']) {
+                                //     $errorArray[] = '<strong class="text-danger">Username is missing</strong>';
+                                // }
+                                //
+                                if (!$emp['department_sid']) {
                                     $errorArray[] = '<strong class="text-danger">Department is missing</strong>';
                                 }
                                 //
-                                if ($emp['team_sid'] == '0') {
+                                if (!$emp['team_sid']) {
                                     $errorArray[] = '<strong class="text-danger">Team is missing</strong>';
                                 }
                             ?>

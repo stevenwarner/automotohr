@@ -1,6 +1,7 @@
 <?php if (!$load_view) {
     $eeocFormOptions = get_eeoc_options_status($company_sid);
-    ?>
+    $dl_citizen = getEEOCCitizenShipFlag($company_sid);
+?>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -70,7 +71,14 @@
 
                                                     <div class="hr-box">
                                                         <div class="hr-box-header" style="background-color: #81b431; color: #ffffff;">
-                                                            <strong>I am a U.S. citizen or permanent resident</strong>
+                                                            <?php 
+                                                                $required_label = '';
+                                                                
+                                                                if ($dl_citizen == 1) {
+                                                                    $required_label = '<span style="color: red; font-size: 16px;"> * </span>';
+                                                                }
+                                                            ?>
+                                                            <strong>I am a U.S. citizen or permanent resident <?php echo $required_label; ?></strong>
                                                         </div>
                                                         <div class="hr-innerpadding">
                                                             <div class="row">
@@ -388,11 +396,16 @@
         $('.go_save').click(function(){
             var eeoc_check = $('input[name="eeoc_form_status"]:checked').val();
             var error_flag = 0;
-
+            //
+            var citizenFlag = <?php echo $dl_citizen; ?>
+            //
             if(eeoc_check == 'Yes'){
-                if($('input[name="eeoc_form_status"]:checked').length == 0){
-                    alertify.error('Please select citizenship status');
+                var citizen = $('input[name="us_citizen"]:checked').val();
+                //
+                if (citizenFlag == 1 && (citizen === undefined || citizen.length == 0)) {
+                    alertify.alert('Please, select a citizen.');
                     error_flag++;
+                    return;
                 }
 
                 if($('input[name="group_status"]:checked').length == 0){

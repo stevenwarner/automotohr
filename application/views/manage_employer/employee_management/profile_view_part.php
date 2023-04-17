@@ -41,7 +41,7 @@
             <p class="dummy-invoice-fields"><?= GetVal($employer["email"]); ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
-            <label class="csF16">Mobile Number</label>
+            <label class="csF16">Phone Number</label>
             <p class="dummy-invoice-fields"><?= GetVal($primary_phone_number_cc); ?></p>
         </div>
     </div>

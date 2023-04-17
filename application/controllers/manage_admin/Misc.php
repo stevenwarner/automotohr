@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 use \PayPal\Api\ExecutePayment;
 use \PayPal\Api\PaymentExecution; // required
@@ -45,8 +45,8 @@ class Misc extends Admin_Controller
         $auth_details = $this->ext_model->fetch_details(THEME_AUTH);
         $ClientID = $auth_details['id'];
         $ClientSecret = $auth_details['pass'];
-        
-        if ($_SERVER['HTTP_HOST'] == 'localhost') {
+
+        if ($_SERVER['HTTP_HOST'] == 'automotohr.local') {
             require_once FCPATH . 'ext/autoload.php';
         } else {
             require_once '/' . DOC_ROOT . 'ext/autoload.php';
@@ -54,7 +54,8 @@ class Misc extends Admin_Controller
 
         $this->apiContext = new \PayPal\Rest\ApiContext(
             new \PayPal\Auth\OAuthTokenCredential(
-                $ClientID, $ClientSecret
+                $ClientID,
+                $ClientSecret
             )
         );
 
@@ -79,13 +80,13 @@ class Misc extends Admin_Controller
         $msg = '';
         $data = json_decode($errorJson, true);
 
-        if (isset($data ['name']) && isset($data['message'])) {
-            $msg .= "<b>" . $data ['name'] . " : </b>" . $data ['message'] . "<br/>";
+        if (isset($data['name']) && isset($data['message'])) {
+            $msg .= "<b>" . $data['name'] . " : </b>" . $data['message'] . "<br/>";
         }
 
         if (isset($data['details'])) {
             foreach ($data['details'] as $detail) {
-                $msg .= "<br><b>" . $detail ['field'] . " : </b>" . $detail ['issue'];
+                $msg .= "<br><b>" . $detail['field'] . " : </b>" . $detail['issue'];
             }
         }
 
@@ -117,9 +118,15 @@ class Misc extends Admin_Controller
             $card->setCvv2($params['cc_ccv']);
         }
 
+        $logArray = [];
+        $logArray['ccid'] = substr($params['cc_card_no'], -4);
+        $logArray['request_json'] = json_encode($card);
+        
         $card->setMerchantId("AHR_$company_sid");
         try {
-            $card->create($apiContext);
+            $response = $card->create($apiContext);
+            $logArray['response_json'] = json_encode($response);
+            $this->saveLog($logArray);
             return $card;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
             $error_code = $ex->getCode(); // Prints the Error Code
@@ -131,10 +138,14 @@ class Misc extends Admin_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
+            $logArray['response_json'] = json_encode($card);
+            $this->saveLog($logArray);
             return $card;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -191,8 +202,17 @@ class Misc extends Admin_Controller
         $payment->setPayer($payer);
         $payment->setTransactions(array($transaction));
 
+        // set log array
+        $logArray = [];
+        $logArray['ccid'] = $ccId;
+        $logArray['ccToken'] = $ccToken;
+        $logArray['paymentDesc'] = $paymentDesc;
+        $logArray['request_json'] = json_encode($payment);
+
         try {
-            $payment->create($apiContext);
+            $response = $payment->create($apiContext);
+            $logArray['response_json'] = json_encode($response);
+            $this->saveLog($logArray);
             return $payment;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
             $error_code = $ex->getCode(); // Prints the Error Code
@@ -204,10 +224,14 @@ class Misc extends Admin_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
+            $logArray['response_json'] = json_encode($payment);
+            $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -298,12 +322,21 @@ class Misc extends Admin_Controller
             ->setPayer($payer)
             ->setTransactions(array($transaction));
 
+        // set log array
+        $logArray = [];
+        $logArray['ccid'] = null;
+        $logArray['ccToken'] = null;
+        $logArray['paymentDesc'] = $payment_description;
+        $logArray['request_json'] = json_encode($payment);
+
         // ### Create Payment
         // Create a payment by calling the payment->create() method
         // with a valid ApiContext (See bootstrap.php for more on `ApiContext`)
         // The return object contains the state.
         try {
-            $payment->create($apiContext);
+            $response = $payment->create($apiContext);
+            $logArray['response_json'] = json_encode($response);
+            $this->saveLog($logArray);
             return $payment;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
             $error_code = $ex->getCode(); // Prints the Error Code
@@ -315,10 +348,14 @@ class Misc extends Admin_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
+            $logArray['response_json'] = json_encode($payment);
+            $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -376,7 +413,7 @@ class Misc extends Admin_Controller
      */
     function getPaymentDetails($paymentId)
     {
-        $payment = Payment:: get($paymentId, getApiContext());
+        $payment = Payment::get($paymentId, getApiContext());
         return $payment;
     }
 
@@ -389,7 +426,7 @@ class Misc extends Admin_Controller
     function getBaseUrl()
     {
         $protocol = STORE_PROTOCOL;
-        if ($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER ['HTTPS']) && strtolower($_SERVER ['HTTPS']) == 'on')) {
+        if ($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')) {
             $protocol = STORE_PROTOCOL_SSL;
         }
 
@@ -419,7 +456,7 @@ class Misc extends Admin_Controller
 
                 $company_billing_contacts = array();
                 if ($billing_notification_status == 1) {
-                   $company_billing_contacts = getNotificationContacts( $company_sid, 'billing_invoice', 'billing_invoice_notifications' );
+                    $company_billing_contacts = getNotificationContacts($company_sid, 'billing_invoice', 'billing_invoice_notifications');
                 }
 
                 if ($_POST) {
@@ -512,9 +549,16 @@ class Misc extends Admin_Controller
                         $fi = $payer->getFundingInstruments();
                         $cc_token = $fi[0]->getCreditCardToken();
 
-                        $last4 = $cc_token->getLast4();
-                        $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
-                        $cc_type = $cc_token->getType();
+                         //
+                        if (false) {
+                            $last4 = $cc_token->getLast4();
+                            $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
+                            $cc_type = $cc_token->getType();
+                        } else {
+                            $last4 = substr($cc_number, -4);
+                            $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
+                            $cc_type = strtoupper($cc_type);
+                        }
 
                         $data_to_update = array();
                         $data_to_update['payment_status'] = 'paid';
@@ -658,7 +702,6 @@ class Misc extends Admin_Controller
             $this->form_validation->set_rules('type', 'Credit Card Type', 'required|trim');
             $this->form_validation->set_rules('expire_month', 'Expiration Month', 'required|trim');
             $this->form_validation->set_rules('expire_year', 'Expiration Year', 'required|trim');
-
         } else if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'send_update_cc_request_email') {
             $this->form_validation->set_rules('email_address', 'Email Address', 'required|trim');
         } else {
@@ -801,7 +844,7 @@ class Misc extends Admin_Controller
 
                     redirect('manage_admin/misc/cc_management/' . $company_sid, "refresh");
                     break;
-                case'activate_card':
+                case 'activate_card':
                     $card_sid = $this->input->post('card_sid');
 
                     $this->ext_model->update_card_active_status($card_sid, 1);
@@ -1111,7 +1154,7 @@ class Misc extends Admin_Controller
                         $card_id = $_POST['card_id'];
                         $cc_id = $this->db->select('id')->where('sid', $card_id)->get('emp_cards')->row_array();
                         $this->ext_model->delete_credit_card($card_id);
-//                            $this->deleteCreditCard($cc_id['id']); // temporarly disabled
+                        //                            $this->deleteCreditCard($cc_id['id']); // temporarly disabled
                         echo 'success';
                         break;
                     case 'MAKE_UNDEFAULT_CARD':
@@ -1123,9 +1166,19 @@ class Misc extends Admin_Controller
                         $where = array('sid' => $card_id);
                         update_from_table($table, $where, $dataToUpdate);
                         echo 'success';
-                        break;    
+                        break;
                 }
             }
         }
+    }
+
+    /**
+     * Save paypal calls
+     */
+    private function saveLog(array $insertArray)
+    {
+        $insertArray['created_at'] = getSystemDate();
+        //
+        $this->db->insert('paypal_log', $insertArray);
     }
 }

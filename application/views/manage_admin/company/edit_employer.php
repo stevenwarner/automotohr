@@ -112,32 +112,47 @@
                                                     </div>
                                                 </li>
 
+                                                <li>
+                                                    <label>Employee Type</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-select-dropdown">
+                                                            <select name="employee_type" id="employee_type" class="invoice-fields">
+                                                                <option <?= $data["employee_type"] == 'fulltime' ? 'selected' : ''; ?> value="fulltime">Full-Time</option>
+                                                                <option <?= $data["employee_type"] == 'parttime' ? 'selected' : ''; ?> value="parttime">Part-Time</option>
+                                                            </select>
+                                                        </div>
+                                                        <?php echo form_error('employee_type'); ?>
+                                                    </div>
+                                                </li>
+
 
                                                 <li>
                                                     <?php echo form_label('Job Title', 'job_title'); ?>
+
+                                                    <?php $templateTitles = get_templet_jobtitles($data['parent_sid']); ?>
 
                                                     <div class="hr-fields-wrap">
                                                         <div class="row">
                                                             <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12">
                                                                 <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12" style="padding-left:0px;padding-right:0px;">
-                                                                    <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $data['job_title_type'] == '0' ? 'checked' : '' ?>> <strong>Add Manual &nbsp;</strong>
-                                                                    <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $data['job_title_type'] != '0' ? 'checked' : '' ?>> <strong> From Drop Down </strong>
-                                                                     
-                                                                    <br>
+                                                                    <?php if ($templateTitles) { ?>
+                                                                        <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $data['job_title_type'] == '0' ? 'checked' : '' ?>> <strong>Add Manual &nbsp;</strong>
+                                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $data['job_title_type'] != '0' ? 'checked' : '' ?>> <strong> From Drop Down </strong>
+                                                                         
+                                                                        <br>
+                                                                    <?php } ?>
                                                                     <?php
-
-                                                                    $templateTitles = get_templet_jobtitles($data['parent_sid']);
                                                                     echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds" id="job_title"');
                                                                     echo form_error('job_title');
                                                                     ?>
-
-                                                                    <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
-                                                                        <option value="0">Please select job title</option>
-                                                                        <?php foreach ($templateTitles as $titleRow) { ?>
-                                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
-                                                                        <?php } ?>
-                                                                    </select>
-
+                                                                    <?php if ($templateTitles) { ?>
+                                                                        <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                                            <option value="0">Please select job title</option>
+                                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                                            <?php } ?>
+                                                                        </select>
+                                                                    <?php } ?>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -277,7 +292,7 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Mobile Number', 'cell_number'); ?>
+                                                    <?php echo form_label('Phone Number', 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
@@ -519,26 +534,26 @@
 
                                                 <li>
                                                     <label>Workers Compensation Code</label>
-                                                        <div class="hr-fields-wrap">
-                                                            <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
 
                                                     </div>
                                                 </li>
 
                                                 <li>
                                                     <label>EEOC Code</label>
-                                                        <div class="hr-fields-wrap">
-                                                            <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
 
                                                     </div>
                                                 </li>
 
                                                 <li>
                                                     <label>Salary Benefits</label>
-                                                        <div class="hr-fields-wrap">
-                                                            <input type="text" class="hr-form-fileds" name="salary_benefits" id="salary_benefits" value="<?php echo $data['salary_benefits']; ?>">
-                                                        </div>
-                                                    </li>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="salary_benefits" id="salary_benefits" value="<?php echo $data['salary_benefits']; ?>">
+                                                    </div>
+                                                </li>
 
                                                 <?php if (IS_NOTIFICATION_ENABLED == 1) { ?>
                                                     <li>
@@ -586,19 +601,19 @@
                                                     </script>
                                                 </li>
                                                 <?php
-                                                    //
-                                                    $hasOther = [];
-                                                    //
-                                                    if ($data['languages_speak']) {
-                                                        $hasOther = array_filter(explode(',', $data['languages_speak']), function ($lan) {
-                                                            return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
-                                                        });
-                                                    }
+                                                //
+                                                $hasOther = [];
+                                                //
+                                                if ($data['languages_speak']) {
+                                                    $hasOther = array_filter(explode(',', $data['languages_speak']), function ($lan) {
+                                                        return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                    });
+                                                }
                                                 ?>
                                                 <li>
                                                     <label>I Speak:</label>
                                                     <div class="hr-fields-wrap">
-                                                       <div class="row">
+                                                        <div class="row">
                                                             <div class="col-sm-12">
                                                                 <!--  -->
                                                                 <label class="control control--checkbox">
@@ -635,9 +650,9 @@
                                                             </div>
                                                         </div>
                                                         <br>
-                                                        <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                                        <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                                                             <div class="col-sm-12">
-                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
                                                                 <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
                                                             </div>
                                                         </div>

@@ -958,7 +958,7 @@ class Application_tracking_system extends Public_Controller
                 $user_data['full_employment_application'] = serialize($full_emp_app);
                 
                 //
-                if ($formpost['template_job_title'] != '0') {
+                if ($this->input->post('temppate_job_title') && $formpost['template_job_title'] != '0') {
                     $templetJobTitleData = $formpost['template_job_title'];
                     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                     $user_data['desired_job_title'] = $templetJobTitleDataArray[1];

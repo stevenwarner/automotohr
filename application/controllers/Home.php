@@ -2030,16 +2030,17 @@ class Home extends CI_Controller
         $f1 = $this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_applicant_document_center');
         $data['eeo_form_status'] = $f1;
         //
-        $data['company_sid'] = $data['session']['company_detail']['sid'];
-        $data['company_name'] = $data['session']['company_detail']['CompanyName'];
-        $data['id'] = $id;
-        $data['user_sid'] = $user_sid;
-        $data['user_type'] = $user_type;
-        $data['first_name'] = $document['user']['first_name'];
-        $data['last_name'] = $document['user']['last_name'];
-        $data['email'] = $document['user']['email'];
-        $data['eeo_form_info'] = $document;
-        $data['location'] = "Public Link";
+        $data['company_sid']        = $data['session']['company_detail']['sid'];
+        $data['company_name']       = $data['session']['company_detail']['CompanyName'];
+        $data['id']                 = $id;
+        $data['user_sid']           = $user_sid;
+        $data['user_type']          = $user_type;
+        $data['first_name']         = $document['user']['first_name'];
+        $data['last_name']          = $document['user']['last_name'];
+        $data['email']              = $document['user']['email'];
+        $data['eeo_form_info']      = $document;
+        $data['location']           = "Public Link";
+        $data['dl_citizen']         = getEEOCCitizenShipFlag($data['company_sid']);
         //
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         $this->load->view('eeo/eeoc_view_public');
@@ -2060,6 +2061,15 @@ class Home extends CI_Controller
         $this->load->model('hr_documents_management_model');
         //
         $document = $this->hr_documents_management_model->getEEOC($post['id']);
+        // hijack the control and set the EEO
+        $eeoFormId = checkAndSetEEOCForUser($document['application_sid'], $document['users_type']);
+        //
+        if ($eeoFormId != 0) {
+            // fetch the new form details
+            $document = $this->hr_documents_management_model->getEEOC($eeoFormId);
+        } else {
+            $eeoFormId = $post['id'];
+        }
         //
         $employeeId = $this->session->userdata('logged_in')['employer_detail']['sid'];
         //
@@ -2087,20 +2097,11 @@ class Home extends CI_Controller
             'users_type' => $document['users_type']
         ])->update('portal_eeo_form', $upd);
         //
-        $this->hr_documents_management_model->updateEEOC(
-            $upd,
-            [
-                'sid' => $post['id']
-            ]
-        );
-        //
-        $document = $this->hr_documents_management_model->getEEOC($post['id']);
-        //
         $dataToUpdate = array();
         $dataToUpdate['gender'] = strtolower($post['gender']);
         update_user_gender($document['application_sid'], 'employee', $dataToUpdate);
         //
-        keepTrackVerificationDocument($employee_sid, 'employee', $action, $post['id'], 'eeoc', $post['location']);
+        keepTrackVerificationDocument($employee_sid, 'employee', $action, $eeoFormId, 'eeoc', $post['location']);
         //
         echo 'success';
         exit(0);

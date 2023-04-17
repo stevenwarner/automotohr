@@ -298,10 +298,12 @@ class Complynet_model extends CI_Model
      * Get employee department
      *
      * @param int $employeeId
+     * @param bool $returnComplyId Optional
      * @return string
      */
     public function getEmployeeDepartmentId(
-        int $employeeId
+        int $employeeId,
+        bool $returnComplyId = true
     ) {
         //
         $record =
@@ -318,7 +320,11 @@ class Complynet_model extends CI_Model
         //
 
         if ($record) {
-            return $this->getComplyNetLinkedDepartmentById($record['sid']);
+            if ($returnComplyId) {
+                return $this->getComplyNetLinkedDepartmentById($record['sid']);
+            } else {
+                return $record['sid'];
+            }
         }
         //
         return 0;
@@ -372,6 +378,10 @@ class Complynet_model extends CI_Model
             ->get('complynet_jobRole')
             ->row_array();
         //
+        if ($record && $record['complynet_job_role_sid'] == 0) {
+            return $this->syncJobRoles($departmentId, $jobTitle);
+        }
+        //
         if ($record && $record['complynet_job_role_sid'] != 0) {
             return $record['complynet_job_role_sid'];
         }
@@ -382,10 +392,21 @@ class Complynet_model extends CI_Model
             $departmentId
         );
         //
-        $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle)));
-        //
         $complyRoleId = 0;
         //
+        if (isset($complyJobTitles['error'])) {
+            $reportError = array();
+            $reportError['department_sid'] = $departmentId;
+            $reportError['response'] = $complyJobTitles;
+            //
+            $message = 'JobRole not found on ComplyNet against department ID <strong>' . $departmentId . '</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            return $complyRoleId;
+        }
+        //
+        $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle))); //
         foreach ($complyJobTitles as $title) {
             //
             $slugComply = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($title['Name'])));
@@ -414,6 +435,22 @@ class Complynet_model extends CI_Model
                 'Name' => $jobTitle
             ]);
             //
+            if (empty($complyRoleId) || isset($complyRoleId['error'])) {
+                //
+                $reportError = array();
+                $reportError['response'] = $complyRoleId;
+                $reportError['complynetObject'] = json_encode([
+                    'ParentId' => $departmentId,
+                    'Name' => $jobTitle
+                ]);
+                //
+                $message = 'JobRole not created on ComplyNet.';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
+                return $complyRoleId;
+            }
+            //
             $ins = [];
             $ins['complynet_department_sid'] = $departmentId;
             $ins['complynet_job_role_sid'] = $complyRoleId;
@@ -437,6 +474,19 @@ class Complynet_model extends CI_Model
             ->where([
                 'company_sid' => $companyId,
                 'email' => $email
+            ])
+            ->count_all_results('complynet_employees');
+    }
+
+    public function findEmployeeBySid(
+        int $employeeId,
+        int $companyId
+    ) {
+        //
+        return $this->db
+            ->where([
+                'company_sid' => $companyId,
+                'employee_sid' => $employeeId
             ])
             ->count_all_results('complynet_employees');
     }
@@ -496,6 +546,19 @@ class Complynet_model extends CI_Model
         $complyDepartments = $this->clib->getComplyNetDepartments(
             $complyLocationId
         );
+        //
+        if (isset($complyDepartments['error'])) {
+            //
+            $reportError = array();
+            $reportError['location_ID'] = $complyLocationId;
+            $reportError['response'] = $complyDepartments;
+            //
+            $message = 'Department not found on ComplayNet against location ID <strong>' . $complyLocationId . '</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            return "System failed to link department with ComplyNet";
+        }
         // Convert department to index
         $complyDepartmentObj = [];
         //
@@ -537,6 +600,22 @@ class Complynet_model extends CI_Model
                         'ParentId' => $complyLocationId,
                         'Name' => $value['name']
                     ]);
+                    //
+                    if (isset($response['error'])) {
+                        $reportError = array();
+                        $reportError['location_ID'] = $complyLocationId;
+                        $reportError['response'] = $response;
+                        $reportError['complynetObject'] = json_decode([
+                            'ParentId' => $complyLocationId,
+                            'Name' => $value['name']
+                        ]);
+                        //
+                        $message = 'Department not created on ComplayNet against location ID <strong>' . $complyLocationId . '</strong>';
+                        //
+                        $this->sendEmailToDeveloper($message, $reportError);
+                        //
+                        continue;
+                    }
                     //
                     if ($response && !empty($response['Id'])) {
                         //
@@ -626,7 +705,7 @@ class Complynet_model extends CI_Model
         if ($employees) {
             foreach ($employees as $index => $employee) {
                 //
-                $employees[$index]['department_sid'] = $this->getEmployeeDepartmentId($employee['sid']);
+                $employees[$index]['department_sid'] = $this->getEmployeeDepartmentId($employee['sid'], false);
                 $employees[$index]['employee_sid'] = $employee['sid'];
             }
         }
@@ -657,6 +736,10 @@ class Complynet_model extends CI_Model
             ])
             ->get('users')
             ->row_array();
+        //
+        if ($record) {
+            $record['department_sid'] = $this->getEmployeeDepartmentId($record['sid'], false);
+        }
         //
         return $record;
     }
@@ -731,14 +814,14 @@ class Complynet_model extends CI_Model
         //
         $this->load->library('Complynet/Complynet_lib', '', 'clib');
         //
-        if ($this->isEmployeeAdded($email, $companyId)) {
+        if ($this->findEmployeeBySid($employeeId, $companyId)) {
             $errorArray[] = 'Employee already synced with ComplyNet.';
             if ($doReturn) {
                 return $errorArray;
             }
             return SendResponse(200, ['errors' => $errorArray]);
         }
-        $employee['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
+        $employee['complynet_job_title'] = $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
         //
         if (checkEmployeeMissingData($employee)) {
             if ($doReturn) {
@@ -782,6 +865,19 @@ class Complynet_model extends CI_Model
 
         // Check employee by email
         $employeeObj = $this->clib->getEmployeeByEmail($email);
+        //
+        if (isset($employeeObj['error'])) {
+            //
+            $reportError = array();
+            $reportError['email'] = $email;
+            $reportError['response'] = $employeeObj;
+            //
+            $message = 'Employee not found on ComplyNet against email <strong>' . $email . '</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            return 'System failed to link employee with ComplyNet.';
+        }
         // found
         if (isset($employeeObj[0]['Id']) && findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId)) {
             $employeeObj[0] = findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId);
@@ -802,6 +898,7 @@ class Complynet_model extends CI_Model
             $ins['complynet_job_role_sid'] = $complyJobRoleId;
             $ins['employee_sid'] = $employeeId;
             $ins['email'] = $email;
+            $ins['alt_id'] = 'AHR' . $employeeId;
             $ins['complynet_json'] = json_encode($employeeObj);
             $ins['created_at'] = $ins['updated_at'] = getSystemDate();
             //
@@ -821,47 +918,7 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['success' => true]);
         }
-        // Check employee by username
-        $employeeObj = $this->clib->getEmployeeByEmail($employee['username']);
-        // found by username as well
-        if (isset($employeeObj[0]['Id']) && findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId)) {
-            $employeeObj[0] = findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId);
-            //
-            if (!$employeeObj[0]) {
-                if ($doReturn) {
-                    return ['failed to find employee'];
-                }
-                return SendResponse(200, ['errors' => ['failed to find employee']]);
-            }
-            // Just link it
-            $ins = [];
-            $ins['company_sid'] = $companyId;
-            $ins['complynet_employee_sid'] = $employeeObj[0]['Id'];
-            $ins['complynet_company_sid'] = $complyCompanyId;
-            $ins['complynet_location_sid'] = $complyLocationId;
-            $ins['complynet_department_sid'] = $complyDepartmentId;
-            $ins['complynet_job_role_sid'] = $complyJobRoleId;
-            $ins['employee_sid'] = $employeeId;
-            $ins['email'] = $email;
-            $ins['complynet_json'] = json_encode($employeeObj);
-            $ins['created_at'] = $ins['updated_at'] = getSystemDate();
-            //
-            $this->db->insert(
-                'complynet_employees',
-                $ins
-            );
-            //
-            $this->db
-                ->where('sid', $employeeId)
-                ->update('users', [
-                    'complynet_onboard' => 1
-                ]);
-            //
-            if ($doReturn) {
-                return [];
-            }
-            return SendResponse(200, ['success' => true]);
-        }
+        //
         // Try to save with email address
         $ins = [];
         $ins['firstName'] = $employee['first_name'];
@@ -874,13 +931,44 @@ class Complynet_model extends CI_Model
         $ins['departmentId'] = $complyDepartmentId;
         $ins['jobRoleId'] = $complyJobRoleId;
         $ins['PhoneNumber'] = $employee['PhoneNumber'];
+        $ins['AltId'] = 'AHR' . $employeeId;
         $ins['TwoFactor'] = false;
         //
         $response = $this->clib->addEmployee($ins);
+        //
+        if (isset($response['error'])) {
+            $reportError = array();
+            $reportError['employee'] = $employee;
+            $reportError['response'] = $response;
+            $reportError['complynetObject'] = json_encode($ins);
+            //
+            $message = 'Employee not created on ComplyNet for company <strong>' . getCompanyNameBySid($companyId) . '</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            return "System failed to link employee with ComplyNet";
+        }
         // Lets save the user
         if (preg_match('/created user/i', $response)) {
             // fetch user
             $employeeObj = $this->clib->getEmployeeByEmail($email);
+            //
+            if (isset($employeeObj['error'])) {
+                //
+                $reportError = array();
+                $reportError['email'] = $email;
+                $reportError['response'] = $employeeObj;
+                //
+                $message = 'Employee not found on ComplyNet against email <strong>' . $email . '</strong>';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
+                if ($doReturn) {
+                    return ['failed to find employee'];
+                }
+                return SendResponse(200, ['errors' => ['failed to find employee']]);
+            }
+            //
             $employeeObj[0] = findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId);
             //
             if (!$employeeObj[0]) {
@@ -899,6 +987,7 @@ class Complynet_model extends CI_Model
             $ins['complynet_job_role_sid'] = $complyJobRoleId;
             $ins['employee_sid'] = $employeeId;
             $ins['email'] = $email;
+            $ins['alt_id'] = 'AHR' . $employeeId;
             $ins['complynet_json'] = json_encode($employeeObj);
             $ins['created_at'] = $ins['updated_at'] = getSystemDate();
             //
@@ -920,61 +1009,21 @@ class Complynet_model extends CI_Model
         }
         //
         if (preg_match('/unavailable/i', $response)) {
-            $ins = [];
-            $ins['firstName'] = $employee['first_name'];
-            $ins['lastName'] = $employee['last_name'];
-            $ins['userName'] = $employee['username'];
-            $ins['email'] = $email;
-            $ins['password'] = 'password';
-            $ins['companyId'] = $complyCompanyId;
-            $ins['locationId'] = $complyLocationId;
-            $ins['departmentId'] = $complyDepartmentId;
-            $ins['jobRoleId'] = $complyJobRoleId;
-            $ins['PhoneNumber'] = $employee['PhoneNumber'];
-            $ins['TwoFactor'] = false;
+            $reportError = array();
+            $reportError['employee'] = $employee;
+            $reportError['response'] = $response;
+            $reportError['complynetObject'] = json_encode($ins);
             //
-            $response = $this->clib->addEmployee($ins);
-            // Lets save the user
-            if (preg_match('/created user/i', $response)) {
-                // fetch user
-                $employeeObj = $this->clib->getEmployeeByEmail($email);
-                $employeeObj[0] = findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId);
-                //
-                if (!$employeeObj[0]) {
-                    if ($doReturn) {
-                        return ['failed to find employee'];
-                    }
-                    return SendResponse(200, ['errors' => ['failed to find employee']]);
-                }
-                // Just link it
-                $ins = [];
-                $ins['company_sid'] = $companyId;
-                $ins['complynet_employee_sid'] = $employeeObj[0]['Id'];
-                $ins['complynet_company_sid'] = $complyCompanyId;
-                $ins['complynet_location_sid'] = $complyLocationId;
-                $ins['complynet_department_sid'] = $complyDepartmentId;
-                $ins['complynet_job_role_sid'] = $complyJobRoleId;
-                $ins['employee_sid'] = $employeeId;
-                $ins['email'] = $email;
-                $ins['complynet_json'] = json_encode($employeeObj);
-                $ins['created_at'] = $ins['updated_at'] = getSystemDate();
-                //
-                $this->db->insert(
-                    'complynet_employees',
-                    $ins
-                );
-                //
-                $this->db
-                    ->where('sid', $employeeId)
-                    ->update('users', [
-                        'complynet_onboard' => 1
-                    ]);
-                //
-                if ($doReturn) {
-                    return [];
-                }
-                return SendResponse(200, ['success' => true]);
+            $message = 'Employee not created on ComplyNet for company <strong>' . getCompanyNameBySid($companyId) . '</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            if ($doReturn) {
+                return $response;
             }
+            return SendResponse(200, ['errors' => [
+                $response
+            ]]);
         }
 
         //
@@ -1013,128 +1062,90 @@ class Complynet_model extends CI_Model
     ) {
         // Check if user is on ComplyNet
         if (!$this->db->where('employee_sid', $employeeId)->count_all_results('complynet_employees')) {
-            // We need to add it to ComplyNet
-            $response = $this->syncSingleEmployee(
-                $companyId,
-                $employeeId,
-                true
-            );
-            //
-            if ($response) {
-                return false;
-            }
+            return false;
+        }
+        // Get the employee details
+        $employeeDetails = $this->db
+            ->select('
+            users.first_name,
+            users.last_name,
+            users.email,
+            users.username,
+            users.job_title,
+            users.complynet_job_title,
+            users.PhoneNumber,
+            users.department_sid,
+            users.team_sid,
+            complynet_employees.complynet_company_sid,
+            complynet_employees.complynet_location_sid,
+            complynet_employees.complynet_job_role_sid,
+            complynet_employees.complynet_department_sid
+        ')
+            ->where([
+                'users.parent_sid' => $companyId,
+                'users.sid' => $employeeId
+            ])
+            ->join('complynet_employees', 'complynet_employees.employee_sid = users.sid', 'inner')
+            ->get('users')
+            ->row_array();
+        //
+        if (empty($employeeDetails)) {
+            return false;
+        }
+        //
+        $differenceArray = [];
+        // check first name
+        if ($employeeDetails['first_name'] != $oldData['first_name']) {
+            $differenceArray['first_name'] = $employeeDetails['first_name'];
+        }
+        // check last name
+        if ($employeeDetails['last_name'] != $oldData['last_name']) {
+            $differenceArray['last_name'] = $employeeDetails['last_name'];
+        }
+        // check email
+        if ($employeeDetails['email'] != $oldData['email']) {
+            $differenceArray['email'] = $employeeDetails['email'];
+        }
+        // check phone number
+        if ($employeeDetails['PhoneNumber'] != $oldData['PhoneNumber']) {
+            $differenceArray['PhoneNumber'] = $employeeDetails['PhoneNumber'];
+        }
+        //
+        if (!$differenceArray) {
+            return false;
+        }
 
-            return true;
-        } else {
-            // Get the employee details
-            $employeeDetails = $this->db
-                ->select('
-                users.first_name,
-                users.last_name,
-                users.email,
-                users.username,
-                users.job_title,
-                users.complynet_job_title,
-                users.PhoneNumber,
-                users.department_sid,
-                users.team_sid,
-                complynet_employees.complynet_company_sid,
-                complynet_employees.complynet_location_sid,
-                complynet_employees.complynet_job_role_sid,
-                complynet_employees.complynet_department_sid
-            ')
-                ->where([
-                    'users.parent_sid' => $companyId,
-                    'users.sid' => $employeeId
-                ])
-                ->join('complynet_employees', 'complynet_employees.employee_sid = users.sid', 'inner')
-                ->get('users')
-                ->row_array();
-            //
-            if (empty($employeeDetails)) {
-                return false;
-            }
-            $employeeDetails['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employeeDetails['job_title'], $employeeDetails['complynet_job_title']);
-            //
-            if (checkEmployeeMissingData($employeeDetails)) {
-                return false;
-            }
-            //
-            $upd = [];
-            //
-            if ($employeeDetails['first_name'] != $oldData['first_name']) {
-                $upd['firstName'] = $employeeDetails['first_name'];
-            }
-            //
-            if ($employeeDetails['last_name'] != $oldData['last_name']) {
-                $upd['lastName'] = $employeeDetails['last_name'];
-            }
-            //
-            if ($employeeDetails['email'] != $oldData['email']) {
-                $upd['email'] = $employeeDetails['email'];
-            }
-            //
-            if ($employeeDetails['PhoneNumber'] != $oldData['PhoneNumber']) {
-                $upd['PhoneNumber'] = $employeeDetails['PhoneNumber'];
-            }
-            //
-            if (empty($upd)) {
-                return false;
-            }
-            $upd['companyId'] = $employeeDetails['complynet_company_sid'];
-            //
-            $upd['locationId'] = $employeeDetails['complynet_location_sid'];
-            // Check if department is changed
-            $complyDepartmentId = $this->getEmployeeDepartmentId(
-                $employeeId
-            );
-            //
-            $upd['departmentId'] = $complyDepartmentId == 0 ? $employeeDetails['complynet_department_sid'] : $complyDepartmentId;
-            //
-            $complyJobRoleId = $this->getAndSetJobRoleId(
-                $upd['departmentId'],
-                $employeeDetails['complynet_job_title']
-            );
-            $upd['jobRoleId'] = $complyJobRoleId == 0 || empty($complyJobRoleId) ? $employeeDetails['complynet_job_role_sid'] : $complyJobRoleId;
+        // fetch complynet object
+        $complyEmployee = $this->db
+            ->where('employee_sid', $employeeId)
+            ->get('complynet_employees')->row_array();
+        //
+        if (!$complyEmployee['alt_id']) {
+            return false;
+        }
+        // make update array
+        $updateArray['firstName'] = $differenceArray['first_name'] ?? $employeeDetails['first_name'];
+        $updateArray['lastName'] = $differenceArray['last_name'] ?? $employeeDetails['last_name'];
+        $updateArray['userName'] = $complyEmployee['email'];
+        $updateArray['email'] = $differenceArray['email'] ?? $employeeDetails['email'];
+        $updateArray['password'] = 'password';
+        $updateArray['companyId'] = $complyEmployee['complynet_company_sid'];
+        $updateArray['locationId'] = $complyEmployee['complynet_location_sid'];
+        $updateArray['departmentId'] = $complyEmployee['complynet_department_sid'];
+        $updateArray['jobRoleId'] = $complyEmployee['complynet_job_role_sid'];
+        $updateArray['PhoneNumber'] = $differenceArray['PhoneNumber'] ?? $employeeDetails['PhoneNumber'];
+        $updateArray['TwoFactor'] = "FALSE";
+        $updateArray['AltId'] = $complyEmployee['alt_id'];
 
-            //
-            $this->load->library('Complynet/Complynet_lib', '', 'clib');
-            //
-            $response = $this->clib->updateUser($upd);
-            //
-            if (gettype($response) == 'string') {
-                return "Unable to update details on ComplyNet.";
-            }
-            //
-            $employeeObj = $this->clib->getEmployeeByEmail($employeeDetails['email']);
-            // Find the right person
-            $employeeObj = findTheRightEmployee($employeeObj, $upd['companyId'], $upd['locationId']);
-            //
-            if ($employeeObj) {
-                // Insert to history
-                //
-                $ins = [];
-                $ins['company_sid'] = $companyId;
-                $ins['employee_sid'] = $employeeId;
-                $ins['complynet_json'] = json_encode($employeeObj);
-                $ins['created_at'] = getSystemDate();
-                //
-                $this->db->insert(
-                    'complynet_employees_history',
-                    $ins
-                );
-
-                // Update the json
-                $this->db->where('update', [
-                    'complynet_department_sid' => $upd['departmentId'],
-                    'complynet_job_role_sid' => $upd['jobRoleId'],
-                    'complynet_json' => json_encode($employeeObj),
-                    'updated_at' => getSystemDate()
-                ]);
-            }
-
+        //
+        $this->load->library('Complynet/Complynet_lib', '', 'clib');
+        //
+        $response = $this->clib->updateUser($updateArray);
+        //
+        if (preg_match('/(1)\s+Update/', $response)) {
             return true;
         }
+        return false;
     }
 
 
@@ -1271,5 +1282,113 @@ class Complynet_model extends CI_Model
         }
         //
         return true;
+    }
+
+    private function sendEmailToDeveloper($message, $data)
+    {
+        mail(
+            'mubashar.ahmed@egenienext.com',
+            $message,
+            json_encode($data)
+        );
+    }
+
+    public function syncJobRoles($departmentId, $jobTitle)
+    {
+        //
+        $complyRoleId = 0;
+        //
+        $this->load->library('Complynet/Complynet_lib', '', 'clib');
+        //
+        $complyJobTitles = $this->clib->getJobRolesByDepartmentId(
+            $departmentId
+        );
+        //
+        if (isset($complyJobTitles['error'])) {
+            $reportError = array();
+            $reportError['department_sid'] = $departmentId;
+            $reportError['response'] = $complyJobTitles;
+            //
+            $message = 'JobRole not found on ComplyNet against department ID <strong>' . $departmentId . '</strong>';
+            //
+            $this->sendEmailToDeveloper($message, $reportError);
+            //
+            return $complyRoleId;
+        }
+        //
+        if (!empty($complyJobTitles)) {
+            foreach ($complyJobTitles as $title) {
+                //
+                $record = $this->db
+                    ->select('sid, complynet_job_role_sid')
+                    ->where([
+                        'complynet_department_sid' => $departmentId,
+                        'job_title' => $jobTitle
+                    ])
+                    ->get('complynet_jobRole')
+                    ->row_array();
+                //
+                if (empty($record)) {
+                    $ins = [];
+                    $ins['complynet_department_sid'] = $departmentId;
+                    $ins['complynet_job_role_sid'] = $title['Id'];
+                    $ins['complynet_job_role_name'] = $title['Name'];
+                    $ins['job_title'] = $jobTitle;
+                    $ins['status'] = 1;
+                    $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert('complynet_jobRole', $ins);
+                } else if (!empty($record) && $record['complynet_job_role_sid'] == 0) {
+                    $this->db
+                        ->where('sid', $record['sid'])
+                        ->update('complynet_jobRole', [
+                            'complynet_job_role_sid' => $title['Id']
+                        ]);
+                }
+                //
+                $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle)));
+                $slugComply = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($title['Name'])));
+                //
+                if ($slug == $slugComply) {
+                    $complyRoleId = $title['Id'];
+                }
+            }
+        }
+        //
+        if ($complyRoleId === 0) {
+            // Let's add the job role
+            $complyRoleId = $this->clib->addJobRole([
+                'ParentId' => $departmentId,
+                'Name' => $jobTitle
+            ]);
+            //
+            if (empty($complyRoleId) || isset($complyRoleId['error'])) {
+                //
+                $reportError = array();
+                $reportError['response'] = $complyRoleId;
+                $reportError['complynetObject'] = json_encode([
+                    'ParentId' => $departmentId,
+                    'Name' => $jobTitle
+                ]);
+                //
+                $message = 'JobRole not created on ComplayNet.';
+                //
+                $this->sendEmailToDeveloper($message, $reportError);
+                //
+                return $complyRoleId;
+            }
+            //
+            $ins = [];
+            $ins['complynet_department_sid'] = $departmentId;
+            $ins['complynet_job_role_sid'] = $complyRoleId;
+            $ins['complynet_job_role_name'] = $jobTitle;
+            $ins['job_title'] = $jobTitle;
+            $ins['status'] = 1;
+            $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('complynet_jobRole', $ins);
+        }
+        //
+        return $complyRoleId;
     }
 }

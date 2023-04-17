@@ -496,9 +496,10 @@ class Settings extends Public_Controller
                 }
 
                 // EEOC Questionnaire
-                    $portal_data['dl_vet'] = $this->input->post('dl_vet', true) == 'on' ? 1 : 0;
-                    $portal_data['dl_vol'] = $this->input->post('dl_vol', true) == 'on' ? 1 : 0;
-                    $portal_data['dl_gen'] = $this->input->post('dl_gen', true) == 'on' ? 1 : 0;
+                $portal_data['dl_citizen'] = $this->input->post('dl_citizen', true) == 'on' ? 1 : 0;
+                $portal_data['dl_vet'] = $this->input->post('dl_vet', true) == 'on' ? 1 : 0;
+                $portal_data['dl_vol'] = $this->input->post('dl_vol', true) == 'on' ? 1 : 0;
+                $portal_data['dl_gen'] = $this->input->post('dl_gen', true) == 'on' ? 1 : 0;
                  
 
                 //

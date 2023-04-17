@@ -922,6 +922,7 @@ class Eeo extends Public_Controller
             $data['history_title'] = "Re-Assign EEOC History";
             $data['verification_documents_history'] = $history_array;
             $data['track_history'] = $eeoc_track;
+            $data['dl_citizen']         = getEEOCCitizenShipFlag($company_sid);
             //
             $this->load->view('main/header', $data);
             $this->load->view('eeo/user_eeoc');

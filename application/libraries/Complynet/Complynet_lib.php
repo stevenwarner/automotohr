@@ -244,8 +244,7 @@ class Complynet_lib
     private function generateNewToken()
     {
         $curl = curl_init();
-
-        curl_setopt_array($curl, array(
+        $lists = array(
             CURLOPT_URL => $this->credentials->AUTH_URL,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -257,10 +256,28 @@ class Complynet_lib
             CURLOPT_POSTFIELDS => 'grant_type=' . ($this->credentials->GRANT_TYPE) . '&username=' . ($this->credentials->USERNAME) . '&password=' . ($this->credentials->PASSWORD) . '',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/x-www-form-urlencoded'
-            ),
-        ));
+            )
+        );
+
+        curl_setopt_array($curl, $lists);
         //
-        $response = json_decode(curl_exec($curl), true);
+        $response = curl_exec($curl);
+        $info = curl_getinfo($curl);
+        // Save the request and response to database
+        $this->saveCall([
+            'request_method' => $lists[CURLOPT_CUSTOMREQUEST],
+            'request_url' => $this->credentials->AUTH_URL,
+            'request_body' => json_encode([
+                'headers' => $lists[CURLOPT_HTTPHEADER],
+                'body' => $lists[CURLOPT_POSTFIELDS]
+            ]),
+            'response_body' => $response,
+            'response_code' => $info['http_code'],
+            'response_headers' => json_encode($info)
+        ]);
+        //
+        //
+        $response = json_decode($response, true);
         curl_close($curl);
         //
         if (isset($response['error'])) {
@@ -276,12 +293,15 @@ class Complynet_lib
      * @param string $url
      * @param string $method
      * @param array  $options
+     * @param bool  $execute Optional
      * @return array
      */
     private function execute(
         string $url,
         string $method = "GET",
-        array $postFields = []
+        array $postFields = [],
+        bool $execute = true,
+        int $iteration = 1
     ) {
         //
         $curl = curl_init();
@@ -309,10 +329,38 @@ class Complynet_lib
         curl_setopt_array($curl, $lists);
         //
         $response = curl_exec($curl);
+        $info = curl_getinfo($curl);
+        // Save the request and response to database
+        $this->saveCall([
+            'request_method' => $lists[CURLOPT_CUSTOMREQUEST],
+            'request_url' => $lists[CURLOPT_URL],
+            'request_body' => json_encode([
+                'headers' => $lists[CURLOPT_HTTPHEADER],
+                'body' => $lists[CURLOPT_POSTFIELDS]
+            ]),
+            'response_body' => $response,
+            'response_code' => $info['http_code'],
+            'response_headers' => json_encode($info)
+        ]);
         //
         $response = json_decode($response, true);
         //
         curl_close($curl);
+        //
+        $execute = $iteration == 2 ? false : true;
+        $iteration++;
+        //
+        // if (is_array($response) && !$response && $execute)  {
+        //     return $this->execute($url, $method, $postFields, $execute, $iteration); 
+        // } else if (!is_array($response) && empty($response) && $execute) {
+        //     return $this->execute($url, $method, $postFields, $execute, $iteration);
+        // } else if ($info['http_code'] == 500 && $execute) {
+        //     return $this->execute($url, $method, $postFields, $execute, $iteration);
+        // }   
+        //
+        if ($info['http_code'] == 500) {
+            $response['error'] = '500 internal server occurred on ComplyNet.';
+        }
         //
         return $response;
     }
@@ -326,12 +374,12 @@ class Complynet_lib
     private function saveAccessToken($response)
     {
         $ins = [];
-        $ins['access_token'] = $response['access_token'];
-        $ins['token_type'] = $response['token_type'];
-        $ins['issued'] = formatDateToDB($response['.issued'], 'D, d M Y H:i:s e', DB_DATE_WITH_TIME);
-        $ins['expires'] = formatDateToDB($response['.expires'], 'D, d M Y H:i:s e', DB_DATE_WITH_TIME);
-        $ins['expires_in'] = $response['expires_in'];
-        $ins['userName'] = $response['userName'];
+        $ins['access_token'] = $response['access_token'] ?? '';
+        $ins['token_type'] = $response['token_type'] ?? '';
+        // $ins['issued'] = formatDateToDB($response['.issued'], 'D, d M Y H:i:s e', DB_DATE_WITH_TIME);
+        // $ins['expires'] = formatDateToDB($response['.expires'], 'D, d M Y H:i:s e', DB_DATE_WITH_TIME);
+        // $ins['expires_in'] = $response['expires_in'];
+        // $ins['userName'] = $response['userName'];
         $ins['created_at'] = $ins['updated_at'] = getSystemDate();
         //
         $this->CI->db->insert('complynet_access_token', $ins);
@@ -346,4 +394,18 @@ class Complynet_lib
     {
         $this->credentials = getCreds('AHR')->COMPLYNET;
     }
+
+    /**
+     * saves request and response
+     *
+     * @param array $ins
+     */
+    private function saveCall($ins)
+    {
+        //
+        $ins['created_at'] = getSystemDate();
+        //
+        $this->CI->db->insert('complynet_calls', $ins);
+    }
+    
 }

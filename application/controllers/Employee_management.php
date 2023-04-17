@@ -427,6 +427,7 @@ class Employee_management extends Public_Controller
                 $access_level = $this->input->post('access_level');
                 $registration_date = $this->input->post('registration_date');
                 $employee_type = $this->input->post('employeeType');
+                $employee_job_type = $this->input->post('employee-type');
                 $username = $this->input->post('username');
                 $location_country = $this->input->post('Location_Country');
                 $location_state = $this->input->post('Location_State');
@@ -439,7 +440,6 @@ class Employee_management extends Public_Controller
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
-
                 //
                 $teamId = $this->input->post('teamId');
                 $departmenId = '';
@@ -449,9 +449,10 @@ class Employee_management extends Public_Controller
                 }
 
                 //
-                $workersCompensationCode = $this->input->post('workers_compensation_code');
-                $eeocCode = $this->input->post('eeoc_code');
-                $salaryBenefits = $this->input->post('salary_benefits');
+
+                // $workersCompensationCode = $this->input->post('workers_compensation_code');
+                //  $eeocCode = $this->input->post('eeoc_code');
+                // $salaryBenefits = $this->input->post('salary_benefits');
 
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -459,6 +460,16 @@ class Employee_management extends Public_Controller
                 $verification_key = random_key() . "_csvImport";
                 $salt = generateRandomString(48);
                 $user_information = array();
+
+                //
+                $user_information['languages_speak'] = null;
+                //
+                $languages_speak = $this->input->post('secondaryLanguages');
+                if ($languages_speak) {
+                    $user_information['languages_speak'] = implode(',', $languages_speak);
+                }
+
+
                 $user_information['gender'] =  $gender;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
@@ -480,17 +491,17 @@ class Employee_management extends Public_Controller
                 $user_information['CompanyDescription'] = $company_description;
                 $user_information['salt'] = $salt;
                 $user_information['employee_status'] = $employment_status;
-                $user_information['employee_type'] = $employment_type;
+                $user_information['employee_type'] = $employee_job_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
                 //
-                $user_information['workers_compensation_code'] = $workersCompensationCode;
-                $user_information['eeoc_code'] = $eeocCode;
-                $user_information['salary_benefits'] = $salaryBenefits;
+                $user_information['workers_compensation_code'] = ''; //$workersCompensationCode;
+                $user_information['eeoc_code'] = ''; //$eeocCode;
+                $user_information['salary_benefits'] = ''; // $salaryBenefits;
 
 
                 //
-                if ($this->input->post('template_job_title') != '0') {
+                if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
                     $templetJobTitleData = $this->input->post('template_job_title');
                     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                     $user_information['job_title'] = $templetJobTitleDataArray[1];
@@ -511,6 +522,7 @@ class Employee_management extends Public_Controller
                 if (!empty($pictures) && $pictures != 'error') {
                     $user_information['profile_picture'] = $pictures;
                 }
+
 
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
@@ -1628,7 +1640,7 @@ class Employee_management extends Public_Controller
                     );
 
                     //
-                    if ($this->input->post('temppate_job_title') != '0') {
+                    if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
                         $templetJobTitleData = $this->input->post('temppate_job_title');
                         $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                         $data_to_insert['job_title'] = $templetJobTitleDataArray[1];
@@ -2466,7 +2478,7 @@ class Employee_management extends Public_Controller
                 $newCompareData['office_location'] = $post['office_location'];
 
                 //
-                if ($this->input->post('template_job_title') != '0') {
+                if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
                     $templetJobTitleData = $this->input->post('template_job_title');
                     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                     $data['job_title'] = $templetJobTitleDataArray[1];
@@ -2493,6 +2505,20 @@ class Employee_management extends Public_Controller
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
                 //
                 $this->dashboard_model->update_user($sid, $data);
+
+                // ComplyNet interjection
+                if (isCompanyOnComplyNet($company_id)) {
+                    //
+                    $this->load->model('2022/complynet_model', 'complynet_model');
+                    //
+                    $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
+                        'first_name' => $employee_detail['first_name'],
+                        'last_name' => $employee_detail['last_name'],
+                        'email' => $employee_detail['email'],
+                        'PhoneNumber' => $employee_detail['PhoneNumber']
+                    ]);
+                }
+
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
 

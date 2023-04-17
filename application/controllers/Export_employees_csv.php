@@ -87,6 +87,7 @@ class Export_employees_csv extends Public_Controller
                         $rows = '';
 
                         if (!empty($employees)) { 
+                            $header = [];
                             foreach ($employees as $key => $employee) {
 
                                 if ($employee['department_sid'] != 0) {
@@ -156,11 +157,11 @@ class Export_employees_csv extends Public_Controller
                                 } else {
                                     $export_data[$i]['status'] = 'Archived Employee';
                                 }
-                                $header = '';
+                                
                                 //
                                 if (($access_level_plus || $pay_plan_flag == 1) && !empty($checked_boxes)  && !empty($checked_boxes[0])) {
                                     foreach ($checked_boxes as $key => $value) {
-                                        $header .= $value . ',';
+                                        $header[$value] = $value;
                                         if ($value == "terminated_date" || $value == "terminated_reason") {
                                             $terminated_data = $this->export_csv_model->get_status_info($employee['sid'], 1);
                                             //
@@ -189,12 +190,25 @@ class Export_employees_csv extends Public_Controller
                                                 $export_data[$i][$value] = '';
                                             }
 
-                                        } else {
+                                        } elseif($value == "drivers_license"){
+                                            unset($header['drivers_license']);
+                                            //
+                                            $drivingData = get_employee_drivers_license($employee['sid']);
+
+                                            $licenseDetails="";
+                                            if(!empty($drivingData)){
+                                                foreach(unserialize($drivingData['license_details']) as $key => $val){
+                                                    $export_data[$i][$key] = $val;
+                                                    $header[$key] = $key;
+                                                }
+                                            }
+
+                                        }else {
                                             $export_data[$i][$value] = str_replace(',', ' ', strip_tags(trim(preg_replace('/\s+/', ' ', $employee[$value]))));
 
                                         } 
                                     }
-                                    $header = ',' . substr($header, 0, -1);
+
                                 }
                                 //
                                 //$export_data[$i]['access_level'] =  $employee['access_level'];
@@ -207,7 +221,8 @@ class Export_employees_csv extends Public_Controller
                                 $rows .= $row . PHP_EOL;
                                 $i++;
                             }
-                            $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status' . $header;
+                            $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status' .(count($header) ? ','.implode(',', $header) : '');
+                            
                             $file_content = '';
                             $file_content .= $header_row . PHP_EOL;
                             $file_content .= $rows;

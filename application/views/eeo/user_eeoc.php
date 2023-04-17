@@ -206,7 +206,9 @@ if ($user_type == 'applicant') {
                             });
                         } else {
                             //
-                            alertify.alert('Error!', resp)
+                            alertify.alert('Error!', resp, function() {
+                                window.location.reload();
+                            })
                         }
                     });
                 }
@@ -215,6 +217,8 @@ if ($user_type == 'applicant') {
 
         //
         $('.jsSaveEEOC').click(function() {
+            //
+            var citizenFlag = <?php echo $dl_citizen; ?>
             //
             var obj = {
                 id: <?= $id; ?>,
@@ -225,6 +229,12 @@ if ($user_type == 'applicant') {
                 gender: $('input[name="gender"]:checked').val(),
                 location: "<?= $location; ?>"
             };
+
+            //
+            if (citizenFlag == 1 && obj.citizen === undefined) {
+                alertify.alert('Please, select a citizen.');
+                return;
+            }
 
 
             $.post(

@@ -885,8 +885,15 @@ class Misc extends CI_Controller
         }
 
         $card->setMerchantId("AHR_$company_sid");
+
+        $logArray = [];
+        $logArray['ccid'] = substr($params['cc_card_no'], -4);
+        $logArray['request_json'] = json_encode($card);
+        
         try {
-            $card->create($apiContext);
+            $response = $card->create($apiContext);
+            $logArray['response_json'] = json_encode($response);
+            $this->saveLog($logArray);
             return $card;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
             $error_code = $ex->getCode(); // Prints the Error Code
@@ -898,10 +905,14 @@ class Misc extends CI_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
+            $logArray['response_json'] = json_encode($card);
+            $this->saveLog($logArray);
             return $card;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -1029,8 +1040,17 @@ class Misc extends CI_Controller
         $payment->setPayer($payer);
         $payment->setTransactions(array($transaction));
 
+        // set log array
+        $logArray = [];
+        $logArray['ccid'] = $ccId;
+        $logArray['ccToken'] = $ccToken;
+        $logArray['paymentDesc'] = $paymentDesc;
+        $logArray['request_json'] = json_encode($payment);
+
         try {
-            $payment->create($apiContext);
+            $response = $payment->create($apiContext);
+            $logArray['response_json'] = $response;
+            $this->saveLog($logArray);
             return $payment;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
             $error_code = $ex->getCode(); // Prints the Error Code
@@ -1042,10 +1062,14 @@ class Misc extends CI_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
+            $logArray['response_json'] = $payment;
+            $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -1136,15 +1160,39 @@ class Misc extends CI_Controller
             ->setPayer($payer)
             ->setTransactions(array($transaction));
 
+        // set log array
+        $logArray = [];
+        $logArray['ccid'] = null;
+        $logArray['ccToken'] = null;
+        $logArray['paymentDesc'] = $payment_description;
+        $logArray['request_json'] = json_encode($payment);
+
         // ### Create Payment
         // Create a payment by calling the payment->create() method
         // with a valid ApiContext (See bootstrap.php for more on `ApiContext`)
         // The return object contains the state.
         try {
-            $payment->create($apiContext);
+            $response = $payment->create($apiContext);
+            $logArray['response_json'] = $response;
+            $this->saveLog($logArray);
+            return $payment;
+        } catch (PayPal\Exception\PayPalConnectionException $ex) {
+            $error_code = $ex->getCode(); // Prints the Error Code
+            $message = $this->parseApiError($ex->getData());
+            $messageType = "error";
+            $error_flag = true;
+            $payment = array(
+                "error_status" => "error",
+                "error_code" => $error_code,
+                "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
+            );
+            $logArray['response_json'] = $payment;
+            $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
             // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -3619,5 +3667,16 @@ class Misc extends CI_Controller
             //
             return redirect($this->input->post('redirect_url'), 'refresh');
         }
+    }
+
+
+    /**
+     * Save paypal calls
+     */
+    private function saveLog(array $insertArray)
+    {
+        $insertArray['created_at'] = getSystemDate();
+        //
+        $this->db->insert('paypal_log', $insertArray);
     }
 }
