@@ -46,4 +46,16 @@ class benefits_model extends CI_Model
     }
    
    
+
+    public function GetAllCompanies()
+    {
+        $this->db->select('sid,CompanyName');
+        $this->db->where('parent_sid', 0);
+        $this->db->where('active', 1);
+        $this->db->where('career_page_type', 'standard_career_site');
+        $return = $this->db->get('users')->result_array();
+        return $return;
+    }
+
+
 }

@@ -20,6 +20,10 @@ class Benefits extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name);
         $this->data['page_title'] = 'Benefits Listing';
         $this->data['benifits'] = $this->Benefits_model->GetAllBenifits();
+
+        $this->data['companies'] = $this->Benefits_model->GetAllCompanies();
+       
+
         $this->render('manage_admin/benefits/index', 'admin_master');
     }
 
