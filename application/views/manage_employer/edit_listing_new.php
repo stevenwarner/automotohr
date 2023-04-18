@@ -124,11 +124,11 @@
                                             <li class="form-col-100 autoheight">
                                                 <label class="autoheight" for="select_template">Select Job Description and Job Requirement Templates ( Please read through the templates and edit or review any text that is in "QUOTATIONS" so that it reflects your company branding and message.)</label>
                                                 <div class="csSelect2WithBg">
-                                                    <select class="" id="select_template">
-                                                        <option value="">Select Template</option>
+                                                    <select class="invoice-fields" style="background-color:#fd7a2a" id="select_template">
+                                                        <option value="" style="background-color:#f7f7f7">Select Template</option>
 
                                                         <?php foreach ($templates as $template) { ?>
-                                                            <option id="template_<?php echo $template['sid'] ?>" data-description="<?php echo $template['description'] ?>" data-requirements="<?php echo $template['requirements'] ?>" value="<?php echo $template['sid'] ?>"><?php echo $template['title'] ?></option>
+                                                            <option id="template_<?php echo $template['sid'] ?>" data-description="<?php echo $template['description'] ?>" data-requirements="<?php echo $template['requirements'] ?>" value="<?php echo $template['sid'] ?>" style="background-color:#f7f7f7"><?php echo $template['title'] ?></option>
                                                         <?php           } ?>
                                                     </select>
                                                 </div>
@@ -2000,7 +2000,7 @@
 
 
 <script>
-    $('#select_template').select2();
+   // $('#select_template').select2();
 </script>
 
 <style>
