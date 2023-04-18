@@ -16561,3 +16561,15 @@ if (!function_exists('get_employee_drivers_license')) {
         return $CI->db->get('license_information')->row_array();
     }
 }
+
+//
+if (!function_exists('get_company_module_status')) {
+    function get_company_module_status($companySid, $fieldName)
+    {
+        $CI = &get_instance();
+        $CI->db->select($fieldName);
+        $CI->db->where('user_sid', $companySid);
+        $result = $CI->db->get('portal_employer')->row_array();
+        return $result[$fieldName];
+    }
+}

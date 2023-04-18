@@ -3884,6 +3884,13 @@ class Employee_management extends Public_Controller
     function send_login_credentials_bulk()
     {
         //
+        $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
+        if (get_company_module_status($companyId, 'bulk_email') == 0) {
+            echo "error";
+            exit;
+        }
+
+        //
         $sids = $this->input->post('sids');
         $action = $this->input->post('action');
         //

@@ -1501,6 +1501,12 @@ class Companies extends Admin_Controller
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
 
                         break;
+                    case 'set_bulk_email_status':
+                        $company_sid = $this->input->post('company_sid');
+                        $bulk_email_status = $this->input->post('bulk_email_status');
+                        $this->company_model->set_bulk_email_status($company_sid, $bulk_email_status);
+                        redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
+                        break;
                 }
             }
         } else {

@@ -248,11 +248,11 @@ class Company_model extends CI_Model
             $this->db->group_start();
 
             for ($i = 0; $i < count($multiple_keywords); $i++) {
-                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/','',$multiple_keywords[$i]);
+                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/', '', $multiple_keywords[$i]);
                 $this->db->or_like('table_one.email', $multiple_keywords[$i]);
                 $this->db->or_like('table_one.username', $multiple_keywords[$i]);
                 if ($phoneRegex) {
-                    $this->db->or_like('REGEXP_REPLACE(table_one.PhoneNumber, "[^0-9]", "")', preg_replace('/[^0-9]/','',$multiple_keywords[$i]), false);
+                    $this->db->or_like('REGEXP_REPLACE(table_one.PhoneNumber, "[^0-9]", "")', preg_replace('/[^0-9]/', '', $multiple_keywords[$i]), false);
                 }
                 $this->db->or_like('table_one.job_title', $multiple_keywords[$i]);
                 $this->db->or_like('table_one.access_level', $multiple_keywords[$i]);
@@ -3027,5 +3027,14 @@ class Company_model extends CI_Model
         } else {
             $this->db->insert('helpbox_info_for_company', $dataToInsert);
         }
+    }
+
+    //
+    function set_bulk_email_status($company_sid, $bulk_email_status)
+    {
+        $data = array();
+        $data['bulk_email'] = intval($bulk_email_status);
+        $this->db->where('user_sid', $company_sid);
+        $this->db->update('portal_employer', $data);
     }
 }
