@@ -86,7 +86,7 @@ class Job_listings extends Public_Controller
                 $job_listing_template_group                                     = 1;
             }
 
-            $current_employees                                                  = $this->dashboard_model->GetAllUsers($company_id);
+            $current_employees                                                  = $this->dashboard_model->GetAllUsersNew($company_id);
             $data['current_employees']                                          = $current_employees;
 
             $config = array(
