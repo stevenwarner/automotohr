@@ -202,12 +202,12 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         </div>
                                         <?php if ($canEMSPermission) { ?>
 
+                                            <div class="col-xs-2 text-left" style="padding-right: 0px;">
+                                                <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
+                                                
+                                            </div>
+                                            
                                             <?php if (get_company_module_status($session['company_detail']['sid'], 'bulk_email') == 1) { ?>
-                                                <div class="col-xs-2 text-left" style="padding-right: 0px;">
-                                                    <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
-
-                                                </div>
-
                                                 <div class="col-xs-3 text-left" style="padding-right: 0px; padding-left: 5px">
                                                     <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email_login"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Login Email</a>
 

@@ -452,11 +452,6 @@ class Send_manual_email extends Public_Controller
         $attach_body       = '';
         $attachments       = $this->portal_email_templates_model->get_all_email_template_attachments($temp_id);
 
-        if (get_company_module_status($company_sid, 'bulk_email') == 0) {
-            $sent_flag = false;
-            exit;
-        }
-
 
         if (sizeof($attachments) > 0) {
             $attach_body .= '<br> Please Review The Following Attachments: <br>';
