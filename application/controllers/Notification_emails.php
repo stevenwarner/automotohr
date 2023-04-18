@@ -83,7 +83,7 @@ class Notification_emails extends Public_Controller
             $data['sub_title'] = "Employment Notification";
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $perform_action = $this->input->post('perform_action');
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -223,7 +223,7 @@ class Notification_emails extends Public_Controller
             $data['sub_title'] = "Employment Notification";
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $perform_action = $this->input->post('perform_action');
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -364,7 +364,7 @@ class Notification_emails extends Public_Controller
             $data['sub_title']                                                  = "Add New Billing & Invoice Notification";
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $perform_action                                                     = $this->input->post('perform_action');
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -503,7 +503,8 @@ class Notification_emails extends Public_Controller
             $data['helping_info'] = NEW_APPLICANT;
             $data['notification_type'] = $notifications_type;
             $data['sub_title'] = "Add New Applicant Email Notification";
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
+                       
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -595,7 +596,6 @@ class Notification_emails extends Public_Controller
                         $data_to_save['company_sid'] = $company_sid;
                         $data_to_save['date_added'] = date('Y-m-d H:i:s');
 
-
                         foreach ($formpost as $key => $value) { //Check Form Post and handle status - start
                             if ($key != 'status') { // remove status from save data as it is an DB Enum
                                 $data_to_save[$key] = $value;
@@ -647,7 +647,7 @@ class Notification_emails extends Public_Controller
             $data['helping_info'] = VIDEO_INTERVIEW;
             $data['notification_type'] = $notifications_type;
             $data['sub_title'] = "Add Video Interview System Notification";
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -903,7 +903,7 @@ class Notification_emails extends Public_Controller
             $data['helping_info']                                               = APPROVAL_RIGHTS;
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add New Approval Email Notification';
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -1217,7 +1217,7 @@ class Notification_emails extends Public_Controller
             $data['title']                                                      = 'Onboarding Request Notifications';
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add Onboarding Request Notification';
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -1355,7 +1355,7 @@ class Notification_emails extends Public_Controller
             $data['title']                                                      = 'Offer Letter Notifications';
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add Offer Letter Notification';
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -1493,7 +1493,7 @@ class Notification_emails extends Public_Controller
             $data['title']                                                      = 'Document Notifications';
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add Document Notification';
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -1631,7 +1631,7 @@ class Notification_emails extends Public_Controller
             $data['title']                                                      = 'General Information Notifications';
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add General Informationt Notification';
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -1769,7 +1769,7 @@ class Notification_emails extends Public_Controller
             $data['title']                                                      = 'Employee Profile Notifications';
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add Employee profile Notification';
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
@@ -1909,7 +1909,7 @@ class Notification_emails extends Public_Controller
             $data['title']                                                      = 'Default Document Approvers Notifications';
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = 'Add Employee as Defallt Approver';
-            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';

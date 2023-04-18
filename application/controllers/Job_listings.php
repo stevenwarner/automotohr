@@ -819,13 +819,15 @@ class Job_listings extends Public_Controller
                 $company_id                                                     = $data['session']['company_detail']['sid'];
                 $logged_in_user_sid                                             = $data['session']['employer_detail']['sid'];
                 $data['logged_in_user_sid']                                     = $logged_in_user_sid;
-                $current_employees                                              = $this->dashboard_model->GetAllUsers($company_id);
+                $current_employees                                              = $this->dashboard_model->GetAllUsersNew($company_id);
                 $data['current_employees']                                      = $current_employees;
                 $id                                                             = $this->uri->segment(2);
                 $myListing                                                      = $this->dashboard_model->get_listing($id, $company_id);
                 $visible_to                                                     = $this->job_listings_visibility_model->GetEmployerIds($id);
                 $jobs_approval_module_status                                    = get_job_approval_module_status($company_id);
                 $has_rights                                                     = 0;
+
+
 
                 if (!is_admin($employer_id) && $jobs_approval_module_status == 1) {
                     $employee_approval_module_status                            = get_job_approval_module_status($employer_id);
@@ -1426,7 +1428,7 @@ class Job_listings extends Public_Controller
                 $logged_in_user_sid                                             = $data['session']['employer_detail']['sid'];
                 $job_listing_template_group                                     = $data['session']['company_detail']['job_listing_template_group'];
                 $data['logged_in_user_sid']                                     = $logged_in_user_sid;
-                $current_employees                                              = $this->dashboard_model->GetAllUsers($company_id);
+                $current_employees                                              = $this->dashboard_model->GetAllUsersNew($company_id);
                 $data['current_employees']                                      = $current_employees;
 
                 if (empty($job_listing_template_group)) {
