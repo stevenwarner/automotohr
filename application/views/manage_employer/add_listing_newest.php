@@ -254,7 +254,7 @@
                                                 </li>
 
                                                 <li class="form-col-100 autoheight">
-                                                <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
+                                                    <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
 
                                                 </li>
                                                 <li class="form-col-50-left">
@@ -281,10 +281,10 @@
                                                     <li class="form-col-100 autoheight">
                                                         <label class="autoheight" for="select_template">Select Job Description and Job Requirement Templates ( Please read through the templates and edit or review any text that is in "QUOTATIONS" so that it reflects your company branding and message.)</label>
                                                         <div class="csSelect2WithBg">
-                                                            <select class="" id="select_template">
-                                                                <option value="">Select Template</option>
+                                                            <select class="invoice-fields" id="select_template" style="background-color:#fd7a2a">
+                                                                <option value="" style="background-color:#f7f7f7">Select Template</option>
                                                                 <?php foreach ($templates as $template) { ?>
-                                                                    <option id="template_<?php echo $template['sid'] ?>" data-description="<?php echo $template['description'] ?>" data-requirements="<?php echo $template['requirements'] ?>" value="<?php echo $template['sid'] ?>"><?php echo $template['title'] ?></option>
+                                                                    <option style="background-color:#f7f7f7" id="template_<?php echo $template['sid'] ?>" data-description="<?php echo $template['description'] ?>" data-requirements="<?php echo $template['requirements'] ?>" value="<?php echo $template['sid'] ?>"><?php echo $template['title'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -1493,12 +1493,9 @@ document.getElementById("name").addEventListener("input", function() {
         }
     </script>
 <?php } ?>
-<script>
-    $('#select_template').select2();
-</script>
 
 <style>
-    .csSelect2WithBg  .select2-selection__rendered{
+    .csSelect2WithBg .select2-selection__rendered {
         background-color: #fd7a2a;
         color: #fff !important;
     }
