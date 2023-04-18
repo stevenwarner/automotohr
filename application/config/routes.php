@@ -1697,3 +1697,7 @@ $route['payroll/signatories/(:num)/(:num)']['delete'] = 'gusto/Gusto_payroll/del
 $route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory/$1';
 // Sync
 $route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
+// Company documents
+$route['payroll/company/documents']['get'] = 'payroll/Payroll/companyDocuments';
+$route['payroll/company/document/(:num)/sign']['get'] = 'payroll/Payroll/companyDocumentsSign/$1';
+$route['payroll/company/document/(:num)/view']['get'] = 'payroll/Payroll/companyDocumentView/$1';

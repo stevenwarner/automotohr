@@ -11,7 +11,7 @@ if (isPayrollOrPlus()) {
     //
 
     if ($isGustoAdmin > 0) {
-        
+
         $navpills[] = [
             'title' => 'Company',
             'url' => '/company',
@@ -36,7 +36,6 @@ if (isPayrollOrPlus()) {
         ];
         $navpills[] = [
             'title' => 'Manage Admins',
-            // 'url' => '/manage-admin',
             'url' => 'avascript:void(0)',
             'slug' => '',
             'icon' => 'users',
@@ -55,15 +54,6 @@ if (isPayrollOrPlus()) {
             'data-cid' => $companySid
         ];
 
-
-        $navpills[] = [
-            'title' => 'Service Terms',
-            'url' => '/service-terms',
-            'slug' => '',
-            'icon' => 'file-pdf-o',
-            'segment' => 'service'
-        ];
-
         $navpills[] = [
             'title' => 'Settings',
             'url' => '/settings',
@@ -74,6 +64,7 @@ if (isPayrollOrPlus()) {
     }
 }
 
+
 $navpills[] = [
     'title' => 'My Pay Stubs',
     'url' => '/my',
@@ -82,21 +73,43 @@ $navpills[] = [
     'segment' => 'my'
 ];
 
+if ($isGustoAdmin > 0) {
+    $navpills[] = [
+        'title' => 'More',
+        'submenu' => [
+            [
+                'title' => 'Service Terms',
+                'url' => '/service-terms',
+                'slug' => '',
+                'icon' => 'file-pdf-o',
+                'segment' => 'service'
+            ],
+            [
+                'title' => 'Company Documents',
+                'url' => '/company/documents',
+                'slug' => '',
+                'icon' => 'file',
+                'segment' => 'service'
+            ],
+        ],
+    ];
+}
+
 //
 $lis = '';
 //
-$baseURL = base_url('payroll/');
+$baseURL = base_url('payroll');
 //
 foreach ($navpills as $tab) {
     //
     if (isset($tab['submenu'])) {
         $tmp = '';
         foreach ($tab['submenu'] as $item) {
-            $tmp .= '<li><a href="' . ($item["url"] == "javascript:void(0)" ? $item['url'] : $baseURL . $item['url']) . '" ' . (isset($item['class']) ? 'class="' . ($item['class']) . '"' : '') . '><i class="fa fa-' . ($item['icon']) . '"></i> ' . ($item['title']) . '</a></li>';
+            $tmp .= '<li><a href="' . ($item["url"] == "javascript:void(0)" ? $item['url'] : $baseURL . $item['url']) . '" ' . (isset($item['class']) ? 'class="csF16 ' . ($item['class']) . '"' : '') . '><i class="fa fa-' . ($item['icon']) . '"></i> ' . ($item['title']) . '</a></li>';
         }
         //
         $lis .= '<li class="has">';
-        $lis .= '   <a href="javascript:void(0)"><i class="fa fa-' . ($tab['icon']) . '"></i>&nbsp;&nbsp;' . ($tab['title']) . ' &nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>';
+        $lis .= '   <a href="javascript:void(0)" class="csF16"><i class="fa fa-' . ($tab['icon']) . '"></i>&nbsp;&nbsp;' . ($tab['title']) . ' &nbsp;&nbsp;<i class="fa fa-caret-down"></i></a>';
         $lis .= '   <ul>';
         $lis .=       $tmp;
         $lis .= '   </ul>';

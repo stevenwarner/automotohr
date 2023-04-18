@@ -381,28 +381,23 @@ class Gusto_payroll_model extends CI_Model
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
 
         // sync company locations
-        $this->syncCompanyLocations($companyId, $companyDetails);
-
-        // lets sync the company admins
-        $this->syncCompanyAdmins($companyId, $companyDetails);
-
-        // lets sync the company signatory
-        $this->syncCompanySignatory($companyId, $companyDetails);
-
-        // lets sync the company federal tax
-        $this->syncCompanyFederalTax($companyId, $companyDetails);
-
-        // lets sync the company industry
-        $this->syncCompanyIndustry($companyId, $companyDetails);
-        
-        // lets sync the company tax liabilities
-        $this->syncCompanyTaxLiabilities($companyId, $companyDetails);
-        
-        // lets sync the company payment config
-        $this->syncCompanyPaymentConfig($companyId, $companyDetails);
-        
-        // lets sync the company payment config
-        $this->syncCompanyPaymentConfig($companyId, $companyDetails);
+        // $this->syncCompanyLocations($companyId, $companyDetails);
+        // // lets sync the company admins
+        // $this->syncCompanyAdmins($companyId, $companyDetails);
+        // // lets sync the company signatory
+        // $this->syncCompanySignatory($companyId, $companyDetails);
+        // // lets sync the company federal tax
+        // $this->syncCompanyFederalTax($companyId, $companyDetails);
+        // // lets sync the company industry
+        // $this->syncCompanyIndustry($companyId, $companyDetails);
+        // // lets sync the company tax liabilities
+        // $this->syncCompanyTaxLiabilities($companyId, $companyDetails);
+        // // lets sync the company payment config
+        // $this->syncCompanyPaymentConfig($companyId, $companyDetails);
+        // // lets sync the company bank accounts
+        // $this->syncCompanyBankAccounts($companyId, $companyDetails);
+        // lets sync the company documents
+        $this->syncCompanyDocuments($companyId, $companyDetails);
     }
 
     /**
@@ -768,6 +763,114 @@ class Gusto_payroll_model extends CI_Model
                 $dataArray['updated_at'] = getSystemDate();
                 //
                 $this->db->where($whereArray)->update($mainTable, $dataArray);
+            }
+            //
+            return true;
+        }
+        //
+        return false;
+    }
+    
+    /**
+     * Sync company bank accounts with Gusto
+     *
+     * @param int   $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyBankAccounts(int $companyId, array $companyDetails)
+    {
+        //
+        $response = getCompanyBankAccounts($companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (!isset($response['errors']) && $response) {
+            //
+            $mainTable = 'payroll_company_bank_accounts';
+
+            foreach( $response as $bankAccount)
+            {
+                //
+                $dataArray = [];
+                $dataArray['routing_number'] = $bankAccount['routing_number'];
+                $dataArray['account_number'] = $bankAccount['hidden_account_number'];
+                $dataArray['account_type'] = strtolower($bankAccount['account_type']);
+                $dataArray['status'] = $bankAccount['verification_status'];
+                $dataArray['verification_type'] = $bankAccount['verification_type'];
+                //
+                $whereArray = [
+                    'company_sid' => $companyId,
+                    'payroll_uuid' => $bankAccount['uuid']
+                ];
+                //
+                if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+                    //
+                    $dataArray['payroll_uuid'] = $bankAccount['uuid'];
+                    $dataArray['company_sid'] = $companyId;
+                    $dataArray['created_at'] = $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                } else {
+                    //
+                    $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->where($whereArray)->update($mainTable, $dataArray);
+                }
+
+            }
+            //
+            return true;
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Sync company bank accounts with Gusto
+     *
+     * @param int   $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyDocuments(int $companyId, array $companyDetails)
+    {
+        //
+        $response = getCompanyDocuments($companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (!isset($response['errors']) && $response) {
+            //
+            $mainTable = 'payroll_company_documents';
+
+            foreach ($response as $bankAccount) {
+                //
+                $dataArray = [];
+                $dataArray['document_name'] = $bankAccount['name'];
+                $dataArray['document_title'] = $bankAccount['title'];
+                $dataArray['document_description'] = $bankAccount['description'];
+                $dataArray['require_signing'] = (int)$bankAccount['requires_signing'];
+                $dataArray['draft'] = (int)$bankAccount['draft'];
+                //
+                $whereArray = [
+                    'company_sid' => $companyId,
+                    'gusto_uuid' => $bankAccount['uuid']
+                ];
+                //
+                if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+                    //
+                    $dataArray['gusto_uuid'] = $bankAccount['uuid'];
+                    $dataArray['company_sid'] = $companyId;
+                    $dataArray['created_at'] = $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                } else {
+                    //
+                    $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->where($whereArray)->update($mainTable, $dataArray);
+                }
             }
             //
             return true;

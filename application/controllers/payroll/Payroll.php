@@ -137,7 +137,8 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function ManageAdmins(){
+    function ManageAdmins()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -155,22 +156,24 @@ class Payroll extends CI_Controller
         $this->data['company_sid'] = $company_sid;
         //
         $this->data['CompanyAdmins'] = $this->pm->GetPayrollColumns(
-            'payroll_company_admin', [
+            'payroll_company_admin',
+            [
                 'company_sid' => $company_sid
             ],
             'sid, first_name, last_name, email_address, phone_number, created_at, updated_at'
         );
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/manage_admin')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/manage_admin')
+            ->view('main/footer');
     }
 
     /**
      * 
      */
-    function ServiceTerms(){
+    function ServiceTerms()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -182,7 +185,8 @@ class Payroll extends CI_Controller
         $company_sid = $session['company_detail']['sid'];
         //
         $termsAccepted = $this->pm->GetPayrollColumn(
-            'payroll_companies', [
+            'payroll_companies',
+            [
                 "company_sid" => $company_sid
             ],
             'terms_accepted, ip_address, email_address, employee_sid, accepted_at',
@@ -190,7 +194,8 @@ class Payroll extends CI_Controller
         );
 
         $this->data['canSign'] = $this->pm->GetPayrollColumn(
-            'payroll_company_admin', [
+            'payroll_company_admin',
+            [
                 "company_sid" => $company_sid,
                 "email_address" => $session['employer_detail']['email'],
             ],
@@ -205,22 +210,24 @@ class Payroll extends CI_Controller
         $this->data['company_sid'] = $company_sid;
         //
         $this->data['CompanyAdmins'] = $this->pm->GetPayrollColumns(
-            'payroll_company_admin', [
+            'payroll_company_admin',
+            [
                 'company_sid' => $company_sid
             ],
             'sid, first_name, last_name, email_address, phone_number, created_at, updated_at'
         );
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/service_terms')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/service_terms')
+            ->view('main/footer');
     }
-    
+
     /**
      * 
      */
-    function Settings(){
+    function Settings()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -236,19 +243,21 @@ class Payroll extends CI_Controller
         ];
         //
         $this->data['payroll_settings'] = $this->pm->GetPayrollColumn(
-            'payroll_settings', [
+            'payroll_settings',
+            [
                 'company_sid' => $company_sid
             ],
             'sid, fast_payment_limit, payment_speed',
             false
         );
         //
-        if(!$this->data['payroll_settings']){
+        if (!$this->data['payroll_settings']) {
             //
             $this->GetAndSetPaymentConfig($company_sid);
             //
             $this->data['payroll_settings'] = $this->pm->GetPayrollColumn(
-                'payroll_settings', [
+                'payroll_settings',
+                [
                     'company_sid' => $company_sid
                 ],
                 'sid, fast_payment_limit, payment_speed',
@@ -257,12 +266,12 @@ class Payroll extends CI_Controller
         }
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/configs')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/configs')
+            ->view('main/footer');
     }
 
-     /**
+    /**
      * 
      */
     function MyPayStubs()
@@ -286,7 +295,7 @@ class Payroll extends CI_Controller
         //
         $myId = $session['employer_detail']['sid'];
         //
-        $this->CheckAndFetchPayStubs($company_sid, $myId);
+        // $this->CheckAndFetchPayStubs($company_sid, $myId);
         //
         // Get employee saved paystubs
         $this->data['payStubs'] = $this->pm->GetPayrollColumns(
@@ -347,7 +356,8 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function PayrollHistory(){
+    function PayrollHistory()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -1773,7 +1783,7 @@ class Payroll extends CI_Controller
             'refresh_token',
             'gusto_company_sid'
         ]);
-        
+
         // Get employee UUID
         $employeeUid = $this->pm->GetPayrollColumn(
             'payroll_employees',
@@ -1798,8 +1808,6 @@ class Payroll extends CI_Controller
         $query = '?processed=true';
         //
         $response = GetUnProcessedPayrolls($query, $company);
-
-//_e($response,true,true);
 
         //
         if (isset($response['errors'])) {
@@ -1928,11 +1936,12 @@ class Payroll extends CI_Controller
             $this->db->insert('payrolls', $insertArray);
         }
     }
-    
+
     /**
      * 
      */
-    private function GetAndSetPaymentConfig($companyId){
+    private function GetAndSetPaymentConfig($companyId)
+    {
         // Get company
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1942,8 +1951,8 @@ class Payroll extends CI_Controller
         //
         $response = GetPaymentConfig($company);
         //
-        if(isset($response['name'])){
-            return ;
+        if (isset($response['name'])) {
+            return;
         }
         //
         $ai = [];
@@ -1955,8 +1964,166 @@ class Payroll extends CI_Controller
         $ai['partner_uid'] = $response['partner_uuid'];
         //
         $this->pm->InsertPayroll(
-            'payroll_settings', 
+            'payroll_settings',
             $ai
         );
+    }
+
+
+    /**
+     * 
+     */
+    public function companyDocuments()
+    {
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Company Documents';
+        $this->data['load_view'] = 0;
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['canSign'] = $this->pm->GetPayrollColumn(
+            'payroll_company_admin',
+            [
+                "company_sid" => $company_sid,
+                "email_address" => $session['employer_detail']['email'],
+            ],
+            'sid',
+            true
+        );
+        if (!$this->data['canSign']) {
+            return redirect('/payroll', 'auto');
+        }
+        //
+        $this->data['payrollDocuments'] =
+            $this->pm->GetPayrollColumns(
+                'payroll_company_documents',
+                [
+                    "company_sid" => $company_sid
+                ],
+                '*'
+            );
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $this->load
+            ->view('main/header', $this->data)
+            ->view('payroll/company_documents')
+            ->view('main/footer');
+    }
+
+    /**
+     * 
+     */
+    public function companyDocumentView(int $documentId)
+    {
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | View Company Document';
+        $this->data['load_view'] = 0;
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['canSign'] = $this->pm->GetPayrollColumn(
+            'payroll_company_admin',
+            [
+                "company_sid" => $company_sid,
+                "email_address" => $session['employer_detail']['email'],
+            ],
+            'sid',
+            true
+        );
+        if (!$this->data['canSign']) {
+            return redirect('/payroll', 'auto');
+        }
+        //
+        $this->data['payrollDocument'] =
+            $this->pm->GetPayrollColumn(
+                'payroll_company_documents',
+                [
+                    "company_sid" => $company_sid,
+                    "sid" => $documentId
+                ],
+                '*',
+                false
+            );
+        //
+        $company = $this->pm->GetCompany($company_sid, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        // get the document
+        $response = getCompanyDocumentPDF($this->data['payrollDocument']['gusto_uuid'], $company);
+        // $this->data['fileName'] = download_and_upload_file_to_aws($response['document_urls'], '.pdf');
+        $this->data['fileName'] = $response['document_urls'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $this->load
+            ->view('main/header', $this->data)
+            ->view('payroll/company_document_view')
+            ->view('main/footer');
+    }
+
+    /**
+     * 
+     */
+    public function companyDocumentSign(int $documentId)
+    {
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Sign Company Document';
+        $this->data['load_view'] = 0;
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['canSign'] = $this->pm->GetPayrollColumn(
+            'payroll_company_admin',
+            [
+                "company_sid" => $company_sid,
+                "email_address" => $session['employer_detail']['email'],
+            ],
+            'sid',
+            true
+        );
+        if (!$this->data['canSign']) {
+            return redirect('/payroll', 'auto');
+        }
+        //
+        $this->data['payrollDocument'] =
+        $this->pm->GetPayrollColumn(
+            'payroll_company_documents',
+            [
+                "company_sid" => $company_sid,
+                "sid" => $documentId
+            ],
+            '*',
+            false
+        );
+        //
+        $company = $this->pm->GetCompany($company_sid, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        // get the document
+        $response = getCompanyDocumentPDF($this->data['payrollDocument']['gusto_uuid'], $company);
+        // $this->data['fileName'] = download_and_upload_file_to_aws($response['document_urls'], '.pdf');
+        $this->data['fileName'] = $response['document_urls'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $this->load
+            ->view('main/header', $this->data)
+            ->view('payroll/company_document_view')
+            ->view('main/footer');
     }
 }

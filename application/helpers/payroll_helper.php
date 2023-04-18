@@ -1375,8 +1375,7 @@ if (!function_exists('GetEmployeePayStubs')) {
             [
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer ' . ($company['access_token']) . '',
-                    'Content-Type: application/json'
+                    'Authorization: Bearer ' . ($company['access_token']) . ''
                 )
             ]
         );
@@ -1939,6 +1938,9 @@ if (!function_exists('PayrollURL')) {
         $urls['getCompanyPaymentConfig'] = 'v1/companies/' . ($key) . '/payment_configs';
 
         $urls['getCompanyPayrolls'] = 'v1/companies/' . ($key) . '/payrolls';
+        $urls['getCompanyBankAccounts'] = 'v1/companies/' . ($key) . '/bank_accounts';
+        $urls['getCompanyDocuments'] = 'v1/companies/' . ($key) . '/forms';
+        $urls['getCompanyDocumentPDF'] = 'v1/forms/' . ($key) . '/pdf';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -2914,6 +2916,173 @@ if (!function_exists('getCompanyPayrolls')) {
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
                 return getCompanyPayrolls($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+
+if (!function_exists('getCompanyBankAccounts')) {
+    /**
+     * Get company bank accounts on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyBankAccounts($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . ''
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyBankAccounts', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyBankAccounts($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+
+if (!function_exists('getCompanyDocuments')) {
+    /**
+     * Get company forms from Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyDocuments($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . ''
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyDocuments', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyDocuments($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+
+if (!function_exists('getCompanyDocumentPDF')) {
+    /**
+     * Get company signed form
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param string $formId
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getCompanyDocumentPDF($formId, $company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . ''
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getCompanyDocumentPDF', $formId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        return [
+            "uuid" => "23123",
+            "document_urls" => "https://s3.amazonaws.com/static.zenpayroll-demo.com/assets/forms/7757842009103552/original/company_direct_deposit20210930-6-mt5rua.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIATJTIZ6DUHUMRXO5M%2F20230418%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230418T074458Z&X-Amz-Expires=30&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGAaCXVzLWVhc3QtMSJHMEUCIQDnJ6s4IOXCpxkFsSqIMLYXlaRETdo4qv3SlGrdf7pGJgIgRFNZF6llXCifbAy2KyVdWj8pqWeStUqd8hPtsxDKJqMqngUIWRAAGgwyMjY3NzkzMjg3NDQiDDMNDShDGvdW2lz0byr7BHayOrU66DtRMVKSQW3Z%2FNAvT71DiAxfM9K%2F3Z%2BK2xEOMRAVMmKawnHN2hDy0qbnYxuvTzyrgQG2TpezUM4tAw98Er7ZCbISrKhBlWmpn93tioM06A30i5SaEDUToh5%2Bj4EtRl%2F1HNPJ2bnz9%2FGJD%2FcQJaW3LEhkK8J0Jhu%2FRbkRo3kxH3%2BgV%2BeDVfOTIJXe0JjM3KyJ0bNQHuKprVHLj0xiXzvFLPNWo9DGmc31v3%2FcrRmQWrMbDi7zwL7vMuifJSr%2BCmOJomHmOc7nC2lBjP9yePRBEFaOWDT%2F0fQD9zI95ahC5eGEx0CW8%2B0gmL%2BIy0qLDsPTw0%2FabYLPiRv3gh7dPLE1KWYRknlab6j%2BrKKckkO6FdMfeiJ%2BUvNV897oshEtUA7ecEwmuT5au6UmVr9OdHAV8lep6nXF6VA3PXXOoPfskN7sYIuGgrM60iCuPwXrkpmiJG2qRFvK5Z48UdAtJD%2F99lAhpnxax4KaiN95coQR0MJG9i16fosCIRIFEQDjq2C5oAIi9Zhvvou2h%2Bhv9HfJGuyf%2BjezDHvotzUPRgG3xKAe7yzgDjjr%2BLeLdQCzRrJqOdZYjVIlN99W9wnz1ByunQVjtVm5b4oyjIvT8kUmB9Ma83dPIWZURmoMonfzEiGDSn0mJJAh2s4wWkgdAy8HRknJHwTy4Rh%2FuWLS9a1LZ4WMd2mH33eLkLVpX67I0NCOLFl7rsqYadXKqlMskoaGeHHjEa%2BwZF6myeaCSgDYMCPw1PUVJNmcmiFAJkfgx4DLfB%2Biagsi1y8EKnbi9CkgUDQMlXrURUdbjTVYK7JcF0%2B4zC7EIPLaipCi0kPamGcIXW412kbaMPqU%2BaEGOpsBzIfFf1BIEOPSH6x1YFi6BsrSGP9vNu8RRa7pyBgf0pgBa5umrMHnDUB%2F%2FFf%2FX49036ZXkpUsb521Hb0rLi8KWLOgdUXf4QwDO%2FIdV%2BPcgKh5XYr%2B46918sTXYWFZCDzpmihPF0iOSYjIeJ8qQD%2Fos0xmhXu6YKndla7M6VaMTPfCejR%2FJ1v4IYP4%2F0wnkWZS1IeBRrYrs3cBPFA%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=7fbdc78c2868aa4c59e5700ad3c3b451e94f427db37711765c74e586f051e786"
+        ];
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyDocumentPDF($formId, $company, $headers);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
