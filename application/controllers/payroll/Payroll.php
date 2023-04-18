@@ -416,27 +416,61 @@ class Payroll extends CI_Controller
         // Get processed payrolls
         // Get the company pay periods
         $response = $this->PayPeriods($this->data['companyId']);
-        // let's reverse the pay periods
-        $this->data['period'] = array_reverse($response['Response'])[0];
-        //
-        if (!$this->data['period']['payroll']['processed']) {
-            // Get the single payroll
-            $this->data['payroll'] = $this->GetUnProcessedPayrolls(
-                $this->data['companyId'],
-                $this->data['period']['start_date'],
-                $this->data['period']['end_date']
-            )['Response'][0];
-            //
-            $version = $this->data['payroll']['version'];
-            //
-            $this->UpdatePayrollForDemo(
-                $this->data['payroll']['employee_compensations'],
-                $version,
-                $this->data['payroll']['pay_period']['start_date'],
-                $this->data['payroll']['pay_period']['end_date']
-            );
-        }
+
+        // // let's reverse the pay periods
+        // $this->data['period'] = array_reverse($response['Response'])[0];
+        // //
+        // if (!$this->data['period']['payroll']['processed']) {
+        //     // Get the single payroll
+        //     $this->data['payroll'] = $this->GetUnProcessedPayrolls(
+        //         $this->data['companyId'],
+        //         $this->data['period']['start_date'],
+        //         $this->data['period']['end_date']
+        //     )['Response'][0];
+        //     //
+        //     $version = $this->data['payroll']['version'];
+        //     //
+        //     $this->UpdatePayrollForDemo(
+        //         $this->data['payroll']['employee_compensations'],
+        //         $version,
+        //         $this->data['payroll']['pay_period']['start_date'],
+        //         $this->data['payroll']['pay_period']['end_date']
+        //     );
+        // }
         // Get Gusto Company Details
+        //
+        //
+        $payPeriods = array_filter($response['Response'], function ($period) {
+            return empty($period['payroll']['processed']) && $period['payroll']['payroll_type'] == 'regular' ? true : false;
+        });
+        //
+        $payrollInfo = array();
+        //
+        if ($payPeriods) {
+            foreach ($payPeriods as $period) {
+                //
+                $payRoll = $this->GetUnProcessedPayrolls(
+                    $this->data['companyId'],
+                    $period['start_date'],
+                    $period['end_date']
+                )['Response'][0];
+                //
+                if ($payRoll && $period['pay_schedule_id'] == $payRoll['pay_period']['pay_schedule_id']) {
+                    $payrollInfo[] = [
+                        'payroll_id' => $payRoll['payroll_id'],
+                        'start_date' => $payRoll['pay_period']['start_date'],
+                        'end_date' => $payRoll['pay_period']['end_date'],
+                        'pay_schedule_id' => $payRoll['pay_period']['pay_schedule_id'],
+                        'check_date' => $payRoll['check_date'],
+                        'payroll_deadline' => $payRoll['payroll_deadline'],
+                        'version' => $payRoll['version']
+                    ];
+                }
+            }
+        }
+        //
+        $this->data['period'] = $payrollInfo;
+        //
         $this->load
             ->view('main/header', $this->data)
             ->view('payroll/create')
@@ -1436,12 +1470,11 @@ class Payroll extends CI_Controller
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
             'refresh_token',
-            'gusto_company_uid'
+            'gusto_company_sid'
         ]);
 
         //
-        $query = '?processed=false&start_date=' . ($startDate) . '&end_date=' . ($endDate) . '';
-        $query = '?processed=false';
+        $query = '?processing_statuses=unprocessed&payroll_types=regular&start_date=' . ($startDate) . '&end_date=' . ($endDate) . '';
         //
         $response = GetUnProcessedPayrolls($query, $company);
         //

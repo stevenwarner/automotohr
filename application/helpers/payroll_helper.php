@@ -1550,26 +1550,22 @@ if (!function_exists('PayPeriods')) {
 }
 
 if (!function_exists('GetUnProcessedPayrolls')) {
-    function GetUnProcessedPayrolls($query, $company, $force = false)
+    function GetUnProcessedPayrolls($query, $company, $headers=[])
     {
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
         //
         $url = PayrollURL('GetUnProcessedPayrolls', $company['gusto_company_sid'], $query);
-        //
-        if (!$force) {
-            $tr = CacheHolder($url);
-            if ($tr) {
-                return $tr;
-            }
-        }
         //
         $response =  MakeCall(
             $url,
             [
                 CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer ' . ($company['access_token']) . '',
-                    'Content-Type: application/json'
-                )
+                CURLOPT_HTTPHEADER => $callHeaders
             ],
             $force
         );
@@ -1867,7 +1863,8 @@ if (!function_exists('PayrollURL')) {
         $urls['Me'] = 'v1/me';
         $urls['CreatePartnerCompany'] = 'v1/partner_managed_companies';
         $urls['RefreshToken'] = 'oauth/token?' . ($key);
-        $urls['PayPeriods'] = 'v1/companies/' . ($key) . '/pay_periods?start_date=' . $key1;
+        // $urls['PayPeriods'] = 'v1/companies/' . ($key) . '/pay_periods?start_date=' . $key1;
+        $urls['PayPeriods'] = 'v1/companies/' . ($key) . '/pay_periods';
         $urls['Payrolls'] = 'v1/companies/' . ($key) . '/pay_schedules';
         $urls['AddBankAccountToPayroll'] = 'v1/employees/' . ($key) . '/bank_accounts';
         $urls['DeleteBankAccountToPayroll'] = 'v1/employees/' . ($key) . '/bank_accounts/' . $key1;

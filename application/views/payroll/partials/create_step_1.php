@@ -1123,7 +1123,6 @@ if(!empty($Payroll['employee_compensations'])):
             tr +='    <td class="vam">';
             tr +='        <strong>'+(payrollEmployee.lastName+', '+payrollEmployee.firstName)+'</strong><br/>';
             tr +='        <p class="ma10">$'+(numberFormat(payrollEmployee.rate)+' /'+(payrollEmployee.rateUnit.toLowerCase()))+'</p>';
-            tr +='        <a class="ma10 csFC2" href="javascript:void(0)"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Edit Personal Note</a>';
             tr +='    </td>';
             if(payrollEmployee.excluded){
                 tr +='    <td class="vam text-right" colspan="4">';

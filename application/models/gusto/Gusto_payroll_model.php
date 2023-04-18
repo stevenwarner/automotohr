@@ -381,28 +381,28 @@ class Gusto_payroll_model extends CI_Model
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
 
         // sync company locations
-        $this->syncCompanyLocations($companyId, $companyDetails);
+        // $this->syncCompanyLocations($companyId, $companyDetails);
 
-        // lets sync the company admins
-        $this->syncCompanyAdmins($companyId, $companyDetails);
+        // // lets sync the company admins
+        // $this->syncCompanyAdmins($companyId, $companyDetails);
 
-        // lets sync the company signatory
-        $this->syncCompanySignatory($companyId, $companyDetails);
+        // // lets sync the company signatory
+        // $this->syncCompanySignatory($companyId, $companyDetails);
 
-        // lets sync the company federal tax
-        $this->syncCompanyFederalTax($companyId, $companyDetails);
+        // // lets sync the company federal tax
+        // $this->syncCompanyFederalTax($companyId, $companyDetails);
 
-        // lets sync the company industry
-        $this->syncCompanyIndustry($companyId, $companyDetails);
+        // // lets sync the company industry
+        // $this->syncCompanyIndustry($companyId, $companyDetails);
         
-        // lets sync the company tax liabilities
-        $this->syncCompanyTaxLiabilities($companyId, $companyDetails);
+        // // lets sync the company tax liabilities
+        // $this->syncCompanyTaxLiabilities($companyId, $companyDetails);
+        
+        // // lets sync the company payment config
+        // $this->syncCompanyPaymentConfig($companyId, $companyDetails);
         
         // lets sync the company payment config
-        $this->syncCompanyPaymentConfig($companyId, $companyDetails);
-        
-        // lets sync the company payment config
-        $this->syncCompanyPaymentConfig($companyId, $companyDetails);
+        $this->syncCompanyPayrollHistory($companyId, $companyDetails);
     }
 
     /**
@@ -741,6 +741,52 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getCompanyPaymentConfig($companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (!isset($response['errors']) && $response) {
+            //
+            $mainTable = 'payroll_settings';
+            //
+            $dataArray = [];
+            $dataArray['partner_uuid'] = $response['partner_uuid'];
+            $dataArray['fast_payment_limit'] = $response['fast_payment_limit'];
+            $dataArray['payment_speed'] = $response['payment_speed'];
+            //
+            $whereArray = [
+                'company_sid' => $companyId
+            ];
+            //
+            if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+                //
+                $dataArray['company_sid'] = $companyId;
+                $dataArray['created_at'] = $dataArray['updated_at'] = getSystemDate();
+                //
+                $this->db->insert($mainTable, $dataArray);
+            } else {
+                //
+                $dataArray['updated_at'] = getSystemDate();
+                //
+                $this->db->where($whereArray)->update($mainTable, $dataArray);
+            }
+            //
+            return true;
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Sync company payment history
+     *
+     * @param int   $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyPayrollHistory(int $companyId, array $companyDetails)
+    {
+        //
+        $response = GetUnProcessedPayrolls('', $companyDetails, [
             'X-Gusto-API-Version: 2023-03-01'
         ]);
         //
