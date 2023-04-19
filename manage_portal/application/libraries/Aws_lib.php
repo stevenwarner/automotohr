@@ -19,13 +19,18 @@ class Aws_lib
      */
     public function __construct()
     {
+
+        $AWSCREDS = getCreds('AHR')->AWS;
+
         $this->s3 = S3Client::factory(array(
-            'region' => 'us-west-1',
-            'version' => '2006-03-01',
+           
+            'region' => $AWSCREDS->REGION,
+            'version' => $AWSCREDS->VERSION,
             'credentials' => array(
-                'key' => 'AKIAVVRKKAOC5IFJ5RZV',
-                'secret' => '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'
+                'key' => $AWSCREDS->CREDENTIALS->KEY,
+                'secret' => $AWSCREDS->CREDENTIALS->SECRET
             )
+
         ));
     }
 
@@ -129,11 +134,12 @@ class Aws_lib
         return $data;
     }
 
-    public function copy_object($sourceBucket, $sourceKeyname, $targetBucket, $targetKeyname, $acl_permission_string = 'public-read'){
+    public function copy_object($sourceBucket, $sourceKeyname, $targetBucket, $targetKeyname, $acl_permission_string = 'public-read')
+    {
 
         $file_exists = $this->s3->doesObjectExist($sourceBucket, $sourceKeyname);
 
-        if($file_exists) {
+        if ($file_exists) {
             $this->s3->copyObject(array(
                 'Bucket' => $targetBucket,
                 'Key' => $targetKeyname,
@@ -143,17 +149,18 @@ class Aws_lib
         }
     }
 
-    public function check_if_file_exists($bucket_name, $key_name){
+    public function check_if_file_exists($bucket_name, $key_name)
+    {
         return $this->s3->doesObjectExist($bucket_name, $key_name);
     }
-    
-    public function copy_files_buckets_to_server($bucket, $key, $path, $file_name) {
-            $result = $this->s3->getObject(array(
-                    'Bucket' => $bucket,
-                    'Key'    => $key,
-                    'SaveAs' => $path . $file_name
-                ));
-            return $result;
+
+    public function copy_files_buckets_to_server($bucket, $key, $path, $file_name)
+    {
+        $result = $this->s3->getObject(array(
+            'Bucket' => $bucket,
+            'Key'    => $key,
+            'SaveAs' => $path . $file_name
+        ));
+        return $result;
     }
-            
 }
