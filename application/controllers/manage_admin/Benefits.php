@@ -22,7 +22,7 @@ class Benefits extends Admin_Controller
         $this->data['benifits'] = $this->Benefits_model->GetAllBenifits();
 
         $this->data['companies'] = $this->Benefits_model->GetAllCompanies();
-       
+
 
         $this->render('manage_admin/benefits/index', 'admin_master');
     }
@@ -77,5 +77,20 @@ class Benefits extends Admin_Controller
             $this->data['page_title'] = 'Edit Benifit';
             $this->render('manage_admin/benefits/add_edit', 'admin_master');
         }
+    }
+
+
+    //
+    public function company_benefits($companySid)
+    {
+        $redirect_url = 'manage_admin';
+        $function_name = 'benifits';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name);
+        $this->data['page_title'] = 'Company Benefits Listing';
+        $this->data['benifits'] = $this->Benefits_model->GetAllBenifits();
+        $this->render('manage_admin/benefits/company_benefits_list', 'admin_master');
     }
 }

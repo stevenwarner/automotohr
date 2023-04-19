@@ -66,36 +66,6 @@
                                                 </tbody>
                                             </table>
                                         </div>
-
-
-                                        <br>
-                                        <br>
-                                        <div class="hr-promotions table-responsive">
-                                            <div class="heading-title page-title">
-                                                <div class="add-new-promotions"> Companies </div>
-                                            </div>
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="col-xs-8">Name</th>
-                                                        <th width="1%" colspan="3" class="actions">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php foreach ($companies as $company) { ?>
-                                                        <tr>
-                                                            <td><?php echo $company['CompanyName'] ?></td>
-                                                            <td>
-                                                                <a href="<?php echo base_url('manage_admin/company_benefits') . '/' . $company['sid']; ?>" class="hr-edit-btn">Manage</a>
-                                                            </td>
-
-                                                            <td>
-                                                            </td>
-                                                        </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

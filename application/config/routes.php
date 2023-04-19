@@ -1705,3 +1705,8 @@ $route['download_document_zip/(:any)']['get'] = 'Hr_documents_management/downloa
 $route['manage_admin/benefits'] = 'manage_admin/benefits/index';
 $route['manage_admin/benefits/add'] = 'manage_admin/benefits/add_edit';
 $route['manage_admin/benefits/edit/(:any)'] = 'manage_admin/benefits/add_edit/$1';
+
+// Company Benefits
+$route['manage_admin/company_benefits/(:any)'] = 'manage_admin/benefits/company_benefits/$1';
+$route['manage_admin/company_benefits/add'] = 'manage_admin/benefits/add_edit';
+$route['manage_admin/company_benefits/edit/(:any)'] = 'manage_admin/benefits/add_edit/$1';
