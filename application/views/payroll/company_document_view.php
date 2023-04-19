@@ -9,6 +9,11 @@
         <?php $this->load->view('payroll/navbar'); ?>
         <br>
         <div class="row">
+            <div class="col-sm-12 text-right">
+                <a href="<?=base_url('payroll/company/documents');?>" class="btn btn-black">Back To Documents</a>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-sm-12">
                 <h3><strong>Company Document - <?= $payrollDocument['document_title']; ?></strong></h3>
             </div>
@@ -35,6 +40,6 @@
         <?php
         } ?>
         <!-- Main area -->
-        <iframe src="<?= $fileName; ?>" style="height: 200px; width: 100%;" frameborder="0"></iframe>
+        <iframe src="<?= $fileName; ?>" style="height: 2000px; width: 100%;" frameborder="0"></iframe>
     </div>
 </div>

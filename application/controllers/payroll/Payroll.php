@@ -2060,8 +2060,7 @@ class Payroll extends CI_Controller
         ]);
         // get the document
         $response = getCompanyDocumentPDF($this->data['payrollDocument']['gusto_uuid'], $company);
-        // $this->data['fileName'] = download_and_upload_file_to_aws($response['document_urls'], '.pdf');
-        $this->data['fileName'] = $response['document_urls'];
+        $this->data['fileName'] = $response['document_url'];
         //
         $this->data['company_sid'] = $company_sid;
         //
