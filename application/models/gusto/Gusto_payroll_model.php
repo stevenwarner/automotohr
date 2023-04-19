@@ -359,6 +359,7 @@ class Gusto_payroll_model extends CI_Model
             $this->db
             ->select('
                 gusto_company_uid,
+                gusto_company_sid,
                 refresh_token,
                 access_token
             ')
@@ -786,7 +787,7 @@ class Gusto_payroll_model extends CI_Model
     public function syncCompanyPayrollHistory(int $companyId, array $companyDetails)
     {
         //
-        $response = GetUnProcessedPayrolls('', $companyDetails, [
+        $response = GetCompletedProcessedPayrolls('', $companyDetails, [
             'X-Gusto-API-Version: 2023-03-01'
         ]);
         //
