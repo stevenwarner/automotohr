@@ -1836,6 +1836,60 @@ class Employee_management extends Public_Controller
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
 
+                    //
+
+                    // load the model
+                    $this->load->model('2022/Gusto_model', 'gusto_model');
+                    //
+                    $this->gusto_model->handleMultipleColumns(
+                        [
+                            'first_name' => $employee_detail['first_name'],
+                            'middle_name' => $employee_detail['middle_name'],
+                            'last_name' => $employee_detail['last_name'],
+                            'email' => $employee_detail['email'],
+                            'ssn' => $employee_detail['ssn'],
+                            'dob' => $employee_detail['dob']
+                        ],
+                        [
+
+                            'first_name' => $this->input->post('first_name', true),
+                            'middle_name' => $this->input->post('middle_name', true),
+                            'last_name' => $this->input->post('last_name', true),
+                            'email' => $this->input->post('email', true),
+                            'ssn' => $this->input->post('SSN', true),
+                            'dob' => $this->input->post('DOB', true)
+
+                        ],
+                        $sid,
+                        $company_id,
+                        $employer_id
+                    );
+
+
+
+                    //Gusto Employee Address Update
+                    $this->gusto_model->gustoUpdateEmployeeAddress(
+                        [
+                            'Location_Address' => $employee_detail['Location_Address'],
+                            'Location_Address_2' => $employee_detail['Location_Address_2'],
+                            'Location_City' => $employee_detail['Location_City'],
+                            'Location_State' => $employee_detail['Location_State'],
+                            'Location_ZipCode' => $employee_detail['Location_ZipCode'],
+                        ],
+                        [
+
+                            'Location_Address' => $this->input->post('Location_Address', true),
+                            'Location_Address_2' => $this->input->post('Location_Address_2', true),
+                            'Location_City' => $this->input->post('Location_City', true),
+                            'Location_State' => $this->input->post('Location_State', true),
+                            'Location_ZipCode' => $this->input->post('Location_ZipCode', true),
+
+                        ],
+                        $sid,
+                        $employer_id
+                    );
+
+
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
