@@ -379,25 +379,26 @@ class Gusto_payroll_model extends CI_Model
     {
         // get company details
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
-
         // sync company locations
-        // $this->syncCompanyLocations($companyId, $companyDetails);
-        // // lets sync the company admins
-        // $this->syncCompanyAdmins($companyId, $companyDetails);
-        // // lets sync the company signatory
-        // $this->syncCompanySignatory($companyId, $companyDetails);
-        // // lets sync the company federal tax
-        // $this->syncCompanyFederalTax($companyId, $companyDetails);
-        // // lets sync the company industry
-        // $this->syncCompanyIndustry($companyId, $companyDetails);
-        // // lets sync the company tax liabilities
-        // $this->syncCompanyTaxLiabilities($companyId, $companyDetails);
-        // // lets sync the company payment config
-        // $this->syncCompanyPaymentConfig($companyId, $companyDetails);
-        // // lets sync the company bank accounts
-        // $this->syncCompanyBankAccounts($companyId, $companyDetails);
+        $this->syncCompanyLocations($companyId, $companyDetails);
+        // lets sync the company admins
+        $this->syncCompanyAdmins($companyId, $companyDetails);
+        // lets sync the company signatory
+        $this->syncCompanySignatory($companyId, $companyDetails);
+        // lets sync the company federal tax
+        $this->syncCompanyFederalTax($companyId, $companyDetails);
+        // lets sync the company industry
+        $this->syncCompanyIndustry($companyId, $companyDetails);
+        // lets sync the company tax liabilities
+        $this->syncCompanyTaxLiabilities($companyId, $companyDetails);
+        // lets sync the company payment config
+        $this->syncCompanyPaymentConfig($companyId, $companyDetails);
+        // lets sync the company bank accounts
+        $this->syncCompanyBankAccounts($companyId, $companyDetails);
         // lets sync the company documents
         $this->syncCompanyDocuments($companyId, $companyDetails);
+        // lets sync employees
+        $this->syncEmployees($companyId, $companyDetails);
     }
 
     /**
@@ -605,7 +606,7 @@ class Gusto_payroll_model extends CI_Model
             $dataArray['has_ein'] = $response['has_ein'];
             $dataArray['ein_verified'] = $response['ein_verified'];
             $dataArray['legal_name'] = $response['legal_name'];
-            
+
             //
             $whereArray = [
                 'company_sid' => $companyId
@@ -675,7 +676,7 @@ class Gusto_payroll_model extends CI_Model
         //
         return false;
     }
-    
+
     /**
      * Sync company tax liabilities with Gusto
      *
@@ -770,7 +771,7 @@ class Gusto_payroll_model extends CI_Model
         //
         return false;
     }
-    
+
     /**
      * Sync company bank accounts with Gusto
      *
@@ -789,8 +790,7 @@ class Gusto_payroll_model extends CI_Model
             //
             $mainTable = 'payroll_company_bank_accounts';
 
-            foreach( $response as $bankAccount)
-            {
+            foreach ($response as $bankAccount) {
                 //
                 $dataArray = [];
                 $dataArray['routing_number'] = $bankAccount['routing_number'];
@@ -817,7 +817,6 @@ class Gusto_payroll_model extends CI_Model
                     //
                     $this->db->where($whereArray)->update($mainTable, $dataArray);
                 }
-
             }
             //
             return true;
@@ -877,5 +876,290 @@ class Gusto_payroll_model extends CI_Model
         }
         //
         return false;
+    }
+
+    /**
+     * Sync employees with Gusto
+     *
+     * @param int   $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncEmployees(int $companyId, array $companyDetails)
+    {
+        // get all employees on Gusto
+        $gustoLinkedEmployees = $this->db
+            ->select('
+            employee_sid,
+            company_sid,
+            work_address_sid,
+            payroll_employee_id,
+            payroll_employee_uuid,
+            version
+        ')
+            ->where(['company_sid' => $companyId])
+            ->get('payroll_employees')
+            ->result_array();
+        //
+        if (!$gustoLinkedEmployees) {
+            return false;
+        }
+        //
+        foreach ($gustoLinkedEmployees as $employee) {
+            // get employee profile
+            $gustoEmployee = getEmployeeFromGusto($employee['payroll_employee_uuid'], $companyDetails);
+            //
+            if (!isset($gustoEmployee['errors']) && $gustoEmployee) {
+                // update personal profile
+                $this->db
+                    ->where('employee_sid', $employee['employee_sid'])
+                    ->update('payroll_employees', [
+                        'version' => $gustoEmployee['version'],
+                        'updated_at' => getSystemDate(),
+                    ]);
+                // home address
+                if ($gustoEmployee['home_address']) {
+                    //
+                    $updArray = [];
+                    $updArray['version'] = $gustoEmployee['home_address']['version'];
+                    $updArray['street_1'] = $gustoEmployee['home_address']['street_1'];
+                    $updArray['street_2'] = $gustoEmployee['home_address']['street_2'];
+                    $updArray['city'] = $gustoEmployee['home_address']['city'];
+                    $updArray['state'] = $gustoEmployee['home_address']['state'];
+                    $updArray['zip'] = $gustoEmployee['home_address']['zip'];
+                    $updArray['country'] = $gustoEmployee['home_address']['country'];
+                    $updArray['active'] = $gustoEmployee['home_address']['active'];
+                    //
+                    if (!$this->db->where('employee_sid', $employee['employee_sid'])->count_all_results('payroll_employee_address')) {
+                        //
+                        $updArray['employee_sid'] = $employee['employee_sid'];
+                        $updArray['created_at'] = $updArray['updated_at'] = getSystemDate();
+                        // insert
+                        $this->db->insert('payroll_employee_address', $updArray);
+                    } else {
+                        $updArray['updated_at'] = getSystemDate();
+                        // update
+                        $this->db->where('employee_sid', $employee['employee_sid'])->update('payroll_employee_address', $updArray);
+                    }
+                }
+                // jobs
+                if ($gustoEmployee['jobs']) {
+                    //
+                    foreach ($gustoEmployee['jobs'] as $job) {
+                        // check if job already exists
+                        $result = $this->db
+                            ->select('sid')
+                            ->where([
+                                'employee_sid' => $employee['employee_sid'],
+                                'payroll_job_id' => $job['id']
+                            ])
+                            ->get('payroll_employee_jobs')
+                            ->row_array();
+                        // set job array
+                        $updArray = [];
+                        $updArray['payroll_job_id'] = $job['id'];
+                        $updArray['payroll_uid'] = $job['uuid'];
+                        $updArray['payroll_location_id'] = $job['location_id'];
+                        $updArray['current_compensation_uuid'] = $job['current_compensation_uuid'];
+                        $updArray['current_compensation_id'] = $job['current_compensation_id'];
+                        $updArray['title'] = $job['title'];
+                        $updArray['hire_date'] = $job['hire_date'];
+                        $updArray['rate'] = $job['rate'];
+                        $updArray['payment_unit'] = $job['payment_unit'];
+                        $updArray['is_primary'] = $job['primary'];
+                        $updArray['version'] = $job['version'];
+                        //
+                        if (!$result) {
+                            //
+                            $updArray['employee_sid'] = $employee['employee_sid'];
+                            $updArray['created_at'] = $updArray['updated_at'] = getSystemDate();
+                            // insert
+                            $this->db->insert(
+                                'payroll_employee_jobs',
+                                $updArray
+                            );
+                            $jobId = $this->db->insert_id();
+                        } else {
+                            // update
+                            $updArray['updated_at'] = getSystemDate();
+                            // insert
+                            $this->db
+                                ->where('employee_sid', $employee['employee_sid'])
+                                ->update(
+                                    'payroll_employee_jobs',
+                                    $updArray
+                                );
+                            $jobId = $result['sid'];
+                        }
+
+                        // handle compensations
+                        if ($job['compensations']) {
+                            foreach ($job['compensations'] as $compensation) {
+                                // check if compensation already exists
+                                $result = $this->db
+                                    ->select('sid')
+                                    ->where([
+                                        'payroll_job_sid' => $jobId
+                                    ])
+                                    ->get('payroll_employee_job_compensations')
+                                    ->row_array();
+                                // set job array
+                                $updArray = [];
+                                $updArray['gusto_job_id'] = $compensation['job_id'];
+                                $updArray['payroll_id'] = $compensation['id'];
+                                $updArray['rate'] = $compensation['rate'];
+                                $updArray['payment_unit'] = $compensation['payment_unit'];
+                                $updArray['version'] = $compensation['version'];
+                                $updArray['flsa_status'] = $compensation['flsa_status'];
+                                $updArray['effective_date'] = $compensation['effective_date'];
+                                $updArray['adjust_for_minimum_wage'] = $compensation['adjust_for_minimum_wage'];
+                                $updArray['minimum_wages'] = json_encode($compensation['minimum_wages']);
+
+                                //
+                                if (!$result) {
+                                    //
+                                    $updArray['payroll_job_sid'] = $jobId;
+                                    $updArray['created_at'] = $updArray['updated_at'] = getSystemDate();
+                                    // insert
+                                    $this->db->insert(
+                                        'payroll_employee_job_compensations',
+                                        $updArray
+                                    );
+                                } else {
+                                    // update
+                                    $updArray['updated_at'] = getSystemDate();
+                                    // insert
+                                    $this->db
+                                        ->where(['payroll_job_sid' => $jobId])
+                                        ->update(
+                                            'payroll_employee_job_compensations',
+                                            $updArray
+                                        );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // get employee federal tax
+            $gustoEmployeeFederalTax = getEmployeeFederalTaxFromGusto($employee['payroll_employee_uuid'], $companyDetails);
+            //
+            if (!isset($gustoEmployeeFederalTax['errors']) && $gustoEmployeeFederalTax) {
+                // set update array
+                $updArray = [];
+                $updArray['filing_status'] = $gustoEmployeeFederalTax['filing_status'];
+                $updArray['extra_withholding'] = $gustoEmployeeFederalTax['extra_withholding'];
+                $updArray['multiple_jobs'] = $gustoEmployeeFederalTax['two_jobs'];
+                $updArray['dependent'] = $gustoEmployeeFederalTax['dependents_amount'];
+                $updArray['other_income'] = $gustoEmployeeFederalTax['other_income'];
+                $updArray['deductions'] = $gustoEmployeeFederalTax['deductions'];
+                $updArray['w4_data_type'] = $gustoEmployeeFederalTax['w4_data_type'];
+                $updArray['version'] = $gustoEmployeeFederalTax['version'];
+                $updArray['additional_withholding'] = $gustoEmployeeFederalTax['additional_withholding'] ? (int)$gustoEmployeeFederalTax['additional_withholding'] : 0;
+                //
+                if (!$this->db->where(['employee_sid' => $employee['employee_sid']])->count_all_results('payroll_employee_federal_tax')) {
+                    //
+                    $updArray['employee_sid'] = $employee['employee_sid'];
+                    $updArray['company_sid'] = $employee['company_sid'];
+                    $updArray['created_at'] = $updArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert('payroll_employee_federal_tax', $updArray);
+                } else {
+                    //
+                    $updArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db
+                        ->where(['employee_sid' => $employee['employee_sid']])
+                        ->update('payroll_employee_federal_tax', $updArray);
+                }
+            }
+
+            // get employee state tax
+            $gustoEmployeeStateTax = getEmployeeStateTaxFromGusto($employee['payroll_employee_uuid'], $companyDetails);
+            //
+            if (!isset($gustoEmployeeStateTax['errors']) && $gustoEmployeeStateTax) {
+                foreach ($gustoEmployeeStateTax as $stateTax) {
+                    // set update array
+                    $updArray = [];
+                    $updArray['state'] = $stateTax['state'];
+                    $updArray['state_json'] = json_encode($stateTax);
+                    //
+                    if (!$this->db->where(['employee_sid' => $employee['employee_sid'], 'state' => $stateTax['state']])->count_all_results('payroll_employee_state_tax')) {
+                        //
+                        $updArray['employee_sid'] = $employee['employee_sid'];
+                        $updArray['company_sid'] = $employee['company_sid'];
+                        $updArray['created_at'] = $updArray['updated_at'] = getSystemDate();
+                        //
+                        $this->db->insert('payroll_employee_state_tax', $updArray);
+                    } else {
+                        //
+                        $updArray['updated_at'] = getSystemDate();
+                        //
+                        $this->db
+                            ->where(['employee_sid' => $employee['employee_sid'], 'state' => $stateTax['state']])
+                            ->update('payroll_employee_state_tax', $updArray);
+                    }
+                }
+            }
+
+            // get employee payment method
+            $gustoEmployeePaymentMethod = getEmployeePaymentMethodFromGusto($employee['payroll_employee_uuid'], $companyDetails);
+
+            if (!isset($gustoEmployeePaymentMethod['errors']) && $gustoEmployeePaymentMethod) {
+                // set update array
+                $updArray = [];
+                $updArray['payment_method'] = $gustoEmployeePaymentMethod['type'];
+                $updArray['split_method'] = $gustoEmployeePaymentMethod['split_by'];
+                $updArray['splits'] = json_encode($gustoEmployeePaymentMethod['splits']??[]);
+                $updArray['version'] = $gustoEmployeePaymentMethod['version'];
+                //
+                if (!$this->db->where(['employee_sid' => $employee['employee_sid']])->count_all_results('payroll_employee_payment_method')) {
+                    //
+                    $updArray['employee_sid'] = $employee['employee_sid'];
+                    $updArray['company_sid'] = $employee['company_sid'];
+                    $updArray['created_at'] = $updArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert('payroll_employee_payment_method', $updArray);
+                } else {
+                    //
+                    $updArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db
+                        ->where(['employee_sid' => $employee['employee_sid']])
+                        ->update('payroll_employee_payment_method', $updArray);
+                }
+            }
+
+            $gustoEmployeeBankAccounts = getEmployeeBankAccountsFromGusto($employee['payroll_employee_uuid'], $companyDetails);
+            if (!isset($gustoEmployeeBankAccounts['errors']) && $gustoEmployeeBankAccounts) {
+                foreach($gustoEmployeeBankAccounts as $account) {
+                    // set update array
+                    $updArray = [];
+                    $updArray['account_type'] = $account['account_type'];
+                    $updArray['name'] = $account['name'];
+                    $updArray['routing_number'] = $account['routing_number'];
+                    $updArray['account_number'] = $account['hidden_account_number'];
+                    //
+                    if (!$this->db->where(['employee_sid' => $employee['employee_sid']])->count_all_results('payroll_employee_bank_accounts')) {
+                        //
+                        $updArray['payroll_bank_uuid'] = $employee['uuid'];
+                        $updArray['employee_sid'] = $employee['employee_sid'];
+                        $updArray['created_at'] = $updArray['updated_at'] = getSystemDate();
+                        //
+                        $this->db->insert('payroll_employee_bank_accounts', $updArray);
+                    } else {
+                        //
+                        $updArray['updated_at'] = getSystemDate();
+                        //
+                        $this->db
+                        ->where(['employee_sid' => $employee['employee_sid']])
+                        ->update('payroll_employee_bank_accounts', $updArray);
+                    }
+                }
+            }
+        }
+        //
+        return true;
     }
 }
