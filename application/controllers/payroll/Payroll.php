@@ -355,10 +355,10 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         $this->data['hide_employer_section'] = 1;
         // Get processed payrolls
-        $this->CheckAndGetProcessedPayrolls($this->data['companyId']);
+        
         //
         $this->data['payrollHistory'] = $this->pm->GetPayrollColumns(
-            'payrolls',
+            'payroll_company_processed_history',
             [
                 'company_sid' => $this->data['companyId']
             ],
@@ -387,15 +387,20 @@ class Payroll extends CI_Controller
         $this->data['hide_employer_section'] = 1;
         //
         $this->data['payrollHistory'] = $this->pm->GetPayrollColumn(
-            'payrolls',
+            'payroll_company_processed_history',
             [
                 'company_sid' => $this->data['companyId'],
                 'sid' => $id
             ],
-            'sid, "Regular" as type, payroll_json',
+            'sid, "Regular" as type, payroll_json, company_sid, payroll_id',
             false
         );
+        $Receipt = $this->getProcessedPayrollsReceipt($this->data['companyId'],$this->data['payrollHistory']['payroll_id']);
         $this->data['Payroll'] = json_decode($this->data['payrollHistory']['payroll_json'], true);
+        $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
+        $this->data['companyname'] = getCompanyNameBySid($this->data['payrollHistory']['company_sid']);
+        _e($Receipt,true,true);
+        // _e($this->data['Payroll'],true);
         // Get Gusto Company Details
         $this->load
             ->view('main/header', $this->data)
@@ -1447,7 +1452,7 @@ class Payroll extends CI_Controller
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
             'refresh_token',
-            'gusto_company_sid'
+            'gusto_company_uid'
         ]);
 
         //
@@ -1963,5 +1968,40 @@ class Payroll extends CI_Controller
             'payroll_settings', 
             $ai
         );
+    }
+
+     /**
+     * 
+     */
+    private function getProcessedPayrollsReceipt($companyId, $payrollUid)
+    {
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = getProcessedPayrollsReceipt($payrollUid, $company);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else {
+            //
+            return [
+                'Status' => true,
+                'Response' => $response,
+            ];
+        }
     }
 }

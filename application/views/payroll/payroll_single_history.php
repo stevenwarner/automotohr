@@ -5,22 +5,32 @@
         <br />
         <!-- Main Content Area -->
         <div class="row">
-            <!-- Sidebar -->
-            <?php $this->load->view('employee_info_sidebar_ems'); ?>
             <!--  -->
-            <div class="col-sm-9 col-xs-12">
+            <div class="col-sm-12 col-xs-12">
                 <!--  -->
-                <div class="">
-                    <span class="pull-left">
-                        <h3 class="">Regular Payroll Summary | <?=formatDateToDB($Payroll['check_date'], DB_DATE, DATE);?> </h3>
-                    </span>
+                <div class="row">
+                    <!--  -->
+                    <div class="col-sm-12">
+                        <span class="pull-left">
+                            <h3 class="">Regular Payroll Summary | <?=formatDateToDB($Payroll['check_date'], DB_DATE, DATE);?> </h3>
+                        </span>
+                    </div>    
                 </div>
                 <!--  -->
                 <div class="row">
                     <!--  -->
                     <div class="col-sm-8">
                         <div class="jumbotron p10">
-                            <h4>Payroll receipt #<?=$Payroll['payroll_uuid'];?></h4>
+                            <h4><strong>Payroll receipt</strong> <span class="pull-right">#<?=$Payroll['payroll_uuid'];?></span></h4>
+                            <hr>
+                            <span><strong>From:</strong>  <?php echo $companyname?></span>
+                            <br>
+                            <span><strong>To:</strong> Payroll recipients</span>
+                            <br>
+                            <br>
+                            <span>For funds debited on <strong><?=formatDateToDB($Payroll['payroll_deadline'], DB_DATE, DATE);?></strong></span>
+                            <hr>
+                            <h4><strong>Total</strong> <span class="pull-right">$<?=number_format($Payroll['totals']['company_debit'], 2);?></span></h4>
                         </div>
                     </div>
                     <!--  -->
@@ -45,6 +55,7 @@
                         </div>
                     </div>
                 </div>
+                <?php //_e($PayrollEmployees,true); ?>
                 <!-- Tabs -->
                 <div class="jsPageTabContainer">
                     <!-- Hours and earnings -->

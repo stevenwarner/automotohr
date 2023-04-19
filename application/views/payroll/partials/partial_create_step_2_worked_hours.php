@@ -106,6 +106,7 @@
                                 <!--  -->
                                 <?php foreach($Payroll['employee_compensations'] as $row): ?>
                                     <?php 
+                                    _e($PayrollEmployees,true);
                                         //
                                         $emp = $PayrollEmployees[$row['employee_id']];
                                         //

@@ -1551,7 +1551,8 @@ if (!function_exists('GetCompletedProcessedPayrolls')) {
         //
         $callHeaders = array_merge($callHeaders, $headers);
         //
-        $url = PayrollURL('GetCompletedProcessedPayrolls', $company['gusto_company_sid']);
+        $url = PayrollURL('GetCompletedProcessedPayrolls', $company['gusto_company_uid']);
+        $url = PayrollURL('GetCompletedProcessedPayrolls', $company['gusto_company_uid']).'?processing_statuses=processed&payroll_types=regular&include=totals,payroll_status_meta';
         //
         $response =  MakeCall(
             $url,
@@ -1560,7 +1561,6 @@ if (!function_exists('GetCompletedProcessedPayrolls')) {
                 CURLOPT_HTTPHEADER => $callHeaders
             ]
         );
-        _e($response,true);
         //
         if (isset($response['errors']['auth'])) {
             // Lets Refresh the token
@@ -1929,6 +1929,7 @@ if (!function_exists('PayrollURL')) {
         $urls['GetCompletedProcessedPayrolls'] = 'v1/companies/' . ($key) . '/payrolls';
 
         $urls['getCompanyPayrolls'] = 'v1/companies/' . ($key) . '/payrolls';
+        $urls['getPayrollReceipt'] = 'v1/payrolls/' . ($key) . '/receipt';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -2923,7 +2924,7 @@ if (!function_exists('GetUnProcessedPayrolls')) {
         //
         $callHeaders = array_merge($callHeaders, $headers);
         //
-        $url = PayrollURL('GetUnProcessedPayrolls', $company['gusto_company_sid'], $query);
+        $url = PayrollURL('GetUnProcessedPayrolls', $company['gusto_company_uid'], $query);
         //
         $response =  MakeCall(
             $url,
@@ -2958,3 +2959,48 @@ if (!function_exists('GetUnProcessedPayrolls')) {
         }
     }
 }
+
+if (!function_exists('getProcessedPayrollsReceipt')) {
+    function getProcessedPayrollsReceipt($payRollId, $company, $headers=[])
+    {
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $url = PayrollURL('getPayrollReceipt', $payRollId);
+        //
+        $response =  MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return GetUnProcessedPayrolls($query, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            CacheHolder($url, $response);
+            //
+            return $response;
+        }
+    }
+}    

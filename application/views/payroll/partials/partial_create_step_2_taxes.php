@@ -168,7 +168,7 @@
                             </td>
                             <td class="text-right ban vam">
                                 <p>
-                                    $<?=number_format($taxDebitArray['total'], 2);?>
+                                    $<?=number_format($Payroll['totals']['tax_debit'], 2);?>
                                 </p>
                             </td>
                         </tr>

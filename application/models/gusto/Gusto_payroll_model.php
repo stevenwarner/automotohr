@@ -359,7 +359,6 @@ class Gusto_payroll_model extends CI_Model
             $this->db
             ->select('
                 gusto_company_uid,
-                gusto_company_sid,
                 refresh_token,
                 access_token
             ')
@@ -793,29 +792,36 @@ class Gusto_payroll_model extends CI_Model
         //
         if (!isset($response['errors']) && $response) {
             //
-            $mainTable = 'payroll_settings';
+            $mainTable = 'payroll_company_processed_history';
             //
-            $dataArray = [];
-            $dataArray['partner_uuid'] = $response['partner_uuid'];
-            $dataArray['fast_payment_limit'] = $response['fast_payment_limit'];
-            $dataArray['payment_speed'] = $response['payment_speed'];
-            //
-            $whereArray = [
-                'company_sid' => $companyId
-            ];
-            //
-            if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+            foreach ($response as $payroll) {
+                $payrollId = $payroll['payroll_uuid'];
                 //
-                $dataArray['company_sid'] = $companyId;
-                $dataArray['created_at'] = $dataArray['updated_at'] = getSystemDate();
+                $dataArray = [];
+                $dataArray['start_date'] = $payroll['pay_period']['start_date'];
+                $dataArray['end_date'] = $payroll['pay_period']['end_date'];
+                $dataArray['schedule_id'] = $payroll['pay_period']['pay_schedule_uuid'];
+                $dataArray['payroll_json'] = json_encode($payroll);
                 //
-                $this->db->insert($mainTable, $dataArray);
-            } else {
+                $whereArray = [
+                    'payroll_id' => $payrollId
+                ];
                 //
-                $dataArray['updated_at'] = getSystemDate();
-                //
-                $this->db->where($whereArray)->update($mainTable, $dataArray);
+                if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+                    //
+                    $dataArray['payroll_id'] = $payrollId;
+                    $dataArray['company_sid'] = $companyId;
+                    $dataArray['created_at'] = $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                } else {
+                    //
+                    $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->where($whereArray)->update($mainTable, $dataArray);
+                }
             }
+            
             //
             return true;
         }
