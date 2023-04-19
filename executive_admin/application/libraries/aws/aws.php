@@ -12,7 +12,7 @@ class AwsSdk
     function __construct()
     {
         //
-        $awsCredentials = getCreds('AHR')->AWS;
+        $awsCredentials = getCreds('AHR')->AWS->CREDENTIALS;
         //
         $this->client = S3Client::factory(array(
             'key' => $awsCredentials->KEY,
