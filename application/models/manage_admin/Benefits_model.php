@@ -30,7 +30,7 @@ class benefits_model extends CI_Model
             $this->UpdateBenifit($sid, $insertData);
         }
     }
-  
+
     //
     public function GetAllBenifits()
     {
@@ -38,14 +38,14 @@ class benefits_model extends CI_Model
         return $this->db->get('default_benifits')->result_array();
     }
 
-  
+
     public function GetBenifitById($sid)
     {
         $this->db->where('sid', $sid);
         return $this->db->get('default_benifits')->row_array();
     }
-   
-   
+
+
 
     public function GetAllCompanies()
     {
@@ -58,10 +58,46 @@ class benefits_model extends CI_Model
     }
 
 
+    //
+    public function GetAllCompanyBenifits($comapnySid)
+    {
+        $this->db->where('company_sid', $comapnySid);
+        $this->db->order_by('sid', 'Desc');
+        return $this->db->get('company_benefits')->result_array();
+    }
 
 
+    //
+    public function SaveCompanyBenefit($sid, $insertData)
+    {
+        if ($sid == null) {
+            $this->InsertCompanyBenefit($insertData);
+        } else {
+            $this->UpdateCompanyBenefit($sid, $insertData);
+        }
+    }
 
 
-    
+    //
+    public function InsertCompanyBenefit($insertData)
+    {
 
+        $this->db->insert('company_benefits', $insertData);
+    }
+    //
+    public function UpdateCompanyBenefit($sid, $insertData)
+    {
+        $this->db->where('sid', $sid);
+        $this->db->update('company_benefits', $insertData);
+    }
+
+
+    //
+    public function get_default_benefits_category()
+    {
+
+        $this->db->select('distinct(category)');
+        $this->db->order_by('category', 'ASC');
+        return $this->db->get('default_benifits')->result_array();
+    }
 }

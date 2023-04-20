@@ -18,36 +18,27 @@
                                         <div class="hr-promotions table-responsive">
                                             <div class="heading-title page-title">
                                                 <div class="add-new-promotions">
-                                                    <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/benefits/add/'); ?>">Add New</a>
+                                                    <a href="<?php echo base_url('manage_admin/benefits'); ?>" class="site-btn pull-right"><i class="fa fa-reply"></i>&nbsp;Back</a>
+                                                    <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/company_benefits/add/' . $companySid); ?>">Add New</a>
                                                 </div>
                                             </div>
                                             <table>
                                                 <thead>
                                                     <tr>
-                                                        <th class="col-xs-8">Name</th>
-                                                        <th class="col-xs-8">Category</th>
-                                                        <th class="col-xs-8">Type Number</th>
-                                                        <th class="col-xs-8">Pretax</th>
-                                                        <th class="col-xs-8">Posttax</th>
-                                                        <th class="col-xs-8">Imputed</th>
-                                                        <th class="col-xs-8">Health Care</th>
-                                                        <th class="col-xs-8">Retirement</th>
-                                                        <th class="col-xs-8">Yearly Limit</th>
+                                                        <th class="col-xs-3">Name</th>
+                                                        <th class="col-xs-3">Category</th>
+                                                        <th class="col-xs-3">Employee Deduction</th>
+                                                        <th class="col-xs-3">Employee Contribution</th>
                                                         <th width="1%" colspan="3" class="actions">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($benifits as $benifit) { ?>
                                                         <tr>
-                                                            <td><?php echo $benifit['name'] ?></td>
+                                                            <td><?php echo $benifit['company_benefit_name'] ?></td>
                                                             <td><?php echo $benifit['category'] ?></td>
-                                                            <td><?php echo $benifit['benefit_type'] ?></td>
-                                                            <td class="text-center"><span class="<?php echo $benifit['pretax'] == '1' ? ' glyphicon glyphicon-ok alert-success ' : ' glyphicon glyphicon-remove alert-danger ' ?>"> </span></td>
-                                                            <td class="text-center"><span class="<?php echo $benifit['posttax'] == '1' ? ' glyphicon glyphicon-ok alert-success ' : ' glyphicon glyphicon-remove alert-danger ' ?>"> </span></td>
-                                                            <td class="text-center"><span class="<?php echo $benifit['imputed'] == '1' ? ' glyphicon glyphicon-ok alert-success ' : ' glyphicon glyphicon-remove alert-danger ' ?>"> </span></td>
-                                                            <td class="text-center"><span class="<?php echo $benifit['healthcare'] == '1' ? ' glyphicon glyphicon-ok alert-success ' : ' glyphicon glyphicon-remove alert-danger ' ?>"> </span></td>
-                                                            <td class="text-center"><span class="<?php echo $benifit['retirement'] == '1' ? ' glyphicon glyphicon-ok alert-success ' : ' glyphicon glyphicon-remove alert-danger ' ?>"> </span></td>
-                                                            <td class="text-center"><span class="<?php echo $benifit['yearly_limit'] == '1' ? ' glyphicon glyphicon-ok alert-success ' : ' glyphicon glyphicon-remove alert-danger ' ?>"> </span> </td>
+                                                            <td><?php echo $benifit['employee_deduction'] ?></td>
+                                                            <td><?php echo $benifit['company_contribution'] ?></td>
                                                             <td>
                                                                 <a href="<?php echo base_url('manage_admin/benefits/edit') . '/' . $benifit['sid']; ?>" class="hr-edit-btn">EDIT</a>
                                                             </td>

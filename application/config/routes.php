@@ -1708,5 +1708,5 @@ $route['manage_admin/benefits/edit/(:any)'] = 'manage_admin/benefits/add_edit/$1
 
 // Company Benefits
 $route['manage_admin/company_benefits/(:any)'] = 'manage_admin/benefits/company_benefits/$1';
-$route['manage_admin/company_benefits/add'] = 'manage_admin/benefits/add_edit';
-$route['manage_admin/company_benefits/edit/(:any)'] = 'manage_admin/benefits/add_edit/$1';
+$route['manage_admin/company_benefits/add/(:any)'] = 'manage_admin/benefits/add_edit_company_benefit/$1';
+$route['manage_admin/company_benefits/edit/(:any)/(:any)'] = 'manage_admin/benefits/add_edit_company_benefit/$1/$1';

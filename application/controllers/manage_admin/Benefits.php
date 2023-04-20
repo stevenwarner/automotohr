@@ -89,8 +89,68 @@ class Benefits extends Admin_Controller
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name);
-        $this->data['page_title'] = 'Company Benefits Listing';
-        $this->data['benifits'] = $this->Benefits_model->GetAllBenifits();
+        $companyName = getCompanyNameBySid($companySid);
+        $this->data['page_title'] = $companyName . ' Benefits Listing';
+        $this->data['companySid'] = $companySid;
+        $this->data['benifits'] = $this->Benefits_model->GetAllCompanyBenifits($companySid);
         $this->render('manage_admin/benefits/company_benefits_list', 'admin_master');
+    }
+
+    //
+
+    public function add_edit_company_benefit($companySid = Null, $sid = NULL)
+    {
+        $redirect_url = 'manage_admin';
+        $function_name = 'add_edit_job_listing_templates';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        $this->data['companySid'] = $companySid;
+
+        check_access_permissions($security_details, $redirect_url, $function_name);
+        $action = $this->input->post('action');
+
+
+        // 
+        $this->data['defaultCategories'] = $this->Benefits_model->get_default_benefits_category();
+
+
+        if ($action == 'save_benifit') {
+            $sid = $this->input->post('sid');
+            $data_insert['company_sid'] = $companySid;
+            $data_insert['company_benefit_name'] = $this->input->post('benifitname');
+            $data_insert['category'] = $this->input->post('categoryname');
+            $data_insert['employee_deduction'] = $this->input->post('employeededuction');
+            $data_insert['company_contribution'] = $this->input->post('companycontribution');
+
+            if ($sid == '') {
+                $sid = null;
+            }
+
+            $this->form_validation->set_rules('benifitname', 'Name', 'trim|required');
+            $this->form_validation->set_rules('category', 'Category ', 'trim|required');
+
+
+            if ($this->form_validation->run() === FALSE) {
+            } else {
+                $this->Benefits_model->SaveCompanyBenefit($sid, $data_insert);
+                redirect('manage_admin/company_benefits/' . $companySid);
+            }
+        } else if ($action == 'enable_disable_benefit') {
+            $sid = $this->input->post('sid');
+            $data_update['status'] = $this->input->post('status') ? '0' : '1';
+            $this->Benefits_model->UpdateBenifit($sid,  $data_update);
+            redirect('manage_admin/company_benefits/' . $companySid);
+            redirect('manage_admin/company_benefits/' . $companySid);
+        }
+
+        if ($sid == NULL) {
+            $this->data['page_title'] = 'Add New Job Benefit';
+            $this->render('manage_admin/benefits/add_edit_company_benefits', 'admin_master');
+        } else {
+            $this->data['benifit'] = $this->Benefits_model->GetBenifitById($sid);
+            $this->data['page_title'] = 'Edit Benifit';
+            $this->render('manage_admin/benefits/add_edit_company_benefits', 'admin_master');
+        }
     }
 }
