@@ -392,15 +392,32 @@ class Payroll extends CI_Controller
                 'company_sid' => $this->data['companyId'],
                 'sid' => $id
             ],
-            'sid, "Regular" as type, payroll_json, company_sid, payroll_id',
+            'payroll_json, payroll_id',
             false
         );
-        $Receipt = $this->getProcessedPayrollsReceipt($this->data['companyId'],$this->data['payrollHistory']['payroll_id']);
-        $this->data['Payroll'] = json_decode($this->data['payrollHistory']['payroll_json'], true);
-        $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
-        $this->data['companyname'] = getCompanyNameBySid($this->data['payrollHistory']['company_sid']);
-        _e($Receipt,true,true);
-        // _e($this->data['Payroll'],true);
+    
+        $payroll = json_decode($this->data['payrollHistory']['payroll_json'], true);
+        $payrollReceipt = $this->getProcessedPayrollsReceipt($this->data['companyId'],$this->data['payrollHistory']['payroll_id'])['Response'];
+        //
+        $employee_compensations = array();
+        //
+        foreach ($payrollReceipt['employee_compensations'] as $ekey => $employee) {
+            // $employee['employee_uuid'];
+            
+            foreach ($payroll['employee_compensations'] as $compensation) {
+                if ($employee['employee_uuid'] == $compensation['employee_uuid']) {
+                    $employee['hourly_compensations'] = $compensation['hourly_compensations'];
+                }
+            }
+            //
+            array_push($employee_compensations, $employee);
+        }
+        //
+        $payrollReceipt['employee_compensations'] = $employee_compensations;
+        //
+        $this->data['Payroll'] = $payroll;
+        $this->data['payrollReceipt'] = $payrollReceipt;
+        //
         // Get Gusto Company Details
         $this->load
             ->view('main/header', $this->data)
@@ -1982,7 +1999,46 @@ class Payroll extends CI_Controller
             'gusto_company_uid'
         ]);
         //
-        $response = getProcessedPayrollsReceipt($payrollUid, $company);
+        $response = getProcessedPayrollsReceipt($payrollUid, $company,[
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else {
+            //
+            return [
+                'Status' => true,
+                'Response' => $response,
+            ];
+        }
+    }
+
+     /**
+     * 
+     */
+    private function getPayrollsEmployeesCompensations($companyId, $payrollUid)
+    {
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = getPayrollsEmployeesCompensations($payrollUid, $company,[
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
         //
         if (isset($response['errors'])) {
             //

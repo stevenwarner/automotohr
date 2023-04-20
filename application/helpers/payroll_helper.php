@@ -2993,7 +2993,7 @@ if (!function_exists('getProcessedPayrollsReceipt')) {
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                return GetUnProcessedPayrolls($query, $company);
+                return getProcessedPayrollsReceipt($payRollId, $company, $headers);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -3003,4 +3003,50 @@ if (!function_exists('getProcessedPayrollsReceipt')) {
             return $response;
         }
     }
-}    
+} 
+
+ 
+if (!function_exists('getPayrollsEmployeesCompensations')) {
+    function getPayrollsEmployeesCompensations($payRollId, $company, $headers=[])
+    {
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $url = PayrollURL('GetSinglePayroll', $company['gusto_company_uid'], $payRollId);
+        //
+        $response =  MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getPayrollsEmployeesCompensations($payRollId, $company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            CacheHolder($url, $response);
+            //
+            return $response;
+        }
+    }
+}   

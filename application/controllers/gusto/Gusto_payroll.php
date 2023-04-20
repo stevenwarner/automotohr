@@ -285,7 +285,5 @@ class Gusto_payroll extends CI_Controller
     {
         // get company details
         $this->gusto_payroll_model->syncCompanyDataWithGusto($companyId);
-
-        _e('I am here at end', true, true);
     }
 }

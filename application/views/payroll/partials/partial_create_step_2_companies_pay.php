@@ -62,7 +62,7 @@
                                 <tr>
                                     <th scope="col" class="vam ban csBG2">
                                         <h1 class="csF18 csB7 mt0 mb0 csW">
-                                            Employees (<?=count($Payroll['employee_compensations']);?>)
+                                            Employees (<?=count($payrollReceipt['employee_compensations']);?>)
                                         </h1>
                                     </th>
                                     <th scope="col" class="vam ban csBG2 text-right">
@@ -102,37 +102,43 @@
                                 ?>
 
                                 <!--  -->
-                                <?php foreach($Payroll['employee_compensations'] as $row): ?>
+                                <?php foreach($payrollReceipt['employee_compensations'] as $row): ?>
                                     <?php 
                                         //
-                                        $emp = $PayrollEmployees[$row['employee_id']];
+                                        $payment_method = $row['payment_method'];
+                                        $netPay = $row['net_pay'];
+                                        $grossPay = 0.00;
+                                        //
+                                        if (!empty($row['hourly_compensations'])) {
+                                            foreach ($row['hourly_compensations'] as $compensation) {
+                                                if ($compensation['name'] == 'Regular Hours') {
+                                                    $grossPay = $compensation['amount'];
+                                                }
+                                            }
+                                        }
                                         //
                                         $totalBenifits = 0.00;
                                         //
                                         if(!empty($row['benefits'])){
-                                            $totalBenifits = array_sum(array_column($row['benefits'], 'company_contribution'));
+                                            $totalBenifits = $row['benefits'];
                                         }
                                         //
                                         $totalReimbursement = 0.00;
                                         //
-                                        if(!empty($row['fixed_compensations']['reimbursement'])){
-                                            $totalReimbursement = array_sum(array_column($row['fixed_compensations']['reimbursement'], 'amount'));
+                                        if(!empty($row['total_reimbursement'])){
+                                            $totalReimbursement = $row['total_reimbursement'];
                                         }
                                         //
                                         $totalTaxes = 0.00;
                                         //
-                                        if(!empty($row['taxes'])){
-                                            $totalTaxes = array_sum(array_column(array_filter($row['taxes'], function($tax){
-                                                if($tax['employer']) {
-                                                    return 1;
-                                                }
-                                            }), 'amount'));
+                                        if(!empty($row['total_tax'])){
+                                            $totalTaxes = $row['taxes'];
                                         }
                                         //
-                                        $totalPayment = ($row['gross_pay'] + $totalReimbursement ) + ($totalTaxes + $totalBenifits);
+                                        $totalPayment = ($grossPay + $totalReimbursement ) + ($totalTaxes + $totalBenifits);
                                         //
                                         $gSubTotal += $totalPayment;
-                                        $gTotalGrossPay += $row['gross_pay'];
+                                        $gTotalGrossPay += $grossPay;
                                         $gTotalReimbursements += $totalReimbursement;
                                         $gTotalEmployeeTaxes += $totalTaxes;
                                         $gTotalEmployeeBenefits += $totalBenifits;
@@ -141,12 +147,12 @@
                                     <tr>
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                           <?=($emp['last_name'].', '.$emp['first_name']);?>
+                                           <?=($row['employee_last_name'].', '.$row['employee_first_name']);?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               $<?=number_format($row['gross_pay'], 2);?>
+                                               $<?=number_format($grossPay, 2);?>
                                            </h6>
                                        </td>
                                        <td class="vam ban text-right">
