@@ -5727,8 +5727,8 @@ if ($user_type == 'employee') {
 
                 //
                 if (dn.trim() == 'EEOC FORM') {
-                    if (<?= $eeo_form_info['status']; ?> != 1) {
-                        return;
+                    if (<?= $eeo_form_info['status']??0; ?> != 1) {
+                       return;
                     }
                 }
 

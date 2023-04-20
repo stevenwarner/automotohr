@@ -398,6 +398,23 @@ class Form_i9 extends Public_Controller
                     // Section 2,3 Ends
                 }
 
+                // TO be checked and removed
+                if(isset($$formpost['section1_last_name'])) {
+                    $insert_data['section1_last_name'] = $formpost['section1_last_name'];
+                    $insert_data['section1_first_name'] = $formpost['section1_first_name'];
+                    $insert_data['section1_middle_initial'] = $formpost['section1_middle_initial'];
+                    $insert_data['section1_other_last_names'] = $formpost['section1_other_last_names'];
+                    $insert_data['section1_address'] = $formpost['section1_address'];
+                    $insert_data['section1_apt_number'] = $formpost['section1_apt_number'];
+                    $insert_data['section1_city_town'] = $formpost['section1_city_town'];
+                    $insert_data['section1_state'] = $formpost['section1_state'];
+                    $insert_data['section1_zip_code'] = $formpost['section1_zip_code'];
+                    $insert_data['section1_date_of_birth'] = empty($formpost['section1_date_of_birth']) || $formpost['section1_date_of_birth'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section1_date_of_birth'])->format('Y-m-d H:i:s');
+                    $insert_data['section1_social_security_number'] = $formpost['section1_social_security_number'];
+                    $insert_data['section1_emp_email_address'] = $formpost['section1_emp_email_address'];
+                    $insert_data['section1_emp_telephone_number'] = $formpost['section1_emp_telephone_number'];
+                }
+
                 //$this->form_wi9_model->insert_form_data('i9', $insert_data, $employer_sid);
                 $this->form_wi9_model->update_form('i9', $type, $employer_sid, $insert_data);
                 //
