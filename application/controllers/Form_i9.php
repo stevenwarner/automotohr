@@ -399,7 +399,7 @@ class Form_i9 extends Public_Controller
                 }
 
                 // TO be checked and removed
-                if(isset($$formpost['section1_last_name'])) {
+                if(isset($formpost['section1_last_name'])) {
                     $insert_data['section1_last_name'] = $formpost['section1_last_name'];
                     $insert_data['section1_first_name'] = $formpost['section1_first_name'];
                     $insert_data['section1_middle_initial'] = $formpost['section1_middle_initial'];
