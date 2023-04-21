@@ -731,7 +731,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                         $access_level  = $session["employer_detail"]['access_level'];
                         ?>
                         <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_status) { ?>
-                            <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); _e($complyNetLink, true);?>
+                            <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid);?>
                             <?php if ($complyNetLink) {
                             ?><!-- Approval -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
