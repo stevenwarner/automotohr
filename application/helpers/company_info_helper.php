@@ -2741,7 +2741,7 @@ if (!function_exists('getComplyNetLink')) {
         }
         // Get email
         $record =
-            $CI->db->select('email')->where([
+            $CI->db->select('email, complynet_json')->where([
                 'employee_sid' => $employeeId
             ])
             ->get('complynet_employees')
@@ -2749,6 +2749,12 @@ if (!function_exists('getComplyNetLink')) {
         //
         if (empty($record)) {
             return '';
+        }
+        //
+        $jsonToArray = json_decode($record['complynet_json'], true);
+        //
+        if (strpos($jsonToArray['UserName'], '@') !== false) {
+            $record['email'] = $jsonToArray['UserName'];
         }
         // Load ComplyNet library
         $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
