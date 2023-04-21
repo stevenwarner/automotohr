@@ -1248,10 +1248,12 @@
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
                                                             <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
+                                                            <?php if($complyNetLink) {?>
                                                             <a href="<?php echo $complyNetLink ?? base_url('complynet') ?>">
                                                                 <figure><i class="fa fa-book"></i></figure>
-                                                                Complynet
+                                                                ComplyNet
                                                             </a>
+                                                            <?php } ?>
                                                         </li>
                                                     <?php  } ?>
 
