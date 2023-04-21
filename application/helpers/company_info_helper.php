@@ -2831,7 +2831,9 @@ if (!function_exists('getComplyNetEmployeeCheck')) {
             return '';
         }
         //
-        if ($employee['complynet_onboard'] == 1) {
+        $CI = &get_instance();
+        //
+        if ($CI->db->where('employee_sid', $employee['sid'])->count_all_results('complynet_employees')) {
             return '<button class="btn btn-xs csBG2" title="Employee is on ComplyNet"><i class="fa fa-shield _csM0"></i></button>';
         }
         //

@@ -296,7 +296,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <?php } ?>
                                             <span>
                                                 <button class="btn btn-orange jsCompanyHelpBoxBtn">
-                                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;<?=$getCompanyHelpboxInfo[0]['button_text'];?>
+                                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;<?= $getCompanyHelpboxInfo[0]['button_text']; ?>
                                                 </button>
                                             </span>
                                         </span>
@@ -731,45 +731,49 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                         $access_level  = $session["employer_detail"]['access_level'];
                         ?>
                         <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_status) { ?>
-                            <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
-                            <!-- Approval -->
-                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                <div class="widget-box">
-                                    <?php if ($complyNetLink) { ?>
-                                        <a href="<?= $complyNetLink; ?>" target="_blank">
-                                            <div class="link-box bg-complynet full-width">
-                                                <h2>Compliance <br /> Management System</h2>
-                                                <ul class="cs-jam-ul" style="position: relative; z-index:1;">
-                                                    <li>Dashboard</li>
-                                                </ul>
-                                                <div class="status-panel">
-                                                    <h3>ComplyNet</h3>
-                                                    <span>Show</span>
+                            <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); _e($complyNetLink, true);?>
+                            <?php if ($complyNetLink) {
+                            ?><!-- Approval -->
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="widget-box">
+                                        <?php if ($complyNetLink) { ?>
+                                            <a href="<?= $complyNetLink; ?>" target="_blank">
+                                                <div class="link-box bg-complynet full-width">
+                                                    <h2>Compliance <br /> Management System</h2>
+                                                    <ul class="cs-jam-ul" style="position: relative; z-index:1;">
+                                                        <li>Dashboard</li>
+                                                    </ul>
+                                                    <div class="status-panel">
+                                                        <h3>ComplyNet</h3>
+                                                        <span>Show</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </a>
-                                    <?php } else { ?>
-                                        <span id="main">
-                                            <div class="link-box bg-complynet full-width">
-                                                <h2>Compliance <br /> Management System</h2>
-                                                <ul class="cs-jam-ul" style="position: relative; z-index:1;">
+                                            </a>
+                                        <?php } else { ?>
+                                            <span id="main">
+                                                <div class="link-box bg-complynet full-width">
+                                                    <h2>Compliance <br /> Management System</h2>
+                                                    <ul class="cs-jam-ul" style="position: relative; z-index:1;">
 
-                                                    <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
-                                                        <li><button id="js-dashboard" data-href="<?= base_url('complynet/dashboard'); ?>" class="btn btn-link" style="color: #ffffff; padding: 3px;">Dashboard</button></li>
-                                                    <?php } ?>
-                                                    <li><button id="js-login" data-href="<?= base_url('complynet/login'); ?>" class="btn btn-link" style="color: #ffffff; padding: 3px;">Login</button></li>
+                                                        <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
+                                                            <li><button id="js-dashboard" data-href="<?= base_url('complynet/dashboard'); ?>" class="btn btn-link" style="color: #ffffff; padding: 3px;">Dashboard</button></li>
+                                                        <?php } ?>
+                                                        <li><button id="js-login" data-href="<?= base_url('complynet/login'); ?>" class="btn btn-link" style="color: #ffffff; padding: 3px;">Login</button></li>
 
-                                                </ul>
-                                                <div class="status-panel">
-                                                    <h3>Complynet</h3>
-                                                    <span>Show</span>
+                                                    </ul>
+                                                    <div class="status-panel">
+                                                        <h3>Complynet</h3>
+                                                        <span>Show</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </span>
-                                    <?php } ?>
+                                            </span>
+                                        <?php } ?>
 
+                                    </div>
                                 </div>
-                            </div>
+                            <?php
+                            } ?>
+
                         <?php } ?>
 
                         <!-- Authorised Signature  -->
