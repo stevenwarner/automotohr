@@ -846,7 +846,7 @@ class Copy_employees extends Admin_Controller
                     array_push($moveCategorysIds, $category_sid);
                     //
                 } else {
-                    $typeSid = $this->copy_employees_model->getCategoryTypeSid($category_sid, $primaryCompanySid);
+                    $typeSid = $this->copy_employees_model->getCategoryTypeById($category_sid, $primaryCompanySid);
                 }
                 //
                 // check policy exist in primary company
@@ -882,7 +882,7 @@ class Copy_employees extends Admin_Controller
                     $movePolicy = 'yes';
                     array_push($movePolicysTitle, $policy['title']);
                 } else {
-                    $policySid = $this->copy_employees_model->getRequestPolicySid($policy['title'], $typeSid, $primaryCompanySid);
+                    $policySid = $this->copy_employees_model->getRequestActivePolicyId($policy['title'], $typeSid, $primaryCompanySid);
                     //
                     // check if primary employee exist in previous company policy 
                     // then add employee into new company policy too
