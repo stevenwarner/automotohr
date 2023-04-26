@@ -225,15 +225,14 @@ class Courses extends Admin_Controller {
             case 'add_course':
                 //
                 $data_to_insert = array();
-                $data_to_insert['company_sid'] = $post['companyId'];
-                $data_to_insert['creator_sid'] = $post['employeeId'];
                 $data_to_insert['title'] = $post['title'];
                 $data_to_insert['type'] = $post['course_type'];
                 $data_to_insert['description'] = $post['description'];
-                $data_to_insert['start_date'] = $post['start_date'];
-                $data_to_insert['end_date'] = $post['end_date'];
+                $data_to_insert['status'] = $post['status'];
+                $data_to_insert['job_titles'] = implode(',', $post['job_titles']);
+                $data_to_insert['scorm_path'] = $post['upoadFile'];
                 //
-                $insert_id = $this->cm->addData('lms_courses', $data_to_insert);
+                $insert_id = $this->couses_model->addData('lms_default_courses', $data_to_insert);
                 //
                 $this->res['Id'] = $insert_id;
                 $this->res['Type'] = $post['course_type'];
@@ -259,6 +258,11 @@ class Courses extends Admin_Controller {
 
             case 'upload_zip':
                 //
+                $newFileName ='6kqje_2023_04_24_how-to-get-started-working-from-home-scorm12';
+                $this->res['path'] = $newFileName;
+                $this->res['Code'] = "SUCCESS";
+                $this->res['Status'] = true;
+                $this->resp();
                 $random = generateRandomString(5);
                 $timestemp = date('Y_m_d');
                 $target_file_name = basename($_FILES["upload_zip"]["name"]);

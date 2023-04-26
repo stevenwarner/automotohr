@@ -24,4 +24,22 @@ class Courses_model extends CI_Model {
         $this->db->order_by('sort_order', 'ASC');
         return $this->db->get('portal_job_listing_templates')->result_array();
     }
+
+    /**
+     * Add company data to table
+     * 
+     * @param string $table
+     * @param array $insertArray
+     * 
+     * @return int
+     */
+    public function addData(
+        string $table, 
+        array $insertArray
+    ){
+        //
+        $this->db->insert($table, $insertArray);
+        //
+        return $this->db->insert_id();
+    }
 }

@@ -50,6 +50,7 @@ $(function () {
 
     //
     function saveCourseDetails (courseDetails) {
+        console.log(courseDetails);
         $.ajax({
             type: 'POST',
             url: courseURL,
