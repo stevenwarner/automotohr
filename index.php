@@ -286,16 +286,9 @@ define('VIEWPATH', $view_folder);
  * And away we go...
  */
 
-if (in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])) {
-	error_reporting(E_ALL);
-	ini_set('display_errors', 0);
-	define('MINIFIED', '');
-} else {
-	error_reporting(E_ALL);
-	ini_set('display_errors', 0);
-	define('MINIFIED', '.min');
-}
+define('MINIFIED', in_array($_SERVER['HTTP_HOST'], ['automotohr.local']) ?  '' : '.min');
 //
+turnOnErrorReporting(0);
 
 // Setting GLOBAL minified version and time
 $GLOBALS['minified_version'] = ENVIRONMENT == 'development' ? '' : '.min';
