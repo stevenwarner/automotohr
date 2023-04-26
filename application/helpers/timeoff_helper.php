@@ -399,13 +399,23 @@ if (!function_exists('getEmployeeAccrual')) {
                 $accruals['plans']
             );
         }
+        // 
+        $currentDate = getSystemDate('Y-m-d');
+        $effectedDate2 = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
+        //
+        $consumeDate = '';
+        //
+        if (strtotime($currentDate) >= strtotime($effectedDate)) {
+            $consumeDate = $effectedDate2;
+        }
         // Get consumed time
         $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
             $policyId,
             $employeeId,
             $accruals['method'],
             $accruals['frequency'],
-            $todayDate
+            $todayDate,
+            $consumeDate
         );
         //
         $monthsWorked = 1;
@@ -510,7 +520,7 @@ if (!function_exists('getEmployeeAccrual')) {
         }
 
         $currentDate = getSystemDate('Y-m-d');
-        $effectedDate = checkDateFormate( $effectedDate ) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
+        $effectedDate = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
         //
         if (strtotime($currentDate) >= strtotime($effectedDate)) {
 

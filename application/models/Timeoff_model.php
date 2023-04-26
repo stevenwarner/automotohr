@@ -2360,6 +2360,7 @@ class Timeoff_model extends CI_Model
      * @param  Integer $employeeId
      * @param  String  $method
      * @param  String  $asOfToday
+     * @param  string  $consumeDate
      * 
      * @return Array
      */
@@ -2368,7 +2369,8 @@ class Timeoff_model extends CI_Model
         $employeeId,
         $method,
         $frequency,
-        $todayDate
+        $todayDate,
+        $consumeDate = ''
     ) {
         $dateFormat = 'Y';
         $dateFormatDB = '%Y';
@@ -2391,7 +2393,12 @@ class Timeoff_model extends CI_Model
             ->where('archive', 0);
         //
         $newDate = DateTime::createfromformat('Y-m-d', $todayDate)->format($dateFormat);
-        $this->db->where("date_format(request_from_date, \"$dateFormatDB\") = ", "$newDate");
+        //
+        if ($consumeDate){
+            $this->db->where("date_format(request_from_date, \"$dateFormatDB\") = ", "$consumeDate");
+        } else{
+            $this->db->where("date_format(request_from_date, \"$dateFormatDB\") = ", "$newDate");
+        }
         //
         $result = $this->db->get();
         //
@@ -6055,7 +6062,7 @@ class Timeoff_model extends CI_Model
         //
         $slug = isset($a->row_array()['slug']) ? $a->row_array()['slug'] : 'H:M';
         $a->free_result();
-                //
+        //
 
 
         foreach ($b as $k => $v) {
