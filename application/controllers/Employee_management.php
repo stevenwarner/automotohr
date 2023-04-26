@@ -1559,9 +1559,7 @@ class Employee_management extends Public_Controller
                     $extra_info_arr['interests'] = $this->input->post('interests');
                     $extra_info_arr['short_bio'] = $this->input->post('short_bio');
 
-
                     $full_emp_app = array();
-
 
                     $video_source = $this->input->post('video_source');
                     $video_id = '';
@@ -1645,10 +1643,17 @@ class Employee_management extends Public_Controller
                         'department_sid' => $departmentId,
                         'team_sid' => $teamId,
                         'gender' => $gender,
-                        'marital_status' => $this->input->post('marital_status'),
-                        'union_member' => $this->input->post('union_member'),
-                        'union_name' => $this->input->post('union_name'),
+                        'marital_status' => $this->input->post('marital_status')
                     );
+
+                    //
+                    $data_to_insert['union_member'] = $this->input->post('union_member');
+                    $data_to_insert['union_name'] = $this->input->post('union_name');
+
+                    if ($data_to_insert['union_member'] == 0) {
+                        $data_to_insert['union_name'] = '';
+                    }
+
 
                     //
                     if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
@@ -3831,6 +3836,13 @@ class Employee_management extends Public_Controller
         $newCompareData['other_email'] = $post['other_email'];
         $newCompareData['other_PhoneNumber'] = $post['other_PhoneNumber'];
 
+        //
+        $newCompareData['union_member'] = $post['union_member'];
+        $newCompareData['union_name'] = $post['union_name'];
+        if ($newCompareData['union_member'] == 0) {
+            $newCompareData['union_name'] = '';
+        }
+
         // Old Data
         $oldCompareData = [];
         $oldCompareData['first_name'] = $employeeDetail['first_name'];
@@ -3873,6 +3885,13 @@ class Employee_management extends Public_Controller
         $oldCompareData['secondary_PhoneNumber'] = $employeeDetailExtra['secondary_PhoneNumber'];
         $oldCompareData['other_email'] = $employeeDetailExtra['other_email'];
         $oldCompareData['other_PhoneNumber'] = $employeeDetailExtra['other_PhoneNumber'];
+
+        //
+
+        $oldCompareData['union_member'] = $employeeDetail['union_member'];
+        $oldCompareData['union_name'] = $employeeDetail['union_name'];
+
+
 
         //
         $difference = $this->findDifference($oldCompareData, $newCompareData);

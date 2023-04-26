@@ -324,22 +324,14 @@
 
 
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <label class="csF16">Union Member</label>
-            <p class="dummy-invoice-fields"><?= $employer['union_member'] ? 'Yes' : 'No'; ?></p>
-        </div>
-    </div>
-    <br />
-    <?php if ($employer['union_member']) { ?>
-    <div class="row">
-        <div class="col-sm-12">
-            <label class="csF16">Union Name</label>
-            <p class="dummy-invoice-fields"><?= $employer['union_name'] ? $employer['union_name'] : 'Not Specified'; ?></p>
-        </div>
-    </div>
-    <br />
-<?php } ?>
+            <p class="dummy-invoice-fields" <?= $employer['union_member'] ? "style='height: 100px'":''?>><?= $employer['union_member'] ? 'Yes <br><br>'.$employer['union_name'] : 'No'; ?></p>
 
+        </div>
+    </div>
+    <br />
+   
 
 <?php if ($timeOff == 'enable') { ?>
     <div class="row">

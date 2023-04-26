@@ -364,12 +364,15 @@ class employers extends Admin_Controller
             $data['languages_speak'] = null;
             //
             $languages_speak = $this->input->post('secondaryLanguages');
-            
+
             //
-          
+
             $data['union_name'] = $this->input->post('union_name');
             $data['union_member'] = $this->input->post('union_member');
-
+            
+            if ($data['union_member'] == 0) {
+                $data['union_name'] = '';
+            }
 
             if ($languages_speak) {
                 $data['languages_speak'] = implode(',', $languages_speak);

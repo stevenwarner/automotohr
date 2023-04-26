@@ -552,7 +552,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                         </div>
 
                                                         <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
-                                                            <label class="control control--radio ">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $employer['union_member'] ? '' : 'checked' ?>>
+                                                            <label class="control control--radio " style="margin-left: -20px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $employer['union_member'] ? '' : 'checked' ?>>
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                         </div>
@@ -564,7 +564,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                                 <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $employer['union_name']; ?>" />
                                                             </div>
                                                         </div>
-
+<br>
                                                         <script>
                                                             <?php if ($employer['union_member'] == 0) { ?>
                                                                 $('.jsunionname').hide();
