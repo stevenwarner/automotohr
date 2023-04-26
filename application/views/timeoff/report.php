@@ -41,6 +41,8 @@
     $employees = '';
     $departments = '';
     $teams = '';
+
+    $policy='';
     //
     $departmentArray = $teamArray = [];
     //
@@ -170,6 +172,23 @@
                                                     <option value="parttime">Part-time</option>
                                                 </select>
                                             </div>
+
+
+                                              <!--  -->
+                                              <div class="form-group">
+                                                <label>Policy</label>
+                                                <select multiple="true" id="filter_policy">
+                                                    <?php if (!empty($policies)) { ?>
+                                                        <?php foreach ($policies as $policyRow) { ?>
+                                                            <option value="<?php echo $policyRow['sid']; ?>"><?php echo $policyRow['title']; ?></option>
+                                                        <?php } ?>
+                                                    <?php } else { ?>
+                                                        <option value="0">No Policy Found!</option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+
+
                                             <!--  -->
                                             <div class="form-group">
                                                 <label>Start Date</label>
@@ -182,7 +201,7 @@
                                                 <?php $efd = !empty($end_date) ? $end_date : ''; ?>
                                                 <input type="text" readonly="true" class="form-control" name="endDate" id="jsReportEndDate" value="<?php echo $efd; ?>"/>
                                             </div>
-                                            <input type="hidden" name="token" id="session_key">
+                                            <input type="hidden" name="token" id="session_key" value="<?php echo $_GET['token'];?>">
                                             <div class="form-group">
                                                 <button class="btn btn-success form-control" id="apply_filter">Apply Filter</button>
                                             </div>
@@ -436,6 +455,9 @@
     $('#filter_teams').select2({ closeOnSelect: false });
     let employeeList = <?=json_encode($company_employees);?>;
 
+    $('#filter_policy').select2({ closeOnSelect: false });
+
+
     $('#view_report').on("click", function () {
         $("#js-view-report-modal").modal('show')
     });
@@ -459,12 +481,15 @@
         var employees = $("#filter_employees").val();
         var departments = $("#filter_departments").val();
         var teams = $("#filter_teams").val();
+        var policy = $("#filter_policy").val();
 
         var form_data = new FormData();
         form_data.append('employees', employees);
         form_data.append('departments', departments);
         form_data.append('teams', teams);
         form_data.append('action', 'generate_session');
+        form_data.append('policy', policy);
+
 
          ml(true, 'report');
         $.ajax({

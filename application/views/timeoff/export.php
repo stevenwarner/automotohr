@@ -185,7 +185,7 @@
             $.post("<?= base_url('/timeoff/handler'); ?>", filterOBJ, (resp) => {
                 progress(true, 100, 'Fetching employees.');
                 if (resp.Status === true && resp.Data.length > 0) {
-                    startExportProcess(resp.Data);
+                   startExportProcess(resp.Data);
                 } else {
                     //
                     alertify.alert("WARNING!", "No time-off found.");
@@ -243,7 +243,7 @@
             progress(true, 30, `Adding <strong>${row.employee.name}</strong> to export. <strong>${current + 1}</strong> out of <strong>${keys.length}</strong> `);
             //
             step3(row);
-            console.log(row);
+           // console.log(row);
         }
 
 
@@ -280,7 +280,7 @@
                 employeeName: row.employee.name.replace(/[^a-zA-Z]/g, '_').toLowerCase(),
             }, (resp) => {
                 //
-                console.log(resp.Link);
+              //  console.log(resp.Link);
                 if (resp.Status === true) {}
             })
         }

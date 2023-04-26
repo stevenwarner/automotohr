@@ -58,8 +58,10 @@ $(function() {
         let
             startDate = $('#jsReportStartDate').val() || 'all',
             endDate = $('#jsReportEndDate').val() || 'all';
-        //
-        window.open($(this).prop('href') + '/' + (selectedEmployees.length == 0 || selectedEmployees.length == employeeList.length ? 'all' : selectedEmployees.join(',')) + '?start=' + (startDate) + '&end=' + (endDate));
+            sToken = $('#session_key').val();
+
+        // 
+        window.open($(this).prop('href') + '/' + (selectedEmployees.length == 0 || selectedEmployees.length == employeeList.length ? 'all' : selectedEmployees.join(',')) + '?start=' + (startDate) + '&end=' + (endDate)+'&token='+sToken);
     });
     //
     function setReportView() {
