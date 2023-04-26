@@ -2394,11 +2394,51 @@ class Timeoff_model extends CI_Model
         //
         $newDate = DateTime::createfromformat('Y-m-d', $todayDate)->format($dateFormat);
         //
-        if ($consumeDate){
-            $this->db->where("date_format(request_from_date, \"$dateFormatDB\") = ", "$consumeDate");
-        } else{
-            $this->db->where("date_format(request_from_date, \"$dateFormatDB\") = ", "$newDate");
-        }
+        $this->db->where("date_format(request_from_date, \"$dateFormatDB\") = ", "$newDate");
+        //
+        $result = $this->db->get();
+        //
+        $record = $result->row_array();
+        $result->free_result();
+        //
+        return $record['requested_time'] == null ? 0 : $record['requested_time'];
+    }
+
+    /** 
+     * Get employee consumed time
+     * 
+     * @employee  Mubashir Ahmed
+     * @date      12/21/2020
+     * 
+     * @param  Integer $policyId
+     * @param  Integer $employeeId
+     * @param  String  $method
+     * @param  String  $asOfToday
+     * @param  string  $consumeDate
+     * 
+     * @return Array
+     */
+    function getEmployeeConsumedTimeByResetDate(
+        $policyId,
+        $employeeId,
+        $consumeDate
+    ) {
+        
+        //
+        $this->db
+            ->select('
+            SUM(requested_time) as requested_time
+        ')
+            ->from('timeoff_requests')
+            ->where('timeoff_policy_sid', $policyId)
+            ->where('employee_sid', $employeeId)
+            ->where('status', 'approved')
+            ->where('is_draft', 0)
+            ->where('archive', 0);
+        //
+        $this->db->group_start();
+        $this->db->where("request_from_date >=", $consumeDate); // 2023-04-16
+        $this->db->group_end();
         //
         $result = $this->db->get();
         //

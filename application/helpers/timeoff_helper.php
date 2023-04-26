@@ -407,17 +407,20 @@ if (!function_exists('getEmployeeAccrual')) {
         //
         if (strtotime($currentDate) >= strtotime($effectedDate)) {
             $consumeDate = $effectedDate2;
+            $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
+                $policyId,
+                $employeeId,
+                $consumeDate
+            );
+        } else {
+            $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
+                $policyId,
+                $employeeId,
+                $accruals['method'],
+                $accruals['frequency'],
+                $todayDate
+            );
         }
-        // Get consumed time
-        $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
-            $policyId,
-            $employeeId,
-            $accruals['method'],
-            $accruals['frequency'],
-            $todayDate,
-            $consumeDate
-        );
-        //
         $monthsWorked = 1;
         $hasCarryOver = 0;
         //
