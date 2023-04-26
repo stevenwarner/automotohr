@@ -443,6 +443,12 @@ class Employee_management extends Public_Controller
                 //
                 $teamId = $this->input->post('teamId');
                 $departmenId = '';
+
+                //
+                $unionName = $this->input->post('union_name');
+                $unionMember = $this->input->post('union_member');
+
+
                 //
                 if ($teamId && $teamId != 0) {
                     $departmenId = getDepartmentColumnByTeamId($teamId, 'department_sid');
@@ -499,6 +505,9 @@ class Employee_management extends Public_Controller
                 $user_information['eeoc_code'] = ''; //$eeocCode;
                 $user_information['salary_benefits'] = ''; // $salaryBenefits;
 
+                //
+                $user_information['union_name'] = $unionName;
+                $user_information['union_member'] = $unionMember;
 
                 //
                 if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
@@ -1637,6 +1646,8 @@ class Employee_management extends Public_Controller
                         'team_sid' => $teamId,
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status'),
+                        'union_member' => $this->input->post('union_member'),
+                        'union_name' => $this->input->post('union_name'),
                     );
 
                     //
@@ -2392,7 +2403,6 @@ class Employee_management extends Public_Controller
                     'employee_number' => $this->input->post('employee_number'),
                     'marital_status' => $this->input->post('marital_status'),
                     'gender' => $gender
-
                 );
 
                 //

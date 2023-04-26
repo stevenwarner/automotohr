@@ -531,6 +531,62 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             <br />
 
 
+
+
+                                                <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Union Member:</label>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                 
+                                                <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio " style="margin-left: -10px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $employer['union_member'] ? 'checked' : '' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio ">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $employer['union_member'] ? '' : 'checked' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <br>
+                                                        <br>
+                                                        <div class="row jsunionname">
+                                                            <div class="col-sm-12">
+                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $employer['union_name']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <script>
+                                                            <?php if ($employer['union_member'] == 0) { ?>
+                                                                $('.jsunionname').hide();
+                                                            <?php } ?>
+
+                                                            $('.unionmember').on('click', function() {
+                                                                var selected = $(this).val();
+                                                                if (selected == '1') {
+                                                                    $('.jsunionname').show();
+
+                                                                } else {
+                                                                    $('.jsunionname').hide();
+                                                                }
+                                                            });
+                                                        </script>
+
+                                                </div>
+                                            </div>
+
+
+
+
                                             <?php if ($timeOff == 'enable') { ?>
                                                 <div class="row">
                                                     <!--  -->
