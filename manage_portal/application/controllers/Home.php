@@ -247,7 +247,7 @@ class Home extends CI_Controller
                 } else {
                     $all_active_jobs = $this->job_details->filters_of_active_jobs($data['employer_id'], $job_approval_module_status);
                 }
-                
+
 
                 if (!empty($all_active_jobs)) { // we need it for search filters as we only need to show filters as per active jobs only
 
@@ -360,7 +360,7 @@ class Home extends CI_Controller
                             $list[$key]['my_id'] = 'q_question_' . $questionnaire_sid;
                         }
 
-                        if(isset($screeningQuestionaires[$questionnaire_sid]) && $screeningQuestionaires[$questionnaire_sid]['questions_count'] > 0){
+                        if (isset($screeningQuestionaires[$questionnaire_sid]) && $screeningQuestionaires[$questionnaire_sid]['questions_count'] > 0) {
                             //
                             $screening_questions = $screeningQuestionaires[$questionnaire_sid]['questions'];
                             $screeningAnswers = [];
@@ -392,7 +392,7 @@ class Home extends CI_Controller
                         $list[$key]['Title'] = prepare_job_title($list[$key]['Title'], $list[$key]['Location_City'], $list[$key]['Location_State'], $list[$key]['Location_Country']);
                     } else {
                         //
-                        $list[$key]['Title'] = $storeData[$company_id]['job_title_location'] == 1 ? $list[$key]['Title'].' - '.$list[$key]['Location_City'].', '.$list[$key]['Location_State'].', '.$list[$key]['Location_Country'] : $list[$key]['Title'];
+                        $list[$key]['Title'] = $storeData[$company_id]['job_title_location'] == 1 ? $list[$key]['Title'] . ' - ' . $list[$key]['Location_City'] . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'] : $list[$key]['Title'];
                     }
                     //Generate Share Links - start
                     $company_subdomain_url = STORE_PROTOCOL_SSL . $storeData[$company_id]['sub_domain'];
@@ -848,7 +848,7 @@ class Home extends CI_Controller
                 //
                 if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                    if($this->input->post('dr',true)){
+                    if ($this->input->post('dr', true)) {
                         echo "Google captcha not set";
                         exit();
                     }
@@ -859,7 +859,7 @@ class Home extends CI_Controller
                 //
                 if (!$gr['success']) {
                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                    if($this->input->post('dr',true)){
+                    if ($this->input->post('dr', true)) {
                         echo "Google captcha not set";
                         exit();
                     }
@@ -905,13 +905,19 @@ class Home extends CI_Controller
                 //
                 if (check_company_status($data['company_details']['sid']) == 0) {
                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-                    if($this->input->post('dr',true)){
+                    if ($this->input->post('dr', true)) {
                         echo "Job application success";
                         exit();
                     }
                     redirect('/', 'refresh');
                 }
-                //
+                // check if email is blocked
+                if ($this->check_domain->check_if_blocked($email) == 'blocked') {
+                    $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your interest in our Talent Network, we will contact you soon.');
+                    return redirect('/join_our_talent_network', 'refresh');
+                }
+
+
                 $talent_network_sid = $this->job_details->check_job_applicant('company_check', $email, $data['company_details']['sid']);
                 $job_added_successfully = 0;
                 $date_applied = date('Y-m-d H:i:s');
@@ -1026,7 +1032,7 @@ class Home extends CI_Controller
                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your interest in our Talent Network, we will contact you soon.');
                 }
                 //}
-                if($this->input->post('dr',true)){
+                if ($this->input->post('dr', true)) {
                     echo "Talent network redirect";
                     exit();
                 }
@@ -1417,24 +1423,25 @@ class Home extends CI_Controller
                                 //     break;
                                 // } 
 
+
+
                                 $redirecturl = "";
                                 $applied_from  = $this->input->post('applied_from');
-                               
-                                    if ($applied_from == 'job') {
-                                 
-                                         $redirecturl = '/job_details/' . $sid;
-                                   } else if ($applied_from == 'jobs_list_view') {
-                                         $redirecturl = '/jobs/';
-                                    } else {
-                                        $redirecturl = '/';
 
-                                    }
-                            
+                                if ($applied_from == 'job') {
+
+                                    $redirecturl = '/job_details/' . $sid;
+                                } else if ($applied_from == 'jobs_list_view') {
+                                    $redirecturl = '/jobs/';
+                                } else {
+                                    $redirecturl = '/';
+                                }
+
                                 $formpost = $this->input->post(NULL, TRUE);
                                 //
                                 if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
                                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                                    if($this->input->post('dr',true)){
+                                    if ($this->input->post('dr', true)) {
                                         echo "Google captcha not set";
                                         exit();
                                     }
@@ -1445,13 +1452,13 @@ class Home extends CI_Controller
                                 //
                                 if (!$gr['success']) {
                                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                                    if($this->input->post('dr',true)){
+                                    if ($this->input->post('dr', true)) {
                                         echo "Google captcha not set";
                                         exit();
                                     }
                                     return redirect($redirecturl, 'refresh');
                                 }
-                               
+
                                 $this->checkUserAppliedForJob($company_sid);
                                 $job_sid                                        = $this->input->post('job_sid');
                                 $first_name                                     = $this->input->post('first_name');
@@ -1463,7 +1470,7 @@ class Home extends CI_Controller
                                 if ($is_blocked_email == 'blocked') {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                     $applied_from                               = $this->input->post('applied_from');
-                                    if($this->input->post('dr',true)){
+                                    if ($this->input->post('dr', true)) {
                                         echo "Blocked email";
                                         exit();
                                     }
@@ -1501,7 +1508,7 @@ class Home extends CI_Controller
                                 //
                                 if (check_company_status($company_sid) == 0) {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-                                    if($this->input->post('dr',true)){
+                                    if ($this->input->post('dr', true)) {
                                         echo "Job application success";
                                         exit();
                                     }
@@ -1514,7 +1521,7 @@ class Home extends CI_Controller
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
                                         $this->session->set_flashdata('message', "<b>Error!</b> You have already applied for this Job '" . $data['job_details']['Title'] . "'");
                                         $applied_from                               = $this->input->post('applied_from');
-                                        if($this->input->post('dr',true)){
+                                        if ($this->input->post('dr', true)) {
                                             echo "Already applied job";
                                             exit();
                                         }
@@ -1611,7 +1618,7 @@ class Home extends CI_Controller
                                         //
                                         if (check_company_status($employer_sid) == 0) {
                                             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-                                            if($this->input->post('dr',true)){
+                                            if ($this->input->post('dr', true)) {
                                                 echo "Job application success";
                                                 exit();
                                             }
@@ -2096,7 +2103,7 @@ class Home extends CI_Controller
                                         }
 
                                         $applied_from = $this->input->post('applied_from');
-                                        if($this->input->post('dr',true)){
+                                        if ($this->input->post('dr', true)) {
                                             echo "Applied job form";
                                             exit();
                                         }
@@ -2113,7 +2120,7 @@ class Home extends CI_Controller
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
                                         $this->session->set_flashdata('message', "<b>Error!</b> You have already applied for this Job '" . $data['job_details']['Title'] . "'");
                                         $applied_from                               = $this->input->post('applied_from');
-                                        if($this->input->post('dr',true)){
+                                        if ($this->input->post('dr', true)) {
                                             echo "Applied job form";
                                             exit();
                                         }
@@ -2176,7 +2183,7 @@ class Home extends CI_Controller
                                         //
                                         if (check_company_status($employer_sid) == 0) {
                                             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-                                            if($this->input->post('dr',true)){
+                                            if ($this->input->post('dr', true)) {
                                                 echo "Job application sucess";
                                                 exit();
                                             }
@@ -2636,7 +2643,7 @@ class Home extends CI_Controller
                                         }
 
                                         $applied_from = $this->input->post('applied_from');
-                                        if($this->input->post('dr',true)){
+                                        if ($this->input->post('dr', true)) {
                                             echo "Job applied form";
                                             exit();
                                         }
@@ -2714,7 +2721,6 @@ class Home extends CI_Controller
                                 //                                }
                                 break;
                         }
-                        
                     }
                 } else { //Job Id Is not 0 But Job Not Found
                     $this->session->set_flashdata('message', 'No Active job found!');
@@ -3084,25 +3090,25 @@ class Home extends CI_Controller
 
                 $formpost = $this->input->post(NULL, TRUE);
                 //
-                if(!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])){
-                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                     if($this->input->post('dr',true)){
-                        echo "Google captcha not set";
-                        exit();
-                    }
-                     return redirect('/job_fair' . '/' . $redirect_page_url . "?applied_by=" . rand(1, 99), 'refresh');
-                }
-                //
-                $gr = verifyCaptcha($formpost['g-recaptcha-response']);
-               //
-                if(!$gr['success']){
+                if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                    if($this->input->post('dr',true)){
+                    if ($this->input->post('dr', true)) {
                         echo "Google captcha not set";
                         exit();
                     }
                     return redirect('/job_fair' . '/' . $redirect_page_url . "?applied_by=" . rand(1, 99), 'refresh');
-                 }
+                }
+                //
+                $gr = verifyCaptcha($formpost['g-recaptcha-response']);
+                //
+                if (!$gr['success']) {
+                    $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                    if ($this->input->post('dr', true)) {
+                        echo "Google captcha not set";
+                        exit();
+                    }
+                    return redirect('/job_fair' . '/' . $redirect_page_url . "?applied_by=" . rand(1, 99), 'refresh');
+                }
 
                 $status                                                         = $this->job_details->update_applicant_status_sid($data['company_details']['sid']); // get the statuses first for current company
                 $email                                                          = $this->input->post('email');
@@ -3113,11 +3119,19 @@ class Home extends CI_Controller
                 //
                 if (check_company_status($data['company_details']['sid']) == 0) {
                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-                    if($this->input->post('dr',true)){
+                    if ($this->input->post('dr', true)) {
                         echo "Job application success";
                         exit();
                     }
                     redirect('/', 'refresh');
+                }
+
+                if($email){
+                    // check if email is blocked
+                    if ($this->check_domain->check_if_blocked($email) == 'blocked') {
+                        $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
+                        redirect('/job_fair' . '/' . $redirect_page_url . "?applied_by=" . rand(1, 99), 'refresh');
+                    }
                 }
                 //
                 $fair_job_sid                                                   = $this->job_details->check_job_applicant('company_check', $email, $data['company_details']['sid']);
@@ -3155,7 +3169,7 @@ class Home extends CI_Controller
                     //
                     if ($hack) {
                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-                        if($this->input->post('dr',true)){
+                        if ($this->input->post('dr', true)) {
                             echo "Job application success";
                             exit();
                         }
@@ -3198,7 +3212,7 @@ class Home extends CI_Controller
                                 $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
                             } else {
                                 $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your video file.');
-                                if($this->input->post('dr',true)){
+                                if ($this->input->post('dr', true)) {
                                     echo "Job fair application error";
                                     exit();
                                 }
@@ -3291,7 +3305,7 @@ class Home extends CI_Controller
                                 $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES['video_upload']['name']) . ' has been uploaded.');
                             } else {
                                 $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your video file.');
-                                if($this->input->post('dr',true)){
+                                if ($this->input->post('dr', true)) {
                                     echo "Error file uploading";
                                     exit();
                                 }
@@ -3456,7 +3470,7 @@ class Home extends CI_Controller
                                 $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES['video_upload']['name']) . ' has been uploaded.');
                             } else {
                                 $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your video file.');
-                                if($this->input->post('dr',true)){
+                                if ($this->input->post('dr', true)) {
                                     echo "Error file upload";
                                     exit();
                                 }
@@ -3608,7 +3622,7 @@ class Home extends CI_Controller
 
                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                 }
-                if($this->input->post('dr',true)){
+                if ($this->input->post('dr', true)) {
                     echo "Job fir redirect";
                     exit();
                 }

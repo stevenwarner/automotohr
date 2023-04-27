@@ -1,27 +1,33 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 ini_set('memory_limit', '50M');
-class Indeed_feed extends CI_Controller {
+class Indeed_feed extends CI_Controller
+{
 
     private $debug_email = TO_EMAIL_DEV;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('all_feed_model');
+        $this->load->model('users_model');
+
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
-    
-/**
- * 
- */
-private function addLastRead($sid){
-    $this->db
-    ->where('sid', $sid)
-    ->set([
-        'last_read' => date('Y-m-d H:i:s', strtotime('now'))
-    ])->update('job_feeds_management');
-}
 
-    public function index() {
+    /**
+     * 
+     */
+    private function addLastRead($sid)
+    {
+        $this->db
+            ->where('sid', $sid)
+            ->set([
+                'last_read' => date('Y-m-d H:i:s', strtotime('now'))
+            ])->update('job_feeds_management');
+    }
+
+    public function index()
+    {
         $sid = $this->isActiveFeed();
         $this->addLastRead(8);
         $jobData = $this->all_feed_model->get_all_company_jobs_indeed();
@@ -48,10 +54,10 @@ private function addLastRead($sid){
                     $companyName = $companydata['CompanyName'];
                     $has_job_approval_rights = $companydata['has_job_approval_rights'];
 
-                    if($has_job_approval_rights ==  1) {
+                    if ($has_job_approval_rights ==  1) {
                         $approval_right_status = $job['approval_status'];
 
-                        if($approval_right_status != 'approved') {
+                        if ($approval_right_status != 'approved') {
                             continue;
                         }
                     }
@@ -154,36 +160,38 @@ private function addLastRead($sid){
     /**
      * 
      */
-    private function addReport($source, $email, $type = 'add'){
-        if($type == 'add'){
+    private function addReport($source, $email, $type = 'add')
+    {
+        if ($type == 'add') {
             $this->db
-            ->insert('daily_job_counter', [
-                'source' => $source,
-                'email' => $email,
-                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
-                'already_exists' => 0
-            ]);
-        } else{
+                ->insert('daily_job_counter', [
+                    'source' => $source,
+                    'email' => $email,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                    'already_exists' => 0
+                ]);
+        } else {
             $this->db
-            ->where('email', $email)
-            ->where('created_at', date('Y-m-d H:i:s', strtotime('now')))
-            ->update('daily_job_counter', [
-                'already_exists' => 1
-            ]);
+                ->where('email', $email)
+                ->where('created_at', date('Y-m-d H:i:s', strtotime('now')))
+                ->update('daily_job_counter', [
+                    'already_exists' => 1
+                ]);
         }
     }
 
-    public function indeedPostUrl() {
+    public function indeedPostUrl()
+    {
         // error_reporting(E_ALL);
         //
         $this->addLastRead(9);
         @mail('mubashir.saleemi123@gmail.com', 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
-        $folder = APPPATH.'../../applicant/indeed';
+        $folder = APPPATH . '../../applicant/indeed';
         //
-        if(!is_dir($folder)) mkdir($folder, 0777, true);
+        if (!is_dir($folder)) mkdir($folder, 0777, true);
         // 
-        $categories_file = fopen($folder.'/Indeed_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
+        $categories_file = fopen($folder . '/Indeed_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
         //
         fwrite($categories_file, file_get_contents('php://input'));
         //
@@ -313,7 +321,7 @@ private function addLastRead($sid){
                 // $job_details = $this->all_feed_model->get_job_detail($job_sid);
                 $questionnaire_sid = 0;
 
-                if(!empty($job_details)){
+                if (!empty($job_details)) {
                     $original_job_title = $job_details['Title'];
                 }
 
@@ -340,6 +348,10 @@ private function addLastRead($sid){
                 $applicationData['ip_address'] = $data['analytics']['ip'];
                 $applicationData['user_agent'] = $userAgent;
 
+                if ($this->users_model->check_if_blocked($applicant_email) == 'blocked') {
+                    exit(0);
+                }
+
                 // Check if user has already applied in this company for any other job
                 $portal_job_applications_sid = $this->all_feed_model->check_job_applicant('company_check', $applicant_email, $companyId);
 
@@ -350,7 +362,6 @@ private function addLastRead($sid){
                     $insert_data_primary['last_name'] = $nameArray[1];
                     $insert_data_primary['email'] = $applicant_email;
                     $insert_data_primary['phone_number'] = $data['applicant']['phoneNumber'];
-
                     $job_applications_sid = $this->all_feed_model->saveApplicant($insert_data_primary);
                     //
                     send_full_employment_application($companyId, $job_applications_sid, "applicant");
@@ -395,7 +406,7 @@ private function addLastRead($sid){
                         'user_type' => 'applicant',
                         'requested_job_sid' => $job_sid,
                         'requested_job_type' => 'job'
-                    ],false);
+                    ], false);
                 }
 
 
@@ -404,25 +415,25 @@ private function addLastRead($sid){
 
                 if ($already_applied <= 0) {
                     $insert_job_list = array(
-                                            'portal_job_applications_sid' => $job_applications_sid,
-                                            'job_sid' => $job_sid,
-                                            'company_sid' => $companyId,
-                                            'date_applied' => $date_applied,
-                                            'status' => $status,
-                                            'status_sid' => $status_sid,
-                                            'applicant_source' => $referer,
-                                            'main_referral' => 'indeed',
-                                            'applicant_type' => 'Applicant',
-                                            'eeo_form' => null,
-                                            'ip_address' => $data['analytics']['ip'],
-                                            'user_agent' => $userAgent,
-                                            'resume' => $applicant_resume,
-                                            'last_update' => date('Y-m-d')
-                                        );
+                        'portal_job_applications_sid' => $job_applications_sid,
+                        'job_sid' => $job_sid,
+                        'company_sid' => $companyId,
+                        'date_applied' => $date_applied,
+                        'status' => $status,
+                        'status_sid' => $status_sid,
+                        'applicant_source' => $referer,
+                        'main_referral' => 'indeed',
+                        'applicant_type' => 'Applicant',
+                        'eeo_form' => null,
+                        'ip_address' => $data['analytics']['ip'],
+                        'user_agent' => $userAgent,
+                        'resume' => $applicant_resume,
+                        'last_update' => date('Y-m-d')
+                    );
                     sleep(1);
                     $final_check = $this->all_feed_model->applicant_list_exists_check($job_applications_sid, $job_sid, $companyId);
 
-                    if($final_check <=0) {
+                    if ($final_check <= 0) {
 
                         /*START START START*/
                         $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
@@ -467,7 +478,7 @@ private function addLastRead($sid){
 
                         $resume_url = '';
                         $resume_anchor = '';
-                        $profile_anchor = '<a href="'.base_url('applicant_profile/'.$job_applications_sid.'/'.$portal_applicant_jobs_list_sid).'" style="'.DEF_EMAIL_BTN_STYLE_DANGER.'"  download="resume" >View Profile</a>';
+                        $profile_anchor = '<a href="' . base_url('applicant_profile/' . $job_applications_sid . '/' . $portal_applicant_jobs_list_sid) . '" style="' . DEF_EMAIL_BTN_STYLE_DANGER . '"  download="resume" >View Profile</a>';
 
                         if (!empty($resume)) {
                             $resume_url = AWS_S3_BUCKET_URL . urlencode($resume);
@@ -480,44 +491,45 @@ private function addLastRead($sid){
                             $applicant_notification_contacts = get_notification_email_contacts($company_sid, 'new_applicant', $job_sid);
 
                             if (!empty($applicant_notification_contacts)) {
-                                    foreach($applicant_notification_contacts as $contact) {
-                                            $replacement_array['firstname'] = $nameArray[0];
-                                            $replacement_array['lastname'] = $nameArray[1];
-                                            $replacement_array['email'] = $applicant_email;
-                                            $replacement_array['company_name'] = $company_name;
-											$replacement_array['phone_number'] = $data['applicant']['phoneNumber'];
-                                            $replacement_array['resume_link'] = $resume_anchor;
-                                            $replacement_array['applicant_profile_link'] = $profile_anchor;
-                                            $replacement_array['original_job_title'] = $original_job_title;
-                                            log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
-                                            //mail($this->debug_email, 'Company notification for: ' . $company_name, 'applicant_email: ' . $applicant_email . ' Send Mail to: ' . $contact['email']);
-                                    }
-                                    //mail($this->debug_email, 'Indeed Applicant Notification', print_r($replacement_array, true ));
+                                foreach ($applicant_notification_contacts as $contact) {
+                                    $replacement_array['firstname'] = $nameArray[0];
+                                    $replacement_array['lastname'] = $nameArray[1];
+                                    $replacement_array['email'] = $applicant_email;
+                                    $replacement_array['company_name'] = $company_name;
+                                    $replacement_array['phone_number'] = $data['applicant']['phoneNumber'];
+                                    $replacement_array['resume_link'] = $resume_anchor;
+                                    $replacement_array['applicant_profile_link'] = $profile_anchor;
+                                    $replacement_array['original_job_title'] = $original_job_title;
+                                    log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
+                                    //mail($this->debug_email, 'Company notification for: ' . $company_name, 'applicant_email: ' . $applicant_email . ' Send Mail to: ' . $contact['email']);
+                                }
+                                //mail($this->debug_email, 'Indeed Applicant Notification', print_r($replacement_array, true ));
                             }
                         } // send email to 'new applicant notification' users *** END *** ////////
 
                         //check if screening Questionnaire is attached to the job - If Yes, Send screen questionnaire email to applicant ***  START ***
-                        if(!empty($job_details)) {
+                        if (!empty($job_details)) {
                             $original_job_title = $job_details['Title'];
                             $questionnaire_sid = $job_details['questionnaire_sid'];
                         }
 
-                        if($questionnaire_sid > 0) {
+                        if ($questionnaire_sid > 0) {
                             $questionnaire_status = $this->all_feed_model->check_screening_questionnaires($questionnaire_sid);
 
-                            if($questionnaire_status == 'found') {
+                            if ($questionnaire_status == 'found') {
                                 $email_template_information = $this->all_feed_model->get_email_template_data(SCREENING_QUESTIONNAIRE_FOR_JOB);
                                 $screening_questionnaire_key = $this->all_feed_model->generate_questionnaire_key($portal_applicant_jobs_list_sid);
 
-                                if(empty($email_template_information)) {
-                                    $email_template_information = array('subject' =>'{{company_name}} - Screening Questionnaire for {{job_title}}',
-                                                                        'text' => '<p>Dear {{applicant_name}},</p>
+                                if (empty($email_template_information)) {
+                                    $email_template_information = array(
+                                        'subject' => '{{company_name}} - Screening Questionnaire for {{job_title}}',
+                                        'text' => '<p>Dear {{applicant_name}},</p>
                                                                                 <p>You have successfully applied for the job: "{{job_title}}" and your job application is in our system. </p>
                                                                                 <p><strong>Please complete the Job Screening Questionnaire by clicking on the link below. We are excited to learn more about you. </strong></p>
                                                                                 <p>{{url}}</p>
                                                                                 <p>Thank you, again, for your interest in {{company_name}}</p>',
-                                                                        'from_name' => '{{company_name}}'
-                                                                    );
+                                        'from_name' => '{{company_name}}'
+                                    );
                                 }
 
                                 $emailTemplateBody = $email_template_information['text'];
@@ -526,13 +538,13 @@ private function addLastRead($sid){
                                 $replacement_array = array();
                                 $replacement_array['company_name'] = $company_name;
 
-                                if($original_job_title != '') {
+                                if ($original_job_title != '') {
                                     $replacement_array['job_title'] = $original_job_title;
                                 } else {
                                     $replacement_array['job_title'] = $jobTitle;
                                 }
 
-                                $replacement_array['applicant_name'] = $nameArray[0].'&nbsp;'.$nameArray[1];
+                                $replacement_array['applicant_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
                                 $replacement_array['url'] = '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . base_url() . 'Job_screening_questionnaire/' . $screening_questionnaire_key . '" target="_blank">Screening Questionnaire</a>';
 
                                 if (!empty($replacement_array)) {
@@ -544,13 +556,13 @@ private function addLastRead($sid){
                                 }
 
                                 if (!empty($emailTemplateBody)) {
-                                                $emailTemplateBody     = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
                                 }
 
                                 $message_data = array();
@@ -563,15 +575,15 @@ private function addLastRead($sid){
                                 $message_data['message'] = $emailTemplateBody;
                                 $message_data['date'] = $date_applied;
                                 $message_data['from_id'] = REPLY_TO;
-                                $message_data['contact_name'] = $nameArray[0].'&nbsp;'.$nameArray[1];
+                                $message_data['contact_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
                                 $message_data['identity_key'] = generateRandomString(48);
                                 $message_hf = message_header_footer_domain($company_sid, $company_name);
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $autoemailbody = FROM_INFO_EMAIL_DISCLAIMER_MSG . $message_hf['header']
-                                                . $emailTemplateBody
-                                                . $message_hf['footer']
-                                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                                . $secret_key . '</div>';
+                                    . $emailTemplateBody
+                                    . $message_hf['footer']
+                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                    . $secret_key . '</div>';
 
                                 $autoemailbody .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
 
@@ -581,8 +593,8 @@ private function addLastRead($sid){
                                 $this->all_feed_model->update_questionnaire_status($portal_applicant_jobs_list_sid);
                             }
                         }
-                    // *** END - Screening Questionnaire Email ***
-                    /*END END END*/
+                        // *** END - Screening Questionnaire Email ***
+                        /*END END END*/
                     }
                 } else {
                     $this->addReport('Indeed', $data['applicant']['email'], 'update');
@@ -599,7 +611,6 @@ private function addLastRead($sid){
                     //log_and_send_templated_email(INDEED_ALREADY_APPLIED_NOTIFICATION, $this->debug_email, $replacement_array, message_header_footer($company_sid, $company_name));
                     //mail($this->debug_email, STORE_NAME.' Apply Now Debug - Indeed Applicant already applied for this job.', print_r($data, true));
                 }
-
             } else {
                 if (isset($data['applicant']['resume']['file']['data'])) { //making Resume file to upload on AWS
                     $base64Data = $data['applicant']['resume']['file']['data']; //Decode pdf content
@@ -695,7 +706,7 @@ private function addLastRead($sid){
                 $job_details = $this->all_feed_model->get_job_detail($job_sid);
                 $questionnaire_sid = 0;
 
-                if(!empty($job_details)){
+                if (!empty($job_details)) {
                     $original_job_title = $job_details['Title'];
                 }
 
@@ -743,23 +754,23 @@ private function addLastRead($sid){
 
                 if ($already_applied <= 0) {
                     $insert_job_list = array(
-                                            'portal_job_applications_sid' => $job_applications_sid,
-                                            'job_sid' => $job_sid,
-                                            'company_sid' => $companyId,
-                                            'date_applied' => $date_applied,
-                                            'status' => $status,
-                                            'status_sid' => $status_sid,
-                                            'applicant_source' => $referer,
-                                            'main_referral' => 'indeed',
-                                            'applicant_type' => 'Applicant',
-                                            'eeo_form' => null,
-                                            'ip_address' => $data['analytics']['ip'],
-                                            'user_agent' => $userAgent
-                                        );
+                        'portal_job_applications_sid' => $job_applications_sid,
+                        'job_sid' => $job_sid,
+                        'company_sid' => $companyId,
+                        'date_applied' => $date_applied,
+                        'status' => $status,
+                        'status_sid' => $status_sid,
+                        'applicant_source' => $referer,
+                        'main_referral' => 'indeed',
+                        'applicant_type' => 'Applicant',
+                        'eeo_form' => null,
+                        'ip_address' => $data['analytics']['ip'],
+                        'user_agent' => $userAgent
+                    );
                     sleep(1);
                     $final_check = $this->all_feed_model->applicant_list_exists_check($job_applications_sid, $job_sid, $companyId);
 
-                    if($final_check <=0) {
+                    if ($final_check <= 0) {
                         /*START START START*/
                         $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
                         $portal_applicant_jobs_list_sid = $jobs_list_result[0];
@@ -803,7 +814,7 @@ private function addLastRead($sid){
 
                         $resume_url = '';
                         $resume_anchor = '';
-                        $profile_anchor = '<a href="'.base_url('applicant_profile/'.$job_applications_sid.'/'.$portal_applicant_jobs_list_sid).'" style="'.DEF_EMAIL_BTN_STYLE_DANGER.'"  download="resume" >View Profile</a>';
+                        $profile_anchor = '<a href="' . base_url('applicant_profile/' . $job_applications_sid . '/' . $portal_applicant_jobs_list_sid) . '" style="' . DEF_EMAIL_BTN_STYLE_DANGER . '"  download="resume" >View Profile</a>';
 
                         if (!empty($resume)) {
                             $resume_url = AWS_S3_BUCKET_URL . urlencode($resume);
@@ -816,43 +827,44 @@ private function addLastRead($sid){
                             $applicant_notification_contacts = get_notification_email_contacts($company_sid, 'new_applicant', $job_sid);
 
                             if (!empty($applicant_notification_contacts)) {
-                                    foreach($applicant_notification_contacts as $contact) {
-                                            $replacement_array['firstname'] = $nameArray[0];
-                                            $replacement_array['lastname'] = $nameArray[1];
-                                            $replacement_array['email'] = $applicant_email;
-                                            $replacement_array['company_name'] = $company_name;
-                                            $replacement_array['resume_link'] = $resume_anchor;
-                                            $replacement_array['applicant_profile_link'] = $profile_anchor;
-                                            $replacement_array['original_job_title'] = $original_job_title;
-                                            log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
-                                            //mail($this->debug_email, 'Company notification for: ' . $company_name, 'applicant_email: ' . $applicant_email . ' Send Mail to: ' . $contact['email']);
-                                    }
-                                    //mail($this->debug_email, 'Indeed Applicant Notification', print_r($replacement_array, true ));
+                                foreach ($applicant_notification_contacts as $contact) {
+                                    $replacement_array['firstname'] = $nameArray[0];
+                                    $replacement_array['lastname'] = $nameArray[1];
+                                    $replacement_array['email'] = $applicant_email;
+                                    $replacement_array['company_name'] = $company_name;
+                                    $replacement_array['resume_link'] = $resume_anchor;
+                                    $replacement_array['applicant_profile_link'] = $profile_anchor;
+                                    $replacement_array['original_job_title'] = $original_job_title;
+                                    log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
+                                    //mail($this->debug_email, 'Company notification for: ' . $company_name, 'applicant_email: ' . $applicant_email . ' Send Mail to: ' . $contact['email']);
+                                }
+                                //mail($this->debug_email, 'Indeed Applicant Notification', print_r($replacement_array, true ));
                             }
                         } // send email to 'new applicant notification' users *** END *** ////////
 
                         //check if screening Questionnaire is attached to the job - If Yes, Send screen questionnaire email to applicant ***  START ***
-                        if(!empty($job_details)) {
+                        if (!empty($job_details)) {
                             $original_job_title = $job_details['Title'];
                             $questionnaire_sid = $job_details['questionnaire_sid'];
                         }
 
-                        if($questionnaire_sid > 0) {
+                        if ($questionnaire_sid > 0) {
                             $questionnaire_status = $this->all_feed_model->check_screening_questionnaires($questionnaire_sid);
 
-                            if($questionnaire_status == 'found') {
+                            if ($questionnaire_status == 'found') {
                                 $email_template_information = $this->all_feed_model->get_email_template_data(SCREENING_QUESTIONNAIRE_FOR_JOB);
                                 $screening_questionnaire_key = $this->all_feed_model->generate_questionnaire_key($portal_applicant_jobs_list_sid);
 
-                                if(empty($email_template_information)) {
-                                    $email_template_information = array('subject' =>'{{company_name}} - Screening Questionnaire for {{job_title}}',
-                                                                        'text' => '<p>Dear {{applicant_name}},</p>
+                                if (empty($email_template_information)) {
+                                    $email_template_information = array(
+                                        'subject' => '{{company_name}} - Screening Questionnaire for {{job_title}}',
+                                        'text' => '<p>Dear {{applicant_name}},</p>
                                                                                 <p>You have successfully applied for the job: "{{job_title}}" and your job application is in our system. </p>
                                                                                 <p><strong>Please complete the Job Screening Questionnaire by clicking on the link below. We are excited to learn more about you. </strong></p>
                                                                                 <p>{{url}}</p>
                                                                                 <p>Thank you, again, for your interest in {{company_name}}</p>',
-                                                                        'from_name' => '{{company_name}}'
-                                                                    );
+                                        'from_name' => '{{company_name}}'
+                                    );
                                 }
 
                                 $emailTemplateBody = $email_template_information['text'];
@@ -861,13 +873,13 @@ private function addLastRead($sid){
                                 $replacement_array = array();
                                 $replacement_array['company_name'] = $company_name;
 
-                                if($original_job_title != '') {
+                                if ($original_job_title != '') {
                                     $replacement_array['job_title'] = $original_job_title;
                                 } else {
                                     $replacement_array['job_title'] = $jobTitle;
                                 }
 
-                                $replacement_array['applicant_name'] = $nameArray[0].'&nbsp;'.$nameArray[1];
+                                $replacement_array['applicant_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
                                 $replacement_array['url'] = '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . base_url() . 'Job_screening_questionnaire/' . $screening_questionnaire_key . '" target="_blank">Screening Questionnaire</a>';
 
                                 if (!empty($replacement_array)) {
@@ -879,13 +891,13 @@ private function addLastRead($sid){
                                 }
 
                                 if (!empty($emailTemplateBody)) {
-                                                $emailTemplateBody     = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
-                                                $emailTemplateBody     = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
+                                    $emailTemplateBody     = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
                                 }
 
                                 $message_data = array();
@@ -898,15 +910,15 @@ private function addLastRead($sid){
                                 $message_data['message'] = $emailTemplateBody;
                                 $message_data['date'] = $date_applied;
                                 $message_data['from_id'] = REPLY_TO;
-                                $message_data['contact_name'] = $nameArray[0].'&nbsp;'.$nameArray[1];
+                                $message_data['contact_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
                                 $message_data['identity_key'] = generateRandomString(48);
                                 $message_hf = message_header_footer_domain($company_sid, $company_name);
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $autoemailbody = FROM_INFO_EMAIL_DISCLAIMER_MSG . $message_hf['header']
-                                                . $emailTemplateBody
-                                                . $message_hf['footer']
-                                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                                . $secret_key . '</div>';
+                                    . $emailTemplateBody
+                                    . $message_hf['footer']
+                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                    . $secret_key . '</div>';
 
                                 $autoemailbody .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
 
@@ -915,8 +927,8 @@ private function addLastRead($sid){
                                 $this->all_feed_model->update_questionnaire_status($portal_applicant_jobs_list_sid);
                             }
                         }
-                    // *** END - Screening Questionnaire Email ***
-                    /*END END END*/
+                        // *** END - Screening Questionnaire Email ***
+                        /*END END END*/
                     }
                 } else {
                     $applicant_email = $data['applicant']['email'];
@@ -935,10 +947,11 @@ private function addLastRead($sid){
         }
     }
 
-    private function isActiveFeed(){
+    private function isActiveFeed()
+    {
         $this->load->model('all_job_feed_model');
         $validSlug = $this->all_job_feed_model->check_for_slug('indeed_paid');
-        if(!$validSlug){
+        if (!$validSlug) {
             echo '<h1>404. Feed Not Found!</h1>';
             die();
         }
