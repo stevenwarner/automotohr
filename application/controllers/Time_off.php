@@ -2439,12 +2439,10 @@ class Time_off extends Public_Controller
         $post = $this->input->post(NULL, TRUE);
         // Check post size and action
 
-        /*
         if (!sizeof($post) || !isset($post['action'])) $this->resp();
         if (!isset($post['companyId']) || $post['companyId'] == '') $this->resp();
         if (!isset($post['employerId']) || $post['employerId'] == '') $this->resp();
         if (!isset($post['employeeId']) || $post['employeeId'] == '') $this->resp();
-    */
 
         $post['public'] = 0;
         // For expired session
@@ -6087,7 +6085,7 @@ class Time_off extends Public_Controller
                 }
 
                 //
-                $path = FCPATH . 'temp_files/timeoff/' . $formpost['fileName'] . '/' . $formpost['employeeName'] . '/';
+                $path = FCPATH . 'temp_files/timeoff/' . $post['fileName'] . '/' . $post['employeeName'] . '/';
                 //
                 if (!is_dir($path)) mkdir($path, 0777, true);
                 //

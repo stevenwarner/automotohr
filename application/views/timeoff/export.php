@@ -143,6 +143,9 @@
         var filterOBJ = {
             action: 'export',
             companySid: "<?= $company_sid; ?>",
+            companyId: "<?= $company_sid; ?>",
+            employerId: "<?= $employer_sid; ?>",
+            employeeId: "<?= $employer_sid; ?>",
             employees: ['all'],
             status: ['all'],
             archive: 'no',
@@ -154,6 +157,9 @@
             filterOBJ = {
                 action: 'export',
                 companySid: "<?= $company_sid; ?>",
+                companyId: "<?= $company_sid; ?>",
+                employerId: "<?= $employer_sid; ?>",
+                employeeId: "<?= $employer_sid; ?>",
                 employees: $('#app_sid').val() === null ? ['all'] : $('#app_sid').val().split(','),
                 status: $('#status').val() === null ? ['all'] : $('#status').val(),
                 archive: $('#archive').val(),
@@ -185,7 +191,7 @@
             $.post("<?= base_url('/timeoff/handler'); ?>", filterOBJ, (resp) => {
                 progress(true, 100, 'Fetching employees.');
                 if (resp.Status === true && resp.Data.length > 0) {
-                   startExportProcess(resp.Data);
+                    startExportProcess(resp.Data);
                 } else {
                     //
                     alertify.alert("WARNING!", "No time-off found.");
@@ -243,7 +249,7 @@
             progress(true, 30, `Adding <strong>${row.employee.name}</strong> to export. <strong>${current + 1}</strong> out of <strong>${keys.length}</strong> `);
             //
             step3(row);
-           // console.log(row);
+            // console.log(row);
         }
 
 
@@ -253,6 +259,9 @@
             $.post("<?= base_url("timeoff/handler"); ?>", {
                 action: 'export_by_sids',
                 companySid: "<?= $company_sid; ?>",
+                companyId: "<?= $company_sid; ?>",
+                employerId: "<?= $employer_sid; ?>",
+                employeeId: "<?= $employer_sid; ?>",
                 fileName: fileName,
                 employeeName: row.employee.name.replace(/[^a-zA-Z]/g, '_').toLowerCase(),
                 ids: row.timeoffs
@@ -276,11 +285,14 @@
             $.post("<?= base_url('timeoff/handler'); ?>", {
                 action: 'get_export_link',
                 companySid: "<?= $company_sid; ?>",
+                companyId: "<?= $company_sid; ?>",
+                employerId: "<?= $employer_sid; ?>",
+                employeeId: "<?= $employer_sid; ?>",
                 fileName: fileName,
                 employeeName: row.employee.name.replace(/[^a-zA-Z]/g, '_').toLowerCase(),
             }, (resp) => {
                 //
-              //  console.log(resp.Link);
+                //  console.log(resp.Link);
                 if (resp.Status === true) {}
             })
         }
