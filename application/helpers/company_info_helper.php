@@ -2761,8 +2761,23 @@ if (!function_exists('getComplyNetLink')) {
         // Get the hash
         $response = $CI->complynet_lib->getUserHash($record['email']);
         //
-        if ($response == 'Array') {
-            return '';
+        if ($response == 'Array' || !$response) {
+            // let's try one more time with current email
+            $currentRecord = $CI->db
+                ->select('email')
+                ->where('sid', $employeeId)
+                ->get('users')
+                ->result_array();
+            //
+            if (!$currentRecord) {
+                return '';
+            }
+            // Get the hash
+            $response = $CI->complynet_lib->getUserHash($currentRecord['email']);
+            //
+            if ($response == 'Array' || !$response) {
+                return '';
+            }
         }
         return $response;
     }
