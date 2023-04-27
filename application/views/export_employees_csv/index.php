@@ -17,12 +17,12 @@
                             </div>
                             <div class="panel-body">
                                 <pre>
-<b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Access Level, Job Title,Status</b><br>
-Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Admin, General Manager,ActiveEmployee
-Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Manager, Manager Sales,ActiveEmployee,
-Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Hiring Manager,ActiveActiveEmployee, 
-Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Employee, Office Assistant,InactiveEmployee,
-Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, Employee, Team Lead,InactiveEmployee, 
+<b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Access Level, Job Title,Status</b><br>
+Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, Admin, General Manager,ActiveEmployee
+Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, Manager, Manager Sales,ActiveEmployee,
+Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, Hiring Manager,ActiveActiveEmployee, 
+Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, Employee, Office Assistant,InactiveEmployee,
+Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States,Employee, Team Lead,InactiveEmployee, 
                                 </pre>
                             </div>
                             <?php if ($access_level_plus || $pay_plan_flag == 1) { ?>
@@ -312,6 +312,15 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                     </label>
                                                 </div>
                                             </div>
+
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Profile Picture URL<input type="checkbox" name="profile_picture" class="check_it" value="profile_picture">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
 
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">

@@ -33,8 +33,8 @@ class Export_employees_csv extends Public_Controller
                 $data['employeesList'] = $this->export_csv_model->getAllActiveEmployees($company_sid, false);
                 $data['csv_report_settings'] = $this->export_csv_model->get_employee_csv_report_settings_bycompany($company_sid, false);
                 //print_r($data['csv_report_settings']);
-                
-                
+
+
                 $this->load->view('main/header', $data);
                 $this->load->view('export_employees_csv/index');
                 $this->load->view('main/footer');
@@ -43,6 +43,7 @@ class Export_employees_csv extends Public_Controller
 
                 switch ($perform_action) {
                     case 'export_employees':
+
                         $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
                         $pay_plan_flag = $data['session']['employer_detail']['pay_plan_flag'];
                         if (($access_level_plus || $pay_plan_flag == 1)) {
@@ -55,26 +56,24 @@ class Export_employees_csv extends Public_Controller
                         $status = $this->input->post('status');
                         $to_date = $this->input->post('to_date');
                         $from_date = $this->input->post('from_date');
-                      
+
                         $start_time = '';
                         $end_time = '';
                         //
                         if (!empty($to_date)) {
                             $start_time = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
-                        
                         }
                         //
                         if (!empty($from_date)) {
                             $end_time = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
-                       
                         }
                         //
                         if ($status == "new_hires") {
                             $start_time = date('Y-m-01 00:00:00');
                             $end_time = date('Y-m-t 23:59:59');
                         }
-                        
-                       //echo $start_time.'#'.$end_time;
+
+                        //echo $start_time.'#'.$end_time;
 
 
 
@@ -86,7 +85,7 @@ class Export_employees_csv extends Public_Controller
                         $i = 0;
                         $rows = '';
 
-                        if (!empty($employees)) { 
+                        if (!empty($employees)) {
                             $header = [];
                             foreach ($employees as $key => $employee) {
 
@@ -140,11 +139,6 @@ class Export_employees_csv extends Public_Controller
                                     }
                                 }
 
-                                if (!empty($employee['profile_picture'])) {
-                                    $export_data[$i]['pictures'] = AWS_S3_BUCKET_URL . $employee['profile_picture']; // good to go
-                                } else {
-                                    $export_data[$i]['pictures'] = '';
-                                }
 
                                 if ($employee['is_executive_admin'] == 1) {
                                     $export_data[$i]['access_level'] = 'Executive Admin';
@@ -157,7 +151,7 @@ class Export_employees_csv extends Public_Controller
                                 } else {
                                     $export_data[$i]['status'] = 'Archived Employee';
                                 }
-                                
+
                                 //
                                 if (($access_level_plus || $pay_plan_flag == 1) && !empty($checked_boxes)  && !empty($checked_boxes[0])) {
                                     foreach ($checked_boxes as $key => $value) {
@@ -170,7 +164,7 @@ class Export_employees_csv extends Public_Controller
                                                     case "terminated_date":
                                                         $terminated_date = $terminated_data['termination_date'];
                                                         $export_data[$i][$value] = $terminated_date;
-                                                    break;
+                                                        break;
                                                     case "terminated_reason":
                                                         $reason = $terminated_data['termination_reason'];
                                                         $terminated_reason = '';
@@ -178,37 +172,39 @@ class Export_employees_csv extends Public_Controller
                                                             $terminated_reason = 'Resignation';
                                                         } else if ($reason == 2) {
                                                             $terminated_reason = 'Tenure Completed';
-                                                        }else if ($reason == 3) {
+                                                        } else if ($reason == 3) {
                                                             $terminated_reason = 'Fired';
                                                         }
                                                         //
                                                         $export_data[$i][$value] = $terminated_reason;
                                                         //
-                                                    break;
+                                                        break;
                                                 }
                                             } else {
                                                 $export_data[$i][$value] = '';
                                             }
-
-                                        } elseif($value == "drivers_license"){
+                                        } elseif ($value == "drivers_license") {
                                             unset($header['drivers_license']);
                                             //
                                             $drivingData = get_employee_drivers_license($employee['sid']);
 
-                                            $licenseDetails="";
-                                            if(!empty($drivingData)){
-                                                foreach(unserialize($drivingData['license_details']) as $key => $val){
+                                            $licenseDetails = "";
+                                            if (!empty($drivingData)) {
+                                                foreach (unserialize($drivingData['license_details']) as $key => $val) {
                                                     $export_data[$i][$key] = $val;
                                                     $header[$key] = $key;
                                                 }
                                             }
-
-                                        }else {
+                                        } elseif ($value == 'profile_picture') {
+                                            if (!empty($employee['profile_picture'])) {
+                                                $export_data[$i]['pictures'] = AWS_S3_BUCKET_URL . $employee['profile_picture'];
+                                            } else {
+                                                $export_data[$i]['pictures'] = '';
+                                            }
+                                        } else {
                                             $export_data[$i][$value] = str_replace(',', ' ', strip_tags(trim(preg_replace('/\s+/', ' ', $employee[$value]))));
-
-                                        } 
+                                        }
                                     }
-
                                 }
                                 //
                                 //$export_data[$i]['access_level'] =  $employee['access_level'];
@@ -221,8 +217,23 @@ class Export_employees_csv extends Public_Controller
                                 $rows .= $row . PHP_EOL;
                                 $i++;
                             }
-                            $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status' .(count($header) ? ','.implode(',', $header) : '');
-                            
+                            //   $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status' . (count($header) ? ',' . implode(',', $header) : '');
+
+                            /*
+                            <?php if (!empty($session['company_detail']['Logo'])) { ?>
+                                <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo']; ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
+                            <?php } ?>
+                            <?php if (!empty($session['company_detail']['CompanyName'])) { ?>
+                                <?php echo $session['company_detail']['CompanyName']; ?><br>
+                            <?php } ?>
+*/
+                            $companyHeader = '';
+                            if (!empty($data['session']['company_detail']['CompanyName'])) {
+                                $companyHeader = ',,,,' . $data['session']['company_detail']['CompanyName'];
+                            }
+
+                            $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Access Level,Job Title,Status' . (count($header) ? ',' . implode(',', $header) : '');
+
                             $file_content = '';
                             $file_content .= $header_row . PHP_EOL;
                             $file_content .= $rows;
@@ -243,6 +254,7 @@ class Export_employees_csv extends Public_Controller
                             header('Content-Transfer-Encoding: binary');
                             header('Content-Length: ' . $file_size); // provide file size
                             header('Connection: close');
+                            echo $companyHeader . PHP_EOL . PHP_EOL;
                             echo $header_row . PHP_EOL;
                             echo $rows;
                             break;
@@ -250,7 +262,7 @@ class Export_employees_csv extends Public_Controller
                             $this->session->set_flashdata('message', '<b>Error:</b> Record(s) Not Found!');
                             redirect('export_employees_csv');
                         }
-                        
+
 
                         /************************************************************************************
                         foreach ($employees as $key => $employee) {
@@ -320,58 +332,56 @@ class Export_employees_csv extends Public_Controller
                         break; */
 
                     case 'save_report_setting':
-                      //  _e($_POST,true,true);
+                        //  _e($_POST,true,true);
                         //
                         $employer_sid = $data['session']['employer_detail']['sid'];
                         $data_to_insert['company_sid'] = $this->input->post('company_sid');
-                        $access_level = explode(',',$this->input->post('access_level'));
-                 
-                        if($access_level[0]=='all'){
-                            $data_to_insert['employee_type'] ='all';
-                        }else{
+                        $access_level = explode(',', $this->input->post('access_level'));
+
+                        if ($access_level[0] == 'all') {
+                            $data_to_insert['employee_type'] = 'all';
+                        } else {
                             $data_to_insert['employee_type'] = $this->input->post('access_level');
                         }
-                    
+
                         $data_to_insert['employee_status'] = $this->input->post('status');
                         $data_to_insert['custom_type'] = $this->input->post('assignAndSendDocument');
                         $data_to_insert['custom_date'] = $this->input->post('assignAndSendCustomDate');
                         $data_to_insert['custom_day'] = $this->input->post('assignAndSendCustomDay');
                         $data_to_insert['custom_time'] = $this->input->post('assignAndSendCustomTime');
-                        if($this->input->post('report_all_columns')==1){
-                        $data_to_insert['selected_columns'] = 'all';
-                        }else{
-                        $data_to_insert['selected_columns'] = $this->input->post('test');
+                        if ($this->input->post('report_all_columns') == 1) {
+                            $data_to_insert['selected_columns'] = 'all';
+                        } else {
+                            $data_to_insert['selected_columns'] = $this->input->post('test');
                         }
                         $sender_list = $this->input->post('assignAdnSendSelectedEmployees');
-                        if($sender_list[0]=='-1'){
-                            $data_to_insert['sender_list'] ='all';
-                        }else{
-                            $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
+                        if ($sender_list[0] == '-1') {
+                            $data_to_insert['sender_list'] = 'all';
+                        } else {
+                            $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',', $this->input->post('assignAdnSendSelectedEmployees')) : '';
                         }
-                      //  $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
-                        
+                        //  $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
+
                         $data_to_insert['created_at'] = date('Y-m-d H:i:s');
                         $data_to_insert['created_by'] = $employer_sid;
                         $to_date = $this->input->post('to_date');
-                        $from_date =  $this->input->post('from_date'); 
+                        $from_date =  $this->input->post('from_date');
 
                         if (!empty($to_date)) {
                             $to_date = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
-                           
                         }
                         //
                         if (!empty($from_date)) {
                             $from_date = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
-  
                         }
 
                         $data_to_insert['to_date'] = $to_date;
-                        $data_to_insert['from_date'] = $from_date; 
+                        $data_to_insert['from_date'] = $from_date;
                         $this->export_csv_model->save_employee_csv_report_settings($data_to_insert);
                         $this->session->set_flashdata('message', '<strong>Success</strong> CSV Report Settings Saved Successfully');
                         redirect('export_employees_csv', 'refresh');
 
-                        break;    
+                        break;
                 }
             }
         } else {
@@ -380,11 +390,10 @@ class Export_employees_csv extends Public_Controller
     }
 
 
-public function report_setting_remove(){
-    $sid = $this->input->post('sid');
-    $data = array('status' => 0);
-    $this->export_csv_model->csv_report_settings_delete($sid,$data);
-     
-}
-
+    public function report_setting_remove()
+    {
+        $sid = $this->input->post('sid');
+        $data = array('status' => 0);
+        $this->export_csv_model->csv_report_settings_delete($sid, $data);
+    }
 }
