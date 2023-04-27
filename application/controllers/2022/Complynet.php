@@ -762,26 +762,4 @@ class Complynet extends Admin_Controller
         exit('Roles processed.');
     }
 
-
-    /**
-     * 
-     */
-    public function redirectToComply(int $employeeId = 0)
-    {
-        // check if we need to read from session
-        if ($employeeId === 0) {
-            $employeeId = $this->session->userdata('logged_in')['employer_detail']['sid'];
-        }
-        // if employee is not found
-        if ($employeeId == 0) {
-            return redirect('/dashboard');
-        }
-        // generate link
-        $complyLink = getComplyNetLink(0, $employeeId);
-        //
-        if (!$complyLink) {
-            return redirect('/dashboard');
-        }
-        redirect($complyLink);
-    }
 }
