@@ -2767,7 +2767,7 @@ if (!function_exists('getComplyNetLink')) {
                 ->select('email')
                 ->where('sid', $employeeId)
                 ->get('users')
-                ->result_array();
+                ->row_array();
             //
             if (!$currentRecord) {
                 return '';
