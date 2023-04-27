@@ -407,6 +407,7 @@ if (!function_exists('getEmployeeAccrual')) {
         //
         if (strtotime($currentDate) >= strtotime($effectedDate)) {
             $consumeDate = $effectedDate2;
+            $consumeDate = preg_replace('/[0-9]{4}/', date('Y', strtotime('now')), $consumeDate);
             $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
                 $policyId,
                 $employeeId,

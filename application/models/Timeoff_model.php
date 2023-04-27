@@ -2369,8 +2369,7 @@ class Timeoff_model extends CI_Model
         $employeeId,
         $method,
         $frequency,
-        $todayDate,
-        $consumeDate = ''
+        $todayDate
     ) {
         $dateFormat = 'Y';
         $dateFormatDB = '%Y';
