@@ -1106,7 +1106,7 @@
 
 
 
-    <?php if ($data['job_title_type'] != '0') { ?>
+    <?php if ($templateTitles && $data['job_title_type'] != '0') { ?>
         $('#temppate_job_title').show();
         $('#temppate_job_title').val('<?php echo $data['job_title_type'] . '#' . $data['job_title']; ?>');
         $('#job_title').hide();

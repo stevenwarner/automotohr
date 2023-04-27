@@ -33,19 +33,19 @@ class job_title_templates_model extends CI_Model
         $this->db->where('sid', $sid);
         $this->db->update('portal_job_title_templates', $data);
 
-        //
-        $data = array(
-            'job_title' => $title
-        );
-        $this->db->where('job_title_type', $sid);
-        $this->db->update('users', $data);
+        // //
+        // $data = array(
+        //     'job_title' => $title
+        // );
+        // $this->db->where('job_title_type', $sid);
+        // $this->db->update('users', $data);
 
-        //
-        $data = array(
-            'desired_job_title' => $title
-        );
-        $this->db->where('job_title_type', $sid);
-        $this->db->update('portal_job_applications', $data);
+        // //
+        // $data = array(
+        //     'desired_job_title' => $title
+        // );
+        // $this->db->where('job_title_type', $sid);
+        // $this->db->update('portal_job_applications', $data);
     }
 
     public function SaveTemplate($sid, $title, $complynetJobTitle, $sortOrder)

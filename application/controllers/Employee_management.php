@@ -1645,11 +1645,6 @@ class Employee_management extends Public_Controller
                         $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                         $data_to_insert['job_title'] = $templetJobTitleDataArray[1];
                         $data_to_insert['job_title_type'] = $templetJobTitleDataArray[0];
-
-                        $userComplynetJobTitle = get_user_complynettitle($sid);
-                        if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
-                            $data_to_insert['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
-                        }
                     } else {
                         $data_to_insert['job_title_type'] = 0;
                     }

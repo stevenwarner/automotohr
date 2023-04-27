@@ -369,21 +369,15 @@ class employers extends Admin_Controller
                 $data['languages_speak'] = implode(',', $languages_speak);
             }
 
-
+            
             if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
                 $templetJobTitleData = $this->input->post('temppate_job_title');
                 $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                 $data['job_title'] = $templetJobTitleDataArray[1];
                 $data['job_title_type'] = $templetJobTitleDataArray[0];
-
-                if ($this->input->post('complynet_job_title') == 'null' && $this->input->post('complynet_job_title', true)) {
-                    $templetComplynetjobtitle = get_templet_complynettitle($templetJobTitleDataArray[0]);
-                    $data['complynet_job_title'] = $templetComplynetjobtitle;
-                }
             } else {
                 $data['job_title_type'] = 0;
             }
-
 
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
