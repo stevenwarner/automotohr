@@ -753,7 +753,7 @@
                                         ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
-                                                    <?php if ($complyNetLink) echo '<a href="' . ($complyNetLink) . '" target="_blank">'; ?>
+                                                    <?php if ($complyNetLink) echo '<a href="' . (base_url('cn/redirect')) . '" target="_blank">'; ?>
                                                     <div class="dashboard-widget-box">
                                                         <figure>
                                                             <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
@@ -763,30 +763,9 @@
                                                         </h2>
                                                         <div class="button-panel col-lg-12">
                                                             <div class="row">
-                                                                <?php
-                                                                if ($complyNetLink) {
-                                                                ?>
-                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                        <a href="<?= $complyNetLink; ?>" target="_blank" class="btn btn-success btn-block">Dashboard</a>
-                                                                    </div>
-                                                                <?php
-                                                                } else {
-                                                                ?>
-                                                                    <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
-                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                            <a href="<?php echo base_url('complynet/dashboard'); ?>" class="btn btn-success btn-block">Dashboard</a>
-                                                                        </div>
-                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                            <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
-                                                                        </div>
-                                                                    <?php } else { ?>
-                                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                            <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
-                                                                        </div>
-                                                                    <?php } ?>
-                                                                <?php
-                                                                }
-                                                                ?>
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <a href="<?= $complyNetLink; ?>" target="_blank" class="btn btn-success btn-block">Dashboard</a>
+                                                                </div>
 
                                                             </div>
                                                         </div>

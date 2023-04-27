@@ -1699,3 +1699,7 @@ $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
 // Download document zip file
 $route['download_document_zip/(:any)']['get'] = 'Hr_documents_management/downloadDocumentZipFile/$1';
+
+// Redirect to ComplyNet
+$route['cn/redirect'] = '2022/Complynet/redirectToComply';
+$route['cn/redirect/(:num)'] = '2022/Complynet/redirectToComply/$1';
