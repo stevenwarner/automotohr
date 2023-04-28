@@ -321,7 +321,7 @@ class Complynet_model extends CI_Model
 
         if ($record) {
             if ($returnComplyId) {
-                return $this->getComplyNetLinkedDepartmentById($record['sid']);
+                return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
             } else {
                 return $record['sid'];
             }
@@ -337,12 +337,13 @@ class Complynet_model extends CI_Model
      * @return string
      */
     public function getComplyNetLinkedDepartmentById(
-        int $departmentId
+        int $departmentId,
+        int $employeeId = 0
     ) {
         //
         $record =
             $this->db
-            ->select('complynet_department_sid')
+            ->select('complynet_department_sid, department_name, complynet_department_sid')
             ->where([
                 'department_sid' => $departmentId,
                 'complynet_department_sid !=  ' => 'A'
@@ -351,10 +352,58 @@ class Complynet_model extends CI_Model
             ->row_array();
         //
         if ($record) {
-            return $record['complynet_department_sid'];
+            // lets double check it
+            $response = $this->getComplyNetDepartmentByAhrId(
+                $departmentId,
+                $record['department_name'],
+                $record['complynet_department_sid'],
+                $employeeId
+            );
+            //
+            if ($response != 0) {
+                return $response;
+            }
+            return 0;
+            // return $record['complynet_department_sid'];
         }
         //
         return 0;
+    }
+
+    private function getComplyNetDepartmentByAhrId(
+        int $departmentId,
+        string $departmentName,
+        string $departmentUUID,
+        int $employeeId
+    ) {
+        // get the company location id
+        $result = $this->db
+            ->where('employee_sid', $employeeId)
+            ->get('complynet_employees')
+            ->row_array();
+        //
+        if (!$result) {
+            return 0;
+        }
+        //
+        $locations = $this->clib->getComplyNetDepartments(
+            $result['complynet_location_sid']
+        );
+        //
+        if (!$locations) {
+            return 0;
+        }
+        //
+        $locationId = 0;
+        //
+        foreach ($locations as $department) {
+            //
+            if ($department['Id'] == $departmentUUID) {
+                $locationId = $department['Id'];
+            }
+        }
+        //
+        return $locationId;
     }
 
     /**
