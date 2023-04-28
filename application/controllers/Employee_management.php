@@ -2381,7 +2381,6 @@ class Employee_management extends Public_Controller
                     'PhoneNumber' => $this->input->post('txt_phonenumber', true) ? $this->input->post('txt_phonenumber', true) : $this->input->post('PhoneNumber', true),
                     'video_type' => $video_source,
                     'YouTubeVideo' => $video_id,
-                    'job_title' => $this->input->post('job_title'),
                     'extra_info' => $extra_info,
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
@@ -2465,7 +2464,6 @@ class Employee_management extends Public_Controller
                 $newCompareData['secondary_PhoneNumber'] = $post['secondary_PhoneNumber'];
                 $newCompareData['other_email'] = $post['other_email'];
                 $newCompareData['other_PhoneNumber'] = $post['other_PhoneNumber'];
-                $newCompareData['job_title'] = $post['job_title'];
                 $newCompareData['division'] = $post['division'];
                 $newCompareData['linkedin_profile_url'] = $post['linkedin_profile_url'];
                 $newCompareData['employee_number'] = $post['employee_number'];
