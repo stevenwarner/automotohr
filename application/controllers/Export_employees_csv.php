@@ -43,7 +43,6 @@ class Export_employees_csv extends Public_Controller
 
                 switch ($perform_action) {
                     case 'export_employees':
-
                         $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
                         $pay_plan_flag = $data['session']['employer_detail']['pay_plan_flag'];
                         if (($access_level_plus || $pay_plan_flag == 1)) {
@@ -56,6 +55,7 @@ class Export_employees_csv extends Public_Controller
                         $status = $this->input->post('status');
                         $to_date = $this->input->post('to_date');
                         $from_date = $this->input->post('from_date');
+                                            
 
                         $start_time = '';
                         $end_time = '';
@@ -74,8 +74,6 @@ class Export_employees_csv extends Public_Controller
                         }
 
                         //echo $start_time.'#'.$end_time;
-
-
 
                         //
                         // $employees = $this->export_csv_model->get_all_employees($company_sid, $access_level, $status);

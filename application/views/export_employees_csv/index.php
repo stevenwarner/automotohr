@@ -271,29 +271,29 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
 
                                             <?php if (isPayrollOrPlus(true)) { ?>
 
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">EEOC Code<input type="checkbox" name="eeoc_code" class="check_it" value="eeoc_code">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                    <div class="checkbox cs_full_width">
+                                                        <label class="control control--checkbox">EEOC Code<input type="checkbox" name="eeoc_code" class="check_it" value="eeoc_code">
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Benefits Salary<input type="checkbox" name="salary_benefits" class="check_it" value="salary_benefits">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                    <div class="checkbox cs_full_width">
+                                                        <label class="control control--checkbox">Benefits Salary<input type="checkbox" name="salary_benefits" class="check_it" value="salary_benefits">
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Workers Compensation Code<input type="checkbox" name="workers_compensation_code" class="check_it" value="workers_compensation_code">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                    <div class="checkbox cs_full_width">
+                                                        <label class="control control--checkbox">Workers Compensation Code<input type="checkbox" name="workers_compensation_code" class="check_it" value="workers_compensation_code">
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             <?php } ?>
 
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
@@ -365,7 +365,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <label>Status:</label>
                                                 <div class="hr-select-dropdown autoheight">
-                                                    <select data-rule-required="true" class="invoice-fields" name="status" id="employee_status">
+                                                    <select data-rule-required="true" class="invoice-fields" name="status[]" id="employee_status" multiple>
 
                                                         <option value="all">All</option>
                                                         <option value="active">Active</option>
@@ -421,6 +421,10 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
     </div>
 </div>
 <script>
+    $('#employee_status').select2({
+        closeOnSelect: false
+    });
+
     $('#display_start_date').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,

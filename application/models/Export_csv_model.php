@@ -60,6 +60,8 @@ class Export_csv_model extends CI_Model
     function get_all_employees_from_DB($company_sid, $access_level, $status, $start, $end)
     {
         //
+
+        /*
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
 
@@ -70,7 +72,10 @@ class Export_csv_model extends CI_Model
         if ($access_level == 'executive_admin') {
             $this->db->where('is_executive_admin', 1);
         }
+*/
 
+
+        /*
         if ($status == 'active') {
             $this->db->where('active', 1);
             $this->db->where('terminated_status', 0);
@@ -83,6 +88,58 @@ class Export_csv_model extends CI_Model
 
         if ($status != 'all' && $status != 'active' && $status != 'terminated') {
             $this->db->where('LCASE(general_status) ', $status);
+        }
+        */
+
+
+
+
+
+        $this->db->select('*');
+        $this->db->where('parent_sid', $company_sid);
+
+        if ($access_level != 'all' && $access_level != 'executive_admin' && $access_level != null) {
+            $this->db->where('access_level', $access_level);
+        }
+
+        if ($access_level == 'executive_admin') {
+            $this->db->where('is_executive_admin', 1);
+        }
+
+        //
+        if (is_array($status)) {
+
+            //
+            if ($status[0] != 'all') {
+                $this->db->group_start();
+                foreach ($status as $statusVal) {
+
+                    if ($statusVal == 'terminated') {
+                        $this->db->or_where('terminated_status', 1);
+                    } else if ($statusVal == 'active') {
+                        $this->db->group_start();
+                        $this->db->or_where('active', 1);
+                        $this->db->where('terminated_status', 0);
+                        $this->db->group_end();
+                    } else {
+                        $this->db->or_where('LCASE(general_status) ', $statusVal);
+                    }
+                }
+                $this->db->group_end();
+            }
+        } else {
+            if ($status == 'active') {
+                $this->db->where('active', 1);
+                $this->db->where('terminated_status', 0);
+            }
+
+            if ($status == 'terminated') {
+                $this->db->where('terminated_status', 1);
+            }
+
+            if ($status != 'all' && $status != 'active' && $status != 'terminated') {
+                $this->db->where('LCASE(general_status) ', $status);
+            }
         }
 
 
@@ -114,6 +171,7 @@ class Export_csv_model extends CI_Model
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
+        
         if (!empty($records_arr)) {
             return $records_arr;
         } else {
