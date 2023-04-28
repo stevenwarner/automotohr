@@ -43,6 +43,12 @@ class Testing extends CI_Controller
         $this->tm->get_merge_employee();
     }
 
+    public function addEmployee () {
+        $employeeId = '17133';
+        $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+        $this->gusto_payroll_model->onboardEmployeeOnGusto($employeeId);
+    }
+
 
 
     // Enable Rehired Employees

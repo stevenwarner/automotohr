@@ -828,4 +828,206 @@ class Gusto_payroll_model extends CI_Model
         //
         return false;
     }
+
+    /**
+     * Sync company employee information
+     *
+     * @param int   $employeeId
+     * @return bool
+     */
+    public function onboardEmployeeOnGusto(int $employeeId)
+    {
+        $response = $this->getEmployeeDetail($employeeId);
+        //
+        if ($response['status']) {
+            //
+            $employeeInfo = $response['data'];
+            $companyDetails = $this->getCompanyDetailsForGusto($employeeInfo['parent_sid']);
+            // Add or Update employee profile info
+            $this->syncCompanyEmployeeProfile($employeeInfo, $companyDetails);
+            // Update employee address info
+            $this->syncCompanyEmployeeAddress($employeeInfo, $companyDetails);
+        }
+        //
+        echo $response['message'];
+        die("End of world");
+        
+    }
+
+    /**
+     * get employee basic detail
+     *
+     * @param int   $employeeId
+     * @return array
+     */
+    public function getEmployeeDetail(int $employeeId)
+    {
+        $response = [
+            'status' => false,
+            'message' => '',
+            'data' => []
+        ];
+        //
+        $employeeProfile =
+            $this->db
+            ->select('
+                sid,
+                first_name,
+                last_name,
+                middle_initial,
+                dob,
+                email,
+                Location_Country,
+                Location_State,
+                Location_Address,
+                Location_Address_2,
+                Location_ZipCode,
+                Location_City,
+                ssn,
+                parent_sid
+            ')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        //
+        if (!$employeeProfile) {
+            $response['message'] = "Employee not found.";
+            return $response; 
+            
+        }
+        //
+        if (ctype_space($employeeProfile["first_name"]) || $employeeProfile["first_name"] == '' || strlen(trim($employeeProfile["first_name"])) < 3) {
+            $response['message'] = "Employee first name is not valid.";
+            return $response;
+        }
+        //
+        if (ctype_space($employeeProfile["last_name"]) || $employeeProfile["last_name"] == '' || strlen(trim($employeeProfile["last_name"])) < 3) {
+            $response['message'] = "Employee last name is not valid.";
+            return $response;
+        }
+        //
+        if (empty($employeeProfile["dob"]) || $employeeProfile["dob"] == "0000-00-00" || !preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $employeeProfile["dob"])) {
+            $response['message'] = "Employee date of birth is not valid.";
+            return $response;
+        }
+        //
+        if (empty($employeeProfile["email"]) || !filter_var($employeeProfile["email"], FILTER_VALIDATE_EMAIL)) {
+            $response['message'] = "Employee email is not valid.";
+            return $response;
+        }
+        //
+        if (empty($employeeProfile["ssn"]) || !preg_match('/^[0-9]{9}$/', $employeeProfile["ssn"])) {
+            $response['message'] = "Employee SSN is not valid.";
+            return $response;
+        }
+        //
+        $response['status'] = true;
+        $response['message'] = "Employee Found.";
+        $response['data'] = $employeeProfile;
+        return $response;
+    }
+
+    /**
+     * Sync employee profile info
+     *
+     * @param array $employeeProfile
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyEmployeeProfile(array $employeeProfile, array $companyDetails)
+    {
+        //
+        $mainTable = 'payroll_employees';
+        //
+        $whereArray = [
+            'employee_sid ' => $employeeProfile['sid'],
+            'company_sid' => $employeeProfile['parent_sid']
+        ];
+        //
+        if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+            //
+            $employeeDetails = [];
+            $employeeDetails['first_name'] = $employeeProfile['first_name'];
+            $employeeDetails['middle_initial'] = $employeeProfile['middle_initial'];
+            $employeeDetails['last_name'] = $employeeProfile['last_name'];
+            $employeeDetails['date_of_birth'] = $employeeProfile['dob'];
+            $employeeDetails['email'] = $employeeProfile['email'];
+            $employeeDetails['ssn'] = $employeeProfile['ssn'];
+            $employeeDetails['self_onboarding'] = false;
+            //
+            // $response = createAnEmployeeOnGusto($employeeDetails, $companyDetails,[
+            //     'X-Gusto-API-Version: 2023-03-01'
+            // ]);
+            
+            //
+            if (!isset($response['errors']) && $response) {
+                //
+                $dataArray = [];
+                $dataArray['company_sid'] = $employeeProfile['parent_sid'];
+                $dataArray['employee_sid'] = $employeeProfile['sid'];
+                $dataArray['payroll_employee_uuid'] = $response['uuid'];
+                $dataArray['onboard_completed'] = 0;
+                $dataArray['last_updated_by'] = 0;
+                $dataArray['version'] = $response['version'];
+                $dataArray['created_at'] = getSystemDate();
+                $dataArray['personal_profile'] = 1;
+                $dataArray['response_body'] = json_encode($response);
+                //
+                $this->db->insert($mainTable, $dataArray);
+                //
+                $addressArray = [];
+                $addressArray['employee_sid '] = $employeeProfile['sid'];;
+                $addressArray['version'] = $response['home_address']['version'];
+                $addressArray['street_1'] = $response['home_address']['street_1'];
+                $addressArray['street_2'] = $response['home_address']['street_2'];
+                $addressArray['city'] = $response['home_address']['city'];
+                $addressArray['state'] = $response['home_address']['state'];
+                $addressArray['zip'] = $response['home_address']['zip'];
+                $addressArray['country'] = $response['home_address']['country'];
+                $addressArray['active'] = $response['home_address']['active'];
+                $addressArray['created_at'] = getSystemDate();
+                //
+                $this->db->insert('payroll_employee_address', $addressArray);
+                //
+                return true;
+            }
+            //
+        } else {
+            $gustoEmployeeInfo =
+            $this->db
+            ->select('
+                payroll_employee_uuid,
+                version
+            ')
+            ->where($whereArray)
+            ->get($mainTable)
+            ->row_array();
+            //
+            $employeeDetails = [];
+            $employeeDetails['version'] = $gustoEmployeeInfo['version'];
+            $employeeDetails['first_name'] = $employeeProfile['first_name'];
+            $employeeDetails['middle_initial'] = $employeeProfile['middle_initial'];
+            $employeeDetails['last_name'] = $employeeProfile['last_name'];
+            $employeeDetails['date_of_birth'] = $employeeProfile['dob'];
+            $employeeDetails['email'] = $employeeProfile['email'];
+            $employeeDetails['ssn'] = $employeeProfile['ssn'];
+            //
+            $response = updateAnEmployeeOnGusto($employeeDetails, $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
+                'X-Gusto-API-Version: 2023-03-01'
+            ]);
+            //
+            if (!isset($response['errors']) && $response) {
+                $dataToUpdate = [];
+                $dataToUpdate['version'] = $response['version'];
+                $dataToUpdate['updated_at'] = getSystemDate();
+                //
+                $this->db->where($whereArray)->update($mainTable, $dataToUpdate);
+                //
+                return true;
+            } 
+        }   
+        //
+        return false;
+    }
+
 }

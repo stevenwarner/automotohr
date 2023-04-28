@@ -286,4 +286,14 @@ class Gusto_payroll extends CI_Controller
         // get company details
         $this->gusto_payroll_model->syncCompanyDataWithGusto($companyId);
     }
+
+
+    /**
+     * add and Update
+     */
+    public function onboardEmployeeOnGusto($employeeId)
+    {
+        // add and Update Employee on Gusto
+        $this->gusto_payroll_model->onboardEmployeeOnGusto($employeeId);
+    }
 }
