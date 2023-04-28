@@ -378,8 +378,19 @@ class Complynet_model extends CI_Model
     ) {
         // get the company location id
         $result = $this->db
-            ->where('employee_sid', $employeeId)
-            ->get('complynet_employees')
+            ->select('parent_sid')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        //
+        if (!$result) {
+            return 0;
+        }
+        //
+        $result = $this->db
+            ->select('complynet_location_sid')
+            ->where('company_sid', $result['parent_sid'])
+            ->get('complynet_companies')
             ->row_array();
         //
         if (!$result) {
