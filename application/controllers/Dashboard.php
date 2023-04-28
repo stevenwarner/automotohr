@@ -989,6 +989,7 @@ class Dashboard extends Public_Controller
                 //
                 if ($category_sid != 0) {
                     $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents($category_sid, $employer_id);
+                           
                 }
             }
             //

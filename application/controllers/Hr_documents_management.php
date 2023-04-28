@@ -1834,7 +1834,7 @@ class Hr_documents_management extends Public_Controller
                         $user_type = empty($user_type) ? null : $user_type;
                         $user_sid = empty($user_sid) ? null : $user_sid;
 
-                        if ($source == 'generated') {
+                        if ($source == 'generated' || $source == 'uploaded' || $source == 'hybrid_document') {
                             if ($fetch_data == 'original') {
                                 $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
                             } else if ($fetch_data == 'modified') {
@@ -1848,15 +1848,49 @@ class Hr_documents_management extends Public_Controller
                         if ($source == 'offer') {
                             $document_info = $this->hr_documents_management_model->get_offer_letter_details($company_sid, $document_sid);
                         }
-                        if (!empty($document_info)) {
+
+
+                        /*
+
+                        if ($source == 'uploaded') {
+                            if ($fetch_data == 'original') {
+                                $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+                            } else if ($fetch_data == 'modified') {
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_record($user_type, $user_sid, $document_sid);
+                            } else {
+                                $history_sid = $this->input->post('history_sid');
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_history_record($user_type, $user_sid, $document_sid, $history_sid);
+                            }
+                        }
+
+                        */
+
+
+                        if (!empty($document_info) && $source != 'uploaded' && $source != 'hybrid_document') {
                             $document_content = $source == 'offer' ? $document_info['letter_body'] : $document_info['document_description'];
                             $document = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_content, $document_sid);
                             $view_data = array();
+                            $view_data['document_type'] = $source;
+
                             $view_data['document_title'] = $source == 'offer' ? $document_info['letter_name'] : $document_info['document_title'];
                             $view_data['document_body'] = $document;
                             echo $this->load->view('hr_documents_management/generated_document_preview_partial', $view_data, true);
-                        }
+                        } else if (!empty($document_info) && ($source == 'uploaded' || $source == 'hybrid_document')) {
+                            $view_data = array();
+                            $view_data['document_type'] = $source;
 
+                            $view_data['document_title'] = $document_info['document_title'];
+                            $view_data['document_path'] = $document_info['uploaded_document_s3_name'];
+                            $view_data['document_ext'] =  $document_info['document_extension'];
+
+                            if ($source == 'hybrid_document') {
+                                $document_content = $source == 'offer' ? $document_info['letter_body'] : $document_info['document_description'];
+                                $document = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_content, $document_sid);
+                                $view_data['document_body'] = $document;
+                            }
+
+                            echo $this->load->view('hr_documents_management/generated_document_preview_partial', $view_data, true);
+                        }
                         break;
                 }
             }
@@ -7271,6 +7305,7 @@ class Hr_documents_management extends Public_Controller
         }
     }
 
+
     public function print_generated_and_offer_later($type, $document_type, $document_sid, $download = NULL)
     {
         if ($this->session->userdata('logged_in')) {
@@ -7372,6 +7407,178 @@ class Hr_documents_management extends Public_Controller
                 $data['download'] = $download;
                 $data['file_name'] = $document['document_title'];
                 $data['original_document_description'] = '<img src="' . $document_file . '" style="width:100%; height:500px;" />';
+                $this->load->view('hr_documents_management/print_generated_document', $data);
+            } else if ($document['document_type'] == 'offer_letter') {
+
+                $document_content = $document['document_description'];
+                $data['file_name'] = $document['document_title'];
+
+                if ($type == 'assigned') {
+                    $value = '------------------------------';
+                    $document_content = str_replace('{{first_name}}', $value, $document_content);
+                    $document_content = str_replace('{{last_name}}', $value, $document_content);
+                    $document_content = str_replace('{{email}}', $value, $document_content);
+                    $document_content = str_replace('{{job_title}}', $value, $document_content);
+                    $document_content = str_replace('{{company_name}}', $value, $document_content);
+                    $document_content = str_replace('{{company_address}}', $value, $document_content);
+                    $document_content = str_replace('{{company_phone}}', $value, $document_content);
+                    $document_content = str_replace('{{career_site_url}}', $value, $document_content);
+                    $document_content = str_replace('{{signature}}', $value, $document_content);
+                    $document_content = str_replace('{{inital}}', $value, $document_content);
+                    $document_content = str_replace('{{sign_date}}', $value, $document_content);
+                    $document_content = str_replace('{{signature_print_name}}', $value, $document_content);
+                    $document_content = str_replace('{{short_text}}', $value, $document_content);
+                    $authorized_base64 = get_authorized_base64_signature($company_sid, $document_sid);
+
+                    if (!empty($authorized_base64)) {
+                        $authorized_signature = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $authorized_base64 . '">';
+                        $authorized_signature_date = '';
+                    } else {
+                        $authorized_signature = '';
+                        $authorized_signature_date = '';
+                    }
+
+                    $document_content = str_replace('{{authorized_signature}}', $authorized_signature, $document_content);
+                    $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+
+                    $value = '<br><input type="checkbox" class="user_checkbox input-grey"/>';
+                    $document_content = str_replace('{{checkbox}}', $value, $document_content);
+
+                    $value = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
+                    $document_content = str_replace('{{text}}', $value, $document_content);
+
+                    $value = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
+                    $document_content = str_replace('{{text_area}}', $value, $document_content);
+
+                    $data['print'] = $type;
+                    $data['document_file'] = 'no_pdf';
+                    $data['download'] = $download;
+                    $data['original_document_description'] = $document_content;
+                } else if ($type == 'submitted') {
+                    $data['print'] = $type;
+                    $data['document_file'] = 'pdf';
+                    $data['download'] = $download;
+                    $data['file_name'] = $document['document_title'];
+                    $data['document'] = $document;
+                }
+
+                $this->load->view('hr_documents_management/print_generated_document', $data);
+            }
+        }
+    }
+
+
+    public function print_generated_and_offer_later_new($type, $document_type, $document_sid, $download = NULL)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+
+            if ($document_type == 'offer') {
+                $document = $this->hr_documents_management_model->get_offer_latter($document_sid);
+                $document['document_type'] = 'generated';
+            } else if (($document_type == 'generated' || $document_type == 'uploaded' || $document_type == 'hybrid_document') && $type == 'original') {
+                $document = $this->hr_documents_management_model->get_original_document($document_sid);
+            } else {
+                $document = $this->hr_documents_management_model->get_submitted_generated_document($document_sid);
+                $document_sid = $document['document_sid'];
+            }
+
+            if ($document['document_type'] == 'generated') {
+                if ($document_type == 'offer') {
+                    $document_content = $document['letter_body'];
+                    $data['file_name'] = $document['letter_name'];
+                } else if ($document_type == 'generated') {
+                    $document_content = $document['document_description'];
+                    $data['file_name'] = $document['document_title'];
+                }
+
+                if ($type == 'original' || $type == 'assigned') {
+                    $value = '------------------------------';
+                    $document_content = str_replace('{{first_name}}', $value, $document_content);
+                    $document_content = str_replace('{{firstname}}', $value, $document_content);
+                    $document_content = str_replace('{{last_name}}', $value, $document_content);
+                    $document_content = str_replace('{{lastname}}', $value, $document_content);
+                    $document_content = str_replace('{{email}}', $value, $document_content);
+                    $document_content = str_replace('{{job_title}}', $value, $document_content);
+                    $document_content = str_replace('{{company_name}}', $value, $document_content);
+                    $document_content = str_replace('{{company_address}}', $value, $document_content);
+                    $document_content = str_replace('{{company_phone}}', $value, $document_content);
+                    $document_content = str_replace('{{career_site_url}}', $value, $document_content);
+                    $document_content = str_replace('{{signature}}', $value, $document_content);
+                    $document_content = str_replace('{{inital}}', $value, $document_content);
+                    $document_content = str_replace('{{sign_date}}', $value, $document_content);
+                    $document_content = str_replace('{{signature_print_name}}', $value, $document_content);
+                    $document_content = str_replace('{{short_text}}', $value, $document_content);
+                    $value = '------/-------/----------------';
+                    $document_content = str_replace('{{start_date}}', $value, $document_content);
+
+                    $value = 'Date :------/-------/----------------';
+                    $document_content = str_replace('{{date}}', $value, $document_content);
+
+                    $value = 'Please contact with your manager';
+                    $document_content = str_replace('{{username}}', $value, $document_content);
+                    $document_content = str_replace('{{password}}', $value, $document_content);
+
+                    $authorized_base64 = get_authorized_base64_signature($company_sid, $document_sid);
+
+                    if (!empty($authorized_base64)) {
+                        $authorized_signature = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . 'px;" src="' . $authorized_base64 . '">';
+                        $authorized_signature_date = '';
+                    } else {
+                        $authorized_signature = '';
+                        $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
+                    }
+
+                    $document_content = str_replace('{{authorized_signature}}', $authorized_signature, $document_content);
+                    $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+
+                    $value = '<br><input type="checkbox" class="user_checkbox input-grey"/>';
+                    $document_content = str_replace('{{checkbox}}', $value, $document_content);
+
+                    $value = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
+                    $document_content = str_replace('{{text}}', $value, $document_content);
+
+                    $value = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
+                    $document_content = str_replace('{{text_area}}', $value, $document_content);
+
+                    $data['print'] = $type;
+                    $data['document_file'] = 'no_pdf';
+                    $data['download'] = $download;
+                    $data['original_document_description'] = $document_content;
+                } else if ($type == 'submitted') {
+                    $data['print'] = $type;
+                    $data['document_file'] = 'pdf';
+                    $data['download'] = $download;
+                    $data['file_name'] = $document['document_title'];
+                    $data['document'] = $document;
+                }
+
+                $data['document_type'] = $document['document_type'];
+
+
+                $this->load->view('hr_documents_management/print_generated_document', $data);
+            } else if ($document['document_type'] == 'uploaded' || $document['document_type'] == 'hybrid_document') {
+                if ($type == 'original') {
+                    $document_file = AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name'];
+                } else if ($type == 'assigned') {
+                    $document_file = AWS_S3_BUCKET_URL . $document['document_s3_name'];
+                } else if ($type == 'submitted') {
+                    $document_file = AWS_S3_BUCKET_URL . $document['uploaded_file'];
+                }
+
+
+                $data['print'] = 'generated';
+                $data['document_file'] = 'no_pdf';
+                $data['download'] = $download;
+                $data['file_name'] = $document['document_title'];
+               
+                $data['document_type'] = $document['document_type'];
+                $data['document_title'] = $document['document_title'];
+                $data['document_path'] = $document['uploaded_document_s3_name'];
+                $data['document_ext'] =  $document['document_extension'];
+                $data['document_description']=$document['document_description'];
+
                 $this->load->view('hr_documents_management/print_generated_document', $data);
             } else if ($document['document_type'] == 'offer_letter') {
 
@@ -12552,7 +12759,7 @@ class Hr_documents_management extends Public_Controller
             //
             shell_exec("cd $dir; zip -r $dt *");
             //
-            redirect('download_document_zip/'.$download_file, 'auto');
+            redirect('download_document_zip/' . $download_file, 'auto');
         }
 
         $this->zip->download($download_file);
@@ -15517,7 +15724,7 @@ class Hr_documents_management extends Public_Controller
     public function downloadDocumentZipFile($fileName)
     {
         //
-        $fileWithPath = ROOTPATH.'temp_files/employee_export/'.$fileName;
+        $fileWithPath = ROOTPATH . 'temp_files/employee_export/' . $fileName;
         // Download file
         header('Content-type: application/zip');
         header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
