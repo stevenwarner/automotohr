@@ -360,7 +360,7 @@ class Complynet_model extends CI_Model
                 $employeeId
             );
             //
-            if ($response != 0) {
+            if ($response != '0') {
                 return $response;
             }
             return 0;
