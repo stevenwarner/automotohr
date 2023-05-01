@@ -385,7 +385,8 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                 } ?>
 
 
-                <?php if ($employee_handbook_enable) { ?>
+                <?php
+                if ($employee_handbook_enable) { ?>
                     <!--  -->
                     <div class="row">
                         <br>
@@ -444,9 +445,19 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                                 ?>
                                                             </td>
                                                             <td class="text-center hidden-xs">
+                                                            <?php if ($document['document_type'] == 'generated' ) { ?>
                                                                 <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/print"); ?>" class="btn btn-orange" target="_blank">Print</a>
-                                                                <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/download"); ?>" class="btn btn-black" target="_blank">Download</a>
-                                                                <a onclick="func_get_generated_document_preview(<?= $document['sid']; ?>,'generated', 'Employee');" class="btn btn-info">View Sign</a>
+                                                               <?php }?>
+                                                                <?php if ($document['document_type'] == 'uploaded' ) { ?>
+                                                                    <a href="<?= base_url("hr_documents_management/download_upload_document/" . ($document['uploaded_document_s3_name'])); ?>" class="btn btn-black" target="_blank">Download</a>
+                                                                <?php }else if($document['document_type'] == 'hybrid_document'){
+
+                                                                } 
+                                                                else { ?>
+                                                                    <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/download"); ?>" class="btn btn-black" target="_blank">Download</a>
+                                                                <?php } ?>
+
+                                                                <a onclick="func_get_generated_document_preview(<?= $document['sid']; ?>,'<?= $document['document_type']; ?>', 'Employee');" class="btn btn-info">View Sign</a>
                                                             </td>
                                                         </tr>
                                                     <?php } ?>
@@ -1529,16 +1540,17 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
         var my_request;
         var footer_print_btn;
         my_request = $.ajax({
+
             'url': '<?php echo base_url('hr_documents_management/ajax_responder'); ?>',
             'type': 'POST',
             'data': {
-
                 'perform_action': 'get_generated_document_preview',
                 'document_sid': document_sid,
                 'source': doc_flag,
                 'fetch_data': 'original'
             }
         });
+
 
 
         my_request.done(function(response) {

@@ -1845,6 +1845,25 @@ class Hr_documents_management extends Public_Controller
                             }
                         }
 
+                        if ($source == 'uploaded') {
+                            if ($fetch_data == 'original') {
+                                $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+                            } else if ($fetch_data == 'modified') {
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_record($user_type, $user_sid, $document_sid);
+                            } else {
+                                $history_sid = $this->input->post('history_sid');
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_history_record($user_type, $user_sid, $document_sid, $history_sid);
+                            }
+
+                            //
+                            echo $this->load->view(
+                                'hr_documents_management/uploaded_document_preview_partial',
+                                $document_info,
+                                true
+                            );
+                            return;
+                        }
+
                         if ($source == 'offer') {
                             $document_info = $this->hr_documents_management_model->get_offer_letter_details($company_sid, $document_sid);
                         }
@@ -12552,7 +12571,7 @@ class Hr_documents_management extends Public_Controller
             //
             shell_exec("cd $dir; zip -r $dt *");
             //
-            redirect('download_document_zip/'.$download_file, 'auto');
+            redirect('download_document_zip/' . $download_file, 'auto');
         }
 
         $this->zip->download($download_file);
@@ -15517,7 +15536,7 @@ class Hr_documents_management extends Public_Controller
     public function downloadDocumentZipFile($fileName)
     {
         //
-        $fileWithPath = ROOTPATH.'temp_files/employee_export/'.$fileName;
+        $fileWithPath = ROOTPATH . 'temp_files/employee_export/' . $fileName;
         // Download file
         header('Content-type: application/zip');
         header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
