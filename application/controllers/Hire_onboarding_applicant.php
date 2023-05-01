@@ -26,6 +26,8 @@ class Hire_onboarding_applicant extends CI_Controller
             $perform_action = $this->input->post('perform_action');
             switch ($perform_action) {
                 case 'hire_applicant':
+
+                    //  die('sdfsdfsdfsdfsdf');
                     $company_sid = $this->input->post('company_sid');
                     $company_info = $this->hire_onboarding_applicant_model->get_company_information($company_sid);
                     $applicant_detail = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -40,6 +42,7 @@ class Hire_onboarding_applicant extends CI_Controller
                     $username = $this->input->post('username');
                     $password = $this->input->post('password');
 
+
                     $configuration = $this->onboarding_model->get_onboarding_configuration('applicant', $applicant_sid);
                     $credentials_data = $this->get_single_record_from_array($configuration, 'section', 'credentials');
                     $credentials = empty($credentials_data) ? array() : unserialize($credentials_data['items']);
@@ -53,8 +56,37 @@ class Hire_onboarding_applicant extends CI_Controller
                     if (isset($credentials['joining_date'])) {
                         $joining_date = ucwords($credentials['joining_date']);
                     }
-                    $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
-                    $status = $result['status'];
+
+
+                     $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
+                     $status = $result['status'];
+
+
+                    //
+                    if ($joining_date == '') {
+                        $joining_date = date('Y-m-d');
+                    }
+
+                    $this->load->model('2022/Adp_model', 'adp_model');
+                    $applicantArray = [];
+                    $applicantArray['first_name'] = $applicant_detail['applicant_info']['first_name'];
+                    $applicantArray['last_name'] =  $applicant_detail['applicant_info']['last_name'];
+                    $applicantArray['hireDate'] = $joining_date;
+                    $applicantArray['dob'] = $applicant_detail['applicant_info']['dob'];
+                    $applicantArray['email'] = $applicant_detail['applicant_info']['email'];
+                    $applicantArray['address'] = $applicant_detail['applicant_info']['address'];
+                    $applicantArray['city'] = $applicant_detail['applicant_info']['city'];
+                    $applicantArray['zipcode'] = $applicant_detail['applicant_info']['zipcode'];
+                    $applicantArray['SSN'] = $applicant_detail['applicant_info']['ssn'];
+                    $applicantArray['gender'] = $applicant_detail['applicant_info']['gender'];
+
+
+                    $countryData = db_get_country_name($applicant_detail['applicant_info']['country']);
+                    $applicantArray['country_name'] = $countryData['country_name'];
+                    $applicantArray['country_code'] = $countryData['country_code'];
+
+
+                    $this->adp_model->onboardApplicantToAdp($applicantArray);
 
                     if ($status == 'success') {
                         //                    if(1){
@@ -232,15 +264,15 @@ class Hire_onboarding_applicant extends CI_Controller
         if (!empty($applicant_profile_info['ip_address'])) {
             $employer_data['ip_address'] = $applicant_profile_info['ip_address'];
         }
-        
+
         if (!empty($applicant_profile_info['cover_letter'])) {
             $employer_data['cover_letter'] = $applicant_profile_info['cover_letter'];
         }
-        
+
         if (!empty($applicant_profile_info['video_type'])) {
             $employer_data['video_type'] = $applicant_profile_info['video_type'];
         }
-        
+
         if (!empty($applicant_profile_info['middle_name'])) {
             $employer_data['middle_name'] = $applicant_profile_info['middle_name'];
         }
@@ -248,10 +280,10 @@ class Hire_onboarding_applicant extends CI_Controller
         if (!empty($applicant_profile_info['nick_name'])) {
             $employer_data['nick_name'] = $applicant_profile_info['nick_name'];
         }
-        
+
         //
 
-       //
+        //
         $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
         $employer_data['department_sid'] = $departmentsTeams['department_sid'];
         $employer_data['team_sid'] = $departmentsTeams['team_sid'];
@@ -409,6 +441,11 @@ class Hire_onboarding_applicant extends CI_Controller
             $username = $username . $rendom;
         }
 
+        //   print_r($company_info);
+        //  die();
+
+
+
         $configuration      = $this->onboarding_model->get_onboarding_configuration('applicant', $applicant_sid);
         $credentials_data   = $this->get_single_record_from_array($configuration, 'section', 'credentials');
         $credentials        = empty($credentials_data) ? array() : unserialize($credentials_data['items']);
@@ -422,9 +459,38 @@ class Hire_onboarding_applicant extends CI_Controller
         }
 
 
-       
+
         $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
         $status = $result['status'];
+
+
+        //ADP 
+        $this->load->model('2022/Adp_model', 'adp_model');
+       
+        if ($joining_date == '') {
+            $joining_date = date('Y-m-d');
+        }
+
+        $applicantArray = [];
+        $applicantArray['first_name'] = $applicant_detail['first_name'];
+        $applicantArray['last_name'] =  $applicant_detail['last_name'];
+        $applicantArray['hireDate'] = $joining_date;
+        $applicantArray['dob'] = $applicant_detail['dob'];
+        $applicantArray['email'] = $applicant_detail['email'];
+        $applicantArray['address'] = $applicant_detail['address'];
+        $applicantArray['city'] = $applicant_detail['city'];
+        $applicantArray['zipcode'] = $applicant_detail['zipcode'];
+        $applicantArray['SSN'] = $applicant_detail['ssn'];
+        $applicantArray['gender'] = $applicant_detail['gender'];
+
+        $countryData = db_get_country_name($applicant_detail['country']);
+        $applicantArray['country_name'] = $countryData['country_name'];
+        $applicantArray['country_code'] = $countryData['country_code'];
+
+       
+        $this->adp_model->onboardApplicantToAdp($applicantArray);
+
+
 
         if ($status == 'success') {
             $this->session->set_flashdata('message', '<strong>Success:</strong> You have moved applicant <b>' . $first_name . ' ' . $last_name . '</b> to the "Employee / Team Members" section!');
@@ -568,13 +634,11 @@ class Hire_onboarding_applicant extends CI_Controller
                     $emp_extra_unserial[$key] = $info;
                     $update_flag = 1;
                 }
-                
             }
 
             if ($emp_extra_unserial && sizeof($emp_extra_unserial)) {
                 $employer_data['extra_info'] = serialize($emp_extra_unserial);
             }
-
         }
 
         //
@@ -597,11 +661,11 @@ class Hire_onboarding_applicant extends CI_Controller
 
         //
         $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
-        if ($employee_profile_info['department_sid']== 0 && $departmentsTeams['department_sid']!=0 && $employee_profile_info['team_sid']== 0  && $departmentsTeams['team_sid']!=0 ) {
+        if ($employee_profile_info['department_sid'] == 0 && $departmentsTeams['department_sid'] != 0 && $employee_profile_info['team_sid'] == 0  && $departmentsTeams['team_sid'] != 0) {
             $employer_data['department_sid'] = $departmentsTeams['department_sid'];
             $employer_data['team_sid'] = $departmentsTeams['team_sid'];
         }
-    
+
         $this->hire_onboarding_applicant_model->update_company_employee($employer_data, $applicant_sid, $employee_sid, 0);
 
         // now move all other information

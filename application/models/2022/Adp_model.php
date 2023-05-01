@@ -522,26 +522,129 @@ class Adp_model extends CI_Model
 
 
     //
-    public function onboardApplicantToAdp($json) {
-      //  _e($json,true,true);
-   //     die($json);
-        // set insert array
-        $mode = 'uat' ;
-        $ins = [
-            'employee_sid' => 0,
-            'associate_oid' => 0,
-            'key_index' => 'onboarding',
-            'key_value' => "",
-            'request_url' => 'https://' . ($mode == 'uat' ?  'uat-' : '') . 'api.adp.com/hcm/v2/applicant.onboard',
-            'request_body' => json_encode($json['onboarding']['body']),
-            'request_method' => 'POST',
-            'status' => 1
-        ];
-        //
-        $ins['created_at'] = $ins['updated_at'] = getSystemDate();
-        //
-        $this->db->insert('adp_queue', $ins);
+    public function onboardApplicantToAdp($applicantData, $templateCode = '15336_7094', $companyCode = 'Q25')
+    {
+
+        if ($applicantData['first_name'] != '' && $applicantData['last_name'] != '' &&  $applicantData['hireDate']) {
+
+            $adpApplicantJson = [
+                'onboarding' => [
+                    'tag' => 'Applicant Onboarding',
+                    'name' => 'onboarding',
+                    'url' => '/hcm/v2/applicant.onboard',
+                    'body' => [
+                        "applicantOnboarding" => [
+                            "onboardingTemplateCode" => [
+                                "code" => $templateCode
+                            ],
+
+                            "onboardingStatus" => [
+                                "statusCode" => [
+                                    "code" => 'inprogress'
+                                ]
+
+                            ],
+
+                            "applicantPersonalProfile" => [
+                                "birthName" => [
+                                    "givenName" => $applicantData['first_name'],
+                                    "middleName" => $applicantData['middle_name'],
+                                    "familyName" => $applicantData['last_name']
+                                ],
+
+                                "genderCode" => [
+                                    "code" => $applicantData['gender'],
+                                ],
+                                "birthDate" => $applicantData['dob'],
+
+
+                                "governmentIDs" => [
+                                    [
+                                        "id" => '',
+                                        "nameCode" => [
+                                            "code" => $applicantData['SSN'] != '' ? $applicantData['SSN'] : ''
+                                        ],
+
+                                        "statusCode" => [
+                                            "code" => 'AppliedFor'
+                                        ]
+
+                                    ]
+
+                                ],
+
+                                "communication" => [
+                                    "emails" => [
+                                        [
+                                            "emailUri" => $applicantData['email'],
+                                            "notificationIndicator" => true
+                                        ]
+                                    ]
+                                ],
+
+
+                                "otherPersonalAddresses" => [
+                                    [
+                                        "lineOne" =>  $applicantData['address'],
+                                        "lineTwo" => "",
+                                        "lineThree" => "",
+                                        "cityName" => $applicantData['city'],
+                                        "subdivisionCode" => [
+                                            "code" => $applicantData['country_name']
+                                        ],
+                                        "countryCode" => $applicantData['country_code'],
+                                        "postalCode" => $applicantData['zipcode']
+                                    ]
+                                ],
+
+                            ],
+
+                            "applicantWorkerProfile" => [
+                                "hireDate" => $applicantData['hireDate']
+                            ],
+
+                            "applicantPayrollProfile" => [
+                                "payrollGroupCode" => "$companyCode"
+                            ],
+
+                            "applicantTaxProfile" => [
+                                "usFederalTaxInstruction" => [
+                                    "multipleJobIndicator" => 'false',
+                                ]
+                            ]
+
+
+                        ]
+                    ]
+                ]
+            ];
+
+            //
+            if ($applicantData['dob'] == null || $applicantData['dob'] == '') {
+                unset($adpApplicantJson['onboarding']['body']['applicantOnboarding']['applicantPersonalProfile']['birthDate']);
+            }
+
+            //  _e($adpApplicantJson,true,true);
+            // set insert array
+            $mode = 'uat';
+            $ins = [
+
+                'request_url' => 'https://' . ($mode == 'uat' ?  'uat-' : '') . 'api.adp.com/hcm/v2/applicant.onboard',
+                'request_body' => json_encode($adpApplicantJson['onboarding']['body']),
+                'request_method' => 'POST',
+                'status' => 1
+            ];
+            //
+            $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('adp_queue', $ins);
+        } else {
+            return;
+        }
     }
+
+
+
 
     /**
      * Get the employee associate OID

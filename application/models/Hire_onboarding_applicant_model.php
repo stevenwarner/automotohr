@@ -89,18 +89,18 @@ class Hire_onboarding_applicant_model extends CI_Model
     {
         $this->db->insert('users', $employer_data);
         $user_id = $this->db->insert_id(); // check if insert was successful
-    
+
 
         //
-        if($employer_data['department_sid']!=0 && $employer_data['team_sid']!=0 ){
+        if ($employer_data['department_sid'] != 0 && $employer_data['team_sid'] != 0) {
             $team_information['department_sid'] = $employer_data['department_sid'];
             $team_information['team_sid'] = $employer_data['team_sid'];
             $team_information['employee_sid'] = $user_id;
             $team_information['created_at'] = date('Y-m-d H:i:s');
             $this->db->insert('departments_employee_2_team', $team_information);
         }
-        
-       
+
+
 
 
         if ($this->db->affected_rows() == '1') { // now update applications table
@@ -1432,7 +1432,9 @@ class Hire_onboarding_applicant_model extends CI_Model
 
     function get_details_by_applicant_sid($applicant_sid)
     {
-        $this->db->select('first_name, last_name, email');
+        // $this->db->select('first_name, last_name, email');
+        $this->db->select('first_name, last_name, email,dob,address,city,zipcode,country,ssn,gender');
+
         $this->db->where('sid', $applicant_sid);
 
         $records_obj = $this->db->get('portal_job_applications');
@@ -1496,8 +1498,8 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('sid', $employee_sid);
         $this->db->update('users', $employer_data);
 
-      //
-        if($employer_data['department_sid']!=0 && $employer_data['team_sid']!=0 ){
+        //
+        if ($employer_data['department_sid'] != 0 && $employer_data['team_sid'] != 0) {
             $team_information['department_sid'] = $employer_data['department_sid'];
             $team_information['team_sid'] = $employer_data['team_sid'];
             $team_information['employee_sid'] = $employee_sid;
@@ -1508,7 +1510,8 @@ class Hire_onboarding_applicant_model extends CI_Model
         //        }
     }
 
-    function save_merge_applicant_info ($applicant_data, $applicant_sid, $employee_sid) {
+    function save_merge_applicant_info($applicant_data, $applicant_sid, $employee_sid)
+    {
         // insert merge table record
         $merge_record = array(
             'portal_job_applications_sid' => $applicant_sid,
@@ -1621,7 +1624,7 @@ class Hire_onboarding_applicant_model extends CI_Model
 
 
 
-//
+    //
     function get_applicant_department_team($company_sid, $applicant_sid)
     {
         $this->db->select('department_sid,team_sid');
@@ -1629,9 +1632,5 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('applicant_sid', $applicant_sid);
         $result = $this->db->get('onboarding_applicants')->row_array();
         return $result;
-      
     }
-
-
-
 }
