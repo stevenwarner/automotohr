@@ -184,6 +184,15 @@ class Terminate_employee extends Public_Controller
                     $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
                 }
 
+
+                //ComplyNet Status
+
+                if (isCompanyOnComplyNet($employer_parent_sid)) {
+                    $this->load->model('2022/complynet_model', 'complynet_model');
+                     $this->complynet_model->updateEmployeeStatusOnComplyNet($employer_parent_sid, $sid, $status);
+                }
+
+
                 $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
                 redirect(base_url('employee_status/' . $sid), 'refresh');
             }
@@ -328,6 +337,14 @@ class Terminate_employee extends Public_Controller
                         $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
                     }
                 }
+
+                //ComplyNet Status
+
+                if (isCompanyOnComplyNet($employer_parent_sid)) {
+                    $this->load->model('2022/complynet_model', 'complynet_model');
+                     $this->complynet_model->updateEmployeeStatusOnComplyNet($employer_parent_sid, $sid, $status);
+                }
+
                 //
                 $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
                 redirect(base_url('employee_status/' . $sid), 'refresh');

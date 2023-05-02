@@ -369,7 +369,7 @@ class employers extends Admin_Controller
                 $data['languages_speak'] = implode(',', $languages_speak);
             }
 
-            
+
             if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
                 $templetJobTitleData = $this->input->post('temppate_job_title');
                 $templetJobTitleDataArray = explode('#', $templetJobTitleData);
@@ -1168,6 +1168,14 @@ class employers extends Admin_Controller
                 $this->company_model->change_terminate_user_status($sid, $data_to_update);
             }
 
+
+            //ComplyNet Status
+            if (isCompanyOnComplyNet($company_detail[0]['sid'])) {
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                $this->complynet_model->updateEmployeeStatusOnComplyNet($company_detail[0]['sid'], $sid, $status);
+            }
+
+
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }
@@ -1300,6 +1308,14 @@ class employers extends Admin_Controller
                 }
             }
             //
+
+            //ComplyNet Status
+            if (isCompanyOnComplyNet($company_detail[0]['sid'])) {
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                $this->complynet_model->updateEmployeeStatusOnComplyNet($company_detail[0]['sid'], $sid, $status);
+            }
+
+            
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }

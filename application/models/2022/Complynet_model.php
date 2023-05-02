@@ -1451,4 +1451,84 @@ class Complynet_model extends CI_Model
         //
         return $complyRoleId;
     }
+
+
+
+
+    //
+    public function updateEmployeeStatusOnComplyNet(
+        int $companyId,
+        int $employeeId,
+        int $status
+    ) {
+
+        //
+        if (!$this->db->where('employee_sid', $employeeId)->count_all_results('complynet_employees')) {
+            return false;
+        }
+
+
+        $complyNetEmployeeStatus = $this->db
+            ->where('employee_sid', $employeeId)
+            ->get('complynet_employees')->row_array();
+
+
+        // Already deactive   Terminated,Inactive,Deceased,Retired,Suspended,Leave
+        if (($status == 1 || $status == 6 || $status == 7 || $status == 4 || $status == 3 || $status == 2) && $complyNetEmployeeStatus['status'] == 0) {
+            return false;
+        }
+
+        // Already active   //Active,Rehired
+
+        if (($status == 5 || $status == 8) && $complyNetEmployeeStatus['status'] == 1) {
+            return false;
+        }
+
+        //  Deactivation Terminated,Inactive,Deceased,Retired,Suspended,Leave
+        if (($status == 1 || $status == 6 || $status == 7 || $status == 4 || $status == 3 || $status == 2) && $complyNetEmployeeStatus['status'] == 1) {
+            $this->updateUserStatus($complyNetEmployeeStatus);
+        }
+
+        // Activation  Active,Rehired
+        if (($status == 5 || $status == 8) && $complyNetEmployeeStatus['status'] == 0) {
+            $this->updateUserStatus($complyNetEmployeeStatus);
+        }
+
+
+        return false;
+    }
+
+    //
+    function updateUserStatus($complyNetEmployeeStatus)
+    {
+
+        // make Status array
+        $updateArray['userName'] = $complyNetEmployeeStatus['email'];
+
+        //
+        $this->load->library('Complynet/Complynet_lib', '', 'clib');
+        //
+        $this->clib->ChangeUserStatus($updateArray);
+
+        $employeeObj = $this->clib->getEmployeeByEmail($complyNetEmployeeStatus['email']);
+        
+        //
+        if (isset($employeeObj[0]['Id']) && findTheRightEmployee($employeeObj, $complyNetEmployeeStatus['complynet_company_sid'], $complyNetEmployeeStatus['complynet_location_sid'])) {
+            $employeeObj[0] = findTheRightEmployee($employeeObj, $complyNetEmployeeStatus['complynet_company_sid'], $complyNetEmployeeStatus['complynet_location_sid']);
+
+            if (isset($employeeObj['error'])) {
+                return false;
+            } else if(!empty($employeeObj[0])) {
+                if ($employeeObj[0]['Status'] == 1) {
+                    $employeeStatus = 1;
+                } else {
+                    $employeeStatus = 0;
+                }
+                $this->db->set('status', $employeeStatus);
+                $this->db->where('employee_sid', $complyNetEmployeeStatus['employee_sid']);
+                $this->db->update('complynet_employees');
+                return true;
+            }
+        }
+    }
 }

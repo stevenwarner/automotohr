@@ -324,7 +324,14 @@ class Employee_management extends Public_Controller
 
                 foreach ($deactivate_fields as $key => $value) {
                     $this->employee_model->deactivate_employee_by_id($value);
+
+                    //ComplyNet Status
+                    if (isCompanyOnComplyNet($company_id)) {
+                        $this->load->model('2022/complynet_model', 'complynet_model');
+                        $this->complynet_model->updateEmployeeStatusOnComplyNet($company_id, $value, 1);
+                    }
                 }
+
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Deactivated!');
                 header('Location: ' . $_SERVER['HTTP_REFERER']);
@@ -335,6 +342,11 @@ class Employee_management extends Public_Controller
 
                 foreach ($deactivate_fields as $key => $value) {
                     $this->employee_model->activate_employee_by_id($value);
+                    //ComplyNet Status
+                    if (isCompanyOnComplyNet($company_id)) {
+                        $this->load->model('2022/complynet_model', 'complynet_model');
+                        $this->complynet_model->updateEmployeeStatusOnComplyNet($company_id, $value, 5);
+                    }
                 }
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Activated!');
@@ -1087,8 +1099,18 @@ class Employee_management extends Public_Controller
     {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'deactivate_single_employee') {
             $sid = $_REQUEST['del_id'];
-            $data = $this->employee_model->deactivate_employee_by_id($sid);
-            echo $data;
+            $dataMessage = $this->employee_model->deactivate_employee_by_id($sid);
+
+            //
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_id = $data["session"]["company_detail"]["sid"];
+            //
+            if (isCompanyOnComplyNet($company_id)) {
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                $this->complynet_model->updateEmployeeStatusOnComplyNet($company_id, $sid, 1);
+            }
+
+            echo $dataMessage;
             exit;
         }
     }
@@ -1108,8 +1130,19 @@ class Employee_management extends Public_Controller
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'archive_single_employee') {
             $sid = $_REQUEST['archive_id'];
             $data_array = array('archived' => 1);
-            $data = $this->employee_model->archive_employee_by_id($sid, $data_array);
-            echo $data;
+
+            $dataMessage = $this->employee_model->archive_employee_by_id($sid, $data_array);
+
+            //
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_id = $data["session"]["company_detail"]["sid"];
+            //
+            if (isCompanyOnComplyNet($company_id)) {
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                $this->complynet_model->updateEmployeeStatusOnComplyNet($company_id, $sid, 1);
+            }
+
+            echo $dataMessage;
             exit;
         }
     }
@@ -1119,8 +1152,19 @@ class Employee_management extends Public_Controller
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'restore_employee') {
             $sid = $_REQUEST['id'];
             $data_array = array('archived' => 0);
-            $data = $this->employee_model->archive_employee_by_id($sid, $data_array);
-            echo $data;
+            $dataMessage = $this->employee_model->archive_employee_by_id($sid, $data_array);
+
+            //
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_id = $data["session"]["company_detail"]["sid"];
+            //
+            if (isCompanyOnComplyNet($company_id)) {
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                $this->complynet_model->updateEmployeeStatusOnComplyNet($company_id, $sid, 5);
+            }
+
+
+            echo $dataMessage;
             exit;
         }
     }

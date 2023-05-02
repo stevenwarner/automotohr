@@ -321,10 +321,14 @@ class Complynet_lib
             ),
         ];
         //
-        if ($method == 'POST' || $method == 'PUT') {
+        if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE') {
             $lists[CURLOPT_POSTFIELDS] = json_encode($postFields);
             $lists[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
         }
+
+
+        
+
         //
         curl_setopt_array($curl, $lists);
         //
@@ -408,4 +412,26 @@ class Complynet_lib
         $this->CI->db->insert('complynet_calls', $ins);
     }
     
+
+ /**
+     * Change user Status
+     *
+     * @param array $upd
+     * @return array
+     */
+    public function ChangeUserStatus(
+        array $upd
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'User',
+            'DELETE',
+            $upd
+        );
+    }
+
+
+
 }
