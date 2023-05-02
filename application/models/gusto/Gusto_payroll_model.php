@@ -843,15 +843,42 @@ class Gusto_payroll_model extends CI_Model
             //
             $employeeInfo = $response['data'];
             $companyDetails = $this->getCompanyDetailsForGusto($employeeInfo['parent_sid']);
+            //
+            $whereArray = [
+                'employee_sid ' => $employeeInfo['sid'],
+                'company_sid' => $employeeInfo['parent_sid']
+            ];
+            //
+            $gustoEmployeeInfo =
+                $this->db
+                ->select('
+                    payroll_employee_uuid,
+                    version
+                ')
+                ->where($whereArray)
+                ->get('payroll_employees')
+                ->row_array();
+            //
             // Add or Update employee profile info
-            $this->syncCompanyEmployeeProfile($employeeInfo, $companyDetails);
+            $this->syncCompanyEmployeeProfile($employeeInfo, gustoEmployeeInfo, $companyDetails);
+            //
             // Update employee address info
-            $this->syncCompanyEmployeeAddress($employeeInfo, $companyDetails);
+            $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            //
+            // Create employee job
+            $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            //
+            // Create employee payment method 
+            $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);   
+            //
+            // Create employee federal Tax 
+            $this->syncCompanyEmployeeFederalTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            //
+            // Create employee State Tax 
+            $this->syncCompanyEmployeeStateTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
         }
         //
-        echo $response['message'];
-        die("End of world");
-        
+        return true;
     }
 
     /**
@@ -884,7 +911,10 @@ class Gusto_payroll_model extends CI_Model
                 Location_ZipCode,
                 Location_City,
                 ssn,
-                parent_sid
+                parent_sid,
+                registration_date,
+                joined_at,
+                job_title
             ')
             ->where('sid', $employeeId)
             ->get('users')
@@ -893,7 +923,6 @@ class Gusto_payroll_model extends CI_Model
         if (!$employeeProfile) {
             $response['message'] = "Employee not found.";
             return $response; 
-            
         }
         //
         if (ctype_space($employeeProfile["first_name"]) || $employeeProfile["first_name"] == '' || strlen(trim($employeeProfile["first_name"])) < 3) {
@@ -931,10 +960,11 @@ class Gusto_payroll_model extends CI_Model
      * Sync employee profile info
      *
      * @param array $employeeProfile
+     *     @param array $gustoEmployeeInfo
      * @param array $companyDetails
      * @return bool
      */
-    public function syncCompanyEmployeeProfile(array $employeeProfile, array $companyDetails)
+    public function syncCompanyEmployeeProfile(array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails)
     {
         //
         $mainTable = 'payroll_employees';
@@ -944,7 +974,7 @@ class Gusto_payroll_model extends CI_Model
             'company_sid' => $employeeProfile['parent_sid']
         ];
         //
-        if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+        if (empty($gustoEmployeeInfo)) {
             //
             $employeeDetails = [];
             $employeeDetails['first_name'] = $employeeProfile['first_name'];
@@ -955,10 +985,9 @@ class Gusto_payroll_model extends CI_Model
             $employeeDetails['ssn'] = $employeeProfile['ssn'];
             $employeeDetails['self_onboarding'] = false;
             //
-            // $response = createAnEmployeeOnGusto($employeeDetails, $companyDetails,[
-            //     'X-Gusto-API-Version: 2023-03-01'
-            // ]);
-            
+            $response = createAnEmployeeOnGusto($employeeDetails, $companyDetails,[
+                'X-Gusto-API-Version: 2023-03-01'
+            ]);
             //
             if (!isset($response['errors']) && $response) {
                 //
@@ -993,15 +1022,6 @@ class Gusto_payroll_model extends CI_Model
             }
             //
         } else {
-            $gustoEmployeeInfo =
-            $this->db
-            ->select('
-                payroll_employee_uuid,
-                version
-            ')
-            ->where($whereArray)
-            ->get($mainTable)
-            ->row_array();
             //
             $employeeDetails = [];
             $employeeDetails['version'] = $gustoEmployeeInfo['version'];
@@ -1017,6 +1037,7 @@ class Gusto_payroll_model extends CI_Model
             ]);
             //
             if (!isset($response['errors']) && $response) {
+                //
                 $dataToUpdate = [];
                 $dataToUpdate['version'] = $response['version'];
                 $dataToUpdate['updated_at'] = getSystemDate();
@@ -1028,6 +1049,385 @@ class Gusto_payroll_model extends CI_Model
         }   
         //
         return false;
+    }
+
+
+    /**
+     * Update employee home address
+     *
+     * @param array $employeeProfile
+     * @param array $gustoEmployeeInfo
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyEmployeeAddress (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        //
+        $mainTable = 'payroll_employee_address';
+        //
+        $whereArray = [
+            'employee_sid ' => $employeeProfile['sid']
+        ];
+        //
+        $employeeAddress = $this->validateEmployeeAddress($employeeProfile, $whereArray, $mainTable);
+        //
+        if ($employeeAddress['status']) {
+            //
+            $response = updateAnEmployeeAddressOnGusto($employeeAddress['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
+                'X-Gusto-API-Version: 2023-03-01'
+            ]);
+            //
+            if (!isset($response['errors']) && $response) {
+                //
+                $dataToUpdate = [];
+                $dataToUpdate['version'] = $response['version'];
+                $dataToUpdate['street_1'] = $response['street_1'];
+                $dataToUpdate['street_2'] = $response['street_2'];
+                $dataToUpdate['city'] = $response['city'];
+                $dataToUpdate['state'] = $response['state'];
+                $dataToUpdate['country'] = $response['country'];
+                $dataToUpdate['zip'] = $response['zip'];
+                $dataToUpdate['active'] = $response['active'];
+                $dataToUpdate['updated_at'] = getSystemDate();
+                //
+                $this->db->where($whereArray)->update($mainTable, $dataToUpdate);
+                //
+                return true;
+            } 
+        }
+        //
+        return false;
+        //    
+    }
+
+    /**
+     * Validate employee home address
+     *
+     * @param array $employeeProfile
+     * @param array $whereArray
+     * @param string $mainTable
+     * @return array
+     */
+    private function validateEmployeeAddress(array $employeeProfile , array $whereArray, string $mainTable) {
+        $response = [
+            'status' => false,
+            'message' => '',
+            'data' => []
+        ];
+        //
+        if (ctype_space($employeeProfile["Location_Address"]) || $employeeProfile["Location_Address"] == '') {
+            $response['message'] = "Must include a street address.";
+            return $response;
+        }
+        //
+        if (ctype_space($employeeProfile["Location_State"]) || $employeeProfile["Location_State"] == '') {
+            $response['message'] = "Must include a state.";
+            return $response;
+        } else if (!empty($employeeProfile["Location_State"])) {
+            $stateDetails = db_get_state_name($employeeProfile["Location_State"]);
+            $employeeProfile['state_code'] = $stateDetails['state_code'];
+            $employeeProfile['state_name'] = $stateDetails['state_name'];
+        }
+        //
+        if (ctype_space($employeeProfile["Location_City"]) || $employeeProfile["Location_City"] == '') {
+            $response['message'] = "Must include a city.";
+            return $response;
+        }
+        //
+        if (ctype_space($employeeProfile["Location_ZipCode"]) || $employeeProfile["Location_ZipCode"] == '') {
+            $response['message'] = "Must include a zip code.";
+            return $response;
+        }
+        //
+        $gustoEmployeeAddressVersion =
+            $this->db
+            ->select('version')
+            ->where($whereArray)
+            ->get($mainTable)
+            ->row_array();
+        //        
+        $employeeAddressDetails = [];
+        $employeeAddressDetails['version'] = $gustoEmployeeAddressVersion['version'];
+        $employeeAddressDetails['street_1'] = $employeeProfile["Location_Address"];
+        $employeeAddressDetails['street_2'] = $employeeProfile["Location_Address_2"];
+        $employeeAddressDetails['city'] = $employeeProfile["Location_City"];
+        $employeeAddressDetails['state'] = $employeeProfile["state_code"];
+        $employeeAddressDetails['zip'] = $employeeProfile["Location_ZipCode"];
+        //
+        $response['status'] = true;
+        $response['message'] = "Employee Address Valid.";
+        $response['data'] = $employeeAddressDetails;
+        return $response;
+    }
+
+    /**
+     * Create employee job
+     *
+     * @param array $employeeProfile
+     * @param array $gustoEmployeeInfo
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyEmployeeJobInfo (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        //
+        $mainTable = 'payroll_employee_jobs';
+        //
+        $whereArray = [
+            'employee_sid' => $employeeProfile['sid']
+        ];
+        //
+        if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+            //
+            $employeeJobDetail = $this->fetchEmployeeJobDetail($employeeProfile);
+            //
+            if ($employeeJobDetail['status']) {
+                //
+                $response = createEmployeeJobDetail($employeeJobDetail['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
+                    'X-Gusto-API-Version: 2023-03-01'
+                ]); 
+                //
+                $dataArray = [];    
+                $dataArray['employee_sid'] = $employeeProfile['sid'];
+                $dataArray['payroll_job_id'] = $response['uuid'];
+                $dataArray['version'] = $response['version'];
+                $dataArray['payroll_location_id'] = $response['location_uuid'];
+                $dataArray['hire_date'] = $response['hire_date'];
+                $dataArray['title'] = $response['title'];
+                $dataArray['is_primary'] = $response['primary'];
+                $dataArray['rate'] = $response['rate'];
+                $dataArray['payment_unit'] = $response['payment_unit'];
+                $dataArray['current_compensation_id'] = $response['current_compensation_uuid'];
+                $dataArray['payroll_uid'] = $response['uuid'];
+                $dataArray['created_at'] = getSystemDate();
+                //
+                $this->db->insert($mainTable, $dataArray);
+                $payroll_job_sid = $this->db->insert_id();
+                //
+                if (!empty($response['compensations'])) {
+                    foreach ($response['compensations'] as $compensation) {
+                        $compensationArray = [];   
+                        $compensationArray['payroll_job_sid '] = $payroll_job_sid;
+                        $compensationArray['rate'] = $compensation['rate'];
+                        $compensationArray['payment_unit'] = $compensation['payment_unit'];
+                        $compensationArray['flsa_status'] = $compensation['flsa_status'];
+                        $compensationArray['effective_date'] = $compensation['effective_date'];
+                        $compensationArray['payroll_id'] = $response['uuid'];
+                        $compensationArray['version'] = $compensation['version'];
+                        $compensationArray['created_at'] = getSystemDate();
+                        //                        
+                        $this->db->insert('payroll_employee_job_compensations', $compensationArray);
+                    }
+                }
+                //
+                return true;
+            }
+        } 
+        //
+        return false;
+    }
+
+    /**
+     * Process employee job details
+     *
+     * @param array $employeeProfile
+     * @return array
+     */
+    private function fetchEmployeeJobDetail(array $employeeProfile) {
+        //
+        $response = [
+            'status' => false,
+            'message' => '',
+            'data' => []
+        ];
+        //
+        $employeeLocation = $this->getEmployeeJobLocation($employeeProfile['parent_sid']);
+        //
+        if (empty($employeeLocation)) {
+            $response['message'] = "Active single job location not found.";
+            return $response;
+        }
+        //
+        $hireDate = get_employee_latest_joined_date($employeeProfile["registration_date"], $employeeProfile["joined_at"], "", false);
+        //
+        if (empty($hireDate)) {
+            $response['message'] = "Must include a hire date.";
+            return $response;
+        }
+        //
+        if (ctype_space($employeeProfile["job_title"]) || $employeeProfile["job_title"] == '') {
+            $response['message'] = "Must include a job tile.";
+            return $response;
+        }
+        //        
+        $employeeJobDetails = [];
+        $employeeJobDetails['title'] = $employeeProfile["job_title"];
+        $employeeJobDetails['location_uuid'] = $employeeLocation;
+        $employeeJobDetails['hire_date'] = $hireDate;
+        //
+        $response['status'] = true;
+        $response['message'] = "Employee job data completed.";
+        $response['data'] = $employeeJobDetails;
+        return $response;
+    }
+
+    /**
+     * Get employee job location details
+     *
+     * @param int $companySid
+     * @return string
+     */
+    private function getEmployeeJobLocation(int $companySid) {
+        //
+        $locationID = '';
+        //
+        $mainTable = 'payroll_company_locations';
+        //
+        $whereArray = [
+            'company_sid ' => $companySid,
+            'active' => 1
+        ];
+        //
+        $companyLocations =
+            $this->db
+            ->select('
+                gusto_uuid
+            ')
+            ->where($whereArray)
+            ->get($mainTable)
+            ->result_array();
+        //
+        if (!empty($companyLocations) && count($companyLocations) == 1) {
+            $locationID = $companyLocations[0]['gusto_uuid'];
+        } 
+        //   
+        return $locationID;
+
+    }
+
+    /**
+     * Create employee bank account
+     *
+     * @param array $employeeProfile
+     * @param array $gustoEmployeeInfo
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyEmployeePaymentMethod (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        //
+        $mainTable = 'payroll_employee_bank_accounts';
+        //
+        $whereArray = [
+            'employee_sid' => $employeeProfile['sid']
+        ];
+        //
+        if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+            //
+            $employeeBankDetail = $this->fetchEmployeeBankDetail($employeeProfile);
+            //
+            if ($employeeBankDetail['status']) {
+                //
+                $response = createEmployeeBankDetail($employeeBankDetail['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
+                    'X-Gusto-API-Version: 2023-03-01'
+                ]);
+                //
+                $dataArray['employee_sid'] = $employeeProfile['sid'];
+                $dataArray['payroll_bank_uuid'] = $response['uuid'];
+                $dataArray['account_type'] = $response['account_type'];
+                $dataArray['name'] = $response['name'];
+                $dataArray['routing_number'] = $response['routing_number'];
+                $dataArray['account_number'] = $response['hidden_account_number'];
+                $dataArray['created_at'] = getSystemDate();
+                //
+                $this->db->insert($mainTable, $dataArray);
+                //
+                return true;
+            }
+        } 
+        //
+        return false;
+    }
+
+    
+    /**
+     * Get employee bank account details
+     *
+     * @param array $employeeProfile
+     * @return array
+     */
+    private function fetchEmployeeBankDetail(array $employeeProfile) {
+       //
+        $response = [
+            'status' => false,
+            'message' => '',
+            'data' => []
+        ];
+        //
+        $mainTable = 'bank_account_details';
+        //
+        $whereArray = [
+            'company_sid ' => $employeeProfile['parent_sid'],
+            'users_sid ' => $employeeProfile['sid'],
+            'users_type' => 'employee',
+            'account_status' => 'primary'
+        ];
+        //
+        $employeeBankDetail =
+            $this->db
+            ->select('
+                routing_transaction_number,
+                account_number,
+                account_type,
+                financial_institution_name
+            ')
+            ->where($whereArray)
+            ->get($mainTable)
+            ->row_array();
+        //
+        if (empty($employeeBankDetail)) {
+            $response['message'] = "Bank account not exist.";
+            return $response;
+        }
+        //
+        if (empty($employeeBankDetail["routing_transaction_number"]) && !is_numeric($employeeBankDetail["routing_transaction_number"])) {
+            $response['message'] = "Must include a routing number.";
+            return $response;
+        }
+        //
+        if (empty($employeeBankDetail["account_number"]) && !is_numeric($employeeBankDetail["account_number"])) {
+            $response['message'] = "Must include a account number.";
+            return $response;
+        }
+        //
+        if (empty($employeeBankDetail["account_type"]) && ($employeeBankDetail["account_type"] != 'Checking' || $employeeBankDetail["account_type"] != 'Savings'))  {
+            $response['message'] = "Must include a account type.";
+            return $response;
+        }
+        //
+        if (empty($employeeBankDetail["financial_institution_name"])) {
+            $response['message'] = "Must include a financial institution name.";
+            return $response;
+        }
+        //     
+        $employeeBankDetails = [];
+        $employeeBankDetails['name'] = $employeeBankDetail["financial_institution_name"];
+        $employeeBankDetails['routing_number'] = $employeeBankDetail["routing_transaction_number"];
+        $employeeBankDetails['account_number'] = $employeeBankDetail["account_number"];
+        $employeeBankDetails['account_type'] = ucfirst($employeeBankDetail["account_type"]);
+        //
+        $response['status'] = true;
+        $response['message'] = "Employee bank data completed.";
+        $response['data'] = $employeeBankDetails;
+        return $response;
+
+    }
+
+    public function syncCompanyEmployeeFederalTax (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        // TODO on this section
+        return true;
+    }
+
+    public function syncCompanyEmployeeStateTax (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        // TODO on this section
+        return true;
     }
 
 }
