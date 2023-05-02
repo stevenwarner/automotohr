@@ -195,58 +195,6 @@
                                                 </script>
 
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Union Member:</label>
-                                                </li>
-
-                                                <li class="form-col-100 autoheight">
-
-                                                    <div class="hr-fields-wrap">
-
-
-                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
-                                                            <label class="control control--radio " style="margin-left: -10px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $formpost['union_member'] ? 'checked' : '' ?>>
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
-
-                                                        <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
-                                                            <label class="control control--radio" style="margin-left: 10px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $formpost['union_member'] ? '' : 'checked' ?>>
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
-
-                                                        <br>
-                                                        <br>
-                                                        <div class="row jsunionname">
-                                                            <div class="col-sm-12">
-                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $formpost['union_name']; ?>" />
-                                                            </div>
-                                                        </div>
-
-                                                        <script>
-                                                            <?php if ($formpost['union_member'] == 0) { ?>
-                                                                $('.jsunionname').hide();
-                                                            <?php } ?>
-
-                                                            $('.unionmember').on('click', function() {
-                                                                var selected = $(this).val();
-                                                                if (selected == '1') {
-                                                                    $('.jsunionname').show();
-
-                                                                } else {
-                                                                    $('.jsunionname').hide();
-                                                                }
-                                                            });
-                                                        </script>
-                                                    </div>
-                                                    <br>
-
-                                                </li>
-
-
-
-
-                                                <li class="form-col-100 autoheight">
 
                                                     <div class="row js-timezone-row">
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

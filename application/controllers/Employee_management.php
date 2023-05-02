@@ -445,8 +445,8 @@ class Employee_management extends Public_Controller
                 $departmenId = '';
 
                 //
-                $unionName = $this->input->post('union_name');
-                $unionMember = $this->input->post('union_member');
+                // $unionName = $this->input->post('union_name');
+                // $unionMember = $this->input->post('union_member');
 
 
                 //
@@ -506,8 +506,8 @@ class Employee_management extends Public_Controller
                 $user_information['salary_benefits'] = ''; // $salaryBenefits;
 
                 //
-                $user_information['union_name'] = $unionName;
-                $user_information['union_member'] = $unionMember;
+                // $user_information['union_name'] = $unionName;
+                // $user_information['union_member'] = $unionMember;
 
                 //
                 if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
