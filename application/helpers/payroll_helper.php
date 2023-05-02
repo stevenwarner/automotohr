@@ -1899,6 +1899,7 @@ if (!function_exists('PayrollURL')) {
         $urls['DeleteEmployeeBankAccount'] = 'v1/employees/' . ($key) . '/bank_accounts/' . ($key1);
         $urls['UpdateEmployeePaymentMethod'] = 'v1/employees/' . ($key) . '/payment_method';
         $urls['MarkEmployeeAsOnboarded'] = 'v1/employees/' . ($key) . '/finish_onboarding';
+        $urls['GetEmployeeOnboardedStatus'] = 'v1/employees/' . ($key) . '/onboarding_status';
         //
         $urls['GetEmployeePayStubs'] = 'v1/payrolls/' . ($key) . '/employees/' . ($key1) . '/pay_stub';
 
@@ -3274,6 +3275,52 @@ if (!function_exists('createEmployeeBankDetail')) {
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
                 return createEmployeeBankDetail($request, $company, $payroll_employee_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+// Employee related calls
+if (!function_exists('getEmployeeOnbordingStatus')) {
+    function getEmployeeOnbordingStatus($company, $payroll_employee_uuid, $headers=[])
+    { 
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'accept: application/json',
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $url = PayrollURL('GetEmployeeOnboardedStatus', $payroll_employee_uuid);
+        //
+        $response =  MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getEmployeeOnbordingStatus($company, $payroll_employee_uuid, $headers);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }

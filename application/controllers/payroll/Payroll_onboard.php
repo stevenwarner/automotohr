@@ -23,6 +23,7 @@ class Payroll_onboard extends CI_Controller
         // Call the model
         $this->load->model("Payroll_model", "pm");
         $this->load->model('single/Employee_model', 'sem');
+        $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
         // Call helper
         $this->load->helper("payroll_helper");
         //
@@ -66,6 +67,8 @@ class Payroll_onboard extends CI_Controller
     {
         //
         $employeeId = $this->input->post('employee_id', true);
+        $this->gusto_payroll_model->onboardEmployeeOnGusto($employeeId);
+        return sendResponse(200, ['status' => true]);
         //
         $ei = $this->sem->GetEmployeeDetailWithPayroll($employeeId, [
             "users.sid",
@@ -205,7 +208,8 @@ class Payroll_onboard extends CI_Controller
                 'payroll_employees.federal_tax',
                 'payroll_employees.state_tax',
                 'payroll_employees.payment_method',
-                'payroll_employees.payroll_employee_id'
+                'payroll_employees.payroll_employee_id',
+                'payroll_employees.payroll_employee_uuid'
             ]);
             //
             if($employees){
@@ -214,7 +218,7 @@ class Payroll_onboard extends CI_Controller
                 //
                 foreach($employees as $employee){
                     //
-                    if(!$employee['payroll_employee_id']) { continue; }
+                    if(!$employee['payroll_employee_uuid']) { continue; }
                     //
                     $tmp[] = [
                         'user_id' => $employee['userId'],

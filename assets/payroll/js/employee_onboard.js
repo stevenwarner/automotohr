@@ -1200,13 +1200,17 @@ $(function EmployeeOnboard() {
                 xhr = null;
                 //
                 LoadContent(resp.html, function() {
-                    //
-                    LoadEmployeeStateTax();
-                    //
-                    $(".jsPayrollEmployeeOnboard").click(UpdateEmployeeFederalTax);
-                    $(".jsPayrollSaveEmployeeStateTax").click(
-                        SaveCompanyEmployeeStateTax
-                    );
+                    if (resp.status == 'data_completed') {
+                        //
+                        LoadEmployeeStateTax();
+                        //
+                        $(".jsPayrollEmployeeOnboard").click(UpdateEmployeeFederalTax);
+                        $(".jsPayrollSaveEmployeeStateTax").click(
+                            SaveCompanyEmployeeStateTax
+                        );
+                    } else {
+                        ml(false, 'jsEmployeeOnboardModelLoader');
+                    }
                 });
             })
             .error(ErrorHandler);

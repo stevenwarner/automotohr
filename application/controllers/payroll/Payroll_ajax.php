@@ -776,16 +776,32 @@ class Payroll_ajax extends CI_Controller
         }
         //
         if ($page === "get-company-employee-state-tax") {
+            $statePrerequisite = $this->pm->checkStatePrerequisite($_GET["employee_id"]);
             //
-            $data['employee_sid'] = $_GET["employee_id"];
-            //
-            $data['state_tax_info'] = $this->pm->GetEmployeeStateTaxDetails($_GET["employee_id"]);
-            //
-            return SendResponse(200, [
-                'API_KEY' => getAPIKey(),
-                'EMPLOYEE_URL' => getAPIUrl("employees"),
-                'html' => $this->load->view($this->path . $page, $data, true)
-            ]);
+            if ($statePrerequisite['status'] == 'data_missing') {
+                $page = 'state_prerequisite';
+                $data['work_address'] = $statePrerequisite['work_address'];
+                $data['federal_tax'] = $statePrerequisite['federal_tax'];
+                //
+                return SendResponse(200, [
+                    'API_KEY' => getAPIKey(),
+                    'EMPLOYEE_URL' => getAPIUrl("employees"),
+                    'status' => 'data_missing',
+                    'html' => $this->load->view($this->path . $page, $data, true)
+                ]);
+            } else {
+                //
+                $data['employee_sid'] = $_GET["employee_id"];
+                //
+                $data['state_tax_info'] = $this->pm->GetEmployeeStateTaxDetails($_GET["employee_id"]);
+                //
+                return SendResponse(200, [
+                    'API_KEY' => getAPIKey(),
+                    'EMPLOYEE_URL' => getAPIUrl("employees"),
+                    'status' => 'data_completed',
+                    'html' => $this->load->view($this->path . $page, $data, true)
+                ]);
+            }    
         }
         //
         if ($page === "get-company-employee-payment-method") {

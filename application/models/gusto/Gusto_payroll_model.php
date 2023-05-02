@@ -860,22 +860,25 @@ class Gusto_payroll_model extends CI_Model
                 ->row_array();
             //
             // Add or Update employee profile info
-            $this->syncCompanyEmployeeProfile($employeeInfo, gustoEmployeeInfo, $companyDetails);
-            //
-            // Update employee address info
-            $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            //
-            // Create employee job
-            $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            //
-            // Create employee payment method 
-            $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);   
-            //
-            // Create employee federal Tax 
-            $this->syncCompanyEmployeeFederalTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            // $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            // //
+            // // Update employee address info
+            // $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            // //
+            // // Create employee job
+            // $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            // //
+            // // Create employee payment method 
+            // $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);   
+            // //
+            // // Create employee federal Tax 
+            // $this->syncCompanyEmployeeFederalTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            // //
+            // // Create employee State Tax 
+            // $this->syncCompanyEmployeeStateTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
             //
             // Create employee State Tax 
-            $this->syncCompanyEmployeeStateTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            $this->updateCompanyEmployeeOnboardingStatus($employeeInfo, $gustoEmployeeInfo, $companyDetails);
         }
         //
         return true;
@@ -999,7 +1002,6 @@ class Gusto_payroll_model extends CI_Model
                 $dataArray['last_updated_by'] = 0;
                 $dataArray['version'] = $response['version'];
                 $dataArray['created_at'] = getSystemDate();
-                $dataArray['personal_profile'] = 1;
                 $dataArray['response_body'] = json_encode($response);
                 //
                 $this->db->insert($mainTable, $dataArray);
@@ -1017,6 +1019,10 @@ class Gusto_payroll_model extends CI_Model
                 $addressArray['created_at'] = getSystemDate();
                 //
                 $this->db->insert('payroll_employee_address', $addressArray);
+                //
+                $dataToUpdate = [];
+                $dataToUpdate['on_payroll'] = 1;                //
+                $this->db->where('sid', $employeeProfile['sid'])->update('users', $dataToUpdate);
                 //
                 return true;
             }
@@ -1185,40 +1191,43 @@ class Gusto_payroll_model extends CI_Model
                     'X-Gusto-API-Version: 2023-03-01'
                 ]); 
                 //
-                $dataArray = [];    
-                $dataArray['employee_sid'] = $employeeProfile['sid'];
-                $dataArray['payroll_job_id'] = $response['uuid'];
-                $dataArray['version'] = $response['version'];
-                $dataArray['payroll_location_id'] = $response['location_uuid'];
-                $dataArray['hire_date'] = $response['hire_date'];
-                $dataArray['title'] = $response['title'];
-                $dataArray['is_primary'] = $response['primary'];
-                $dataArray['rate'] = $response['rate'];
-                $dataArray['payment_unit'] = $response['payment_unit'];
-                $dataArray['current_compensation_id'] = $response['current_compensation_uuid'];
-                $dataArray['payroll_uid'] = $response['uuid'];
-                $dataArray['created_at'] = getSystemDate();
+                if (!isset($response['errors']) && $response) {
                 //
-                $this->db->insert($mainTable, $dataArray);
-                $payroll_job_sid = $this->db->insert_id();
-                //
-                if (!empty($response['compensations'])) {
-                    foreach ($response['compensations'] as $compensation) {
-                        $compensationArray = [];   
-                        $compensationArray['payroll_job_sid '] = $payroll_job_sid;
-                        $compensationArray['rate'] = $compensation['rate'];
-                        $compensationArray['payment_unit'] = $compensation['payment_unit'];
-                        $compensationArray['flsa_status'] = $compensation['flsa_status'];
-                        $compensationArray['effective_date'] = $compensation['effective_date'];
-                        $compensationArray['payroll_id'] = $response['uuid'];
-                        $compensationArray['version'] = $compensation['version'];
-                        $compensationArray['created_at'] = getSystemDate();
-                        //                        
-                        $this->db->insert('payroll_employee_job_compensations', $compensationArray);
+                    $dataArray = [];    
+                    $dataArray['employee_sid'] = $employeeProfile['sid'];
+                    $dataArray['payroll_job_id'] = $response['uuid'];
+                    $dataArray['version'] = $response['version'];
+                    $dataArray['payroll_location_id'] = $response['location_uuid'];
+                    $dataArray['hire_date'] = $response['hire_date'];
+                    $dataArray['title'] = $response['title'];
+                    $dataArray['is_primary'] = $response['primary'];
+                    $dataArray['rate'] = $response['rate'];
+                    $dataArray['payment_unit'] = $response['payment_unit'];
+                    $dataArray['current_compensation_id'] = $response['current_compensation_uuid'];
+                    $dataArray['payroll_uid'] = $response['uuid'];
+                    $dataArray['created_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                    $payroll_job_sid = $this->db->insert_id();
+                    //
+                    if (!empty($response['compensations'])) {
+                        foreach ($response['compensations'] as $compensation) {
+                            $compensationArray = [];   
+                            $compensationArray['payroll_job_sid '] = $payroll_job_sid;
+                            $compensationArray['rate'] = $compensation['rate'];
+                            $compensationArray['payment_unit'] = $compensation['payment_unit'];
+                            $compensationArray['flsa_status'] = $compensation['flsa_status'];
+                            $compensationArray['effective_date'] = $compensation['effective_date'];
+                            $compensationArray['payroll_id'] = $response['uuid'];
+                            $compensationArray['version'] = $compensation['version'];
+                            $compensationArray['created_at'] = getSystemDate();
+                            //                        
+                            $this->db->insert('payroll_employee_job_compensations', $compensationArray);
+                        }
                     }
-                }
-                //
-                return true;
+                    //
+                    return true;
+                }    
             }
         } 
         //
@@ -1300,7 +1309,6 @@ class Gusto_payroll_model extends CI_Model
         } 
         //   
         return $locationID;
-
     }
 
     /**
@@ -1329,17 +1337,20 @@ class Gusto_payroll_model extends CI_Model
                     'X-Gusto-API-Version: 2023-03-01'
                 ]);
                 //
-                $dataArray['employee_sid'] = $employeeProfile['sid'];
-                $dataArray['payroll_bank_uuid'] = $response['uuid'];
-                $dataArray['account_type'] = $response['account_type'];
-                $dataArray['name'] = $response['name'];
-                $dataArray['routing_number'] = $response['routing_number'];
-                $dataArray['account_number'] = $response['hidden_account_number'];
-                $dataArray['created_at'] = getSystemDate();
-                //
-                $this->db->insert($mainTable, $dataArray);
-                //
-                return true;
+                if (!isset($response['errors']) && $response) {
+                    //
+                    $dataArray['employee_sid'] = $employeeProfile['sid'];
+                    $dataArray['payroll_bank_uuid'] = $response['uuid'];
+                    $dataArray['account_type'] = $response['account_type'];
+                    $dataArray['name'] = $response['name'];
+                    $dataArray['routing_number'] = $response['routing_number'];
+                    $dataArray['account_number'] = $response['hidden_account_number'];
+                    $dataArray['created_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                    //
+                    return true;
+                }    
             }
         } 
         //
@@ -1428,6 +1439,58 @@ class Gusto_payroll_model extends CI_Model
     public function syncCompanyEmployeeStateTax (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
         // TODO on this section
         return true;
+    }
+
+    public function updateCompanyEmployeeOnboardingStatus (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        //
+        $response = getEmployeeOnbordingStatus($companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        _e($response,true,true);
+        //
+        if (!isset($response['errors']) && $response) {
+            if (isset($response['onboarding_steps'])) {
+                //
+                $onboardingStatus = [];
+                //
+                foreach ($response['onboarding_steps'] as $step) {
+                    //
+                    if ($step['id'] == 'personal_details' && $step['completed'] == 1) {
+                        $onboardingStatus['personal_profile'] = 1;
+                    } else if ($step['id'] == 'compensation_details' && $step['completed'] == 1) {
+                        $onboardingStatus['compensation'] = 1;
+                    } else if ($step['id'] == 'add_work_address' && $step['completed'] == 1) {
+                        $onboardingStatus['work_address'] = 1;
+                    } else if ($step['id'] == 'add_home_address' && $step['completed'] == 1) {   
+                        $onboardingStatus['home_address'] = 1;
+                    } else if ($step['id'] == 'federal_tax_setup' && $step['completed'] == 1) {
+                        $onboardingStatus['federal_tax'] = 1;
+                    } else if ($step['id'] == 'state_tax_setup' && $step['completed'] == 1) {
+                        $onboardingStatus['state_tax'] = 1;
+                    } else if ($step['id'] == 'direct_deposit_setup' && $step['completed'] == 1) {
+                        $onboardingStatus['payment_method'] = 1;
+                    } else if ($step['id'] == 'employee_form_signing' && $step['completed'] == 1) {
+                        $onboardingStatus['employee_form_signing'] = 1;
+                    } else if ($step['id'] == 'file_new_hire_report' && $step['completed'] == 1) {
+                        $onboardingStatus['file_new_hire_report'] = 1;
+                    }
+                }
+                //
+                $mainTable = 'payroll_employees';
+                //
+                $whereArray = [
+                    'employee_sid ' => $employeeProfile['sid'],
+                    'company_sid' => $employeeProfile['parent_sid']
+                ];
+                //
+                $this->db->where($whereArray)->update($mainTable, $onboardingStatus);
+
+            }
+            return true;
+        }
+        //
+        return false;
     }
 
 }
