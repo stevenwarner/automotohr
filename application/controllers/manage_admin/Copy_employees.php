@@ -145,12 +145,21 @@ class Copy_employees extends Admin_Controller
                 $resp['response'] = 'No employee found.';
                 echo json_encode($resp);
             }
+            // set array
+            $passArray = [
+                'oldEmployeeId' => $employee_sid,
+                'oldCompanyId' => $from_company,
+                'newEmployeeId' => 0,
+                'newCompanyId' => $to_company
+            ];
 
             $date = date('Y-m-d H:i:s', strtotime('now'));
 
             if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
                 $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
                 $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
+                //
+                $passArray['newEmployeeId'] = $primary_employee_sid;
 
                 $secondary_employee_email    = $employee['email'];
                 //
@@ -302,6 +311,9 @@ class Copy_employees extends Admin_Controller
                 if ($formpost['timeoff'] == 1) {
                     $this->transferEmployeeTimeoff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company);
                 }
+
+                //
+                $this->manageEmployee($passArray, 1);
 
                 echo json_encode($resp);
             } else {
@@ -786,15 +798,16 @@ class Copy_employees extends Admin_Controller
 
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
+                $this->manageEmployee($passArray, 0);
                 echo json_encode($resp);
             }
         }
     }
 
-    private function transferEmployeeTimeoff (
-        $secondaryEmployeeSid, 
-        $primaryEmployeeSid, 
-        $secondaryCompanySid, 
+    private function transferEmployeeTimeoff(
+        $secondaryEmployeeSid,
+        $primaryEmployeeSid,
+        $secondaryCompanySid,
         $primaryCompanySid
     ) {
         //
@@ -896,7 +909,7 @@ class Copy_employees extends Admin_Controller
                         if (empty($assignedEmployees)) {
                             $dataToUpdate['assigned_employees'] = $primaryEmployeeSid;
                         } else if (str_replace($primaryEmployeeSid, '', $assignedEmployees) == $assignedEmployees) {
-                            $dataToUpdate['assigned_employees'] = $assignedEmployees.','.$primaryEmployeeSid;
+                            $dataToUpdate['assigned_employees'] = $assignedEmployees . ',' . $primaryEmployeeSid;
                         }
                         $this->copy_employees_model->updateCompanyPolicy($policySid, $dataToUpdate);
                     }
@@ -982,7 +995,6 @@ class Copy_employees extends Admin_Controller
                     $moveBalance = 'yes';
                     array_push($moveBalancesIds, $balance['sid']);
                 }
-                
             }
         }
         //
@@ -1458,5 +1470,28 @@ class Copy_employees extends Admin_Controller
 
         echo 'employee copy successfully';
         die('stop');
+    }
+
+    /**
+     * 
+     */
+    public function manageEmployee(array $passArray, bool $doMerge)
+    {
+        $passArray = [
+            'oldEmployeeId' => 49245,
+            'oldCompanyId' => 8578,
+            'newEmployeeId' => 49246,
+            'newCompanyId' => 31338
+        ];
+        // load ComplyNet model
+        $this->load->model('2022/Complynet_model', 'complynet_model');
+        //
+        $departmentAdded = $this->complynet_model->checkAndMoveEmployeeDepartmentAndTeam($passArray);
+        //
+        if (!$departmentAdded) {
+            return false;
+        }
+        // transfer employee to another location
+        $this->complynet_model->transferEmployeeToAnotherLocation($passArray);
     }
 }
