@@ -305,7 +305,7 @@ private function addLastRead($sid){
                         $original_job_title = $job_details['Title'];
 
 
-                        if ($this->users_model->check_if_blocked($email) == 'blocked') {
+                        if (checkForBlockedEmail($email) == 'blocked') {
                             exit(0);
                         }
 

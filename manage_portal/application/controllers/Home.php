@@ -708,7 +708,7 @@ class Home extends CI_Controller
                 } else {
                     $contact_name = $this->input->post('name');
                     $contact_email = $this->input->post('email');
-                    $is_blocked = $this->check_domain->check_if_blocked($contact_email);
+                    $is_blocked = checkForBlockedEmail($contact_email);
 
                     if ($is_blocked) {
                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your enquiry. We will get back to you!');
@@ -912,7 +912,7 @@ class Home extends CI_Controller
                     redirect('/', 'refresh');
                 }
                 // check if email is blocked
-                if ($this->check_domain->check_if_blocked($email) == 'blocked') {
+                if (checkForBlockedEmail($email) == 'blocked') {
                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your interest in our Talent Network, we will contact you soon.');
                     return redirect('/join_our_talent_network', 'refresh');
                 }
@@ -1465,7 +1465,7 @@ class Home extends CI_Controller
                                 $last_name                                      = $this->input->post('last_name');
                                 $YouTube_Video                                  = $this->input->post('YouTube_Video');
                                 $email                                          = $this->input->post('email');
-                                $is_blocked_email                               = $this->check_domain->check_if_blocked($email);
+                                $is_blocked_email                               = checkForBlockedEmail($email);
 
                                 if ($is_blocked_email == 'blocked') {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
@@ -2666,8 +2666,8 @@ class Home extends CI_Controller
                                 $receiver_email                                 = $this->input->post('receiver_email');
                                 $sender_email                                   = $this->input->post('sender_email');
                                 $comment                                        = $this->input->post('comment');
-                                $is_sender_blocked                              = $this->check_domain->check_if_blocked($sender_email);
-                                $is_receiver_blocked                            = $this->check_domain->check_if_blocked($receiver_email);
+                                $is_sender_blocked                              = checkForBlockedEmail($sender_email);
+                                $is_receiver_blocked                            = checkForBlockedEmail($receiver_email);
 
                                 if ($is_sender_blocked == 'blocked' || $is_receiver_blocked) {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you.');
@@ -3128,7 +3128,7 @@ class Home extends CI_Controller
 
                 if($email){
                     // check if email is blocked
-                    if ($this->check_domain->check_if_blocked($email) == 'blocked') {
+                    if (checkForBlockedEmail($email) == 'blocked') {
                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
                         redirect('/job_fair' . '/' . $redirect_page_url . "?applied_by=" . rand(1, 99), 'refresh');
                     }

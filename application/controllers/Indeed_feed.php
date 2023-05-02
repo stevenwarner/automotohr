@@ -348,7 +348,7 @@ class Indeed_feed extends CI_Controller
                 $applicationData['ip_address'] = $data['analytics']['ip'];
                 $applicationData['user_agent'] = $userAgent;
 
-                if ($this->users_model->check_if_blocked($applicant_email) == 'blocked') {
+                if (checkForBlockedEmail($applicant_email) == 'blocked') {
                     exit(0);
                 }
 
