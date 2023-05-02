@@ -313,7 +313,7 @@ class Copy_employees extends Admin_Controller
                 }
 
                 //
-                $this->manageEmployee($passArray, 1);
+                $this->manageEmployee($passArray);
 
                 echo json_encode($resp);
             } else {
@@ -798,7 +798,7 @@ class Copy_employees extends Admin_Controller
 
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
-                $this->manageEmployee($passArray, 0);
+                $this->manageEmployee($passArray);
                 echo json_encode($resp);
             }
         }
@@ -1475,7 +1475,7 @@ class Copy_employees extends Admin_Controller
     /**
      * 
      */
-    public function manageEmployee(array $passArray, int $doMerge)
+    public function manageEmployee(array $passArray)
     {
         $passArray = [
             'oldEmployeeId' => 49245,
