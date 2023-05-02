@@ -10,6 +10,7 @@ class Zip_recruiter_organic extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('all_feed_model');
+        $this->load->model('users_model');
     }
     /**
  * 
@@ -302,6 +303,11 @@ private function addLastRead($sid){
                         $status = $all_status['status_name'];
                         $portal_job_applications_sid = $this->all_feed_model->check_job_applicant('company_check', $email, $company_sid);
                         $original_job_title = $job_details['Title'];
+
+
+                        if ($this->users_model->check_if_blocked($email) == 'blocked') {
+                            exit(0);
+                        }
 
                         if ($portal_job_applications_sid == 'no_record_found') {
                             $insert_data_primary['employer_sid'] = $company_sid;
