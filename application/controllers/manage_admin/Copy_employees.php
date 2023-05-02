@@ -1475,7 +1475,7 @@ class Copy_employees extends Admin_Controller
     /**
      * 
      */
-    public function manageEmployee(array $passArray, bool $doMerge)
+    public function manageEmployee(array $passArray, int $doMerge)
     {
         $passArray = [
             'oldEmployeeId' => 49245,
