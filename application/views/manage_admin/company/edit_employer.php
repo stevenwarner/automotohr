@@ -117,6 +117,7 @@
                                                     <div class="hr-fields-wrap">
                                                         <div class="hr-select-dropdown">
                                                             <select name="employee_type" id="employee_type" class="invoice-fields">
+                                                                <option <?= $data["employee_type"] == '' ? 'selected' : ''; ?> value="">Please select</option>
                                                                 <option <?= $data["employee_type"] == 'fulltime' ? 'selected' : ''; ?> value="fulltime">Full-Time</option>
                                                                 <option <?= $data["employee_type"] == 'parttime' ? 'selected' : ''; ?> value="parttime">Part-Time</option>
                                                             </select>
