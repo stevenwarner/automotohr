@@ -84,26 +84,19 @@ class Testing extends CI_Controller
         if (!empty($employeeLogDat)) {
 
             foreach ($employeeLogDat as $key=>$logRow) {
-               // print_r($logRow);
-               // die();
                 //
-              //  if (isCompanyOnComplyNet($logRow['from_company_sid']) && isCompanyOnComplyNet($logRow['previous_employee_sid'])) {
-                  //  if ($this->db->where('employee_sid', $logRow['previous_employee_sid'])->count_all_results('complynet_employees') > 0) {
+               if (isCompanyOnComplyNet($logRow['from_company_sid']) && isCompanyOnComplyNet($logRow['previous_employee_sid'])) {
+                   if ($this->db->where('employee_sid', $logRow['previous_employee_sid'])->count_all_results('complynet_employees') > 0) {
                         $complynetEmployeeList[] = array('from_company_sid'=>$logRow['from_company_sid'],'to_company_sid'=>$logRow['to_company_sid'],'previous_employee_sid'=>$logRow['previous_employee_sid'],'new_employee_sid'=>$logRow['new_employee_sid']);
-                 //   }
+                    }
 
-               // }
+               }
             }
 
         }
 
         print_r($complynetEmployeeList);
-
        // return $complynetEmployeeList;
     }
 
-
-    // 
-    //$CI->db->where(['sid' => $companyId, 'complynet_status' => 1])->count_all_results('users')) {
-    //  return 0;
 }
