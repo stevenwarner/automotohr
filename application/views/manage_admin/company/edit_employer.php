@@ -652,13 +652,21 @@
                                                         <br>
                                                         <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                                                             <div class="col-sm-12">
-                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
+                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" id='otherOtherLanguage' />
                                                                 <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
                                                             </div>
                                                         </div>
 
                                                         <script>
                                                             $('[name="secondaryOption"]').click(function() {
+
+                                                                if ($('[name="secondaryOption"]').is(":checked")) {
+                                                                    $('#otherOtherLanguage').val('<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>');
+
+                                                                } else {
+                                                                    $('#otherOtherLanguage').val('');
+                                                                }
+
                                                                 $('.jsOtherLanguage').toggleClass('dn');
                                                             });
                                                         </script>
@@ -670,9 +678,9 @@
                                                     <label>Union Member:</label>
                                                     <div class="hr-fields-wrap">
 
-                                                       
+
                                                         <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
-                                                            <label class="control control--radio "  style="margin-left: -20px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $data['union_member'] ? 'checked' : '' ?>>
+                                                            <label class="control control--radio " style="margin-left: -20px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $data['union_member'] ? 'checked' : '' ?>>
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                         </div>
@@ -687,7 +695,7 @@
                                                         <br>
                                                         <div class="row jsunionname">
                                                             <div class="col-sm-12">
-                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $data['union_name'];?>" />
+                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $data['union_name']; ?>" />
                                                             </div>
                                                         </div>
 
