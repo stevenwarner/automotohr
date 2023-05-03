@@ -10421,6 +10421,22 @@ if (!function_exists('fetch_admin_sms_notifications')) {
         return $_this->sms_model->get_sms_admin(0);
     }
 }
+/**
+ * Get SMS notifications
+ * Ceated on: 22-07-2019
+ *
+ * @param $_this Instance
+ *
+ * @return Integer
+ */
+if (!function_exists('getProfileDataChange')) {
+    function getProfileDataChange($_this)
+    {
+        // load user model
+        $_this->load->model('2022/User_model', 'user_model');
+        return $_this->user_model->getEmployeeHistory([]);
+    }
+}
 
 /**
  * Send email to applicant/employee to update the number
@@ -10902,7 +10918,6 @@ if (!function_exists('resetResumeName')) {
 if (!function_exists('send_settings_to_remarket')) {
     function send_settings_to_remarket($url, $new_settings)
     {
-        return false;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, 1);

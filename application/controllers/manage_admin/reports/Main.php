@@ -1,23 +1,26 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Main extends Admin_Controller {
+class Main extends Admin_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/advanced_report_model');
     }
 
     //
-    function facebook_job_report(){
+    function facebook_job_report()
+    {
         //
         $passArray = [];
         //
         $jobs = json_decode(getFileData(base_url("Facebook_feed/index/1")), true);
         //
-        foreach($jobs as $job){
+        foreach ($jobs as $job) {
             //
             $passArray[$job['jid']] = [
                 'job_id' => $job['jid'],
@@ -32,7 +35,7 @@ class Main extends Admin_Controller {
         }
         //
         $facebookJobs = $this->db
-        ->select('
+            ->select('
             facebook_jobs_status.job_id,
             facebook_jobs_status.job_status,
             facebook_jobs_status.external_id,
@@ -41,12 +44,12 @@ class Main extends Admin_Controller {
             facebook_jobs_status.reason,
             facebook_jobs_status.updated_at
         ')
-        ->get('facebook_jobs_status')
-        ->result_array();
+            ->get('facebook_jobs_status')
+            ->result_array();
         //
-        foreach($facebookJobs as $job){
+        foreach ($facebookJobs as $job) {
             //
-            if(isset($passArray[$job['job_id']])){
+            if (isset($passArray[$job['job_id']])) {
                 $passArray[$job['job_id']]['job_status'] = $job['job_status'];
                 $passArray[$job['job_id']]['external_id'] = $job['external_id'];
                 $passArray[$job['job_id']]['status'] = $job['status'];
@@ -60,19 +63,31 @@ class Main extends Admin_Controller {
         //
         $this->render('manage_admin/reports/facebook_jobs');
     }
-    
-    
+
+
     //
-    function blacklist_email(){
+    function blacklist_email()
+    {
         //
         $this->data['jobs'] = $this->db
-        ->order_by('blacklist_emails.note', 'DESC')
-        ->get('blacklist_emails')
-        ->result_array();
+            ->order_by('blacklist_emails.note', 'DESC')
+            ->get('blacklist_emails')
+            ->result_array();
 
         //
         $this->render('manage_admin/reports/blacklist_emails');
     }
 
 
+    public function employeeProfileDataReport()
+    {
+        //
+        $this->data['page_title'] = 'Employee Profile Update - Report';
+        // load user model
+        $this->load->model('2022/User_model', 'user_model');
+        // get filter records
+        $this->data['records'] = $this->user_model->getEmployeeHistory($this->input->get(null, false));
+        //
+        $this->render('manage_admin/company/employee_profile_change_report');
+    }
 }

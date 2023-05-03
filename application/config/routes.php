@@ -1703,3 +1703,6 @@ $route['download_document_zip/(:any)']['get'] = 'Hr_documents_management/downloa
 // Redirect to ComplyNet
 $route['cn/redirect'] = 'Testing/redirectToComply';
 $route['cn/redirect/(:num)'] = 'Testing/redirectToComply/$1';
+
+//
+$route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProfileDataReport';

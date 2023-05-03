@@ -32,7 +32,7 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
-  
+
 
     public function fix_merge()
     {
@@ -62,4 +62,17 @@ class Testing extends CI_Controller
     //     }
     //     echo "Done";
     // }
+
+    public function fixTransferEmployees()
+    {
+        // get all ComplyNet employees
+        $employees = $this->db
+            ->select('employee_sid')
+            ->get('complynet_employees')
+            ->result_array();
+        //
+        $employees = array_column($employees, 'employee_sid');
+        // check and get from
+        _e($employees, true);
+    }
 }
