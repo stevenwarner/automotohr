@@ -1477,12 +1477,12 @@ class Copy_employees extends Admin_Controller
      */
     public function manageEmployee(array $passArray)
     {
-        $passArray = [
-            'oldEmployeeId' => 49245,
-            'oldCompanyId' => 8578,
-            'newEmployeeId' => 49246,
-            'newCompanyId' => 31338
-        ];
+        // $passArray = [
+        //     'oldEmployeeId' => 49245,
+        //     'oldCompanyId' => 8578,
+        //     'newEmployeeId' => 49246,
+        //     'newCompanyId' => 31338
+        // ];
         // load ComplyNet model
         $this->load->model('2022/Complynet_model', 'complynet_model');
         //
