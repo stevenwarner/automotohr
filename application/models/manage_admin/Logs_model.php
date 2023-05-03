@@ -326,14 +326,16 @@ class logs_model extends CI_Model
         return $b;
     }
 
-    function getModuleInfo($sid){
+    function getModuleInfo($sid)
+    {
         return $this->db->select('sid, module_name')
-        ->where('sid', $sid)
-        ->get('modules')
-        ->row_array();
+            ->where('sid', $sid)
+            ->get('modules')
+            ->row_array();
     }
 
-    function get_all_active_companies() {
+    function get_all_active_companies()
+    {
         $result = $this->db->query("SELECT `sid`, `CompanyName` FROM `users` WHERE `parent_sid` = '0' AND `career_site_listings_only` = 0 AND `active` = '1' AND (`expiry_date` > '2016-04-20 13:26:27' OR `expiry_date` IS NULL)")->result_array();
         if (count($result) > 0) {
             //
@@ -343,7 +345,8 @@ class logs_model extends CI_Model
         }
     }
 
-    function get_company_module_status ($company_sid, $module_sid) {
+    function get_company_module_status($company_sid, $module_sid)
+    {
         $this->db->select('is_active');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('module_sid', $module_sid);
@@ -358,16 +361,18 @@ class logs_model extends CI_Model
         }
     }
 
-    function UpdateCompanyData($companyId, $oldStatus){
+    function UpdateCompanyData($companyId, $oldStatus)
+    {
         //
-        if(
+        if (
             !$this->db
-            ->where('company_sid', $companyId)
-            ->where('module_sid', 7)
-            ->count_all_results('company_modules')
-        ){
+                ->where('company_sid', $companyId)
+                ->where('module_sid', 7)
+                ->count_all_results('company_modules')
+        ) {
             $this->db->insert(
-                'company_modules', [
+                'company_modules',
+                [
                     'module_sid' => 7,
                     'company_sid' => $companyId,
                     'is_active' => 1,
@@ -381,18 +386,70 @@ class logs_model extends CI_Model
             ->where('company_sid', $companyId)
             ->where('module_sid', 7)
             ->update(
-                'company_modules', [
+                'company_modules',
+                [
                     'is_active' => $oldStatus ? 0 : 1,
                     'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
                 ]
             );
     }
 
-    function getCompanyPayrollInfo($company_sid){
+    function getCompanyPayrollInfo($company_sid)
+    {
         return $this->db
-        ->select('refresh_token, access_token, gusto_company_uid')
-        ->where('company_sid', $company_sid)
-        ->get("payroll_companies")
-        ->row_array();
+            ->select('refresh_token, access_token, gusto_company_uid')
+            ->where('company_sid', $company_sid)
+            ->get("payroll_companies")
+            ->row_array();
+    }
+
+
+
+
+
+    //Get Call Logs
+    public function get_call_logs($table_name, $email, $start_date, $end_date, $limit = null, $offset = null, $count_only = false, $name_search = 'all')
+    {
+        $this->db->select('*');
+
+        if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+            //  $this->db->where('email_log.date BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
+        } //else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
+        // $this->db->where('email_log.date >=', $start_date);
+        //   } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+        // $this->db->where('email_log.date <=', $end_date);
+        //   }
+
+        if ($limit !== null && $offset !== null) {
+            $this->db->limit($limit, $offset);
+        }
+
+        if (!empty($user_name) && $user_name != 'all') {
+            //  $this->db->like('email_log.username', $user_name);
+        }
+
+        if (!empty($email) && $email != 'all') {
+            //   $this->db->like('email_log.email', $email);
+        }
+
+        if (!empty($name_search) && $name_search != 'all') {
+            // $this->db->like('email_log.message', $name_search);
+        }
+
+        $this->db->order_by('date', 'DESC');
+
+        if ($count_only == true) {
+            $this->db->from($table_name);
+            return $this->db->count_all_results();
+        } else {
+            $this->db->from($table_name);
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+
+            //            echo $this->db->last_query();
+
+            return $records_arr;
+        }
     }
 }

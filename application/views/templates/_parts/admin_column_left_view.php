@@ -150,6 +150,8 @@ if (
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
     $this->uri->segment(2) == 'job_title_templates' ||
+    $this->uri->segment(2) == 'call_logs' ||
+
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
         ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_templates' ||
@@ -770,6 +772,17 @@ if (
                                     ?> href="<?php echo site_url('manage_admin/blocked_ips'); ?>">Blocked IPs</a>
                             </div>
                         <?php } ?>
+
+
+                        <div class="menu-item">
+                                <a <?php
+                                    if (base_url(uri_string()) == site_url('manage_admin/call_logs') || $this->uri->segment(2) == 'blocked_logs') {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('manage_admin/call_logs'); ?>">Call Logs</a>
+                            </div>
+
+
                     </div>
                 </li>
             <?php } ?>
