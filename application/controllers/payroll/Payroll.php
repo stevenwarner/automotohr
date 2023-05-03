@@ -303,6 +303,74 @@ class Payroll extends CI_Controller
             ->view('main/footer');
     }
 
+     /**
+     * 
+     */
+    function MyPayrollDocuments()
+    {
+
+        //
+        $data['load_view'] = check_blue_panel_status(false, 'self');
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Documents';
+        //
+        $this->data['PageScripts'] = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        $this->data['session'] = $session;
+        //
+        $myId = $session['employer_detail']['sid'];
+        //
+        $formInfo = $this->CheckAndFetchPayrollDocuments($myId, $company_sid);
+        //
+        $this->data['formInfo'] = $formInfo;
+        //
+        $this->load
+            ->view('main/header', $this->data)
+            ->view('payroll/my_payroll_documents')
+            ->view('main/footer');
+    }
+
+    /**
+     * 
+     */
+    function MyDocument($formId)
+    {
+
+        //
+        $data['load_view'] = check_blue_panel_status(false, 'self');
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Documents';
+        //
+        $this->data['PageScripts'] = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        $this->data['session'] = $session;
+        //
+        $myId = $session['employer_detail']['sid'];
+        //
+        $formData = $this->GetPayrollDocuments($company_sid, $formId, $myId);
+        //
+        $this->data['formData'] = $formData;
+        //
+        $this->load
+            ->view('main/header', $this->data)
+            ->view('payroll/my_payroll_document')
+            ->view('main/footer');
+    }
+
     /**
      * 
      */
@@ -2060,4 +2128,82 @@ class Payroll extends CI_Controller
             ];
         }
     }
+
+    /**
+     * 
+     */
+    private function CheckAndFetchPayrollDocuments($employeeId, $companyId)
+    {
+        //
+        $returnData =  [
+            'Status' => false,
+            'Message' => 'No Document Found',
+            'Forms' => []
+        ];
+        //
+        $checkPrerequisite = $this->pm->checkEmployeeDocumentPrerequisite($employeeId);
+        //
+        if ($checkPrerequisite['data_missing']) {
+            return $returnData;
+        } else {
+            //
+            $company = $this->pm->GetCompany($companyId, [
+                'access_token',
+                'refresh_token',
+                'gusto_company_uid'
+            ]);
+            //
+            $response = getEmployeePayrollsDocuments($company, $checkPrerequisite['payroll_employee_uuid'],[
+                'X-Gusto-API-Version: 2023-03-01'
+            ]);
+            //
+            if (isset($response['errors'])) {
+                return $returnData;
+            } else {
+                //
+                $returnData['Status'] = true;
+                $returnData['Message'] = 'Document Found';
+                $returnData['Forms'] = $response;
+                //
+                return $returnData;
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    private function GetPayrollDocuments($companyId, $formUUID, $employeeId)
+    {
+        //
+        $returnData =  [
+            'Status' => false,
+            'Message' => 'No Form Found',
+            'Form' => []
+        ];
+        //
+        $employeeUUID = $this->pm->getEmployeeUUID($employeeId);
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = getEmployeeFormContent($company, $employeeUUID, $formUUID,[
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (isset($response['errors'])) {
+            return $returnData;
+        } else {
+            //
+            $returnData['Status'] = true;
+            $returnData['Message'] = 'Document Found';
+            $returnData['Form'] = $response;
+            //
+            return $returnData;
+        }
+    }
+        
 }

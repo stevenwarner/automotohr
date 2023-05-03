@@ -1419,6 +1419,8 @@ $route["payroll/manage-admin"]['get'] = "payroll/Payroll/ManageAdmins";
 $route["payroll/service-terms"]['get'] = "payroll/Payroll/ServiceTerms";
 $route["payroll/settings"]['get'] = "payroll/Payroll/Settings";
 $route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
+$route["payroll/my_payroll_documents"]['get'] = "payroll/Payroll/MyPayrollDocuments";
+$route["payroll/my_document/(:any)"]['get'] = "payroll/Payroll/MyDocument/$1";
 $route["payroll/history"]['get'] = "payroll/Payroll/PayrollHistory";
 $route["payroll/history/(:num)"]['get'] = "payroll/Payroll/PayrollSingleHistory/$1";
 //

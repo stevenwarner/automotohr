@@ -702,7 +702,6 @@ class Payroll_model extends CI_Model{
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
         //
-        // _e($record_arr,true);
         if (!empty($record_arr)) {
             if ($record_arr['work_address'] == 1) {
 				$prerequisiteStatus['work_address'] = 1;
@@ -718,6 +717,56 @@ class Payroll_model extends CI_Model{
         }
 		//
 		return $prerequisiteStatus;
+	}
+
+	function checkEmployeeDocumentPrerequisite ($employee_sid) {
+		//
+		$prerequisiteStatus = array(
+			'state_tax' => 0,
+			'federal_tax' => 0,
+			'status' => 'data_missing',
+			'payroll_employee_uuid' => ''
+		);
+		//
+		$this->db->select('state_tax, federal_tax, payroll_employee_uuid');
+        $this->db->where("employee_sid", $employee_sid);
+        $record_obj = $this->db->get('payroll_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            if ($record_arr['state_tax'] == 1) {
+				$prerequisiteStatus['state_tax'] = 1;
+			}
+			//
+			if ($record_arr['federal_tax'] == 1) {
+				$prerequisiteStatus['federal_tax'] = 1;
+			}
+			//
+			if ($record_arr['federal_tax'] == 1 && $record_arr['state_tax'] == 1) {
+				$prerequisiteStatus['status'] = 'data_completed';
+				$prerequisiteStatus['payroll_employee_uuid'] = $record_arr['payroll_employee_uuid'];
+			}
+        }
+		//
+		return $prerequisiteStatus;
+	}
+
+	function getEmployeeUUID ($employee_sid) {
+		//
+		$employeeUUID = '';
+		//
+		$this->db->select('payroll_employee_uuid');
+        $this->db->where("employee_sid", $employee_sid);
+        $record_obj = $this->db->get('payroll_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            $employeeUUID = $record_arr['payroll_employee_uuid'];
+        }
+		//
+		return $employeeUUID;
 	}
 
 	//

@@ -82,6 +82,14 @@ $navpills[] = [
     'segment' => 'my'
 ];
 
+$navpills[] = [
+    'title' => 'My Payroll Documents',
+    'url' => 'my_payroll_documents',
+    'slug' => '',
+    'icon' => 'file',
+    'segment' => 'my_payroll_documents'
+];
+
 //
 $lis = '';
 //
