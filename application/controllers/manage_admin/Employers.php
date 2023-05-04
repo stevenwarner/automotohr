@@ -358,6 +358,7 @@ class employers extends Admin_Controller
             $data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
             $data['eeoc_code'] = $this->input->post('eeoc_code');
             $data['salary_benefits'] = $this->input->post('salary_benefits');
+            $data['payment_method'] = $this->input->post('payment_method');
 
 
 
@@ -509,6 +510,7 @@ class employers extends Admin_Controller
                 $action = $this->input->post('action');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+                $payment_method = $this->input->post('payment_method');
                 $salt = generateRandomString(48);
 
                 
@@ -538,6 +540,7 @@ class employers extends Admin_Controller
                 $insert_data['salt'] = $salt;
                 $insert_data['gender'] = $gender;
                 $insert_data['timezone'] = $timezone;
+                $insert_data['payment_method'] = $payment_method;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
 

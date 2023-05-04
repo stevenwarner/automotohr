@@ -1902,6 +1902,7 @@ if (!function_exists('PayrollURL')) {
         $urls['GetEmployeeOnboardedStatus'] = 'v1/employees/' . ($key) . '/onboarding_status';
         $urls['GetEmployeeForms'] = 'v1/employees/' . ($key) . '/forms';
         $urls['GetEmployeeFormContent'] = 'v1/employees/' . ($key) . '/forms/' . ($key1).'/pdf';
+        $urls['SignEmployeeForm'] = 'v1/employees/' . ($key) . '/forms/' . ($key1).'/sign';
         //
         $urls['GetEmployeePayStubs'] = 'v1/payrolls/' . ($key) . '/employees/' . ($key1) . '/pay_stub';
 
@@ -3415,6 +3416,54 @@ if (!function_exists('getEmployeeFormContent')) {
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
                 return getEmployeeFormContent($company, $payroll_employee_uuid, $form_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+// Employee related calls
+if (!function_exists('signPayrollEmployeeForm')) {
+    function signPayrollEmployeeForm($company, $payroll_employee_uuid, $form_uuid, $request, $headers=[])
+    { 
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'accept: application/json',
+            'content-type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $url = PayrollURL('SignEmployeeForm', $payroll_employee_uuid, $form_uuid);
+        //
+        $response =  MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return signPayrollEmployeeForm($company, $payroll_employee_uuid, $form_uuid, $request, $headers);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }

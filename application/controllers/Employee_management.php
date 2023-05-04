@@ -437,6 +437,7 @@ class Employee_management extends Public_Controller
                 $send_welcome_email = $this->input->post('send_welcome_email');
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
+                $payment_method = $this->input->post('payment_method');
                 $timezone = $this->input->post('timezone');
 
                 //
@@ -459,6 +460,7 @@ class Employee_management extends Public_Controller
                 $salt = generateRandomString(48);
                 $user_information = array();
                 $user_information['gender'] =  $gender;
+                $user_information['payment_method'] =  $payment_method;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
                 $user_information['last_name'] = $last_name;
@@ -1609,6 +1611,7 @@ class Employee_management extends Public_Controller
                         'team_sid' => $teamId,
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status'),
+                        'payment_method' => $this->input->post('payment_method'),
                     );
                     //
                     if (isPayrollOrPlus(true)) {

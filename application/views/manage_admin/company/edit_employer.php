@@ -318,6 +318,18 @@
                                                     </div>
                                                 </li>
                                                 <li>
+                                                    <label>Payment Method</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-select-dropdown">
+                                                            <select class="invoice-fields" name="payment_method">                                                                
+                                                                <option <?= $data["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
+                                                                <option <?= $data["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
+                                                            </select> 
+                                                        </div>
+                                                        <?php echo form_error('payment_method'); ?>
+                                                    </div>
+                                                </li>                                               
+                                                <li>
                                                     <label>Marital Status</label>
                                                     <div class="hr-fields-wrap">
                                                         <div class="hr-select-dropdown">

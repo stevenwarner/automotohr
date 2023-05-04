@@ -288,7 +288,7 @@ class Payroll extends CI_Controller
         //
         $this->CheckAndFetchPayStubs($company_sid, $myId);
         //
-        // Get employee saved paystubs
+        // Get employee saved paystub
         $this->data['payStubs'] = $this->pm->GetPayrollColumns(
             'payroll_employees_pay_stubs',
             [
@@ -329,7 +329,26 @@ class Payroll extends CI_Controller
         //
         $formInfo = $this->CheckAndFetchPayrollDocuments($myId, $company_sid);
         //
-        $this->data['formInfo'] = $formInfo;
+        if (!empty($formInfo['Forms'])) {
+            foreach ($formInfo['Forms'] as $form) {
+                if(!$this->pm->checkFormExist($form['uuid'], $myId)) {
+                    //                    
+                    $data_to_insert = [];
+                    $data_to_insert['employee_sid'] = $myId;
+                    $data_to_insert['form_uuid'] = $form['uuid'];
+                    $data_to_insert['name'] = $form['name'];
+                    $data_to_insert['title'] = $form['title'];
+                    $data_to_insert['description'] = $form['description'];
+                    $data_to_insert['requires_signing'] = $form['requires_signing'];
+                    $data_to_insert['created_at'] = getSystemDate();
+                    //
+                    $this->pm->addEmployeeForm($data_to_insert);
+                }
+            }
+        }
+        //
+        $this->data['formInfo'] = $this->pm->getEmployeeForm($myId);
+        // _e($this->data['formInfo'],true,true);
         //
         $this->load
             ->view('main/header', $this->data)
@@ -361,14 +380,56 @@ class Payroll extends CI_Controller
         //
         $myId = $session['employer_detail']['sid'];
         //
-        $formData = $this->GetPayrollDocuments($company_sid, $formId, $myId);
+        $formInfo = $this->pm->getEmployeeFormInfo($formId);
+        $formData = $this->GetPayrollDocument($company_sid, $formInfo['form_uuid'], $myId);
         //
+        $this->data['formId'] = $formId;
         $this->data['formData'] = $formData;
+        $this->data['formInfo'] = $formInfo;
         //
-        $this->load
-            ->view('main/header', $this->data)
-            ->view('payroll/my_payroll_document')
-            ->view('main/footer');
+         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
+        
+
+        if ($this->form_validation->run() == false) {
+            $this->load
+                ->view('main/header', $this->data)
+                ->view('payroll/my_payroll_document')
+                ->view('main/footer');
+        } else {
+            //
+            $signFormData = [];
+            $signFormData['signature_text'] = $_POST['signature'];
+            $signFormData['agree'] = true;
+            $signFormData['signed_by_ip_address'] = getUserIP();
+            // $signedData = $this->signPayrollDocument($company_sid, $formInfo['form_uuid'], $myId, $signFormData);
+            //
+            $signedData = array(
+                'Status' => 1,
+                'Message' => 'Document Found',
+                'Form' => array(
+                    'uuid' => '5809284d-fa53-4e09-8cb7-430bbe33a6d6',
+                    'name' => 'employee_direct_deposit',
+                    'title' => 'Employee Direct Deposit Authorization',
+                    'description' => 'This document authorizes Gusto to transfer money to and from your bank account.',
+                    'requires_signing' => '',
+                    'draft' => '',
+                    'employee_uuid' =>'6dd48eb3-78cc-457b-abe0-109ea0813102'
+                )
+
+            );
+            //
+            if ($signedData['Status'] == 1 && empty($signedData['Form']['requires_signing'])) {
+                $data_to_update = [];
+                $data_to_update['is_signed'] = 1;
+                $data_to_update['signature_text'] = $signFormData['signature_text'];
+                $data_to_update['signed_by_ip_address'] = $signFormData['signed_by_ip_address'];
+                //
+                $this->pm->updateEmployeeFormInfo($formId, $data_to_update);
+            }
+            //
+            $reload_location = 'payroll/my_payroll_documents';
+            redirect($reload_location, 'refresh');
+        }        
     }
 
     /**
@@ -2173,7 +2234,7 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    private function GetPayrollDocuments($companyId, $formUUID, $employeeId)
+    private function GetPayrollDocument($companyId, $formUUID, $employeeId)
     {
         //
         $returnData =  [
@@ -2191,6 +2252,42 @@ class Payroll extends CI_Controller
         ]);
         //
         $response = getEmployeeFormContent($company, $employeeUUID, $formUUID,[
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (isset($response['errors'])) {
+            return $returnData;
+        } else {
+            //
+            $returnData['Status'] = true;
+            $returnData['Message'] = 'Document Found';
+            $returnData['Form'] = $response;
+            //
+            return $returnData;
+        }
+    }
+
+     /**
+     * 
+     */
+    private function signPayrollDocument($companyId, $formUUID, $employeeId, $formData)
+    {
+        //
+        $returnData =  [
+            'Status' => false,
+            'Message' => 'No Form Found',
+            'Form' => []
+        ];
+        //
+        $employeeUUID = $this->pm->getEmployeeUUID($employeeId);
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = signPayrollEmployeeForm($company, $employeeUUID, $formUUID, $formData,[
             'X-Gusto-API-Version: 2023-03-01'
         ]);
         //

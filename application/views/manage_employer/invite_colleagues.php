@@ -115,7 +115,14 @@
                                                         <option <?= $formpost["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
                                                         <option <?= $formpost["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
                                                     </select>
+                                                </li>
 
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Payment Method:</label>
+                                                    <select class="invoice-fields" name="payment_method">                                                                
+                                                        <option <?= $formpost["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
+                                                        <option <?= $formpost["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
+                                                    </select>
                                                 </li>
 
 

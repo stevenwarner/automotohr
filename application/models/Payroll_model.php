@@ -1136,4 +1136,43 @@ class Payroll_model extends CI_Model{
 		//
 		return json_decode($q['payroll_json'], true);
 	}
+
+	public function checkFormExist ($formUUID, $employeeId) {
+		return $this->db
+		->where('form_uuid', $formUUID)
+		->where('employee_sid', $employeeId)
+		->count_all_results('payroll_employees_forms');
+	}
+
+	public function addEmployeeForm ($data_to_insert) {
+		$this->db->insert('payroll_employees_forms', $data_to_insert);
+	}
+
+	public function getEmployeeForm ($employeeId) {
+		//
+		$query = 
+		$this->db
+		->select('sid, title, requires_signing, is_signed')
+		->where('employee_sid', $employeeId)
+		->get('payroll_employees_forms')
+		->result_array();
+		//
+		return $query ? $query : [];
+	}
+
+	public function getEmployeeFormInfo ($formId) {
+		$query = $this->db
+		->select('form_uuid, title, requires_signing, is_signed')
+		->where('sid', $formId)
+		->get('payroll_employees_forms')
+		->row_array();
+		//
+		return $query;
+	}
+
+	public function updateEmployeeFormInfo ($formId, $data_to_update) {
+		$this->db
+		->where('sid', $formId)
+		->update('payroll_employees_forms', $data_to_update);
+	}
 }
