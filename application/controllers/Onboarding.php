@@ -130,7 +130,7 @@ class Onboarding extends CI_Controller
                             }
                         }
 
-                        if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_applicant_document_center']) { 
+                        if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_applicant_document_center']) {
                             if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                                 $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($applicant_sid, 'applicant');
 
@@ -150,7 +150,7 @@ class Onboarding extends CI_Controller
                                     $sendGroupEmail = 1;
                                 }
                             }
-                        }    
+                        }
                     }
                 }
 
@@ -4925,6 +4925,12 @@ class Onboarding extends CI_Controller
                 $companyExtraInfo = unserialize($this->session->userdata('logged_in')['company_detail']['extra_info']);
                 //
                 $data['onboarding_eeo_form_status'] = isset($companyExtraInfo['EEO']) ? $companyExtraInfo['EEO'] : 0;
+
+                //
+                $data['onboarding_template_code'] = $this->onboarding_model->get_onboarding_template_code();
+
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($user_sid);
+
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
@@ -5442,6 +5448,7 @@ class Onboarding extends CI_Controller
                 $data_to_save['user_sid'] = $user_sid;
                 $data_to_save['section'] = 'sections';
                 $data_to_save['items'] = serialize($sections);
+
                 $this->onboarding_model->save_onboarding_config($company_sid, $user_type, $user_sid, 'sections', $data_to_save);
                 $data_to_save['section'] = 'locations';
                 $data_to_save['items'] = serialize($locations);
@@ -5454,6 +5461,13 @@ class Onboarding extends CI_Controller
                 $this->onboarding_model->save_onboarding_config($company_sid, $user_type, $user_sid, 'people', $data_to_save);
                 //disable all default record before insert new record
                 $this->onboarding_model->disable_default_record($company_sid, $user_type, $user_sid, 'item');
+
+
+                //
+                $adpOnboardingTemplateCode = $this->input->post('adp_onboarding_template_code');
+
+                $this->onboarding_model->update_applicant_adp_onboarding_template_code($user_sid, $adpOnboardingTemplateCode);
+
 
                 if (!empty($items)) {
                     foreach ($items as $key => $item) {
@@ -10438,7 +10452,7 @@ class Onboarding extends CI_Controller
             $company_sid = $company_detail['sid'];
             $company_name = $employee_detail['CompanyName'];
             $user_type = 'employee';
-            
+
             if (!$this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_employee_document_center')) {
                 return redirect('hr_documents_management/my_documents');
             }

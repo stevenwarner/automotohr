@@ -1300,40 +1300,93 @@
                                                         </div>
                                                         <header class="hr-box-header hr-box-footer"></header>
                                                     </article>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                        <div class="row">
-                                            <!-- Dynamic Modules -->
-                                            <?php if (sizeof($dynamicModules)) {
-                                                foreach ($dynamicModules as $k => $v) { ?>
-                                                    <article class="col-sm-6 information-box">
-                                                        <header class="hr-box-header">
-                                                            <?= $v['module_name']; ?>
-                                                            <?php if ($v['sid'] == 3) : ?>
-                                                                <span class="pull-right">
-                                                                    <button class="btn btn-success jsModifyFeedEmail">
-                                                                        <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Details
-                                                                    </button>
-                                                                </span>
-                                                            <?php endif; ?>
-                                                            <?php if ($v['module_name'] == "Payroll") { ?>
-                                                                <a href="<?php echo base_url('manage_admin/companies/manage_payroll/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
-                                                            <?php } ?>
-                                                        </header>
-                                                        <div class="clearfix"></div>
+
+
+                                                    <article class="information-box">
+                                                        <header class="hr-box-header">ADP company location <span class="pull-right">
+                                                                <button class="btn btn-success jsModifyadpCompanyLocation">
+                                                                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update
+                                                                </button>
+                                                            </span></header>
                                                         <div class="table-outer">
                                                             <div class="info-row">
                                                                 <ul>
-                                                                    <li class="<?= $v['status'] == 1 ? 'inclueded-state' : 'exclueded-state'; ?>">
+                                                                    <li>
+                                                                        <label><?php echo $adp_company_location; ?></label>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <header class="hr-box-header hr-box-footer"></header>
+                                                    </article>
+
+
+                                                </div>
+                                            <?php } ?>
+
+
+
+                                            <div class="row">
+                                                <!-- Dynamic Modules -->
+                                                <?php if (sizeof($dynamicModules)) {
+                                                    foreach ($dynamicModules as $k => $v) { ?>
+                                                        <article class="col-sm-6 information-box">
+                                                            <header class="hr-box-header">
+                                                                <?= $v['module_name']; ?>
+                                                                <?php if ($v['sid'] == 3) : ?>
+                                                                    <span class="pull-right">
+                                                                        <button class="btn btn-success jsModifyFeedEmail">
+                                                                            <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Details
+                                                                        </button>
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                                <?php if ($v['module_name'] == "Payroll") { ?>
+                                                                    <a href="<?php echo base_url('manage_admin/companies/manage_payroll/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                <?php } ?>
+                                                            </header>
+                                                            <div class="clearfix"></div>
+                                                            <div class="table-outer">
+                                                                <div class="info-row">
+                                                                    <ul>
+                                                                        <li class="<?= $v['status'] == 1 ? 'inclueded-state' : 'exclueded-state'; ?>">
+                                                                            <label>Status</label>
+                                                                            <div class="text" style="<?= $v['status'] == 1 ? 'color:green;' : 'color:red;'; ?>">
+                                                                                <?= $v['status'] == 0 ? 'Disabled' : 'Enabled'; ?>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <div class="text">
+                                                                                <a data-id="<?= $v['sid']; ?>" data-status="<?= $v['status']; ?>" class="site-btn <?= $v['status'] == 1 ? 'btn-danger' : ''; ?> pull-right js-dynamic-module-btn"><?= $v['status'] == 1 ? 'Disable' : 'Enable'; ?></a>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <header class="hr-box-header hr-box-footer"></header>
+                                                        </article>
+                                                <?php }
+                                                } ?>
+                                            </div>
+
+                                            <div class="row">
+                                                <?php if (!empty($adp_company_status)) { ?>
+                                                    <article class="col-sm-6 information-box">
+                                                        <header class="hr-box-header">ADP Settings
+                                                            <a href="<?php echo base_url('manage_admin/adp_settings/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+
+                                                        </header>
+                                                        <div class="table-outer">
+                                                            <div class="info-row">
+                                                                <ul>
+                                                                    <li class="<?= $adp_company_status['status'] == 1 ? 'inclueded-state' : 'exclueded-state'; ?>">
                                                                         <label>Status</label>
-                                                                        <div class="text" style="<?= $v['status'] == 1 ? 'color:green;' : 'color:red;'; ?>">
-                                                                            <?= $v['status'] == 0 ? 'Disabled' : 'Enabled'; ?>
+                                                                        <div class="text" style="<?= $adp_company_status['status'] == 1 ? 'color:green;' : 'color:red;'; ?>">
+                                                                            <?= $adp_company_status['status'] == 0 ? 'Disabled' : 'Enabled'; ?>
                                                                         </div>
                                                                     </li>
                                                                     <li>
                                                                         <div class="text">
-                                                                            <a data-id="<?= $v['sid']; ?>" data-status="<?= $v['status']; ?>" class="site-btn <?= $v['status'] == 1 ? 'btn-danger' : ''; ?> pull-right js-dynamic-module-btn"><?= $v['status'] == 1 ? 'Disable' : 'Enable'; ?></a>
+                                                                            <a data-id="<?= $adp_company_status['sid']; ?>" data-status="<?= $adp_company_status['status']; ?>" class="site-btn <?= $adp_company_status['status'] == 1 ? 'btn-danger' : ''; ?> pull-right js-dynamic-module-adp-btn"><?= $adp_company_status['status'] == 1 ? 'Disable' : 'Enable'; ?></a>
                                                                         </div>
                                                                     </li>
                                                                 </ul>
@@ -1341,248 +1394,219 @@
                                                         </div>
                                                         <header class="hr-box-header hr-box-footer"></header>
                                                     </article>
-                                            <?php }
-                                            } ?>
-                                        </div>
-
-                                        <div class="row">
-                                            <?php if (!empty($adp_company_status)) { ?>
-                                                <article class="col-sm-6 information-box">
-                                                    <header class="hr-box-header">ADP Settings
-                                                        <a href="<?php echo base_url('manage_admin/adp_settings/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
-
-                                                    </header>
-                                                    <div class="table-outer">
-                                                        <div class="info-row">
-                                                            <ul>
-                                                                <li class="<?= $adp_company_status['status'] == 1 ? 'inclueded-state' : 'exclueded-state'; ?>">
-                                                                    <label>Status</label>
-                                                                    <div class="text" style="<?= $adp_company_status['status'] == 1 ? 'color:green;' : 'color:red;'; ?>">
-                                                                        <?= $adp_company_status['status'] == 0 ? 'Disabled' : 'Enabled'; ?>
-                                                                    </div>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="text">
-                                                                        <a data-id="<?= $adp_company_status['sid']; ?>" data-status="<?= $adp_company_status['status']; ?>" class="site-btn <?= $adp_company_status['status'] == 1 ? 'btn-danger' : ''; ?> pull-right js-dynamic-module-adp-btn"><?= $adp_company_status['status'] == 1 ? 'Disable' : 'Enable'; ?></a>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <header class="hr-box-header hr-box-footer"></header>
-                                                </article>
-                                            <?php } ?>
-                                        </div>
+                                                <?php } ?>
+                                            </div>
 
 
-                                        <div class="heading-title page-title">
-                                            <h1 class="page-title">Company Admin Invoices</h1>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <div class="hr-promotions table-responsive">
-                                                    <div class="scrollable-area">
-                                                        <table class="table table-bordered table-stripped fixTable-header">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th colspan="4" class="text-center">Invoice Summary</th>
-                                                                    <th rowspan="2" colspan="1" class="text-center">Actions</th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th colspan="1"></th>
-                                                                    <th class="text-center">Value</th>
-                                                                    <th class="text-center">Discount</th>
-                                                                    <th class="text-center">Amount</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php if (!empty($company_admin_invoices)) { ?>
-                                                                    <?php foreach ($company_admin_invoices as $invoice) { ?>
-                                                                        <tr>
-                                                                            <td class="col-lg-6">
-                                                                                <div class="invoice-date">
-                                                                                    <div class="row">
-                                                                                        <div class="col-lg-12">
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Company</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo ucwords($invoice['company_name']); ?></div>
+                                            <div class="heading-title page-title">
+                                                <h1 class="page-title">Company Admin Invoices</h1>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="hr-promotions table-responsive">
+                                                        <div class="scrollable-area">
+                                                            <table class="table table-bordered table-stripped fixTable-header">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th colspan="4" class="text-center">Invoice Summary</th>
+                                                                        <th rowspan="2" colspan="1" class="text-center">Actions</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th colspan="1"></th>
+                                                                        <th class="text-center">Value</th>
+                                                                        <th class="text-center">Discount</th>
+                                                                        <th class="text-center">Amount</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php if (!empty($company_admin_invoices)) { ?>
+                                                                        <?php foreach ($company_admin_invoices as $invoice) { ?>
+                                                                            <tr>
+                                                                                <td class="col-lg-6">
+                                                                                    <div class="invoice-date">
+                                                                                        <div class="row">
+                                                                                            <div class="col-lg-12">
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Company</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo ucwords($invoice['company_name']); ?></div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Created Date</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo convert_date_to_frontend_format($invoice['created'], true); ?></div>
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Created Date</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo convert_date_to_frontend_format($invoice['created'], true); ?></div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
 
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice #</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo $invoice['invoice_number']; ?></div>
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice #</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo $invoice['invoice_number']; ?></div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Status</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6 <?php echo ucwords($invoice['payment_status']); ?>"><?php echo ucwords($invoice['payment_status']); ?></div>
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Status</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6 <?php echo ucwords($invoice['payment_status']); ?>"><?php echo ucwords($invoice['payment_status']); ?></div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Date</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo convert_date_to_frontend_format($invoice['payment_date'], true); ?></div>
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Date</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo convert_date_to_frontend_format($invoice['payment_date'], true); ?></div>
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <h5><strong>Item Summary</strong></h5>
+                                                                                        <ul class="item-name-summary">
+                                                                                            <?php foreach ($invoice['item_names'] as $item_name) { ?>
+                                                                                                <li><?php echo $item_name['item_name']; ?></li>
+                                                                                            <?php } ?>
+                                                                                        </ul>
                                                                                     </div>
-                                                                                    <h5><strong>Item Summary</strong></h5>
-                                                                                    <ul class="item-name-summary">
-                                                                                        <?php foreach ($invoice['item_names'] as $item_name) { ?>
-                                                                                            <li><?php echo $item_name['item_name']; ?></li>
-                                                                                        <?php } ?>
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </td>
-                                                                            <!-- Start Invoice Summary -->
-                                                                            <td class="text-right col-xs-2">
-                                                                                $<?php echo number_format($invoice['value'], 2, '.', ',') ?></td>
-                                                                            <td class="text-right col-xs-2">
-                                                                                $<?php echo number_format($invoice['discount_amount'], 2, '.', ',') ?></td>
-                                                                            <td class="text-right col-xs-2">
-                                                                                <!--
+                                                                                </td>
+                                                                                <!-- Start Invoice Summary -->
+                                                                                <td class="text-right col-xs-2">
+                                                                                    $<?php echo number_format($invoice['value'], 2, '.', ',') ?></td>
+                                                                                <td class="text-right col-xs-2">
+                                                                                    $<?php echo number_format($invoice['discount_amount'], 2, '.', ',') ?></td>
+                                                                                <td class="text-right col-xs-2">
+                                                                                    <!--
                                                                                 <?php /*if ($invoice['is_discounted'] == 1) { */ ?>
                                                                                     $<?php /*echo number_format($invoice['total_after_discount'], 2, '.', ',') */ ?>
                                                                                 <?php /*} else { */ ?>
                                                                                     $<?php /*echo number_format($invoice['value'], 2, '.', ',') */ ?>
                                                                                 <?php /*} */ ?>
                                                                                 -->
-                                                                                $<?php echo number_format($invoice['total_after_discount'], 2, '.', ',') ?>
-                                                                            </td>
-                                                                            <!-- End Invoice Summary commission_invoice_sid-->
-                                                                            <td class="text-center">
-                                                                                <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/view_admin_invoice') . '/' . $invoice['sid']; ?>">View Invoice</a>
-                                                                                <?php if ($invoice['payment_status'] == 'unpaid') { ?>
-                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/apply_discount_admin_invoice') . '/' . $invoice['sid']; ?>">Apply Discount</a>
-                                                                                <?php } else { ?>
-                                                                                    <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Apply Discount</a>
-                                                                                <?php } ?>
-                                                                                <?php if ($invoice['commission_invoice_sid'] == 0) { ?>
-                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/companies/generate_commisson_invoice') . '/' . $invoice['company_sid'] . '/' . $invoice['sid']; ?>">Generate CI</a>
-                                                                                <?php } else { ?>
-                                                                                    <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Generate CI</a>
-                                                                                <?php } ?>
-                                                                                <?php if ($invoice['payment_status'] == 'unpaid' && $invoice['discount_amount'] < $invoice['value']) { ?>
-                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/misc/process_payment_admin_invoice') . '/' . $invoice['sid']; ?>">Process Payment</a>
-                                                                                <?php } elseif ($invoice['discount_amount'] == $invoice['value'] && $invoice['payment_status'] == 'unpaid') { ?>
-                                                                                    <button type="button" class="hr-edit-btn invoice-links" onclick="fActivateInvoiceFeatures(<?php echo $invoice['company_sid']; ?>, <?php echo $invoice['sid'] ?>);"> Activate Invoice </button>
-                                                                                <?php } else { ?>
-                                                                                    <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Process Payment</a>
-                                                                                <?php } ?>
-                                                                                <?php if ($invoice['payment_status'] == 'unpaid') { ?>
-                                                                                    <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" href="javascript:void(0);">Send Invoice</a>
-                                                                                <?php } ?>
+                                                                                    $<?php echo number_format($invoice['total_after_discount'], 2, '.', ',') ?>
+                                                                                </td>
+                                                                                <!-- End Invoice Summary commission_invoice_sid-->
+                                                                                <td class="text-center">
+                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/view_admin_invoice') . '/' . $invoice['sid']; ?>">View Invoice</a>
+                                                                                    <?php if ($invoice['payment_status'] == 'unpaid') { ?>
+                                                                                        <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/apply_discount_admin_invoice') . '/' . $invoice['sid']; ?>">Apply Discount</a>
+                                                                                    <?php } else { ?>
+                                                                                        <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Apply Discount</a>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($invoice['commission_invoice_sid'] == 0) { ?>
+                                                                                        <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/companies/generate_commisson_invoice') . '/' . $invoice['company_sid'] . '/' . $invoice['sid']; ?>">Generate CI</a>
+                                                                                    <?php } else { ?>
+                                                                                        <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Generate CI</a>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($invoice['payment_status'] == 'unpaid' && $invoice['discount_amount'] < $invoice['value']) { ?>
+                                                                                        <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/misc/process_payment_admin_invoice') . '/' . $invoice['sid']; ?>">Process Payment</a>
+                                                                                    <?php } elseif ($invoice['discount_amount'] == $invoice['value'] && $invoice['payment_status'] == 'unpaid') { ?>
+                                                                                        <button type="button" class="hr-edit-btn invoice-links" onclick="fActivateInvoiceFeatures(<?php echo $invoice['company_sid']; ?>, <?php echo $invoice['sid'] ?>);"> Activate Invoice </button>
+                                                                                    <?php } else { ?>
+                                                                                        <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Process Payment</a>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($invoice['payment_status'] == 'unpaid') { ?>
+                                                                                        <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" href="javascript:void(0);">Send Invoice</a>
+                                                                                    <?php } ?>
+                                                                                </td>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    <?php } else { ?>
+                                                                        <tr>
+                                                                            <td colspan="9">
+                                                                                <h3 class="no-data">Admin Invoices Not Found!</h3>
                                                                             </td>
                                                                         </tr>
                                                                     <?php } ?>
-                                                                <?php } else { ?>
-                                                                    <tr>
-                                                                        <td colspan="9">
-                                                                            <h3 class="no-data">Admin Invoices Not Found!</h3>
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php } ?>
-                                                            </tbody>
-                                                        </table>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="heading-title page-title">
-                                            <h1 class="page-title">Company Marketplace Invoices</h1>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <div class="hr-promotions table-responsive">
-                                                    <div class="scrollable-area">
-                                                        <table class="table table-bordered table-stripped fixTable-header">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th colspan="4" class="text-center">Invoice Summary</th>
-                                                                    <th rowspan="2" colspan="1" class="text-center">Actions</th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th colspan="1"></th>
-                                                                    <th class="text-center">Value</th>
-                                                                    <th class="text-center">Discount</th>
-                                                                    <th class="text-center">Amount</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php if (!empty($company_portal_invoices)) { ?>
-                                                                    <?php foreach ($company_portal_invoices as $invoice) { ?>
-                                                                        <tr>
-                                                                            <td class="col-lg-6">
-                                                                                <div class="invoice-date">
-                                                                                    <div class="row">
-                                                                                        <div class="col-lg-12">
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Created Date</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo date('m-d-Y', strtotime($invoice['date'])); ?></div>
+                                            <div class="heading-title page-title">
+                                                <h1 class="page-title">Company Marketplace Invoices</h1>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="hr-promotions table-responsive">
+                                                        <div class="scrollable-area">
+                                                            <table class="table table-bordered table-stripped fixTable-header">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th colspan="4" class="text-center">Invoice Summary</th>
+                                                                        <th rowspan="2" colspan="1" class="text-center">Actions</th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th colspan="1"></th>
+                                                                        <th class="text-center">Value</th>
+                                                                        <th class="text-center">Discount</th>
+                                                                        <th class="text-center">Amount</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php if (!empty($company_portal_invoices)) { ?>
+                                                                        <?php foreach ($company_portal_invoices as $invoice) { ?>
+                                                                            <tr>
+                                                                                <td class="col-lg-6">
+                                                                                    <div class="invoice-date">
+                                                                                        <div class="row">
+                                                                                            <div class="col-lg-12">
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Created Date</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo date('m-d-Y', strtotime($invoice['date'])); ?></div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice #</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo $invoice['sid']; ?></div>
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice #</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?php echo $invoice['sid']; ?></div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Date</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?= convert_date_to_frontend_format($invoice["payment_date"], true); ?></div>
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Date</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><?= convert_date_to_frontend_format($invoice["payment_date"], true); ?></div>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div class="dotted-border">
-                                                                                                <div class="row">
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Status</strong></div>
-                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6 <?php echo ucwords($invoice['status']); ?>"><?php echo ucwords($invoice['status']); ?></div>
+                                                                                                <div class="dotted-border">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Payment Status</strong></div>
+                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6 <?php echo ucwords($invoice['status']); ?>"><?php echo ucwords($invoice['status']); ?></div>
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <h5><strong>Item Summary</strong></h5>
+                                                                                        <ul class="item-name-summary">
+                                                                                            <?php foreach ($invoice['item_names'] as $item_name) { ?>
+                                                                                                <li><?php echo $item_name['name']; ?></li>
+                                                                                            <?php } ?>
+                                                                                        </ul>
                                                                                     </div>
-                                                                                    <h5><strong>Item Summary</strong></h5>
-                                                                                    <ul class="item-name-summary">
-                                                                                        <?php foreach ($invoice['item_names'] as $item_name) { ?>
-                                                                                            <li><?php echo $item_name['name']; ?></li>
-                                                                                        <?php } ?>
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </td>
-                                                                            <!-- Start Invoice Summary -->
-                                                                            <td class="text-right col-xs-2">
-                                                                                $ <?php echo number_format($invoice['sub_total'], 2, '.', ',') ?></td>
-                                                                            <td class="text-right col-xs-2">
-                                                                                $ <?php echo number_format($invoice['total_discount'], 2, '.', ',') ?></td>
-                                                                            <td class="text-right col-xs-2">
-                                                                                $ <?php echo number_format($invoice['total'], 2, '.', ',') ?>
-                                                                            </td>
-                                                                            <!-- End Invoice Summary -->
-                                                                            <td class="text-center">
-                                                                                <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/edit_invoice/' . $invoice['sid']); ?>">View Invoice</a>
+                                                                                </td>
+                                                                                <!-- Start Invoice Summary -->
+                                                                                <td class="text-right col-xs-2">
+                                                                                    $ <?php echo number_format($invoice['sub_total'], 2, '.', ',') ?></td>
+                                                                                <td class="text-right col-xs-2">
+                                                                                    $ <?php echo number_format($invoice['total_discount'], 2, '.', ',') ?></td>
+                                                                                <td class="text-right col-xs-2">
+                                                                                    $ <?php echo number_format($invoice['total'], 2, '.', ',') ?>
+                                                                                </td>
+                                                                                <!-- End Invoice Summary -->
+                                                                                <td class="text-center">
+                                                                                    <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/invoice/edit_invoice/' . $invoice['sid']); ?>">View Invoice</a>
+                                                                                </td>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    <?php } else { ?>
+                                                                        <tr>
+                                                                            <td colspan="9">
+                                                                                <h3 class="no-data">Marketplace Invoices Not Found!</h3>
                                                                             </td>
                                                                         </tr>
                                                                     <?php } ?>
-                                                                <?php } else { ?>
-                                                                    <tr>
-                                                                        <td colspan="9">
-                                                                            <h3 class="no-data">Marketplace Invoices Not Found!</h3>
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php } ?>
-                                                            </tbody>
-                                                        </table>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1596,498 +1620,571 @@
             </div>
         </div>
     </div>
-</div>
-<script>
-    $('#training-status').click(function() {
-        var company_sid = $(this).attr('data-attr');
-        var key = $(this).attr('data-key');
-        var message = 'Are you sure you want to mark it uncompleted? <br /> This action is reversable!';
-        if (key == '1') {
-            message = 'Are you sure you want to mark it completed? <br /> This action is reversable!';
-        }
-        alertify.confirm(
-            'Please Confirm!',
-            message,
-            function() {
-                var myUrl = '<?php echo base_url('manage_admin/companies/ajax_responder') ?>';
-                var myRequest;
 
-                myRequest = $.ajax({
-                    url: myUrl,
-                    type: 'POST',
-                    data: {
-                        perform_action: 'mark_training_completed',
-                        company_sid: company_sid,
-                        key: key
-                    }
-                });
 
-                myRequest.done(function(response) {
-                    //console.log(response);
-                    if (response == 'success') {
-                        myUrl = window.location.href;
-                        window.location = myUrl;
-                    }
-                })
-            },
-            function() {
-                //Cancel
-            });
-    });
 
-    function fActivateInvoiceFeatures(company_sid, invoice_sid) {
-        alertify.confirm(
-            'Are you sure?',
-            'Are you sure you want to Activate all Products against this Invoice? <br /> This action is irreversable!',
-            function() {
-                var myUrl = '<?php echo base_url('manage_admin/invoice/ajax_responder') ?>';
-                var myRequest;
+    <div id="jsModaladpCompanyLocationContainer">
+        <div class="modal fade" id="jsadpCompanyLocationModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Update ADP Company Location </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>ADP Company Location</label>
+                                <input type="text" class="form-control jsLocationName" placeholder="" />
+                            </div>
+                        </div>
 
-                myRequest = $.ajax({
-                    url: myUrl,
-                    type: 'POST',
-                    data: {
-                        perform_action: 'activate_invoice_features',
-                        company_sid: company_sid,
-                        invoice_sid: invoice_sid
-                    }
-                });
 
-                myRequest.done(function(response) {
-                    //console.log(response);
-                    if (response == 'success') {
-                        myUrl = window.location.href;
-                        window.location = myUrl;
-                    }
-                })
-            },
-            function() {
-                //Cancel
-            });
-    }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success jsSaveadpCompanyLocation">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    $(document).ready(function() { // get the states
-        var myid = $('#state_id').html();
-        setTimeout(function() {
-            $("#country").change();
-        }, 1000);
-        if (myid) {
-            setTimeout(function() {
-                $('#state').val(myid);
-            }, 1200);
-        }
-    });
 
-    $(document).on('click', '#change-status', function() {
-        var status = $('#change-status').attr('data-status');
-        var id = $('#change-status').attr('data-attr');
-        alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
-            function() {
-                $.ajax({
-                    url: "<?= base_url() ?>manage_admin/companies/change_applicant_status",
-                    type: 'POST',
-                    data: {
-                        status: status,
-                        sid: id
-                    },
-                    success: function(data) {
-                        alertify.success('Employee has been Activated.');
-                        data = JSON.parse(data);
-                        window.location.href = '<?php echo current_url() ?>';
-                    },
-                    error: function() {
 
-                    }
-                });
-            },
-            function() {
-                alertify.error('Canceled');
-            });
-    });
-
-    //change_per_job_listing_status
-    $(document).on('click', '#change_per_job_status', function() {
-        var status = $(this).attr('data-status');
-        var db_field = $(this).attr('data-attr');
-        var company_id = '<?php echo $company_sid; ?>';
-
-        alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
-            function() {
-                $.ajax({
-                    url: "<?= base_url() ?>manage_admin/companies/ajax_change_status",
-                    type: 'POST',
-                    data: {
-                        status: status,
-                        db_field: db_field,
-                        sid: company_id
-                    },
-                    success: function(data) {
-                        alertify.success('Status updated successfully.');
-                        window.location.href = '<?php echo current_url() ?>';
-                    },
-                    error: function() {}
-                });
-            },
-            function() {
-                alertify.error('Canceled');
-            });
-    });
-
-    $(document).on('click', '#change-resource', function() {
-        var status = $('#change-resource').attr('data-status');
-        var id = $('#change-resource').attr('data-attr');
-        alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
-            function() {
-                $.ajax({
-                    url: "<?= base_url() ?>manage_admin/companies/change_resource_center",
-                    type: 'POST',
-                    data: {
-                        status: status,
-                        sid: id
-                    },
-                    success: function(data) {
-                        alertify.success('Resource center has been Activated.');
-                        data = JSON.parse(data);
-                        window.location.href = '<?php echo current_url() ?>';
-                    },
-                    error: function() {}
-                });
-            },
-            function() {
-                alertify.error('Canceled');
-            });
-    });
-
-    $(document).on('click', '#change-ems', function() {
-        var status = $('#change-ems').attr('data-status');
-        var id = $('#change-ems').attr('data-attr');
-        alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
-            function() {
-                $.ajax({
-                    url: "<?= base_url() ?>manage_admin/companies/change_ems_status",
-                    type: 'POST',
-                    data: {
-                        status: status,
-                        sid: id
-                    },
-                    success: function(data) {
-                        alertify.success('EMS Status has been Activated.');
-                        data = JSON.parse(data);
-                        if (status == 0) {
-                            window.location.href = '<?php echo base_url('setup_default_config') . '/' ?>' + id;
-                        } else {
-                            window.location.href = '<?php echo current_url() ?>';
-                        }
-                    },
-                    error: function() {}
-                });
-            },
-            function() {
-                alertify.error('Canceled');
-            });
-    });
-
-    $(document).on('click', '#change-complynet', function() {
-        var status = $('#change-complynet').attr('data-status');
-        var id = $('#change-complynet').attr('data-attr');
-        alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html() + " Complynet",
-            function() {
-                $.ajax({
-                    url: "<?= base_url() ?>manage_admin/companies/change_comply_status",
-                    type: 'POST',
-                    data: {
-                        status: status,
-                        sid: id
-                    },
-                    success: function(data) {
-                        alertify.success('ComplyNet Status has been Activated.');
-                        data = JSON.parse(data);
-                        window.location.href = '<?php echo current_url() ?>';
-                    },
-                    error: function() {}
-                });
-            },
-            function() {
-                alertify.error('Canceled');
-            });
-    });
-
-    //
-    // $('#js-captcha-btn').click(function(){
-    //     //
-    //     var status = parseInt($(this).data('status')) === 0 ? 1 : 0,
-    //     id = $(this).data('attr');
-    //     //
-    //     alertify.confirm('Confirmation', "Are you sure you want to "+$(this).html()+" Captcha.",
-    //         function () {
-    //             //
-    //             var xhr = $.post("<?php //echo base_url('manage_admin/companies/change_captcha_status');
-                                        ?>", {
-    //                 status: status,
-    //                 sid: id
-    //             });
-    //             //
-    //             xhr.success(function(data){
-    //                 alertify.success('Captcha Status has been '+( status == 0 ? 'Enabled' : 'Disabled' )+'.');
-    //                 data = JSON.parse(data);
-    //                 window.location.href = '<?php //echo current_url()
-                                                ?>';
-    //             });
-    //         },
-    //         function () {
-    //             alertify.error('Canceled');
-    //         });
-    // });
-
-    function getStates(val, states) {
-        var html = '';
-        if (val == '') {
-            $('#state').html('<option value="">Select State</option>');
-        } else {
-            allstates = states[val];
-
-            for (var i = 0; i < allstates.length; i++) {
-                var id = allstates[i].sid;
-                var name = allstates[i].state_name;
-                html += '<option value="' + id + '">' + name + '</option>';
+    <script>
+        $('#training-status').click(function() {
+            var company_sid = $(this).attr('data-attr');
+            var key = $(this).attr('data-key');
+            var message = 'Are you sure you want to mark it uncompleted? <br /> This action is reversable!';
+            if (key == '1') {
+                message = 'Are you sure you want to mark it completed? <br /> This action is reversable!';
             }
+            alertify.confirm(
+                'Please Confirm!',
+                message,
+                function() {
+                    var myUrl = '<?php echo base_url('manage_admin/companies/ajax_responder') ?>';
+                    var myRequest;
 
-            $('#state').html(html);
-        }
-    }
+                    myRequest = $.ajax({
+                        url: myUrl,
+                        type: 'POST',
+                        data: {
+                            perform_action: 'mark_training_completed',
+                            company_sid: company_sid,
+                            key: key
+                        }
+                    });
 
-    $(function() {
-        $('.js-dynamic-module-btn').click(function(e) {
-            e.preventDefault();
-            let megaOBJ = {};
-            var _this = $(this);
-            megaOBJ.Status = $(this).data('status');
-            megaOBJ.Id = $(this).data('id');
-            megaOBJ.CompanyId = <?= $company_sid; ?>;
-            //
-            alertify.confirm('Do you really want to ' + (megaOBJ.Status === 1 ? 'disable' : 'enable') + ' this MODULE?', function() {
-                //
-                $.post("<?= base_url('manage_admin/companies/update_module_status'); ?>", megaOBJ, function(resp) {
-                    if (resp.Status === false) {
-                        alertify.alert('ERROR!', resp.Response);
-                        return;
-                    }
-                    alertify.alert('SUCCESS!', 'Module has been ' + (megaOBJ.Status === 1 ? 'Disabled' : 'Enabled') + '.');
-                    _this.text(megaOBJ.Status === 0 ? 'Disable' : 'Enable');
-                    //
-                    if (megaOBJ.Status === 0) {
-                        _this.data('status', 1);
-                        _this.addClass('btn-danger');
-                        _this.parent().parent().parent().find('.exclueded-state').removeClass('exclueded-state').addClass('inclueded-state');
-                        _this.parent().parent().parent().find('.inclueded-state div').attr('style', 'color:green;').text('Enabled');
-                    } else {
-                        _this.data('status', 0);
-                        _this.removeClass('btn-danger');
-                        _this.parent().parent().parent().find('.inclueded-state').removeClass('inclueded-state').addClass('exclueded-state');
-                        _this.parent().parent().parent().find('.exclueded-state div').attr('style', 'color:red;').text('Disabled');
-                    }
+                    myRequest.done(function(response) {
+                        //console.log(response);
+                        if (response == 'success') {
+                            myUrl = window.location.href;
+                            window.location = myUrl;
+                        }
+                    })
+                },
+                function() {
+                    //Cancel
                 });
-            }).set('labels', {
-                ok: 'Yes',
-                cancel: 'No'
-            });
         });
-    })
 
-    //
-    $(function() {
+        function fActivateInvoiceFeatures(company_sid, invoice_sid) {
+            alertify.confirm(
+                'Are you sure?',
+                'Are you sure you want to Activate all Products against this Invoice? <br /> This action is irreversable!',
+                function() {
+                    var myUrl = '<?php echo base_url('manage_admin/invoice/ajax_responder') ?>';
+                    var myRequest;
+
+                    myRequest = $.ajax({
+                        url: myUrl,
+                        type: 'POST',
+                        data: {
+                            perform_action: 'activate_invoice_features',
+                            company_sid: company_sid,
+                            invoice_sid: invoice_sid
+                        }
+                    });
+
+                    myRequest.done(function(response) {
+                        //console.log(response);
+                        if (response == 'success') {
+                            myUrl = window.location.href;
+                            window.location = myUrl;
+                        }
+                    })
+                },
+                function() {
+                    //Cancel
+                });
+        }
+
+        $(document).ready(function() { // get the states
+            var myid = $('#state_id').html();
+            setTimeout(function() {
+                $("#country").change();
+            }, 1000);
+            if (myid) {
+                setTimeout(function() {
+                    $('#state').val(myid);
+                }, 1200);
+            }
+        });
+
+        $(document).on('click', '#change-status', function() {
+            var status = $('#change-status').attr('data-status');
+            var id = $('#change-status').attr('data-attr');
+            alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
+                function() {
+                    $.ajax({
+                        url: "<?= base_url() ?>manage_admin/companies/change_applicant_status",
+                        type: 'POST',
+                        data: {
+                            status: status,
+                            sid: id
+                        },
+                        success: function(data) {
+                            alertify.success('Employee has been Activated.');
+                            data = JSON.parse(data);
+                            window.location.href = '<?php echo current_url() ?>';
+                        },
+                        error: function() {
+
+                        }
+                    });
+                },
+                function() {
+                    alertify.error('Canceled');
+                });
+        });
+
+        //change_per_job_listing_status
+        $(document).on('click', '#change_per_job_status', function() {
+            var status = $(this).attr('data-status');
+            var db_field = $(this).attr('data-attr');
+            var company_id = '<?php echo $company_sid; ?>';
+
+            alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
+                function() {
+                    $.ajax({
+                        url: "<?= base_url() ?>manage_admin/companies/ajax_change_status",
+                        type: 'POST',
+                        data: {
+                            status: status,
+                            db_field: db_field,
+                            sid: company_id
+                        },
+                        success: function(data) {
+                            alertify.success('Status updated successfully.');
+                            window.location.href = '<?php echo current_url() ?>';
+                        },
+                        error: function() {}
+                    });
+                },
+                function() {
+                    alertify.error('Canceled');
+                });
+        });
+
+        $(document).on('click', '#change-resource', function() {
+            var status = $('#change-resource').attr('data-status');
+            var id = $('#change-resource').attr('data-attr');
+            alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
+                function() {
+                    $.ajax({
+                        url: "<?= base_url() ?>manage_admin/companies/change_resource_center",
+                        type: 'POST',
+                        data: {
+                            status: status,
+                            sid: id
+                        },
+                        success: function(data) {
+                            alertify.success('Resource center has been Activated.');
+                            data = JSON.parse(data);
+                            window.location.href = '<?php echo current_url() ?>';
+                        },
+                        error: function() {}
+                    });
+                },
+                function() {
+                    alertify.error('Canceled');
+                });
+        });
+
+        $(document).on('click', '#change-ems', function() {
+            var status = $('#change-ems').attr('data-status');
+            var id = $('#change-ems').attr('data-attr');
+            alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
+                function() {
+                    $.ajax({
+                        url: "<?= base_url() ?>manage_admin/companies/change_ems_status",
+                        type: 'POST',
+                        data: {
+                            status: status,
+                            sid: id
+                        },
+                        success: function(data) {
+                            alertify.success('EMS Status has been Activated.');
+                            data = JSON.parse(data);
+                            if (status == 0) {
+                                window.location.href = '<?php echo base_url('setup_default_config') . '/' ?>' + id;
+                            } else {
+                                window.location.href = '<?php echo current_url() ?>';
+                            }
+                        },
+                        error: function() {}
+                    });
+                },
+                function() {
+                    alertify.error('Canceled');
+                });
+        });
+
+        $(document).on('click', '#change-complynet', function() {
+            var status = $('#change-complynet').attr('data-status');
+            var id = $('#change-complynet').attr('data-attr');
+            alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html() + " Complynet",
+                function() {
+                    $.ajax({
+                        url: "<?= base_url() ?>manage_admin/companies/change_comply_status",
+                        type: 'POST',
+                        data: {
+                            status: status,
+                            sid: id
+                        },
+                        success: function(data) {
+                            alertify.success('ComplyNet Status has been Activated.');
+                            data = JSON.parse(data);
+                            window.location.href = '<?php echo current_url() ?>';
+                        },
+                        error: function() {}
+                    });
+                },
+                function() {
+                    alertify.error('Canceled');
+                });
+        });
+
         //
-        $('.jsModifyFeedEmail').click(function(event) {
+        // $('#js-captcha-btn').click(function(){
+        //     //
+        //     var status = parseInt($(this).data('status')) === 0 ? 1 : 0,
+        //     id = $(this).data('attr');
+        //     //
+        //     alertify.confirm('Confirmation', "Are you sure you want to "+$(this).html()+" Captcha.",
+        //         function () {
+        //             //
+        //             var xhr = $.post("<?php //echo base_url('manage_admin/companies/change_captcha_status');
+                                            ?>", {
+        //                 status: status,
+        //                 sid: id
+        //             });
+        //             //
+        //             xhr.success(function(data){
+        //                 alertify.success('Captcha Status has been '+( status == 0 ? 'Enabled' : 'Disabled' )+'.');
+        //                 data = JSON.parse(data);
+        //                 window.location.href = '<?php //echo current_url()
+                                                    ?>';
+        //             });
+        //         },
+        //         function () {
+        //             alertify.error('Canceled');
+        //         });
+        // });
+
+        function getStates(val, states) {
+            var html = '';
+            if (val == '') {
+                $('#state').html('<option value="">Select State</option>');
+            } else {
+                allstates = states[val];
+
+                for (var i = 0; i < allstates.length; i++) {
+                    var id = allstates[i].sid;
+                    var name = allstates[i].state_name;
+                    html += '<option value="' + id + '">' + name + '</option>';
+                }
+
+                $('#state').html(html);
+            }
+        }
+
+        $(function() {
+            $('.js-dynamic-module-btn').click(function(e) {
+                e.preventDefault();
+                let megaOBJ = {};
+                var _this = $(this);
+                megaOBJ.Status = $(this).data('status');
+                megaOBJ.Id = $(this).data('id');
+                megaOBJ.CompanyId = <?= $company_sid; ?>;
+                //
+                alertify.confirm('Do you really want to ' + (megaOBJ.Status === 1 ? 'disable' : 'enable') + ' this MODULE?', function() {
+                    //
+                    $.post("<?= base_url('manage_admin/companies/update_module_status'); ?>", megaOBJ, function(resp) {
+                        if (resp.Status === false) {
+                            alertify.alert('ERROR!', resp.Response);
+                            return;
+                        }
+                        alertify.alert('SUCCESS!', 'Module has been ' + (megaOBJ.Status === 1 ? 'Disabled' : 'Enabled') + '.');
+                        _this.text(megaOBJ.Status === 0 ? 'Disable' : 'Enable');
+                        //
+                        if (megaOBJ.Status === 0) {
+                            _this.data('status', 1);
+                            _this.addClass('btn-danger');
+                            _this.parent().parent().parent().find('.exclueded-state').removeClass('exclueded-state').addClass('inclueded-state');
+                            _this.parent().parent().parent().find('.inclueded-state div').attr('style', 'color:green;').text('Enabled');
+                        } else {
+                            _this.data('status', 0);
+                            _this.removeClass('btn-danger');
+                            _this.parent().parent().parent().find('.inclueded-state').removeClass('inclueded-state').addClass('exclueded-state');
+                            _this.parent().parent().parent().find('.exclueded-state div').attr('style', 'color:red;').text('Disabled');
+                        }
+                    });
+                }).set('labels', {
+                    ok: 'Yes',
+                    cancel: 'No'
+                });
+            });
+        })
+
+        //
+        $(function() {
+            //
+            $('.jsModifyFeedEmail').click(function(event) {
+                //
+                event.preventDefault();
+                //
+                var modal = $('#jsModalContainer').html();
+                $('#jsModalContainer').remove();
+                $('body').append(modal)
+                //
+                $('#jsEmailModal .jsName').val("<?= $CompanyIndeedDetails['contact_name']; ?>");
+                $('#jsEmailModal .jsPhone').val("<?= $CompanyIndeedDetails['contact_phone']; ?>");
+                $('#jsEmailModal .jsEmail').val("<?= $CompanyIndeedDetails['contact_email']; ?>");
+                //
+                $('#jsEmailModal').modal();
+            });
+
+            //
+            var xhr = null;
+
+            //
+            $(document).on('click', '.jsSaveEmail', function(event) {
+                //
+                event.preventDefault();
+                //
+                if (xhr !== null) {
+                    return;
+                }
+                //
+                var o = {};
+                o.email = $('#jsEmailModal .jsEmail').val().trim();
+                o.name = $('#jsEmailModal .jsName').val().trim();
+                o.phone = $('#jsEmailModal .jsPhone').val().trim();
+                o.companyId = <?= $company_sid; ?>;
+
+
+                //
+                if (o.email && !validateEmail(o.email)) {
+                    return alertify.alert(
+                        'Error!',
+                        'Email is not valid.'
+                    );
+                }
+                //
+                $(this).text('Updating email...');
+                //
+                xhr = $.post(
+                    "<?= base_url("manage_admin/companies/update_company_email"); ?>",
+                    o
+                ).done(function(resp) {
+                    alertify.alert(
+                        "Success!",
+                        "You have successfully updated the email.",
+                        function() {
+                            window.location.reload();
+                        }
+                    );
+                });
+            });
+
+            function validateEmail(email) {
+                const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(String(email).toLowerCase());
+            }
+        });
+
+
+
+        $(function() {
+            $('.js-dynamic-module-adp-btn').click(function(e) {
+                e.preventDefault();
+                let megaOBJ = {};
+                var _this = $(this);
+                megaOBJ.Status = $(this).data('status');
+                megaOBJ.Id = $(this).data('id');
+                megaOBJ.CompanyId = <?= $company_sid; ?>;
+                //
+                alertify.confirm('Do you really want to ' + (megaOBJ.Status === 1 ? 'disable' : 'enable') + ' ADP Settings ?', function() {
+                    //
+                    $.post("<?= base_url('manage_admin/statusupdate'); ?>", megaOBJ, function(resp) {
+                        if (resp.Status === false) {
+                            alertify.alert('ERROR!', resp.Response);
+                            return;
+                        }
+                        alertify.alert('SUCCESS!', 'ADP Settings has been ' + (megaOBJ.Status === 1 ? 'Disabled' : 'Enabled') + '.');
+                        _this.text(megaOBJ.Status === 0 ? 'Disable' : 'Enable');
+                        //
+                        if (megaOBJ.Status === 0) {
+                            _this.data('status', 1);
+                            _this.addClass('btn-danger');
+                            _this.parent().parent().parent().find('.exclueded-state').removeClass('exclueded-state').addClass('inclueded-state');
+                            _this.parent().parent().parent().find('.inclueded-state div').attr('style', 'color:green;').text('Enabled');
+                        } else {
+                            _this.data('status', 0);
+                            _this.removeClass('btn-danger');
+                            _this.parent().parent().parent().find('.inclueded-state').removeClass('inclueded-state').addClass('exclueded-state');
+                            _this.parent().parent().parent().find('.exclueded-state div').attr('style', 'color:red;').text('Disabled');
+                        }
+                    });
+                }).set('labels', {
+                    ok: 'Yes',
+                    cancel: 'No'
+                });
+            });
+        })
+    </script>
+
+
+    <!-- Email Modal -->
+    <div id="jsModalContainer">
+        <div class="modal fade" id="jsEmailModal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Update details for Indeed feed</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Contact Person</label>
+                                <input type="text" class="form-control jsName" placeholder="Jhon Doe" />
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Contact Phone Number</label>
+                                <input type="email" class="form-control jsPhone" placeholder="+1 (123)-4567891" />
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Contact Email Address</label>
+                                <input type="email" class="form-control jsEmail" placeholder="jhon.doe@automotohr.com" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success jsSaveEmail">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function invoiceEmail() {
+            //
+            let invoiceIds = [];
+            //
+            $('.jsSendInvoice').click(function(event) {
+                //
+                event.preventDefault();
+                //
+                let invoiceId = $(this).data('invoice');
+                //
+                if ($.inArray(invoiceId, invoiceIds) !== -1) {
+                    return;
+                }
+                //
+                invoiceIds.push(invoiceId);
+                //
+                return alertify.confirm(
+                    'Invoice will be sent through email to the people listed in "Billing And Invoice Notifications".<br /><br />Are you sure you want to do it?',
+                    function() {
+                        startProcess(invoiceId);
+                    }
+                );
+            });
+
+            //
+            function startProcess(invoiceId) {
+                //
+                $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Sending...');
+                //
+                $.post(
+                    "<?= base_url('send_invoice_by_email'); ?>", {
+                        invoiceId: invoiceId,
+                        companyId: <?= $company_sid; ?>
+                    }
+                ).done(function(resp) {
+                    $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Send Invoice');
+                    invoiceIds.splice(invoiceIds.indexOf(invoiceId, 1));
+                    //
+                    if (resp.error) {
+                        return alertify.alert('Error!', resp.error, function() {});
+                    }
+                    return alertify.alert('Success!', resp.success, function() {});
+                });
+            }
+        });
+
+
+
+        //
+        $('.jsModifyadpCompanyLocation').click(function(event) {
             //
             event.preventDefault();
             //
-            var modal = $('#jsModalContainer').html();
-            $('#jsModalContainer').remove();
+            var modal = $('#jsModaladpCompanyLocationContainer').html();
+            $('#jsModaladpCompanyLocationContainer').remove();
             $('body').append(modal)
             //
-            $('#jsEmailModal .jsName').val("<?= $CompanyIndeedDetails['contact_name']; ?>");
-            $('#jsEmailModal .jsPhone').val("<?= $CompanyIndeedDetails['contact_phone']; ?>");
-            $('#jsEmailModal .jsEmail').val("<?= $CompanyIndeedDetails['contact_email']; ?>");
-            //
-            $('#jsEmailModal').modal();
+            $('#jsadpCompanyLocationModal .jsLocationName').val("<?= $adp_company_location; ?>");
+            $('#jsadpCompanyLocationModal').modal();
         });
 
-        //
-        var xhr = null;
+
 
         //
-        $(document).on('click', '.jsSaveEmail', function(event) {
+        $(document).on('click', '.jsSaveadpCompanyLocation', function(event) {
+         
             //
             event.preventDefault();
-            //
-            if (xhr !== null) {
-                return;
-            }
-            //
             var o = {};
-            o.email = $('#jsEmailModal .jsEmail').val().trim();
-            o.name = $('#jsEmailModal .jsName').val().trim();
-            o.phone = $('#jsEmailModal .jsPhone').val().trim();
+            o.adpCompanyLocation = $('#jsadpCompanyLocationModal .jsLocationName').val().trim();
             o.companyId = <?= $company_sid; ?>;
-
-
-
+            
             //
-            if (o.email && !validateEmail(o.email)) {
-                return alertify.alert(
-                    'Error!',
-                    'Email is not valid.'
-                );
-            }
+            $(this).text('Updating ADP Company Location...');
             //
-            $(this).text('Updating email...');
-            //
-            xhr = $.post(
-                "<?= base_url("manage_admin/companies/update_company_email"); ?>",
+           $.post(
+                "<?= base_url("manage_admin/companies/update_adp_company_location"); ?>",
                 o
             ).done(function(resp) {
                 alertify.alert(
                     "Success!",
-                    "You have successfully updated the email.",
+                    "You have successfully updated ADP Company Location.",
                     function() {
                         window.location.reload();
                     }
                 );
             });
         });
-
-        function validateEmail(email) {
-            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        }
-    });
-
-
-
-    $(function() {
-        $('.js-dynamic-module-adp-btn').click(function(e) {
-            e.preventDefault();
-            let megaOBJ = {};
-            var _this = $(this);
-            megaOBJ.Status = $(this).data('status');
-            megaOBJ.Id = $(this).data('id');
-            megaOBJ.CompanyId = <?= $company_sid; ?>;
-            //
-            alertify.confirm('Do you really want to ' + (megaOBJ.Status === 1 ? 'disable' : 'enable') + ' ADP Settings ?', function() {
-                //
-                $.post("<?= base_url('manage_admin/statusupdate'); ?>", megaOBJ, function(resp) {
-                    if (resp.Status === false) {
-                        alertify.alert('ERROR!', resp.Response);
-                        return;
-                    }
-                    alertify.alert('SUCCESS!', 'ADP Settings has been ' + (megaOBJ.Status === 1 ? 'Disabled' : 'Enabled') + '.');
-                    _this.text(megaOBJ.Status === 0 ? 'Disable' : 'Enable');
-                    //
-                    if (megaOBJ.Status === 0) {
-                        _this.data('status', 1);
-                        _this.addClass('btn-danger');
-                        _this.parent().parent().parent().find('.exclueded-state').removeClass('exclueded-state').addClass('inclueded-state');
-                        _this.parent().parent().parent().find('.inclueded-state div').attr('style', 'color:green;').text('Enabled');
-                    } else {
-                        _this.data('status', 0);
-                        _this.removeClass('btn-danger');
-                        _this.parent().parent().parent().find('.inclueded-state').removeClass('inclueded-state').addClass('exclueded-state');
-                        _this.parent().parent().parent().find('.exclueded-state div').attr('style', 'color:red;').text('Disabled');
-                    }
-                });
-            }).set('labels', {
-                ok: 'Yes',
-                cancel: 'No'
-            });
-        });
-    })
-</script>
-
-
-<!-- Email Modal -->
-<div id="jsModalContainer">
-    <div class="modal fade" id="jsEmailModal">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Update details for Indeed feed</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <label>Contact Person</label>
-                            <input type="text" class="form-control jsName" placeholder="Jhon Doe" />
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <label>Contact Phone Number</label>
-                            <input type="email" class="form-control jsPhone" placeholder="+1 (123)-4567891" />
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <label>Contact Email Address</label>
-                            <input type="email" class="form-control jsEmail" placeholder="jhon.doe@automotohr.com" />
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success jsSaveEmail">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    $(function invoiceEmail() {
-        //
-        let invoiceIds = [];
-        //
-        $('.jsSendInvoice').click(function(event) {
-            //
-            event.preventDefault();
-            //
-            let invoiceId = $(this).data('invoice');
-            //
-            if ($.inArray(invoiceId, invoiceIds) !== -1) {
-                return;
-            }
-            //
-            invoiceIds.push(invoiceId);
-            //
-            return alertify.confirm(
-                'Invoice will be sent through email to the people listed in "Billing And Invoice Notifications".<br /><br />Are you sure you want to do it?',
-                function() {
-                    startProcess(invoiceId);
-                }
-            );
-        });
-
-        //
-        function startProcess(invoiceId) {
-            //
-            $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Sending...');
-            //
-            $.post(
-                "<?= base_url('send_invoice_by_email'); ?>", {
-                    invoiceId: invoiceId,
-                    companyId: <?= $company_sid; ?>
-                }
-            ).done(function(resp) {
-                $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Send Invoice');
-                invoiceIds.splice(invoiceIds.indexOf(invoiceId, 1));
-                //
-                if (resp.error) {
-                    return alertify.alert('Error!', resp.error, function() {});
-                }
-                return alertify.alert('Success!', resp.success, function() {});
-            });
-        }
-    });
-</script>
+    </script>

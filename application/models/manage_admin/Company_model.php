@@ -3023,4 +3023,30 @@ class Company_model extends CI_Model
             $this->db->insert('helpbox_info_for_company', $dataToInsert);
         }
     }
+
+
+
+    //
+
+    function get_adp_company_location($company_sid)
+    {
+        $this->db->select('adp_company_location');
+        $this->db->where('user_sid', $company_sid);
+        $data = $this->db->get('portal_employer')->row_array();
+
+        return $data['adp_company_location'];
+    }
+
+
+    //
+    function UpdateadpCompanyLocation(
+        $locationname,
+        $companyId
+    ) {
+        //
+        $this->db->where('user_sid', $companyId)
+            ->update('portal_employer', [
+                'adp_company_location' => $locationname
+            ]);
+    }
 }

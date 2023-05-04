@@ -1386,7 +1386,9 @@ if ($user_type == 'applicant') {
                                                                                             <?php } ?>
                                                                                         </td>
                                                                                         <td class="col-lg-6 text-center">
-                                                                                            </form>
+                                                                                           
+                                                                                        <!-- </form2>-->
+
                                                                                             <?php if (!empty($eeo_form_info)) { ?>
                                                                                                 <?php if ($eeo_form_info['status']) { ?>
                                                                                                     <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -1748,6 +1750,33 @@ if ($user_type == 'applicant') {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                        
+                                            <div class="row">
+
+                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                    <?php $field_id = 'adp_onboarding_template_code'; ?>
+                                                    <?php echo form_label('ADP Template Code', $field_id); ?>
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>">
+                                                        <option value='' >Please select a code</option>
+   
+                                                        <?php foreach ($onboarding_template_code as $codeRow) { ?>
+                                                                <option <?php echo $codeRow['code'] == $onboarding_applicant_template_code['adp_onboarding_template_code'] ? 'selected="selected"' : ''; ?> value="<?php echo $codeRow['code']; ?>">
+                                                                    <?php echo $codeRow['code']; ?>
+                                                                </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                    <?php echo form_error($field_id); ?>
+                                                </div>
+
+
+                                            </div>
+                                            <br>
+
+
+
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                     <div class="form-group">
@@ -1997,7 +2026,9 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
                                         </div>-->
-                                    </form>
+
+                                        
+                                   </form>
                                 </div>
                             </div>
                         </div>

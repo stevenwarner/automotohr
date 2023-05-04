@@ -3179,21 +3179,53 @@ class Onboarding_model extends CI_Model
      */
     public function getPrimaryAddress(
         int $companyId
-    )
-    {
+    ) {
         return $this->db
-        ->select(
-            '
+            ->select(
+                '
                 location_address,
                 location_telephone,
                 location_fax
             '
-        )
-        ->where([
-            'company_sid' => $companyId,
-            'is_primary' => 1
-        ])
-        ->get('onboarding_office_locations')
-        ->row_array();
+            )
+            ->where([
+                'company_sid' => $companyId,
+                'is_primary' => 1
+            ])
+            ->get('onboarding_office_locations')
+            ->row_array();
+    }
+
+
+    //
+
+    function get_onboarding_template_code()
+    {
+        $this->db->select('*');
+        $record_obj = $this->db->get('adp_onboarding_template_code');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        return $record_arr;
+    }
+
+
+    //
+
+    function get_applicant_onboarding_template_code($user_sid)
+    {
+        $this->db->select('adp_onboarding_template_code');
+        $this->db->where('sid', $user_sid);
+        $record_obj = $this->db->get('portal_job_applications');
+        $record_arr = $record_obj->row_array();
+        return $record_arr;
+    }
+
+
+    //
+    function update_applicant_adp_onboarding_template_code($user_sid, $adpOnboardingTemplateCode)
+    {
+        $data['adp_onboarding_template_code'] = $adpOnboardingTemplateCode;
+        $this->db->where('sid', $user_sid);
+        $this->db->update('portal_job_applications', $data);
     }
 }
