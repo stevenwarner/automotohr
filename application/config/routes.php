@@ -1706,3 +1706,6 @@ $route['cn/redirect/(:num)'] = 'Testing/redirectToComply/$1';
 
 //
 $route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProfileDataReport';
+
+//
+$route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';

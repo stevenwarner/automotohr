@@ -2486,19 +2486,19 @@ class Employee_management extends Public_Controller
                 $newCompareData['office_location'] = $post['office_location'];
 
                 //
-                if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
-                    $templetJobTitleData = $this->input->post('template_job_title');
-                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
-                    $data['job_title'] = $templetJobTitleDataArray[1];
-                    $data['job_title_type'] = $templetJobTitleDataArray[0];
+                // if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
+                //     $templetJobTitleData = $this->input->post('template_job_title');
+                //     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                //     $data['job_title'] = $templetJobTitleDataArray[1];
+                //     $data['job_title_type'] = $templetJobTitleDataArray[0];
 
-                    $userComplynetJobTitle = get_user_complynettitle($sid);
-                    if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
-                        $data['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
-                    }
-                } else {
-                    $data['job_title_type'] = 0;
-                }
+                //     $userComplynetJobTitle = get_user_complynettitle($sid);
+                //     if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
+                //         $data['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                //     }
+                // } else {
+                //     $data['job_title_type'] = 0;
+                // }
 
 
 

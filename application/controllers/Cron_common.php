@@ -555,8 +555,8 @@ class Cron_common extends CI_Controller
                 ->update('users');
         }
         //
-        _e($found."\n\n");
-        _e($notFound."\n\n");
+        _e($found . "\n\n");
+        _e($notFound . "\n\n");
     }
 
     /**
@@ -639,8 +639,8 @@ class Cron_common extends CI_Controller
             }
         }
         //
-        _e($found."\n\n");
-        _e($notFound."\n\n");
+        _e($found . "\n\n");
+        _e($notFound . "\n\n");
     }
 
     /**
@@ -767,12 +767,12 @@ class Cron_common extends CI_Controller
     {
         // Get all records
         $records =
-        $this->db
-        ->select('sid, termination_date, status_change_date')
-        ->where('termination_date REGEXP "0022"', '', false)
-        ->or_where('status_change_date REGEXP "0022"', '', false)
-        ->get('terminated_employees')
-        ->result_array();
+            $this->db
+            ->select('sid, termination_date, status_change_date')
+            ->where('termination_date REGEXP "0022"', '', false)
+            ->or_where('status_change_date REGEXP "0022"', '', false)
+            ->get('terminated_employees')
+            ->result_array();
         //
         if (empty($records)) {
             exit(0);
@@ -786,8 +786,8 @@ class Cron_common extends CI_Controller
             $upd['status_change_date'] = str_replace('0022-', '2022-', $record['status_change_date']);
             //
             $this->db
-            ->where('sid', $record['sid'])
-            ->update('terminated_employees', $upd);
+                ->where('sid', $record['sid'])
+                ->update('terminated_employees', $upd);
         }
         _e(count($records), true);
         //
@@ -852,28 +852,28 @@ class Cron_common extends CI_Controller
                 }
 
                 //
-                if (strlen(trim($updateArray['us_citizen'])) === 0 && strlen(trim($value['us_citizen'])) !== 0 ) {
+                if (strlen(trim($updateArray['us_citizen'])) === 0 && strlen(trim($value['us_citizen'])) !== 0) {
                     $updateArray['us_citizen'] = trim($value['us_citizen']);
                 }
 
                 //
-                if (strlen(trim($updateArray['visa_status'])) === 0 && strlen(trim($value['visa_status'])) !== 0 ) {
+                if (strlen(trim($updateArray['visa_status'])) === 0 && strlen(trim($value['visa_status'])) !== 0) {
                     $updateArray['visa_status'] = trim($value['visa_status']);
                 }
                 //
-                if (strlen(trim($updateArray['group_status'])) === 0 && strlen(trim($value['group_status'])) !== 0 ) {
+                if (strlen(trim($updateArray['group_status'])) === 0 && strlen(trim($value['group_status'])) !== 0) {
                     $updateArray['group_status'] = trim($value['group_status']);
                 }
                 //
-                if (strlen(trim($updateArray['veteran'])) === 0 && strlen(trim($value['veteran'])) !== 0 ) {
+                if (strlen(trim($updateArray['veteran'])) === 0 && strlen(trim($value['veteran'])) !== 0) {
                     $updateArray['veteran'] = trim($value['veteran']);
                 }
                 //
-                if (strlen(trim($updateArray['disability'])) === 0 && strlen(trim($value['disability'])) !== 0 ) {
+                if (strlen(trim($updateArray['disability'])) === 0 && strlen(trim($value['disability'])) !== 0) {
                     $updateArray['disability'] = trim($value['disability']);
                 }
                 //
-                if (strlen(trim($updateArray['gender'])) === 0 && strlen(trim($value['gender'])) !== 0 ) {
+                if (strlen(trim($updateArray['gender'])) === 0 && strlen(trim($value['gender'])) !== 0) {
                     $updateArray['gender'] = trim($value['gender']);
                 }
 
@@ -892,5 +892,16 @@ class Cron_common extends CI_Controller
 
         //
         exit('All done');
+    }
+
+    public function fixEmployeeType()
+    {
+        $this->db
+            ->where('employee_type is null', null, false)
+            ->or_where('employee_type = ""', '', false)
+            ->or_where('employee_type = ', '0', false)
+            ->update('users', [
+                'employee_type' => 'fulltime'
+            ]);
     }
 }
