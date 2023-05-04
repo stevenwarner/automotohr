@@ -5420,7 +5420,16 @@ class Onboarding extends CI_Controller
                 if ($user_type == 'applicant') {
 
                     $employee_status = $this->input->post('employee-status');
-                    $employee_type = $this->input->post('employee-type');
+               
+                    //
+                    if ($this->input->post('employee-type') == '' || $this->input->post('employee-type') == null || $this->input->post('employee-type') == '0') {
+                        $employee_type ='fulltime';
+                    }else{
+                        $employee_type = $this->input->post('employee-type');
+
+                    }
+
+
                     $onboarding_data = array();
                     $onboarding_data['company_sid'] = $company_sid;
                     $onboarding_data['employer_sid'] = $employer_sid;

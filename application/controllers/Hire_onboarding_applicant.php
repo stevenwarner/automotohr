@@ -224,6 +224,14 @@ class Hire_onboarding_applicant extends CI_Controller
         } else {
            $employee_type = $applicant_profile_info['employee_type']; 
         }
+
+        
+        //
+        if ($applicant_profile_info['employee_type'] == '' || $applicant_profile_info['employee_type'] == null || $applicant_profile_info['employee_type'] == '0') {
+            $employee_type ='fulltime';
+        }
+
+
         $employer_data['employee_type'] = $employee_type;
         //
         if (!empty($password)) {

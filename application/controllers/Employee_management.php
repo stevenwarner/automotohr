@@ -476,6 +476,12 @@ class Employee_management extends Public_Controller
                 }
 
 
+                //
+                if ($employee_job_type == '' || $employee_job_type == null || $employee_job_type == '0') {
+                    $employee_job_type = 'fulltime';
+                }
+
+
                 $user_information['gender'] =  $gender;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
@@ -1621,6 +1627,17 @@ class Employee_management extends Public_Controller
                     $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
 
 
+                    
+                    //
+                    if ($this->input->post('employee-type') == '' || $this->input->post('employee-type') == null || $this->input->post('employee-type')) {
+                        $employee_job_type = 'fulltime';
+                    } else {
+
+                        $employee_job_type = $this->input->post('employee-type');
+                    }
+
+
+
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
                         'last_name' => $this->input->post('last_name'),
@@ -1630,7 +1647,7 @@ class Employee_management extends Public_Controller
                         'Location_ZipCode' => $this->input->post('Location_ZipCode'),
                         'Location_Address' => $this->input->post('Location_Address'),
                         'employee_status' => $this->input->post('employee-status'),
-                        'employee_type' => $this->input->post('employee-type'),
+                        'employee_type' => $employee_job_type,
                         'PhoneNumber' => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber', true) : $this->input->post('PhoneNumber', true),
                         'profile_picture' => $pictures,
                         'video_type' => $video_source,
