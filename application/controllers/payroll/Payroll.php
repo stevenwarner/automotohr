@@ -79,6 +79,11 @@ class Payroll extends CI_Controller
         //
         $company_sid = $session['company_detail']['sid'];
         //
+        if (!checkTermsAccepted($company_sid)) {
+            $reload_location = 'payroll/service-terms';
+            redirect($reload_location, 'refresh');
+        }
+        //
         $this->data['company_sid'] = $company_sid;
 
         $this->load->model('Payroll_model', 'pm');
@@ -126,6 +131,11 @@ class Payroll extends CI_Controller
         //
         $company_sid = $session['company_detail']['sid'];
         //
+        if (!checkTermsAccepted($company_sid)) {
+            $reload_location = 'payroll/service-terms';
+            redirect($reload_location, 'refresh');
+        }
+        //
         $this->data['company_sid'] = $company_sid;
         //
         $this->load
@@ -151,6 +161,11 @@ class Payroll extends CI_Controller
         $session = $this->session->userdata('logged_in');
         //
         $company_sid = $session['company_detail']['sid'];
+        //
+        if (!checkTermsAccepted($company_sid)) {
+            $reload_location = 'payroll/service-terms';
+            redirect($reload_location, 'refresh');
+        }
         //
         $this->data['company_sid'] = $company_sid;
         //
@@ -230,6 +245,11 @@ class Payroll extends CI_Controller
         $session = $this->session->userdata('logged_in');
         //
         $company_sid = $session['company_detail']['sid'];
+        //
+        if (!checkTermsAccepted($company_sid)) {
+            $reload_location = 'payroll/service-terms';
+            redirect($reload_location, 'refresh');
+        }
         //
         $this->data['PageScripts'] = [
             'payroll/js/settings'
@@ -564,6 +584,11 @@ class Payroll extends CI_Controller
         $this->data['title'] = 'Payroll | Create';
         $this->data['load_view'] = 0;
         $this->data['hide_employer_section'] = 1;
+        //
+        if (!checkTermsAccepted($this->data['companyId'])) {
+            $reload_location = 'payroll/service-terms';
+            redirect($reload_location, 'refresh');
+        }
         // Get processed payrolls
         // Get the company pay periods
         $response = $this->PayPeriods($this->data['companyId']);
