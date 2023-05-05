@@ -353,7 +353,15 @@ class employers extends Admin_Controller
             $data['access_level'] = $this->input->post('security_access_level');
             $data['access_level_plus'] = $this->input->post('access_level_plus');
             $data['complynet_status'] = $this->input->post('complynet_status');
-            $data['employee_type'] = $this->input->post('employee_type');
+
+
+            if ($this->input->post('employee_type') == '' || $this->input->post('employee_type') == null || $this->input->post('employee_type') == '0') {
+                $data['employee_type'] = 'fulltime';
+            } else {
+
+                $data['employee_type'] = $this->input->post('employee_type');
+            }
+
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
 
@@ -369,7 +377,7 @@ class employers extends Admin_Controller
 
             $data['union_name'] = $this->input->post('union_name');
             $data['union_member'] = $this->input->post('union_member');
-            
+
             if ($data['union_member'] == 0) {
                 $data['union_name'] = '';
             }
@@ -378,7 +386,7 @@ class employers extends Admin_Controller
                 $data['languages_speak'] = implode(',', $languages_speak);
             }
 
-            
+
             if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
                 $templetJobTitleData = $this->input->post('temppate_job_title');
                 $templetJobTitleDataArray = explode('#', $templetJobTitleData);
@@ -553,7 +561,16 @@ class employers extends Admin_Controller
                 $action = $this->input->post('action');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
-                $employee_type = $this->input->post('employee_type');
+
+                if ($this->input->post('employee_type') == '' || $this->input->post('employee_type') == null || $this->input->post('employee_type') == '0') {
+                    $employee_type = 'fulltime';
+                   
+                } else {
+
+                    $employee_type = $this->input->post('employee_type');
+                }
+
+
                 $salt = generateRandomString(48);
 
 

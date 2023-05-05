@@ -576,6 +576,20 @@ class Hire_onboarding_applicant extends CI_Controller
             $update_flag = 1;
         }
 
+
+         //
+         if ((empty($employee_profile_info['employee_type']) || $employee_profile_info['employee_type'] == NULL || $employee_profile_info['employee_type'] == '0' ) && (!empty($applicant_profile_info['employee_type']) && $applicant_profile_info['employee_type']!=null && $applicant_profile_info['employee_type']!='0' )) {
+            $employer_data['employee_type'] = $applicant_profile_info['employee_type'];
+            $update_flag = 1;
+        }
+
+
+        if ((empty($employee_profile_info['employee_type']) || $employee_profile_info['employee_type'] == NULL || $employee_profile_info['employee_type'] == '0' ) && (empty($applicant_profile_info['employee_type']) || $applicant_profile_info['employee_type']==null || $applicant_profile_info['employee_type']=='0' )) {
+            $employer_data['employee_type'] = 'fulltime';
+            $update_flag = 1;
+        }
+
+
         //
         $emp_extra_unserial = unserialize($employee_profile_info['extra_info']);
         $emp_extra_keys = array();

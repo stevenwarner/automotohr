@@ -481,7 +481,6 @@ class Employee_management extends Public_Controller
                     $employee_job_type = 'fulltime';
                 }
 
-
                 $user_information['gender'] =  $gender;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
