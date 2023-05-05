@@ -239,7 +239,6 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <label>Employment Type:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="employee-type" id="employee-type">
-                                                            <option value="0">Select Employment Type</option>
                                                             <?php if (!empty($employment_types)) { ?>
                                                                 <?php foreach ($employment_types as $key => $employment_type) { ?>
                                                                     <option value="<?= $key ?>" <?php if (strtolower($employer['employee_type']) == $key) {
