@@ -16489,3 +16489,21 @@ if (!function_exists('getActiveEmployees')) {
         return $CI->db->get_where('users', $where)->result_array();
     }
 }
+
+//
+if (!function_exists('checkTermsAccepted')) {
+    function checkTermsAccepted($company_sid)
+    {
+        $CI = &get_instance();
+
+        $CI->db->where('terms_accepted', 1);
+        $CI->db->where('company_sid ', $company_sid);
+        //
+        if ($CI->db->count_all_results('payroll_companies')) {
+            return true;
+        }
+
+        return false;
+    }
+}
+

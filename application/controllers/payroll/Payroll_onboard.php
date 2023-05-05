@@ -454,6 +454,13 @@ class Payroll_onboard extends CI_Controller
         $primaryAdmin = $this->pm->GetPrimaryAdmin($companyId);
         // Get company details
         $companyDetails = $this->scm->GetCompanyDetails($companyId, 'CompanyName, ssn as ein, on_payroll');
+        //
+        // Check if ENI is already used
+        if ($this->db->where('gusto_company_uid', $companyDetails['ein'])->count_all_results('payroll_companies')) {
+            // return if EIN already in used
+            return SendResponse(200, ['errors' => ['EIN already in used.']]);
+        }
+
         // Make request array
         $request = [
             'user' => [],

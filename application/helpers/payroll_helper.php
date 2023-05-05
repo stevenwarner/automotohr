@@ -1286,6 +1286,7 @@ if (!function_exists('UpdateEmployeePaymentMethod')) {
         return $response;
     }
 }
+
 //
 if (!function_exists('MarkEmployeeAsOnboarded')) {
     function MarkEmployeeAsOnboarded($employeeUUID, $company)
@@ -3285,6 +3286,96 @@ if (!function_exists('createEmployeeBankDetail')) {
         //
         return $response;
     }
+}
+
+// Employee related calls
+if (!function_exists('getOnboardingEmployeePaymentMethod')) {
+    function getOnboardingEmployeePaymentMethod($company, $payroll_employee_uuid, $headers=[])
+    { 
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'accept: application/json',
+            'content-type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('GetEmployeePaymentMethod', $payroll_employee_uuid),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getOnboardingEmployeePaymentMethod($company, $payroll_employee_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('updateOnboardingEmployeePaymentMethod')) {
+    function updateOnboardingEmployeePaymentMethod($request, $company, $payroll_employee_uuid, $headers=[])
+    {
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'accept: application/json',
+            'content-type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $url = PayrollURL('UpdateEmployeePaymentMethod', $payroll_employee_uuid);
+        //
+        $response =  MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateOnboardingEmployeePaymentMethod($request, $company, $payroll_employee_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;    }
 }
 
 // Employee related calls

@@ -929,8 +929,6 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
-
-
                     </div>
                 </div>
             </div>

@@ -868,8 +868,11 @@ class Gusto_payroll_model extends CI_Model
             // // Create employee job
             // $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
             // //
-            // // Create employee payment method 
-            // $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);   
+            // // Create employee bank detail 
+            // $this->syncCompanyEmployeeBankDetail($employeeInfo, $gustoEmployeeInfo, $companyDetails); 
+            // // 
+            // // Update employee payment Method 
+            $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);   
             // //
             // // Create employee federal Tax 
             // $this->syncCompanyEmployeeFederalTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
@@ -877,8 +880,8 @@ class Gusto_payroll_model extends CI_Model
             // // Create employee State Tax 
             // $this->syncCompanyEmployeeStateTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
             //
-            // Create employee State Tax 
-            $this->updateCompanyEmployeeOnboardingStatus($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            // // Update employee status
+            // $this->updateCompanyEmployeeOnboardingStatus($employeeInfo, $gustoEmployeeInfo, $companyDetails);
         }
         //
         return true;
@@ -917,7 +920,8 @@ class Gusto_payroll_model extends CI_Model
                 parent_sid,
                 registration_date,
                 joined_at,
-                job_title
+                job_title,
+                payment_method
             ')
             ->where('sid', $employeeId)
             ->get('users')
@@ -1319,7 +1323,7 @@ class Gusto_payroll_model extends CI_Model
      * @param array $companyDetails
      * @return bool
      */
-    public function syncCompanyEmployeePaymentMethod (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+    public function syncCompanyEmployeeBankDetail (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {die("i am here");
         //
         $mainTable = 'payroll_employee_bank_accounts';
         //
@@ -1357,7 +1361,6 @@ class Gusto_payroll_model extends CI_Model
         return false;
     }
 
-    
     /**
      * Get employee bank account details
      *
@@ -1429,6 +1432,106 @@ class Gusto_payroll_model extends CI_Model
         $response['data'] = $employeeBankDetails;
         return $response;
 
+    }
+
+    /**
+     * Update employee payment method
+     *
+     * @param array $employeeProfile
+     * @param array $gustoEmployeeInfo
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyEmployeePaymentMethod (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        //
+        $paymentMethod = $employeeProfile['payment_method'] == 'direct_deposit' ? 'Direct Deposit' : 'Check';
+        $mainTable = 'payroll_employee_payment_method';
+        //
+        $whereArray = [
+            'employee_sid' => $employeeProfile['sid']
+        ];
+        //
+        if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+            //
+            if ($employeeProfile['payment_method']) {
+                //
+                $response = getOnboardingEmployeePaymentMethod($companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
+                    'X-Gusto-API-Version: 2023-03-01'
+                ]);
+                //
+                if (!isset($response['errors']) && $response) {
+                    //
+                    $dataArray['employee_sid'] = $employeeProfile['sid'];
+                    $dataArray['company_sid'] = $employeeProfile['parent_sid'];
+                    $dataArray['payment_method'] = $response['type'];
+                    $dataArray['split_method'] = $response['split_by'];
+                    $dataArray['version'] = $response['version'];
+                    $dataArray['splits'] = json_encode($response['splits']);
+                    $dataArray['created_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                    //
+                    if ($response['type'] != $paymentMethod) {
+                        $updatePaymentMethod = [];
+                        $updatePaymentMethod['version'] = $response['version'];
+                        $updatePaymentMethod['type'] = $paymentMethod;
+                        //
+                        if($updatePaymentMethod['type'] == 'Direct Deposit'){
+                            $updatePaymentMethod['split_by'] = 'Percentage';
+                            $updatePaymentMethod['splits'] = json_decode($response['splits']);
+                        }
+                        //
+                        $this->updateEmployeePaymentMethod($updatePaymentMethod, $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], $whereArray, $mainTable);
+                        //
+                    }
+                    //
+                    return true;
+                }    
+            }
+        } else {
+            $employeePaymentMethod = $this->db
+                ->select('
+                    sid,
+                    payment_method,
+                    split_method,
+                    splits,
+                    version
+                ')
+                ->where($whereArray)
+                ->get($mainTable)
+                ->row_array();
+            //
+            if ($employeePaymentMethod['payment_method'] != $paymentMethod) {
+                $updatePaymentMethod = [];
+                $updatePaymentMethod['version'] = $employeePaymentMethod['version'];
+                $updatePaymentMethod['type'] = $paymentMethod;
+                //
+                if($updatePaymentMethod['type'] == 'Direct Deposit'){
+                    $updatePaymentMethod['split_by'] = 'Percentage';
+                    $updatePaymentMethod['splits'] = json_decode($employeePaymentMethod['splits']);
+                }
+                //
+                $this->updateEmployeePaymentMethod($updatePaymentMethod, $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], $whereArray, $mainTable);
+            }    
+        }
+        //
+        return false;
+    }
+
+    private function updateEmployeePaymentMethod ($data, $companyDetails, $employeeUUID, $whereArray, $mainTable) {
+        //
+        $response = updateOnboardingEmployeePaymentMethod($data, $companyDetails, $employeeUUID, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        $data_to_update = [];
+        $data_to_update['version'] = $response['060bf2d587991d8f090a1309b285291c'];
+        $data_to_update['payment_method'] = $response['type'];
+        $data_to_update['split_method'] = $response['split_by'];
+        $data_to_update['splits'] = $response['splits'];
+        $dataArray['updated_at'] = getSystemDate();
+        //
+        $this->db->where($whereArray)->update($mainTable, $data_to_update);
     }
 
     public function syncCompanyEmployeeFederalTax (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {

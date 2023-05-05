@@ -915,6 +915,12 @@ class Payroll extends CI_Controller
                 'CompanyName'
             ]
         );
+        //
+        // Check if ENI is already used
+        if ($this->db->where('gusto_company_uid', $companyDetails['EIN'])->count_all_results('payroll_companies')) {
+            // return if EIN already in used
+            return SendResponse(200, ['errors' => ['EIN already in used.']]);
+        }
         // Request
         $request =  [];
         $request['user'] =  $this->userDetails;

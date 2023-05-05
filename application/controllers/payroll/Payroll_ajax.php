@@ -161,6 +161,12 @@ class Payroll_ajax extends CI_Controller
             if ($companyDetails['on_payroll'] == '1') {
                 return SendResponse(200, ['errors' => ['Company already in use for payroll']]);
             }
+            //
+            // Check if ENI is already used
+            if ($this->db->where('gusto_company_uid', $companyDetails['ein'])->count_all_results('payroll_companies')) {
+                // return if EIN already in used
+                return SendResponse(200, ['errors' => ['EIN already in used.']]);
+            }
             // Let's onboard the company
             // Make request array
             $request = [
