@@ -506,6 +506,62 @@ $assignIdObj = $confidential_sids;
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
+
+
+                                                                                <?php if ($active_group['w4'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">W4 Fillable</td>
+                                                                                            <td class="col-xs-2" colspan="5">Verification </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+
+                                                                                    <?php if ($active_group['w9'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">W9 Fillable</td>
+                                                                                            <td class="col-xs-2" colspan="5">Verification </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($active_group['i9'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">I9 Fillable</td>
+                                                                                            <td class="col-xs-2" colspan="5">Verification </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($active_group['direct_deposit'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">Direct Deposit Information</td>
+                                                                                            <td class="col-xs-2" colspan="5">General </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+
+                                                                                    <?php if ($active_group['drivers_license'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">Drivers License Information</td>
+                                                                                            <td class="col-xs-2" colspan="5">General </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($active_group['occupational_license'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">Occupational License Information</td>
+                                                                                            <td class="col-xs-2" colspan="5">General </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($active_group['emergency_contacts'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">Emergency Contacts</td>
+                                                                                            <td class="col-xs-2" colspan="5">General </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+
+                                                                                    <?php if ($active_group['dependents'] == 1) { ?>
+                                                                                        <tr class="js-search-row">
+                                                                                            <td class="col-xs-8">Dependents</td>
+                                                                                            <td class="col-xs-2" colspan="5">General </td>
+                                                                                        </tr>
+                                                                                    <?php } ?>
+
+
+
                                                                                     <?php if ($active_group['documents_count'] > 0) { ?>
                                                                                         <?php foreach ($active_group['documents'] as $document) { ?>
                                                                                             <tr class="js-search-row">
@@ -605,6 +661,8 @@ $assignIdObj = $confidential_sids;
                                                                                             <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
                                                                                         </tr>
                                                                                     <?php } ?>
+
+                                                                                   
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
@@ -5727,8 +5785,8 @@ if ($user_type == 'employee') {
 
                 //
                 if (dn.trim() == 'EEOC FORM') {
-                    if (<?= $eeo_form_info['status']??0; ?> != 1) {
-                       return;
+                    if (<?= $eeo_form_info['status'] ?? 0; ?> != 1) {
+                        return;
                     }
                 }
 

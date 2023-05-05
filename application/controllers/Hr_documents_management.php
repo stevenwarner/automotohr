@@ -3164,7 +3164,6 @@ class Hr_documents_management extends Public_Controller
             }
 
             $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid, 1);
-
             if (!empty($groups)) {
                 foreach ($groups as $key => $group) {
                     $document_status = $this->hr_documents_management_model->is_document_assign_2_group($group['sid']);
@@ -3174,7 +3173,35 @@ class Hr_documents_management extends Public_Controller
                     $group_ids[] = $group_sid;
                     $group_documents = $this->hr_documents_management_model->get_all_documents_in_group($group_sid, 0, $pp_flag);
 
+                  $verificationGeneralDocCount = 0;
                     if ($group_status) {
+
+                        if ($group['w4'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+                        if ($group['w9'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+                        if ($group['i9'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+                        if ($group['direct_deposit'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+                        if ($group['drivers_license'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+                        if ($group['occupational_license'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+                        if ($group['emergency_contacts'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+                        if ($group['dependents'] == 1) {
+                            $verificationGeneralDocCount = $verificationGeneralDocCount + 1;
+                        }
+
+
                         $active_groups[] = array(
                             'sid' => $group_sid,
                             'name' => $group['name'],
@@ -3190,7 +3217,7 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
+                            'documents_count' => count($group_documents) + $verificationGeneralDocCount,
                             'documents' => $group_documents
                         );
                     } else {
@@ -3209,7 +3236,7 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
+                            'documents_count' => count($group_documents) + $verificationGeneralDocCount,
                             'documents' => $group_documents
                         );
                     }
