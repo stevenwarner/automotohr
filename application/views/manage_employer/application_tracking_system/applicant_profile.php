@@ -77,6 +77,18 @@ if ($_ssv) {
                                     <?php } ?>
 
                                     <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
+
+
+                                    <?php if ($onboarding_applicant_template_code['adp_onboarding_template_code'] == '' || $onboarding_applicant_template_code['adp_onboarding_template_code'] == null ||  $adp_company_code['adp_company_location']=='' ||  $adp_company_code['adp_company_location']==null)  { ?>
+                                        <p class="" style="padding:18px; color: red;">
+                                            <strong>
+                                                This Applicant have missing the  <?php if ($adp_company_code['adp_company_location'] == '' || $adp_company_code['adp_company_location'] == null ) { echo "Company Code ,"; }?> <?php if ($onboarding_applicant_template_code['adp_onboarding_template_code'] == '' || $onboarding_applicant_template_code['adp_onboarding_template_code'] == null ) { echo "Template Code"; }?>  and unable to move to ADP 
+                                            </strong>
+                                        </p>
+                                    <?php } ?>
+
+
+
                                     <?php if (!$send_notification) { ?>
                                         <p class="" style="padding:18px; color: red;">
                                             <strong>
@@ -1878,14 +1890,14 @@ if ($_ssv) {
         $('.eventdate').datepicker({
             dateFormat: 'mm-dd-yy',
             changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $('#eventdate').datepicker({
             dateFormat: 'mm-dd-yy',
             changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $("#eventdate").datepicker("setDate", new Date());
         $('.selected').click(function() {

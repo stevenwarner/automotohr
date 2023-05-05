@@ -3228,4 +3228,16 @@ class Onboarding_model extends CI_Model
         $this->db->where('sid', $user_sid);
         $this->db->update('portal_job_applications', $data);
     }
+
+//
+   function get_adp_company_code($company_sid)
+    {
+        $this->db->select('adp_company_location');
+        $this->db->where('user_sid', $company_sid);
+        $record_obj = $this->db->get('portal_employer');
+        $record_arr = $record_obj->row_array();
+        return $record_arr;
+    }
+
+
 }

@@ -8,6 +8,7 @@ class Hire_onboarding_applicant extends CI_Controller
 
         $this->load->model('hire_onboarding_applicant_model');
         $this->load->model('onboarding_model');
+        
     }
 
     /**
@@ -85,8 +86,14 @@ class Hire_onboarding_applicant extends CI_Controller
                     $applicantArray['country_name'] = $countryData['country_name'];
                     $applicantArray['country_code'] = $countryData['country_code'];
 
+                    $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_sid);
+                    $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($app_id);
 
-                    $this->adp_model->onboardApplicantToAdp($applicantArray);
+                    //
+                    if($data['onboarding_applicant_template_code']['adp_onboarding_template_code']!='' && $data['onboarding_applicant_template_code']['adp_onboarding_template_code']!=null && $data['adp_company_code']['adp_company_location']!='' && $data['adp_company_code']['adp_company_location']!=null ){
+                        $this->adp_model->onboardApplicantToAdp($applicantArray);
+                    }
+
 
                     if ($status == 'success') {
                         //                    if(1){

@@ -4930,6 +4930,7 @@ class Onboarding extends CI_Controller
                 $data['onboarding_template_code'] = $this->onboarding_model->get_onboarding_template_code();
 
                 $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($user_sid);
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_sid);
 
                 //
                 $this->load->view('main/header', $data);

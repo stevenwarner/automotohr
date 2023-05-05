@@ -1303,7 +1303,7 @@
 
 
                                                     <article class="information-box">
-                                                        <header class="hr-box-header">ADP company location <span class="pull-right">
+                                                        <header class="hr-box-header">ADP company code <span class="pull-right">
                                                                 <button class="btn btn-success jsModifyadpCompanyLocation">
                                                                     <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update
                                                                 </button>
@@ -1629,13 +1629,13 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">Update ADP Company Location </h4>
+                        <h4 class="modal-title">Update ADP Company Code </h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                <label>ADP Company Location</label>
-                                <input type="text" class="form-control jsLocationName" placeholder="" />
+                                <label>ADP Company Code</label>
+                                <input type="text" class="form-control jsLocationName" placeholder="1111" />
                             </div>
                         </div>
 
@@ -2171,8 +2171,17 @@
             o.adpCompanyLocation = $('#jsadpCompanyLocationModal .jsLocationName').val().trim();
             o.companyId = <?= $company_sid; ?>;
             
+
+            if (o.adpCompanyLocation && !validateNumber(o.adpCompanyLocation)) {
+                    return alertify.alert(
+                        'Error!',
+                        'Code is not valid. Must be four digits numeric '
+                    );
+                }
+
+
             //
-            $(this).text('Updating ADP Company Location...');
+            $(this).text('Updating ADP Company Code...');
             //
            $.post(
                 "<?= base_url("manage_admin/companies/update_adp_company_location"); ?>",
@@ -2180,11 +2189,19 @@
             ).done(function(resp) {
                 alertify.alert(
                     "Success!",
-                    "You have successfully updated ADP Company Location.",
+                    "You have successfully updated ADP Company Code.",
                     function() {
                         window.location.reload();
                     }
                 );
             });
         });
+
+
+        function validateNumber(adpcompanycode) {
+                const re = /^[0-9]{4,4}$/;
+                return re.test(String(adpcompanycode).toLowerCase());
+            }
+
+
     </script>

@@ -1386,8 +1386,8 @@ if ($user_type == 'applicant') {
                                                                                             <?php } ?>
                                                                                         </td>
                                                                                         <td class="col-lg-6 text-center">
-                                                                                           
-                                                                                        <!-- </form2>-->
+
+                                                                                            <!-- </form2>-->
 
                                                                                             <?php if (!empty($eeo_form_info)) { ?>
                                                                                                 <?php if ($eeo_form_info['status']) { ?>
@@ -1751,17 +1751,17 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
 
-                                        
+
                                             <div class="row">
 
-                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                     <?php $field_id = 'adp_onboarding_template_code'; ?>
                                                     <?php echo form_label('ADP Template Code', $field_id); ?>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>">
-                                                        <option value='' >Please select a code</option>
-   
-                                                        <?php foreach ($onboarding_template_code as $codeRow) { ?>
+                                                            <option value=''>Please select a code</option>
+
+                                                            <?php foreach ($onboarding_template_code as $codeRow) { ?>
                                                                 <option <?php echo $codeRow['code'] == $onboarding_applicant_template_code['adp_onboarding_template_code'] ? 'selected="selected"' : ''; ?> value="<?php echo $codeRow['code']; ?>">
                                                                     <?php echo $codeRow['code']; ?>
                                                                 </option>
@@ -2027,8 +2027,8 @@ if ($user_type == 'applicant') {
                                             </div>
                                         </div>-->
 
-                                        
-                                   </form>
+
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -3764,48 +3764,142 @@ if ($user_type == 'applicant') {
         });
     }
 
+
+
     function fun_hire_applicant() {
-        alertify.confirm(
-            'Are you Sure?',
-            'By selecting this option the Candidate will skip the onboarding process. Are you sure you want to directly hire this Candidate?',
-            function() {
-                var hiring_url = "<?php echo base_url('hire_onboarding_applicant/hire_applicant_manually'); ?>";
+        <?php if ($adp_company_code['adp_company_location'] != '' || $adp_company_code['adp_company_location'] != null || $onboarding_applicant_template_code['adp_onboarding_template_code'] != ''  || $onboarding_applicant_template_code['adp_onboarding_template_code'] != null) { ?>
+            adpTemplateCodeCheck();
+        <?php } else { ?>
 
-                $.ajax({
-                    type: 'POST',
-                    data: {
-                        applicant_sid: '<?php echo isset($user_sid) && !empty($user_sid) ? $user_sid : ""; ?>',
-                        applicant_job_sid: '<?php echo isset($job_list_sid) && !empty($job_list_sid) ? $job_list_sid : ""; ?>',
-                        company_sid: '<?php echo isset($company_sid) && !empty($company_sid) ? $company_sid : ""; ?>'
-                    },
-                    url: hiring_url,
-                    success: function(data) {
-                        if (data == 'success') {
-                            alertify.success('Applicant is successfully hired!');
-                            setTimeout(function() {
-                                window.location.href = '<?php echo base_url("application_tracking_system/active/all/all/all/all/all/all/all/all/all"); ?>';
-                            }, 1000);
-                        } else if (data == 'failure_e') {
-                            alertify.success('Error! The E-Mail address of the applicant is already registered at your company as employee!');
-                        } else if (data == 'failure_f') {
-                            alertify.success('Could not found applicant data, Please try again!');
-                        } else if (data == 'failure_i') {
-                            alertify.success('Could not move applicant to employee due to database error, Please try again!');
-                        } else if (data == 'error') {
-                            alertify.success('Could not found applicant information, Please try again!');
+            alertify.confirm(
+                'Are you Sure?',
+                'By selecting this option the Candidate will skip the onboarding process. Are you sure you want to directly hire this Candidate?',
+                function() {
+                    var hiring_url = "<?php echo base_url('hire_onboarding_applicant/hire_applicant_manually'); ?>";
+
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            applicant_sid: '<?php echo isset($user_sid) && !empty($user_sid) ? $user_sid : ""; ?>',
+                            applicant_job_sid: '<?php echo isset($job_list_sid) && !empty($job_list_sid) ? $job_list_sid : ""; ?>',
+                            company_sid: '<?php echo isset($company_sid) && !empty($company_sid) ? $company_sid : ""; ?>'
+                        },
+                        url: hiring_url,
+                        success: function(data) {
+                            if (data == 'success') {
+                                alertify.success('Applicant is successfully hired!');
+                                setTimeout(function() {
+                                    window.location.href = '<?php echo base_url("application_tracking_system/active/all/all/all/all/all/all/all/all/all"); ?>';
+                                }, 1000);
+                            } else if (data == 'failure_e') {
+                                alertify.success('Error! The E-Mail address of the applicant is already registered at your company as employee!');
+                            } else if (data == 'failure_f') {
+                                alertify.success('Could not found applicant data, Please try again!');
+                            } else if (data == 'failure_i') {
+                                alertify.success('Could not move applicant to employee due to database error, Please try again!');
+                            } else if (data == 'error') {
+                                alertify.success('Could not found applicant information, Please try again!');
+                            }
+                        },
+                        error: function() {
+
                         }
-                    },
-                    error: function() {
+                    });
+                },
+                function() {
+                    alertify.error('Canceled!');
+                }).set('labels', {
+                ok: 'YES!',
+                cancel: 'NO'
+            });
 
-                    }
-                });
+        <?php } ?>
+    }
+
+
+
+
+
+
+    function adpTemplateCodeCheck() {
+
+
+        <?php
+        $missingText = '';
+        if ($adp_company_code['adp_company_location'] == '' || $adp_company_code['adp_company_location'] == null) {
+            $missingText = 'Company Code ,';
+        } ?> <?php if ($onboarding_applicant_template_code['adp_onboarding_template_code'] == '' || $onboarding_applicant_template_code['adp_onboarding_template_code'] == null) {
+            $missingText = $missingText . 'Template Code';
+        } ?>
+
+
+        alertify.confirm(
+            "Are you Sure?",
+            "This Applicant have missing the  <?php echo  $missingText; ?>  and unable to move to ADP ",
+
+            function() {
+
+                setTimeout(() => {
+
+                    alertify.confirm(
+                        'Are you Sure?',
+                        'By selecting this option the Candidate will skip the onboarding process. Are you sure you want to directly hire this Candidate?',
+                        function() {
+
+                            var hiring_url = "<?php echo base_url('hire_onboarding_applicant/hire_applicant_manually'); ?>";
+                            $.ajax({
+                                type: 'POST',
+                                data: {
+                                    applicant_sid: '<?php echo isset($applicant_info['sid']) && !empty($applicant_info['sid']) ? $applicant_info['sid'] : ""; ?>',
+                                    applicant_job_sid: '<?php echo isset($job_list_sid) && !empty($job_list_sid) ? $job_list_sid : ""; ?>',
+                                    company_sid: '<?php echo isset($company_sid) && !empty($company_sid) ? $company_sid : ""; ?>'
+                                },
+                                url: hiring_url,
+                                success: function(data) {
+                                    data = JSON.parse(data);
+                                    if (data.status == 'success') {
+                                        alertify.alert('Applicant is successfully hired!');
+                                        window.location.href = '<?php echo base_url("employee_profile"); ?>/' + data.adid;
+                                        // setTimeout(function(){
+                                        //     window.location.href = '<?php //echo base_url("application_tracking_system/active/all/all/all/all/all/all/all/all/all"); 
+                                                                        ?>';
+                                        // }, 1000);
+                                    } else if (data.status == 'failure_e') {
+                                        alertify.alert('Error! The E-Mail address of the applicant is already registered at your company as employee!');
+                                    } else if (data.status == 'failure_f') {
+                                        alertify.alert('Could not found applicant data, Please try again!');
+                                    } else if (data.status == 'failure_i') {
+                                        alertify.alert('Could not move applicant to employee due to database error, Please try again!');
+                                    } else if (data.status == 'error') {
+                                        alertify.alert('Could not found applicant information, Please try again!');
+                                    }
+                                },
+                                error: function() {
+
+                                }
+                            });
+                        },
+                        function() {
+                            alertify.error('Cancelled!');
+                        }).set('labels', {
+                        ok: 'YES!',
+                        cancel: 'NO'
+                    });
+
+
+                }, 500);
+
+
             },
             function() {
-                alertify.error('Canceled!');
+                alertify.error('Cancelled!');
             }).set('labels', {
             ok: 'YES!',
             cancel: 'NO'
         });
+
+
+
     }
 </script>
 <style>
