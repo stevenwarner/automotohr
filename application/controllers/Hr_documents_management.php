@@ -3173,6 +3173,8 @@ class Hr_documents_management extends Public_Controller
                     $group_sid = $group['sid'];
                     $group_ids[] = $group_sid;
                     $group_documents = $this->hr_documents_management_model->get_all_documents_in_group($group_sid, 0, $pp_flag);
+                    $otherDocuments = getGroupOtherDocuments($group);
+                    $otherDocumentCount = count($otherDocuments);
 
                     if ($group_status) {
                         $active_groups[] = array(
@@ -3190,8 +3192,9 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
-                            'documents' => $group_documents
+                            'documents_count' => count($group_documents) + $otherDocumentCount,
+                            'documents' => $group_documents,
+                            'other_documents' => $otherDocuments
                         );
                     } else {
                         $in_active_groups[] = array(
@@ -3209,8 +3212,9 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
-                            'documents' => $group_documents
+                            'documents_count' => count($group_documents) + $otherDocumentCount,
+                            'documents' => $group_documents,
+                            'other_documents' => $otherDocuments
                         );
                     }
                 }
