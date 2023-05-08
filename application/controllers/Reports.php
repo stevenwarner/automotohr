@@ -199,8 +199,14 @@ class Reports extends Public_Controller
             $data['applicants'] = $applicants;
             $data['applicants_count'] = $total_records;
 
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             // ** export file sheet ** //
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
+
+
                 $myRecords = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, false, true, null, null, $source);
                 if (isset($myRecords) && sizeof($myRecords) > 0) {
                     header('Content-Type: text/csv; charset=utf-8');
@@ -253,6 +259,9 @@ class Reports extends Public_Controller
                     $cols[] = 'Questionnaire Score';
                     $cols[] = 'Reviews Score';
                     $cols[] = 'Interview Scores';
+
+                    fputcsv($output, array($companyinfo['company_name']));
+
                     fputcsv($output, $cols);
 
                     foreach ($myRecords as $applicant) {
@@ -403,10 +412,18 @@ class Reports extends Public_Controller
             $data['jobs'] = $jobs;
             $data['chart_data'] = json_encode($chart_data);
 
+
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 header('Content-Type: text/csv; charset=utf-8');
                 header('Content-Disposition: attachment; filename=data.csv');
                 $output = fopen('php://output', 'w');
+
+                //
+                fputcsv($output, array($companyinfo['company_name']), '', '', '');
 
                 fputcsv($output, array('Job Title', 'Filled Date'));
 
@@ -556,6 +573,11 @@ class Reports extends Public_Controller
             $data['applicants'] = $applicants;
             $data['is_hired_report'] = false;
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             //** excel sheet export code **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 $applicants = $this->reports_model->GetAllApplicantsBetweenPeriod($company_sid, $start_date, $end_date, $keyword, 0, $job_sid, $applicant_type, $applicant_status, false);
@@ -563,6 +585,9 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+
+                    fputcsv($output, array($companyinfo['company_name'], '', ''));
 
                     if (isset($is_hired_report) && $is_hired_report == true) {
                         fputcsv($output, array('Job Title', 'Applicant Name', 'Hired On'));
@@ -659,11 +684,20 @@ class Reports extends Public_Controller
 
             $data['jobs'] = $jobs;
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 if (isset($jobs) && sizeof($jobs) > 0) {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'], '', '', ''));
+
+
                     fputcsv($output, array('Job Title', 'Job Date', 'Applicants', 'Average Days To Fill'));
 
                     foreach ($jobs as $job) {
@@ -748,12 +782,21 @@ class Reports extends Public_Controller
 
             $data['jobs'] = $jobs;
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 if (isset($jobs) && sizeof($jobs) > 0) {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'], '', '', ''));
+
+
                     fputcsv($output, array('Job Title', 'Job Date', 'Applicants', 'Average Days To Hire'));
 
                     foreach ($jobs as $job) {
@@ -798,6 +841,9 @@ class Reports extends Public_Controller
             $data['title'] = 'Advanced Hr Reports - Active New Hire Categories';
             $categories = $this->reports_model->GetAllJobCategoriesWhereApplicantsAreHired($company_sid);
             $data['categories'] = $categories;
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
 
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
@@ -806,6 +852,9 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'], ''));
+
 
                     fputcsv($output, array('Category', 'Hire Count'));
 
@@ -949,6 +998,11 @@ class Reports extends Public_Controller
             $data['applicants'] = $applicants;
             $data['is_hired_report'] = true;
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 $applicants = $this->reports_model->GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false);
@@ -958,6 +1012,8 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=New Hires data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'], '', ''));
 
                     if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {
                         fputcsv($output, array('Job Title', 'Applicant Name', 'Hired On'));
@@ -1032,6 +1088,11 @@ class Reports extends Public_Controller
             $data['is_hired_report'] = true;
             $data['keyword'] = $keyword;
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 if (isset($applicants) && sizeof($applicants) > 0) {
@@ -1039,6 +1100,9 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'], '', ''));
+
 
                     if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {
                         fputcsv($output, array('Job Title', 'Applicant Name', 'Hired On'));
@@ -1083,6 +1147,7 @@ class Reports extends Public_Controller
 
     public function generate_job_views_applicants_report()
     {
+
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1091,13 +1156,22 @@ class Reports extends Public_Controller
             $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'my_settings', 'reports');
 
+            if (isset($_POST['job_status'])) {
+                $jobStatus = $_POST['job_status'];
+            } else {
+                $jobStatus = 'all';
+            }
+
+
             $company_sid = $data['session']['company_detail']['sid'];
             $employer_sid = $data['session']['employer_detail']['sid'];
             $data['title'] = 'Job Views and Hires';
-            $all_jobs = $this->reports_model->get_all_jobs_views_applicants_count($company_sid);
+            $all_jobs = $this->reports_model->get_all_jobs_views_applicants_count_filter($company_sid, $jobStatus);
             $data['all_jobs'] = $all_jobs;
             $total_views = 0;
             $total_applicants = 0;
+
+            $data['jobstatus'] = $jobStatus;
 
             foreach ($all_jobs as $job) {
                 $total_views += intval($job['views']);
@@ -1107,6 +1181,11 @@ class Reports extends Public_Controller
             $data['total_views'] = $total_views;
             $data['total_applicants'] = $total_applicants;
 
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
+
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 if (isset($all_jobs) && sizeof($all_jobs) > 0) {
@@ -1114,6 +1193,9 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+
+                    fputcsv($output, array($companyinfo['company_name'], '', '', '', '', ''));
 
                     fputcsv($output, array('Job Title', 'Created Date', 'Deactivation Date', 'Status', 'Views', 'Applicants'));
 
@@ -1223,6 +1305,11 @@ class Reports extends Public_Controller
             }
 
             $data['users'] = $users;
+
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
             //** **//
 
             /** export excel sheet * */
@@ -1232,6 +1319,9 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'], ''));
+
 
                     foreach ($users as $user => $references) {
                         fputcsv($output, array($user, ucwords($references[0]['users_type'])));
@@ -1391,6 +1481,12 @@ class Reports extends Public_Controller
 
             $company_statuses = $this->reports_model->get_company_statuses($company_sid);
             $data['applicant_statuses'] = $company_statuses;
+
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             // **** //
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
@@ -1401,6 +1497,9 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'], '', '', '', ''));
+
 
                     fputcsv($output, array('Application Date', 'Applicant Name', 'Job Title', 'Email', 'Status'));
 
@@ -1468,6 +1567,12 @@ class Reports extends Public_Controller
             $data['startdate'] = date('m-d-Y', strtotime($start_date));
             $data['enddate'] = date('m-d-Y', strtotime($end_date));
             $data['keyword'] = $keyword;
+
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             // **** //
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
@@ -1476,6 +1581,9 @@ class Reports extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'],'','',''));
+
 
                     fputcsv($output, array('Offer Date', 'Job Title', 'Applicant Name', 'Email', 'Employee Type'));
 
@@ -1746,12 +1854,18 @@ class Reports extends Public_Controller
 
             $data['companies_applicant_scores'] = $this->reports_model->get_applicant_interview_scores($company_sid, $keyword, $start_date_applied, $end_date_applied, false, $job_sid, $applicant_type, $applicant_status, $per_page, $offset);
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
                 if (isset($data['companies_applicant_scores']) && sizeof($data['companies_applicant_scores']) > 0) {
 
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array($companyinfo['company_name'],'','',''));
 
                     fputcsv($output, array('Total : ' . count($data['companies_applicant_scores']) . ' Applicant Interview(s)'));
                     fputcsv($output, array('Interview Date', 'Applicant', 'Conducted By', 'For Position', 'Applicant Evaluation Score', 'Job Relevancy Evaluation Score', 'Applicant Overall Score', 'Job Relevancy Overall Score', 'Star Rating'));
@@ -1912,6 +2026,10 @@ class Reports extends Public_Controller
             $data['to_records'] = $applicants_count < $per_page ? $applicants_count : $offset + $per_page;
             $data['applicants_count'] = $applicants_count;
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
@@ -1928,6 +2046,9 @@ class Reports extends Public_Controller
                             header('Content-Type: text/csv; charset=utf-8');
                             header('Content-Disposition: attachment; filename=data.csv');
                             $output = fopen('php://output', 'w');
+
+                            fputcsv($output, array($companyinfo['company_name'], '', '', '', '', '', ''));
+
                             fputcsv($output, array('Date Applied', 'Applicant Type', 'First Name', 'Last Name', 'Job Title', 'IP Address', 'Applicant Source'));
 
                             foreach ($applicants as $applicant) {
@@ -2441,6 +2562,10 @@ class Reports extends Public_Controller
             $data['title'] = "Daily Activity Report";
             $perform_action = $this->input->post('perform_action');
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
             switch ($perform_action) {
                 case 'export_csv_file':
                     $this->form_validation->set_rules('report_date', 'report_date', 'required|trim|xss_clean');
@@ -2475,6 +2600,9 @@ class Reports extends Public_Controller
                         header('Content-Type: text/csv; charset=utf-8');
                         header('Content-Disposition: attachment; filename=data.csv');
                         $output = fopen('php://output', 'w');
+
+                        fputcsv($output, array($companyinfo['company_name'], '', ''));
+
 
                         foreach ($employers as $employer) {
                             fputcsv($output, array($employer['employer_name'], '', $employer['total_time_spent'] . ' Minutes'));
@@ -2623,11 +2751,17 @@ class Reports extends Public_Controller
             $data['applicant_names']                                            = $applicant_names;
             $data['title']                                                      = 'Advanced Hr Reports - Interviews Scheduled by Recruiters';
 
+            //
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
 
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export CSV') {
                 header('Content-Type: text/csv; charset=utf-8');
                 header('Content-Disposition: attachment; filename=interviews-scheduled-by-recruiters.csv');
                 $output = fopen('php://output', 'w');
+
+                fputcsv($output, array($companyinfo['company_name'], '', '', ''));
 
                 foreach ($data['events'] as $employer_id => $employee_events) {
                     $name = ucwords($employer_names[$employer_id]);
@@ -2737,6 +2871,10 @@ class Reports extends Public_Controller
         //
         $data['title'] = 'Driving License Report';
 
+        //
+        $companyinfo = getCompanyInfo($company_sid);
+        $data['companyName'] = $companyinfo['company_name'];
+
         if (sizeof($this->input->post(NULL, TRUE))) {
             $post = $this->input->post(NULL, TRUE);
             $post['companySid'] = $company_sid;
@@ -2754,6 +2892,8 @@ class Reports extends Public_Controller
                 header('Content-Type: text/csv; charset=utf-8');
                 header("Content-Disposition: attachment; filename=Driving_report_" . (date('YmdHis')) . ".csv");
                 $output = fopen('php://output', 'w');
+                fputcsv($output, array($companyinfo['company_name'], '', '', '', '', '', '', '', ''));
+
                 fputcsv($output, array('Employee', 'Job Title', 'Licence Type', 'Licence Class', 'License Authority', 'License Number', 'Date Of Birth', 'Issue Date', 'Expiration Date'));
 
                 foreach ($licenses as $license) {
@@ -2972,28 +3112,28 @@ class Reports extends Public_Controller
     function error_report()
     {
         // $alertpages = ["assign_bulk_documents", "add_history_documents"];
-		// $page = str_replace(base_url(), "", $_POST["OnPage"]);
-		// $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
-		// $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
-		// if (str_replace($alertpages, '', $page) != $page) {
-		// 	sendMail(
-		// 		FROM_EMAIL_NOTIFICATIONS,
-		// 		OFFSITE_DEV_EMAIL,
-		// 		'Bulk Upload Documents Error',
-		// 		@json_encode($_POST)
-		// 	);
-		// } else {
-		// 	sendMail(
-		// 		FROM_EMAIL_NOTIFICATIONS,
-		// 		OFFSITE_DEV_EMAIL,
-		// 		'Error On ' . $page,
-		// 		@json_encode($_POST)
-		// 	);
-		// }
+        // $page = str_replace(base_url(), "", $_POST["OnPage"]);
+        // $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
+        // $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
+        // if (str_replace($alertpages, '', $page) != $page) {
+        // 	sendMail(
+        // 		FROM_EMAIL_NOTIFICATIONS,
+        // 		OFFSITE_DEV_EMAIL,
+        // 		'Bulk Upload Documents Error',
+        // 		@json_encode($_POST)
+        // 	);
+        // } else {
+        // 	sendMail(
+        // 		FROM_EMAIL_NOTIFICATIONS,
+        // 		OFFSITE_DEV_EMAIL,
+        // 		'Error On ' . $page,
+        // 		@json_encode($_POST)
+        // 	);
+        // }
         // //
         // jsErrorHandler($_POST);
-		//  
-		echo "error repoted and send email";
+        //  
+        echo "error repoted and send email";
     }
 
 
@@ -3010,6 +3150,11 @@ class Reports extends Public_Controller
         //
         $data['title'] = 'Employee Document Report';
 
+        //
+        $companyinfo = getCompanyInfo($company_sid);
+        $data['companyName'] = $companyinfo['company_name'];
+
+
         if (sizeof($this->input->post(NULL, TRUE))) {
             $post = $this->input->post(NULL, TRUE);
             $post['companySid'] = $company_sid;
@@ -3025,6 +3170,9 @@ class Reports extends Public_Controller
                 header('Content-Type: text/csv; charset=utf-8');
                 header("Content-Disposition: attachment; filename=document_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
                 $output = fopen('php://output', 'w');
+
+                fputcsv($output, array($companyinfo['company_name'], '', '', ''));
+
                 fputcsv($output, array(
                     "Exported By", $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
                 ));
