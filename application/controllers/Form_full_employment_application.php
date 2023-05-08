@@ -8,6 +8,7 @@ class Form_full_employment_application extends CI_Controller
         $this->load->model('form_full_employment_application_model');
         $this->load->model('manage_admin/documents_model');
         $this->load->model('dashboard_model');
+        $this->load->model('onboarding_model');   
     }
 
     public function index($verification_key = null)
@@ -1157,6 +1158,12 @@ class Form_full_employment_application extends CI_Controller
                             $ip_track = $this->documents_model->get_document_ip_tracking_record($company_id, 'full_employment_application', 'signed', $sid, 'applicant');
                             $data['ip_track'] = $ip_track;
                             $data['job_list_sid'] = $jobs_listing;
+
+                            $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                            $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+                            
+
+                            
                             $this->load->view('main/header', $data);
                             $this->load->view('manage_employer/full_employment_application');
                             $this->load->view('main/footer');

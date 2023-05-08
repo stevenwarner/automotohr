@@ -7,6 +7,9 @@ class Reference_checks extends CI_Controller {
         $this->load->model('reference_checks_model');
         $this->load->model('application_tracking_system_model');
         $this->load->model('users_model');
+        //
+        $this->load->model('onboarding_model');
+
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $session_details = $this->session->userdata('logged_in');
         $sid = $session_details['employer_detail']['sid'];
@@ -50,6 +53,12 @@ class Reference_checks extends CI_Controller {
                 $reload_location = 'reference_checks/applicant/' . $sid . '/' .$jobs_listing;
                 $cancel_url = base_url('reference_checks_applicant/' . $sid . '/' .$jobs_listing);
                 $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($sid, 'applicant'); //getting average rating of applicant
+           
+              //
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+
+
             }
 
             $data['cancel_url'] = $cancel_url;

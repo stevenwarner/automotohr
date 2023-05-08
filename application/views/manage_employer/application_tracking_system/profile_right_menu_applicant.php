@@ -1341,8 +1341,6 @@ if ($this->session->userdata('logged_in')) {
     });
 
     function fun_hire_applicant() {
-
-
         <?php if ($adp_company_code['adp_company_location'] != '' || $adp_company_code['adp_company_location'] != null || $onboarding_applicant_template_code['adp_onboarding_template_code'] != ''  || $onboarding_applicant_template_code['adp_onboarding_template_code'] != null) { ?>
             adpTemplateCodeCheck();
         <?php } else { ?>

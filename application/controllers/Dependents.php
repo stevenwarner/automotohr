@@ -6,6 +6,7 @@ class Dependents extends Public_Controller
     {
         parent::__construct();
         $this->load->model('dependents_model');
+        $this->load->model('onboarding_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->library('pagination');
     }
@@ -54,6 +55,10 @@ class Dependents extends Public_Controller
                 $reload_location = 'dependants/applicant/' . $sid . '/' . $jobs_listing;
                 $data['return_title_heading'] = "Applicant Profile";
                 $data['return_title_heading_link'] = base_url() . 'applicant_profile/' . $sid . '/' . $jobs_listing;
+               
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+                
                 $load_view = check_blue_panel_status(false, $type);
             }
 

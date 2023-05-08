@@ -18,7 +18,8 @@ class Hr_documents_management extends Public_Controller
     }
 
     public function index()
-    {getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
+    {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
 
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -1962,6 +1963,13 @@ class Hr_documents_management extends Public_Controller
                     $data['employer_sid'] = $applicant_info['sid'];
 
                     $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $user_sid, $user_type, 'single_download');
+
+
+
+                    $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_sid);
+                    $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($user_sid);
+
+
                     break;
             }
             $data['EmployeeSid'] = $user_sid;
@@ -3458,7 +3466,7 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) { 
+                    if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                             $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
 
@@ -3478,7 +3486,7 @@ class Hr_documents_management extends Public_Controller
                                 $sendGroupEmail = 1;
                             }
                         }
-                    }    
+                    }
                 }
             }
 
@@ -4118,6 +4126,7 @@ class Hr_documents_management extends Public_Controller
             // );
             //
             // _e($data,true,true);
+
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
@@ -5250,7 +5259,7 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) { 
+                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                             $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
 
@@ -5270,7 +5279,7 @@ class Hr_documents_management extends Public_Controller
                                 $sendGroupEmail = 1;
                             }
                         }
-                    }    
+                    }
                 }
             }
 
@@ -14084,7 +14093,7 @@ class Hr_documents_management extends Public_Controller
         $employer_sid = $data["session"]["employer_detail"]["sid"];
         $security_sid = $employer_detail['sid'];
         getCompanyEmsStatusBySid($company_detail['sid']);
-        
+
 
         $security_details = db_get_access_level_details($security_sid);
         $data['security_details'] = $security_details;

@@ -10,6 +10,7 @@ class Video_interview_system extends Public_Controller
         parent::__construct();
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->model('video_interview_system_model');
+        $this->load->model('onboarding_model');   
         $this->load->library("pagination");
     }
 
@@ -189,6 +190,10 @@ class Video_interview_system extends Public_Controller
                 $sent_questions = $this->video_interview_system_model->get_applicant_questions($company_sid, $applicant_sid);
                 $distinct_questions = $this->video_interview_system_model->get_distinct_questions($company_sid, $applicant_sid);
                 //                echo $this->db->last_query().'<br>';
+
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_sid);
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($applicant_sid);
+               
 
 
                 foreach ($distinct_questions as $d_key => $question) {

@@ -5623,6 +5623,11 @@ class Onboarding extends CI_Controller
 
                 $ats_params = $this->session->userdata('ats_params');
                 $data = applicant_right_nav($user_sid, $job_list_sid, $ats_params);
+
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_sid);
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($user_sid);
+
+
                 $data['job_list_sid'] = $job_list_sid;
                 $data['user_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($user_sid, $user_type);
             } else if ($user_type == 'employee') {
@@ -5702,6 +5707,9 @@ class Onboarding extends CI_Controller
             $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, '');
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
+
+
+
 
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
@@ -5955,11 +5963,16 @@ class Onboarding extends CI_Controller
                     redirect('application_tracking_system/active/all/all/all/all', 'refresh');
                 }
 
+
                 $assigned_offer_letter = $this->onboarding_model->get_assigned_and_signed_offer_letter($company_sid, $user_type, $user_sid);
                 $offer_letter_history = $this->onboarding_model->get_signed_offer_letter_from_history($company_sid, $user_type, $user_sid);
 
                 $ats_params = $this->session->userdata('ats_params');
                 $data = applicant_right_nav($user_sid, $job_list_sid, $ats_params);
+
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_sid);
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($user_sid);
+
                 $applicant_offer_letters = array();
 
                 if (!empty($assigned_offer_letter)) {

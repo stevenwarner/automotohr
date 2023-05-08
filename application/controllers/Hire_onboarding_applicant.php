@@ -8,7 +8,6 @@ class Hire_onboarding_applicant extends CI_Controller
 
         $this->load->model('hire_onboarding_applicant_model');
         $this->load->model('onboarding_model');
-        
     }
 
     /**
@@ -59,8 +58,8 @@ class Hire_onboarding_applicant extends CI_Controller
                     }
 
 
-                     $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
-                     $status = $result['status'];
+                    $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
+                    $status = $result['status'];
 
 
                     //
@@ -90,7 +89,7 @@ class Hire_onboarding_applicant extends CI_Controller
                     $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($app_id);
 
                     //
-                    if($data['onboarding_applicant_template_code']['adp_onboarding_template_code']!='' && $data['onboarding_applicant_template_code']['adp_onboarding_template_code']!=null && $data['adp_company_code']['adp_company_location']!='' && $data['adp_company_code']['adp_company_location']!=null ){
+                    if ($data['onboarding_applicant_template_code']['adp_onboarding_template_code'] != '' && $data['onboarding_applicant_template_code']['adp_onboarding_template_code'] != null && $data['adp_company_code']['adp_company_location'] != '' && $data['adp_company_code']['adp_company_location'] != null) {
                         $this->adp_model->onboardApplicantToAdp($applicantArray);
                     }
 
@@ -473,7 +472,7 @@ class Hire_onboarding_applicant extends CI_Controller
 
         //ADP 
         $this->load->model('2022/Adp_model', 'adp_model');
-       
+
         if ($joining_date == '') {
             $joining_date = date('Y-m-d');
         }
@@ -494,7 +493,7 @@ class Hire_onboarding_applicant extends CI_Controller
         $applicantArray['country_name'] = $countryData['country_name'];
         $applicantArray['country_code'] = $countryData['country_code'];
 
-       
+
         $this->adp_model->onboardApplicantToAdp($applicantArray);
 
 

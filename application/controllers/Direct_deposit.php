@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Direct_deposit extends Public_Controller
 {
@@ -12,6 +12,7 @@ class Direct_deposit extends Public_Controller
         $this->load->model('direct_deposit_model');
         $this->load->model('dashboard_model');
         $this->load->model('application_tracking_system_model');
+        $this->load->model('onboarding_model');
 
         //
         $this->layout = true;
@@ -31,10 +32,10 @@ class Direct_deposit extends Public_Controller
             $company_name = $data['session']['company_detail']['CompanyName'];
 
             //
-            if($type == 'employee'){
+            if ($type == 'employee') {
                 $exits = $this->direct_deposit_model->checkDDI($type, $sid, $company_sid);
                 //
-                if($exits == 0){
+                if ($exits == 0) {
                     //$type = 'applicant';
                     // not understand this logic
                 }
@@ -78,27 +79,32 @@ class Direct_deposit extends Public_Controller
                 $data['company_id'] = $company_sid;
                 $data['company_name'] = $company_name;
                 $data['employee_number'] = $employee_number;
-                $users_sign_info = get_e_signature($company_sid, $sid, 'employee'); 
+                $users_sign_info = get_e_signature($company_sid, $sid, 'employee');
                 $data['users_sign_info'] = $users_sign_info;
                 $data['cn'] = $this->direct_deposit_model->getUserData($sid, 'employee');
                 $data['send_email_notification'] = 'yes';
                 //
 
             } else if ($type == 'applicant') {
-                if ($data['session']['employer_detail']['access_level'] != "Hiring Manager"){
+                if ($data['session']['employer_detail']['access_level'] != "Hiring Manager") {
                     check_access_permissions($security_details, 'application_tracking', 'direct_deposit_info');  // Param2: Redirect URL, Param3: Function Name
                 }
-                
+
                 $data = applicant_right_nav($sid);
                 $data['security_details'] = $security_details;
                 $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
                 $data['title'] = 'Applicant Direct Deposit Information';
-                $reload_location = 'direct_deposit/applicant/' . $sid . '/' .$jobs_listing;
-                $cancel_url = 'applicant_profile/' . $sid . '/' .$jobs_listing;
+                $reload_location = 'direct_deposit/applicant/' . $sid . '/' . $jobs_listing;
+                $cancel_url = 'applicant_profile/' . $sid . '/' . $jobs_listing;
                 $data["return_title_heading"] = "Applicant Profile";
-                $data["return_title_heading_link"] = base_url() . 'applicant_profile/' . $sid . '/' .$jobs_listing;
+                $data["return_title_heading_link"] = base_url() . 'applicant_profile/' . $sid . '/' . $jobs_listing;
                 $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($sid, 'applicant'); //getting average rating of applicant
                 $data['cancel_url'] = $cancel_url;
+
+                //
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_sid);
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+
                 $load_view = check_blue_panel_status(false, $type);
 
                 $applicant_info = $this->dashboard_model->get_applicants_details($sid);
@@ -134,7 +140,7 @@ class Direct_deposit extends Public_Controller
                 $data['company_id'] = $company_sid;
                 $data['company_name'] = $company_name;
                 $data['employee_number'] = $employee_number;
-                $users_sign_info = get_e_signature($company_sid, $sid, 'applicant'); 
+                $users_sign_info = get_e_signature($company_sid, $sid, 'applicant');
                 $data['users_sign_info'] = $users_sign_info;
                 $data['cn'] = $this->direct_deposit_model->getUserData($sid, 'applicant');
                 $data['send_email_notification'] = 'no';
@@ -143,9 +149,9 @@ class Direct_deposit extends Public_Controller
             }
 
             $page = 'index';
-            if($this->layout){
+            if ($this->layout) {
                 $direct_deposit_information = $this->direct_deposit_model->getDDI($type, $sid, $company_sid);
-                $data['ddi'] = $direct_deposit_information;    
+                $data['ddi'] = $direct_deposit_information;
                 $page = 'index_new';
             } else {
                 $direct_deposit_information = $this->direct_deposit_model->get_direct_deposit_details($type, $sid, $company_sid);
@@ -162,14 +168,14 @@ class Direct_deposit extends Public_Controller
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
-            if($this->form_validation->run() == false) {
+            if ($this->form_validation->run() == false) {
                 //load views
                 $this->load->view('main/header', $data);
-                $this->load->view('direct_deposit/'.$page.'');
+                $this->load->view('direct_deposit/' . $page . '');
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
-                switch ($perform_action){
+                switch ($perform_action) {
                     case 'update_bank_details':
 
                         $users_sid = $this->input->post('users_sid');
@@ -207,12 +213,16 @@ class Direct_deposit extends Public_Controller
 
 
     //
-    function add(){
+    function add()
+    {
         $session = $this->session->userdata('logged_in');
         //
-        if(!$session) { echo 'failed'; exit(0); }
+        if (!$session) {
+            echo 'failed';
+            exit(0);
+        }
         //getting userdata from DB
-        $employerId = $session["employer_detail"]["sid"];                                                                                                   
+        $employerId = $session["employer_detail"]["sid"];
         $companyId = $session["company_detail"]["sid"];
         //
         $post = $this->input->post(NULL);
@@ -240,12 +250,16 @@ class Direct_deposit extends Public_Controller
     }
 
     //
-    function edit(){
+    function edit()
+    {
         $session = $this->session->userdata('logged_in');
         //
-        if(!$session) { echo 'failed'; exit(0); }
+        if (!$session) {
+            echo 'failed';
+            exit(0);
+        }
         //getting userdata from DB
-        $employerId = $session["employer_detail"]["sid"];                                                                                                   
+        $employerId = $session["employer_detail"]["sid"];
         $companyId = $session["company_detail"]["sid"];
         //
         $post = $this->input->post(NULL);
@@ -259,7 +273,7 @@ class Direct_deposit extends Public_Controller
         $ins['account_percentage'] = $post['accountPercentage'];
         // $ins['account_status'] = $post['accountStatus'] == 0 ? 'normal' : (  $post['accountStatus'] == 1 ? 'primary' : 'secondary');
         // Upload file
-        if(count($_FILES)) $ins['voided_cheque'] = $_FILES['file']['name']; //upload_file_to_aws('file', $companyId, str_replace(' ', '_', $_FILES['file']['name']), $employerId, AWS_S3_BUCKET_NAME)
+        if (count($_FILES)) $ins['voided_cheque'] = $_FILES['file']['name']; //upload_file_to_aws('file', $companyId, str_replace(' ', '_', $_FILES['file']['name']), $employerId, AWS_S3_BUCKET_NAME)
         //
         $inserted = $this->direct_deposit_model->updateDDA($ins, $post['sid']);
         //
@@ -267,14 +281,16 @@ class Direct_deposit extends Public_Controller
     }
 
     //
-    public function update_primary($sid){
+    public function update_primary($sid)
+    {
         $this->direct_deposit_model->updateDD($sid);
         echo 'success';
     }
 
 
     //
-    function pd($userType, $userSid, $companySid, $type){
+    function pd($userType, $userSid, $companySid, $type)
+    {
         //
         $data = [];
         $data['session'] = $this->session->userdata('logged_in');
@@ -285,15 +301,16 @@ class Direct_deposit extends Public_Controller
         $data['employee_number'] = $employee_number;
         $data['data'] = $this->direct_deposit_model->getDDI($userType, $userSid, $companySid);
         //
-        $data['data'][0]['voided_cheque_64'] = 'data:image/'.(getFileExtension($data['data'][0]['voided_cheque'])).';base64,'.base64_encode(getFileData(AWS_S3_BUCKET_URL.$data['data'][0]['voided_cheque']));
-        if(isset($data['data'][1])) $data['data'][1]['voided_cheque_64'] = 'data:image/'.(getFileExtension($data['data'][0]['voided_cheque'])).';base64,'.base64_encode(getFileData(AWS_S3_BUCKET_URL.$data['data'][1]['voided_cheque']));
+        $data['data'][0]['voided_cheque_64'] = 'data:image/' . (getFileExtension($data['data'][0]['voided_cheque'])) . ';base64,' . base64_encode(getFileData(AWS_S3_BUCKET_URL . $data['data'][0]['voided_cheque']));
+        if (isset($data['data'][1])) $data['data'][1]['voided_cheque_64'] = 'data:image/' . (getFileExtension($data['data'][0]['voided_cheque'])) . ';base64,' . base64_encode(getFileData(AWS_S3_BUCKET_URL . $data['data'][1]['voided_cheque']));
 
         $data[$userType] = $data['cn'] = $this->direct_deposit_model->getUserData($userSid, $userType);
         //
         $this->load->view('direct_deposit/pd', $data);
     }
 
-    public function ajax_handler () {
+    public function ajax_handler()
+    {
         $session = $this->session->userdata('logged_in');
         //
         if (empty($session)) {
@@ -302,7 +319,7 @@ class Direct_deposit extends Public_Controller
             $session['company_detail']['CompanyName'] = $company_name;
         }
         //
-        if($session) {
+        if ($session) {
 
             $updated_by                 = $session["employer_detail"]["sid"];
             $record_sid                 = $_POST['record_sid'];
@@ -344,9 +361,9 @@ class Direct_deposit extends Public_Controller
             }
 
             $this->direct_deposit_model->set_user_extra_info($user_type, $user_sid, $company_sid, $employee_number);
-            
+
             if ($record_sid != 0) {
-                
+
                 // fetch old record and save it into history table start
                 $update_by_sid = $session['employer_detail']['sid'];
                 $old_record = $this->direct_deposit_model->getDDI($user_type, $user_sid, $company_sid);
@@ -374,7 +391,7 @@ class Direct_deposit extends Public_Controller
 
                 $data_to_update['deposit_type'] = $deposit_type;
                 $data_to_update['account_percentage'] = $account_percentage;
-                $data_to_update['user_signature'] = $drawn_signature;   
+                $data_to_update['user_signature'] = $drawn_signature;
                 $data_to_update['employee_number'] = $employee_number;
                 $data_to_update['print_name'] = $print_name;
                 $data_to_update['consent_date'] = date("Y-m-d", strtotime($consent_date));
@@ -419,7 +436,7 @@ class Direct_deposit extends Public_Controller
             checkAndInsertCompletedDocument($cpArray);
 
             $userData = $this->direct_deposit_model->getUserData($user_sid, $user_type);
-            if($send_email_notification == 'yes') {
+            if ($send_email_notification == 'yes') {
                 // Send document completion alert
                 broadcastAlert(
                     DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -434,28 +451,28 @@ class Direct_deposit extends Public_Controller
                     $user_type
 
                 );
-            }    
+            }
 
             echo 'success';
         }
     }
 
-    public function get_e_signature () {
-        
+    public function get_e_signature()
+    {
+
         $user_sid                   = $_POST['user_sid'];
         $user_type                  = $_POST['user_type'];
         $company_sid                = $_POST['company_sid'];
 
-        $signature = get_e_signature($company_sid, $user_sid, $user_type); 
+        $signature = get_e_signature($company_sid, $user_sid, $user_type);
 
         $return_data = array();
 
-        if (!empty($signature) ) {
+        if (!empty($signature)) {
             $return_data['signature_bas64_image'] = $signature['signature_bas64_image'];
             echo json_encode($return_data);
         } else {
             echo false;
         }
     }
-
 }

@@ -9,6 +9,8 @@ class Settings extends Public_Controller
         $this->load->model('settings_model');
         $this->load->model('application_tracking_model');
         $this->load->model("Payroll_model");
+        $this->load->model('onboarding_model');
+
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
@@ -1552,7 +1554,7 @@ class Settings extends Public_Controller
                 // if($updateArray){
                 //     $this->db->where('sid', $data['employer']['sid'])->update('users', ['full_employment_application' => serialize($updateArray)]);
                 // }
-               
+
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/full_employment_application');
                 $this->load->view('main/footer');
@@ -1824,6 +1826,12 @@ class Settings extends Public_Controller
                 $data_function["return_title_heading"] = "Applicant Profile";
                 $data_function["return_title_heading_link"] = base_url() . 'applicant_profile/' . $sid . '/' . $jobs_listing;
                 $data_function["cancel_url"] = 'applicant_profile/' . $sid . '/' . $jobs_listing;
+             
+                //
+                $data_function['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                $data_function['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+
+             
                 $load_view = false;
             }
             $data_function['load_view'] = $load_view;
@@ -2304,6 +2312,12 @@ class Settings extends Public_Controller
                 $cancel_url = 'drivers_license_info/applicant/' . $sid . '/' . $jobs_listing;
                 // getting applicant ratings - getting average rating of applicant
                 $data_function['applicant_average_rating'] = $this->application_tracking_model->getApplicantAverageRating($sid, 'applicant');
+              
+                //
+                $data_function['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                $data_function['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+
+              
                 $load_view = check_blue_panel_status(false, $type);
             }
 
@@ -2628,6 +2642,11 @@ class Settings extends Public_Controller
                 $data_function["return_title_heading_link"] = base_url() . 'applicant_profile/' . $sid . '/' . $jobs_listing;
                 $data_function["cancel_url"] = 'applicant_profile/' . $sid . '/' . $jobs_listing;
                 $data_function['applicant_average_rating'] = $this->application_tracking_model->getApplicantAverageRating($sid, 'applicant'); //getting average rating of applicant
+
+                $data_function['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                $data_function['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+
+
                 $load_view = check_blue_panel_status(false, $type);
             }
 

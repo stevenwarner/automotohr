@@ -7,6 +7,8 @@ class Emergency_contacts extends Public_Controller
         $this->load->model('emergency_contacts_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->library('pagination');
+        //
+        $this->load->model('onboarding_model');
     }
 
     public function index($type = NULL, $sid = NULL, $jobs_listing = NULL) {
@@ -76,6 +78,9 @@ class Emergency_contacts extends Public_Controller
                 $parent_sid                                                     = $applicant_info['company_sid'];
                 $data['emp_app_sid']                                            = $sid;
                 
+                $data['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                $data['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
+              
                 if ($parent_sid > 0) {
                     if ($company_id != $parent_sid) {
                         $this->session->set_flashdata('message', '<b>Error:</b> Applicant Not Found!'); // Applicant Exist In Db But Not in Same Company.

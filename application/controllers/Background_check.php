@@ -12,6 +12,9 @@ class Background_check extends CI_Controller {
             $this->load->model('application_tracking_system_model');
             $this->load->model('dashboard_model');
             //$this->load->model('manage_admin/invoice_model');
+
+            $this->load->model('onboarding_model');
+
             require_once(APPPATH . 'libraries/aws/aws.php');
             $this->form_validation->set_error_delimiters('<p class="error"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $session = $this->session->userdata('logged_in');
@@ -78,6 +81,9 @@ class Background_check extends CI_Controller {
                     $reload_location = 'background_check/applicant/' . $sid . '/' . $jobs_listing;
                     $data_function['cancel_url'] = 'applicant_profile/' . $sid . '/' .$jobs_listing;
                     $applicant_info = $this->dashboard_model->get_applicants_details($sid);
+
+                    $data_function['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                    $data_function['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
 
                     $data_employer = array(
                         'sid' => $applicant_info['sid'],
@@ -198,6 +204,9 @@ class Background_check extends CI_Controller {
                 $data_function['questions_answered'] = $this->application_tracking_system_model->check_answered_video_questionnaires($sid, $company_id);
                 $data_function['job_list_sid'] = $jobs_listing;
                 //form data valdation ends
+
+                //
+               
                 if ($this->form_validation->run() === FALSE) {
                     $this->load->view('main/header', $data_function);
                     $this->load->view('manage_employer/background_check');
@@ -960,6 +969,10 @@ class Background_check extends CI_Controller {
                     $data_function['company_background_check'] = checkCompanyAccurateCheck($data["session"]["company_detail"]["sid"]);
                     //Outsourced HR Compliance and Onboarding check
                     $data_function['kpa_onboarding_check'] = checkCompanyKpaOnboardingCheck($data["session"]["company_detail"]["sid"]);
+
+                    //
+                    $data_function['adp_company_code'] = $this->onboarding_model->get_adp_company_code($company_id);
+                    $data_function['onboarding_applicant_template_code'] = $this->onboarding_model->get_applicant_onboarding_template_code($sid);
 
                     $data_employer = array(
                         'sid' => $applicant_info['sid'],
