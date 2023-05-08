@@ -449,10 +449,15 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone', true);
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
-
-
+            //
             $this->company_model->update_user($sid, $data, 'Employer');
-
+            //
+            // Check and Update employee basic profile info
+            $this->checkAndUpdateProfileInfo(
+                $sid,
+                $employer_detail[0],
+                $data
+            );
             //
             $teamId = $this->input->post('teamId');
             handleEmployeeDepartmentAndTeam($sid, $teamId);
@@ -463,6 +468,104 @@ class employers extends Admin_Controller
                 redirect('manage_admin/employers/edit_employer/' . $sid, 'refresh');
             }
         }
+    }
+
+    private function checkAndUpdateProfileInfo (
+        $employeeId,
+        $employeeDetail,
+        $dataToInsert
+    ) {
+        // New employee profile data
+        $newProfileData = [];
+        $newProfileData['first_name'] = $dataToInsert['first_name'];
+        $newProfileData['last_name'] = $dataToInsert['last_name'];
+        $newProfileData['dob'] = $dataToInsert['dob'];
+        $newProfileData['email'] = $dataToInsert['email'];
+        $newProfileData['ssn'] = $dataToInsert['ssn'];
+        //
+        // Old employee profile data
+        $oldProfileData = [];
+        $oldProfileData['first_name'] = $employeeDetail['first_name'];
+        $oldProfileData['last_name'] = $employeeDetail['last_name'];
+        $oldProfileData['email'] = $employeeDetail['email'];
+        $oldProfileData['ssn'] = $employeeDetail['ssn'];
+        $oldProfileData['dob'] = $employeeDetail['dob'];
+        //
+        $profileDifference = $this->findDifference($oldProfileData, $newProfileData);
+        //
+        if ($profileDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'profile');
+        }
+        //
+        // New employee address data
+        $newAddressData = [];
+        $newAddressData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newAddressData['Location_City'] = $dataToInsert['Location_City'];
+        $newAddressData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newAddressData['Location_State'] = $dataToInsert['Location_State'];
+        //
+        // Old employee address data
+        $oldAddressData = [];
+        $oldAddressData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldAddressData['Location_City'] = $employeeDetail['Location_City'];
+        $oldAddressData['Location_State'] = $employeeDetail['Location_State'];
+        $oldAddressData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        //
+        $addressDifference = $this->findDifference($oldAddressData, $newAddressData);
+        //
+        if ($addressDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'address');
+        }
+        //
+        // New employee payment method
+        $newPaymentData = [];
+        $newPaymentData['payment_method'] = $dataToInsert['payment_method'];
+        //
+        // Old employee payment method
+        $oldPaymentData = [];
+        $oldPaymentData['payment_method'] = $employeeDetail['payment_method'];
+        //
+        $paymentMethodDifference = $this->findDifference($oldPaymentData, $newPaymentData);
+        //
+        if ($paymentMethodDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'payment_method');
+        }
+    }
+
+    /**
+     * 
+     */
+    function findDifference($previous_data, $form_data)
+    {
+        // 
+        $profile_changed = 0;
+        //
+        $dt = [];
+        //
+        if (!empty($previous_data)) {
+            foreach ($previous_data as $key => $data) {
+                //
+                if (!isset($form_data[$key])) {
+                    continue;
+                }
+                //   
+                if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
+                    //
+                    $dt[$key] = [
+                        'old' => $data,
+                        'new' => $form_data[$key]
+                    ];
+                    //
+                    $profile_changed = 1;
+                }
+            }
+        }
+        //
+
+        return ['profile_changed' => $profile_changed, 'data' => $dt];
     }
 
     public function add_employer($company_sid = null)

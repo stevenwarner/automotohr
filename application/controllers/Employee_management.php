@@ -1813,6 +1813,13 @@ class Employee_management extends Public_Controller
                         $data_to_insert
                     );
                     //
+                    // Check and Update employee basic profile info
+                    $this->checkAndUpdateProfileInfo(
+                        $sid,
+                        $employee_detail,
+                        $data_to_insert
+                    );
+                    //
                     $complynetResponse = false;
 
                     // ComplyNet interjection
@@ -2445,6 +2452,13 @@ class Employee_management extends Public_Controller
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
                 //
                 $this->dashboard_model->update_user($sid, $data);
+                //
+                // Check and Update employee basic profile info
+                $this->checkAndUpdateProfileInfo(
+                    $sid,
+                    $employee_detail,
+                    $data
+                );
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
 
@@ -3695,7 +3709,71 @@ class Employee_management extends Public_Controller
         }
         return false;
     }
-
+ 
+    private function checkAndUpdateProfileInfo (
+        $employeeId,
+        $employeeDetail,
+        $dataToInsert
+    ) {
+        // New employee profile data
+        $newProfileData = [];
+        $newProfileData['first_name'] = $dataToInsert['first_name'];
+        $newProfileData['last_name'] = $dataToInsert['last_name'];
+        $newProfileData['dob'] = $dataToInsert['dob'];
+        $newProfileData['email'] = $dataToInsert['email'];
+        $newProfileData['ssn'] = $dataToInsert['ssn'];
+        //
+        // Old employee profile data
+        $oldProfileData = [];
+        $oldProfileData['first_name'] = $employeeDetail['first_name'];
+        $oldProfileData['last_name'] = $employeeDetail['last_name'];
+        $oldProfileData['email'] = $employeeDetail['email'];
+        $oldProfileData['ssn'] = $employeeDetail['ssn'];
+        $oldProfileData['dob'] = $employeeDetail['dob'];
+        //
+        $profileDifference = $this->findDifference($oldProfileData, $newProfileData);
+        //
+        if ($profileDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'profile');
+        }
+        //
+        // New employee address data
+        $newAddressData = [];
+        $newAddressData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newAddressData['Location_City'] = $dataToInsert['Location_City'];
+        $newAddressData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newAddressData['Location_State'] = $dataToInsert['Location_State'];
+        //
+        // Old employee address data
+        $oldAddressData = [];
+        $oldAddressData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldAddressData['Location_City'] = $employeeDetail['Location_City'];
+        $oldAddressData['Location_State'] = $employeeDetail['Location_State'];
+        $oldAddressData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        //
+        $addressDifference = $this->findDifference($oldAddressData, $newAddressData);
+        //
+        if ($addressDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'address');
+        }
+        //
+        // New employee payment method
+        $newPaymentData = [];
+        $newPaymentData['payment_method'] = $dataToInsert['payment_method'];
+        //
+        // Old employee payment method
+        $oldPaymentData = [];
+        $oldPaymentData['payment_method'] = $employeeDetail['payment_method'];
+        //
+        $paymentMethodDifference = $this->findDifference($oldPaymentData, $newPaymentData);
+        //
+        if ($paymentMethodDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'payment_method');
+        }
+    }
 
     /**
      * Saves the difference

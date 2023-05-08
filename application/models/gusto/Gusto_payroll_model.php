@@ -888,6 +888,57 @@ class Gusto_payroll_model extends CI_Model
     }
 
     /**
+     * Update company employee information
+     *
+     * @param int $employeeId
+     * @param string $update
+     * @return bool
+     */
+    public function updateGustoEmployeInfo (int $employeeId, string $update)
+    {
+        $response = $this->getEmployeeDetail($employeeId);
+        //
+        if ($response['status']) {
+            //
+            $employeeInfo = $response['data'];
+            $companyDetails = $this->getCompanyDetailsForGusto($employeeInfo['parent_sid']);
+            //
+            $whereArray = [
+                'employee_sid ' => $employeeInfo['sid'],
+                'company_sid' => $employeeInfo['parent_sid']
+            ];
+            //
+            $gustoEmployeeInfo =
+                $this->db
+                ->select('
+                    payroll_employee_uuid,
+                    version
+                ')
+                ->where($whereArray)
+                ->get('payroll_employees')
+                ->row_array();
+            //
+            if ($update == 'profile') {
+                // Add or Update employee profile info
+                $this->updateGustoEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            } 
+            //
+            if ($update == 'address') {
+                // Update employee address info
+                $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            }
+            // 
+            if ($update == 'payment_method') {
+                // Update employee payment Method 
+                $this->updateGustoEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails); 
+            }    
+        
+        }
+        //
+        return true;
+    }
+
+    /**
      * get employee basic detail
      *
      * @param int   $employeeId
@@ -967,7 +1018,7 @@ class Gusto_payroll_model extends CI_Model
      * Sync employee profile info
      *
      * @param array $employeeProfile
-     *     @param array $gustoEmployeeInfo
+     * @param array $gustoEmployeeInfo
      * @param array $companyDetails
      * @return bool
      */
@@ -1032,6 +1083,31 @@ class Gusto_payroll_model extends CI_Model
             }
             //
         } else {
+            $this->updateGustoEmployeeProfile($employeeProfile, $gustoEmployeeInfo, $companyDetails);
+        }   
+        //
+        return false;
+    }
+
+    /**
+     * Update employee profile info
+     *
+     * @param array $employeeProfile
+     * @param array $gustoEmployeeInfo
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function updateGustoEmployeeProfile(array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails)
+    {
+        //
+        $mainTable = 'payroll_employees';
+        //
+        $whereArray = [
+            'employee_sid ' => $employeeProfile['sid'],
+            'company_sid' => $employeeProfile['parent_sid']
+        ];
+        //
+        if (!empty($gustoEmployeeInfo)) {
             //
             $employeeDetails = [];
             $employeeDetails['version'] = $gustoEmployeeInfo['version'];
@@ -1078,32 +1154,34 @@ class Gusto_payroll_model extends CI_Model
             'employee_sid ' => $employeeProfile['sid']
         ];
         //
-        $employeeAddress = $this->validateEmployeeAddress($employeeProfile, $whereArray, $mainTable);
-        //
-        if ($employeeAddress['status']) {
+        if ($this->db->where($whereArray)->count_all_results($mainTable)) {
+            $employeeAddress = $this->validateEmployeeAddress($employeeProfile, $whereArray, $mainTable);
             //
-            $response = updateAnEmployeeAddressOnGusto($employeeAddress['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
-                'X-Gusto-API-Version: 2023-03-01'
-            ]);
-            //
-            if (!isset($response['errors']) && $response) {
+            if ($employeeAddress['status']) {
                 //
-                $dataToUpdate = [];
-                $dataToUpdate['version'] = $response['version'];
-                $dataToUpdate['street_1'] = $response['street_1'];
-                $dataToUpdate['street_2'] = $response['street_2'];
-                $dataToUpdate['city'] = $response['city'];
-                $dataToUpdate['state'] = $response['state'];
-                $dataToUpdate['country'] = $response['country'];
-                $dataToUpdate['zip'] = $response['zip'];
-                $dataToUpdate['active'] = $response['active'];
-                $dataToUpdate['updated_at'] = getSystemDate();
+                $response = updateAnEmployeeAddressOnGusto($employeeAddress['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'],[
+                    'X-Gusto-API-Version: 2023-03-01'
+                ]);
                 //
-                $this->db->where($whereArray)->update($mainTable, $dataToUpdate);
-                //
-                return true;
-            } 
-        }
+                if (!isset($response['errors']) && $response) {
+                    //
+                    $dataToUpdate = [];
+                    $dataToUpdate['version'] = $response['version'];
+                    $dataToUpdate['street_1'] = $response['street_1'];
+                    $dataToUpdate['street_2'] = $response['street_2'];
+                    $dataToUpdate['city'] = $response['city'];
+                    $dataToUpdate['state'] = $response['state'];
+                    $dataToUpdate['country'] = $response['country'];
+                    $dataToUpdate['zip'] = $response['zip'];
+                    $dataToUpdate['active'] = $response['active'];
+                    $dataToUpdate['updated_at'] = getSystemDate();
+                    //
+                    $this->db->where($whereArray)->update($mainTable, $dataToUpdate);
+                    //
+                    return true;
+                } 
+            }
+        }    
         //
         return false;
         //    
@@ -1153,7 +1231,7 @@ class Gusto_payroll_model extends CI_Model
             ->select('version')
             ->where($whereArray)
             ->get($mainTable)
-            ->row_array();
+            ->row_array();  
         //        
         $employeeAddressDetails = [];
         $employeeAddressDetails['version'] = $gustoEmployeeAddressVersion['version'];
@@ -1323,7 +1401,7 @@ class Gusto_payroll_model extends CI_Model
      * @param array $companyDetails
      * @return bool
      */
-    public function syncCompanyEmployeeBankDetail (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {die("i am here");
+    public function syncCompanyEmployeeBankDetail (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
         //
         $mainTable = 'payroll_employee_bank_accounts';
         //
@@ -1489,6 +1567,30 @@ class Gusto_payroll_model extends CI_Model
                 }    
             }
         } else {
+            $this->updateGustoEmployeePaymentMethod($employeeProfile, $gustoEmployeeInfo, $companyDetails);  
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Update employee payment method
+     *
+     * @param array $employeeProfile
+     * @param array $gustoEmployeeInfo
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function updateGustoEmployeePaymentMethod (array $employeeProfile, array $gustoEmployeeInfo, array $companyDetails) {
+        //
+        $paymentMethod = $employeeProfile['payment_method'] == 'direct_deposit' ? 'Direct Deposit' : 'Check';
+        $mainTable = 'payroll_employee_payment_method';
+        //
+        $whereArray = [
+            'employee_sid' => $employeeProfile['sid']
+        ];
+        //
+        if ($this->db->where($whereArray)->count_all_results($mainTable)) {
             $employeePaymentMethod = $this->db
                 ->select('
                     sid,
