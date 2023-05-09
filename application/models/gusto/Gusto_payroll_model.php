@@ -860,17 +860,17 @@ class Gusto_payroll_model extends CI_Model
                 ->row_array();
             //
             // Add or Update employee profile info
-            // $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // //
-            // // Update employee address info
-            // $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // //
-            // // Create employee job
-            // $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // //
-            // // Create employee bank detail 
-            // $this->syncCompanyEmployeeBankDetail($employeeInfo, $gustoEmployeeInfo, $companyDetails); 
-            // // 
+            $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            //
+            // Update employee address info
+            $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            //
+            // Create employee job
+            $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            //
+            // Create employee bank detail 
+            $this->syncCompanyEmployeeBankDetail($employeeInfo, $gustoEmployeeInfo, $companyDetails); 
+            // 
             // // Update employee payment Method 
             $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);   
             // //
@@ -880,8 +880,8 @@ class Gusto_payroll_model extends CI_Model
             // // Create employee State Tax 
             // $this->syncCompanyEmployeeStateTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
             //
-            // // Update employee status
-            // $this->updateCompanyEmployeeOnboardingStatus($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            // Update employee status
+            $this->updateCompanyEmployeeOnboardingStatus($employeeInfo, $gustoEmployeeInfo, $companyDetails);
         }
         //
         return true;
