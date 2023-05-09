@@ -50,6 +50,7 @@ class Admin_Controller extends MY_Controller {
                 $header_notifications['form_affiliate_end_user_license_agreement'] = form_affiliate_end_user_license_agreement();
                 $header_notifications['private_messages'] = fetch_private_message_notification();
                 $header_notifications['sms_notifications'] = fetch_admin_sms_notifications($this);
+                $header_notifications['profile_date_change'] = count(getProfileDataChange($this));
                // echo '<pre>';
                // print_r($header_notifications['private_messages']);
                // die();

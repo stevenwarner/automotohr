@@ -113,14 +113,52 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Job Title', 'job_title'); ?>
+                                                    <label>Employee Type</label>
                                                     <div class="hr-fields-wrap">
-                                                        <?php
-                                                        echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds"');
-                                                        echo form_error('job_title');
-                                                        ?>
+                                                        <div class="hr-select-dropdown">
+                                                            <select name="employee_type" id="employee_type" class="invoice-fields">
+                                                                <option <?= $data["employee_type"] == 'fulltime' ? 'selected' : ''; ?> value="fulltime">Full-Time</option>
+                                                                <option <?= $data["employee_type"] == 'parttime' ? 'selected' : ''; ?> value="parttime">Part-Time</option>
+                                                            </select>
+                                                        </div>
+                                                        <?php echo form_error('employee_type'); ?>
                                                     </div>
                                                 </li>
+
+
+                                                <li>
+                                                    <?php echo form_label('Job Title', 'job_title'); ?>
+
+                                                    <?php $templateTitles = get_templet_jobtitles($data['parent_sid']); ?>
+
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12">
+                                                                <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12" style="padding-left:0px;padding-right:0px;">
+                                                                    <?php if ($templateTitles) { ?>
+                                                                        <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $data['job_title_type'] == '0' ? 'checked' : '' ?>> <strong>Add Manual &nbsp;</strong>
+                                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $data['job_title_type'] != '0' ? 'checked' : '' ?>> <strong> From Drop Down </strong>
+                                                                         
+                                                                        <br>
+                                                                    <?php } ?>
+                                                                    <?php
+                                                                    echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds" id="job_title"');
+                                                                    echo form_error('job_title');
+                                                                    ?>
+                                                                    <?php if ($templateTitles) { ?>
+                                                                        <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                                            <option value="0">Please select job title</option>
+                                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                                            <?php } ?>
+                                                                        </select>
+                                                                    <?php } ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+
 
                                                 <?php if (isCompanyOnComplyNet($data['parent_sid']) != 0) { ?>
                                                     <li>
@@ -254,7 +292,7 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Mobile Number', 'cell_number'); ?>
+                                                    <?php echo form_label('Phone Number', 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
@@ -508,26 +546,26 @@
 
                                                 <li>
                                                     <label>Workers Compensation Code</label>
-                                                        <div class="hr-fields-wrap">
+                                                    <div class="hr-fields-wrap">
                                                         <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
 
-                                                        </div>
-                                                    </li>
+                                                    </div>
+                                                </li>
 
-                                                    <li>
+                                                <li>
                                                     <label>EEOC Code</label>
-                                                        <div class="hr-fields-wrap">
+                                                    <div class="hr-fields-wrap">
                                                         <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
 
-                                                        </div>
-                                                    </li>
+                                                    </div>
+                                                </li>
 
-                                                    <li>
+                                                <li>
                                                     <label>Salary Benefits</label>
-                                                        <div class="hr-fields-wrap">
-                                                        <textarea autocomplete="nope" class="hr-form-fileds" name="salary_benefits" id="salary_benefits"><?php echo $data['salary_benefits']; ?></textarea>
-                                                        </div>
-                                                    </li>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="salary_benefits" id="salary_benefits" value="<?php echo $data['salary_benefits']; ?>">
+                                                    </div>
+                                                </li>
 
                                                 <?php if (IS_NOTIFICATION_ENABLED == 1) { ?>
                                                     <li>
@@ -574,6 +612,126 @@
                                                         $('.jsSelect2').select2();
                                                     </script>
                                                 </li>
+                                                <?php
+                                                //
+                                                $hasOther = [];
+                                                //
+                                                if ($data['languages_speak']) {
+                                                    $hasOther = array_filter(explode(',', $data['languages_speak']), function ($lan) {
+                                                        return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                    });
+                                                }
+                                                ?>
+                                                <li>
+                                                    <label>I Speak:</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($data['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($data['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($data['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <!--  -->
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
+                                                            <div class="col-sm-12">
+                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" id='otherOtherLanguage' />
+                                                                <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                            </div>
+                                                        </div>
+
+                                                        <script>
+                                                            $('[name="secondaryOption"]').click(function() {
+
+                                                                if ($('[name="secondaryOption"]').is(":checked")) {
+                                                                    $('#otherOtherLanguage').val('<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>');
+
+                                                                } else {
+                                                                    $('#otherOtherLanguage').val('');
+                                                                }
+
+                                                                $('.jsOtherLanguage').toggleClass('dn');
+                                                            });
+                                                        </script>
+                                                    </div>
+                                                </li>
+
+
+                                                <li>
+                                                    <label>Union Member:</label>
+                                                    <div class="hr-fields-wrap">
+
+
+                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio " style="margin-left: -20px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $data['union_member'] ? 'checked' : '' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio " style="margin-left: -10px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $data['union_member'] ? '' : 'checked' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <br>
+                                                        <br>
+                                                        <div class="row jsunionname">
+                                                            <div class="col-sm-12">
+                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $data['union_name']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <script>
+                                                            <?php if ($data['union_member'] == 0) { ?>
+                                                                $('.jsunionname').hide();
+                                                            <?php } ?>
+
+                                                            $('.unionmember').on('click', function() {
+                                                                var selected = $(this).val();
+                                                                if (selected == '1') {
+                                                                    $('.jsunionname').show();
+
+                                                                } else {
+                                                                    $('.jsunionname').hide();
+                                                                }
+                                                            });
+                                                        </script>
+                                                    </div>
+                                                    <br>
+                                                </li>
+                                                <br>
+
+
                                                 <?php
                                                 $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);
                                                 //
@@ -1013,4 +1171,26 @@
             }
         );
     }
+
+
+
+    <?php if ($templateTitles && $data['job_title_type'] != '0') { ?>
+        $('#temppate_job_title').show();
+        $('#temppate_job_title').val('<?php echo $data['job_title_type'] . '#' . $data['job_title']; ?>');
+        $('#job_title').hide();
+    <?php } ?>
+
+    $('.titleoption').click(function() {
+        var titleOption = $(this).val();
+        if (titleOption == 'dropdown') {
+            $('#temppate_job_title').show();
+            $('#temppate_job_title').val('<?php echo $data['job_title_type'] == '0' ? '0' : $data['job_title_type'] . '#' . $data['job_title']; ?>');
+            $('#job_title').hide();
+        } else if (titleOption == 'manual') {
+            $('#temppate_job_title').hide();
+            $('#temppate_job_title').val('0');
+            $('#job_title').show();
+        }
+
+    });
 </script>

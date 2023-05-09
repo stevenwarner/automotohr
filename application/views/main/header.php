@@ -325,109 +325,109 @@
         <div id="messageBox"></div>
         <div id="wrapper">
             <header class="<?= in_array('iframe', $this->uri->segment_array()) ? 'hidden' : ''; ?> header<?php
-                                                                                                        if (
-                                                                                                            $class == 'dashboard' ||
-                                                                                                            $class == 'time_off' ||
-                                                                                                            $class == 'job_listings' ||
-                                                                                                            $class == 'screening_questionnaires' ||
-                                                                                                            $class == 'settings' ||
-                                                                                                            $class == 'employee_login_text' ||
-                                                                                                            $class == 'bulk_resume_download' ||
-                                                                                                            $class == 're_assign_candidate' ||
-                                                                                                            $class == 'job_fair_configuration' ||
-                                                                                                            $class == 'incident_reporting_system' ||
-                                                                                                            $class == 'resend_screening_questionnaire' ||
-                                                                                                            $class == 'users' ||
-                                                                                                            $class == 'eeo' ||
-                                                                                                            // $class == 'demo' ||
-                                                                                                            $class == 'application_tracking' ||
-                                                                                                            $class == 'market_place' ||
-                                                                                                            $class == 'portal_email_templates' ||
-                                                                                                            $class == 'portal_sms_templates' ||
-                                                                                                            $class == 'manual_candidate' ||
-                                                                                                            $class == 'private_messages' ||
-                                                                                                            $class == 'xml_export' ||
-                                                                                                            $class == 'employee_management' ||
-                                                                                                            $class == 'department_management' ||
-                                                                                                            $class == 'onboarding_block' ||
-                                                                                                            $class == 'appearance' ||
-                                                                                                            $class == 'hr_documents' ||
-                                                                                                            $class == 'background_check' ||
-                                                                                                            $class == 'my_hr_documents' ||
-                                                                                                            $class == 'order_history' ||
-                                                                                                            $class == 'received_documents' ||
-                                                                                                            $class == 'order_detail' ||
-                                                                                                            $class == 'reference_checks' ||
-                                                                                                            $class == 'i9form'  ||
-                                                                                                            $class == 'form_i9' ||
-                                                                                                            $class == 'form_w4' ||
-                                                                                                            $class == 'form_w9' ||
-                                                                                                            $class == 'resource_center' ||
-                                                                                                            $class == 'facebook_configuration' ||
-                                                                                                            $class == 'security_access_level' ||
-                                                                                                            $class == 'reference_network' ||
-                                                                                                            $class == 'expirations_manager' ||
-                                                                                                            $class == 'reports' ||
-                                                                                                            $class == 'approval_rights_management' ||
-                                                                                                            $class == 'job_approval_management' ||
-                                                                                                            $class == 'applicant_approval_management' ||
-                                                                                                            $class == 'misc' ||
-                                                                                                            $class == 'cc_management' ||
-                                                                                                            $class == 'import_csv' ||
-                                                                                                            $class == 'accurate_background' ||
-                                                                                                            $class == 'job_listing_categories_manager' ||
-                                                                                                            $class == 'support_tickets' ||
-                                                                                                            $class == 'resume_database' ||
-                                                                                                            $class == 'notification_emails' ||
-                                                                                                            $class == 'post_on_jobs_to_career' ||
-                                                                                                            $class == 'application_status' ||
-                                                                                                            $class == 'interview_questionnaire' ||
-                                                                                                            $class == 'application_tracking_system' ||
-                                                                                                            $class == 'import_applicants_csv' ||
-                                                                                                            $class == 'assign_bulk_documents' ||
-                                                                                                            $class == 'turnover_cost_calculator' ||
-                                                                                                            $class == 'photo_gallery' ||
-                                                                                                            $class == 'organizational_hierarchy' ||
-                                                                                                            $class == 'video_interview_system' ||
-                                                                                                            $class == 'attendance' ||
-                                                                                                            $class == 'task_management' ||
-                                                                                                            $class == 'export_employees_csv' ||
-                                                                                                            $class == 'export_applicants_csv' ||
-                                                                                                            $class == 'events_management' ||
-                                                                                                            $class == 'onboarding' ||
-                                                                                                            $class == 'direct_deposit' ||
-                                                                                                            $class == 'learning_center' ||
-                                                                                                            $class == 'e_signature' ||
-                                                                                                            $class == 'my_learning_center' ||
-                                                                                                            $class == 'documents_management' ||
-                                                                                                            $class == 'hr_documents_management' ||
-                                                                                                            $class == 'calendar' ||
-                                                                                                            $class == 'company_addresses' ||
-                                                                                                            $class == 'form_full_employment_application' ||
-                                                                                                            $class == 'emergency_contacts' ||
-                                                                                                            $class == 'dependents' ||
-                                                                                                            $class == 'announcements' ||
-                                                                                                            $class == 'manage_ems' ||
-                                                                                                            $class == 'safety_sheets' ||
-                                                                                                            $class == 'general_info' ||
-                                                                                                            $class == 'complynet' ||
-                                                                                                            $class == 'turnover_cost_calculator' ||
-                                                                                                            $class == 'paid_time_off' ||
-                                                                                                            $class == 'performance_management' ||
-                                                                                                            $class == 'goals' ||
-                                                                                                            $class == 'govt_user' ||
-                                                                                                            $class == 'terminate_employee' ||
-                                                                                                            ($class == 'home' && $method == 'resource_page') ||
-                                                                                                            ($class == 'home' && $method == 'event') ||
-                                                                                                            ($class == 'home' && $method == 'services' && $this->uri->segment(2) == 'questionnaires-tutorial') ||
-                                                                                                            $class == 'performance_review' ||
-                                                                                                            $class == 'payroll' ||
-                                                                                                            isset($logged_in_view)
-                                                                                                        ) {
-                                                                                                            echo " header-position";
-                                                                                                        } elseif ($class == 'demo') {
-                                                                                                            echo " header-new-fixed";
-                                                                                                        } ?>">
+                                                                                                            if (
+                                                                                                                $class == 'dashboard' ||
+                                                                                                                $class == 'time_off' ||
+                                                                                                                $class == 'job_listings' ||
+                                                                                                                $class == 'screening_questionnaires' ||
+                                                                                                                $class == 'settings' ||
+                                                                                                                $class == 'employee_login_text' ||
+                                                                                                                $class == 'bulk_resume_download' ||
+                                                                                                                $class == 're_assign_candidate' ||
+                                                                                                                $class == 'job_fair_configuration' ||
+                                                                                                                $class == 'incident_reporting_system' ||
+                                                                                                                $class == 'resend_screening_questionnaire' ||
+                                                                                                                $class == 'users' ||
+                                                                                                                $class == 'eeo' ||
+                                                                                                                // $class == 'demo' ||
+                                                                                                                $class == 'application_tracking' ||
+                                                                                                                $class == 'market_place' ||
+                                                                                                                $class == 'portal_email_templates' ||
+                                                                                                                $class == 'portal_sms_templates' ||
+                                                                                                                $class == 'manual_candidate' ||
+                                                                                                                $class == 'private_messages' ||
+                                                                                                                $class == 'xml_export' ||
+                                                                                                                $class == 'employee_management' ||
+                                                                                                                $class == 'department_management' ||
+                                                                                                                $class == 'onboarding_block' ||
+                                                                                                                $class == 'appearance' ||
+                                                                                                                $class == 'hr_documents' ||
+                                                                                                                $class == 'background_check' ||
+                                                                                                                $class == 'my_hr_documents' ||
+                                                                                                                $class == 'order_history' ||
+                                                                                                                $class == 'received_documents' ||
+                                                                                                                $class == 'order_detail' ||
+                                                                                                                $class == 'reference_checks' ||
+                                                                                                                $class == 'i9form'  ||
+                                                                                                                $class == 'form_i9' ||
+                                                                                                                $class == 'form_w4' ||
+                                                                                                                $class == 'form_w9' ||
+                                                                                                                $class == 'resource_center' ||
+                                                                                                                $class == 'facebook_configuration' ||
+                                                                                                                $class == 'security_access_level' ||
+                                                                                                                $class == 'reference_network' ||
+                                                                                                                $class == 'expirations_manager' ||
+                                                                                                                $class == 'reports' ||
+                                                                                                                $class == 'approval_rights_management' ||
+                                                                                                                $class == 'job_approval_management' ||
+                                                                                                                $class == 'applicant_approval_management' ||
+                                                                                                                $class == 'misc' ||
+                                                                                                                $class == 'cc_management' ||
+                                                                                                                $class == 'import_csv' ||
+                                                                                                                $class == 'accurate_background' ||
+                                                                                                                $class == 'job_listing_categories_manager' ||
+                                                                                                                $class == 'support_tickets' ||
+                                                                                                                $class == 'resume_database' ||
+                                                                                                                $class == 'notification_emails' ||
+                                                                                                                $class == 'post_on_jobs_to_career' ||
+                                                                                                                $class == 'application_status' ||
+                                                                                                                $class == 'interview_questionnaire' ||
+                                                                                                                $class == 'application_tracking_system' ||
+                                                                                                                $class == 'import_applicants_csv' ||
+                                                                                                                $class == 'assign_bulk_documents' ||
+                                                                                                                $class == 'turnover_cost_calculator' ||
+                                                                                                                $class == 'photo_gallery' ||
+                                                                                                                $class == 'organizational_hierarchy' ||
+                                                                                                                $class == 'video_interview_system' ||
+                                                                                                                $class == 'attendance' ||
+                                                                                                                $class == 'task_management' ||
+                                                                                                                $class == 'export_employees_csv' ||
+                                                                                                                $class == 'export_applicants_csv' ||
+                                                                                                                $class == 'events_management' ||
+                                                                                                                $class == 'onboarding' ||
+                                                                                                                $class == 'direct_deposit' ||
+                                                                                                                $class == 'learning_center' ||
+                                                                                                                $class == 'e_signature' ||
+                                                                                                                $class == 'my_learning_center' ||
+                                                                                                                $class == 'documents_management' ||
+                                                                                                                $class == 'hr_documents_management' ||
+                                                                                                                $class == 'calendar' ||
+                                                                                                                $class == 'company_addresses' ||
+                                                                                                                $class == 'form_full_employment_application' ||
+                                                                                                                $class == 'emergency_contacts' ||
+                                                                                                                $class == 'dependents' ||
+                                                                                                                $class == 'announcements' ||
+                                                                                                                $class == 'manage_ems' ||
+                                                                                                                $class == 'safety_sheets' ||
+                                                                                                                $class == 'general_info' ||
+                                                                                                                $class == 'complynet' ||
+                                                                                                                $class == 'turnover_cost_calculator' ||
+                                                                                                                $class == 'paid_time_off' ||
+                                                                                                                $class == 'performance_management' ||
+                                                                                                                $class == 'goals' ||
+                                                                                                                $class == 'govt_user' ||
+                                                                                                                $class == 'terminate_employee' ||
+                                                                                                                ($class == 'home' && $method == 'resource_page') ||
+                                                                                                                ($class == 'home' && $method == 'event') ||
+                                                                                                                ($class == 'home' && $method == 'services' && $this->uri->segment(2) == 'questionnaires-tutorial') ||
+                                                                                                                $class == 'performance_review' ||
+                                                                                                                $class == 'payroll' ||
+                                                                                                                isset($logged_in_view)
+                                                                                                            ) {
+                                                                                                                echo " header-position";
+                                                                                                            } elseif ($class == 'demo') {
+                                                                                                                echo " header-new-fixed";
+                                                                                                            } ?>">
                 <div class="container-fluid">
                     <div class="row hidden-print">
                         <div class="col-md-12">
@@ -1248,10 +1248,12 @@
                                                         <li>
                                                             <?php $get_data = $this->session->userdata('logged_in'); ?>
                                                             <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
-                                                            <a href="<?php echo $complyNetLink ?? base_url('complynet') ?>">
-                                                                <figure><i class="fa fa-book"></i></figure>
-                                                                Complynet
-                                                            </a>
+                                                            <?php if ($complyNetLink) { ?>
+                                                                <a href="<?= base_url('cn/redirect'); ?>">
+                                                                    <figure><i class=" fa fa-book"></i></figure>
+                                                                    ComplyNet
+                                                                </a>
+                                                            <?php } ?>
                                                         </li>
                                                     <?php  } ?>
 

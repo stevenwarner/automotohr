@@ -132,10 +132,10 @@
                                                                             echo '<br> <b> Employee Status:</b> ' . (GetEmployeeStatus($value['last_status_text'], $value['active']));
                                                                             //
                                                                             echo '<br> <b> Access Level:</b> ' . ucwords($value['access_level']);
-                                                                            echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : ''));?>
+                                                                            echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : '')); ?>
                                                                             <!-- Languages -->
                                                                             <br />
-                                                                            <strong>I Speak:</strong> <?=showLanguages($value['languages_speak']);?>
+                                                                            <strong>I Speak:</strong> <?= showLanguages($value['languages_speak']); ?>
                                                                             <br />
                                                                             <?php
                                                                             if (!empty($value['username'])) {
@@ -218,6 +218,9 @@
                                                                             //
                                                                             if (!empty($isOnComplyNet)) {
                                                                                 echo '<b>ComplyNet Status: </b><br>' . $isOnComplyNet;
+                                                                            }
+                                                                            if (!in_array(getComplyNetEmployeeCheck($value, 1, 1, false), ['Not on ComplyNet', ''])) {
+                                                                                echo '<b>ComplyNet Link: </b><br><a href="' . (base_url('cn/redirect/' . ($value['sid']) . '')) . '" class="btn btn-success">Show Page</a>';
                                                                             }
                                                                             ?>
                                                                         </td>

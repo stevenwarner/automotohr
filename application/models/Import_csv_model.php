@@ -349,4 +349,18 @@ class Import_csv_model extends CI_Model {
         $this->db->where('sid', $employeeId);
         $this->db->update('users', $data_to_update);
     }
+
+   //
+    function InsertLicenseDetails($data) {
+        $this->db->insert('license_information', $data);
+        return $this->db->insert_id();
+    }
+
+    function updatLicenseDetails($data_to_update, $employeeId){
+        $this->db->where('users_sid', $employeeId);
+        $this->db->where('license_type', 'drivers');
+        $this->db->update('license_information', $data_to_update);
+    }
+
+
 }

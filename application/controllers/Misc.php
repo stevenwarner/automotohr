@@ -885,8 +885,15 @@ class Misc extends CI_Controller
         }
 
         $card->setMerchantId("AHR_$company_sid");
+
+        $logArray = [];
+        $logArray['ccid'] = substr($params['cc_card_no'], -4);
+        $logArray['request_json'] = json_encode($card);
+        
         try {
-            $card->create($apiContext);
+            $response = $card->create($apiContext);
+            $logArray['response_json'] = json_encode($response);
+            $this->saveLog($logArray);
             return $card;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
             $error_code = $ex->getCode(); // Prints the Error Code
@@ -898,10 +905,14 @@ class Misc extends CI_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
+            $logArray['response_json'] = json_encode($card);
+            $this->saveLog($logArray);
             return $card;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -1029,8 +1040,17 @@ class Misc extends CI_Controller
         $payment->setPayer($payer);
         $payment->setTransactions(array($transaction));
 
+        // set log array
+        $logArray = [];
+        $logArray['ccid'] = $ccId;
+        $logArray['ccToken'] = $ccToken;
+        $logArray['paymentDesc'] = $paymentDesc;
+        $logArray['request_json'] = json_encode($payment);
+
         try {
-            $payment->create($apiContext);
+            $response = $payment->create($apiContext);
+            $logArray['response_json'] = $response;
+            $this->saveLog($logArray);
             return $payment;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
             $error_code = $ex->getCode(); // Prints the Error Code
@@ -1042,10 +1062,14 @@ class Misc extends CI_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
+            $logArray['response_json'] = $payment;
+            $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -1136,15 +1160,39 @@ class Misc extends CI_Controller
             ->setPayer($payer)
             ->setTransactions(array($transaction));
 
+        // set log array
+        $logArray = [];
+        $logArray['ccid'] = null;
+        $logArray['ccToken'] = null;
+        $logArray['paymentDesc'] = $payment_description;
+        $logArray['request_json'] = json_encode($payment);
+
         // ### Create Payment
         // Create a payment by calling the payment->create() method
         // with a valid ApiContext (See bootstrap.php for more on `ApiContext`)
         // The return object contains the state.
         try {
-            $payment->create($apiContext);
+            $response = $payment->create($apiContext);
+            $logArray['response_json'] = $response;
+            $this->saveLog($logArray);
+            return $payment;
+        } catch (PayPal\Exception\PayPalConnectionException $ex) {
+            $error_code = $ex->getCode(); // Prints the Error Code
+            $message = $this->parseApiError($ex->getData());
+            $messageType = "error";
+            $error_flag = true;
+            $payment = array(
+                "error_status" => "error",
+                "error_code" => $error_code,
+                "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
+            );
+            $logArray['response_json'] = $payment;
+            $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
             // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
+            $logArray['response_json'] = 'error';
+            $this->saveLog($logArray);
             return $ex;
         }
     }
@@ -2721,6 +2769,7 @@ class Misc extends CI_Controller
             $employer_sid = $data['session']['employer_detail']['sid'];
             $data['title'] = "Credit Card Management";
 
+
             if (isset($_POST['save_card']) && $_POST['save_card'] == 'save_card') {
                 $formpost = $_POST;
                 $contractor_first_name = $data['session']['employer_detail']['first_name'];
@@ -2773,6 +2822,29 @@ class Misc extends CI_Controller
                     $custom_data['country'] = $formpost['country'];
                     $custom_data['phone_number'] = $formpost['phone_number'];
                     $carddetails["address_details"] = serialize($custom_data);
+
+
+                    $emailTemplateBody =  'Dear Steven, <br><br>';
+                    $emailTemplateBody = $emailTemplateBody . " I wanted to inform you that " . $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'] . " has recently added a new credit card to our company's account under the name " . $data['session']['company_detail']['CompanyName'] . " . The card was added on " . formatDateToDB(date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME) . ". <br>";
+                    $emailTemplateBody = $emailTemplateBody . " I am writing to provide you with the details of the new card so that you can keep track of any transactions that may occur.<br>";
+                    $emailTemplateBody = $emailTemplateBody . " Here is the card information you need to know: <br>";
+                    $emailTemplateBody = $emailTemplateBody . " Card Number: " . $carddetails['number'] . " <br>";
+                    $emailTemplateBody = $emailTemplateBody . " Best regards, <br>  AutomotoHR Team";
+
+
+                    $from = FROM_EMAIL_NOTIFICATIONS; //$emailTemplateData['from_email'];
+                    $to = TO_EMAIL_STEVEN;
+                    $subject = 'New Card Is Added'; //$emailTemplateData['subject'];
+                    $from_name = ucwords(STORE_DOMAIN); //$emailTemplateData['from_name'];
+
+                    $body = EMAIL_HEADER
+                        . $emailTemplateBody
+                        . EMAIL_FOOTER;
+
+                    //
+                    sendMail($from, $to, $subject, $body, $from_name);
+                    sendMail($from, DEV_EMAIL_PM, $subject, $body, $from_name);
+
                     $this->ext_model->cc_future_store($carddetails, $company_sid, $employer_sid);
                     $this->session->set_flashdata('success', 'Success, Your card has successfully saved!');
                     redirect('cc_management', "refresh");
@@ -2925,7 +2997,29 @@ class Misc extends CI_Controller
                     $custom_data['country'] = $formpost['country'];
                     $custom_data['phone_number'] = $formpost['phone_number'];
                     $carddetails["address_details"] = serialize($custom_data);
+
                     $this->ext_model->update_card($card_sid, $carddetails);
+
+                    $emailTemplateBody =  'Dear Steven, <br><br>';
+                    $emailTemplateBody = $emailTemplateBody . " I am pleased to inform you that our company's account under the name " . $data['session']['company_detail']['CompanyName'] . " has been recently updated by " . $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'] . ".";
+                    $emailTemplateBody = $emailTemplateBody . " Under an existing credit card " . $data['card']['number'] . " . The change was made on " . formatDateToDB(date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME) . ".<br>";
+                    $emailTemplateBody = $emailTemplateBody . " Best regards, <br>";
+                    $emailTemplateBody = $emailTemplateBody . " AutomotoHR Team ";
+
+
+                    $from = FROM_EMAIL_NOTIFICATIONS; //$emailTemplateData['from_email'];
+                    $to = TO_EMAIL_STEVEN;
+                    $subject = 'Existing Card Is Updated'; //$emailTemplateData['subject'];
+                    $from_name = ucwords(STORE_DOMAIN); //$emailTemplateData['from_name'];
+
+                    $body = EMAIL_HEADER
+                        . $emailTemplateBody
+                        . EMAIL_FOOTER;
+
+                    //
+                    sendMail($from, $to, $subject, $body, $from_name);
+                    sendMail($from, DEV_EMAIL_PM, $subject, $body, $from_name);
+
                     $this->session->set_flashdata('success', 'Success, Your card has successfully updated!');
                     redirect('cc_management', "refresh");
                 } else {
@@ -3573,5 +3667,16 @@ class Misc extends CI_Controller
             //
             return redirect($this->input->post('redirect_url'), 'refresh');
         }
+    }
+
+
+    /**
+     * Save paypal calls
+     */
+    private function saveLog(array $insertArray)
+    {
+        $insertArray['created_at'] = getSystemDate();
+        //
+        $this->db->insert('paypal_log', $insertArray);
     }
 }

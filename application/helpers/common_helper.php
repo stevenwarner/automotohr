@@ -9629,17 +9629,19 @@ if (!function_exists('get_timezones')) {
         // Timezones without daylight time
         // America
         $timezones = [];
-        $timezones[] = ['value' => '-11:00|US|01|SST', 'name' => 'Samoa Time',    'key' => 'SST'];
-        $timezones[] = ['value' => '-08:00|US|05|AKST', 'name' => 'Alaska Time',   'key' => 'AKST'];
+        // $timezones[] = ['value' => '-11:00|US|01|SST', 'name' => 'Samoa Time',    'key' => 'SST'];
+        // $timezones[] = ['value' => '-08:00|US|05|AKST', 'name' => 'Alaska Time',   'key' => 'AKST'];
         $timezones[] = ['value' => '-07:00|US|07|PST', 'name' => 'Pacific Time',  'key' => 'PST', 'type' => 'north_america'];
         $timezones[] = ['value' => '-06:00|US|09|MST', 'name' => 'Mountain Time', 'key' => 'MST', 'type' => 'north_america'];
         $timezones[] = ['value' => '-05:00|US|11|CST', 'name' => 'Central Time',  'key' => 'CST', 'type' => 'north_america'];
         $timezones[] = ['value' => '-04:00|US|13|EST', 'name' => 'Eastern Time',  'key' => 'EST', 'type' => 'north_america'];
-        $timezones[] = ['value' => '-04:00|US|14|AST', 'name' => 'Atlantic Time', 'key' => 'AST'];
-        $timezones[] = ['value' => '+10:00|US|15|CHST', 'name' => 'Chamorro Time', 'key' => 'CHST'];
+        //$timezones[] = ['value' => '-04:00|US|14|AST', 'name' => 'Atlantic Time', 'key' => 'AST'];
+        // $timezones[] = ['value' => '+10:00|US|15|CHST', 'name' => 'Chamorro Time', 'key' => 'CHST'];
         $timezones[] = ['value' => '-09:00|US|03|HST', 'name' => 'Hawaii-Aleutian Time', 'key' => 'HST'];
         $timezones[] = ['value' => '-03:00|US|15|NST', 'name' => 'Newfoundland Standard Time', 'key' => 'NST'];
         // Europe
+
+        /*
         $timezones[] = ['value' => '+02:00|EU|02|CET', 'name' => 'Central European Time', 'key' => 'CET'];
         $timezones[] = ['value' => '+02:00|EU|05|EET', 'name' => 'Eastern European Time', 'key' => 'EET'];
         $timezones[] = ['value' => '+03:00|EU|06|FET', 'name' => 'Further European Time', 'key' => 'FET'];
@@ -9651,6 +9653,8 @@ if (!function_exists('get_timezones')) {
         $timezones[] = ['value' => '+04:00|EU|12|SAMT', 'name' => 'Samara Time',           'key' => 'SAMT'];
         $timezones[] = ['value' => '+03:00|EU|13|TRT', 'name' => 'Turkey Time',           'key' => 'TRT'];
         $timezones[] = ['value' => '+01:00|EU|14|WET', 'name' => 'Western European Time', 'key' => 'WET'];
+      */
+
         // Merge arrays
         $zones = $timezones;
         // Check and return
@@ -10415,6 +10419,22 @@ if (!function_exists('fetch_admin_sms_notifications')) {
         // Load SMS model
         $_this->load->model('manage_admin/sms_model');
         return $_this->sms_model->get_sms_admin(0);
+    }
+}
+/**
+ * Get SMS notifications
+ * Ceated on: 22-07-2019
+ *
+ * @param $_this Instance
+ *
+ * @return Integer
+ */
+if (!function_exists('getProfileDataChange')) {
+    function getProfileDataChange($_this)
+    {
+        // load user model
+        $_this->load->model('2022/User_model', 'user_model');
+        return $_this->user_model->getEmployeeHistory([]);
     }
 }
 
@@ -16132,7 +16152,7 @@ if (!function_exists('get_company_departments_teams')) {
      * @param int $teamId Optional
      * @return array|string
      */
-    function get_company_departments_teams(int $companyId, string $id = '', int $teamId = 0)
+    function get_company_departments_teams(int $companyId, string $id = '', $teamId = 0)
     {
         //
         $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="jsSelect2" style="width: 100%;">';
@@ -16507,3 +16527,117 @@ if (!function_exists('checkTermsAccepted')) {
     }
 }
 
+if (!function_exists('get_templet_jobtitles')) {
+    function get_templet_jobtitles($companyId)
+    {
+        if (!empty($companyId)) {
+            // Get Group Id
+            $CI = &get_instance();
+            $CI->db->select('job_titles_template_group');
+            $CI->db->where('sid', $companyId);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+            $gropuSid = $company_info['job_titles_template_group'];
+
+            // Get Gropup Data
+            $CI->db->where('sid', $gropuSid);
+            $CI->db->where('archive_status', 'active');
+            $GroupsData = $CI->db->get('portal_job_listing_template_groups')->row_array();
+
+            $titlesIdArray = array();
+
+            if ($GroupsData['titles'] != '') {
+                $titlesIdArray = unserialize($GroupsData['titles']);
+            }
+            if (!$titlesIdArray) {
+                return [];
+            }
+            // Get Job Titles
+            $CI->db->where('archive_status', 'active');
+            $CI->db->where_in('sid', $titlesIdArray);
+            $CI->db->order_by('sort_order', 'ASC');
+            $jobTitlesData = $CI->db->get('portal_job_title_templates')->result_array();
+
+            return $jobTitlesData;
+        }
+    }
+}
+
+
+//
+if (!function_exists('get_templet_complynettitle')) {
+    function get_templet_complynettitle($titleSid)
+    {
+        if (!empty($titleSid)) {
+            $CI = &get_instance();
+            $CI->db->select('complynet_job_title');
+            $CI->db->where('sid', $titleSid);
+            $CI->db->order_by('sort_order', 'ASC');
+            $jobComplynetData = $CI->db->get('portal_job_title_templates')->row_array();
+            return $jobComplynetData['complynet_job_title'];
+        }
+    }
+}
+
+
+
+//  Get User Complynet Job Title by Sid
+if (!function_exists('get_user_complynettitle')) {
+    function get_user_complynettitle($sid)
+    {
+        if (!empty($sid)) {
+            $CI = &get_instance();
+            $CI->db->select('complynet_job_title');
+            $CI->db->where('sid', $sid);
+            $jobComplynetData = $CI->db->get('users')->row_array();
+            return $jobComplynetData['complynet_job_title'];
+        }
+    }
+}
+
+
+//
+if (!function_exists('get_employee_drivers_license')) {
+    function get_employee_drivers_license($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('license_details');
+        $CI->db->where('users_sid', $emp_id);
+        $CI->db->where('license_type ', 'drivers');
+        return $CI->db->get('license_information')->row_array();
+    }
+}
+//
+if (!function_exists('getEEOCCitizenShipFlag')) {
+    function getEEOCCitizenShipFlag($companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('dl_citizen');
+        $CI->db->where('user_sid', $companySid);
+        $portalData = $CI->db->get('portal_employer')->row_array();
+        return $portalData['dl_citizen'];
+    }
+}
+//
+if (!function_exists('get_employee_drivers_license')) {
+    function get_employee_drivers_license($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('license_details');
+        $CI->db->where('users_sid', $emp_id);
+        $CI->db->where('license_type ', 'drivers');
+        return $CI->db->get('license_information')->row_array();
+    }
+}
+
+//
+if (!function_exists('get_company_module_status')) {
+    function get_company_module_status($companySid, $fieldName)
+    {
+        $CI = &get_instance();
+        $CI->db->select($fieldName);
+        $CI->db->where('user_sid', $companySid);
+        $result = $CI->db->get('portal_employer')->row_array();
+        return $result[$fieldName];
+    }
+}

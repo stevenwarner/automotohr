@@ -354,7 +354,7 @@ $assignIdObj = $confidential_sids;
                                                                 <tr>
                                                                     <td class="col-lg-2">
                                                                         EEOC FORM
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . (empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on') . '.gif'); ?>">
+                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . ($eeo_form_info['status'] == 1 && $eeo_form_info['is_expired'] == 1 ? 'on' : 'off') . '.gif'); ?>">
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
                                                                         <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -506,6 +506,16 @@ $assignIdObj = $confidential_sids;
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
+                                                                                    <!-- List verification and general documents with no actions -->
+                                                                                    <?php if($active_group['other_documents']): ?>
+                                                                                        <?php foreach($active_group['other_documents'] as $otherDocument): ?>
+                                                                                            <tr class="js-search-row">
+                                                                                                <td class="col-xs-8"><?=$otherDocument;?></td>
+                                                                                                <td>-</td>
+                                                                                                <td class="text-center">-</td>
+                                                                                            </tr>
+                                                                                        <?php endforeach; ?>
+                                                                                    <?php endif; ?>
                                                                                     <?php if ($active_group['documents_count'] > 0) { ?>
                                                                                         <?php foreach ($active_group['documents'] as $document) { ?>
                                                                                             <tr class="js-search-row">
@@ -5727,8 +5737,8 @@ if ($user_type == 'employee') {
 
                 //
                 if (dn.trim() == 'EEOC FORM') {
-                    if (<?= $eeo_form_info['status']; ?> != 1) {
-                        return;
+                    if (<?= $eeo_form_info['status']??0; ?> != 1) {
+                       return;
                     }
                 }
 

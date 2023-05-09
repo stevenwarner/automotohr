@@ -10,36 +10,38 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
     }
 
-    public function test()
+    /**
+     * 
+     */
+    public function redirectToComply(int $employeeId = 0)
     {
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.gusto-demo.com/v1/companies/7756341741024534/pay_periods?start_date=2023-02-28',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer msPKA8AjhCKIObfna046RGcI4HdcgcM28zdGIZUbAmg'
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-        echo $response;
-
-        die;
+        // check if we need to read from session
+        if ($employeeId === 0) {
+            $employeeId = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        }
+        // if employee is not found
+        if ($employeeId == 0) {
+            return redirect('/dashboard');
+        }
+        // generate link
+        $complyLink = getComplyNetLink(0, $employeeId);
+        //
+        if (!$complyLink) {
+            return redirect('/dashboard');
+        }
+        redirect($complyLink);
     }
+
+
 
     public function fix_merge()
     {
+        $this->load->model('2022/complynet_model', 'complynet_model');
+        echo $this->complynet_model->syncJobRoles(
+            '90AE8942-8150-4423-90A1-9FF8160A1376',
+            'Body Shop Manager'
+        );
+        die('END');
         $this->tm->get_merge_employee();
     }
 
@@ -66,4 +68,17 @@ class Testing extends CI_Controller
     //     }
     //     echo "Done";
     // }
+
+    public function fixTransferEmployees()
+    {
+        // get all ComplyNet employees
+        $employees = $this->db
+            ->select('employee_sid')
+            ->get('complynet_employees')
+            ->result_array();
+        //
+        $employees = array_column($employees, 'employee_sid');
+        // check and get from
+        _e($employees, true);
+    }
 }

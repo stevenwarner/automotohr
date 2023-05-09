@@ -5,7 +5,7 @@
     </li>
     <?php } ?>
     <li <?php echo ($pageName == 'jobs' ? 'class="active"' : '' ); ?>>
-        <a href="<?php echo base_url(strtolower(str_replace(' ', '_', $jobs_page_title))); ?>"><?php echo ucwords(strtolower(str_replace('-', ' ', $jobs_page_title))); ?></a>
+        <a href="<?php echo base_url(strtolower(str_replace(' ', '_', $jobs_page_title))); ?>"><?php echo ucwords((str_replace(['-', '_'], ' ', $jobs_page_title))); ?></a>
     </li>
     <?php   if ($isPaid) {
         foreach ($pages as $page) {

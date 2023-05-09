@@ -1700,3 +1700,35 @@ $route['payroll/signatories/(:num)/(:num)']['delete'] = 'gusto/Gusto_payroll/del
 $route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory/$1';
 // Sync
 $route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
+
+//Job Title Templates
+$route['manage_admin/job_title_templates'] = 'manage_admin/job_title_templates/index';
+$route['manage_admin/job_title_templates/add'] = 'manage_admin/job_title_templates/add_edit';
+$route['manage_admin/job_title_templates/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit/$1';
+
+$route['manage_admin/job_title_groups'] = 'manage_admin/job_title_templates/index';
+$route['manage_admin/job_title_groups/add'] = 'manage_admin/job_title_templates/add_edit_group';
+$route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit_group/$1';
+
+
+/**
+ * Cron job URLS
+ */
+$route['cron_fix_duplicate_eeo']['cli'] = "Cron_common/fixDuplicateEEOForms";
+$route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
+
+$route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
+
+
+// Download document zip file
+$route['download_document_zip/(:any)']['get'] = 'Hr_documents_management/downloadDocumentZipFile/$1';
+
+// Redirect to ComplyNet
+$route['cn/redirect'] = 'Testing/redirectToComply';
+$route['cn/redirect/(:num)'] = 'Testing/redirectToComply/$1';
+
+//
+$route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProfileDataReport';
+
+//
+$route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';

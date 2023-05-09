@@ -1421,6 +1421,15 @@ class Onboarding extends CI_Controller
             $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
             $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
             $primary_info['full_employment_application'] = serialize($full_emp_app);
+            //
+            $primary_info['languages_speak'] = null;
+            //
+            $languages_speak = $this->input->post('secondaryLanguages');
+            //
+            if ($languages_speak) {
+                $primary_info['languages_speak'] = implode(',', $languages_speak);
+            }
+            //
             $this->onboarding_model->update_applicant_information($company_sid, $applicant_sid, $primary_info);
             $this->onboarding_model->increment_section_save_count($applicant_sid, 'applicant', 'general_information');
             //
@@ -2891,6 +2900,7 @@ class Onboarding extends CI_Controller
             }
 
             $data['enable_learbing_center'] = $enable_learbing_center;
+            $data['dl_citizen'] = getEEOCCitizenShipFlag($data['company_info']['sid']);
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
             if ($this->form_validation->run() == false) {
@@ -8817,11 +8827,11 @@ class Onboarding extends CI_Controller
                         'rules' => 'xss_clean|trim|required'
                     );
 
-                    $order_field = array(
-                        'field' => 'w4_middle_name',
-                        'label' => 'Middle Name',
-                        'rules' => 'xss_clean|trim|required'
-                    );
+                    // $order_field = array(
+                    //     'field' => 'w4_middle_name',
+                    //     'label' => 'Middle Name',
+                    //     'rules' => 'xss_clean|trim|required'
+                    // );
 
                     if (isset($_GET['submit']) && $_GET['submit'] == 'Download PDF') {
                         $view = $this->load->view('form_w4/form_w4', $data, TRUE);
@@ -8860,7 +8870,7 @@ class Onboarding extends CI_Controller
                     } else {
 
                         $first_name = $this->input->post('w4_first_name');
-                        $middle_name = $this->input->post('w4_middle_name');
+                        $middle_name = $this->input->post('w4_middle_name') ?? '';
                         $last_name = $this->input->post('w4_last_name');
                         $ss_number = $this->input->post('ss_number');
                         $home_address = $this->input->post('home_address');
@@ -10472,6 +10482,7 @@ class Onboarding extends CI_Controller
             $data['eeo_form_info']      = $eeo_form_info;
             $data['id']                 = $eeo_form_info['sid'];
             $data['location']           = "Blue Panel";
+            $data['dl_citizen']         = getEEOCCitizenShipFlag($company_sid);
             //
             $this->load->view('onboarding/on_boarding_header', $data);
             $this->load->view('eeo/employee_eeoc');

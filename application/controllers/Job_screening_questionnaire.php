@@ -297,7 +297,7 @@ class Job_screening_questionnaire extends CI_Controller {
                                 $mail_body = str_replace('{{last-name}}', ucwords($applicant_lname), $mail_body);
 
                                 sendMail($from, $to, $subject, $mail_body, $fromname);
-                                sendMail($from, 'ahassan.egenie@gmail.com', $subject, $mail_body, $fromname);
+                                sendMail($from, 'mubashar@automotohr.com', $subject, $mail_body, $fromname);
                             }
                             redirect(base_url('Job_screening_questionnaire').'/'.$verification_key, "refresh");                   
                         }

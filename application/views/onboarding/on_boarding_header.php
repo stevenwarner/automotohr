@@ -312,7 +312,9 @@
                                                     $access_level  = isset($employee) ? $employee['access_level'] : $employerData['access_level'];
                                                     if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $access_level != 'Employee' && $employee_status) { ?>
                                                         <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
-                                                        <li><a href="<?php echo $complyNetLink ?? base_url('complynet'); ?>"><i class="fa fa-fw fa-fire-extinguisher"></i>&nbsp;&nbsp;ComplyNet</a></li>
+                                                        <?php if ($complyNetLink) { ?>
+                                                            <li><a href="<?= base_url('cn/redirect'); ?>"><i class="fa fa-fw fa-fire-extinguisher"></i>&nbsp;&nbsp;ComplyNet</a></li>
+                                                        <?php } ?>
                                                     <?php } ?>
                                                 </ul>
                                             </li>
@@ -377,16 +379,16 @@
                                 <?php if ($employee['is_executive_admin'] == 0) { ?>
                                     <br>
                                     <br><br>
-                                     
+
                                     <div class="btn-link-wrp">
                                         <?php if ((isset($employerData) && $employerData['access_level'] != 'Employee') || (isset($employee) && $employee['access_level'] != 'Employee')) { ?>
                                             <a href="<?php echo base_url('dashboard'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"> Management Dashboard </a>
                                         <?php } ?>
-                                        <?php if($this->uri->segment(1)=='employee_management_system' || $this->uri->segment(1)=='dashboard'){?>
-                                        <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"><i class="fa fa-pencil"></i> my profile</a>
-                                         <?php }else{ ?>
+                                        <?php if ($this->uri->segment(1) == 'employee_management_system' || $this->uri->segment(1) == 'dashboard') { ?>
+                                            <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"><i class="fa fa-pencil"></i> my profile</a>
+                                        <?php } else { ?>
                                             <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;">EMS Dashboard</a>
-                                        <?php }?>
+                                        <?php } ?>
                                     </div>
 
                                 <?php } ?>

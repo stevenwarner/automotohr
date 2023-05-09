@@ -406,10 +406,29 @@
                             <div class="form-group autoheight">
                                 <p>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    Make the following selected options mandatory the following field(s).
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                U.S. citizen <small class="help_text">If enabled then the "U.S. citizen or permanent resident" section will be required for EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_citizen" name="dl_citizen" <?php echo (isset($portal['dl_citizen']) && $portal['dl_citizen'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <p>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
                                     Make the following selected options available on EEO for employee/applicant.
                                 </p>
                             </div>
                         </div>
+                        
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">

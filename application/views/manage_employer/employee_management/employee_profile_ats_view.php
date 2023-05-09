@@ -127,7 +127,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <?php echo form_error('email'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Mobile number:</label>
+                                                    <label>Phone number:</label>
                                                     <?= $input_group_start; ?>
                                                     <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>" type="text" name="PhoneNumber">
                                                     <?= $input_group_end; ?>
@@ -147,9 +147,26 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Job Title:</label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title">
+                                                    <?php $templateTitles = get_templet_jobtitles($employer['parent_sid']); ?>
+
+                                                    <label>Job Title: &nbsp;&nbsp;&nbsp;
+                                                        <?php if ($templateTitles) { ?>
+                                                            <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $employer['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
+                                                            <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $employer['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title &nbsp;
+                                                        <?php } ?>
+                                                    </label>
+                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $employer["job_title"]); ?>" type="text" name="job_title" id="job_title">
+                                                    <?php if ($templateTitles) { ?>
+                                                        <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                            <option value="0">Please select job title</option>
+                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    <?php } ?>
                                                 </div>
+
+
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -232,7 +249,6 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <label>Employment Type:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="employee-type" id="employee-type">
-                                                            <option value="0">Select Employment Type</option>
                                                             <?php if (!empty($employment_types)) { ?>
                                                                 <?php foreach ($employment_types as $key => $employment_type) { ?>
                                                                     <option value="<?= $key ?>" <?php if (strtolower($employer['employee_type']) == $key) {
@@ -508,9 +524,9 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                            <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                                                 <div class="col-sm-12">
-                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
                                                     <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
                                                 </div>
                                             </div>
@@ -522,6 +538,62 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             </script>
 
                                             <br />
+
+
+
+
+                                                <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Union Member:</label>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                 
+                                                <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio " style="margin-left: -10px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $employer['union_member'] ? 'checked' : '' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio " style="margin-left: -20px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $employer['union_member'] ? '' : 'checked' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <br>
+                                                        <br>
+                                                        <div class="row jsunionname">
+                                                            <div class="col-sm-12">
+                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $employer['union_name']; ?>" />
+                                                            </div>
+                                                        </div>
+<br>
+                                                        <script>
+                                                            <?php if ($employer['union_member'] == 0) { ?>
+                                                                $('.jsunionname').hide();
+                                                            <?php } ?>
+
+                                                            $('.unionmember').on('click', function() {
+                                                                var selected = $(this).val();
+                                                                if (selected == '1') {
+                                                                    $('.jsunionname').show();
+
+                                                                } else {
+                                                                    $('.jsunionname').hide();
+                                                                }
+                                                            });
+                                                        </script>
+
+                                                </div>
+                                            </div>
+
+
 
 
                                             <?php if ($timeOff == 'enable') { ?>
@@ -2567,6 +2639,31 @@ if (checkIfAppIsEnabled('timeoff')) {
             }
         }
 
+    <?php } ?>
+
+
+    //
+    <?php if ($templateTitles) { ?>
+
+        <?php if ($employer['job_title_type'] != '0') { ?>
+            $('#temppate_job_title').show();
+            $('#temppate_job_title').val('<?php echo $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+            $('#job_title').hide();
+        <?php } ?>
+
+        $('.titleoption').click(function() {
+            var titleOption = $(this).val();
+            if (titleOption == 'dropdown') {
+                $('#temppate_job_title').show();
+                $('#temppate_job_title').val('<?php echo $employer['job_title_type'] == '0' ? '0' : $employer['job_title_type'] . '#' . $employer['job_title']; ?>');
+                $('#job_title').hide();
+            } else if (titleOption == 'manual') {
+                $('#temppate_job_title').hide();
+                $('#temppate_job_title').val('0');
+                $('#job_title').show();
+            }
+
+        });
     <?php } ?>
 </script>
 

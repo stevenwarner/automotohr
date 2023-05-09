@@ -210,19 +210,19 @@ if (count($balances['Employees'])) {
                                                         'M d Y, D'
                                                     ); ?>
                                                 </td>
-                                                <td><?= $balance['AllowedTime']['text'] == '' ? '0 hours' : $balance['AllowedTime']['text']; ?>
+                                                <td><?= $balance['total']['AllowedTime']['text'] == '' ? '0 hours' : $balance['total']['AllowedTime']['text']; ?>
                                                 </td>
                                                 <td>
                                                     <span>
                                                         <strong>Paid:</strong>
-                                                        <?= $balance['ConsumedTime']['text'] == '' ? '0 hours' : $balance['ConsumedTime']['text']; ?>
+                                                        <?= $balance['total']['ConsumedTime']['text'] == '' ? '0 hours' : $balance['total']['ConsumedTime']['text']; ?>
                                                     </span><br />
                                                     <span>
                                                         <strong>Unpaid:</strong>
-                                                        <?= $balance['UnpaidConsumedTime']['text'] == '' ? '0 hours' : $balance['UnpaidConsumedTime']['text']; ?>
+                                                        <?= $balance['total']['UnpaidConsumedTime']['text'] == '' ? '0 hours' : $balance['total']['UnpaidConsumedTime']['text']; ?>
                                                     </span>
                                                 </td>
-                                                <td><?= $balance['RemainingTime']['text'] == '' ? '0 hours' : $balance['RemainingTime']['text']; ?>
+                                                <td><?= $balance['total']['RemainingTime']['text'] == '' ? '0 hours' : $balance['total']['RemainingTime']['text']; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

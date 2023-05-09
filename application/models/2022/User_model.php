@@ -2,7 +2,8 @@
 
 class User_model extends CI_Model
 {
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
@@ -12,15 +13,15 @@ class User_model extends CI_Model
     public function getCompanyEmployees($companyId)
     {
         return $this->db
-        ->select(getUserFields())
-        ->where([
-            'parent_sid' => $companyId,
-            'active' => 1,
-            'terminated_status' => 0
-        ])
-        ->order_by('first_name', 'ASC')
-        ->get('users')
-        ->result_array();
+            ->select(getUserFields())
+            ->where([
+                'parent_sid' => $companyId,
+                'active' => 1,
+                'terminated_status' => 0
+            ])
+            ->order_by('first_name', 'ASC')
+            ->get('users')
+            ->result_array();
     }
 
     /**
@@ -33,20 +34,19 @@ class User_model extends CI_Model
     public function getProfileHistory(
         $employeeId,
         $count = false
-    )
-    {
+    ) {
         //
         $this->db
-        ->from('profile_history')
-        ->where('user_sid', $employeeId);
+            ->from('profile_history')
+            ->where('user_sid', $employeeId);
         //
         if ($count) {
             return $this->db->count_all_results();
         }
         //
         $records =
-        $this->db
-        ->select('
+            $this->db
+            ->select('
             profile_history.profile_data,
             profile_history.created_at,
             profile_history.employer_sid,
@@ -60,10 +60,10 @@ class User_model extends CI_Model
             users.job_title,
             users.timezone
         ')
-        ->join('users', 'users.sid = profile_history.employer_sid', 'left')
-        ->order_by('profile_history.sid', 'DESC')
-        ->get()
-        ->result_array();
+            ->join('users', 'users.sid = profile_history.employer_sid', 'left')
+            ->order_by('profile_history.sid', 'DESC')
+            ->get()
+            ->result_array();
         //
         if (!empty($records)) {
             foreach ($records as $key => $record) {
@@ -94,10 +94,10 @@ class User_model extends CI_Model
     {
         //
         return $this->db
-        ->select('sid, state_name')
-        ->from('states')
-        ->get()
-        ->result_array();
+            ->select('sid, state_name')
+            ->from('states')
+            ->get()
+            ->result_array();
     }
 
     /**
@@ -109,8 +109,7 @@ class User_model extends CI_Model
         $licenseFile,
         $employeeId,
         $employerId = 0
-    )
-    {
+    ) {
         //
         if ($employeeId == $employerId) {
             $employerId = 0;
@@ -125,18 +124,18 @@ class User_model extends CI_Model
             $newData['license_class'] = isset($post['license_class']) ? $post['license_class'] : '';
             $newData['license_number'] = $post['license_number'];
             $newData['license_issue_date'] = !empty($post['license_issue_date']) ?
-            formatDateToDB($post['license_issue_date'], SITE_DATE, DB_DATE)
-            : '';
+                formatDateToDB($post['license_issue_date'], SITE_DATE, DB_DATE)
+                : '';
             $newData['license_expiration_date'] = !empty($post['license_expiration_date']) ?
-            formatDateToDB($post['license_expiration_date'], SITE_DATE, DB_DATE)
-            : '';
+                formatDateToDB($post['license_expiration_date'], SITE_DATE, DB_DATE)
+                : '';
             $newData['license_indefinite'] = isset($post['license_indefinite']) ? $post['license_indefinite'] : '';
             $newData['license_notes'] = trim($post['license_notes']);
             $newData['license_file'] = $licenseFile;
             //
             if (!empty($oldData['license_issue_date'])) {
                 $oldData['license_issue_date'] =
-                formatDateToDB($oldData['license_issue_date'], SITE_DATE, DB_DATE);
+                    formatDateToDB($oldData['license_issue_date'], SITE_DATE, DB_DATE);
             }
             //
             if (!empty($oldData['license_expiration_date'])) {
@@ -190,11 +189,11 @@ class User_model extends CI_Model
             if (!empty($oldData['birth_date'])) {
                 //
                 $oldData['birth_date'] =
-                formatDateToDB(
-                    $oldData['birth_date'],
-                    strpos('-', $oldData['birth_date']) === false ? SITE_DATE : 'm-d-Y',
-                    DB_DATE
-                );
+                    formatDateToDB(
+                        $oldData['birth_date'],
+                        strpos('-', $oldData['birth_date']) === false ? SITE_DATE : 'm-d-Y',
+                        DB_DATE
+                    );
             }
         }
         // Emergency Contacts
@@ -244,14 +243,13 @@ class User_model extends CI_Model
     public function getGeneralDocumentData(
         $documentType,
         $employeeId
-    )
-    {
+    ) {
         //
-        $func = 'get'.(ucwords($documentType));
+        $func = 'get' . (ucwords($documentType));
         //
         return $this->$func($employeeId);
     }
-    
+
     /**
      * Get occupational license
      *
@@ -263,18 +261,17 @@ class User_model extends CI_Model
     public function getOccupationalLicense(
         $userId,
         $userType = 'employee'
-    )
-    {
+    ) {
         //
         $record = $this->db
-        ->select('license_details, license_file')
-        ->where([
-            'users_sid' => $userId,
-            'users_type' => $userType,
-            'license_type' => 'occupational'
-        ])
-        ->get('license_information')
-        ->row_array();
+            ->select('license_details, license_file')
+            ->where([
+                'users_sid' => $userId,
+                'users_type' => $userType,
+                'license_type' => 'occupational'
+            ])
+            ->get('license_information')
+            ->row_array();
         //
         $tmp = [];
         //
@@ -311,18 +308,17 @@ class User_model extends CI_Model
     public function getDriversLicense(
         $userId,
         $userType = 'employee'
-    )
-    {
+    ) {
         //
         $record = $this->db
-        ->select('license_details, license_file')
-        ->where([
-            'users_sid' => $userId,
-            'users_type' => $userType,
-            'license_type' => 'drivers'
-        ])
-        ->get('license_information')
-        ->row_array();
+            ->select('license_details, license_file')
+            ->where([
+                'users_sid' => $userId,
+                'users_type' => $userType,
+                'license_type' => 'drivers'
+            ])
+            ->get('license_information')
+            ->row_array();
         //
         $tmp = [];
         //
@@ -359,11 +355,10 @@ class User_model extends CI_Model
     public function getDirectDeposit(
         $userId,
         $userType = 'employee'
-    )
-    {
+    ) {
         //
         $records = $this->db
-        ->select('
+            ->select('
             account_title,
             routing_transaction_number,
             account_number,
@@ -377,13 +372,13 @@ class User_model extends CI_Model
             print_name,
             consent_date
         ')
-        ->where([
-            'users_sid' => $userId,
-            'users_type' => $userType
-        ])
-        ->order_by('sid', 'ASC')
-        ->get('bank_account_details')
-        ->result_array();
+            ->where([
+                'users_sid' => $userId,
+                'users_type' => $userType
+            ])
+            ->order_by('sid', 'ASC')
+            ->get('bank_account_details')
+            ->result_array();
         //
         if (empty($records)) {
             $records = [];
@@ -432,7 +427,7 @@ class User_model extends CI_Model
         //
         return $records;
     }
-    
+
     /**
      * Get dependents
      *
@@ -444,16 +439,15 @@ class User_model extends CI_Model
     public function getDependent(
         $userId,
         $userType = 'employee'
-    )
-    {
+    ) {
         //
         $record = $this->db
-        ->select('dependant_details')
-        ->where([
-            'sid' => $this->input->post('sid', true)
-        ])
-        ->get('dependant_information')
-        ->row_array();
+            ->select('dependant_details')
+            ->where([
+                'sid' => $this->input->post('sid', true)
+            ])
+            ->get('dependant_information')
+            ->row_array();
         //
         if (empty($record)) {
             $record['first_name'] = '';
@@ -477,7 +471,7 @@ class User_model extends CI_Model
         //
         return $record;
     }
-    
+
     /**
      * Get emergency contacts
      *
@@ -489,11 +483,10 @@ class User_model extends CI_Model
     public function getEmergencyContact(
         $userId,
         $userType = 'employee'
-    )
-    {
+    ) {
         //
         $record = $this->db
-        ->select('
+            ->select('
             first_name,
             last_name,
             email,
@@ -506,11 +499,11 @@ class User_model extends CI_Model
             Relationship,
             priority
         ')
-        ->where([
-            'sid' => $this->input->post('sid', true)
-        ])
-        ->get('emergency_contacts')
-        ->row_array();
+            ->where([
+                'sid' => $this->input->post('sid', true)
+            ])
+            ->get('emergency_contacts')
+            ->row_array();
         //
         if (empty($record)) {
             $record['first_name'] = '';
@@ -578,7 +571,7 @@ class User_model extends CI_Model
     }
 
 
-     /**
+    /**
      * Get employee history data
      *
      * @param int     $employeeId
@@ -589,11 +582,10 @@ class User_model extends CI_Model
         $employeeIds,
         $startDate,
         $endDate
-    )
-    {
+    ) {
         //
         $this->db
-        ->select('
+            ->select('
             profile_history.profile_data,
             profile_history.created_at,
             profile_history.employer_sid,
@@ -608,20 +600,20 @@ class User_model extends CI_Model
             users.job_title,
             users.timezone
         ')
-        ->join('users', 'users.sid = profile_history.user_sid', 'left')
-        ->order_by('profile_history.sid', 'DESC');
+            ->join('users', 'users.sid = profile_history.user_sid', 'left')
+            ->order_by('profile_history.sid', 'DESC');
         // where
         $this->db->where('parent_sid', $companyId);
         if ($employeeIds) {
             $this->db->where_in('user_sid', $employeeIds);
         }
         if ($startDate && $endDate) {
-            $this->db->where('profile_history.created_at >= ', $startDate.' 00:00:00');
-            $this->db->where('profile_history.created_at <= ', $endDate.' 23:59:59');
+            $this->db->where('profile_history.created_at >= ', $startDate . ' 00:00:00');
+            $this->db->where('profile_history.created_at <= ', $endDate . ' 23:59:59');
         }
         $records = $this->db
-        ->get('profile_history')
-        ->result_array();
+            ->get('profile_history')
+            ->result_array();
         //
         if (empty($records)) {
             return [];
@@ -659,8 +651,7 @@ class User_model extends CI_Model
     public function getEmployeeInformationChange(
         int $companyId,
         string $type
-    )
-    {
+    ) {
         // Set dates
         if ($type == 'daily') {
             $startDate = date('Y-m-d', strtotime('now'));
@@ -674,14 +665,74 @@ class User_model extends CI_Model
         }
         // Query
         return
-        $this->db
-        ->select('profile_history.sid')
-        ->join('users', 'users.sid = profile_history.user_sid')
-        ->where('users.parent_sid', $companyId)
-        ->where('profile_history.created_at >= ', $startDate.' 00:00:00')
-        ->where('profile_history.created_at <= ', $endDate.' 23:59:59')
-        ->group_by('profile_history.user_sid')
-        ->get('profile_history')
-        ->num_rows();
+            $this->db
+            ->select('profile_history.sid')
+            ->join('users', 'users.sid = profile_history.user_sid')
+            ->where('users.parent_sid', $companyId)
+            ->where('profile_history.created_at >= ', $startDate . ' 00:00:00')
+            ->where('profile_history.created_at <= ', $endDate . ' 23:59:59')
+            ->group_by('profile_history.user_sid')
+            ->get('profile_history')
+            ->num_rows();
+    }
+
+    /**
+     * Get all active companies
+     */
+    public function getAllActiveCompanies()
+    {
+        return $this->db
+            ->select('sid, CompanyName')
+            ->where('active', 1)
+            ->where('is_paid', 1)
+            ->where('parent_sid', 0)
+            ->order_by('CompanyName', 'ASC')
+            ->get('users')
+            ->result_array();
+    }
+
+    /**
+     * 
+     */
+    public function getEmployeeHistory($get)
+    {
+        //
+        $whereArray = [];
+        if ($get && $get['start_date'] && $get['end_date']) {
+            //
+            if ($get['start_date'] != '') {
+                $whereArray['profile_history.created_at >='] = (formatDateToDB($get['start_date'], SITE_DATE, DB_DATE)) . ' 00:00:00';
+            }
+            //
+            if ($get['end_date']) {
+                $whereArray['profile_history.created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
+            }
+        } else {
+            $whereArray['profile_history.created_at >='] = getSystemDate(DB_DATE) . ' 00:00:00';
+            $whereArray['profile_history.created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
+        }
+        //
+        return $this->db
+            ->select('
+                profile_history.sid, 
+                profile_history.created_at,  
+                profile_history.profile_data,
+                users.first_name,
+                users.last_name,
+                users.nick_name,
+                users.access_level,
+                users.access_level_plus,
+                users.is_executive_admin,
+                users.job_title
+            ')
+            ->group_start()
+            ->where("profile_history.profile_data REGEXP '\"job_title\"'")
+            ->or_where("profile_history.profile_data REGEXP '\"email\"'")
+            ->group_end()
+            ->join('users', 'users.sid = profile_history.user_sid', 'inner')
+            ->where($whereArray)
+            ->order_by('profile_history.sid', 'DESC')
+            ->get('profile_history')
+            ->result_array();
     }
 }

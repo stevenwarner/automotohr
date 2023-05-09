@@ -897,7 +897,9 @@ class Calendar extends Public_Controller {
                 $employer_id,
                 $event_type,
                 $access_level,
-                $data['session']['employer_detail']
+                $data['session']['employer_detail'],
+                $this->input->post('start_date'),
+                $this->input->post('end_date')
             );
             $events = array_merge(!is_array($events) ? array() : $events ,$timeoffs);
         }

@@ -749,49 +749,33 @@
 
                                     <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
                                         <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <?php if ($complyNetLink) echo '<a href="' . ($complyNetLink) . '" target="_blank">'; ?>
-                                                <div class="dashboard-widget-box">
-                                                    <figure>
-                                                        <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
-                                                    </figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo $complyNetLink ? $complyNetLink : base_url('complynet'); ?>">Compliance <br /> Management System</a>
-                                                    </h2>
-                                                    <div class="button-panel col-lg-12">
-                                                        <div class="row">
-                                                            <?php
-                                                            if ($complyNetLink) {
-                                                            ?>
+                                        <?php if ($complyNetLink) {
+                                        ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <?php if ($complyNetLink) echo '<a href="' . (base_url('cn/redirect')) . '" target="_blank">'; ?>
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo $complyNetLink ? $complyNetLink : base_url('complynet'); ?>">Compliance <br /> Management System</a>
+                                                        </h2>
+                                                        <div class="button-panel col-lg-12">
+                                                            <div class="row">
                                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                     <a href="<?= $complyNetLink; ?>" target="_blank" class="btn btn-success btn-block">Dashboard</a>
                                                                 </div>
-                                                            <?php
-                                                            } else {
-                                                            ?>
-                                                                <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                        <a href="<?php echo base_url('complynet/dashboard'); ?>" class="btn btn-success btn-block">Dashboard</a>
-                                                                    </div>
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                        <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
-                                                                    </div>
-                                                                <?php } else { ?>
-                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                        <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
-                                                                    </div>
-                                                                <?php } ?>
-                                                            <?php
-                                                            }
-                                                            ?>
 
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <?php if ($complyNetLink) echo '</a>'; ?>
                                                 </div>
-                                                <?php if ($complyNetLink) echo '</a>'; ?>
                                             </div>
-                                        </div>
+                                        <?php
+                                        } ?>
+
                                     <?php } ?>
 
                                     <?php
@@ -912,72 +896,70 @@
                                         </div>
                                     <?php } ?>
 
+
+
                                     <!-- Account Activity -->
-                                    <?php if ($EmsStatus == 1) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box activity-box-wrp">
-                                                <div class="activity-box">
-                                                    <h2>Account Activity</h2>
-                                                    <article class="activity-count">
-                                                        <label>Jobs Active</label>
-                                                        <div class="progress v3">
-                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                                <span class="number-of-count"><?php echo $jobCountActive; ?></span>
-                                                            </div>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box activity-box-wrp">
+                                            <div class="activity-box">
+                                                <h2>Account Activity</h2>
+                                                <article class="activity-count">
+                                                    <label>Jobs Active</label>
+                                                    <div class="progress v3">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                            <span class="number-of-count"><?php echo $jobCountActive; ?></span>
                                                         </div>
-                                                    </article>
-                                                    <article class="activity-count">
-                                                        <label>Jobs posted</label>
-                                                        <div class="progress v1">
-                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                                <span class="number-of-count"><?php echo $jobCount; ?></span>
-                                                            </div>
+                                                    </div>
+                                                </article>
+                                                <article class="activity-count">
+                                                    <label>Jobs posted</label>
+                                                    <div class="progress v1">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                            <span class="number-of-count"><?php echo $jobCount; ?></span>
                                                         </div>
-                                                    </article>
-                                                    <article class="activity-count">
-                                                        <label>Job page visitors</label>
-                                                        <div class="progress v2">
-                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                                <span class="number-of-count"><?php echo $visitors; ?></span>
-                                                            </div>
+                                                    </div>
+                                                </article>
+                                                <article class="activity-count">
+                                                    <label>Job page visitors</label>
+                                                    <div class="progress v2">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                            <span class="number-of-count"><?php echo $visitors; ?></span>
                                                         </div>
-                                                    </article>
-                                                    <article class="activity-count">
-                                                        <label>Applications received</label>
-                                                        <div class="progress v3">
-                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                                <span class="number-of-count"><?php echo $applicants; ?></span>
-                                                            </div>
+                                                    </div>
+                                                </article>
+                                                <article class="activity-count">
+                                                    <label>Applications received</label>
+                                                    <div class="progress v3">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                            <span class="number-of-count"><?php echo $applicants; ?></span>
                                                         </div>
-                                                    </article>
-                                                </div>
+                                                    </div>
+                                                </article>
                                             </div>
                                         </div>
-                                    <?php } ?>
-
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    <?php } else { ?>
+        <?php } else { ?>
 
-        <?php $this->load->view('onboarding/getting_started'); ?>
+            <?php $this->load->view('onboarding/getting_started'); ?>
 
-    <?php } ?>
+        <?php } ?>
 
-    <style>
-        .start_animation {
-            animation-name: icon_alert;
-            animation-duration: 0.8s;
-            animation-iteration-count: infinite;
-        }
-
-        @keyframes icon_alert {
-            75% {
-                color: #dc3545;
+        <style>
+            .start_animation {
+                animation-name: icon_alert;
+                animation-duration: 0.8s;
+                animation-iteration-count: infinite;
             }
-        }
-    </style>
+
+            @keyframes icon_alert {
+                75% {
+                    color: #dc3545;
+                }
+            }
+        </style>

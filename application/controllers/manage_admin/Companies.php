@@ -302,7 +302,8 @@ class Companies extends Admin_Controller
                 'payment_type' => $this->input->post('payment_type'),
                 'past_due' => $this->input->post('past_due'),
                 'user_shift_minutes' => $this->input->post('shift_mins'),
-                'user_shift_hours' => $this->input->post('shift_hours')
+                'user_shift_hours' => $this->input->post('shift_hours'),
+                'job_titles_template_group' => $this->input->post('job_titles_template_group')
             );
             //
             if (IS_TIMEZONE_ACTIVE) $data['timezone'] = $this->input->post('company_timezone', true);
@@ -1499,6 +1500,12 @@ class Companies extends Admin_Controller
                         $this->company_model->set_phone_pattern_module($company_sid, $this->input->post('phone_pattern_module', TRUE));
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
 
+                        break;
+                    case 'set_bulk_email_status':
+                        $company_sid = $this->input->post('company_sid');
+                        $bulk_email_status = $this->input->post('bulk_email_status');
+                        $this->company_model->set_bulk_email_status($company_sid, $bulk_email_status);
+                        redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
                         break;
                 }
             }

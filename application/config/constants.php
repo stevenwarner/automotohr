@@ -111,6 +111,7 @@ define('FROM_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN); // automotoHR admin email
 define('TO_EMAIL_STEVEN', 'steven@' . STORE_DOMAIN); // automotoHR admin email
 define('TO_EMAIL_ALEX', 'amiller@theautomotivepartners.com'); // automotoHR Alex Emal
 define('FROM_EMAIL_DEV', 'dev@' . STORE_DOMAIN); // automotoHR developer email
+define('DEV_EMAIL_PM', 'mubashar@' . STORE_DOMAIN); // automotoHR developer email
 define('FROM_EMAIL_ACCOUNTS', 'accounts@' . STORE_DOMAIN); // automotoHR developer email
 define('TO_EMAIL_DEV', 'dev@' . STORE_DOMAIN); // automotoHR developer email
 define('FROM_STORE_NAME', STORE_NAME . '.com'); // automotoHR developer email

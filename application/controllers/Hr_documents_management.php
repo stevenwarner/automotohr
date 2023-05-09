@@ -18,7 +18,8 @@ class Hr_documents_management extends Public_Controller
     }
 
     public function index()
-    {getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
+    {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
 
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -1844,6 +1845,25 @@ class Hr_documents_management extends Public_Controller
                             }
                         }
 
+                        if ($source == 'uploaded') {
+                            if ($fetch_data == 'original') {
+                                $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+                            } else if ($fetch_data == 'modified') {
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_record($user_type, $user_sid, $document_sid);
+                            } else {
+                                $history_sid = $this->input->post('history_sid');
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_history_record($user_type, $user_sid, $document_sid, $history_sid);
+                            }
+
+                            //
+                            echo $this->load->view(
+                                'hr_documents_management/uploaded_document_preview_partial',
+                                $document_info,
+                                true
+                            );
+                            return;
+                        }
+
                         if ($source == 'offer') {
                             $document_info = $this->hr_documents_management_model->get_offer_letter_details($company_sid, $document_sid);
                         }
@@ -3153,6 +3173,8 @@ class Hr_documents_management extends Public_Controller
                     $group_sid = $group['sid'];
                     $group_ids[] = $group_sid;
                     $group_documents = $this->hr_documents_management_model->get_all_documents_in_group($group_sid, 0, $pp_flag);
+                    $otherDocuments = getGroupOtherDocuments($group);
+                    $otherDocumentCount = count($otherDocuments);
 
                     if ($group_status) {
                         $active_groups[] = array(
@@ -3170,8 +3192,9 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
-                            'documents' => $group_documents
+                            'documents_count' => count($group_documents) + $otherDocumentCount,
+                            'documents' => $group_documents,
+                            'other_documents' => $otherDocuments
                         );
                     } else {
                         $in_active_groups[] = array(
@@ -3189,8 +3212,9 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
-                            'documents' => $group_documents
+                            'documents_count' => count($group_documents) + $otherDocumentCount,
+                            'documents' => $group_documents,
+                            'other_documents' => $otherDocuments
                         );
                     }
                 }
@@ -3458,7 +3482,7 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) { 
+                    if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                             $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
 
@@ -3478,7 +3502,7 @@ class Hr_documents_management extends Public_Controller
                                 $sendGroupEmail = 1;
                             }
                         }
-                    }    
+                    }
                 }
             }
 
@@ -5250,7 +5274,7 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) { 
+                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                             $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
 
@@ -5270,7 +5294,7 @@ class Hr_documents_management extends Public_Controller
                                 $sendGroupEmail = 1;
                             }
                         }
-                    }    
+                    }
                 }
             }
 
@@ -7647,6 +7671,10 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['group_sid'] = $group_assign_sid;
                 $data_to_insert['assigned_by_sid'] = $employer_sid;
                 $data_to_insert['applicant_sid'] = 0;
+                if (in_array('-1', $employees)) {
+                    $Allemployees = $this->hr_documents_management_model->fetch_all_company_employees($company_sid);
+                    $employees = array_column($Allemployees, 'sid');
+                }
 
                 if (!empty($employees)) {
                     foreach ($employees as $key => $employee) {
@@ -12547,24 +12575,10 @@ class Hr_documents_management extends Public_Controller
             //
             shell_exec("cd $dir; zip -r $dt *");
             //
-            //
-            $strFile = file_get_contents($dt);
-            //
-            header("Content-type: application/force-download");
-            header('Content-Disposition: attachment; filename="' . $download_file . '"');
-
-            header('Content-Length: ' . filesize($dt));
-            echo $strFile;
-            while (ob_get_level()) {
-                ob_end_clean();
-            }
-            readfile($dt);
-            exit(0);
+            redirect('download_document_zip/' . $download_file, 'auto');
         }
 
         $this->zip->download($download_file);
-        //
-
     }
 
     /**
@@ -13644,7 +13658,7 @@ class Hr_documents_management extends Public_Controller
         }
         //
         if (empty($info)) {
-            echo 'The employee is inactive.<br> Please activate the employee to send an email notification.';
+            echo 'The ' . ($post['userType']) . ' is assigned the EEO form, but since the ' . ($post['userType']) . ' has been marked as deactivated or terminated, the system is unable to send an email notification.';
             exit(0);
         }
         $this->load->model('Hr_documents_management_model', 'HRDMM');
@@ -14084,7 +14098,7 @@ class Hr_documents_management extends Public_Controller
         $employer_sid = $data["session"]["employer_detail"]["sid"];
         $security_sid = $employer_detail['sid'];
         getCompanyEmsStatusBySid($company_detail['sid']);
-        
+
 
         $security_details = db_get_access_level_details($security_sid);
         $data['security_details'] = $security_details;
@@ -15515,5 +15529,28 @@ class Hr_documents_management extends Public_Controller
         $resp['Response'] = 'The document has been sent successfully.';
         //
         $this->res($resp);
+    }
+
+
+    /**
+     * Dowload document zip file
+     *
+     * @param string $fileName
+     */
+    public function downloadDocumentZipFile($fileName)
+    {
+        //
+        $fileWithPath = ROOTPATH . 'temp_files/employee_export/' . $fileName;
+        // Download file
+        header('Content-type: application/zip');
+        header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
+        header("Content-length: " . filesize($fileWithPath));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        ob_clean();
+        flush();
+        readfile($fileWithPath);
+        exit;
     }
 }

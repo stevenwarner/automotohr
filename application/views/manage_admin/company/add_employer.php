@@ -56,6 +56,16 @@
                                                     </div>
 
 
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                            <label>Employee Type:</label>
+                                                            <select name="employee_type" id="employee_type" class="invoice-fields">
+                                                                <option <?= $data["employee_type"] == 'fulltime' ? 'selected' : ''; ?> value="fulltime">Full-Time</option>
+                                                                <option <?= $data["employee_type"] == 'parttime' ? 'selected' : ''; ?> value="parttime">Part-Time</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
 
                                                     <?php if(isCompanyOnComplyNet($company_sid)!=0){?>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">

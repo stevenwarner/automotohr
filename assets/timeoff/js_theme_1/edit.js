@@ -483,7 +483,12 @@ $(function () {
                         employeeName = '',
                         employeeRole = '';
                     //
-                    if (balance.is_manual == 1) {
+                    if (balance.is_manual == 0 && balance.is_allowed == 1) {
+                        startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                        endDate = '';
+                        employeeName = '-';
+                        employeeRole = '';
+                    } else if (balance.is_manual == 1) {
                         startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
                         endDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
                         employeeName = balance.first_name + ' ' + balance.last_name;
@@ -552,7 +557,11 @@ $(function () {
                     rows += '</tr>';
                     rows += '<tr>';
                     rows += '   <td colspan="6">';
-                    rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
+                    if (balance.is_manual == 0 && balance.is_allowed == 1) {
+                        rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                    } else {
+                        rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
+                    }
                     rows += '   </td>';
                     rows += '</tr>';
                 });

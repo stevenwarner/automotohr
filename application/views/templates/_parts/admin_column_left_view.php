@@ -149,6 +149,7 @@ if (
     $this->uri->segment(2) == 'turnover_cost_calculator_logs' ||
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
+    $this->uri->segment(2) == 'job_title_templates' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
         ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_templates' ||
@@ -187,6 +188,7 @@ if (
 ) {
     $ticket_support = true;
 } else if (
+    $this->uri->segment(1) == 'employee_profile_data_report' ||
     $this->uri->segment(3) == 'facebook_job_report' ||
     $this->uri->segment(3) == 'blacklist_email' ||
     $this->uri->segment(3) == 'job_products_report' ||
@@ -690,6 +692,19 @@ if (
                                     Templates</a>
                             </div>
                         <?php } ?>
+
+
+                            <div class="menu-item">
+                                <a <?php
+                                    if (base_url(uri_string()) == site_url('manage_admin/job_title_templates') || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_templates') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_templates')) || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_template_groups') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_template_groups'))) {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('manage_admin/job_title_templates'); ?>">Job Titles</a>
+                            </div>
+
+
+
+
                         <?php if (check_access_permissions_for_view($security_details, 'job_categories_manager')) { ?>
                             <div class="menu-item">
                                 <a <?php
@@ -944,6 +959,11 @@ if (
                     <div class="submenu" <?php echo $reports_menu ? 'style="display:block;"' : ''; ?>>
 
                         <div class="menu-item">
+                            <a <?php if (strpos(base_url(uri_string()), site_url('employee_profile_data_report')) !== false || ($this->uri->segment(3) == 'employee_profile_data_report')) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('employee_profile_data_report'); ?>">Employee Profile Data Report</a>
+                        </div>
+                         <div class="menu-item">
                             <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/main/facebook_job_report')) !== false || ($this->uri->segment(3) == 'main/facebook_job_report')) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/reports/main/facebook_job_report'); ?>">Facebook Jobs Report</a>

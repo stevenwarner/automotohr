@@ -31,7 +31,14 @@
     <br>
     <div class="col-sm-12">
         <div class="bg-gray p10">
-            <strong>I am a U.S. citizen or permanent resident </strong>
+            <?php 
+                $required_label = '';
+                
+                if ($dl_citizen == 1) {
+                    $required_label = '<span style="color: red; font-size: 16px;"> * </span>';
+                }
+            ?>
+            <strong>I am a U.S. citizen or permanent resident <?php echo $required_label; ?></strong>
         </div>
         <label class="control control--radio">
             <input type="radio" name="citizen" <?php echo !empty($eeo_form_info['us_citizen']) && $eeo_form_info['us_citizen'] == 'Yes' ? 'checked="checked"' : ''; ?> value="Yes" <?php echo $is_readonly; ?>> Yes

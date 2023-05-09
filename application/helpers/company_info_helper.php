@@ -2741,23 +2741,43 @@ if (!function_exists('getComplyNetLink')) {
         }
         // Get email
         $record =
-            $CI->db->select('email')->where([
-                'parent_sid' => $companyId,
-                'sid' => $employeeId
+            $CI->db->select('email, complynet_json')->where([
+                'employee_sid' => $employeeId
             ])
-            ->get('users')
+            ->get('complynet_employees')
             ->row_array();
         //
         if (empty($record)) {
             return '';
+        }
+        //
+        $jsonToArray = json_decode($record['complynet_json'], true);
+        //
+        if (strpos($jsonToArray['UserName'], '@') !== false) {
+            $record['email'] = $jsonToArray['UserName'];
         }
         // Load ComplyNet library
         $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
         // Get the hash
         $response = $CI->complynet_lib->getUserHash($record['email']);
         //
-        if ($response == 'Array') {
-            return '';
+        if ($response == 'Array' || !$response) {
+            // let's try one more time with current email
+            $currentRecord = $CI->db
+                ->select('email')
+                ->where('sid', $employeeId)
+                ->get('users')
+                ->row_array();
+            //
+            if (!$currentRecord) {
+                return '';
+            }
+            // Get the hash
+            $response = $CI->complynet_lib->getUserHash($currentRecord['email']);
+            //
+            if ($response == 'Array' || !$response) {
+                return '';
+            }
         }
         return $response;
     }
@@ -2826,7 +2846,9 @@ if (!function_exists('getComplyNetEmployeeCheck')) {
             return '';
         }
         //
-        if ($employee['complynet_onboard'] == 1) {
+        $CI = &get_instance();
+        //
+        if ($CI->db->where('employee_sid', $employee['sid'])->count_all_results('complynet_employees')) {
             return '<button class="btn btn-xs csBG2" title="Employee is on ComplyNet"><i class="fa fa-shield _csM0"></i></button>';
         }
         //
@@ -2865,9 +2887,9 @@ if (!function_exists('checkEmployeeMissingData')) {
         if (!$employee['last_name']) {
             $errors[] = 'Last name is missing.';
         }
-        if (!$employee['username']) {
-            $errors[] = 'Username is missing.';
-        }
+        // if (!$employee['username']) {
+        //     $errors[] = 'Username is missing.';
+        // }
         if (!$employee['email']) {
             $errors[] = 'Email is missing.';
         }
@@ -2878,7 +2900,7 @@ if (!function_exists('checkEmployeeMissingData')) {
         //     $errors[] = 'Job title is missing.';
         // }
         if (!$employee['complynet_job_title']) {
-            $errors[] = 'Job title is missing.';
+            $errors[] = 'ComplyNet Job title is missing.';
         }
         if (!$employee['department_sid']) {
             $errors[] = 'Department is missing.';
@@ -2948,7 +2970,7 @@ if (!function_exists('getUserColumnById')) {
      * @param string $column Optional
      * @return string
      */
-    function getUserColumnById (
+    function getUserColumnById(
         int $id,
         string $column = 'sid'
     ) {
@@ -2956,14 +2978,157 @@ if (!function_exists('getUserColumnById')) {
         $CI = &get_instance();
         //
         $record =
-        $CI->db->select($column)
-        ->where('sid', $id)
-        ->get('users')
-        ->row_array();
+            $CI->db->select($column)
+            ->where('sid', $id)
+            ->get('users')
+            ->row_array();
         //
         if (empty($record)) {
             return '';
         }
         return $record[$column];
+    }
+}
+
+
+if (!function_exists('checkAndSetEEOCForUser')) {
+    /**
+     * Remove duplicate records at run time
+     *
+     * @param int $userId
+     * @param string $userType
+     * @return int
+     */
+    function checkAndSetEEOCForUser(int $userId, string $userType)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // get all records of user
+        $records =
+            $CI->db
+            ->where([
+                'application_sid' => $userId,
+                'users_type' => $userType
+            ])
+            ->order_by('sid', 'desc')
+            ->get('portal_eeo_form')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return 0;
+        }
+        // save last record
+        $lastRecord = $records[0];
+        // update tracker
+        $CI->db
+            ->where([
+                'document_type' => 'eeoc',
+                'user_type' => $userType,
+                'user_sid' => $userId
+            ])
+            ->update('verification_documents_track', [
+                'document_sid' => $lastRecord['sid']
+            ]);
+
+        //
+        foreach ($records as $key => $value) {
+            //
+            if ($key == 0) {
+                continue;
+            }
+
+            //
+            if (strlen(trim($lastRecord['us_citizen'])) === 0 && strlen(trim($value['us_citizen'])) !== 0) {
+                $lastRecord['us_citizen'] = trim($value['us_citizen']);
+            }
+
+            //
+            if (strlen(trim($lastRecord['visa_status'])) === 0 && strlen(trim($value['visa_status'])) !== 0) {
+                $lastRecord['visa_status'] = trim($value['visa_status']);
+            }
+            //
+            if (strlen(trim($lastRecord['group_status'])) === 0 && strlen(trim($value['group_status'])) !== 0) {
+                $lastRecord['group_status'] = trim($value['group_status']);
+            }
+            //
+            if (strlen(trim($lastRecord['veteran'])) === 0 && strlen(trim($value['veteran'])) !== 0) {
+                $lastRecord['veteran'] = trim($value['veteran']);
+            }
+            //
+            if (strlen(trim($lastRecord['disability'])) === 0 && strlen(trim($value['disability'])) !== 0) {
+                $lastRecord['disability'] = trim($value['disability']);
+            }
+            //
+            if (strlen(trim($lastRecord['gender'])) === 0 && strlen(trim($value['gender'])) !== 0) {
+                $lastRecord['gender'] = trim($value['gender']);
+            }
+            //
+            $insArray = $value;
+            $insArray['eeo_form_sid'] = $value['sid'];
+            unset($insArray['sid']);
+            // add to history
+            $CI->db->insert('portal_eeo_form_history', $insArray);
+            // delete record
+            $CI->db->where('sid', $value['sid'])->delete('portal_eeo_form');
+        }
+        //
+        $CI->db->where('sid', $lastRecord['sid'])->update('portal_eeo_form', $lastRecord);
+        //
+        return $lastRecord['sid'];
+    }
+}
+
+
+if (!function_exists('getGroupOtherDocuments')) {
+    /**
+     * check and get group verification
+     * and general documents
+     * 
+     * @param array $group
+     * @param bool  $doCount Optional
+     * @return int|array
+     */
+    function getGroupOtherDocuments(array $group, bool $doCount = false)
+    {
+        //
+        $documentArray = [];
+        // check for I9
+        if ($group['i9'] == 1) {
+            $documentArray[] = 'I9 Fillable';
+        }
+        // check for w4
+        if ($group['w4'] == 1) {
+            $documentArray[] = 'W4 Fillable';
+        }
+        // check for w9
+        if ($group['w9'] == 1) {
+            $documentArray[] = 'W9 Fillable';
+        }
+        // check for eeoc
+        if ($group['eeoc'] == 1) {
+            $documentArray[] = 'EEOC';
+        }
+        // check for dependents
+        if ($group['dependents'] == 1) {
+            $documentArray[] = 'Dependents';
+        }
+        // check for DDI
+        if ($group['direct_deposit'] == 1) {
+            $documentArray[] = 'Direct Deposit Information';
+        }
+        // check for driving license
+        if ($group['drivers_license'] == 1) {
+            $documentArray[] = 'Drivers License Information';
+        }
+        // check for emergency contacts
+        if ($group['emergency_contacts'] == 1) {
+            $documentArray[] = 'Emergency Contacts';
+        }
+        // check for occupational license
+        if ($group['occupational_license'] == 1) {
+            $documentArray[] = 'Occupational License Information';
+        }
+        //
+        return $doCount ? count($documentArray) : $documentArray;
     }
 }

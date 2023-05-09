@@ -346,12 +346,14 @@ class employers extends Admin_Controller
             $data['job_title'] = $this->input->post('job_title');
             $data['direct_business_number'] = $this->input->post('direct_business_number');
             $data['cell_number'] = $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('cell_number');
+            $data['PhoneNumber'] = $data['cell_number'];
             $data['alternative_email'] = $this->input->post('alternative_email');
             $data['extra_info'] = serialize($extraInfo);
             $registration_date = $this->input->post('registration_date');
             $data['access_level'] = $this->input->post('security_access_level');
             $data['access_level_plus'] = $this->input->post('access_level_plus');
             $data['complynet_status'] = $this->input->post('complynet_status');
+            $data['employee_type'] = $this->input->post('employee_type');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
 
@@ -359,8 +361,33 @@ class employers extends Admin_Controller
             $data['eeoc_code'] = $this->input->post('eeoc_code');
             $data['salary_benefits'] = $this->input->post('salary_benefits');
             $data['payment_method'] = $this->input->post('payment_method');
+            //
+            $data['languages_speak'] = null;
+            //
+            $languages_speak = $this->input->post('secondaryLanguages');
 
+            //
 
+            $data['union_name'] = $this->input->post('union_name');
+            $data['union_member'] = $this->input->post('union_member');
+            
+            if ($data['union_member'] == 0) {
+                $data['union_name'] = '';
+            }
+
+            if ($languages_speak) {
+                $data['languages_speak'] = implode(',', $languages_speak);
+            }
+
+            
+            if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
+                $templetJobTitleData = $this->input->post('temppate_job_title');
+                $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                $data['job_title'] = $templetJobTitleDataArray[1];
+                $data['job_title_type'] = $templetJobTitleDataArray[0];
+            } else {
+                $data['job_title_type'] = 0;
+            }
 
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
@@ -458,6 +485,27 @@ class employers extends Admin_Controller
                 $employer_detail[0],
                 $data
             );
+
+            //
+            $oldData = $this->db
+                ->select('first_name, last_name, email, PhoneNumber, parent_sid')
+                ->where('sid', $sid)->get('users')->row_array();
+
+            $this->company_model->update_user($sid, $data, 'Employer');
+
+            // ComplyNet interjection
+            if (isCompanyOnComplyNet($oldData['parent_sid'])) {
+                //
+                $this->load->model('2022/complynet_model', 'complynet_model');
+                //
+                $this->complynet_model->updateEmployeeOnComplyNet($oldData['parent_sid'], $sid, [
+                    'first_name' => $oldData['first_name'],
+                    'last_name' => $oldData['last_name'],
+                    'email' => $oldData['email'],
+                    'PhoneNumber' => $oldData['PhoneNumber']
+                ]);
+            }
+
             //
             $teamId = $this->input->post('teamId');
             handleEmployeeDepartmentAndTeam($sid, $teamId);
@@ -614,9 +662,10 @@ class employers extends Admin_Controller
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
                 $payment_method = $this->input->post('payment_method');
+                $employee_type = $this->input->post('employee_type');
                 $salt = generateRandomString(48);
 
-                
+
 
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
@@ -632,6 +681,7 @@ class employers extends Admin_Controller
                 $insert_data['email'] = $email;
                 $insert_data['first_name'] = $first_name;
                 $insert_data['last_name'] = $last_name;
+                $insert_data['employee_type'] = $employee_type;
                 $insert_data['job_title'] = $job_title;
                 $insert_data['cell_number'] = $cell_number;
                 $insert_data['registration_date'] = $registration_date;
@@ -655,7 +705,6 @@ class employers extends Admin_Controller
                 if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                     $insert_data['complynet_job_title'] = $this->input->post('complynet_job_title');
                 }
-
 
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');

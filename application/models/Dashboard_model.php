@@ -2008,7 +2008,7 @@ class Dashboard_model extends CI_Model
         $this->db->where('is_executive_admin', 0);
         $this->db->where('active', 1);
         $this->db->order_by('first_name', 'ASC');
-        
+
         return $this->db->get('users')->result_array();
     }
 
@@ -3350,5 +3350,24 @@ class Dashboard_model extends CI_Model
             ->where('documents_management.isdoctolibrary', 1)
             ->where('documents_management.archive', 0)
             ->count_all_results('documents_management');
+    }
+
+
+    //
+    public function GetAllUsersNew($company_sid)
+    {
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('username !=', '');
+        $this->db->where('active', 1);
+        $this->db->where('terminated_status', 0);
+        $this->db->where('access_level!=','Employee');
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
+        $result = $this->db->get('users')->result_array();
+
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return array();
+        }
     }
 }

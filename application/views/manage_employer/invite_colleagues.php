@@ -43,6 +43,15 @@
                                                     <?php echo form_error('last_name'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
+                                                    <label>Phone Number</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="PhoneNumber" id="PhoneNumber" value="<?php
+                                                                                                                                                                if (isset($formpost['PhoneNumber'])) {
+                                                                                                                                                                    echo $formpost['PhoneNumber'];
+                                                                                                                                                                }
+                                                                                                                                                                ?>">
+                                                    <?php echo form_error('PhoneNumber'); ?>
+                                                </li>
+                                                <li class="form-col-100 autoheight">
                                                     <label>E-Mail<span class="staric">*</span></label>
                                                     <input type="email" autocomplete="nope" class="invoice-fields" name="email" id="email" value="<?php
                                                                                                                                                     if (isset($formpost['email'])) {
@@ -52,9 +61,25 @@
                                                     <?php echo form_error('email'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Job Title<span class="staric">*</span></label>
+                                                    <?php $templateTitles = get_templet_jobtitles($company_id); ?>
+                                                    <label>Job Title<span class="staric">*</span> &nbsp;&nbsp;&nbsp;
+                                                        <?php if ($templateTitles) { ?>
+                                                            <input type="radio" name="title_option" value="manual" class="titleoption" checked> Add Manual &nbsp;
+                                                            <input type="radio" name="title_option" value="dropdown" class="titleoption"> From Drop Down
+                                                        <?php } ?>
+                                                    </label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="job_title" id="job_title" value="<?php echo set_value('job_title'); ?>">
                                                     <?php echo form_error('job_title'); ?>
+
+                                                    <?php if ($templateTitles) { ?>
+                                                        <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
+                                                            <option value="0">Please select job title</option>
+                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    <?php } ?>
+
                                                 </li>
                                                 <li class="form-col-100">
                                                     <label>Access Level:<span class="staric">*</span></label>
@@ -136,23 +161,49 @@
                                                 </li>
 
 
-                                                <li class="form-col-100 autoheight">
-                                                    <label>Workers Compensation Code</label>
-                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="workers_compensation_code" id="workers_compensation_code">
-                                                </li>
+
 
                                                 <li class="form-col-100 autoheight">
-                                                    <label>EEOC Code</label>
-                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="eeoc_code" id="eeoc_code" >
+                                                    <label>I Speak:</label>
                                                 </li>
-
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Salary Benefits</label>
-                                                    <textarea autocomplete="nope" class="invoice-fields" name="salary_benefits" id="salary_benefits"></textarea>
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="english" checked /> English
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </li>
+                                                <li class="form-col-100 autoheight">
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="spanish" /> Spanish
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </li>
+                                                <li class="form-col-100 autoheight">
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryLanguages[]" value="russian" /> Russian
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </li>
+                                                <li class="form-col-100 autoheight">
+                                                    <label class="control control--checkbox">
+                                                        <input type="checkbox" name="secondaryOption" value="other" /> Others
+                                                        <div class="control__indicator"></div>
+                                                    </label>
                                                 </li>
 
 
+                                                <li class="form-col-100 autoheight jsOtherLanguage dn">
+                                                    <div class="col-sm-12">
+                                                        <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="" />
+                                                        <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                    </div>
+                                                </li>
 
+                                                <script>
+                                                    $('[name="secondaryOption"]').click(function() {
+                                                        $('.jsOtherLanguage').toggleClass('dn');
+                                                    });
+                                                </script>
 
                                                 <li class="form-col-100 autoheight">
 
@@ -245,7 +296,7 @@
                                     </div> -->
                                     <div class="tick-list-box">
                                         <h2><?php echo STORE_NAME; ?> is Secure</h2>
-                                        <ul> 
+                                        <ul>
                                             <li>Transmissions encrypted by Amazon Web Services® SSL</li>
                                             <li>Information treated confidential by AutomotoHR</li>
                                             <!-- <li>Receive emails with your signed paperwork</li> -->
@@ -394,6 +445,15 @@
                 },
             },
             submitHandler: function(form) {
+                //
+                var phoneNumber = $('#PhoneNumber').val().trim();
+                //
+                if (phoneNumber != '') {
+                    if (phoneNumber.match(/[^0-9+-\s+]/) !== null) {
+                        alertify.alert('Phone number must contain only digits and dashes.');
+                        return false;
+                    }
+                }
                 form.submit();
             }
         });
@@ -428,4 +488,19 @@
     }).val();
 
     $('.jsSelect2').select2();
+
+    <?php if ($templateTitles) { ?>
+        $('.titleoption').click(function() {
+            var titleOption = $(this).val();
+            if (titleOption == 'dropdown') {
+                $('#template_job_title').show();
+                $('#job_title').hide();
+            } else if (titleOption == 'manual') {
+                $('#template_job_title').hide();
+                $('#template_job_title').val('0');
+                $('#job_title').show();
+            }
+
+        });
+    <?php } ?>
 </script>
