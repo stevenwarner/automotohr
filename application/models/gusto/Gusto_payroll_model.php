@@ -1652,8 +1652,6 @@ class Gusto_payroll_model extends CI_Model
             'X-Gusto-API-Version: 2023-03-01'
         ]);
         //
-        _e($response,true,true);
-        //
         if (!isset($response['errors']) && $response) {
             if (isset($response['onboarding_steps'])) {
                 //
