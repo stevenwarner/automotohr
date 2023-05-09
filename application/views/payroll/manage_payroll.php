@@ -12,7 +12,7 @@
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-envelope-o" aria-hidden="true"></i><?php echo $company_info['CompanyName']; ?> - Payroll</h1>
                                         <span class="pull-right">
-                                            <button class="btn btn-success" onclick="window.location.href='<?php echo base_url('manage_admin/companies/manage_company') . '/' . $company_info['sid']; ?>' ">Back</button>
+                                            <button class="btn btn-cancel csW" onclick="window.location.href='<?php echo base_url('manage_admin/companies/manage_company') . '/' . $company_info['sid']; ?>' "><i class="fa fa-long-arrow-left" aria-hidden="true"></i>Back</button>
                                         </span>
                                     </div>
                                     <div class="row">
@@ -40,7 +40,7 @@
                                                 </button>
                                             <?php } else { ?>
                                                 <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
-                                                    Start Onboarding Process
+                                                    Create Partner Company On Gusto
                                                 </button>
                                             <?php } ?>
                                         </div>
@@ -67,7 +67,7 @@
                                         </div>
                                     <?php } ?>
                                     <!-- Email Logs End -->
-                                    <!-- Compant Status info Start -->
+                                    <!-- Company Status info Start -->
                                     <?php if (!empty($company_status)) { ?>
                                         <div class="hr-box">
                                             <div class="hr-box-header bg-header-green">
@@ -119,47 +119,60 @@
                                             </div>
                                         </div>
                                     <?php } ?>
-                                    <!-- Compant Status info End -->
-
-                                    <!--  -->
-                                    <div class="hr-box">
-                                        <div class="hr-box-header bg-header-green">
-                                            <span class="pull-left">
-                                                <h1 class="hr-registered">Payroll Employees</h1>
-                                            </span>
-                                            <span class="pull-right">
-                                                <span id="jsPayrollEmployeesListingCount" class="hr-registered">Total: 0</span>
-                                            </span>
-                                        </div>
-                                        <div class="hr-innerpadding">
-                                            <!--  -->
-                                            <div class="row">
-                                                <div class="col-xs-12 text-right">
-                                                    <button class="btn btn-success" id="jsPayrollEmployeeAddBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Onboard Employee To Payroll</button>
-                                                </div>
+                                    <!-- Company Status info End -->
+                                    <?php if ($company_info['gusto_company_uid']) : ?>
+                                        <!--  -->
+                                        <div class="hr-box">
+                                            <div class="hr-box-header bg-header-green">
+                                                <span class="pull-left">
+                                                    <h1 class="hr-registered">Payroll Employees</h1>
+                                                </span>
+                                                <span class="pull-right">
+                                                    <span id="jsPayrollEmployeesListingCount" class="hr-registered">Total: 0</span>
+                                                </span>
                                             </div>
-                                            <!--  -->
-                                            <div class="row">
-                                                <div class="col-xs-12">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered table-striped table-hover">
-                                                            <caption></caption>
-                                                            <thead>
-                                                                <tr>
-                                                                    <th scope="col">Employee</th>
-                                                                    <th scope="col" class="text-right">Payroll Id</th>
-                                                                    <th scope="col" class="text-right">Onboard Status</th>
-                                                                    <th scope="col" class="text-right">Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="jsPayrollEmployeesListingBox"></tbody>
-                                                        </table>
+                                            <div class="hr-innerpadding">
+                                                <!--  -->
+                                                <div class="row">
+                                                    <div class="col-xs-12 text-right">
+                                                        <button class="btn btn-success" id="jsPayrollEmployeeAddBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Onboard Employee To Payroll</button>
+                                                    </div>
+                                                </div>
+                                                <!--  -->
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-striped table-hover">
+                                                                <caption></caption>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col">Employee</th>
+                                                                        <th scope="col" class="text-right">Payroll Id</th>
+                                                                        <th scope="col" class="text-right">Onboard Status</th>
+                                                                        <th scope="col" class="text-right">Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="jsPayrollEmployeesListingBox"></tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <!--  -->
                                         </div>
-                                        <!--  -->
-                                    </div>
+                                    <?php else : ?>
+                                        <div class="hr-box">
+                                            <br>
+                                            <p class="alert alert-info text-center">
+                                                <strong>Company is not on Gusto, yet!</strong>
+                                                <br>
+                                                <br>
+                                                <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
+                                                    Create Partner Company On Gusto
+                                                </button>
+                                            </p>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
