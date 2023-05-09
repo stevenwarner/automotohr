@@ -140,7 +140,7 @@ if ($_ssv) {
                                             <p class="dummy-invoice-fields"><?php echo $applicant_info["email"] ?></p>
                                         </div>
                                         <div class="col-md-6 col-xs-12">
-                                            <label class="csF16">Phone Number</label>
+                                            <label class="csF16">Primary Number</label>
                                             <p class="dummy-invoice-fields"><?= $primary_phone_number_cc; ?></p>
                                         </div>
                                     </div><br>
@@ -365,12 +365,12 @@ if ($_ssv) {
                                                 </p>
                                             </div>
                                         <?php } ?>
-                                            <div class="col-sm-12">
-                                                <label class="csF16">I Speak</label>
-                                                <p class="dummy-invoice-fields">
-                                                    <?=$applicant_info['languages_speak'] ? showLanguages($applicant_info['languages_speak']) : 'Not Specified';?>
-                                                </p>
-                                            </div>
+                                        <div class="col-sm-12">
+                                            <label class="csF16">I Speak</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?= $applicant_info['languages_speak'] ? showLanguages($applicant_info['languages_speak']) : 'Not Specified'; ?>
+                                            </p>
+                                        </div>
                                         <br>
                                     </div><br>
                                     <?php if (isset($applicant_info["YouTube_Video"]) && $applicant_info["YouTube_Video"] != "") {
@@ -445,9 +445,11 @@ if ($_ssv) {
 
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>Phone number:</label>
+                                                <label>Primary number: <?php if (get_company_module_status($session['company_detail']['sid'], 'primary_number_required') == 1) { ?> <span class="staric">*</span> <? } ?></label>
                                                 <?= $input_group_start; ?>
                                                 <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('phone_number', $primary_phone_number); ?>" type="text" name="phone_number">
+                                                <?php echo form_error('phone_number'); ?>
+
                                                 <?= $input_group_end; ?>
                                             </li>
                                             <li class="form-col-100">
@@ -614,12 +616,12 @@ if ($_ssv) {
                                                 <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>" id="job_title">
                                                 <?php echo form_error('desired_job_title'); ?>
                                                 <?php if ($templateTitles) { ?>
-                                                <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
-                                                    <option value="0">Please select job title</option>
-                                                    <?php foreach ($templateTitles as $titleRow) { ?>
-                                                        <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
-                                                    <?php } ?>
-                                                </select>
+                                                    <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
+                                                        <option value="0">Please select job title</option>
+                                                        <?php foreach ($templateTitles as $titleRow) { ?>
+                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                        <?php } ?>
+                                                    </select>
                                                 <?php } ?>
 
                                             </li>
@@ -684,14 +686,14 @@ if ($_ssv) {
                                             <?php } ?>
 
                                             <?php
-                                                //
-                                                $hasOther = [];
-                                                //
-                                                if ($applicant_info['languages_speak']) {
-                                                    $hasOther = array_filter(explode(',', $applicant_info['languages_speak']), function ($lan) {
-                                                        return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
-                                                    });
-                                                }
+                                            //
+                                            $hasOther = [];
+                                            //
+                                            if ($applicant_info['languages_speak']) {
+                                                $hasOther = array_filter(explode(',', $applicant_info['languages_speak']), function ($lan) {
+                                                    return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                                                });
+                                            }
                                             ?>
 
                                             <div class="row">
@@ -736,9 +738,9 @@ if ($_ssv) {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                                            <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                                                 <div class="col-sm-12">
-                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
                                                     <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
                                                 </div>
                                             </div>
@@ -2768,7 +2770,7 @@ if ($_ssv) {
             var is_error = false;
             // Check for phone number
             if (_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)) {
-                alertify.alert('Error!', 'Invalid mobile number provided.', function() {
+                alertify.alert('Error!', 'Invalid Primary number provided.', function() {
                     return;
                 });
                 e.preventDefault();
@@ -2905,25 +2907,25 @@ if ($_ssv) {
 
     <?php if ($templateTitles) { ?>
 
-    <?php if ($applicant_info['job_title_type'] != '0') { ?>
-        $('#template_job_title').show();
-        $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
-        $('#job_title').hide();
-    <?php } ?>
-
-    $('.titleoption').click(function() {
-        var titleOption = $(this).val();
-        if (titleOption == 'dropdown') {
+        <?php if ($applicant_info['job_title_type'] != '0') { ?>
             $('#template_job_title').show();
-            $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] == '0' ? '0' : $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
+            $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
             $('#job_title').hide();
-        } else if (titleOption == 'manual') {
-            $('#template_job_title').hide();
-            $('#template_job_title').val('0');
-            $('#job_title').show();
-        }
+        <?php } ?>
 
-    });
+        $('.titleoption').click(function() {
+            var titleOption = $(this).val();
+            if (titleOption == 'dropdown') {
+                $('#template_job_title').show();
+                $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] == '0' ? '0' : $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
+                $('#job_title').hide();
+            } else if (titleOption == 'manual') {
+                $('#template_job_title').hide();
+                $('#template_job_title').val('0');
+                $('#job_title').show();
+            }
+
+        });
     <?php } ?>
 </script>
 

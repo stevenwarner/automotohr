@@ -252,7 +252,7 @@
                                                                         <th>First Name</th>
                                                                         <th>Last Name</th>
                                                                         <th>Email</th>
-                                                                        <th class="text-center">Phone Number</th>
+                                                                        <th class="text-center">Primary Number</th>
                                                                         <th class="text-center">Date Applied</th>
                                                                         <th>Applicant Type</th>
                                                                         <th>Applicant Source</th>

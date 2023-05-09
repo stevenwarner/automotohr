@@ -234,7 +234,7 @@ class Companies extends Admin_Controller
         $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
         $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
         $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-        $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+        $this->form_validation->set_rules('PhoneNumber', 'Primary Number', 'trim|xss_clean');
         $this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
         $this->form_validation->set_rules('WebSite', 'Website', 'trim|xss_clean|valid_url');
         $this->form_validation->set_rules('accounts_contact_person', 'Accounts Contact Person', 'trim|xss_clean|alpha_numeric_spaces');

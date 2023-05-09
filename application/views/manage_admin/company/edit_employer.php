@@ -292,7 +292,10 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Phone Number', 'cell_number'); ?>
+
+                                                    <?php
+                                                    $requiredText = get_company_module_status($data['parent_sid'], 'primary_number_required') == 1 ? '<span class="hr-required">*</span>' : ''; ?>
+                                                    <?php echo form_label('Primary Number' . $requiredText, 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
@@ -832,8 +835,8 @@
 </script>
 <script>
     $('.js-update-employee').on("click", function(event) {
-
         // Check for phone number
+
         if ($('#PhoneNumber').val() != '' && $('#PhoneNumber').val().trim() != '(___) ___-____' && !fpn($('#PhoneNumber').val(), '', true)) {
             alertify.alert('Error!', 'Invalid phone number.', function() {
                 return;
@@ -847,6 +850,20 @@
         // Check the fields
         if ($('#PhoneNumber').val().trim() == '(___) ___-____') $('#PhoneNumber').val('');
         else $(this).append('<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + ($('#PhoneNumber').val().replace(/\D/g, '')) + '" />');
+
+
+
+        <?php if (get_company_module_status($data['parent_sid'], 'primary_number_required') == 1) { ?>
+            if ($('#PhoneNumber').val() == '' || $('#PhoneNumber').val().trim() == '(___) ___-____') {
+                alertify.alert('Error!', 'Invalid phone number.', function() {
+                    return;
+                });
+                event.preventDefault();
+                return;
+            }
+
+        <?php } ?>
+        
 
         var min_flag = 0,
             hrs_flag = 0,

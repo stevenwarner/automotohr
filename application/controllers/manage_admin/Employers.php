@@ -531,7 +531,11 @@ class employers extends Admin_Controller
             $this->form_validation->set_rules('alternative_email', 'Alternative Email', 'trim|valid_email');
             $this->form_validation->set_rules('job_title', 'Job Title', 'trim');
             $this->form_validation->set_rules('direct_business_number', 'Direct Business Number', 'trim');
+            
+           if(get_company_module_status($company_sid, 'primary_number_required') == 1) {
             $this->form_validation->set_rules('cell_number', 'Cell Number', 'trim');
+           }
+
             $this->form_validation->set_rules('security_access_level', 'Security Access Level', 'required|trim');
 
             if ($this->form_validation->run() == false) {

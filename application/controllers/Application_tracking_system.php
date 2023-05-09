@@ -664,6 +664,12 @@ class Application_tracking_system extends Public_Controller
                 $this->form_validation->set_rules('DOB', 'DOB', 'required|trim|xss_clean');
             }
 
+            //
+            if (get_company_module_status($data['session']['company_detail']['sid'], 'primary_number_required') == 1) {
+                $this->form_validation->set_rules('phone_number', 'phone_number', 'required|trim|xss_clean');
+            }
+
+
             if ($this->form_validation->run() == FALSE) { //checking if the form is submitted so i can open the form screen again
                 $data['edit_form']                                              = false;
 
@@ -956,7 +962,7 @@ class Application_tracking_system extends Public_Controller
                 $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                 $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                 $user_data['full_employment_application'] = serialize($full_emp_app);
-                
+
                 //
                 if ($this->input->post('temppate_job_title') && $formpost['template_job_title'] != '0') {
                     $templetJobTitleData = $formpost['template_job_title'];

@@ -40,7 +40,7 @@
                                             }
                                         } ?>
 
-                                        <label><?php echo $users_type; ?> Phone Number</label>
+                                        <label><?php echo $users_type; ?> Primary Number</label>
                                         <input name="users_phone"
                                                id="users_phone"
                                                class="form-control"

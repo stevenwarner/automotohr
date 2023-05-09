@@ -250,6 +250,28 @@
                                 </label>
                             </div>
                         </div>
+
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>Registration Forms <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                <p>Make the following selected Fields mandatory.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Make Primary Number  Mandatory <small class="help_text">Make Primary Number  Mandatory</small>
+                                    <input class="" type="checkbox" id="primary_number_status" name="primary_number_status" value="1" <?php echo (isset($portal['primary_number_required']) && $portal['primary_number_required'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        
+
+
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <h3>General Documents <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
