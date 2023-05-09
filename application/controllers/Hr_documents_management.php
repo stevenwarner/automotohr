@@ -5276,7 +5276,7 @@ class Hr_documents_management extends Public_Controller
 
                     if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
+                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($employer_sid, 'employee');
 
                             if (empty($is_eeoc_assign)) {
                                 $eeoc_data_to_insert = array();
