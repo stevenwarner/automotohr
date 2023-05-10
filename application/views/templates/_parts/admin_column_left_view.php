@@ -214,7 +214,8 @@ if (
     $this->uri->segment(3) == 'applicant_origination_report' ||
     $this->uri->segment(3) == 'applicant_origination_statistics' ||
     $this->uri->segment(3) == 'accurate_background' ||
-    $this->uri->segment(3) == 'invoice_item_usage'
+    $this->uri->segment(3) == 'invoice_item_usage' ||
+    $this->uri->segment(3) == 'complynet_report'
 ) {
     $reports_menu = true;
 } else if (
@@ -1162,6 +1163,14 @@ if (
                                 } ?> href="<?php echo site_url('manage_admin/reports/applicant_origination_tracker/all/all/all/all'); ?>">Applicant Origination Tracker Report</a>
                         </div>-->
                         <?php } ?>
+                         <?php if (check_access_permissions_for_view($security_details, 'complynet_report')) { ?>
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/complynet_report')) !== false || ($this->uri->segment(3) == 'complynet_report')) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/reports/complynet_report'); ?>">ComplyNet Report</a>
+                            </div>
+                        <?php } ?>
+
                     </div>
                 </li>
             <?php } ?>
