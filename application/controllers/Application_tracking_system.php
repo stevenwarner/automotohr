@@ -956,7 +956,7 @@ class Application_tracking_system extends Public_Controller
                 $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                 $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                 $user_data['full_employment_application'] = serialize($full_emp_app);
-                
+
                 //
                 if ($this->input->post('temppate_job_title') && $formpost['template_job_title'] != '0') {
                     $templetJobTitleData = $formpost['template_job_title'];
@@ -1413,6 +1413,7 @@ class Application_tracking_system extends Public_Controller
             $data['session'] = $this->session->userdata('logged_in');
             $company_name = $data['session']['company_detail']['CompanyName'];
             $formpost = $this->input->post(NULL, TRUE);
+
             $formpost['date'] = date('Y-m-d H:i:s');
             $formpost['from_id'] = $data['session']['employer_detail']['sid'];
             $temp_id = $formpost['template'];
@@ -1457,14 +1458,14 @@ class Application_tracking_system extends Public_Controller
                 $applicantData = $this->application_tracking_system_model->getApplicantData($formpost['job_id']);
                 $to = $applicantData['email'];
                 $app_emp_data = $applicantData;
-            } else if ($formpost['users_type'] = 'employee') {
+            } else if ($formpost['users_type'] == 'employee') {
                 $employerDetail = $this->application_tracking_system_model->getEmployerDetail($formpost['employee_id']);
                 $to = $employerDetail['email'];
                 $message_data['job_id'] = "";
                 $app_emp_data = $employerDetail;
             }
 
-            $job_title = '';
+            $job_title = $app_emp_data['job_title'];
             $today = new DateTime();
             // Set server date/time for db
             $message_data['date'] = $today->format('Y-m-d H:i:s');
@@ -1537,7 +1538,6 @@ class Application_tracking_system extends Public_Controller
 
                 sendMail($from, $to, $subject, $body, $company_name, REPLY_TO);
             }
-
             $_SESSION['show_message'] = 'true';
             $this->application_tracking_system_model->save_message($message_data);
             $this->session->set_flashdata('message', 'Success! Message sent successfully!');
