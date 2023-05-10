@@ -122,7 +122,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             lastNameTitles = <?= json_encode(array('lastname', 'lname')); ?>,
             firstNameTitles = <?= json_encode(array('firstname', 'fname')); ?>,
             coverLetterTitles = <?= json_encode(array('coverletter', 'coverletterurl')); ?>,
-            phoneNumberTitles = <?= json_encode(array('phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber')); ?>,
+            phoneNumberTitles = <?= json_encode(array('phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber','primarynumber')); ?>,
             accessLevelTitles = <?= json_encode(array('accesslevel')); ?>,
             emailAddressTitles = <?= json_encode(array('email', 'emailaddress')); ?>,
             profilePictureTitles = <?= json_encode(array('profile', 'profilepicture', 'profilepictureurl')); ?>;
