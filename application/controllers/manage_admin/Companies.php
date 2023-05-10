@@ -685,7 +685,7 @@ class Companies extends Admin_Controller
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-        $name = $name == null ? 'all' : urldecode($name);
+        $name = $name == null ? 'all' : str_replace('_', ' ', urldecode($name));
         $email = $email == null ? 'all' : urldecode($email);
         $this->data['administrators'] = $this->company_model->get_executive_administrators($name, $email);
         $this->data['page_title'] = 'Manage Company Executive Admins';
