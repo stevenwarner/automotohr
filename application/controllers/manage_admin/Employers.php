@@ -292,6 +292,7 @@ class employers extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $employer_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
+        $this->data['company_detail'] = $company_detail;
         $this->data['creator'] = $employer_detail[0]['created_by'] == null ? [] : $this->company_model->getEmployeeCreator($employer_detail[0]['created_by']);
         $this->data['show_timezone'] = isset($company_detail[0], $company_detail[0]['timezone']) ? $company_detail[0]['timezone'] : '';
         $this->data['page_title'] = 'Edit Employer';

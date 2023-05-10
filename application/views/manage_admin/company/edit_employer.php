@@ -15,6 +15,13 @@
                                     </div>
 
                                     <div class="edit-email-template">
+                                        <div class="row">
+                                            <div class="col-sm-12 text-center">
+                                                <img src="<?= AWS_S3_BUCKET_URL . $company_detail[0]['Logo']; ?>" alt="<?= $company_detail[0]['CompanyName']; ?>" style="width: 75px; height: 75px;" />
+                                                <p><?= $company_detail[0]['CompanyName']; ?></p>
+                                            </div>
+                                        </div>
+                                        <hr>
                                         <?php if (count($creator)) { ?>
                                             <p>Employee created by : <strong><?= remakeEmployeeName($creator, true) . ' [' . ($creator['email']) . '] (' . ($creator['active'] == 1 ? 'Active' : 'InActive') . ')'; ?></strong></p>
                                             <hr />
