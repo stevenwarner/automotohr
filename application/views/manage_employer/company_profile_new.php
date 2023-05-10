@@ -179,6 +179,15 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Make Primary Number Mandatory <small class="help_text">Make Primary Number Mandatory</small>
+                                    <input class="" type="checkbox" id="primary_number_status" name="primary_number_status" value="1" <?php echo (isset($portal['primary_number_required']) && $portal['primary_number_required'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
@@ -251,18 +260,6 @@
                             </div>
                         </div>
 
-
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group autoheight">
-                                <label class="control control--checkbox">
-                                    Make Primary Number  Mandatory <small class="help_text">Make Primary Number  Mandatory</small>
-                                    <input class="" type="checkbox" id="primary_number_status" name="primary_number_status" value="1" <?php echo (isset($portal['primary_number_required']) && $portal['primary_number_required'] == 1 ? 'checked="checked" ' : ''); ?> />
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </div>
-                        </div>
-
-                     
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <h3>General Documents <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
@@ -281,7 +278,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                    Direct Deposit Information <small class="help_text">Make the Direct Deposit Information	as mandatory.</small>
+                                    Direct Deposit Information <small class="help_text">Make the Direct Deposit Information as mandatory.</small>
                                     <input class="" type="checkbox" id="man_d2" name="man_d2" <?php echo (isset($portal['man_d2']) && $portal['man_d2'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
@@ -314,40 +311,40 @@
                                 </label>
                             </div>
                         </div>
-                        <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group autoheight">
-                                <h3>Document Library <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
-                                <p>Make the following selected documents available on document library.</p>
+                        <?php if (checkIfAppIsEnabled('documentlibrary')) : ?>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <h3>Document Library <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                    <p>Make the following selected documents available on document library.</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group autoheight">
-                                <label class="control control--checkbox">
-                                    I9 <small class="help_text">Make the I9 available on document library.</small>
-                                    <input class="" type="checkbox" id="dl_i9" name="dl_i9" <?php echo (isset($portal['dl_i9']) && $portal['dl_i9'] == 1 ? 'checked="checked" ' : ''); ?> />
-                                    <div class="control__indicator"></div>
-                                </label>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        I9 <small class="help_text">Make the I9 available on document library.</small>
+                                        <input class="" type="checkbox" id="dl_i9" name="dl_i9" <?php echo (isset($portal['dl_i9']) && $portal['dl_i9'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group autoheight">
-                                <label class="control control--checkbox">
-                                    W9 <small class="help_text">Make the W9 available on document library.</small>
-                                    <input class="" type="checkbox" id="dl_w9" name="dl_w9" <?php echo (isset($portal['dl_w9']) && $portal['dl_w9'] == 1 ? 'checked="checked" ' : ''); ?> />
-                                    <div class="control__indicator"></div>
-                                </label>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        W9 <small class="help_text">Make the W9 available on document library.</small>
+                                        <input class="" type="checkbox" id="dl_w9" name="dl_w9" <?php echo (isset($portal['dl_w9']) && $portal['dl_w9'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group autoheight">
-                                <label class="control control--checkbox">
-                                    W4 <small class="help_text">Make the W4 available on document library.</small>
-                                    <input class="" type="checkbox" id="dl_w4" name="dl_w4" <?php echo (isset($portal['dl_w4']) && $portal['dl_w4'] == 1 ? 'checked="checked" ' : ''); ?> />
-                                    <div class="control__indicator"></div>
-                                </label>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        W4 <small class="help_text">Make the W4 available on document library.</small>
+                                        <input class="" type="checkbox" id="dl_w4" name="dl_w4" <?php echo (isset($portal['dl_w4']) && $portal['dl_w4'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
 
 
@@ -426,7 +423,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                U.S. citizen <small class="help_text">If enabled then the "U.S. citizen or permanent resident" section will be required for EEOC.</small>
+                                    U.S. citizen <small class="help_text">If enabled then the "U.S. citizen or permanent resident" section will be required for EEOC.</small>
                                     <input class="" type="checkbox" id="dl_citizen" name="dl_citizen" <?php echo (isset($portal['dl_citizen']) && $portal['dl_citizen'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
@@ -441,11 +438,11 @@
                                 </p>
                             </div>
                         </div>
-                        
+
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                VETERAN <small class="help_text">If enabled then the "VETERAN" section will be visible to employee/applicant on EEOC.</small>
+                                    VETERAN <small class="help_text">If enabled then the "VETERAN" section will be visible to employee/applicant on EEOC.</small>
                                     <input class="" type="checkbox" id="dl_vet" name="dl_vet" <?php echo (isset($portal['dl_vet']) && $portal['dl_vet'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
@@ -454,7 +451,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                DISABILITY <small class="help_text">If enabled then the "voluntary self-identification of disability" section will be visible to employee/applicant on EEOC.</small>
+                                    DISABILITY <small class="help_text">If enabled then the "voluntary self-identification of disability" section will be visible to employee/applicant on EEOC.</small>
                                     <input class="" type="checkbox" id="dl_vol" name="dl_vol" <?php echo (isset($portal['dl_vol']) && $portal['dl_vol'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
@@ -463,7 +460,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                GENDER  <small class="help_text">If enabled then the "GENDER" section will be visible to employee/applicant on EEOC.</small>
+                                    GENDER <small class="help_text">If enabled then the "GENDER" section will be visible to employee/applicant on EEOC.</small>
                                     <input class="" type="checkbox" id="dl_gen" name="dl_gen" <?php echo (isset($portal['dl_gen']) && $portal['dl_gen'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>

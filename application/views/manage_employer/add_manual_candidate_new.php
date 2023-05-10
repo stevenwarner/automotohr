@@ -37,7 +37,7 @@
                                     <?php echo form_error('email'); ?>
                                 </li>
                                 <li class="form-col-50-right">
-                                    <?php echo form_label('Phone Number', 'phone_number'); ?>
+                                    <?php echo form_label('Primary Number ' . (get_company_module_status($this->session->userdata('logged_in')['company_detail']['sid'], 'primary_number_required') == 1 ? '<span class="hr-required">*</span>' : '') . '', 'phone_number'); ?>
                                     <?php echo form_input('phone_number', set_value('phone_number'), 'class="invoice-fields"'); ?>
                                     <?php echo form_error('phone_number'); ?>
                                 </li>
@@ -91,7 +91,7 @@
                                 </li>
                                 <li class="form-col-50-right">
                                     <label>Desired Job Title: &nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption" checked> Add Manual &nbsp;
-                                        <input type="radio" name="title_option"  value="dropdown" class="titleoption"> From Drop Down</label>
+                                        <input type="radio" name="title_option" value="dropdown" class="titleoption"> From Drop Down</label>
                                     <div>
                                         <input type="text" class="invoice-fields" name="desired_job_title" id="job_title">
                                         <?php $templateTitles = get_templet_jobtitles($session["company_detail"]["sid"]); ?>
@@ -155,6 +155,7 @@
                     email: true
                 },
                 phone_number: {
+                    required: <?= get_company_module_status($this->session->userdata('logged_in')['company_detail']['sid'], 'primary_number_required') == 1 ? 'true' : 'false'?>,
                     pattern: /^[0-9\-]+$/
                 },
             },
