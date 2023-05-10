@@ -18,6 +18,7 @@
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12 text-right">
                                     <a href="<?=base_url('cn/manage/job_roles');?>" class="btn btn-success">Manage Job Roles</a>
+                                    <a href="<?=base_url('manage_admin/reports/complynet_report');?>" class="btn btn-success">Report</a>
                                 </div>
                             </div>
                             <br />
