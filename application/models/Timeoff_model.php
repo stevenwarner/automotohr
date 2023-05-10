@@ -5541,7 +5541,7 @@ class Timeoff_model extends CI_Model
             ->where('tr.is_draft', 0)
             ->order_by('tr.request_from_date', 'ASC');
         //
-        if ($employeeIds != 'all') {
+        if ($employeeIds !='all' && $employeeIds && $employeeIds[0] != '') {
             $this->db->where_in('tr.employee_sid', $employeeIds);
         }
         //
@@ -5964,7 +5964,7 @@ class Timeoff_model extends CI_Model
             ->where('tr.is_draft', 0)
             ->order_by('tr.request_from_date', 'ASC');
         //
-        if ($employeeIds != 'all') {
+        if ($employeeIds != 'all' && $employeeIds && $employeeIds[0] != '') {
             $this->db->where_in('tr.employee_sid', $employeeIds);
         }
 
