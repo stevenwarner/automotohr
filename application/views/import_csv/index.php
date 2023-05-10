@@ -5,7 +5,7 @@
     $importColumnsArray[] = 'Middle Initial';
     $importColumnsArray[] = 'Last Name';
     $importColumnsArray[] = 'Email';
-    $importColumnsArray[] = 'Contact Number';
+    $importColumnsArray[] = 'Primary Number';
     $importColumnsArray[] = 'Street Address';
     $importColumnsArray[] = 'City';
     $importColumnsArray[] = 'Zipcode';
