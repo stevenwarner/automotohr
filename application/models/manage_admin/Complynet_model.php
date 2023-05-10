@@ -45,7 +45,7 @@ class Complynet_model extends CI_Model
         } else {
 
             if ($limit !== null && $offset !== null) {
-                $this->db->limit($limit, $offset);
+                // $this->db->limit($limit, $offset);
             }
 
             $result = array();
