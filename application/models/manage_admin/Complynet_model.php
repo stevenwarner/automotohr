@@ -22,9 +22,9 @@ class Complynet_model extends CI_Model
         }
         if ($keyword &&$keyword != "all") {
             $this->db->group_start();
-            $this->db->where("request_body like '%$keyword%'", null, null);
-            $this->db->or_where("response_body like '%$keyword%'", null, null);
-            $this->db->or_where("request_url like '%$keyword%'", null, null);
+            $this->db->where("request_body REGEXP '$keyword`'", null, null);
+            $this->db->or_where("response_body REGEXP '$keyword`'", null, null);
+            $this->db->or_where("request_url REGEXP '$keyword`'", null, null);
             $this->db->group_end();
         }
        
