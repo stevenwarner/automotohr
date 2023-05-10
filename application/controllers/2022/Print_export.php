@@ -30,7 +30,7 @@ class Print_export extends Public_Controller{
                 'sid as Id', 
                 'ContactName as Contact Name',
                 'CompanyName as Company Name',
-                'PhoneNumber as Phone Number',
+                'PhoneNumber as Primary Number',
                 'registration_date as Registration Date',
                 'expiry_date as Expiration Date',
                 'active as  Status'

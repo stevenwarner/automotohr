@@ -178,7 +178,7 @@ class Export_applicants_csv extends Public_Controller {
                         $i++;
                     }
 
-                    $header_row = 'Date Applied,First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Profile Picture,Resume,Cover Letter,Applicant Type,Job Title,Status,Applicant Status,Notes';
+                    $header_row = 'Date Applied,First Name,Last Name,E-Mail,Primary Number,Street Address,City,Zipcode,State,Country,Profile Picture,Resume,Cover Letter,Applicant Type,Job Title,Status,Applicant Status,Notes';
                     $file_content = '';
                     $file_content .= $header_row . ',' . PHP_EOL;
                     $file_content .= $rows;

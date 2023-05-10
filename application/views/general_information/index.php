@@ -646,7 +646,7 @@ $field_sid = 'employee_sid';
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <?php $field_id = 'PhoneNumber'; ?>
-                                                        <?php echo form_label('Phone Number:', $field_id); ?>
+                                                        <?php echo form_label('Primary Number:', $field_id); ?>
                                                         <?php echo form_input($field_id, '', 'class="form-control" id="' . $field_id . ' "'); ?>
                                                         <?php echo form_error($field_id); ?>
                                                     </div>

@@ -400,7 +400,11 @@ class Employee_management extends Public_Controller
             $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-            $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+
+            if (get_company_module_status($company_id, 'primary_number_required') == 1) {
+                $this->form_validation->set_rules('PhoneNumber', 'Primary Number', 'trim|xss_clean');
+            }
+
             $this->form_validation->set_rules('job_title', 'Job Title', 'trim|xss_clean');
             $this->form_validation->set_rules('registration_date', 'Starting Date', 'trim|xss_clean');
             $this->form_validation->set_message('is_unique', '%s is already registered!');
@@ -1417,10 +1421,16 @@ class Employee_management extends Public_Controller
                 $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-                $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+
+                if (get_company_module_status($company_id, 'primary_number_required') == 1) {
+                    $this->form_validation->set_rules('PhoneNumber', 'Primary Number', 'trim|xss_clean');
+                }
+
                 $this->form_validation->set_rules('access_level', 'Access Level', 'trim|xss_clean');
                 $this->form_validation->set_rules('break_hours', 'break_hours', 'trim|xss_clean|min_length[1]|max_length[24]');
                 $this->form_validation->set_rules('break_mins', 'break_mins', 'trim|xss_clean|min_length[1]|max_length[59]');
+
+
                 //
                 $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
                 //

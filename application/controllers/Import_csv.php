@@ -34,7 +34,7 @@ class Import_csv extends Public_Controller {
                 $firstNameTitles = array('first_name', 'firstName', 'first-name', 'FirstName', 'FName', 'First Name'); // for first_name
                 $lastNameTitles = array('last_name', 'lastName', 'last-name', 'LastName', 'LName', 'last name'); //for last_name
                 $emailAddressTitles = array('email', 'email_address', 'emailAddress', 'email-address', 'EmailAddress', 'Email', 'E-Mail', 'e-mail');
-                $phoneNumberTitles = array('phone_number', 'phoneNumber', 'phone-number', 'PhoneNumber', 'Phone', 'Contact Number', 'Contact', 'Employee Telephone Number', 'Telephone Number'); //for PhoneNumber
+                $phoneNumberTitles = array('phone_number', 'phoneNumber', 'phone-number', 'PhoneNumber', 'Phone', 'Contact Number', 'Contact', 'Employee Telephone Number', 'Telephone Number','PrimaryNumber'); //for PhoneNumber
                 $addressTitles = array('address', 'Address', 'Street Address', 'Employee Address Line 1', 'Address Line 1', 'Employee Address'); // for Location_Address
                 $cityTitles = array('city', 'City', 'Employee City'); // for Location_city
                 $zipCodeTitles = array('zip_code', 'zipCode', 'zip-code', 'ZipCode', 'zip', 'Employee ZIP'); // for Location_ZipCode

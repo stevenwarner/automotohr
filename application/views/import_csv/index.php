@@ -5,7 +5,7 @@
     $importColumnsArray[] = 'Middle Initial';
     $importColumnsArray[] = 'Last Name';
     $importColumnsArray[] = 'Email';
-    $importColumnsArray[] = 'Contact Number';
+    $importColumnsArray[] = 'Primary Number';
     $importColumnsArray[] = 'Street Address';
     $importColumnsArray[] = 'City';
     $importColumnsArray[] = 'Zipcode';
@@ -170,7 +170,7 @@
         lastNameTitles = <?=json_encode(array('lastname', 'lname'));?>,
         firstNameTitles = <?=json_encode(array('firstname', 'fname'));?>,
         coverLetterTitles = <?=json_encode(array('coverletter', 'coverletterurl'));?>,
-        phoneNumberTitles = <?=json_encode(array('phonenumber','contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber'));?>,
+        phoneNumberTitles = <?=json_encode(array('phonenumber','contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber', 'primarynumber'));?>,
         accessLevelTitles = <?=json_encode(array('accesslevel'));?>,
         emailAddressTitles = <?=json_encode(array('email', 'emailaddress', 'personalemail', 'e-mail'));?>,
         secondaryemailaddressTitles = <?=json_encode(array('secondaryemail', 'secondaryemailaddress'));?>,

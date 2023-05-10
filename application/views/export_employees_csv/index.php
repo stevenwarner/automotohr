@@ -17,7 +17,7 @@
                             </div>
                             <div class="panel-body">
                                 <pre>
-<b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Access Level, Job Title,Status</b><br>
+<b>First Name, Last Name, E-Mail, Primary Number, Street Address, City, Zipcode, State, Country, Access Level, Job Title,Status</b><br>
 Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, Admin, General Manager,ActiveEmployee
 Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, Manager, Manager Sales,ActiveEmployee,
 Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, Hiring Manager,ActiveActiveEmployee, 

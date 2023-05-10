@@ -251,7 +251,7 @@
                                                                     <th>First Name</th>
                                                                     <th>Last Name</th>
                                                                     <th>Email</th>
-                                                                    <th>Phone Number</th>
+                                                                    <th>Primary Number</th>
                                                                     <th>Date Applied</th>
                                                                     <th>Applicant Type</th>
                                                                     <th>Applicant Status</th>

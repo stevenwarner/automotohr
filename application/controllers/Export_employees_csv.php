@@ -230,7 +230,7 @@ class Export_employees_csv extends Public_Controller
                                 $companyHeader = ',,,,' . $data['session']['company_detail']['CompanyName'];
                             }
 
-                            $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Access Level,Job Title,Status' . (count($header) ? ',' . implode(',', $header) : '');
+                            $header_row = 'First Name,Last Name,E-Mail,Primary Number,Street Address,City,Zipcode,State,Country,Access Level,Job Title,Status' . (count($header) ? ',' . implode(',', $header) : '');
 
                             $file_content = '';
                             $file_content .= $header_row . PHP_EOL;

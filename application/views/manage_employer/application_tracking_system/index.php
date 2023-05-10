@@ -3087,7 +3087,7 @@
             send_sms_box += loader_row;
             send_sms_box += '       <form action="javascript:void(0)" id="js-sms-form">';
             send_sms_box += '           <div class="form-group">';
-            send_sms_box += '               <label>Receiver Phone Number</label>';
+            send_sms_box += '               <label>Receiver Primary Number</label>';
             send_sms_box += '               <div class="input-group">';
             send_sms_box += '                   <div class="input-group-addon">+1</div>';
             send_sms_box += '                   <input type="text" disabled="true" name="txt_phone" class="form-control" value="' + (megaOBJ.phone) + '" />';

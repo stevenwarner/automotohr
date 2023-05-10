@@ -99,13 +99,13 @@ $(function () {
             rows += '<hr />';
             //
             let innerRows = '';
-            console.log(data['union_member'])
+            //  console.log(data['union_member'])
             for (let index in data) {
                 //
                 let newData = data[index]['new'] || '-';
                 let oldData = data[index]['old'] || '-';
                 if (index == 'union_member') {
-                 //   console.log(data)
+                    //   console.log(data)
                 }
                 //
                 if (index.toLowerCase() == 'location_state') {
@@ -137,10 +137,17 @@ $(function () {
                 }
                 //
                 innerRows += '   <tr>';
-                if(index != 'union_member'){
-                innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + '</strong></td>';
-                                }
-                  //
+                if (index != 'union_member') {
+
+                    if (index == 'PhoneNumber') {
+                        innerRows += '<td><strong> PRIMARY NUMBER </strong></td>';
+                    } else {
+                        innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + 'dd</strong></td>';
+                    }
+                }
+
+               
+                //
                 if (index == 'action') {
                     innerRows += '       <td class="bg-danger text-center" colspan="2">Deleted</td>';
                 } else if (index == 'union_member') {
