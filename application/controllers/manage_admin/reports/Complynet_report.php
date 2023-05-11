@@ -9,7 +9,7 @@ class Complynet_report extends Admin_Controller {
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index($keyword = null, $status = null, $from = null, $to = null, $page_active = 1, $page_number = 1) {
+    public function index($keyword = null, $status = null, $method = null, $from = null, $to = null, $page_active = 1, $page_number = 1) {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url       = 'manage_admin';
         $function_name      = 'applicants_report';
@@ -33,7 +33,7 @@ class Complynet_report extends Admin_Controller {
             $end_date = date('Y-m-d 23:59:59');
         }
 
-        $total_records = $this->complynet_model->getFilterRecords($keyword, $status, $start_date, $end_date, null, null, true);
+        $total_records = $this->complynet_model->getFilterRecords($keyword, $status, $method, $start_date, $end_date, null, null, true);
         $keyword = urldecode($keyword);
 
         $base_url = base_url('manage_admin/reports/complynet_report') . '/' . urlencode($keyword) . '/' . urlencode($status) . '/' . urlencode($from) . '/' . urlencode($to) . '/' . $page_number;
@@ -74,7 +74,7 @@ class Complynet_report extends Admin_Controller {
 
         $this->data['links'] = $this->pagination->create_links();
 
-        $calls = $this->complynet_model->getFilterRecords($keyword, $status, $start_date, $end_date, $records_per_page, $offset);
+        $calls = $this->complynet_model->getFilterRecords($keyword, $status, $method, $start_date, $end_date, $records_per_page, $offset);
         $this->data['calls'] = $calls;
 
         $this->render('manage_admin/reports/complynet_report');
@@ -97,12 +97,12 @@ class Complynet_report extends Admin_Controller {
         }
         // 
         $resp['Status'] = TRUE;
-        $resp['Response'] = 'Proceed';
-        $resp['request_body'] = json_decode($call['request_body'],true);
-        $resp['response_code'] = $call['response_code'];
-        $resp['request_url'] = $call['request_url'];
-        $resp['response_body'] = $call['response_body'];
-        $resp['response_headers'] = $call['response_headers'];
+        $resp['Response'] = $call;
+        // $resp['request_body'] = json_decode($call['request_body'],true);
+        // $resp['response_code'] = $call['response_code'];
+        // $resp['request_url'] = $call['request_url'];
+        // $resp['response_body'] = $call['response_body'];
+        // $resp['response_headers'] = $call['response_headers'];
 
         $this->resp($resp);
     }

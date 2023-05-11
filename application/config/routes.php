@@ -1003,7 +1003,8 @@ $route['manage_admin/reports/invoice_item_usage/(:any)/(:any)/(:any)/(:num)'] = 
 //Manage Admin Complynet report
 $route['manage_admin/reports/complynet_report/'] = 'manage_admin/reports/complynet_report/index';
 $route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4';
-$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)/(:num)/(:num)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4/$5/$6';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4/$5';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:num)/(:num)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4/$5/$6/$7';
 $route['manage_admin/reports/complynet_report/getDetail/(:num)'] = 'manage_admin/reports/complynet_report/getDetail/$1';
 //Manage Admin Credit Card Statuses
 $route['manage_admin/cc_expires/(:any)'] = 'manage_admin/cc_expires/index/$1';
