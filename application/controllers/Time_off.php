@@ -7308,4 +7308,29 @@ class Time_off extends Public_Controller
         echo json_encode($this->timeoff_model->getMyTimeOffs($data['company_sid'], $employeeId));
         exit(0);
     }
+
+
+    /**
+     * Get policy history
+     * 
+     * Fetches the changes done by the employers to the policy
+     * 
+     * @param int $policyId
+     * @return json
+     */
+    public function getPolicyHistory(int $policyId)
+    {
+        // get and check session
+        $session = checkAndGetSession('employee');
+        // lets sanitize the id
+        $policyId = (int) $policyId;
+        // get the company id to match
+        $companyId = $session['parent_sid'];
+        // get the records
+        $records = $this->timeoff_model->getPolicyHistoryWithDifference($policyId, $companyId);
+        //
+        $view = $this->load->view('timeoff/policy_history', ['records' => $records], true);
+        //  
+        return SendResponse(200, ['view' => $view]);
+    }
 }

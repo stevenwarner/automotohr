@@ -173,6 +173,9 @@ $route['export_time_off'] = 'Time_off/export';
 $route['timeoff/export'] = 'Time_off/export';
 $route['download_export_timeoff/(:num)'] = 'Time_off/download_export_timeoff/$1';
 
+// Time off policy history
+$route['timeoff/policy/(:num)/history']['get'] = 'Time_off/getPolicyHistory/$1';
+
 // Added on: 07-10-2019
 $route['pto/my/(:any)'] = 'Paid_time_off/my_pto/$1';
 // Added on: 12-09-2019
