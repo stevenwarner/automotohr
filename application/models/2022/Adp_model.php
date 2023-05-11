@@ -397,7 +397,7 @@ class Adp_model extends CI_Model
                     "worker" => [
                         "person" => [
                             "birthName" => [
-                                      "familyName1" => "Jon"
+                                "familyName1" => "Jon"
                             ]
                         ]
                     ]
@@ -555,23 +555,22 @@ class Adp_model extends CI_Model
 
                             "onboardingStatus" => [
                                 "statusCode" => [
-                                    "code" => 'inprogress'
+                                    "code" => 'completed'
                                 ]
 
                             ],
 
                             "applicantPersonalProfile" => [
                                 "birthName" => [
-                                    "givenName" => $applicantData['first_name'],
-                                    "middleName" => $applicantData['middle_name'],
-                                    "familyName" => $applicantData['last_name']
+                                    "givenName" => $applicantData['first_name'] != '' ? $applicantData['first_name'] : '',
+                                    "middleName" => $applicantData['middle_name'] != '' ? $applicantData['middle_name'] : '',
+                                    "familyName" => $applicantData['last_name'] != '' ? $applicantData['last_name'] : ''
                                 ],
 
                                 "genderCode" => [
-                                    "code" => $applicantData['gender'],
+                                    "code" => $applicantData['gender'] != '' ? $applicantData['gender'] : '',
                                 ],
-                                "birthDate" => $applicantData['dob'],
-
+                                "birthDate" => $applicantData['dob'] != '' ? $applicantData['dob'] : '',
 
                                 "governmentIDs" => [
                                     [
@@ -583,7 +582,6 @@ class Adp_model extends CI_Model
                                         "statusCode" => [
                                             "code" => 'AppliedFor'
                                         ]
-
                                     ]
 
                                 ],
@@ -591,35 +589,34 @@ class Adp_model extends CI_Model
                                 "communication" => [
                                     "emails" => [
                                         [
-                                            "emailUri" => $applicantData['email'],
+                                            "emailUri" => $applicantData['email'] != '' ? $applicantData['email'] : '',
                                             "notificationIndicator" => true
                                         ]
                                     ]
                                 ],
 
-
                                 "otherPersonalAddresses" => [
                                     [
-                                        "lineOne" =>  $applicantData['address'],
+                                        "lineOne" =>  $applicantData['address'] != '' ? $applicantData['address'] : '',
                                         "lineTwo" => "",
                                         "lineThree" => "",
-                                        "cityName" => $applicantData['city'],
+                                        "cityName" => $applicantData['city'] != '' ? $applicantData['city'] : '',
                                         "subdivisionCode" => [
-                                            "code" => $applicantData['country_name']
+                                            "code" => $applicantData['country_name'] != '' ? $applicantData['country_name'] : ''
                                         ],
-                                        "countryCode" => $applicantData['country_code'],
-                                        "postalCode" => $applicantData['zipcode']
+                                        "countryCode" => $applicantData['country_code'] != '' ? $applicantData['country_code'] : '',
+                                        "postalCode" => $applicantData['zipcode'] != '' ? $applicantData['zipcode'] : ''
                                     ]
                                 ],
 
                             ],
 
                             "applicantWorkerProfile" => [
-                                "hireDate" => $applicantData['hireDate']
+                                "hireDate" => $applicantData['hireDate'] != '' ? $applicantData['hireDate'] : ''
                             ],
 
                             "applicantPayrollProfile" => [
-                                "payrollGroupCode" => "$companyCode"
+                                "payrollGroupCode" => "$companyCode" 
                             ],
 
                             "applicantTaxProfile" => [
@@ -627,7 +624,6 @@ class Adp_model extends CI_Model
                                     "multipleJobIndicator" => 'false',
                                 ]
                             ]
-
 
                         ]
                     ]

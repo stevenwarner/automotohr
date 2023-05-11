@@ -451,7 +451,7 @@ class employers extends Admin_Controller
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
 
-             
+
             // only run for employee
             if (checkEmployeeAdpStatus($sid)) {
                 // load the model
@@ -469,7 +469,7 @@ class employers extends Admin_Controller
                         'middle_name' => $employer_detail[0]['middle_name'],
                         'maiden_name' => $employer_detail[0]['maiden_name'],
 
-                        
+
                     ],
                     [
                         'gender' => $this->input->post('gender', true),
@@ -588,8 +588,34 @@ class employers extends Admin_Controller
 
 
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
+
+
+                // applicant to ADP
+
+                if (checkADPStatus($company_sid) > 0) {
+                    
+                    $this->load->model('2022/Adp_model', 'adp_model');
+
+                    $applicantArray = [];
+                    $applicantArray['first_name'] = $first_name;
+                    $applicantArray['last_name'] =  $last_name;
+                    $applicantArray['hireDate'] = $joined_at;
+                    $applicantArray['dob'] = '';
+                    $applicantArray['email'] = $email;
+                    $applicantArray['address'] = '';
+                    $applicantArray['city'] = '';
+                    $applicantArray['zipcode'] = '';
+                    $applicantArray['SSN'] = '';
+                    $applicantArray['gender'] = $gender;
+                    $applicantArray['country_name'] = '';
+                    $applicantArray['country_code'] = '';
+
+                    $this->adp_model->onboardApplicantToAdp($applicantArray);
+                }
+
+
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
-                //
+
                 //
                 $teamId = $this->input->post('teamId');
                 handleEmployeeDepartmentAndTeam($sid, $teamId);

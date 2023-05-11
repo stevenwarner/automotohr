@@ -67,6 +67,8 @@ class Hire_onboarding_applicant extends CI_Controller
                         $joining_date = date('Y-m-d');
                     }
 
+                    if (checkADPStatus($company_sid ) > 0) {
+                    
                     $this->load->model('2022/Adp_model', 'adp_model');
                     $applicantArray = [];
                     $applicantArray['first_name'] = $applicant_detail['applicant_info']['first_name'];
@@ -92,6 +94,9 @@ class Hire_onboarding_applicant extends CI_Controller
                     if ($data['onboarding_applicant_template_code']['adp_onboarding_template_code'] != '' && $data['onboarding_applicant_template_code']['adp_onboarding_template_code'] != null && $data['adp_company_code']['adp_company_location'] != '' && $data['adp_company_code']['adp_company_location'] != null) {
                         $this->adp_model->onboardApplicantToAdp($applicantArray);
                     }
+
+                }
+
 
 
                     if ($status == 'success') {
@@ -475,6 +480,9 @@ class Hire_onboarding_applicant extends CI_Controller
 
 
         //ADP 
+
+        if (checkADPStatus($company_sid) > 0) {
+
         $this->load->model('2022/Adp_model', 'adp_model');
 
         if ($joining_date == '') {
@@ -499,6 +507,7 @@ class Hire_onboarding_applicant extends CI_Controller
 
 
         $this->adp_model->onboardApplicantToAdp($applicantArray);
+    }
 
 
 

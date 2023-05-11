@@ -267,3 +267,36 @@ if (!function_exists('getStateColumnsById')) {
             ->get()->row_array();
     }
 }
+
+
+
+
+//
+if (!function_exists('get_adp_company_code')) {
+
+    function get_adp_company_code($company_sid)
+    {
+        $CI = &get_instance();
+
+        $CI->db->select('adp_company_location');
+        $CI->db->where('user_sid', $company_sid);
+        $record_obj = $CI->db->get('portal_employer');
+        $record_arr = $record_obj->row_array();
+        return $record_arr;
+    }
+}
+
+
+//
+if (!function_exists('get_employee_onboarding_template_code')) {
+
+    function get_employee_onboarding_template_code($user_sid)
+    {
+        $this->db->select('adp_onboarding_template_code');
+        $this->db->where('sid', $user_sid);
+        $record_obj = $this->db->get('users');
+        $record_arr = $record_obj->row_array();
+        return $record_arr;
+    }
+}
+

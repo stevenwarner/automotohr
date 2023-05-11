@@ -439,7 +439,7 @@ class Employee_management extends Public_Controller
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
                 $maiden_name = $this->input->post('maiden_name');
-                
+
 
                 //
                 $teamId = $this->input->post('teamId');
@@ -490,9 +490,44 @@ class Employee_management extends Public_Controller
                     $user_information['profile_picture'] = $pictures;
                 }
 
+
+
+                //
+
+                if (checkADPStatus($company_id) > 0) {
+
+                    $this->load->model('2022/Adp_model', 'adp_model');
+
+                    $applicantArray = [];
+                    $applicantArray['first_name'] = $user_information['first_name'];
+                    $applicantArray['last_name'] =  $user_information['last_name'];
+                    $applicantArray['hireDate'] = $user_information['joined_at'];
+                    $applicantArray['dob'] = '';
+                    $applicantArray['email'] = $user_information['email'];
+                    $applicantArray['address'] = $user_information['Location_Address'];
+                    $applicantArray['city'] = $user_information['Location_City'];
+                    $applicantArray['zipcode'] = $user_information['Location_ZipCode'];
+                    $applicantArray['SSN'] = '';
+                    $applicantArray['gender'] = $user_information['gender'];
+
+                    if ($user_information['Location_Country'] != '' &&  $user_information['Location_Country'] != '0') {
+                        $countryData = db_get_country_name($user_information['Location_Country']);
+                        $applicantArray['country_name'] = $countryData['country_name'];
+                        $applicantArray['country_code'] = $countryData['country_code'];
+                    } else {
+                        $applicantArray['country_name'] = '';
+                        $applicantArray['country_code'] = '';
+                    }
+                }
+
+
+
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
                     $employee_sid = $this->employee_model->add_employee($user_information);
+
+                    $this->adp_model->onboardApplicantToAdp($applicantArray);
+
 
                     //
                     if ($departmenId != '' && $teamId != '') {
@@ -516,6 +551,9 @@ class Employee_management extends Public_Controller
                 } else {
                     $link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_registration') . '/' . $verification_key . '">' . 'Update Login Credentials' . '</a>';
                     $employee_sid = $this->employee_model->add_employee($user_information);
+
+                    $this->adp_model->onboardApplicantToAdp($applicantArray);
+
 
                     //
                     if ($departmenId != '' && $teamId != '') {
@@ -1820,7 +1858,7 @@ class Employee_management extends Public_Controller
                         );
                     }
 
-                   // echo $employee_detail['first_name'];
+                    // echo $employee_detail['first_name'];
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
@@ -2461,10 +2499,10 @@ class Employee_management extends Public_Controller
 
                 //
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
-               
+
                 // only run for employee
-                   if (checkEmployeeAdpStatus($sid)) {
-                    
+                if (checkEmployeeAdpStatus($sid)) {
+
                     // load the model
                     $this->load->model('2022/Adp_model', 'adp_model');
                     //
