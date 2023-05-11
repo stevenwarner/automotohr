@@ -143,7 +143,7 @@ $putCalls = 0;
                                         <div class="col-xs-2">
                                             <div class="thumbnail success-block">
                                                 <div class="caption">
-                                                    <h3 id="jsSuccessCalls">0</h3>
+                                                    <h3 id="jsSuccessCalls"><?= $boxArray['success']; ?></h3>
                                                     <h4><strong>Success</strong></h4>
                                                 </div>
                                             </div>
@@ -151,7 +151,7 @@ $putCalls = 0;
                                         <div class="col-xs-2">
                                             <div class="thumbnail error-block">
                                                 <div class="caption">
-                                                    <h3 id="jsErrorCalls">0</h3>
+                                                    <h3 id="jsErrorCalls"><?= $boxArray['error']; ?></h3>
                                                     <h4><strong>Error</strong></h4>
                                                 </div>
                                             </div>
@@ -159,7 +159,7 @@ $putCalls = 0;
                                         <div class="col-xs-2">
                                             <div class="thumbnail success-block">
                                                 <div class="caption">
-                                                    <h3 id="jsGetCalls">0</h3>
+                                                    <h3 id="jsGetCalls"><?= $boxArray['get']; ?></h3>
                                                     <h4><strong>GET</strong></h4>
                                                 </div>
                                             </div>
@@ -167,7 +167,7 @@ $putCalls = 0;
                                         <div class="col-xs-2">
                                             <div class="thumbnail post-block">
                                                 <div class="caption">
-                                                    <h3 id="jsPostCalls">0</h3>
+                                                    <h3 id="jsPostCalls"><?= $boxArray['post']; ?></h3>
                                                     <h4><strong>POST</strong></h4>
                                                 </div>
                                             </div>
@@ -175,7 +175,7 @@ $putCalls = 0;
                                         <div class="col-xs-2">
                                             <div class="thumbnail put-block">
                                                 <div class="caption">
-                                                    <h3 id="jsPUTCalls">0</h3>
+                                                    <h3 id="jsPUTCalls"><?= $boxArray['put']; ?></h3>
                                                     <h4><strong>PUT</strong></h4>
                                                 </div>
                                             </div>
@@ -183,7 +183,7 @@ $putCalls = 0;
                                         <div class="col-xs-2">
                                             <div class="thumbnail error-block">
                                                 <div class="caption">
-                                                    <h3 id="jsDeleteCalls">0</h3>
+                                                    <h3 id="jsDeleteCalls"><?= $boxArray['delete']; ?></h3>
                                                     <h4><strong>DELETE</strong></h4>
                                                 </div>
                                             </div>
@@ -376,13 +376,6 @@ $putCalls = 0;
 </div>
 
 <script>
-    $('#jsSuccessCalls').html("<?php echo '<strong>' . $successCalls . '</strong>'; ?>");
-    $('#jsErrorCalls').html("<?php echo '<strong>' . $errorCalls . '</strong>'; ?>");
-    $('#jsGetCalls').html("<?php echo '<strong>' . $getCalls . '</strong>'; ?>");
-    $('#jsPostCalls').html("<?php echo '<strong>' . $postCalls . '</strong>'; ?>");
-    $('#jsPUTCalls').html("<?php echo '<strong>' . $putCalls . '</strong>'; ?>");
-    $('#jsDeleteCalls').html("<?php echo '<strong>' . $deleteCalls . '</strong>'; ?>");
-
     $(document).ready(function() {
         $('.datepicker').datepicker({
             dateFormat: 'mm-dd-yy',

@@ -14,14 +14,7 @@ class Complynet_model extends CI_Model
 
         $this->db->where("request_url <>", 'https://api.complynet.com/Token');
 
-        if (!empty($status) && !is_null($status)) {
-            if ($status == 'success') {
-                $this->db->where('response_code', 200);
-            } else if ($status == 'error') {
-                $this->db->where('response_code <>', 200);
-            }
-        }
-        if ($keyword && $keyword != "all") {
+        if ($keyword != "all") {
             $this->db->group_start();
             $this->db->where("request_body REGEXP '$keyword'", null, null);
             $this->db->or_where("response_body REGEXP '$keyword'", null, null);
@@ -30,17 +23,22 @@ class Complynet_model extends CI_Model
         }
 
         //
-        if ($method) {
-            $this->db->where('LOWER(request_method)', $method);
+        if ($status != 'all') {
+            if ($status == 'success') {
+                $this->db->where('response_code', 200);
+            } else if ($status == 'error') {
+                $this->db->where('response_code <>', 200);
+            }
         }
 
-
-        if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+        
+        //
+        if ($method && $method != 'all') {
+            $this->db->where('LOWER(request_method)', $method);
+        }
+        //
+        if ($start_date != 'all' && $end_date != 'all') {
             $this->db->where('created_at BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
-        } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
-            $this->db->where('created_at >=', $start_date);
-        } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
-            $this->db->where('created_at <=', $end_date);
         }
 
         $this->db->from('complynet_calls');
