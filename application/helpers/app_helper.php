@@ -197,10 +197,10 @@ if (!function_exists('getPolicyDifference')) {
             //
             if ($differenceArray['employees']['new_value']) {
                 //
-                $oldEmployeesList = explode(',', $differenceArray['employees']['new_value']);
+                $newEmployeeList = explode(',', $differenceArray['employees']['new_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $oldEmployeesList)
+                ->where_in('sid', $newEmployeeList)
                 ->get('users')
                     ->result_array();
                 //
@@ -231,10 +231,10 @@ if (!function_exists('getPolicyDifference')) {
             //
             if ($differenceArray['allowed_approver']['new_value']) {
                 //
-                $oldEmployeesList = explode(',', $differenceArray['allowed_approver']['new_value']);
+                $newEmployeeList = explode(',', $differenceArray['allowed_approver']['new_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $oldEmployeesList)
+                ->where_in('sid', $newEmployeeList)
                 ->get('users')
                     ->result_array();
                 //
