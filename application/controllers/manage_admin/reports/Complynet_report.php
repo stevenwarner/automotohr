@@ -56,7 +56,7 @@ class Complynet_report extends Admin_Controller
         $total_records = $this->complynet_model->getFilterRecords($keyword, $status, $method, $start_date, $end_date, null, null, true);
         $keyword = urldecode($keyword);
 
-        $base_url = base_url('manage_admin/reports/complynet_report') . '/' . urlencode($keyword) . '/' . urlencode($status) . '/' . urlencode($from) . '/' . urlencode($to) . '/' . $page_number;
+        $base_url = base_url('manage_admin/reports/complynet_report') . '/' . urlencode($keyword) . '/' . urlencode($status) . '/' . urldecode($method) . '/' . urlencode($from) . '/' . urlencode($to) . '/' . $page_number;
 
         $offset = 0;
         $records_per_page = PAGINATION_RECORDS_PER_PAGE;
