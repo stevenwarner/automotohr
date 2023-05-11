@@ -44,7 +44,7 @@ if ($records) {
                                             <?php } ?>
                                         </td>
                                         <td class="bg-success">
-                                            <?php foreach ($difference['new_value'] as $plan) { ?>
+                                            <?php foreach ($difference['new_value'] as $employee) { ?>
                                                 <p><?= $employee; ?></p>
                                             <?php } ?>
                                         </td>
@@ -55,7 +55,7 @@ if ($records) {
                                             <?php } ?>
                                         </td>
                                         <td class="bg-success">
-                                            <?php foreach ($difference['new_value'] as $plan) { ?>
+                                            <?php foreach ($difference['new_value'] as $employee) { ?>
                                                 <p><?= $employee; ?></p>
                                             <?php } ?>
                                         </td>
