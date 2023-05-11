@@ -1,3 +1,22 @@
+<script type="text/javascript">
+    function print_page(elem) {
+        var data = ($(elem).html());
+        var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
+
+        mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/font-awesome.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.css'); ?>" type="text/css" />');
+        mywindow.document.write('</head><body >');
+        mywindow.document.write('<table> <tr><td>&nbsp;</td></tr><tr><td><b><?php echo getCompanyNameBySid($company_sid); ?></b></td></tr><tr><td>&nbsp;</td></tr></table >');
+        mywindow.document.write(data);
+        mywindow.document.write('</body></html>');
+        mywindow.document.write('<scr' + 'ipt src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
+        mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
+        mywindow.document.close();
+        mywindow.focus();
+    }
+</script>
 <div class="main">
     <div class="container">
         <div class="row">
@@ -127,22 +146,3 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    function print_page(elem) {
-        var data = ($(elem).html());
-        var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
-
-        mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
-        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>" type="text/css" />');
-        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/font-awesome.css'); ?>" type="text/css" />');
-        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.css'); ?>" type="text/css" />');
-        mywindow.document.write('</head><body >');
-        mywindow.document.write('<table> <tr><td>&nbsp;</td></tr><tr><td><b><?php echo getCompanyNameBySid($company_sid); ?></b></td></tr><tr><td>&nbsp;</td></tr></table >');
-        mywindow.document.write(data);
-        mywindow.document.write('</body></html>');
-        mywindow.document.write('<scr' + 'ipt src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
-        mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
-        mywindow.document.close();
-        mywindow.focus();
-    }
-</script>
