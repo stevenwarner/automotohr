@@ -37,6 +37,29 @@ if ($records) {
                                                 <p>Allow <?= $plan['accrualRate']; ?> extra hour(s) after <?= $plan['accrualType']; ?> <?= $plan['accrualTypeM']; ?></p>
                                             <?php } ?>
                                         </td>
+                                    <?php } else if ($column == 'employees') { ?>
+                                        <td class="bg-danger">
+                                            <?php foreach ($difference['old_value'] as $employee) { ?>
+                                                <p><?= $employee; ?></p>
+                                            <?php } ?>
+                                        </td>
+                                        <td class="bg-success">
+                                            <?php foreach ($difference['new_value'] as $plan) { ?>
+                                                <p><?= $employee; ?></p>
+                                            <?php } ?>
+                                        </td>
+                                    <?php } else if ($column == 'allowed_approver') { ?>
+                                        <td class="bg-danger">
+                                            <?php foreach ($difference['old_value'] as $employee) { ?>
+                                                <p><?= $employee; ?></p>
+                                            <?php } ?>
+                                        </td>
+                                        <td class="bg-success">
+                                            <?php foreach ($difference['new_value'] as $plan) { ?>
+                                                <p><?= $employee; ?></p>
+                                            <?php } ?>
+                                        </td>
+
                                     <?php } else { ?>
                                         <td class="bg-danger"><?= $difference['old_value']; ?></td>
                                         <td class="bg-success"><?= $difference['new_value']; ?></td>
