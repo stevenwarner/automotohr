@@ -12,6 +12,8 @@ class Complynet_model extends CI_Model
     {
         $this->db->select('sid, uuid_field, request_url, request_method, response_code, created_at');
 
+        $this->db->where("request_url <>", 'https://api.complynet.com/Token');
+
         if(!empty($status) && !is_null($status))
         {
             if ($status == 'success') {
@@ -45,7 +47,7 @@ class Complynet_model extends CI_Model
         } else {
 
             if ($limit !== null && $offset !== null) {
-                // $this->db->limit($limit, $offset);
+                $this->db->limit($limit, $offset);
             }
 
             $result = array();
@@ -60,8 +62,8 @@ class Complynet_model extends CI_Model
     }
 
     public function getCall ($sid) {
-        $this->db->select('response_headers, response_body, request_body');
-        $this->db->where('sid',1);
+        $this->db->select('response_code, request_url, response_headers, response_body, request_body');
+        $this->db->where('sid', $sid);
 
         $result = $this->db->get('complynet_calls')->row_array();
         return $result;

@@ -291,10 +291,24 @@
                 <h4 class="modal-title">View Detail</h4>
             </div>
             <div class="modal-body">
-                <!-- <div class="loader" id="add_form_upload_document_loader" style="display: none;">
+                <div class="loader" id="show_detail_loader" style="display: none;">
                     <i class="fa fa-spinner fa-spin"></i>
-                </div> -->
-              
+                </div>
+
+                <div class="row margin-top">
+                    <div class="col-sm-12">
+                        <label>Request URL</label>
+                        <pre class="jsRequestURL">
+                            
+                        </pre>
+                        <br>
+                        <label>Response Code</label>
+                        <pre class="jsResponseCode">
+                            
+                        </pre>
+                    </div>
+                </div>
+
                 <div class="row margin-top">
                     <div class="col-sm-12">
                         <label>Request Header</label>
@@ -365,17 +379,21 @@
     }
 
     function showCallDetail (sid) {
+        $('#call_modal').appendTo("body").modal('show');
+        $('#show_detail_loader').show();
+        //
         $.ajax({
             type: 'GET',
             url: '<?= base_url('manage_admin/reports/complynet_report/getDetail') ?>'+'/'+sid,
             success: function(data) {
-                console.log(JSON.parse(JSON.stringify(data.response_body,undefined,4)))
+                
+                $('.jsRequestURL').html(data.request_url);
+                $('.jsResponseCode').html(data.response_code);
                 $('.jsRequestHeader').html(data.request_body.headers);
-                $('.jsRequestBody').html(data.request_body.body);
+                $('.jsRequestBody').html(data.request_body.body != undefined ? data.request_body.body : 'NULL');
                 $('.jsResponseHeader').html(JSON.stringify(JSON.parse(data.response_headers),undefined,4));
                 $('.jsResponseBody').html(JSON.stringify(JSON.parse(data.response_body),undefined,4));
-                $('#call_modal').appendTo("body").modal('show');
-
+                $('#show_detail_loader').hide();
             }
         });
     }

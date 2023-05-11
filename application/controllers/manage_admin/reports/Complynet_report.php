@@ -99,6 +99,8 @@ class Complynet_report extends Admin_Controller {
         $resp['Status'] = TRUE;
         $resp['Response'] = 'Proceed';
         $resp['request_body'] = json_decode($call['request_body'],true);
+        $resp['response_code'] = $call['response_code'];
+        $resp['request_url'] = $call['request_url'];
         $resp['response_body'] = $call['response_body'];
         $resp['response_headers'] = $call['response_headers'];
 
