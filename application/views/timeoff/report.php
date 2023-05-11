@@ -214,6 +214,10 @@
                                     <!-- Employee listing area -->
                                     <div class="col-sm-9 col-xs-12">
                                         <!--  -->
+                                        <div class="row" style="margin: 5px 5px;">
+                                            <div class="col-lg-2" style="background: rgba(242, 222, 222, .5); padding: 16px;"></div>
+                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The time-off request is consumed by an employee.</div>
+                                        </div>
                                         <!--  -->
                                         <div class="table-responsive">
                                             <table class="table table-striped table-condensed">
@@ -223,7 +227,7 @@
                                                         <th scope="col">Employee Name</th>
                                                         <th scope="col">Department(s)</th>
                                                         <th scope="col">Team(s)</th>
-                                                        <th scope="col"># of Request(s)</th>
+                                                        <th scope="col"># of Time Off(s)</th>
                                                         <th scope="col">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -293,7 +297,7 @@
                                                                 <th style="font-size: 14px !important;">Status</th>
                                                             </tr>
                                                             <?php foreach ($emp['timeoffs'] as $timeoff) { ?>
-                                                                <tr class="timeoff_<?php echo $emp['sid']; ?>" style="display: none;">
+                                                                <tr class="timeoff_<?php echo $emp['sid']; ?>" style="display: none; <?php echo str_replace('CONSUMED', '', $timeoff['request_status']) != $timeoff['request_status'] ? 'background-color:  #f2dede !important;' : '';  ?>">
                                                                     <td><?php echo $timeoff['policy_name']; ?></td>
                                                                     <?php 
                                                                         $hours = floor($timeoff['requested_time'] / 60); 
@@ -307,11 +311,11 @@
                                                                             $status = $timeoff['status']; 
 
                                                                             if ($status == 'approved') {
-                                                                                echo '<p class="text-success"><b>APPROVED</b></p>';
+                                                                                echo '<strong class="text-success">APPROVED</strong> ('.$timeoff['request_status'].')';
                                                                             } else if ($status == 'rejected') {
-                                                                                echo '<p class="text-danger"><b>REJECTED</b></p>';
+                                                                                echo '<strong class="text-danger">REJECTED</strong> (<strong class="text-warning">PENDING</strong>)';
                                                                             } else if ($status == 'pending') {
-                                                                                echo '<p class="text-warning"><b>PENDING</b></p>';
+                                                                                echo '<strong class="text-warning">PENDING</strong> (<strong class="text-warning">PENDING</strong>)';
                                                                             }
                                                                         ?>  
                                                                     </td>
@@ -366,7 +370,13 @@
                     <div class="col-xs-6">
                         <p class="text-right">Report Date <strong><?=date('m/d/Y H:i', strtotime('now'));?></strong></p>
                     </div>
-                    <hr />
+                </div>
+                <div class="row" style="margin: 5px 5px;">
+                    <div class="col-lg-2" style="background: rgba(242, 222, 222, .5); padding: 16px;"></div>
+                    <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The allotted time off has been consumed.</div>
+                </div>    
+                <hr />
+                <div class="row">
                     <div class="col-xs-12 text-right">
                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?=base_url("timeoff/report/print");?>"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print Report</a>
                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?=base_url("timeoff/report/download");?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Report</a>
@@ -394,7 +404,7 @@
                                         $employee_no = !empty($employee['employee_number']) ? $employee['employee_number'] : $employee['sid'];
                                     ?>
                                     <?php foreach ($employee['timeoffs'] as $timeoff): ?>
-                                        <tr>
+                                        <tr style="<?php echo str_replace('CONSUMED', '', $timeoff['request_status']) != $timeoff['request_status'] ? 'background-color:  #f2dede !important;' : '';  ?>">
                                             <td>
                                                 <strong>
                                                     <?php echo $employee_name; ?>
@@ -425,11 +435,11 @@
                                                     $status = $timeoff['status']; 
 
                                                     if ($status == 'approved') {
-                                                        echo '<p class="text-success"><b>APPROVED</b></p>';
+                                                        echo '<strong class="text-success">APPROVED</strong> ('.$timeoff['request_status'].')';
                                                     } else if ($status == 'rejected') {
-                                                        echo '<p class="text-danger"><b>REJECTED</b></p>';
+                                                        echo '<strong class="text-danger">REJECTED</strong> (<strong class="text-warning">PENDING</strong>)';
                                                     } else if ($status == 'pending') {
-                                                        echo '<p class="text-warning"><b>PENDING</b></p>';
+                                                        echo '<strong class="text-warning">PENDING</strong> (<strong class="text-warning">PENDING</strong>)';
                                                     }
                                                 ?> 
                                             </td>

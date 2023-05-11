@@ -1187,23 +1187,29 @@ class Time_off extends Public_Controller
             if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
                 unset($company_employees[$ekey]);
             } else {
-                foreach ($timeoffRequests as $tkey => $request) {
+                //
+                foreach ($timeoffRequests as $request) {
+                    //
                     if ($employee['sid'] == $request['employee_sid']) {
                         $policy_sid = $request['timeoff_policy_sid'];
                         $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
-                        $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                        //
+                        $processRequest = splitTimeoffRequest($request);
+                        //
+                        if ($processRequest['type'] == 'multiple') {
+                            //
+                            foreach ($processRequest['requestData'] as $split) {
+                                $company_employees[$ekey]['timeoffs'][] = $split;
+                            }
+                            //
+                        } else {
+                            $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
+                        }
+
                     }
                 }
             }
         }
-        //
-
-        // echo '<pre>';
-        // echo print_r($data['assign_departments']);
-        // echo print_r($data['assign_teams']);
-        // die('stop');
-        //
-
         //
         $data['company_employees'] = $company_employees;
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);

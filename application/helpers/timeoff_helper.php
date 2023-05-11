@@ -821,3 +821,130 @@ if (!function_exists('getButton')) {
         </a>');
     }
 }
+
+
+/**
+ * Get time off request status
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $requestDate
+ * 
+ * @return String
+ */
+if (!function_exists('getTimeoffRequestStatus')) {
+    function getTimeoffRequestStatus($requestDate)
+    {
+        $date_now = date("Y-m-d");
+        $requestDate = date('Y-m-d', strtotime($requestDate));
+        //
+        if ($date_now < $requestDate) {
+            return '<strong class="text-warning">PENDING</strong>';
+        } else {
+            return '<strong class="text-success">CONSUMED</strong>';
+        }
+    }
+}
+
+/**
+ * Split time off request
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $request
+ * 
+ * @return Array
+ */
+if (!function_exists('splitTimeoffRequest')) {
+    function splitTimeoffRequest($request)
+    {
+        //
+        $response = [
+            'type' => "single",
+            'requestData' => $request 
+        ];
+        //
+        $fromDate = date_create($request['request_from_date']);
+        $toDate = date_create($request['request_to_date']);
+        //
+        $requestInterval = $fromDate->diff($toDate);
+        $requestDays = $requestInterval->format('%d') + 1;
+        //
+        if ($requestDays > 1) {
+            $requestData = [];
+            $response['type'] = 'multiple';
+            $requestedTimePerDay = $request['requested_time'] / $requestDays;
+            //
+            for ($i=0; $i < $requestDays; $i++) { 
+                $requestDate = date("Y-m-d", strtotime($i.'days', strtotime($request['request_from_date'])));
+                //
+                $split = $request;
+                $split['requested_time'] = $requestedTimePerDay;
+                $split['request_from_date'] = $requestDate;
+                $split['request_to_date'] = $requestDate;
+                $split['request_status'] = getTimeoffRequestStatus($requestDate);
+                //
+                $requestData[] = $split;
+            }
+             
+            $response['requestData'] = $requestData;
+        } else {
+            $response['requestData']['request_status'] = getTimeoffRequestStatus($request['request_from_date']);
+        }
+        //
+        return $response;
+    }
+}
+
+/**
+ * Split time off request
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $request
+ * @param Array  $string
+ * 
+ * @return string
+ */
+if (!function_exists('generateTimeoffRequestSlot')) {
+    function generateTimeoffRequestSlot($request, $type)
+    {
+        $consumed_time = $request['consumed_time'];
+        //
+        if ($type == 'multiple') {
+            $hours = floor($request['requested_time'] / 60); 
+
+            if ($hours > 1) {
+                $consumed_time = $hours.' Hours';
+            } else {
+                $consumed_time = $hours.' Hour';
+            }
+        }
+        //
+        $rowColor =  str_replace('CONSUMED', '', $request['request_status']) != $request['request_status'] ? 'background-color:  #f2dede !important;' : '';
+        //
+        $html =  '';
+        $html .= '<tr style="'.$rowColor.'">';
+        $html .= '  <td>'.( ucwords($request['first_name'].' '.$request['last_name']) ).' <br /> '.( remakeEmployeeName($request, false) ).' <br /> '.( !empty($request['employee_number']) ? $request['employee_number'] : $request['employeeId'] ).'</td>';
+        $html .= '  <td>'.( $request['title'] ).'</td>';
+        $html .= '  <td>'.( $consumed_time ).'</td>';
+        $html .= '  <td>'.( DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y') ).'</td>';
+        $html .= '  <td>'.( DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('m/d/Y') ).'</td>';
+        //
+        $status = $request['status']; 
+        //
+        if ($status == 'approved') {
+            $html .= '<td><strong class="text-success">APPROVED</strong> ('.$request['request_status'].')</td>';
+        } else if ($status == 'rejected') {
+            $html .= '<td><strong class="text-danger">REJECTED</strong> (<strong class="text-warning">PENDING</strong>)</td>';
+        } else if ($status == 'pending') {
+            $html .= '<td><strong class="text-warning">PENDING</strong> (<strong class="text-warning">PENDING</strong>)</td>';
+        }
+        $html .= '</tr>';
+        //
+        return $html;
+    }
+}
