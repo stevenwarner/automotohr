@@ -80,6 +80,18 @@
                                                     </div>
                                                 </li>
 
+
+                                                <li>
+                                                    <?php echo form_label('Maiden Name', 'maiden_name'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <?php
+                                                        echo form_input('maiden_name', set_value('maiden_name', $data['maiden_name'], false), 'class="hr-form-fileds"');
+                                                        echo form_error('maiden_name');
+                                                        ?>
+                                                    </div>
+                                                </li>
+
+
                                                 <li>
                                                     <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?>
                                                     <div class="hr-fields-wrap">
@@ -529,7 +541,7 @@
 
                                                     <label>Team:</label>
                                                     <div class="hr-fields-wrap">
-                                                        <?= get_company_departments_teams($data['parent_sid'], 'teamId', $data['team_sid'] ?? 0); ?>
+                                                        <?= get_company_departments_teams($data['parent_sid'], 'teamId', $data['team_sid']!='' ?? 0); ?>
                                                     </div>
                                                     <script>
                                                         $('.jsSelect2').select2();

@@ -68,6 +68,8 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->select('portal_job_applications.video_type');
         $this->db->select('portal_job_applications.middle_name');
         $this->db->select('portal_job_applications.nick_name');
+        $this->db->select('portal_job_applications.maiden_name');
+
         //
 
         $this->db->select('portal_applicant_jobs_list.*, portal_applicant_jobs_list.sid as portal_applicant_jobs_list_sid');

@@ -39,6 +39,16 @@
                                                         </div>
                                                     </div>
 
+
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                            <?php echo form_label('Maiden Name ', 'maiden_name'); ?>
+                                                            <?php echo form_input('maiden_name', set_value('maiden_name'), 'class="hr-form-fileds"'); ?>
+                                                        </div>
+                                                    </div>
+
+
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
                                                             <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?>

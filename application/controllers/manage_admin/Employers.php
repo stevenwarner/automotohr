@@ -360,6 +360,9 @@ class employers extends Admin_Controller
             $data['complynet_status'] = $this->input->post('complynet_status');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
+
+            $data['maiden_name'] = $this->input->post('maiden_name');
+
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                 $data['complynet_job_title'] = $this->input->post('complynet_job_title');
@@ -463,7 +466,10 @@ class employers extends Admin_Controller
                         'email' => $employer_detail[0]['email'],
                         'first_name' => $employer_detail[0]['first_name'],
                         'last_name' => $employer_detail[0]['last_name'],
-                        'middle_name' => $employer_detail[0]['middle_name']
+                        'middle_name' => $employer_detail[0]['middle_name'],
+                        'maiden_name' => $employer_detail[0]['maiden_name'],
+
+                        
                     ],
                     [
                         'gender' => $this->input->post('gender', true),
@@ -473,7 +479,8 @@ class employers extends Admin_Controller
                         'email' => $this->input->post('email', true),
                         'first_name' => $this->input->post('first_name', true),
                         'last_name' => $this->input->post('last_name', true),
-                        'middle_name' => $this->input->post('middle_name', true)
+                        'middle_name' => $this->input->post('middle_name', true),
+                        'maiden_name' => $this->input->post('maiden_name', true)
                     ],
                     $sid,
                     $company_id,
@@ -571,6 +578,8 @@ class employers extends Admin_Controller
                 $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+                $insert_data['maiden_name'] = $this->input->post('maiden_name');
+
 
                 //
                 if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {

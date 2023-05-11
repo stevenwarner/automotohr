@@ -1316,6 +1316,8 @@ class Onboarding extends CI_Controller
             $date_of_birth = $this->input->post('dob');
             $gender = $this->input->post('gender');
             $marital_status = $this->input->post('marital_status');
+            $maiden_name = $this->input->post('maiden_name');
+
 
             if (!empty($date_of_birth)  && !preg_match(XSYM_PREG, $date_of_birth)) {
                 $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
@@ -1392,6 +1394,8 @@ class Onboarding extends CI_Controller
             $primary_info['linkedin_profile_url'] = $linkedin_profile_url;
             $primary_info['gender'] = $gender;
             $primary_info['marital_status'] = $marital_status;
+            $primary_info['maiden_name'] = $maiden_name;
+
             //
             if (!preg_match(XSYM_PREG, $SSN)) $primary_info['ssn'] = $SSN;
             if (!preg_match(XSYM_PREG, $date_of_birth)) $primary_info['dob'] = $DOB;

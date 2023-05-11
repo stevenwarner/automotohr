@@ -30,8 +30,14 @@
                                         <?php echo form_label('Last Name <span class="hr-required">*</span>','first_name'); ?>
                                         <?php echo form_input('last_name',set_value('last_name'),'class="invoice-fields"'); ?>
                                         <?php echo form_error('last_name'); ?>
-                                    </li>                               
+                                    </li>
+                                    
                                     <li class="form-col-50-left">
+                                        <?php echo form_label('Maiden Name','maiden_name'); ?>
+                                        <?php echo form_input('maiden_name',set_value('maiden_name'),'class="invoice-fields"'); ?>
+                                    </li>  
+
+                                    <li class="form-col-50-right">
                                         <?php echo form_label('E-Mail<span class="hr-required">*</span>','email'); ?>									
                                         <?php echo form_input('email',set_value('email'),'class="invoice-fields"'); ?>
                                         <?php echo form_error('email'); ?>	

@@ -51,9 +51,6 @@ if (!function_exists('generateRequestBody')) {
      */
     function generateRequestBody(array $field, string $associateOID, $value, $extraValueArray)
     {
-        // print_r($field);
-        //  die('sdfsdf');
-
         //
         $requestBody = [];
         $requestBody['events'] = [];
@@ -76,7 +73,7 @@ if (!function_exists('generateRequestBody')) {
                 'codeValue' => strtoupper(substr($value, 0, 1))
             ];
         }
-        
+
         // Rehire Date
         if ($field['name'] == 'rehireDate') {
             $requestBody['events'][0]['data']['transform']['effectiveDateTime'] = $value;
@@ -156,6 +153,11 @@ if (!function_exists('generateRequestBody')) {
             $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['middleName'] =  $extraValueArray['middle_name'];
             $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['familyName1'] =  $extraValueArray['first_name'];
             $requestBody['events'][0]['data']['transform']['worker']['person']['legalName']['formattedName'] =  $extraValueArray['first_name'] . ' ' . $extraValueArray['last_name'];
+        }
+
+        //	Maiden Name
+        if ($field['name'] == 'maiden_name') {
+            $requestBody['events'][0]['data']['transform']['worker']['person']['birthName']['familyName1'] =  $value;
         }
 
         //

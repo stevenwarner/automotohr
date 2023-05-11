@@ -438,6 +438,8 @@ class Employee_management extends Public_Controller
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+                $maiden_name = $this->input->post('maiden_name');
+                
 
                 //
                 $teamId = $this->input->post('teamId');
@@ -476,6 +478,8 @@ class Employee_management extends Public_Controller
                 $user_information['employee_status'] = $employment_status;
                 $user_information['employee_type'] = $employment_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
+
+                $user_information['maiden_name'] = $maiden_name;
 
                 if ($departmenId != '' && $teamId != '') {
                     $user_information['department_sid'] = $departmenId;
@@ -1597,7 +1601,8 @@ class Employee_management extends Public_Controller
                         'department_sid' => $departmentId,
                         'team_sid' => $teamId,
                         'gender' => $gender,
-                        'marital_status' => $this->input->post('marital_status')
+                        'marital_status' => $this->input->post('marital_status'),
+                        'maiden_name' => $this->input->post('maiden_name')
                     );
 
                     if (!isSecret($date_of_birth)) {
@@ -1788,7 +1793,8 @@ class Employee_management extends Public_Controller
                                 'email' => $employee_detail['email'],
                                 'first_name' => $employee_detail['first_name'],
                                 'last_name' => $employee_detail['last_name'],
-                                'middle_name' => $employee_detail['middle_name']
+                                'middle_name' => $employee_detail['middle_name'],
+                                'maiden_name' => $employee_detail['maiden_name']
                             ],
                             [
                                 'dob' => $this->input->post('dob', true),
@@ -1805,7 +1811,8 @@ class Employee_management extends Public_Controller
                                 'email' => $this->input->post('email', true),
                                 'first_name' => $this->input->post('first_name', true),
                                 'last_name' => $this->input->post('last_name', true),
-                                'middle_name' => $this->input->post('middle_name', true)
+                                'middle_name' => $this->input->post('middle_name', true),
+                                'maiden_name' => $this->input->post('maiden_name', true)
                             ],
                             $sid,
                             $company_id,
@@ -2368,7 +2375,8 @@ class Employee_management extends Public_Controller
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
                     'marital_status' => $this->input->post('marital_status'),
-                    'gender' => $gender
+                    'gender' => $gender,
+                    'maiden_name' => $this->input->post('maiden_name')
                 );
 
                 //
@@ -2476,7 +2484,9 @@ class Employee_management extends Public_Controller
                             'email' => $employee_detail['email'],
                             'first_name' => $employee_detail['first_name'],
                             'last_name' => $employee_detail['last_name'],
-                            'middle_name' => $employee_detail['middle_name']
+                            'middle_name' => $employee_detail['middle_name'],
+                            'maiden_name' => $employee_detail['maiden_name']
+
                         ],
                         [
                             'dob' => $this->input->post('dob', true),
@@ -2493,7 +2503,9 @@ class Employee_management extends Public_Controller
                             'email' => $this->input->post('email', true),
                             'first_name' => $this->input->post('first_name', true),
                             'last_name' => $this->input->post('last_name', true),
-                            'middle_name' => $this->input->post('middle_name', true)
+                            'middle_name' => $this->input->post('middle_name', true),
+                            'maiden_name' => $this->input->post('maiden_name', true)
+
                         ],
                         $sid,
                         $company_id,

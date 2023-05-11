@@ -147,11 +147,18 @@ if ($_ssv) {
                                     </div>
                                     <br>
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-12">
+
+
+                                    <div class="col-md-3 col-xs-12">
+                                            <label class="csF16">Maiden Name</label>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["maiden_name"] ?></p>
+                                        </div>
+
+                                        <div class="col-md-4 col-xs-12">
                                             <label class="csF16">Email</label>
                                             <p class="dummy-invoice-fields"><?php echo $applicant_info["email"] ?></p>
                                         </div>
-                                        <div class="col-md-6 col-xs-12">
+                                        <div class="col-md-5 col-xs-12">
                                             <label class="csF16">Mobile Number</label>
                                             <p class="dummy-invoice-fields"><?= $primary_phone_number_cc; ?></p>
                                         </div>
@@ -423,13 +430,20 @@ if ($_ssv) {
                                                     <?php echo form_error('last_name'); ?>
                                                 </div>
                                             </div>
+
                                             <li class="form-col-50-left">
+                                                <label>Maiden Name:</label>
+                                                <input class="invoice-fields" value="<?php echo set_value('maiden_name', $applicant_info["maiden_name"]); ?>" type="text" name="maiden_name">
+
+                                            </li>
+
+                                            <li class="form-col-50-right">
                                                 <label>email:<samp class="red"> * </samp></label>
                                                 <input class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('email', $applicant_info["email"]); ?>" type="email" name="email">
                                                 <?php echo form_error('email'); ?>
 
                                             </li>
-                                            <li class="form-col-50-right">
+                                            <li class="form-col-50-left">
                                                 <label>mobile number:</label>
                                                 <?= $input_group_start; ?>
                                                 <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('phone_number', $primary_phone_number); ?>" type="text" name="phone_number">

@@ -13,6 +13,8 @@ class Application_tracking_system extends Public_Controller
         $this->load->model('job_approval_rights_model');
         $this->load->model('manage_admin/remarket_model');
         $this->load->model('manage_admin/remarket_model');
+        $this->load->model('portal_email_templates_model');
+       
 
         // $this->load->model('manage_admin/interview_questionnaires_model');
         $this->load->model('onboarding_model');
@@ -858,7 +860,7 @@ class Application_tracking_system extends Public_Controller
                 // Added on: 03-05-2019
                 unset($user_data['DOB']);
 
-                // Reset phone number
+               // Reset phone number
                 $user_data['phone_number'] = isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['phone_number'];
                 $secondary_phonenumber    = isset($formpost['txt_secondary_phonenumber']) ? $formpost['txt_secondary_phonenumber'] : $this->input->post('secondary_PhoneNumber', true);
                 $other_phonenumber        = isset($formpost['txt_other_phonenumber']) ? $formpost['txt_other_phonenumber'] : $this->input->post('other_PhoneNumber', true);

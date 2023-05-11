@@ -100,7 +100,7 @@ if($_ssv){
                             </div>
                             <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10">
                                 <div class="row">
-                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                         <div class="form-group">
                                             <?php $field_id = 'first_name'; ?>
                                             <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
@@ -109,7 +109,7 @@ if($_ssv){
                                             <?php echo form_error($field_id); ?>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                         <div class="form-group">
                                             <?php $field_id = 'last_name'; ?>
                                             <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
@@ -118,6 +118,19 @@ if($_ssv){
                                             <?php echo form_error($field_id); ?>
                                         </div>
                                     </div>
+
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                        <div class="form-group">
+                                            <?php $field_id = 'maiden_name'; ?>
+                                            <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
+                                            <?php echo form_label('Maiden Name:<span class="required"></span>', $field_id); ?>
+                                            <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '" data-rule-required="true"'); ?>
+
+                                        </div>
+                                    </div>
+
+
+
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="form-group autoheight">
                                             <label>Profile picture:</label>

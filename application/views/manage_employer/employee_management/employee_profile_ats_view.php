@@ -120,13 +120,20 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+
+
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 form-group">
+                                                    <label>Maiden Name:
+                                                    </label>
+                                                    <input class="invoice-fields " value="<?php echo set_value('maiden_name', $employer["maiden_name"]); ?>" type="text" name="maiden_name">
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 form-group">
                                                     <label>email:
                                                     </label>
                                                     <input class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('email', $employer["email"]); ?>" type="email" name="email">
                                                     <?php echo form_error('email'); ?>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5 form-group">
                                                     <label>Mobile number:</label>
                                                     <?= $input_group_start; ?>
                                                     <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>" type="text" name="PhoneNumber">

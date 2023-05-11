@@ -253,6 +253,10 @@ class Hire_onboarding_applicant extends CI_Controller
         $employer_data['username'] = $username;
         $employer_data['joined_at'] = $joining_date;
         $employer_data['created_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
+
+        $employer_data['maiden_name'] = $applicant_profile_info['maiden_name'];
+
+
         if (!empty($password)) {
             $employer_data['password'] = do_hash($password, 'md5');
         }
@@ -664,6 +668,14 @@ class Hire_onboarding_applicant extends CI_Controller
             $employer_data['dob'] = $applicant_profile_info['dob'];
             $update_flag = 1;
         }
+
+
+        if ((empty($employee_profile_info['maiden_name']) || $employee_profile_info['maiden_name'] == NULL) && !empty($applicant_profile_info['maiden_name'])) {
+            $employer_data['maiden_name'] = $applicant_profile_info['maiden_name'];
+            $update_flag = 1;
+        }
+
+
 
         //
         $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);

@@ -388,6 +388,20 @@ class Adp_model extends CI_Model
                         ]
                     ]
                 ]
+            ],
+            'maiden_name' => [
+                'tag' => 'Workers - Demographic Data Management',
+                'name' => 'maiden_name',
+                'url' => '/events/hr/v1/worker.birth-name.change',
+                'body' => [
+                    "worker" => [
+                        "person" => [
+                            "birthName" => [
+                                      "familyName1" => "Jon"
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
     }
@@ -515,6 +529,7 @@ class Adp_model extends CI_Model
             //
             $ins['created_at'] = $ins['updated_at'] = getSystemDate();
             //
+
             $this->db->insert('adp_queue', $ins);
         }
         return true;
