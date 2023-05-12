@@ -105,7 +105,7 @@
                                             <p><?php echo $applicant_info["email"] ?></p>
                                         </li>
                                         <li class="form-col-50-right">
-                                            <label>mobile number:</label>
+                                            <label>Primary number:</label>
                                             <p><?=phonenumber_format($applicant_info["phone_number"]);?></p>
                                         </li>
                                         <li class="form-col-50-left">
@@ -262,7 +262,7 @@
 
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>mobile number:</label>
+                                                <label>Primary number:</label>
                                                 <div class="input-group">
                                                     <div class="input-group-addon">
                                                         <span class="input-group-text" id="basic-addon1">+1</span>
@@ -2378,7 +2378,7 @@
         var is_error = false;
         // Check for phone number
         if(_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)){
-            alertify.alert('Invalid mobile number provided.', function(){ return; });
+            alertify.alert('Invalid Primary number provided.', function(){ return; });
             e.preventDefault();
             is_error = true;
             return;

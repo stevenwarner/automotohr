@@ -111,7 +111,7 @@
                                             <p><?php echo $applicant_info["email"] ?></p>
                                         </li>
                                         <li class="form-col-50-right">
-                                            <label>phone number:</label>
+                                            <label>Primary Number:</label>
 
                                             <p><?php echo $applicant_info["phone_number"] ?></p>
                                         </li>
@@ -250,7 +250,7 @@
 
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>phone number:</label>
+                                                <label>Primary number:</label>
                                                 <input class="invoice-fields"
                                                        value="<?php echo set_value('phone_number', $applicant_info["phone_number"]); ?>"
                                                        type="text" name="phone_number">

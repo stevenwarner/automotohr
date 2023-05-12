@@ -173,6 +173,9 @@ $route['export_time_off'] = 'Time_off/export';
 $route['timeoff/export'] = 'Time_off/export';
 $route['download_export_timeoff/(:num)'] = 'Time_off/download_export_timeoff/$1';
 
+// Time off policy history
+$route['timeoff/policy/(:num)/history']['get'] = 'Time_off/getPolicyHistory/$1';
+
 // Added on: 07-10-2019
 $route['pto/my/(:any)'] = 'Paid_time_off/my_pto/$1';
 // Added on: 12-09-2019
@@ -1000,6 +1003,12 @@ $route['resend_screening_questionnaire/(:any)/(:any)/(:any)/(:any)'] = 'resend_s
 $route['manage_admin/reports/invoice_item_usage/'] = 'manage_admin/reports/invoice_item_usage/index/';
 $route['manage_admin/reports/invoice_item_usage/(:any)/(:any)/(:any)'] = 'manage_admin/reports/invoice_item_usage/index/$1/$2/$3';
 $route['manage_admin/reports/invoice_item_usage/(:any)/(:any)/(:any)/(:num)'] = 'manage_admin/reports/invoice_item_usage/index/$1/$2/$3/$4';
+//Manage Admin Complynet report
+$route['manage_admin/reports/complynet_report/'] = 'manage_admin/reports/complynet_report/index';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4/$5';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:num)/(:num)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4/$5/$6/$7';
+$route['manage_admin/reports/complynet_report/getDetail/(:num)'] = 'manage_admin/reports/complynet_report/getDetail/$1';
 //Manage Admin Credit Card Statuses
 $route['manage_admin/cc_expires/(:any)'] = 'manage_admin/cc_expires/index/$1';
 $route['manage_admin/cc_expires/(:any)/(:any)'] = 'manage_admin/cc_expires/index/$1/$2';

@@ -127,7 +127,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <?php echo form_error('email'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Phone number:</label>
+                                                    <label>Primary number: <?php if (get_company_module_status($company_id = $session["company_detail"]["sid"], 'primary_number_required') == 1) { ?><span class="staric">*</span><?php } ?></label>
                                                     <?= $input_group_start; ?>
                                                     <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>" type="text" name="PhoneNumber">
                                                     <?= $input_group_end; ?>
@@ -542,7 +542,7 @@ if (checkIfAppIsEnabled('timeoff')) {
 
 
 
-                                                <div class="row">
+                                            <div class="row">
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Union Member:</label>
@@ -553,42 +553,42 @@ if (checkIfAppIsEnabled('timeoff')) {
 
                                             <div class="row">
                                                 <div class="col-sm-12">
-                                                 
-                                                <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
-                                                            <label class="control control--radio " style="margin-left: -10px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $employer['union_member'] ? 'checked' : '' ?>>
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
 
-                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
-                                                            <label class="control control--radio " style="margin-left: -20px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $employer['union_member'] ? '' : 'checked' ?>>
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                        <label class="control control--radio " style="margin-left: -10px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $employer['union_member'] ? 'checked' : '' ?>>
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </div>
 
-                                                        <br>
-                                                        <br>
-                                                        <div class="row jsunionname">
-                                                            <div class="col-sm-12">
-                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $employer['union_name']; ?>" />
-                                                            </div>
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                        <label class="control control--radio " style="margin-left: -20px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $employer['union_member'] ? '' : 'checked' ?>>
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </div>
+
+                                                    <br>
+                                                    <br>
+                                                    <div class="row jsunionname">
+                                                        <div class="col-sm-12">
+                                                            <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $employer['union_name']; ?>" />
                                                         </div>
-<br>
-                                                        <script>
-                                                            <?php if ($employer['union_member'] == 0) { ?>
+                                                    </div>
+                                                    <br>
+                                                    <script>
+                                                        <?php if ($employer['union_member'] == 0) { ?>
+                                                            $('.jsunionname').hide();
+                                                        <?php } ?>
+
+                                                        $('.unionmember').on('click', function() {
+                                                            var selected = $(this).val();
+                                                            if (selected == '1') {
+                                                                $('.jsunionname').show();
+
+                                                            } else {
                                                                 $('.jsunionname').hide();
-                                                            <?php } ?>
-
-                                                            $('.unionmember').on('click', function() {
-                                                                var selected = $(this).val();
-                                                                if (selected == '1') {
-                                                                    $('.jsunionname').show();
-
-                                                                } else {
-                                                                    $('.jsunionname').hide();
-                                                                }
-                                                            });
-                                                        </script>
+                                                            }
+                                                        });
+                                                    </script>
 
                                                 </div>
                                             </div>
@@ -1669,6 +1669,14 @@ if (checkIfAppIsEnabled('timeoff')) {
                     min: 0,
                     max: 59
                 },
+
+                <?php if (get_company_module_status($session["company_detail"]["sid"], 'primary_number_required') == 1) { ?>
+                    PhoneNumber: {
+                        required: true
+                    },
+                <?php  } ?>
+
+
                 <?php if ($access_level_plus == 1 && IS_PTO_ENABLED == 1) { ?>
                     shift_hours: {
                         required: true,

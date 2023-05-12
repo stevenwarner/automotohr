@@ -118,7 +118,7 @@
                                                                 <th>First Name</th>
                                                                 <th>Last Name</th>
                                                                 <th>Email</th>
-                                                                <th>Phone Number</th>
+                                                                <th>Primary Number</th>
                                                                 <!--                                                                <th>Applicant Type</th>-->
                                                                 <th>Application Date</th>
                                                                 <th>Action</th>

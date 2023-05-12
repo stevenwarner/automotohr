@@ -234,7 +234,7 @@ class Companies extends Admin_Controller
         $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
         $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
         $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-        $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+        $this->form_validation->set_rules('PhoneNumber', 'Primary Number', 'trim|xss_clean');
         $this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
         $this->form_validation->set_rules('WebSite', 'Website', 'trim|xss_clean|valid_url');
         $this->form_validation->set_rules('accounts_contact_person', 'Accounts Contact Person', 'trim|xss_clean|alpha_numeric_spaces');
@@ -685,7 +685,7 @@ class Companies extends Admin_Controller
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-        $name = $name == null ? 'all' : urldecode($name);
+        $name = $name == null ? 'all' : str_replace('_', ' ', urldecode($name));
         $email = $email == null ? 'all' : urldecode($email);
         $this->data['administrators'] = $this->company_model->get_executive_administrators($name, $email);
         $this->data['page_title'] = 'Manage Company Executive Admins';

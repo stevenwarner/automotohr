@@ -181,7 +181,7 @@
 
     function update_url(){
         var url = '<?php echo base_url('manage_admin/companies/executive_administrators/'); ?>';
-        var name = $('#name').val();
+        var name = $('#name').val().replace(/\s+/, '_');
         var email = $('#email').val();
         name = name == '' ? 'all' : name;
         email = email == '' ? 'all' : email;

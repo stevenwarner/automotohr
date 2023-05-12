@@ -209,7 +209,7 @@ class Cron_csv_report extends CI_Controller
                 $i++;
             }
 
-            $header_row = 'First Name,Last Name,E-Mail,Contact Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status' . $header;
+            $header_row = 'First Name,Last Name,E-Mail,Primary Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status' . $header;
             $file_content = '';
             $file_content .= $header_row . PHP_EOL;
             $file_content .= $rows;

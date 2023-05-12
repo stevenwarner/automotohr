@@ -40,6 +40,8 @@ class Job_views_report extends CI_Controller {
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
 
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+
                     fputcsv($output, array('Date', 'Job Title', 'Views', 'Applicants'));
 
                     foreach ($data['all_jobs'] as $job) {

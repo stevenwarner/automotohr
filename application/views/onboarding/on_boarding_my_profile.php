@@ -1,5 +1,5 @@
 <?php
-if($this->uri->segment(1) == 'e_signature') $sideBar = '';
+if ($this->uri->segment(1) == 'e_signature') $sideBar = '';
 else $sideBar = onboardingHelpWidget($company_info['sid']);
 
 $company_sid = 0;
@@ -35,27 +35,27 @@ if (isset($applicant)) {
     $field_state = 'state';
     $field_youtube = 'YouTube_Video';
     $title = 'My Profile';
-} 
+}
 
 $dob = isset($user_information['dob']) && !empty($user_information['dob']) && $user_information['dob'] != '0000-00-0' ? date('m-d-Y', strtotime(str_replace('-', '/', $user_information['dob']))) : '';
 //
-if($_ssv){
+if ($_ssv) {
     $user_information['ssn'] = ssvReplace($user_information['ssn']);
-    if($dob != '') $user_information['dob'] = $dob = ssvReplace($dob, true);
+    if ($dob != '') $user_information['dob'] = $dob = ssvReplace($dob, true);
 }
 
 ?>
 <div class="main">
     <div class="container">
-      
+
         <div class="row">
-            <?php if($this->uri->segment(1) != 'e_signature'){ ?>
-            <div class="col-sm-12">
-                <p style="color: #cc0000;"><b><i>We suggest that you only use Google Chrome to access your account
-                            and use its Features. Internet Explorer is not supported and may cause certain feature
-                            glitches and security issues.</i></b></p>
-                             <?=$sideBar;?>
-            </div>
+            <?php if ($this->uri->segment(1) != 'e_signature') { ?>
+                <div class="col-sm-12">
+                    <p style="color: #cc0000;"><b><i>We suggest that you only use Google Chrome to access your account
+                                and use its Features. Internet Explorer is not supported and may cause certain feature
+                                glitches and security issues.</i></b></p>
+                    <?= $sideBar; ?>
+                </div>
             <?php } ?>
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -65,7 +65,7 @@ if($_ssv){
                             <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i> Review Previous Step</a>
                         </div>
                         <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                            <a href="<?= base_url('onboarding/general_information/' . $unique_sid);?>" class="btn btn-warning btn-block"> Bypass This Step <i class="fa fa-angle-right"></i></a>
+                            <a href="<?= base_url('onboarding/general_information/' . $unique_sid); ?>" class="btn btn-warning btn-block"> Bypass This Step <i class="fa fa-angle-right"></i></a>
                         </div>
                         <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
                             <a href="javascript:;" class="btn btn-success btn-block" id="go_next"> Save And Proceed Next <i class="fa fa-angle-right"></i></a>
@@ -89,9 +89,9 @@ if($_ssv){
                         <div class="row">
                             <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 pull-right">
                                 <div id="" class="img-thumbnail emply-picture pull-right">
-                                    <?php $field_id = $field_profile_picture;?>
+                                    <?php $field_id = $field_profile_picture; ?>
                                     <?php $temp = isset($user_information[$field_id]) && !empty($user_information[$field_id]) ? $user_information[$field_id] : base_url('assets/images/default_pic.jpg'); ?>
-                                    <?php if(isset($user_information[$field_id]) && !empty($user_information[$field_id])) { ?>
+                                    <?php if (isset($user_information[$field_id]) && !empty($user_information[$field_id])) { ?>
                                         <img class="img-responsive img-rounded" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>">
                                     <?php } else { ?>
                                         <img class="img-responsive" src="<?php echo $temp; ?>">
@@ -145,9 +145,11 @@ if($_ssv){
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                 <div class="form-group">
+                                    <?php
+                                    $requiredText = get_company_module_status($company_info['sid'], 'primary_number_required') == 1 ? '<span class="required">*</span>' : ''; ?>
                                     <?php $field_id = $field_phone; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
-                                    <?php echo form_label('Mobile Number:', $field_id); ?>
+                                    <?php echo form_label('Primary Number: ' . $requiredText, $field_id); ?>
                                     <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '" data-rule-required="true"'); ?>
                                     <?php echo form_error($field_id); ?>
                                 </div>
@@ -180,11 +182,11 @@ if($_ssv){
                                     <?php $country_id = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('Country: <span class="required">*</span>', $field_id); ?>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" data-rule-required="true" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, '<?php echo $field_state?>')">
+                                        <select class="form-control" data-rule-required="true" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, '<?php echo $field_state ?>')">
                                             <option value="">Please Select</option>
                                             <?php foreach ($active_countries as $active_country) { ?>
                                                 <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
-                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
+                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>"> <?= $active_country["country_name"]; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -197,13 +199,13 @@ if($_ssv){
                                     <?php $state_id = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('State: <span class="required">*</span>', $field_id); ?>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" data-rule-required="true" name="<?php echo $field_id?>" id="<?php echo $field_id?>">
+                                        <select class="form-control" data-rule-required="true" name="<?php echo $field_id ?>" id="<?php echo $field_id ?>">
                                             <?php if (empty($state_id)) { ?>
                                                 <option value="">Select State</option> <?php
-                                            } else {
-                                                foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                                    } else {
+                                                                                        foreach ($active_states[$country_id] as $active_state) { ?>
                                                     <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
-                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>"><?= $active_state["state_name"] ?></option>
                                                 <?php } ?>
                                             <?php } ?>
                                         </select>
@@ -261,9 +263,9 @@ if($_ssv){
                                     <div class="hr-select-dropdown">
                                         <select class="form-control" name="gender">
                                             <option value="">Please Select Gender</option>
-                                            <option <?=$user_information["gender"] == 'male' ? 'selected' : '';?> value="male">Male</option>
-                                            <option <?=$user_information["gender"] == 'female' ? 'selected' : '';?> value="female">Female</option>
-                                            <option <?=$user_information["gender"] == 'other' ? 'selected' : '';?> value="other">Other</option>
+                                            <option <?= $user_information["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
+                                            <option <?= $user_information["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
+                                            <option <?= $user_information["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
                                         </select>
                                         <?php echo form_error('gender'); ?>
                                     </div>
@@ -277,13 +279,13 @@ if($_ssv){
                                             <option value="">
                                                 Please select marital status
                                             </option>
-                                            <option <?=$user_information["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
+                                            <option <?= $user_information["marital_status"] == 'Single' ? 'selected' : ''; ?> value="Single">
                                                 Single
                                             </option>
-                                            <option <?=$user_information["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
+                                            <option <?= $user_information["marital_status"] == 'Married' ? 'selected' : ''; ?> value="Married">
                                                 Married
                                             </option>
-                                            <option <?=$user_information["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
+                                            <option <?= $user_information["marital_status"] == 'Other' ? 'selected' : ''; ?> value="Other">
                                                 Other
                                             </option>
                                         </select>
@@ -321,8 +323,8 @@ if($_ssv){
                                     <?php $required_asterisk = $ssn_required ? '<span class="required">*</span>' : ''; ?>
                                     <?php $required_rule = $ssn_required ? 'required="required"' : ''; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
-                                    <?php echo form_label('Social Security Number: '. $required_asterisk, $field_id); ?>
-                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"'. $required_rule); ?>
+                                    <?php echo form_label('Social Security Number: ' . $required_asterisk, $field_id); ?>
+                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"' . $required_rule); ?>
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -332,22 +334,22 @@ if($_ssv){
                                     <?php $required_asterisk = $dob_required ? '<span class="required">*</span>' : ''; ?>
                                     <?php $required_rule = $dob_required ? 'data-rule-required="true"' : ''; ?>
                                     <?php $temp = $dob; ?>
-                                    <label>Date of Birth: <?= $required_asterisk;?></label>
-                                    <input class="form-control" id="date_of_birth" readonly="" type="text" <?= $required_rule;?> name="<?php echo $field_id;?>" value="<?php echo $temp; ?>">
+                                    <label>Date of Birth: <?= $required_asterisk; ?></label>
+                                    <input class="form-control" id="date_of_birth" readonly="" type="text" <?= $required_rule; ?> name="<?php echo $field_id; ?>" value="<?php echo $temp; ?>">
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
                         </div>
 
                         <?php
-                            //
-                            $hasOther = [];
-                            //
-                            if ($user_information['languages_speak']) {
-                                $hasOther = array_filter(explode(',', $user_information['languages_speak']), function ($lan) {
-                                    return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
-                                });
-                            }
+                        //
+                        $hasOther = [];
+                        //
+                        if ($user_information['languages_speak']) {
+                            $hasOther = array_filter(explode(',', $user_information['languages_speak']), function ($lan) {
+                                return !in_array($lan, ['english', 'spanish', 'russian']) && !empty($lan);
+                            });
+                        }
                         ?>
 
                         <div class="row">
@@ -356,7 +358,7 @@ if($_ssv){
                                 <div class="form-group autoheight">
                                     <label>I Speak:</label>
                                 </div>
-                            </div>    
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
@@ -394,9 +396,9 @@ if($_ssv){
                                 </label>
                             </div>
                         </div>
-                        <div class="row jsOtherLanguage <?=$hasOther ? '' : 'dn';?>">
+                        <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                <input type="text" class="form-control" name="secondaryLanguages[]" placeholder="French, German" value="<?=$hasOther ? ucwords(implode(',', $hasOther)) : '';?>" />
+                                <input type="text" class="form-control" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
                                 <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
                             </div>
                         </div>
@@ -442,45 +444,45 @@ if($_ssv){
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                     <label class="control control--radio"><?php echo NO_VIDEO; ?>
-                                                        <input type="radio" name="video_source" class="video_source" value="no_video"  checked="">
+                                                        <input type="radio" name="video_source" class="video_source" value="no_video" checked="">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                     <label class="control control--radio"><?php echo YOUTUBE_VIDEO; ?>
-                                                        <input type="radio" name="video_source" class="video_source" value="youtube" <?php echo $user_information['video_type'] == 'youtube' ? 'checked="checked"':''; ?>>
+                                                        <input type="radio" name="video_source" class="video_source" value="youtube" <?php echo $user_information['video_type'] == 'youtube' ? 'checked="checked"' : ''; ?>>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                     <label class="control control--radio"><?php echo VIMEO_VIDEO; ?>
-                                                        <input type="radio" name="video_source" class="video_source" value="vimeo" <?php echo $user_information['video_type'] == 'vimeo' ? 'checked="checked"':''; ?>>
+                                                        <input type="radio" name="video_source" class="video_source" value="vimeo" <?php echo $user_information['video_type'] == 'vimeo' ? 'checked="checked"' : ''; ?>>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                     <label class="control control--radio"><?php echo UPLOAD_VIDEO; ?>
-                                                        <input type="radio" name="video_source" class="video_source" value="uploaded" <?php echo $user_information['video_type'] == 'uploaded' ? 'checked="checked"':''; ?>>
+                                                        <input type="radio" name="video_source" class="video_source" value="uploaded" <?php echo $user_information['video_type'] == 'uploaded' ? 'checked="checked"' : ''; ?>>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>        
+                                </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight" id="youtube_vimeo_input">
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <?php 
-                                                if (!empty($user_information['YouTube_Video']) && $user_information['video_type'] == 'youtube') {
-                                                    $video_link = 'https://www.youtube.com/watch?v='.$user_information['YouTube_Video'];
-                                                } else if (!empty($user_information['YouTube_Video']) && $user_information['video_type'] == 'vimeo') {
-                                                    $video_link = 'https://vimeo.com/'.$user_information['YouTube_Video'];
-                                                } else {
-                                                    $video_link = '';
-                                                }
+                                            <?php
+                                            if (!empty($user_information['YouTube_Video']) && $user_information['video_type'] == 'youtube') {
+                                                $video_link = 'https://www.youtube.com/watch?v=' . $user_information['YouTube_Video'];
+                                            } else if (!empty($user_information['YouTube_Video']) && $user_information['video_type'] == 'vimeo') {
+                                                $video_link = 'https://vimeo.com/' . $user_information['YouTube_Video'];
+                                            } else {
+                                                $video_link = '';
+                                            }
                                             ?>
                                             <label for="YouTube_Video" id="label_youtube">Youtube Video:</label>
                                             <label for="Vimeo_Video" id="label_vimeo" style="display: none">Vimeo Video:</label>
@@ -493,18 +495,18 @@ if($_ssv){
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <label for="YouTube_Video">Upload Video:</label>                                     
+                                            <label for="YouTube_Video">Upload Video:</label>
                                             <div class="upload-file form-control">
-                                                <?php 
-                                                    if (!empty($user_information['YouTube_Video']) && $user_information['video_type'] == 'uploaded') {
+                                                <?php
+                                                if (!empty($user_information['YouTube_Video']) && $user_information['video_type'] == 'uploaded') {
                                                 ?>
-                                                        <input type="hidden" id="pre_upload_video_url" name="pre_upload_video_url" value="<?php echo $user_information['YouTube_Video']; ?>">
-                                                <?php        
-                                                    } else {
+                                                    <input type="hidden" id="pre_upload_video_url" name="pre_upload_video_url" value="<?php echo $user_information['YouTube_Video']; ?>">
+                                                <?php
+                                                } else {
                                                 ?>
                                                     <input type="hidden" id="pre_upload_video_url" name="pre_upload_video_url" value="">
-                                                <?php        
-                                                    }
+                                                <?php
+                                                }
                                                 ?>
                                                 <span class="selected-file" id="name_upload_video">No video selected</span>
                                                 <input name="upload_video" id="upload_video" onchange="upload_video_checker('upload_video')" type="file">
@@ -514,19 +516,19 @@ if($_ssv){
                                     </div>
                                 </div>
                             </div>
-                            <?php if(!empty($user_information['YouTube_Video'])) { ?>
+                            <?php if (!empty($user_information['YouTube_Video'])) { ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="well well-sm">
                                         <div class="embed-responsive embed-responsive-16by9">
-                                        <?php if($user_information['video_type'] == 'youtube') { ?>
-                                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo $user_information['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                                        <?php } elseif($user_information['video_type'] == 'vimeo') { ?>
-                                            <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $user_information['YouTube_Video']; ?>"  frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                                        <?php } else {?> 
-                                            <video controls>
-                                                <source src="<?php echo base_url().'assets/uploaded_videos/'.$user_information['YouTube_Video']; ?>" type='video/mp4'>
-                                            </video>
-                                        <?php } ?>
+                                            <?php if ($user_information['video_type'] == 'youtube') { ?>
+                                                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo $user_information['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                            <?php } elseif ($user_information['video_type'] == 'vimeo') { ?>
+                                                <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $user_information['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                            <?php } else { ?>
+                                                <video controls>
+                                                    <source src="<?php echo base_url() . 'assets/uploaded_videos/' . $user_information['YouTube_Video']; ?>" type='video/mp4'>
+                                                </video>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 </div>
@@ -539,7 +541,7 @@ if($_ssv){
                                     <a class="btn btn-info btn-block mb-2" href="<?php echo $back_url; ?>">Review Previous Step</a>
                                 </div>
                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                    <a href="<?= base_url('onboarding/general_information/' . $unique_sid);?>" class="btn btn-warning btn-block mb-2"> Bypass This Step <i class="fa fa-angle-right"></i></a>
+                                    <a href="<?= base_url('onboarding/general_information/' . $unique_sid); ?>" class="btn btn-warning btn-block mb-2"> Bypass This Step <i class="fa fa-angle-right"></i></a>
                                 </div>
                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                     <input class="btn btn-success btn-block mb-2" id="add_edit_submit" value="Save And Proceed Next" type="submit">
@@ -551,7 +553,7 @@ if($_ssv){
             </div>
         </div>
     </div>
-               <?php if($sideBar != ''){ ?>
+    <?php if ($sideBar != '') { ?>
 </div>
 <?php } ?>
 </div>
@@ -567,10 +569,10 @@ if($_ssv){
 </div>
 
 <script type="text/javascript">
-   $(document).ready(function(){
-//       $('form').validate();
-       CKEDITOR.replace('short_bio');
-       CKEDITOR.replace('interests');
+    $(document).ready(function() {
+        //       $('form').validate();
+        CKEDITOR.replace('short_bio');
+        CKEDITOR.replace('interests');
 
         $('#date_of_birth').datepicker({
             dateFormat: 'mm-dd-yy',
@@ -580,7 +582,7 @@ if($_ssv){
         }).val();
 
         var pre_selected = '<?php echo !empty($user_information['YouTube_Video']) ? $user_information['video_type'] : ''; ?>';
-        if(pre_selected == 'youtube'){
+        if (pre_selected == 'youtube') {
             $('#label_youtube').show();
             $('#label_vimeo').hide();
             $('#youtube_vimeo_input').show();
@@ -590,30 +592,30 @@ if($_ssv){
             $('#label_vimeo').show();
             $('#youtube_vimeo_input').show();
             $('#upload_input').hide();
-        } else if(pre_selected == 'uploaded') {
+        } else if (pre_selected == 'uploaded') {
             $('#youtube_vimeo_input').hide();
             $('#upload_input').show();
         } else {
             $('#youtube_vimeo_input').hide();
             $('#upload_input').hide();
         }
-   });
+    });
 
     function getStates(val, states, select_id) {
         var html = '';
-        
+
         if (val == '') {
             $('#state').html('<option value="">Select State</option><option value="">Please Select your country</option>');
         } else {
             allstates = states[val];
             html += '<option value="">Select State</option>';
-            
+
             for (var i = 0; i < allstates.length; i++) {
                 var id = allstates[i].sid;
                 var name = allstates[i].state_name;
                 html += '<option value="' + id + '">' + name + '</option>';
             }
-            
+
             $('#' + select_id).html(html);
             $('#' + select_id).trigger('change');
         }
@@ -621,7 +623,7 @@ if($_ssv){
 
     function check_file_all(val) {
         var fileName = $("#" + val).val();
-        
+
         if (fileName.length > 0) {
             $('#name_' + val).html('<span>' + fileName + '</span>');
         } else {
@@ -629,16 +631,16 @@ if($_ssv){
         }
     }
 
-    $('#go_next').click(function(){
-       $('#add_edit_submit').click();
+    $('#go_next').click(function() {
+        $('#add_edit_submit').click();
     });
 
-    $(function () {
+    $(function() {
         $.validator.setDefaults({
             debug: true,
             success: "valid"
         });
-        
+
         $("#form_applicant_information").validate({
             ignore: ":hidden:not(select)",
             rules: {
@@ -660,9 +662,14 @@ if($_ssv){
                 PhoneNumber: {
                     required: true
                 },
-                phone_number: {
-                    required: false
-                },
+
+                <?php if (get_company_module_status($company_info['sid'], 'primary_number_required') == 1) { ?>
+
+                    phone_number: {
+                        required: true
+                    },
+                <?php } ?>
+
                 city: {
                     required: true
                 },
@@ -689,65 +696,69 @@ if($_ssv){
                 }
             },
             messages: {
-                first_name:{
+                first_name: {
                     required: 'First Name is required'
                 },
-                last_name:{
+                last_name: {
                     required: 'Last Name is required'
                 },
-                email:{
+                email: {
                     required: 'Email is required'
                 },
-                Location_Address:{
+                Location_Address: {
                     required: 'Address is required'
                 },
-                address:{
+                address: {
                     required: 'Address is required'
                 },
-                PhoneNumber:{
+                <?php if (get_company_module_status($company_info['sid'], 'primary_number_required') == 1) { ?>
+
+                    PhoneNumber: {
+                        required: 'Phone Number is required'
+                    },
+                <?php } ?>
+
+                phone_number: {
                     required: 'Phone Number is required'
                 },
-                phone_number:{
-                    required: 'Phone Number is required'
-                },
-                city:{
+                city: {
                     required: 'City is required'
                 },
-                Location_Country:{
+                Location_Country: {
                     required: 'Country is required'
                 },
-                country:{
+                country: {
                     required: 'Country is required'
                 },
-                Location_State:{
+                Location_State: {
                     required: 'State is required'
                 },
-                state:{
+                state: {
                     required: 'State is required'
                 },
-                Location_ZipCode:{
+                Location_ZipCode: {
                     required: 'Zip Code is required'
                 },
-                zipcode:{
+                zipcode: {
                     required: 'Zip Code is required'
                 },
-                Location_City:{
+                Location_City: {
                     required: 'City is required'
                 }
             },
-            submitHandler: function (form) {
-                $('#my_loader').show(); 
+            submitHandler: function(form) {
+                $('#my_loader').show();
                 form.submit();
             }
         });
     });
 
-    $('#add_edit_submit').click(function () {
-        if($('input[name="video_source"]:checked').val() != 'no_video'){
+    $('#add_edit_submit').click(function() {
+        if ($('input[name="video_source"]:checked').val() != 'no_video') {
             var flag = 0;
-            if($('input[name="video_source"]:checked').val() == 'youtube'){
-                
-                if($('#yt_vm_video_url').val() != '') { 
+            if ($('input[name="video_source"]:checked').val() == 'youtube') {
+
+                if ($('#yt_vm_video_url').val() != '') {
 
                     var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                     if (!$('#yt_vm_video_url').val().match(p)) {
@@ -762,17 +773,19 @@ if($_ssv){
                     alertify.error('Please add valid youtube video link.');
                     return false;
                 }
-            } else if($('input[name="video_source"]:checked').val() == 'vimeo'){
-                
-                if($('#yt_vm_video_url').val() != '') {              
+            } else if ($('input[name="video_source"]:checked').val() == 'vimeo') {
+
+                if ($('#yt_vm_video_url').val() != '') {
                     var flag = 0;
                     var myurl = "<?= base_url() ?>learning_center/validate_vimeo";
                     $.ajax({
                         type: "POST",
                         url: myurl,
-                        data: {url: $('#yt_vm_video_url').val()},
-                        async : false,
-                        success: function (data) {
+                        data: {
+                            url: $('#yt_vm_video_url').val()
+                        },
+                        async: false,
+                        success: function(data) {
                             if (data == false) {
                                 alertify.error('Not a Valid Vimeo URL');
                                 flag = 0;
@@ -781,8 +794,7 @@ if($_ssv){
                                 flag = 1;
                             }
                         },
-                        error: function (data) {
-                        }
+                        error: function(data) {}
                     });
                 } else {
                     flag = 0;
@@ -791,32 +803,32 @@ if($_ssv){
                 }
             } else if ($('input[name="video_source"]:checked').val() == 'uploaded') {
                 var old_uploaded_video = $('#pre_upload_video_url').val();
-                if(old_uploaded_video != ''){
+                if (old_uploaded_video != '') {
                     flag = 1;
                 } else {
                     var file = upload_video_checker('upload_video');
-                    if (file == false){
+                    if (file == false) {
                         flag = 0;
-                        return false;    
+                        return false;
                     } else {
                         flag = 1;
                     }
                 }
             }
 
-            if(flag == 1){
+            if (flag == 1) {
                 return true;
             } else {
                 return false;
             }
         } else {
             return true;
-        }   
+        }
     });
 
-    $('.video_source').on('click', function(){
+    $('.video_source').on('click', function() {
         var selected = $(this).val();
-        if(selected == 'youtube'){
+        if (selected == 'youtube') {
             $('#label_youtube').show();
             $('#label_vimeo').hide();
             $('#youtube_vimeo_input').show();
@@ -826,7 +838,7 @@ if($_ssv){
             $('#label_vimeo').show();
             $('#youtube_vimeo_input').show();
             $('#upload_input').hide();
-        } else if(selected == 'uploaded') {
+        } else if (selected == 'uploaded') {
             $('#youtube_vimeo_input').hide();
             $('#upload_input').show();
         } else {
@@ -849,8 +861,8 @@ if($_ssv){
                     alertify.error("Please select a valid video format.");
                     $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
                     return false;
-                } else{
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                } else {
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#" + val).val(null);

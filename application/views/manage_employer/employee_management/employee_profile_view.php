@@ -73,7 +73,7 @@
                                                 </div>								
                                             </li>
                                             <li class="form-col-50-left">	
-                                                <?php echo form_label('Phone Number', 'PhoneNumber'); ?>									
+                                                <?php echo form_label('Primary Number', 'PhoneNumber'); ?>									
                                                 <?php echo form_input('PhoneNumber', set_value('PhoneNumber', $employer['PhoneNumber']), 'class="invoice-fields"'); ?>
                                                 <?php echo form_error('PhoneNumber'); ?>								
                                             </li>

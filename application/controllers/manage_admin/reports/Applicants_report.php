@@ -128,9 +128,9 @@ class Applicants_report extends Admin_Controller {
                 header('Content-Disposition: attachment; filename=data.csv');
                 $output = fopen('php://output', 'w');
                 if (isset($_GET['company_or_brand']) && $_GET['company_or_brand'] == 'brand') { 
-                    fputcsv($output, array('Job Title', 'First Name', 'Last Name', 'Email', 'Phone Number', 'Date Applied', 'Applicant Type', 'Questionnaire Score', 'Reviews Score', 'Company Name'));
+                    fputcsv($output, array('Job Title', 'First Name', 'Last Name', 'Email', 'Primary Number', 'Date Applied', 'Applicant Type', 'Questionnaire Score', 'Reviews Score', 'Company Name'));
                 } else {
-                    fputcsv($output, array('Job Title', 'First Name', 'Last Name', 'Email', 'Phone Number', 'Date Applied', 'Questionnaire Score', 'Reviews Score', 'Applicant Type'));
+                    fputcsv($output, array('Job Title', 'First Name', 'Last Name', 'Email', 'Primary Number', 'Date Applied', 'Questionnaire Score', 'Reviews Score', 'Applicant Type'));
                 }
                 
                 foreach($applicants as $applicant){

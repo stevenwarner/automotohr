@@ -13,7 +13,7 @@
                     <p><?php echo ucwords($employer['job_title']); ?></p>
                 </li>
                 <li class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                    <label>Phone Number</label>
+                    <label>Primary Number</label>
                     <p><?php echo ucwords($employer['PhoneNumber']); ?></p>
                 </li>
             </ul>

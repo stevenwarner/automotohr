@@ -43,7 +43,7 @@
                                                     <?php echo form_error('last_name'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Phone Number</label>
+                                                    <label>Primary Number <?php if (get_company_module_status($company_id, 'primary_number_required') == 1) { ?><span class="staric">*</span> <?php } ?></label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="PhoneNumber" id="PhoneNumber" value="<?php
                                                                                                                                                                 if (isset($formpost['PhoneNumber'])) {
                                                                                                                                                                     echo $formpost['PhoneNumber'];
@@ -392,6 +392,13 @@
                     required: true,
                     email: true
                 },
+
+                <?php if (get_company_module_status($company_id, 'primary_number_required') == 1) { ?>
+                    PhoneNumber: {
+                        required: true
+                    },
+                <?php } ?>
+
                 Location_City: {
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
@@ -423,6 +430,13 @@
                 salary_amount: {
                     required: 'Salary amount is required'
                 },
+                <?php if (get_company_module_status($company_id, 'primary_number_required') == 1) { ?>
+
+                    PhoneNumber: {
+                        required: 'Primary Number'
+                    },
+                <?php } ?>
+
                 registration_date: {
                     required: 'Starting Date is required'
                 },

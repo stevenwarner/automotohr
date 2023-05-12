@@ -157,7 +157,11 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                                 <div class="form-group">
                                     <?php $field_id = $field_phone; ?>
                                     <?php $temp = $primary_phone_number; ?>
-                                    <?php echo form_label('Mobile Number:', $field_id); ?>
+                                    <?php
+
+                                    $requiredText = get_company_module_status($session['company_detail']['sid'], 'primary_number_required') == 1 ? '<span class="required">*</span>' : ''; ?>
+
+                                    <?php echo form_label('Primary Number: ' . $requiredText, $field_id); ?>
                                     <?= $input_group_start; ?>
                                     <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '" data-rule-required="true" placeholder="(555) 123-1234"'); ?>
                                     <?= $input_group_end; ?>
@@ -427,8 +431,8 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                                 <div class="form-group">
                                     <?php $field_id = 'job_title'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
-                                    <?php echo form_label('Job Title:', $field_id); ?> &nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption <?php echo $is_readony; ?>" <?php echo $user_information['job_title_type'] == '0' ? 'checked' : '' ?> > Add Manual &nbsp;
-                                    <input type="radio" name="title_option" value="dropdown" class="titleoption <?php echo $is_readony; ?>" <?php echo $user_information['job_title_type'] != '0' ? 'checked' : '' ?> > From Drop Down
+                                    <?php echo form_label('Job Title:', $field_id); ?> &nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption <?php echo $is_readony; ?>" <?php echo $user_information['job_title_type'] == '0' ? 'checked' : '' ?>> Add Manual &nbsp;
+                                    <input type="radio" name="title_option" value="dropdown" class="titleoption <?php echo $is_readony; ?>" <?php echo $user_information['job_title_type'] != '0' ? 'checked' : '' ?>> From Drop Down
                                     <input type="text" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" value="<?php echo set_value($field_id, $temp); ?>" class="form-control <?php echo $is_readony; ?>" id="job_title" />
                                     <?php echo form_error($field_id); ?>
                                     <?php $templateTitles = get_templet_jobtitles($user_information['parent_sid']); ?>
@@ -820,10 +824,13 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                 address: {
                     required: true
                 },
-                PhoneNumber: {
-                    // required: true,
-                    // pattern: /(\(\d{3}\))\s(\d{3})-(\d{4})$/ // (555) 123-4567
-                },
+
+                <?php if (get_company_module_status($session['company_detail']['sid'], 'primary_number_required') == 1) { ?>
+
+                    PhoneNumber: {
+                        required: true,
+                    },
+                <?php } ?>
                 phone_number: {
                     required: true
                 },
@@ -870,7 +877,7 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                     required: 'Address is required'
                 },
                 PhoneNumber: {
-                    required: 'Phone Number is required',
+                    required: 'Primary Number is required ss',
                     pattern: 'Invalid format! e.g. (XXX) XXX-XXXX'
                 },
                 phone_number: {
@@ -911,6 +918,7 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
             },
             submitHandler: function(form) {
                 <?php if ($is_regex === 1) { ?>
+                    alert('sdf');
                     // TODO
                     var is_error = false;
                     // Check for phone number

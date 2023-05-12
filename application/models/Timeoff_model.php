@@ -2422,7 +2422,7 @@ class Timeoff_model extends CI_Model
         $employeeId,
         $consumeDate
     ) {
-        
+
         //
         $this->db
             ->select('
@@ -5541,7 +5541,7 @@ class Timeoff_model extends CI_Model
             ->where('tr.is_draft', 0)
             ->order_by('tr.request_from_date', 'ASC');
         //
-        if ($employeeIds != 'all') {
+        if ($employeeIds != 'all' && $employeeIds && $employeeIds[0] != '') {
             $this->db->where_in('tr.employee_sid', $employeeIds);
         }
         //
@@ -5964,7 +5964,7 @@ class Timeoff_model extends CI_Model
             ->where('tr.is_draft', 0)
             ->order_by('tr.request_from_date', 'ASC');
         //
-        if ($employeeIds != 'all') {
+        if ($employeeIds != 'all' && $employeeIds && $employeeIds[0] != '') {
             $this->db->where_in('tr.employee_sid', $employeeIds);
         }
 
@@ -6260,5 +6260,102 @@ class Timeoff_model extends CI_Model
         }
 
         return array_values($b);
+    }
+
+    /**
+     * Get the policy history
+     * 
+     * Get the time off policy change log with the 
+     * difference of what was changed with who changed it
+     * 
+     * @param int $policyId
+     * @param int $companyId
+     * @return array
+     */
+    public function getPolicyHistoryWithDifference(int $policyId, int $companyId)
+    {
+        // set policy where
+        $whereArray = [
+            'sid' => $policyId,
+            'company_sid' => $companyId
+        ];
+        // check if policy belong to current company
+        if (!$this->db->where($whereArray)->count_all_results('timeoff_policies')) {
+            return [];
+        }
+        // get the policy history
+        $history = $this->db
+            ->select('
+            timeoff_policy_timeline.action, 
+            timeoff_policy_timeline.action_type,
+            timeoff_policy_timeline.created_at,
+            timeoff_policy_timeline.note,
+            ' . (getUserFields()) . '
+        ')
+            ->join('users', 'users.sid = timeoff_policy_timeline.employee_sid', 'inner')
+            ->where('timeoff_policy_timeline.policy_sid', $policyId)
+            ->where('timeoff_policy_timeline.action_type', 'current')
+            ->order_by('timeoff_policy_timeline.sid', 'ASC')
+            ->get('timeoff_policy_timeline')
+            ->result_array();
+        // check if there is no history
+        if (!$history) {
+            return [];
+        }
+        // get the current time off policy
+        $currentPolicy = $this->db->select('
+            title,
+            assigned_employees,
+            off_days,
+            for_admin,
+            is_included,
+            accruals,
+            is_entitled_employee,
+            is_archived,
+            allowed_approvers,
+            policy_category_type
+        ')
+            ->where($whereArray)
+            ->get('timeoff_policies')
+            ->row_array();
+        //
+        $currentPolicyCompare = ['note' => json_encode($currentPolicy)];
+        // set records array
+        $records = [];
+        // let's loop through the history
+        foreach ($history as $index => $value) {
+            // check if it was a first entry
+            if ($value['action'] == 'create') {
+                // set the record array
+                $records[] = [
+                    'action' => $value['action'],
+                    'user' => remakeEmployeeName($value),
+                    'difference' => [],
+                    'created_at' => formatDateToDB($value['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME)
+                ];
+                // then skip the iteration
+                continue;
+            }
+            //
+            $compareWithArray = $currentPolicyCompare;
+            // check if there are next index
+            if (isset($history[$index + 1])) {
+                $compareWithArray = $history[$index + 1];
+            }
+            // lets compare the array
+            $differenceArray = getPolicyDifference($value, $compareWithArray);
+            //
+            if($differenceArray) {
+                // set the record array
+                $records[] = [
+                    'action' => $value['action'],
+                    'user' => remakeEmployeeName($value),
+                    'difference' => $differenceArray,
+                    'created_at' => formatDateToDB($value['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME)
+                ];
+            }
+        }
+        // return the results
+        return array_reverse($records);
     }
 }

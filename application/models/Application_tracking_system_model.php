@@ -1780,15 +1780,31 @@ class Application_tracking_system_model extends CI_Model {
     }
 
     function getApplicantData($app_id) {
-        $args = array('sid' => $app_id);
-        $res = $this->db->get_where('portal_job_applications', $args);
-        $ret = $res->result_array();
-
-        if (!empty($ret)) {
-            return $ret[0];
-        } else {
-            return false;
+        //
+        $args = array('portal_job_applications.sid' => $app_id);
+        //
+        $res = $this->db
+        ->get_where('portal_job_applications', $args);
+        $ret = $res->row_array();
+        
+        //
+        if ($ret){
+            // get last job
+            $lastJob = $this->db
+            ->select('
+                portal_applicant_jobs_list.desired_job_title,
+                portal_job_listings.Title
+            ')
+            ->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left')
+            ->where('portal_applicant_jobs_list.portal_job_applications_sid', $ret['sid'])
+            ->order_by('portal_applicant_jobs_list.sid', 'desc')
+            ->get('portal_applicant_jobs_list')
+            ->row_array();
+            //
+            $ret['job_title'] = $lastJob && $lastJob['Title'] ? $lastJob['Title'] : $lastJob['desired_job_title'];
         }
+
+        return $ret;
     }
 
     function getApplicantRating($app_id, $employer_id, $users_type = NULL, $date = NULL) {
