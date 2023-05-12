@@ -66,7 +66,7 @@
                                                 <div class="report-btns">
                                                     <div class="row">
                                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                            <button class="form-btn" id="btn_apply_filters" onclick="fApplyDateFilters();">Filter</button>
+                                                            <button class="form-btn" id="btn_apply_filters">Filter</button>
                                                         </div>
                                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                             <a class="form-btn" id="clear" href="<?php echo base_url('reports/generate_job_views_applicants_report'); ?>/">Clear</a>

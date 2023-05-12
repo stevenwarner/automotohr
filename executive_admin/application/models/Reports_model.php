@@ -1,12 +1,15 @@
 <?php
 
-class Reports_model extends CI_Model {
+class Reports_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
-    public function get_job_products($company_sid, $product_sid, $job_sid, $start_date, $end_date, $count_only = false, $limit = null, $offset = null) {
+    public function get_job_products($company_sid, $product_sid, $job_sid, $start_date, $end_date, $count_only = false, $limit = null, $offset = null)
+    {
         $this->db->select('jobs_to_feed.*');
         $this->db->where('jobs_to_feed.company_sid', $company_sid);
 
@@ -40,21 +43,21 @@ class Reports_model extends CI_Model {
             $this->db->order_by("sid", "desc");
             $products = $this->db->get('jobs_to_feed')->result_array();
             $i = 0;
-            
+
             foreach ($products as $product) {
                 $job_title = get_job_title($product['job_sid']);
                 $product_name = db_get_products_details($product['product_sid']);
                 $products[$i]['job_title'] = $job_title;
-                
+
                 if (isset($product_name['name'])) {
                     $products[$i]['product_name'] = $product_name['name'];
                 } else {
                     $products[$i]['product_name'] = '';
                 }
-                
+
                 $i++;
             }
-            
+
             return $products;
         } else {
             $this->db->from('jobs_to_feed');
@@ -62,60 +65,65 @@ class Reports_model extends CI_Model {
         }
     }
 
-    public function get_job_products_count($company_sid = NULL, $search = '', $between = '') {
+    public function get_job_products_count($company_sid = NULL, $search = '', $between = '')
+    {
         if ($search != '' && $search != NULL) {
             $this->db->where($search);
         }
-        
+
         if ($between != '' && $between != NULL) {
             $this->db->where($between);
         }
-        
+
         $this->db->where('company_sid > ', 0);
         $this->db->where('company_sid', $company_sid);
         return $this->db->get('jobs_to_feed')->num_rows();
     }
 
-    public function get_active_products() {
+    public function get_active_products()
+    {
         $this->db->select('sid, name');
         $this->db->where('active', 1);
         return $this->db->get('products')->result_array();
     }
 
-    public function get_purchased_products_by_company($company_sid) {
+    public function get_purchased_products_by_company($company_sid)
+    {
         $orders = $this->db->get_where('invoices', array('company_sid' => $company_sid, 'status' => 'Paid'))->result_array();
         $product_ids = array();
-        
+
         foreach ($orders as $order) {
             $items_array = $order['serialized_items_info'];
             $items = unserialize($items_array);
             $products = $items['products'];
-            
+
             foreach ($products as $product) {
                 $product_ids[] = $product;
             }
         }
-        
+
         $products = array_unique($product_ids);
-        
+
         if (sizeof($products) > 0) {
             $this->db->select('sid, name');
             $this->db->where_in('sid', $products);
         } else {
             return array();
         }
-        
+
         return $this->db->get('products')->result_array();
     }
 
-    public function get_active_jobs($company_sid = NULL) {
+    public function get_active_jobs($company_sid = NULL)
+    {
         $this->db->select('sid, Title');
         $this->db->where('active', 1);
         $this->db->where('user_sid', $company_sid);
         return $this->db->get('portal_job_listings')->result_array();
     }
 
-    function get_applicants_status($company_sid = NULL, $start_date = NULL, $end_date = NULL) {
+    function get_applicants_status($company_sid = NULL, $start_date = NULL, $end_date = NULL)
+    {
         $this->db->select('portal_job_applications.sid as pja_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -155,10 +163,10 @@ class Reports_model extends CI_Model {
 
         foreach ($applications as $key => $application) {
             $applications[$key]['Title'] = get_job_title($application['job_sid']);
-            
+
             if ($have_status == true) {
                 $status = $this->get_application_status($application['status_sid']);
-                
+
                 if (!empty($status)) {
                     $applications[$key]['status_name'] = $status[0]['name'];
                     $applications[$key]['status_css_class'] = $status[0]['css_class'];
@@ -166,41 +174,43 @@ class Reports_model extends CI_Model {
                 }
             }
         }
-        
+
         return $applications;
     }
 
-    function get_references($company_sid = NULL) {
+    function get_references($company_sid = NULL)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->order_by('sid', 'DESC');
         $references = $this->db->get('reference_checks')->result_array();
         $i = 0;
-        
+
         foreach ($references as $reference) {
             $sid = $reference['user_sid'];
             $type = $reference['users_type'];
             $this->db->select('first_name, last_name');
             $this->db->where('sid', $sid);
-            
+
             if ($type == 'applicant') { // get applicant name
                 $user = $this->db->get('portal_job_applications')->result_array();
             } else if ($type == 'employee') { // get employee name
                 $user = $this->db->get('users')->result_array();
             }
-            
+
             if (isset($user[0])) {
                 $references[$i]['user_name'] = $user[0]['first_name'] . ' ' . $user[0]['last_name'];
             } else {
                 $references[$i]['user_name'] = '';
             }
-            
+
             $i++;
         }
         return $references;
     }
 
-    function GetAllUsers($company_sid = NULL) {
+    function GetAllUsers($company_sid = NULL)
+    {
         $this->db->select('*');
         $this->db->where('active', 1);
         $this->db->where('parent_sid', $company_sid);
@@ -208,7 +218,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('users')->result_array();
     }
 
-    function GetAllEventsByCompanyAndEmployer($company_sid, $employer_sid) {
+    function GetAllEventsByCompanyAndEmployer($company_sid, $employer_sid)
+    {
         $this->db->select('portal_schedule_event.*');
         $this->db->select('portal_job_applications.first_name as applicant_first_name');
         $this->db->select('portal_job_applications.last_name as applicant_last_name');
@@ -224,16 +235,17 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_schedule_event')->result_array();
     }
 
-    function get_all_hired_jobs($company_sid = NULL, $start_date = null, $end_date = null, $status = null) {
+    function get_all_hired_jobs($company_sid = NULL, $start_date = null, $end_date = null, $status = null)
+    {
         $this->db->select('portal_job_listings.Title');
         $this->db->select('portal_job_applications.hired_date');
         $this->db->select('portal_applicant_jobs_list.job_sid');
-        
+
         if ($status) {
             $this->db->where('portal_job_applications.hired_status', 1);
             $this->db->where('portal_job_applications.hired_sid >', 0);
         }
-        
+
         $this->db->where('portal_job_applications.employer_sid', $company_sid);
 
         if ($start_date != null && $end_date != null) {
@@ -245,7 +257,8 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_job_applications')->result_array();
     }
 
-    function GetAllApplicantsBetween($company_sid = NULL, $keyword = 'all', $start_date, $end_date, $hired_status = null, $check_hired_date = false) {
+    function GetAllApplicantsBetween($company_sid = NULL, $keyword = 'all', $start_date, $end_date, $hired_status = null, $check_hired_date = false)
+    {
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.job_sid');
         $this->db->select('portal_applicant_jobs_list.desired_job_title');
@@ -300,19 +313,21 @@ class Reports_model extends CI_Model {
         return $applications;
     }
 
-    function GetAllJobsCompanySpecific($company_sid = NULL, $keywords = '') {
+    function GetAllJobsCompanySpecific($company_sid = NULL, $keywords = '')
+    {
         $this->db->select('*');
         $this->db->where('user_sid', $company_sid);
-        
+
         if (!empty($keywords) && $keywords != 'all') {
             $this->db->like('Title', $keywords);
         }
-        
+
         $this->db->order_by('portal_job_listings.activation_date', 'DESC');
         return $this->db->get('portal_job_listings')->result_array();
     }
 
-    function GetAllApplicantsCompanyEmployerAndJobSpecific($company_sid = NULL, $job_sid, $hired_status = null) {
+    function GetAllApplicantsCompanyEmployerAndJobSpecific($company_sid = NULL, $job_sid, $hired_status = null)
+    {
         $this->db->select('portal_job_listings.Title');
         $this->db->select('portal_job_applications.sid as pja_sid');
         $this->db->select('portal_job_applications.employer_sid');
@@ -354,13 +369,15 @@ class Reports_model extends CI_Model {
         return $this->db->get('portal_applicant_jobs_list')->result_array();
     }
 
-    function get_company_jobs($company_sid) {
+    function get_company_jobs($company_sid)
+    {
         $this->db->select('sid, Title, active');
         $this->db->where('user_sid', $company_sid);
         return $this->db->get('portal_job_listings')->result_array();
     }
 
-    function get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null) {
+    function get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null)
+    {
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.status');
@@ -467,7 +484,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_company_statuses($company_sid) {
+    function get_company_statuses($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->order_by('status_order', 'ASC');
@@ -477,7 +495,8 @@ class Reports_model extends CI_Model {
         return $records_arr;
     }
 
-    function GetAllJobCategoriesWhereApplicantsAreHired($company_sid = NULL) {
+    function GetAllJobCategoriesWhereApplicantsAreHired($company_sid = NULL)
+    {
         $this->db->select('portal_job_applications.sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -510,16 +529,16 @@ class Reports_model extends CI_Model {
         $this->db->join('portal_job_listings', 'portal_applicant_jobs_list.job_sid = portal_job_listings.sid', 'left');
         $applicants = $this->db->get('portal_job_applications')->result_array();
         $csCategories = '';
-        
+
         foreach ($applicants as $applicant) {
             $csCategories .= $applicant['JobCategory'] . ',';
         }
-        
+
         $csCategories = substr($csCategories, 0, strlen($csCategories) - 1);
         $csCategories = explode(',', $csCategories);
         $categories = array();
         $categoriesHireCount = array();
-        
+
         foreach ($csCategories as $category) {
             $this->db->select('*');
             $this->db->where('sid', $category);
@@ -535,18 +554,19 @@ class Reports_model extends CI_Model {
                 }
             }
         }
-        
+
         $myReturn = array();
-        
+
         foreach ($categories as $category) {
             $myReturn[] = array('category' => $category, 'count' => $categoriesHireCount[$category]);
         }
-        
+
         rsort($myReturn, 1);
         return $myReturn;
     }
 
-    function GetAllApplicantsOnboarding($company_sid = NULL, $keyword = 'all', $start_date, $end_date, $check_hired_date = false) {
+    function GetAllApplicantsOnboarding($company_sid = NULL, $keyword = 'all', $start_date, $end_date, $check_hired_date = false)
+    {
         $this->db->select('users.username');
         $this->db->select('portal_job_applications.sid');
         $this->db->select('portal_job_applications.employer_sid');
@@ -601,7 +621,7 @@ class Reports_model extends CI_Model {
                 }
             }
         }
-        
+
         if ($check_hired_date == true) {
             if ($start_date != null && $end_date != null) {
                 $this->db->where('portal_job_applications.hired_date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
@@ -611,29 +631,30 @@ class Reports_model extends CI_Model {
                 $this->db->where('portal_job_applications.date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
             }
         }
-        
+
         $this->db->join('portal_job_applications', 'users.sid = portal_job_applications.hired_sid', 'left');
         $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
         $this->db->join('portal_job_listings', 'portal_applicant_jobs_list.job_sid = portal_job_listings.sid', 'left');
         $this->db->order_by('hired_date', 'DESC');
         $applications = $this->db->get('users')->result_array();
         $i = 0;
-        
+
         foreach ($applications as $application) {
             $applications[$i]['Title'] = get_job_title($application['job_sid']);
             $i++;
         }
-        
+
         return $applications;
     }
 
-    function get_all_jobs_views_applicants_count($company_sid = NULL) {
+    function get_all_jobs_views_applicants_count($company_sid = NULL)
+    {
         $this->db->select('*');
         $this->db->where('user_sid', $company_sid);
         $this->db->where('active <> ', 2);
         $this->db->order_by('sid', 'DESC');
         $return_data = $this->db->get('portal_job_listings')->result_array();
-        
+
         if (!empty($return_data)) {
             foreach ($return_data as $key => $row) {
                 $job_sid = $row['sid'];
@@ -652,11 +673,12 @@ class Reports_model extends CI_Model {
                 $return_data[$key]['company_title'] = $company_name;
             }
         }
-        
+
         return $return_data;
     }
 
-    function check_company_status($company_sid) {
+    function check_company_status($company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $records = $this->db->get('application_status')->result_array();
         if (sizeof($records) <= 0) {
@@ -666,14 +688,16 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_application_status($status_sid) {
+    function get_application_status($status_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $status_sid);
         return $this->db->get('application_status')->result_array();
     }
 
     //*************** Activity Reports functions **********************//
-    function get_all_companies() {
+    function get_all_companies()
+    {
         $this->db->select('*');
         $this->db->where('parent_sid', 0);
         $this->db->order_by('sid', 'DESC');
@@ -682,14 +706,15 @@ class Reports_model extends CI_Model {
         return $this->db->get('users')->result_array();
     }
 
-    function generate_activity_log_data_for_view($company_sid, $start_date, $end_date, $employer_sid = null) { //Handle Manual Employer Sid Feed
+    function generate_activity_log_data_for_view($company_sid, $start_date, $end_date, $employer_sid = null)
+    { //Handle Manual Employer Sid Feed
         if ($employer_sid == null) {
             $active_employers = $this->get_active_employers($company_sid, $start_date, $end_date);
         } else {
             $active_employers = array();
             $active_employers[] = array('employer_sid' => $employer_sid);
         }
-        
+
         foreach ($active_employers as $key => $active_employer) {
             $this->db->select('*');
             $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
@@ -699,10 +724,10 @@ class Reports_model extends CI_Model {
             $this->db->order_by('employer_ip', 'ASC');
             $employer_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $logs_to_return = array();
-            
+
             if (!empty($employer_logs)) {
                 $first_log = $employer_logs[0];
-                
+
                 foreach ($employer_logs as $employer_log) {
                     $first_ip = $first_log['employer_ip'];
                     $first_ip_array_key = str_replace('.', '_', $first_ip);
@@ -710,7 +735,7 @@ class Reports_model extends CI_Model {
                     $current_ip = $employer_log['employer_ip'];
                     $current_ip_array_key = str_replace('.', '_', $current_ip);
                     $current_ip_array_key = str_replace('::1', '000_000_000_000', $current_ip_array_key);
-                    
+
                     if ($first_ip_array_key == $current_ip_array_key) {
                         $logs_to_return[$first_ip_array_key][] = $employer_log;
                     } else {
@@ -718,19 +743,19 @@ class Reports_model extends CI_Model {
                         $first_log = $employer_log;
                     }
                 }
-                
+
                 $active_employers[$key]['activity_logs'] = $logs_to_return;
             }
         }
-        
+
         foreach ($active_employers as $emp_key => $employer) {
             $activity_logs = $employer['activity_logs'];
             $time_spent = 10;
-            
+
             foreach ($activity_logs as $ip_log_key => $ip_logs) {
                 $time_spent = 10;
                 $first_activity = $ip_logs[0];
-                
+
                 foreach ($ip_logs as $act_key => $activity_log) {
                     $first_activity_datetime = new DateTime($first_activity['action_timestamp']);
                     $current_activity_datetime = new DateTime($activity_log['action_timestamp']);
@@ -743,9 +768,8 @@ class Reports_model extends CI_Model {
                     $current_ip = $activity_log['employer_ip'];
                     $current_ip_array_key = str_replace('.', '_', $current_ip);
                     $current_ip_array_key = str_replace('::1', '000_000_000_000', $current_ip_array_key);
-                    
+
                     if ($current_activity_datetime_unix < $first_activity_ten_min_window_unix) {
-                        
                     } else {
                         if ($first_ip_array_key == $current_ip_array_key) {
                             $time_spent = $time_spent + 10;
@@ -754,7 +778,7 @@ class Reports_model extends CI_Model {
                         }
                         $first_activity = $activity_log;
                     }
-                    
+
                     $employer_activity_records['activities'][$ip_log_key]['act_details'] = $activity_log;
                     $employer_activity_records['activities'][$ip_log_key]['time_spent'] = $time_spent;
                     $employer_activity_records['activities'][$ip_log_key]['log_count'] = $act_key + 1;
@@ -768,7 +792,7 @@ class Reports_model extends CI_Model {
         foreach ($active_employers as $employer_key => $employer_logs) {
             $total_time_spent = 0;
             $total_logs = 0;
-            
+
             foreach ($employer_logs['activity_logs'] as $ip_logs) {
                 $total_time_spent += intval($ip_logs['time_spent']);
                 $active_employers[$employer_key]['total_time_spent'] = $total_time_spent;
@@ -776,11 +800,12 @@ class Reports_model extends CI_Model {
                 $active_employers[$employer_key]['total_logs'] = $total_logs;
             }
         }
-        
+
         return $active_employers;
     }
 
-    function get_active_employers($company_sid, $start_date, $end_date) {
+    function get_active_employers($company_sid, $start_date, $end_date)
+    {
         $this->db->distinct();
         $this->db->select('employer_sid');
         $this->db->where('company_sid', $company_sid);
@@ -788,18 +813,20 @@ class Reports_model extends CI_Model {
         return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
     }
 
-    public function get_all_employers($company_sid) {
+    public function get_all_employers($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
         $this->db->order_by('sid', 'DESC');
         return $this->db->get('users')->result_array();
     }
 
-    public function get_activity_log($employer_sid, $year, $month, $day, $hour) {
+    public function get_activity_log($employer_sid, $year, $month, $day, $hour)
+    {
         $this->db->select('*');
         $this->db->where('sid', $employer_sid);
         $employer_info = $this->db->get('users')->result_array();
-        
+
         if (!empty($employer_info)) {
             $employer_info = $employer_info[0];
             $company_sid = $employer_info['parent_sid'];
@@ -813,27 +840,29 @@ class Reports_model extends CI_Model {
         }
     }
 
-    public function get_all_inactive_employees($company_sid, $start_date, $end_date) {
+    public function get_all_inactive_employees($company_sid, $start_date, $end_date)
+    {
         $active_employers = $this->get_active_employers($company_sid, $start_date, $end_date);
         $active_employers_sids = array();
-        
+
         foreach ($active_employers as $active_employer) {
             $active_employers_sids[] = $active_employer['employer_sid'];
         }
-        
+
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('is_executive_admin', 0);
-        
+
         if (!empty($active_employers_sids)) {
             $this->db->where('sid NOT IN ( ' . implode(',', $active_employers_sids) . ' )');
         }
-        
+
         $inactive_employers = $this->db->get('users')->result_array();
         return $inactive_employers;
     }
 
-    public function get_company_activity_overview($company_sid, $start_date, $end_date, $get_details = false) {
+    public function get_company_activity_overview($company_sid, $start_date, $end_date, $get_details = false)
+    {
         $this->db->select('*');
         $this->db->where('parent_sid', 0);
         $this->db->where('sid', $company_sid);
@@ -849,25 +878,25 @@ class Reports_model extends CI_Model {
             $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
             $active_employers = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $active_employers_sids = array();
-            
+
             foreach ($active_employers as $active_employer) {
                 $active_employers_sids[] = $active_employer['employer_sid'];
             }
-            
+
             //Get Inactive Employers
             $inactive_employers = array();
             $this->db->select('*');
             $this->db->where('parent_sid', $company_sid);
             $this->db->order_by('is_executive_admin', 'DESC');
             $this->db->order_by('access_level', 'ASC');
-            
+
             if (!empty($active_employers_sids)) {
                 $this->db->where('sid NOT IN ( ' . implode(',', $active_employers_sids) . ' )');
             }
-            
+
             $inactive_employers = $this->db->get('users')->result_array();
             $active_employers = array(); //Get Active Employers
-            
+
             if (!empty($active_employers_sids)) {
                 $this->db->select('*');
                 $this->db->where('parent_sid', $company_sid);
@@ -876,7 +905,7 @@ class Reports_model extends CI_Model {
                 $this->db->where('sid IN ( ' . implode(',', $active_employers_sids) . ' )');
                 $active_employers = $this->db->get('users')->result_array();
             }
-            
+
             if ($get_details == true) {
                 if (!empty($active_employers)) {
                     foreach ($active_employers as $act_emp_key => $active_employer) {
@@ -889,14 +918,15 @@ class Reports_model extends CI_Model {
                     }
                 }
             }
-            
+
             $companies[$key]['active_employers'] = $active_employers;
             $companies[$key]['inactive_employers'] = $inactive_employers;
         }
         return $companies;
     }
 
-    function get_candidate_offers($company_sid = NULL, $start_date = NULL, $end_date = NULL, $keyword = 'all') {
+    function get_candidate_offers($company_sid = NULL, $start_date = NULL, $end_date = NULL, $keyword = 'all')
+    {
         $this->db->select('first_name, last_name, registration_date, CompanyName, access_level, email, applicant_sid');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('username', NULL);
@@ -927,7 +957,7 @@ class Reports_model extends CI_Model {
         }
 
         $candidates = $this->db->get('users')->result_array();
-        
+
         foreach ($candidates as $key => $candidate) { // get job title
             $applicant_sid = $candidate['applicant_sid'];
             $this->db->select('job_sid');
@@ -941,22 +971,24 @@ class Reports_model extends CI_Model {
                 $candidates[$key]['job_title'] = 'Job Deleted';
             }
         }
-        
+
         return $candidates;
     }
 
-    function getApplicantReviewsCount($applicant_sid) {
+    function getApplicantReviewsCount($applicant_sid)
+    {
         $result = $this->db->get_where('portal_applicant_rating', array('applicant_job_sid' => $applicant_sid));
         return $result->num_rows();
     }
 
-    function getApplicantAverageRating($app_id, $users_type = 'applicant') {
+    function getApplicantAverageRating($app_id, $users_type = 'applicant')
+    {
         $result = $this->db->get_where('portal_applicant_rating', array(
             'applicant_job_sid' => $app_id
         ));
-        
+
         $rows = $result->num_rows();
-        
+
         if ($rows > 0) {
             $this->db->select_sum('rating');
             $this->db->where('applicant_job_sid', $app_id);
@@ -966,7 +998,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_not_hired_applicants($company_sid) {
+    function get_not_hired_applicants($company_sid)
+    {
         $this->db->select('sid');
         $this->db->where('employer_sid', $company_sid);
         $this->db->where('hired_status', 0);
@@ -980,7 +1013,8 @@ class Reports_model extends CI_Model {
         return $applicant_sids;
     }
 
-    function get_job_title_by_type($job_sid, $applicant_type, $desired_job_title) {
+    function get_job_title_by_type($job_sid, $applicant_type, $desired_job_title)
+    {
         $job_title = '';
 
         if ($applicant_type == 'Applicant') {
@@ -1004,7 +1038,8 @@ class Reports_model extends CI_Model {
         return $job_title;
     }
 
-    function get_applicants_by_source($company_sid, $applicant_source, $start_date, $end_date, $keyword = 'all', $count_only = false, $limit = null, $offset = null) {
+    function get_applicants_by_source($company_sid, $applicant_source, $start_date, $end_date, $keyword = 'all', $count_only = false, $limit = null, $offset = null)
+    {
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -1073,7 +1108,8 @@ class Reports_model extends CI_Model {
         }
     }
 
-    function get_applicant_interview_scores($company_sid, $keyword = 'all') {
+    function get_applicant_interview_scores($company_sid, $keyword = 'all')
+    {
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -1147,7 +1183,8 @@ class Reports_model extends CI_Model {
         return $applicants;
     }
 
-    function get_stats_by_source($search = array(), $company_sid) {
+    function get_stats_by_source($search = array(), $company_sid)
+    {
         if ($search['date_option'] == 'daily') {
             $start = date('Y-m-d 00:00:00');
             $end = date('Y-m-d 23:59:59');
@@ -1167,8 +1204,9 @@ class Reports_model extends CI_Model {
         $this->db->order_by('portal_applicant_jobs_list.sid', 'DESC');
         return $this->db->get('portal_applicant_jobs_list')->result_array();
     }
-    
-    function have_status_records($company_sid) {
+
+    function have_status_records($company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $status = $this->db->get('application_status')->result_array();
 
@@ -1177,5 +1215,32 @@ class Reports_model extends CI_Model {
         } else {
             return false;
         }
+    }
+
+    //
+    function get_all_jobs_views_applicants_count_filter($company_sid, $jobStatus)
+    {
+        $this->db->select('*');
+        $this->db->where('user_sid', $company_sid);
+
+        if ($jobStatus != 'all') {
+            $this->db->where('active', $jobStatus);
+        }
+        $this->db->where('active <> ', 2);
+
+        $this->db->order_by('sid', 'DESC');
+        $return_data = $this->db->get('portal_job_listings')->result_array();
+
+        if (!empty($return_data)) {
+            foreach ($return_data as $key => $row) {
+                $job_sid = $row['sid'];
+                $this->db->select('sid');
+                $this->db->where('job_sid', $job_sid);
+                $this->db->from('portal_applicant_jobs_list');
+                $count = $this->db->count_all_results();
+                $return_data[$key]['applicant_count'] = $count;
+            }
+        }
+        return $return_data;
     }
 }

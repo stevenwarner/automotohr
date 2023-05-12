@@ -1,21 +1,27 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Company_daily_activity_report extends CI_Controller {
+class Company_daily_activity_report extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         // $this->load->library("pagination");
         $this->load->model('Reports_model');
     }
 
-    public function index($company_sid) {
+    public function index($company_sid)
+    {
         if ($this->session->userdata('executive_loggedin')) {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Company Daily Activity Report';
             $data['company_sid'] = $company_sid;
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
 
             //**** working code ****//
             // $data['companies'] = $this->Reports_model->get_all_companies();
@@ -29,7 +35,6 @@ class Company_daily_activity_report extends CI_Controller {
             }
 
             if ($this->form_validation->run() == false) {
-                
             } else {
                 $perform_action = $this->input->post('perform_action');
 
@@ -52,6 +57,8 @@ class Company_daily_activity_report extends CI_Controller {
                         header('Content-Type: text/csv; charset=utf-8');
                         header('Content-Disposition: attachment; filename=data.csv');
                         $output = fopen('php://output', 'w');
+
+                        fputcsv($output, ['Company Name', getCompanyNameBySid($company_sid)]);
 
                         foreach ($employers as $employer) {
                             fputcsv($output, array($employer['employer_name'], '', $employer['total_time_spent'] . ' Minutes'));
@@ -79,7 +86,8 @@ class Company_daily_activity_report extends CI_Controller {
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
         $perform_action = $this->input->post('perform_action');
 
@@ -93,7 +101,6 @@ class Company_daily_activity_report extends CI_Controller {
         }
 
         if ($this->form_validation->run() == false) {
-            
         } else {
             $perform_action = $this->input->post('perform_action');
             switch ($perform_action) {
@@ -120,5 +127,4 @@ class Company_daily_activity_report extends CI_Controller {
             }
         }
     }
-
 }

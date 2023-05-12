@@ -1,4 +1,5 @@
 <script type="text/javascript">
+
     function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
@@ -55,6 +56,46 @@
                         </div>
                     </div>
                 </div>
+            
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div style="margin-top: 15px; margin-left: -15px; margin-right: -15px;">
+
+                    <form id="form-filters" method="post" enctype="multipart/form-data" action="">
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label>Job Status</label>
+                            <div class="hr-select-dropdown">
+                                <select class="invoice-fields" name="job_status" id="job_status">
+                                    <option value="all">All</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label></label>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <button class="btn btn-success btn-block" id="btn_apply_filters">Filter</button>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <a class="btn btn-success btn-block" id="clear" href="<?php echo base_url('reports/job_views_report/'.$company_sid); ?>/">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+
                 <!-- counts -->
                 <?php if (isset($all_jobs) && !empty($all_jobs)) { ?>
                     <div class="bt-panel">
@@ -64,6 +105,8 @@
                         </a>
                         <form method="post" id="export" name="export">
                             <input type="hidden" name="submit" value="Export" />
+                            <input type="hidden" name="job_status" value="<?php echo $jobstatus;?>" />
+
                             <button class="btn btn-success" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export To Excel</button>
                         </form>
                     </div>
@@ -146,3 +189,7 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+$("#job_status").val('<?php echo $jobstatus;?>');
+</script>

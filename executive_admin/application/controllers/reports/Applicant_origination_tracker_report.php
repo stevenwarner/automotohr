@@ -17,6 +17,8 @@ class Applicant_origination_tracker_report extends CI_Controller {
             $data['title'] = 'Applicant Origination Tracking Report';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             //**** working code ****//
             $source = urldecode($source);
             $start_date = urldecode($startdate);
@@ -68,6 +70,8 @@ class Applicant_origination_tracker_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+                   
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
 
                     $company_applicants_by_source = $data['companies_applicants_by_source'];
                     $company_info = $company_applicants_by_source['company_info'];

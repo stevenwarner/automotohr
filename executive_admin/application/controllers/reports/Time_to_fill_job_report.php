@@ -17,6 +17,8 @@ class Time_to_fill_job_report extends CI_Controller {
             $data['title'] = 'Applicants Report - Time To Fill';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             $keyword = urldecode($keyword);
 
             //**** working code ****//
@@ -60,6 +62,8 @@ class Time_to_fill_job_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+                  
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
                     fputcsv($output, array('Job Title', 'Job Date', 'Applicants', 'Average Days To Fill'));
 
                     foreach ($data['jobs'] as $job) {
