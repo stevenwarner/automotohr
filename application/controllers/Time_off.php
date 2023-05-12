@@ -288,7 +288,7 @@ class Time_off extends Public_Controller
      *
      */
     function policies($page = 'view', $id = NULL, $filter = NULL)
-    {
+    {        
         $data = array();
         $this->check_login($data);
         $employer_detail = $data['session']['employer_detail'];
@@ -2910,6 +2910,53 @@ class Time_off extends Public_Controller
                 $this->res['Data'] = $policyHistory;
                 $this->resp();
                 break;
+
+            case "get_policy_request":
+                //
+                $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($post['companyId']);
+                $policyRequests = $this->timeoff_model->getPolicyRequests($post['policyId']);
+                $policies = $this->timeoff_model->getAllActivePolicies($post['companyId']);
+                //
+                if (empty($policyRequests)) {
+                    $this->res['Response'] = 'We are unable to find requests against this policy.';
+                }
+                //
+                $empTimeoff = array_column($policyRequests, 'employee_sid');
+                //
+                foreach ($company_employees as $ekey => $employee) {
+                    if (!in_array($employee['sid'], $empTimeoff)) {
+                        unset($company_employees[$ekey]);
+                    } else {
+                        //
+                        foreach ($policyRequests as $request) {
+                            //
+                            if ($employee['sid'] == $request['employee_sid']) {
+                                //
+                                $processRequest = splitTimeoffRequest($request);
+                                //
+                                if ($processRequest['type'] == 'multiple') {
+                                    //
+                                    foreach ($processRequest['requestData'] as $split) {
+                                        $company_employees[$ekey]['timeoffs'][] = $split;
+                                    }
+                                    //
+                                } else {
+                                    $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
+                                }
+
+                            }
+                        }
+                    }
+                }
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['View'] = $this->load->view('timeoff/partials/policies/manage_policy', [
+                    'company_employees' => $company_employees,
+                    'company_policies' => $policies
+                ], true);
+                $this->resp();
+                break;    
 
                 // Fetch company types
             case 'get_types_by_company':

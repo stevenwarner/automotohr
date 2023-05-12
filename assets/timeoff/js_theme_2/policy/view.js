@@ -41,10 +41,20 @@ $(function () {
                 employeeId: employeeId,
                 public: 0
             }
+        },
+        ManagePolicy: {
+            Main: {
+                action: "get_policy_request",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
+            }
         }
     },
         oldState = {},
-        xhr = null;
+        xhr = null,
+        PolicyID = 0;
 
     //
     window.timeoff.PaginationOBJ.CompanyPolicies = callOBJ.CompanyPolicies;
@@ -85,6 +95,18 @@ $(function () {
         }, () => {
             // Fetch history
             fetchPolicyHistory($(this).closest('.jsBox').data('id'));
+        });
+    });
+    //
+    $(document).on('click', '.jsManagePolicy', function () {
+        Modal({
+            Id: 1,
+            Title: `Policy History for ${$(this).closest('.jsBox').data('name')}`,
+            Body: getManagePolicyTemplate(),
+            Loader: 'jsManagePolicyLoader'
+        }, () => {
+            // Fetch Employee
+            fetchPolicyRequests($(this).closest('.jsBox').data('id'));
         });
     });
     // Filter buttons
@@ -180,6 +202,18 @@ $(function () {
             ok: 'YES',
             cancel: 'NO'
         }).setHeader('CONFIRM!');
+    });
+
+    //
+    $(document).on('change', '#jsAssigPolicyToAll', function () {
+        //
+        let newPolicy = $(this).val();
+        // $('select.jsAssignNewPolicy').val(newPolicy).trigger('change');
+
+        if (newPolicy != PolicyID) {
+            $('.jsAssignNewPolicy').select2('val', newPolicy);
+        }
+        
     });
 
     //
@@ -369,6 +403,16 @@ $(function () {
         return html;
     }
 
+    
+    //
+    function getManagePolicyTemplate() {
+        let html = `
+            <div id="jsManagePolicyTable">    
+            </div>
+        `;
+        return html;
+    }
+
     //
     function fetchPolicyHistory(
         policyId
@@ -429,6 +473,57 @@ $(function () {
         });
     }
 
+    function fetchPolicyRequests (policyId) {
+        //
+        PolicyID = policyId;
+        //
+        ml(true, 'jsManagePolicyLoader');
+        //
+        $('#jsPolicyHistoryTable').html('');
+        //
+        xhr = $.post(handlerURL, Object.assign(callOBJ.ManagePolicy.Main, {
+            policyId: policyId
+        }), (resp) => {
+            //
+            xhr = null;
+            //
+            if (resp.Redirect === true) {
+                alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+                    window.location.reload();
+                });
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                alertify.alert('WARNING!', resp.Response, () => { });
+                //
+                ml(false, 'jsManagePolicyLoader');
+                //
+                return;
+            }
+
+            //
+            $('#jsManagePolicyTable').html(resp.View);
+            //
+            $('.jsAssignNewPolicy').select2({
+                closeOnSelect: false
+            });
+            //
+            console.log(policyId)            
+            // $('.jsAssignNewPolicy').select2('val', policyId);
+            // $('select.jsAssignNewPolicy').val(policyId).trigger('change');
+            //
+            $('#jsAssigPolicyToAll').select2({
+                closeOnSelect: false
+            });
+            //
+            console.log(policyId)
+            $('#jsAssigPolicyToAll').select2('val', policyId);
+            //
+            ml(false, 'jsManagePolicyLoader');
+        });
+    }
+
     //
     function getPolicyBox(v) {
         let title = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'Activate Policy' : 'Deactivate Policy',
@@ -445,6 +540,7 @@ $(function () {
         rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
 
         rows += `            <span class="pull-right">`;
+        rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsManagePolicy" title="Manage Policy" placement="top"><i class="fa fa-cog"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistory" title="View history" placement="top"><i class="fa fa-history"></i></span>`;
         rows += `            </span>`;

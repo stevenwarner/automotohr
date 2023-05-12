@@ -401,6 +401,58 @@ class Timeoff_model extends CI_Model
     }
 
     /**
+     * Get policy requests by id
+     * 
+     * @employee  Aleem Shaukat
+     * @date      12/05/2023
+     * 
+     * @param Integer $policyId
+     * 
+     * @return Array
+     */
+    function getPolicyRequests($policyId)
+    {
+        return $this->db
+            ->select('
+            request_from_date , 
+            request_to_date,
+            requested_time,
+            employee_sid
+        ')
+            ->where('timeoff_policy_sid', $policyId)
+            ->get('timeoff_requests')
+            ->result_array();
+    }
+
+    /**
+     * Get all active policy by company id
+     * 
+     * @employee  Aleem Shaukat
+     * @date      12/05/2023
+     * 
+     * @param Integer $companyId
+     * 
+     * @return Array
+     */
+    function getAllActivePolicies($companyId)
+    {
+        $this->db
+            ->select('
+            sid,
+            title
+        ')
+            ->where('company_sid', $companyId)
+            ->where('is_archived', 0)
+            ->order_by('sort_order', 'ASC');
+        //
+        $policies = $this->db->get('timeoff_policies')
+            ->result_array();
+        //
+        return $policies;
+    }
+    
+
+    /**
      * Get company types
      * 
      * @employee Mubashir Ahmed
