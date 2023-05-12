@@ -1710,6 +1710,9 @@ $route['manage_admin/job_title_groups'] = 'manage_admin/job_title_templates/inde
 $route['manage_admin/job_title_groups/add'] = 'manage_admin/job_title_templates/add_edit_group';
 $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit_group/$1';
 
+// Employee onboard
+$route['gusto/employee/profile']['post'] = 'gusto/Gusto_payroll/onboardEmployee/profile';
+
 
 /**
  * Cron job URLS

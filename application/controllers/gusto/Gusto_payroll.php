@@ -296,4 +296,63 @@ class Gusto_payroll extends CI_Controller
         // add and Update Employee on Gusto
         $this->gusto_payroll_model->onboardEmployeeOnGusto($employeeId);
     }
+
+    /**
+     * Handle employee onboard
+     * 
+     * Handles employee onboard process from the 
+     * UI of super admin and employer panel
+     * 
+     * @method handleEmployeeProfileForOnboarding
+     * 
+     * @param string $type
+     * profile|job|home_address|federal_tax|state_tax|payment_method|documents
+     * @return json
+     */
+    public function onboardEmployee(string $type)
+    {
+        // get the filtered post
+        $post = $this->input->post(null, true);
+        // get gusto employee details
+        $gustoEmployeeDetails = $this->db
+            ->select('payroll_employee_uuid, version')
+            ->where([
+                'company_sid' => $post['companyId'],
+                'employee_sid' => $post['employeeId']
+            ])
+            ->get('payroll_employees')
+            ->row_array();
+        // double check the intrusion
+        if (!$gustoEmployeeDetails) {
+            // add the error
+            $errors['errors'][] = 'Employee not found.';
+            // send back response
+            return SendResponse(200, $errors);
+        }
+        // get the company details
+        $gustoCompany =
+            $this->db
+            ->select('
+                gusto_company_sid, 
+                gusto_company_uid,
+                access_token,
+                refresh_token
+            ')
+            ->where([
+                'company_sid' => $post['companyId']
+            ])
+            ->get('payroll_companies')
+            ->row_array();
+        // double check the intrusion
+        if (!$gustoCompany) {
+            // add the error
+            $errors['errors'][] = 'Company credentials not found.';
+            // send back response
+            return SendResponse(200, $errors);
+        }
+        // check for profile
+        if ($type == 'profile') {
+            $this->gusto_payroll_model->handleEmployeeProfileForOnboarding($post, $gustoEmployeeDetails, $gustoCompany, false);
+        }
+    }
 }

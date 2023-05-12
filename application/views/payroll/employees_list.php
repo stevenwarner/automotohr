@@ -32,8 +32,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Employee</th>
-                                            <th scope="col" class="text-right">Payroll Id</th>
-                                            <th scope="col" class="text-right">Onboard Status</th>
+                                            <th scope="col" class="text-center">Onboard Status</th>
                                             <th scope="col" class="text-right">Actions</th>
                                         </tr>
                                     </thead>
@@ -47,7 +46,3 @@
         </div>
     </div>
 </div>
-
-<!-- Add System Model -->
-<link rel="stylesheet" href="<?= base_url(_m("assets/css/SystemModel", 'css')); ?>">
-<script src="<?= base_url(_m("assets/js/SystemModal")); ?>"></script>

@@ -1,5 +1,5 @@
 <?php
- defined('BASEPATH') || exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
 /**
  * 
@@ -67,42 +67,14 @@ class Payroll_onboard extends CI_Controller
     {
         //
         $employeeId = $this->input->post('employee_id', true);
-        $this->gusto_payroll_model->onboardEmployeeOnGusto($employeeId);
+        //
+        $response = $this->gusto_payroll_model->onboardEmployeeOnGusto($employeeId);
+        //
+        if (is_array($response)) {
+            return sendResponse(200, ['status' => false, 'errors' => $response]);
+        }
+        //
         return sendResponse(200, ['status' => true]);
-        //
-        $ei = $this->sem->GetEmployeeDetailWithPayroll($employeeId, [
-            "users.sid",
-            "users.first_name",
-            "users.middle_name",
-            "users.last_name",
-            "users.registration_date",
-            "users.joined_at",
-            "users.ssn",
-            "users.dob",
-            "users.email",
-            "users.Location_Country",
-            "users.Location_State",
-            "users.Location_City",
-            "users.Location_Address",
-            "users.PhoneNumber",
-            "users.Location_ZipCode",
-            "users.Location_Address_2",
-            "users.on_payroll",
-            "payroll_employees.payroll_employee_uuid"
-        ]);
-        // Either employee is on payroll or not
-        if(!$ei['payroll_employee_uuid']){
-            $this->CreateEmployeeOnGusto($companyId, $employeeId, $ei);
-        }
-        // Let's update employee's address
-        $this->UpdateEmployeeAddressOnGusto($companyId, $employeeId);
-        // Let's create a job
-        $this->CreateEmployeeJobOnGusto($companyId, $employeeId);
-        //
-        if($this->input->post('need_response', true)){
-            return sendResponse(200, ['status' => true]);
-        }
-
     }
 
     /**
@@ -120,7 +92,7 @@ class Payroll_onboard extends CI_Controller
         //
         return sendResponse(200, ['status' => true]);
     }
-    
+
     /**
      * Accept terms
      * 
@@ -131,22 +103,24 @@ class Payroll_onboard extends CI_Controller
     {
         //
         $termsAccepted = $this->pm->GetPayrollColumn(
-            'payroll_companies', [
+            'payroll_companies',
+            [
                 "company_sid" => $companyId
             ],
             'terms_accepted',
             true
         );
         //
-        if($termsAccepted){
+        if ($termsAccepted) {
             return sendResponse(200, ['status' => false, 'response' => "Already accepted"]);
         }
         //
         $ses = $this->session->userdata('logged_in')['employer_detail'];
         //
-        if(
+        if (
             !$this->pm->GetPayrollColumn(
-                'payroll_company_admin', [
+                'payroll_company_admin',
+                [
                     "company_sid" => $companyId,
                     "email_address" => $ses['email']
                 ],
@@ -166,7 +140,7 @@ class Payroll_onboard extends CI_Controller
         //
         return sendResponse(200, ['status' => true]);
     }
-    
+
     /**
      * Payment configs
      * 
@@ -193,11 +167,12 @@ class Payroll_onboard extends CI_Controller
      * @param string $type
      * @return
      */
-    public function Get($companyId, $type){
+    public function Get($companyId, $type)
+    {
         //
         $type = strtolower($type);
         // For payroll employees
-        if($type == 'payroll_employees'){
+        if ($type == 'payroll_employees') {
             //
             $employees = $this->sem->GetPayrollEmployees($companyId, [
                 rtrim(getUserFields(), ','),
@@ -208,22 +183,25 @@ class Payroll_onboard extends CI_Controller
                 'payroll_employees.federal_tax',
                 'payroll_employees.state_tax',
                 'payroll_employees.payment_method',
+                'payroll_employees.employee_form_signing',
                 'payroll_employees.payroll_employee_id',
                 'payroll_employees.payroll_employee_uuid'
             ]);
             //
-            if($employees){
+            if ($employees) {
                 //
                 $tmp = [];
                 //
-                foreach($employees as $employee){
+                foreach ($employees as $employee) {
                     //
-                    if(!$employee['payroll_employee_uuid']) { continue; }
+                    if (!$employee['payroll_employee_uuid']) {
+                        continue;
+                    }
                     //
                     $tmp[] = [
                         'user_id' => $employee['userId'],
                         'payroll_onboard_status' => EmployeePayrollOnboardStatus($employee),
-                        'payroll_employee_id' => $employee['payroll_employee_id'],
+                        'payroll_employee_id' => $employee['payroll_employee_uuid'],
                         'full_name_with_role' => remakeEmployeeName($employee)
                     ];
                 }
@@ -234,7 +212,7 @@ class Payroll_onboard extends CI_Controller
             return SendResponse(200, $employees);
         }
         // To onboard payroll employees
-        if($type == 'employees'){
+        if ($type == 'employees') {
             //
             $employees = $this->sem->GetPayrollEmployees($companyId, [
                 rtrim(getUserFields(), ','),
@@ -248,33 +226,37 @@ class Payroll_onboard extends CI_Controller
                 'payroll_employees.payroll_employee_id'
             ]);
             //
-            if($employees){
+            if ($employees) {
                 //
                 $tmp = [];
                 //
-                foreach($employees as $employee){
+                foreach ($employees as $employee) {
                     //
-                    if($employee['payroll_employee_id']) { continue; }
+                    if ($employee['payroll_employee_id']) {
+                        continue;
+                    }
                     //
                     $missing_fields = [];
                     //
-                    if(!$employee['first_name']){
+                    if (!$employee['first_name']) {
                         $missing_fields[] = 'First Name';
                     }
                     //
-                    if(!$employee['last_name']){
+                    if (!$employee['last_name']) {
                         $missing_fields[] = 'Last Name';
                     }
                     //
-                    if(!$employee['ssn']){
+                    $employee['ssn'] = preg_replace('/[^0-9]/', '', $employee['ssn']);
+                    //
+                    if (!preg_match('/[0-9]{9}/', $employee['ssn'])) {
                         $missing_fields[] = 'Social Security Number';
                     }
                     //
-                    if(!$employee['dob']){
+                    if (!$employee['dob']) {
                         $missing_fields[] = 'Date Of Birth';
                     }
                     //
-                    if(!$employee['email']){
+                    if (!$employee['email']) {
                         $missing_fields[] = 'Email';
                     }
                     //
@@ -303,7 +285,8 @@ class Payroll_onboard extends CI_Controller
      * @param number $employeeId
      * @return
      */
-    public function DeleteEmployeeFromPayroll($companyId, $employeeId){
+    public function DeleteEmployeeFromPayroll($companyId, $employeeId)
+    {
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($employeeId, [
             "payroll_employees.payroll_employee_uuid"
@@ -336,13 +319,14 @@ class Payroll_onboard extends CI_Controller
      * @param number $companyId
      * @return
      */
-    public function EmployeeOnboardPiece($section, $companyId){
+    public function EmployeeOnboardPiece($section, $companyId)
+    {
         //
         $section = strtolower($section);
         //
         $post = $this->input->post(NULL, TRUE);
         //
-        switch($section){
+        switch ($section) {
             case "profile":
                 $this->AddEditEmployeeProfile($companyId, $post);
                 break;
@@ -365,10 +349,10 @@ class Payroll_onboard extends CI_Controller
                 $this->CompleteOnboardStep($companyId, $post);
                 break;
             default:
-            return SendResponse(401, 'Invalid call made.');
+                return SendResponse(401, 'Invalid call made.');
         }
     }
-    
+
     /** 
      * Get employee section for payroll
      * 
@@ -377,16 +361,17 @@ class Payroll_onboard extends CI_Controller
      * @param number $employeeId
      * @return
      */
-    public function GetEmployeeOnboardSection($section, $companyId, $employeeId){
+    public function GetEmployeeOnboardSection($section, $companyId, $employeeId)
+    {
         //
         $section = strtolower($section);
         //
-        switch($section){
+        switch ($section) {
             case "state_tax":
                 $this->GetEmployeeStateTax($companyId, $employeeId);
                 break;
             default:
-            return SendResponse(401, 'Invalid call made.');
+                return SendResponse(401, 'Invalid call made.');
         }
     }
 
@@ -399,7 +384,8 @@ class Payroll_onboard extends CI_Controller
      * @param number $bankId
      * @return
      */
-    public function DeleteEmployeeOnboardSection($section, $companyId, $employeeId, $bankId){
+    public function DeleteEmployeeOnboardSection($section, $companyId, $employeeId, $bankId)
+    {
         //
         $section = strtolower($section);
         //
@@ -408,7 +394,7 @@ class Payroll_onboard extends CI_Controller
             'id' => $bankId
         ];
         //
-        if($section == 'bank_account'){
+        if ($section == 'bank_account') {
             $this->DeleteEmployeeBankAccount($companyId, $post);
         }
 
@@ -422,10 +408,12 @@ class Payroll_onboard extends CI_Controller
      * @param number $employeeId
      * @return
      */
-    public function OnboardStatus($companyId, $employeeId){
+    public function OnboardStatus($companyId, $employeeId)
+    {
         //
         $employeePayroll = $this->pm->GetPayrollColumn(
-            'payroll_employees', [
+            'payroll_employees',
+            [
                 "employee_sid" => $employeeId
             ],
             'onboard_completed, personal_profile, compensation, home_address, federal_tax, state_tax, payment_method',
@@ -434,7 +422,7 @@ class Payroll_onboard extends CI_Controller
         //
         $resp = EmployeePayrollOnboardStatus($employeePayroll);
         //
-        return SendResponse(200, [ 'status' => true, 'response' => $resp ]);
+        return SendResponse(200, ['status' => true, 'response' => $resp]);
     }
 
 
@@ -447,7 +435,8 @@ class Payroll_onboard extends CI_Controller
      * @param number $companyId
      * @return
      */
-    private function CreatePartnerCompany($companyId){
+    private function CreatePartnerCompany($companyId)
+    {
         //
         LoadModel('scm', $this);
         // Get primary admin
@@ -507,7 +496,8 @@ class Payroll_onboard extends CI_Controller
      * @param array  $cd
      * @return
      */
-    private function AddCompanyLocation($companyId, $cd){
+    private function AddCompanyLocation($companyId, $cd)
+    {
         //
         LoadModel('scm', $this);
         // Get company details
@@ -569,7 +559,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function CreateEmployeeOnGusto($companyId, $employeeId, $ei){
+    private function CreateEmployeeOnGusto($companyId, $employeeId, $ei)
+    {
         //
         $request = [];
         $request['first_name'] = $ei['first_name'];
@@ -763,7 +754,7 @@ class Payroll_onboard extends CI_Controller
         //
         return true;
     }
-    
+
     /**
      * Create employee job on Gusto
      * 
@@ -772,7 +763,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function CreateEmployeeJobOnGusto($companyId, $employeeId){
+    private function CreateEmployeeJobOnGusto($companyId, $employeeId)
+    {
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($employeeId, [
             "users.job_title",
@@ -833,7 +825,7 @@ class Payroll_onboard extends CI_Controller
         //
         $this->pm->InsertPayroll('payroll_employee_job_versions', $ia);
         // //
-        foreach($response['compensations'] as $compensation){
+        foreach ($response['compensations'] as $compensation) {
             // Add entry to the payroll job compensation
             $ia = [];
             $ia['payroll_job_sid'] = $id;
@@ -870,27 +862,28 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function AddEditEmployeeProfile($companyId, $post){
+    private function AddEditEmployeeProfile($companyId, $post)
+    {
         // Errors array
         $er = [];
         // Validations
-        if(empty($post['FirstName'])){
+        if (empty($post['FirstName'])) {
             $er[] = 'First name is missing.';
         }
-        if(empty($post['LastName'])){
+        if (empty($post['LastName'])) {
             $er[] = 'Last name is missing.';
         }
-        if(empty($post['DOB'])){
+        if (empty($post['DOB'])) {
             $er[] = 'Date Of Birth is missing.';
         }
-        if(empty($post['Email'])){
+        if (empty($post['Email'])) {
             $er[] = 'Email is missing.';
         }
-        if(empty($post['SSN'])){
+        if (empty($post['SSN'])) {
             $er[] = 'Social Security Number is missing.';
         }
 
-        if($er){
+        if ($er) {
             return SendResponse(200, [
                 'status' => false,
                 'errors' => $er
@@ -904,20 +897,20 @@ class Payroll_onboard extends CI_Controller
             "payroll_employees.work_address_sid"
         ]);
         // Either employee is on payroll or not
-        if(!$ei['payroll_employee_uuid']){
+        if (!$ei['payroll_employee_uuid']) {
             $this->CreateEmployeeOnGusto($companyId, $post['employeeId'], $ei);
-        } else{
+        } else {
             // Let's update the employee data
             $this->UpdateEmployeeOnGusto($companyId, $post, $ei['payroll_employee_uuid'], $ei['version']);
             // Check the jobs view
-            if(!$post['EWA'] || $post['EWA'] == 0){
+            if (!$post['EWA'] || $post['EWA'] == 0) {
                 //
                 return SendResponse(200, ['status' => true, 'response' => 'Employee\'s personal details is added/updated. The system is unable to update job due to missing work address and start date. Please, complete these two in order to proceed. ', 'move' => false]);
             }
             // Lets update the job
             $response = $this->UpdateEmployeeJob($companyId, $post);
             //
-            if(is_array($response)){
+            if (is_array($response)) {
                 return SendResponse(200, ['status' => false, 'errors' => $response]);
             }
             //
@@ -935,7 +928,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function UpdateEmployeeOnGusto($companyId, $post, $employee_uuid, $version){
+    private function UpdateEmployeeOnGusto($companyId, $post, $employee_uuid, $version)
+    {
         // Make update array
         $upa = [];
         $upa['first_name'] = $post['FirstName'];
@@ -1001,7 +995,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function UpdateEmployeeJob($companyId, $post){
+    private function UpdateEmployeeJob($companyId, $post)
+    {
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "users.job_title",
@@ -1023,7 +1018,7 @@ class Payroll_onboard extends CI_Controller
         //
         $request = [];
         $request['title'] = $ed['job_title'] ? $ed['job_title'] : 'Automotive';
-        if(isset($post['job_title'])){
+        if (isset($post['job_title'])) {
             $request['title'] = $post['job_title'];
         }
         $request['location_id'] = $post['EWA'];
@@ -1045,7 +1040,7 @@ class Payroll_onboard extends CI_Controller
             return $errors;
         }
         //
-        if(isset($response['name'])){
+        if (isset($response['name'])) {
             return [$response['message']];
         }
         // Add entry to the payroll job
@@ -1074,7 +1069,7 @@ class Payroll_onboard extends CI_Controller
         //
         $this->pm->InsertPayroll('payroll_employee_job_versions', $ia);
         // //
-        foreach($response['compensations'] as $compensation){
+        foreach ($response['compensations'] as $compensation) {
             // Get compensation sid
             $sid = $this->pm->GetCompensationColumn($compensation['id']);
             // Add entry to the payroll job compensation
@@ -1113,15 +1108,17 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function EditEmployeeJobAndCompensation($companyId, $post){
+    private function EditEmployeeJobAndCompensation($companyId, $post)
+    {
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "payroll_employees.work_address_sid"
         ]);
+        _e($ed, true, true);
         // Update job
         $response = $this->UpdateEmployeeJob($companyId, ['job_title' => $post['Title'], 'EWA' => $ed['work_address_sid'], 'employeeId' => $post['employeeId']]);
         // Check if there was an error
-        if(is_array($response)){
+        if (is_array($response)) {
             return sendResponse(200, ['status' => false, 'errors' => $response]);
         }
         //
@@ -1178,7 +1175,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function GetAndUpdateJob($companyId, $jobId){
+    private function GetAndUpdateJob($companyId, $jobId)
+    {
         //
         $payrollId = $this->pm->GetPayrollColumn('payroll_employee_jobs', ['sid' => $jobId], 'payroll_job_id');
         // Get company details
@@ -1215,7 +1213,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function EditEmployeeHomeAddress($companyId, $post){
+    private function EditEmployeeHomeAddress($companyId, $post)
+    {
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "payroll_employee_address.sid",
@@ -1271,7 +1270,7 @@ class Payroll_onboard extends CI_Controller
             'Location_City' => $response['city']
         ], ['sid' => $post['employeeId']]);
         //
-        if(!empty($post['PhoneNumber'])){
+        if (!empty($post['PhoneNumber'])) {
             $this->pm->UpdatePayroll('users', ['PhoneNumber' => $post['PhoneNumber']], ['sid' => $post['employeeId']]);
         }
         //
@@ -1286,14 +1285,15 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function EditEmployeeFederalTax($companyId, $post){
+    private function EditEmployeeFederalTax($companyId, $post)
+    {
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "payroll_employee_federal_tax.sid",
             "payroll_employee_federal_tax.version"
         ], 'payroll_employee_federal_tax');
         //
-        if(empty($ed['sid'])){
+        if (empty($ed['sid'])) {
             $ed = $this->GetEmployeeFederalTax($companyId, $post['employeeId']);
         }
         // Let's update the compensations
@@ -1357,16 +1357,17 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function EditEmployeeStateTax($companyId, $post){
+    private function EditEmployeeStateTax($companyId, $post)
+    {
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "payroll_employee_state_tax.sid",
         ], 'payroll_employee_state_tax');
         //
-        if(empty($ed['sid'])){
+        if (empty($ed['sid'])) {
             $ed = $this->GetEmployeeStateTax($companyId, $post['employeeId']);
         }
-         //
+        //
         $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "payroll_employees.payroll_employee_uuid"
         ])['payroll_employee_uuid'];
@@ -1381,7 +1382,7 @@ class Payroll_onboard extends CI_Controller
         //
         unset($tpost['state_name'], $tpost['employeeId']);
         //
-        foreach($tpost as $k => $v){
+        foreach ($tpost as $k => $v) {
             $request['states'][0]['questions'][] = [
                 'key' => $k,
                 'answers' => [[
@@ -1390,8 +1391,8 @@ class Payroll_onboard extends CI_Controller
                 ]]
             ];
         }
-        
-       
+
+
         // Get company details
         $company_details = $this->pm->GetPayrollCompany($companyId);
         //
@@ -1428,10 +1429,11 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function AddEditEmployeeBankAccount($companyId, $post){
+    private function AddEditEmployeeBankAccount($companyId, $post)
+    {
         //
-        if($post['bankId'] == 0){
-            $this->AddEmployeeBankDetails($companyId, $post);  
+        if ($post['bankId'] == 0) {
+            $this->AddEmployeeBankDetails($companyId, $post);
         }
         // Get the latest payment method
         $this->UpdateEmployeePaymentMethod($companyId, $post['employeeId']);
@@ -1447,7 +1449,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function AddEmployeeBankDetails($companyId, $post){
+    private function AddEmployeeBankDetails($companyId, $post)
+    {
         //
         $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "payroll_employees.payroll_employee_uuid"
@@ -1498,7 +1501,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function GetEmployeeFederalTax($companyId, $employeeId){
+    private function GetEmployeeFederalTax($companyId, $employeeId)
+    {
         //
         $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
         // Get company details
@@ -1547,7 +1551,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function GetEmployeeStateTax($companyId, $employeeId){
+    private function GetEmployeeStateTax($companyId, $employeeId)
+    {
         //
         $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
         // Get company details
@@ -1571,10 +1576,10 @@ class Payroll_onboard extends CI_Controller
         $ia['state_json'] = json_encode($response[0]);
         $ia['updated_at'] = $this->datetime;
         //
-        if(!$sid){
+        if (!$sid) {
             $ia['created_at'] = $this->datetime;
             $response['sid'] = $this->pm->InsertPayroll('payroll_employee_state_tax', $ia);
-        } else{
+        } else {
             $this->pm->UpdatePayroll('payroll_employee_state_tax', $ia, ['sid' => $response['sid']]);
         }
         //
@@ -1590,7 +1595,8 @@ class Payroll_onboard extends CI_Controller
     /**
      * 
      */
-    private function UpdateEmployeePaymentMethod($companyId, $employeeId){
+    private function UpdateEmployeePaymentMethod($companyId, $employeeId)
+    {
         //
         $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
         // Get company details
@@ -1619,7 +1625,8 @@ class Payroll_onboard extends CI_Controller
     /**
      * 
      */
-    private function DeleteEmployeeBankAccount($companyId, $post){
+    private function DeleteEmployeeBankAccount($companyId, $post)
+    {
         //
         $bankUid = $post['id'];
         //
@@ -1648,7 +1655,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function CompleteOnboardStep($companyId, $post, $return = true){
+    private function CompleteOnboardStep($companyId, $post, $return = true)
+    {
         //
         $onboardCompleted = $this->pm->GetPayrollColumn('payroll_employees', [
             'employee_sid' => $post['employeeId'],
@@ -1659,11 +1667,11 @@ class Payroll_onboard extends CI_Controller
             'state_tax' => 1
         ], 'sid');
         //
-        if($return){
+        if ($return) {
             $this->UpdateEmployeePaymentMethodToGusto($companyId, $post['employeeId']);
         }
         //
-        if(!$onboardCompleted){
+        if (!$onboardCompleted) {
             return SendResponse(200, ['status' => true, 'response' => 'You have successfully onboard the employee.']);
         }
         //
@@ -1688,7 +1696,8 @@ class Payroll_onboard extends CI_Controller
     /**
      * 
      */
-    private function UpdateEmployeePaymentMethodToGusto($companyId, $employeeId){
+    private function UpdateEmployeePaymentMethodToGusto($companyId, $employeeId)
+    {
         //
         $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $employeeId], 'payroll_employee_uuid');
         //
@@ -1701,11 +1710,11 @@ class Payroll_onboard extends CI_Controller
         $request['type'] = trim($this->input->post('PaymentMethod', true));
         $request['split_by'] = 'Amount';
         //
-        if($request['type'] == 'Direct Deposit'){
+        if ($request['type'] == 'Direct Deposit') {
             //
             $request['splits'] = json_decode($payment['splits']);
             //
-            if(count($request['splits']) == 1){
+            if (count($request['splits']) == 1) {
                 $request['split_by'] = 'Percentage';
             }
         }
@@ -1727,7 +1736,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function GetEmployeeBankDetails($companyId, $post){
+    private function GetEmployeeBankDetails($companyId, $post)
+    {
         //
         $payrollId = $this->pm->GetPayrollColumn('payroll_employees', ['employee_sid' => $post['employeeId']], 'payroll_employee_uuid');
         // Get company details
@@ -1739,7 +1749,7 @@ class Payroll_onboard extends CI_Controller
             return MakeErrorArray($response['errors']);
         }
         //
-        if(!$response){
+        if (!$response) {
             //
             $result = $this->pm->GetPayrollColumn('bank_account_details', ['users_sid' => $post['employeeId'], 'users_type' => 'employee'], 'sid, account_title, routing_transaction_number, account_number, account_type', false);
             // Add entry to the payroll job
@@ -1771,7 +1781,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function CreateAdminOnGusto($companyId, $post){
+    private function CreateAdminOnGusto($companyId, $post)
+    {
         //
         $request = $post;
         // Get company details
@@ -1805,7 +1816,7 @@ class Payroll_onboard extends CI_Controller
         //
         return $id;
     }
-    
+
     /**
      * Create admin on gusto
      * 
@@ -1814,7 +1825,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function AcceptServiceTermsOnGusto($companyId, $request){
+    private function AcceptServiceTermsOnGusto($companyId, $request)
+    {
         // Get company details
         $company_details = $this->pm->GetPayrollCompany($companyId);
         //
@@ -1842,7 +1854,7 @@ class Payroll_onboard extends CI_Controller
         //
         return true;
     }
-    
+
     /**
      * Create admin on gusto
      * 
@@ -1851,7 +1863,8 @@ class Payroll_onboard extends CI_Controller
      * 
      * @return
      */
-    private function UpdatePaymentConfig($companyId, $request){
+    private function UpdatePaymentConfig($companyId, $request)
+    {
         // Get company details
         $company_details = $this->pm->GetPayrollCompany($companyId);
         //
