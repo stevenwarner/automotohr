@@ -872,6 +872,19 @@ if (!function_exists('splitTimeoffRequest')) {
         $requestInterval = $fromDate->diff($toDate);
         $requestDays = $requestInterval->format('%d') + 1;
         //
+        $jsonToArray = $request['timeoff_days'] ? json_decode($request['timeoff_days'], true)['days'] : [];
+        //
+        if ($jsonToArray) {
+            //
+            $tmp = [];
+            //
+            foreach ($jsonToArray as $er) {
+                $tmp[formatDateToDB($er['date'], 'm-d-Y', DB_DATE)] = $er['time'];
+            }
+            //
+            $jsonToArray = $tmp;
+        }
+        //
         if ($requestDays > 1) {
             $requestData = [];
             $response['type'] = 'multiple';
@@ -881,7 +894,7 @@ if (!function_exists('splitTimeoffRequest')) {
                 $requestDate = date("Y-m-d", strtotime($i.'days', strtotime($request['request_from_date'])));
                 //
                 $split = $request;
-                $split['requested_time'] = $requestedTimePerDay;
+                $split['requested_time'] = $jsonToArray[$requestDate] ?? $requestedTimePerDay;
                 $split['request_from_date'] = $requestDate;
                 $split['request_to_date'] = $requestDate;
                 $split['request_status'] = getTimeoffRequestStatus($requestDate);

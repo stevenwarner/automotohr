@@ -5888,7 +5888,7 @@ class Timeoff_model extends CI_Model
         if ($type == 'employees_only') {
             $this->db->select('employee_sid');
         } else if ($type == 'records_only') {
-            $this->db->select('employee_sid, timeoff_policy_sid, requested_time, allowed_timeoff, request_from_date, request_to_date, status');
+            $this->db->select('employee_sid, timeoff_policy_sid, timeoff_days, requested_time, allowed_timeoff, request_from_date, request_to_date, status');
         }
         //
         $this->db->where('company_sid', $company_sid);
