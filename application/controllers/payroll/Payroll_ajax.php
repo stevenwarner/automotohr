@@ -761,6 +761,15 @@ class Payroll_ajax extends CI_Controller
             //
             $data['employee_job_info'] = $this->pm->GetEmployeeJobDetails($_GET["employee_id"]);
             //
+            if (!$data['employee_job_info']) {
+                $data['employee_job_info'] = $this->db->select('
+                    "Exempt" as flsa_status,
+                    job_title as title,
+                    hourly_rate as rate,
+                    "Hour" as payment_unit
+                ')->where('sid', $_GET["employee_id"])->get('users')->row_array();
+            }
+            //
             return SendResponse(200, [
                 'JOB_ID' => $data['employee_job_info']['sid'],
                 'JOB_HIRE_DATE' => $data['employee_job_info']['hire_date'],

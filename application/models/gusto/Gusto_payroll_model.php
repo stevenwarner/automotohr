@@ -1740,8 +1740,12 @@ class Gusto_payroll_model extends CI_Model
      * @param bool  $doReturn
      * @return array
      */
-    public function handleEmployeeProfileForOnboarding(array $post, array $gustoEmployeeDetails, array $gustoCompany, bool $doReturn)
-    {
+    public function handleEmployeeProfileForOnboarding(
+        array $post,
+        array $gustoEmployeeDetails,
+        array $gustoCompany,
+        bool $doReturn
+    ) {
         // set default response
         $errors = [];
         // let verify the data
@@ -1770,7 +1774,7 @@ class Gusto_payroll_model extends CI_Model
             $errors['errors'][] = 'Social security number is required. It must be off 9 digits long.';
         }
         // check if error happened
-        if ($errors) {
+        if ($errors['errors']) {
             return $doReturn ? $errors : SendResponse(200, $errors);
         }
         // set request
@@ -1783,37 +1787,175 @@ class Gusto_payroll_model extends CI_Model
         $request['ssn'] = $post['ssn'];
         $request['version'] = $gustoEmployeeDetails['version'];
         // lets update the employee profile
-        $response = updateOnboardEmployeeProfile(
-            $request,
-            $gustoEmployeeDetails['payroll_employee_uuid'],
-            $gustoCompany
-        );
-        // check for Gusto errors
-        if ($errors = hasGustoErrors($response)) {
-            return _e($errors, true);
+        // $response = updateOnboardEmployeeProfile(
+        //     $request,
+        //     $gustoEmployeeDetails['payroll_employee_uuid'],
+        //     $gustoCompany
+        // );
+        // // check for Gusto errors
+        // if ($errors = hasGustoErrors($response)) {
+        //     return $doReturn ? $errors : sendResponse(200, $errors);
+        // }
+        // // set the user update array
+        // $userArray = [];
+        // $userArray['first_name'] = $request['first_name'];
+        // $userArray['last_name'] = $request['last_name'];
+        // $userArray['middle_initial'] = $request['middle_initial'];
+        // $userArray['email'] = $request['email'];
+        // $userArray['ssn'] = $request['ssn'];
+        // $userArray['dob'] = $request['date_of_birth'];
+        // if ($post['startDate']) {
+        //     $userArray['joined_at'] = formatDateToDB($post['startDate'], SITE_DATE, DB_DATE);
+        // }
+        // // update the users table
+        // updateUserById($userArray, $post['employeeId']);
+        // // set the payroll employee array
+        // $payrollEmployeeArray = [];
+        // $payrollEmployeeArray['version'] = $response['version'];
+        // $payrollEmployeeArray['personal_profile'] = 1;
+        // $payrollEmployeeArray['updated_at'] = getSystemDate();
+        // $payrollEmployeeArray['response_body'] = json_encode($response);
+        //
+        // if ($post['workLocation']) {
+        //     $payrollEmployeeArray['work_address_sid'] = $post['workLocation'];
+        // }
+        // update the table
+        // $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
+        // if location is set
+        if ($post['workLocation'] && $post['startDate']) {
+            // get the required things for job & compensation
+            $employeeDetails = $this->db->select('
+                job_title,
+                hourly_rate
+            ')
+                ->where('sid', $post["employeeId"])
+                ->get('users')
+                ->row_array();
+            //
+            if ($employeeDetails['job_title']) {
+                // set post
+                $newPost = [];
+                $newPost['title'] = $employeeDetails['job_title'];
+                $newPost['rate'] = $employeeDetails['hourly_rate'];
+                $newPost['flsa_status'] = "Exempt";
+                $newPost['payment_unit'] = "Hour";
+                $newPost['employeeId'] = $post['employeeId'];
+                $newPost['companyId'] = $post['companyId'];
+                // call the event
+                $this->handleEmployeeCompensationForOnboarding(
+                    $newPost,
+                    $gustoEmployeeDetails,
+                    $gustoCompany,
+                    false
+                );
+            }
         }
-        // set the user update array
-        $userArray = [];
-        $userArray['first_name'] = $request['first_name'];
-        $userArray['last_name'] = $request['last_name'];
-        $userArray['middle_initial'] = $request['middle_initial'];
-        $userArray['email'] = $request['email'];
-        $userArray['ssn'] = $request['ssn'];
-        $userArray['dob'] = $request['date_of_birth'];
-        // update the users table
-        updateUserById($userArray, $post['employeeId']);
-        $this->db->where('sid', $post['employeeId'])->update('users', $userArray);
-        // set the payroll employee array
-        $payrollEmployeeArray = [];
-        $payrollEmployeeArray['version'] = $response['version'];
-        $payrollEmployeeArray['personal_profile'] = 1;
-        $payrollEmployeeArray['updated_at'] = getSystemDate();
-        $payrollEmployeeArray['response_body'] = json_encode($response);
-        _e($response, true);
+        // send response
+        return $doReturn ? true : sendResponse(200, [
+            'success' => 'The employee\'s profile has been successfully updated.'
+        ]);
+    }
 
+    /**
+     * Handle employee onboard job and compensation
+     * 
+     * Handles employee onboard job & compensation process from the 
+     * UI of super admin and employer panel
+     * 
+     * @param array $post
+     * @param array $gustoEmployeeDetails
+     * @param array $gustoCompany
+     * @param bool  $doReturn
+     * @return array
+     */
+    public function handleEmployeeCompensationForOnboarding(
+        array $post,
+        array $gustoEmployeeDetails,
+        array $gustoCompany,
+        bool $doReturn
+    ) {
+        // set default response
+        $errors = [];
+        // let verify the data
+        // check for job title
+        if (!$post['title']) {
+            $errors['errors'][] = 'Job title is required.';
+        }
+        // check for rate
+        if (!$post['rate']) {
+            $errors['errors'][] = 'Rate is required.';
+        }
+        // check for flsa status
+        if (!$post['flsa_status']) {
+            $errors['errors'][] = 'FLSA status is required.';
+        }
+        // check for payment unit
+        if (!$post['payment_unit']) {
+            $errors['errors'][] = 'Payment unit is required.';
+        }
+        // check if error happened
+        if ($errors['errors']) {
+            return $doReturn ? $errors : SendResponse(200, $errors);
+        }
+        // lets check the job first
+        if (
+            !$this->db
+                ->where('employee_sid', $post['employeeId'])
+                ->count_all_results('payroll_employee_jobs')
+        ) {
+            // we need to add job and compensation
+            // lets fetch the job from Gusto
+            $gustoJob = getEmployeeJobsFromGusto(
+                $gustoEmployeeDetails['payroll_employee_uuid'],
+                $gustoCompany
+            );
+            // check for errors
+            if ($errors = hasGustoErrors($gustoJob)) {
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // check if already job present on Gusto
+            if (!$gustoJob) {
+                // add the job to Gusto
+                // check if location exists
+                $gustoEmployeeWorkLocation = $this->db
+                    ->select('work_address_sid')
+                    ->where('employee_sid', $post['employeeId'])
+                    ->get('payroll_employees')
+                    ->row_array()['work_address_sid'];
+                // check the work location
+                if (!$gustoEmployeeWorkLocation) {
+                    // set error
+                    $errors['errors'][] = 'Employee\'s work location is required.';
+                    // send response
+                    return $doReturn ? $errors : sendResponse(200, $errors);
+                }
+                // check if employee start date is present
+                // get the required things for job & compensation
+                $employeeStartDate = getUserStartDate($post['employeeId'], true);
+                // check the date as well
+                if (!$employeeStartDate) {
+                    // set error
+                    $errors['errors'][] = 'Employee\'s start date is required.';
+                    // send response
+                    return $doReturn ? $errors : sendResponse(200, $errors);
+                }
+                // create request
+                $request = [];
+                $request['title'] = $post['title'];
+                $request['location_uuid'] = $gustoEmployeeWorkLocation;
+                $request['hire_date'] = $employeeStartDate;
+                // create job on Gusto
+                $response = createEmployeeJobOnGusto(
+                    $request,
+                    $gustoEmployeeDetails['payroll_employee_uuid'],
+                    $gustoCompany
+                );
+                _e($response, true);
 
-        _e($post);
-        _e($request);
-        _e($gustoEmployeeDetails);
+            } else {
+            }
+        } else {
+            // we need to update job and compensation
+        }
     }
 }

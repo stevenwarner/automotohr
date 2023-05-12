@@ -1721,6 +1721,7 @@ $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_te
 
 // Employee onboard
 $route['gusto/employee/profile']['post'] = 'gusto/Gusto_payroll/onboardEmployee/profile';
+$route['gusto/employee/compensation']['post'] = 'gusto/Gusto_payroll/onboardEmployee/compensation';
 
 
 /**

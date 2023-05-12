@@ -690,22 +690,20 @@ $(function EmployeeOnboard() {
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
 				//
-				// if (!resp.status) {
-				// 	return alertify.alert(
-				// 		"Error!",
-				// 		typeof resp.errors === "object"
-				// 			? resp.errors.join("<br/>")
-				// 			: resp.errors,
-				// 		ECB
-				// 	);
-				// }
-				// //
-				// return alertify.alert("Success!", resp.response, function () {
-				// 	if (resp.move) {
-				// 		UpdateCompanyEmployeeCompensation();
-				// 		return true;
-				// 	}
-				// });
+				if (resp.errors) {
+					return alertify.alert(
+						"Error!",
+						typeof resp.errors === "object"
+							? resp.errors.join("<br/>")
+							: resp.errors,
+						ECB
+					);
+				}
+				//
+				return alertify.alert("Success!", resp.success, function () {
+					UpdateCompanyEmployeeCompensation();
+					return true;
+				});
 			})
 			.error(ErrorHandler);
 	}
@@ -720,33 +718,34 @@ $(function EmployeeOnboard() {
 		event.preventDefault();
 		//
 		var o = {};
-		o.Title = $(".jsJobTitle").val().trim();
-		o.Rate = $(".jsAmount")
+		o.title = $(".jsJobTitle").val().trim();
+		o.rate = $(".jsAmount")
 			.val()
 			.trim()
 			.replace(/[^0-9.]/g, "");
-		o.FlsaStatus = $(".jsEmployeeType option:selected").val();
-		o.PaymentUnit = $(".jsSalaryType option:selected").val();
+		o.flsaStatus = $(".jsEmployeeType option:selected").val();
+		o.paymentUnit = $(".jsSalaryType option:selected").val();
 		o.employeeId = selectedEmployeeId;
+		o.companyId = companyId;
 		// Validation
-		if (!o.Title) {
+		if (!o.title) {
 			return alertify.alert("Warning!", "Job title is mandatory.", ECB);
 		}
-		if (!o.FlsaStatus || o.FlsaStatus == 0) {
+		if (!o.flsaStatus || o.flsaStatus == 0) {
 			return alertify.alert(
 				"Warning!",
 				"Employee type is mandatory.",
 				ECB
 			);
 		}
-		if (!o.Rate) {
+		if (!o.rate) {
 			return alertify.alert(
 				"Warning!",
 				"Salary amount is mandatory.",
 				ECB
 			);
 		}
-		if (!o.PaymentUnit || o.PaymentUnit == 0) {
+		if (!o.paymentUnit || o.paymentUnit == 0) {
 			return alertify.alert("Warning!", "Salary type is mandatory.", ECB);
 		}
 		//
@@ -754,7 +753,7 @@ $(function EmployeeOnboard() {
 		//
 		xhr = $.ajax({
 			method: "POST",
-			url: baseURI + "payroll/onboard_employee/compensation/" + companyId,
+			url: baseURI + "gusto/employee/compensation",
 			data: o,
 		})
 			.done(function (resp) {
@@ -762,22 +761,22 @@ $(function EmployeeOnboard() {
 				xhr = null;
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
-				//
-				if (!resp.status) {
-					return alertify.alert(
-						"Error!",
-						typeof resp.errors === "object"
-							? resp.errors.join("<br/>")
-							: resp.errors,
-						ECB
-					);
-				}
-				//
-				return alertify.alert(
-					"Success!",
-					resp.response,
-					UpdateCompanyEmployeeAddress
-				);
+				// //
+				// if (!resp.status) {
+				// 	return alertify.alert(
+				// 		"Error!",
+				// 		typeof resp.errors === "object"
+				// 			? resp.errors.join("<br/>")
+				// 			: resp.errors,
+				// 		ECB
+				// 	);
+				// }
+				// //
+				// return alertify.alert(
+				// 	"Success!",
+				// 	resp.response,
+				// 	UpdateCompanyEmployeeAddress
+				// );
 			})
 			.error(ErrorHandler);
 		//

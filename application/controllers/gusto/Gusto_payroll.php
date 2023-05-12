@@ -352,7 +352,21 @@ class Gusto_payroll extends CI_Controller
         }
         // check for profile
         if ($type == 'profile') {
-            $this->gusto_payroll_model->handleEmployeeProfileForOnboarding($post, $gustoEmployeeDetails, $gustoCompany, false);
+            $this->gusto_payroll_model->handleEmployeeProfileForOnboarding(
+                $post, 
+                $gustoEmployeeDetails, 
+                $gustoCompany, 
+                false
+            );
+        }
+        // check for compensation
+        if ($type == 'compensation') {
+            $this->gusto_payroll_model->handleEmployeeCompensationForOnboarding(
+                $post,
+                $gustoEmployeeDetails,
+                $gustoCompany,
+                false
+            );
         }
     }
 }

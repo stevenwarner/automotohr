@@ -184,9 +184,9 @@ if (!function_exists('getPolicyDifference')) {
                 $oldEmployeesList = explode(',', $differenceArray['employees']['old_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $oldEmployeesList)
-                ->get('users')
-                ->result_array();
+                    ->where_in('sid', $oldEmployeesList)
+                    ->get('users')
+                    ->result_array();
                 //
                 $differenceArray['employees']['old_value'] = [];
                 //
@@ -200,8 +200,8 @@ if (!function_exists('getPolicyDifference')) {
                 $newEmployeeList = explode(',', $differenceArray['employees']['new_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $newEmployeeList)
-                ->get('users')
+                    ->where_in('sid', $newEmployeeList)
+                    ->get('users')
                     ->result_array();
                 //
                 $differenceArray['employees']['new_value'] = [];
@@ -218,9 +218,9 @@ if (!function_exists('getPolicyDifference')) {
                 $oldEmployeesList = explode(',', $differenceArray['allowed_approver']['old_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $oldEmployeesList)
-                ->get('users')
-                ->result_array();
+                    ->where_in('sid', $oldEmployeesList)
+                    ->get('users')
+                    ->result_array();
                 //
                 $differenceArray['allowed_approver']['old_value'] = [];
                 //
@@ -234,8 +234,8 @@ if (!function_exists('getPolicyDifference')) {
                 $newEmployeeList = explode(',', $differenceArray['allowed_approver']['new_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $newEmployeeList)
-                ->get('users')
+                    ->where_in('sid', $newEmployeeList)
+                    ->get('users')
                     ->result_array();
                 //
                 $differenceArray['allowed_approver']['new_value'] = [];
@@ -247,5 +247,63 @@ if (!function_exists('getPolicyDifference')) {
         }
         // return the difference array
         return $differenceArray;
+    }
+}
+
+if (!function_exists('updateUserById')) {
+    /**
+     * Update user
+     * 
+     * Central point to update user in system, the system will user information to
+     * all the other places, like profile, w4, I9, full employment etc.
+     * 
+     * @param array $updateArray
+     * @param int   $employeeId
+     */
+    function updateUserById(array $updateArray, int $employeeId)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // update the user in "users" table
+        $CI->db->where(['sid' => $employeeId])->update('users', $updateArray);
+    }
+}
+
+if (!function_exists('getUserStartDate')) {
+    /**
+     * Get user joining date
+     * 
+     * Get the user start date; registration date, joined dated
+     * and rehire date
+     * 
+     * @param int  $employeeId
+     * @param bool $includeRehireDate Optional Default is "false"
+     * @return array
+     */
+    function getUserStartDate(int $employeeId, bool $includeRehireDate)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // get user dates
+        $employeeDetails = $CI->db
+        ->select('
+            registration_date,
+            joined_at,
+            rehire_date
+        ')
+        ->where('sid', $employeeId)
+        ->get('users')
+        ->row_array();
+        // check the details
+        if (!$employeeDetails) {
+            return '';
+        }
+        // get the latest date
+        return get_employee_latest_joined_date(
+            $employeeDetails['registration_date'],
+            $employeeDetails['joined_at'],
+            $includeRehireDate ? $employeeDetails['rehire_date'] : '',
+            false
+        );
     }
 }

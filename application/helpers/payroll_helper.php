@@ -1943,6 +1943,9 @@ if (!function_exists('PayrollURL')) {
 
         $urls['getCompanyPayrolls'] = 'v1/companies/' . ($key) . '/payrolls';
         $urls['getPayrollReceipt'] = 'v1/payrolls/' . ($key) . '/receipt';
+
+        // Employee urls
+        $urls['getEmployeeJobsFromGusto'] = 'v1/employees/' . ($key) . '/jobs';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -3598,13 +3601,49 @@ if (!function_exists('parseGustoErrors')) {
     }
 }
 
+if (!function_exists('hasGustoErrors')) {
+    /**
+     * Parse Gusto errors
+     * 
+     * Convert Gusto errors to AutomotoHR errors
+     * for handling errors
+     * 
+     * @version 1.0
+     * 
+     * @param mixed $response
+     * @return array
+     */
+    function hasGustoErrors($response)
+    {
+        // set errors array
+        $errors = [
+            'errors' => []
+        ];
+        // if it's a single error
+        if (isset($response['message'])) {
+            $errors['errors'][] = $response['message'];
+        }
+        else if (isset($response['errors']['invalid_grant'])) {
+            $errors['errors'] = array_merge($errors['errors'], $response['errors']['invalid_grant']);
+        }
+        else if (isset($response['errors'])) {
+            foreach ($response['errors'] as $err) {
+                //
+                $errors['errors'][] = $err['message'];
+            }
+        }
 
-// Employee onboarding
+        //
+        return $errors['errors'] ? $errors : [];
+    }
+}
+
 if (!function_exists('updateOnboardEmployeeProfile')) {
     /**
      * Update request for Gusto
-     * 
      * Update onboard employee profile on Gusto.
+     * 
+     * @version 1.0
      */
     function updateOnboardEmployeeProfile($request, $employeeId, $company)
     {
@@ -3616,7 +3655,8 @@ if (!function_exists('updateOnboardEmployeeProfile')) {
                 CURLOPT_POSTFIELDS => json_encode($request),
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
-                    'Content-Type: application/json'
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
                 )
             ]
         );
@@ -3635,7 +3675,7 @@ if (!function_exists('updateOnboardEmployeeProfile')) {
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
-                return UpdateEmployeeOnGusto($request, $employeeId, $company);
+                return updateOnboardEmployeeProfile($request, $employeeId, $company);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
@@ -3645,22 +3685,107 @@ if (!function_exists('updateOnboardEmployeeProfile')) {
     }
 }
 
-if (!function_exists('hasGustoErrors')) {
-    //
-    function hasGustoErrors($response){
-        // set errors array
-        $errors = [
-            'errors' => []
-        ];
-        // if it's a single error
-        if (isset($response['message'])) {
-            $errors['errors'][] = $response['message'];
-        }
-        if (isset($response['errors']['invalid_grant'])) {
-            $errors['errors'] = array_merge($errors['errors'], $response['errors']['invalid_grant']);
-        }
-
+if (!function_exists('getEmployeeJobsFromGusto')) {
+    /**
+     * Get the jobs
+     * 
+     * Get the employee all jobs with all compensations
+     * from Gusto
+     * 
+     * @version 1.0
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function getEmployeeJobsFromGusto($employeeId, $company)
+    {
         //
-        return $errors;
+        $response =  MakeCall(
+            PayrollURL('getEmployeeJobsFromGusto', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getEmployeeJobsFromGusto($employeeId, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('createEmployeeJobOnGusto')) {
+    /**
+     * Create job
+     * 
+     * Create employee job on Gusto. Gusto will create
+     * a default compensation
+     * 
+     * @version 1.0
+     * @param array  $request
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function createEmployeeJobOnGusto($employeeId, $company)
+    {
+        //
+        $response =  MakeCall(
+            PayrollURL('createEmployeeJobOnGusto', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return createEmployeeJobOnGusto($employeeId, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
     }
 }
