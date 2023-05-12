@@ -164,7 +164,29 @@
 
                                                 </li>
 
+                                                <?php if (checkADPStatus($company_id) > 0) { ?>
 
+                                                    <li class="form-col-100 autoheight">
+                                                        <div class="row js-timezone-row">
+                                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                <div class=" input-grey  ">
+                                                                    <?php $onboarding_template_code = get_onboarding_template_code_list(); ?>
+                                                                    <?php $field_id = 'adp_onboarding_template_code'; ?>
+                                                                    <?php echo form_label('ADP Template Code:', $field_id); ?>
+                                                                    <select class="invoice-fields" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>">
+                                                                        <option value=''>Please select a code</option>
+                                                                        <?php foreach ($onboarding_template_code as $codeRow) { ?>
+                                                                            <option <?php echo $codeRow['code'] == $onboarding_applicant_template_code['adp_onboarding_template_code'] ? 'selected="selected"' : ''; ?> value="<?php echo $codeRow['code']; ?>">
+                                                                                <?php echo $codeRow['code']; ?>
+                                                                            </option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+
+                                                <?php } ?>
 
 
                                                 <li class="form-col-50-right autoheight" style="display: none">

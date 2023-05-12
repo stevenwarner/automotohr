@@ -550,6 +550,8 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
+                $adp_onboarding_template_code = $this->input->post('adp_onboarding_template_code', true);
+
 
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
@@ -579,7 +581,7 @@ class employers extends Admin_Controller
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
                 $insert_data['maiden_name'] = $this->input->post('maiden_name');
-
+                $insert_data['adp_onboarding_template_code'] = $adp_onboarding_template_code;
 
                 //
                 if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
@@ -589,28 +591,30 @@ class employers extends Admin_Controller
 
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
 
-
                 // applicant to ADP
-
                 if (checkADPStatus($company_sid) > 0) {
-                    
-                    $this->load->model('2022/Adp_model', 'adp_model');
 
-                    $applicantArray = [];
-                    $applicantArray['first_name'] = $first_name;
-                    $applicantArray['last_name'] =  $last_name;
-                    $applicantArray['hireDate'] = $joined_at;
-                    $applicantArray['dob'] = '';
-                    $applicantArray['email'] = $email;
-                    $applicantArray['address'] = '';
-                    $applicantArray['city'] = '';
-                    $applicantArray['zipcode'] = '';
-                    $applicantArray['SSN'] = '';
-                    $applicantArray['gender'] = $gender;
-                    $applicantArray['country_name'] = '';
-                    $applicantArray['country_code'] = '';
+                    $adpCompanyCode = get_adp_company_code($company_sid);
 
-                    $this->adp_model->onboardApplicantToAdp($applicantArray);
+                    if ($adp_onboarding_template_code != '' && $adpCompanyCode['adp_company_location'] != '') {
+                        $this->load->model('2022/Adp_model', 'adp_model');
+
+                        $applicantArray = [];
+                        $applicantArray['first_name'] = $first_name;
+                        $applicantArray['last_name'] =  $last_name;
+                        $applicantArray['hireDate'] = $joined_at;
+                        $applicantArray['dob'] = '';
+                        $applicantArray['email'] = $email;
+                        $applicantArray['address'] = '';
+                        $applicantArray['city'] = '';
+                        $applicantArray['zipcode'] = '';
+                        $applicantArray['SSN'] = '';
+                        $applicantArray['gender'] = $gender;
+                        $applicantArray['country_name'] = '';
+                        $applicantArray['country_code'] = '';
+
+                        $this->adp_model->onboardApplicantToAdp($applicantArray, $adp_onboarding_template_code, $adpCompanyCode['adp_company_location']);
+                    }
                 }
 
 

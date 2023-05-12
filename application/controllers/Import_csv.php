@@ -632,42 +632,52 @@ class Import_csv extends Public_Controller
                     if (isset($v0['employment_type']) && !empty($v0['employment_type'])) {
                         $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
                     }
-                    //New Fields End
-                    // Insert employee
-                    $employeeId = $this->import_csv_model->InsertNewUser($insertArray);
 
-
-                    //
-                    if (checkADPStatus($company_id) > 0) {
-
-                        $this->load->model('2022/Adp_model', 'adp_model');
-
-                        $applicantArray = [];
-                        $applicantArray['first_name'] = $insertArray['first_name'] != '' ? $insertArray['first_name'] : '';
-                        $applicantArray['last_name'] =  $insertArray['last_name'] != '' ? $insertArray['last_name'] : '';
-                        $applicantArray['hireDate'] = $insertArray['registration_date'];
-                        $applicantArray['dob'] = $insertArray['dob'] != '' ? $insertArray['dob'] : '';
-                        $applicantArray['email'] = $insertArray['email'] != '' ? $insertArray['email'] : '';
-                        $applicantArray['address'] =  $insertArray['Location_Address'] != '' ? $insertArray['Location_Address'] : '';
-                        $applicantArray['city'] = $insertArray['Location_City'] != '' ? $insertArray['Location_City'] : '';
-                        $applicantArray['zipcode'] =  $insertArray['Location_ZipCode'] != '' ? $insertArray['Location_ZipCode'] : '';
-                        $applicantArray['SSN'] = $insertArray['ssn'] != '' ? $insertArray['ssn'] : '';
-                        $applicantArray['gender'] = $insertArray['gender'] != '' ? $insertArray['gender'] : '';
-
-                        if ($insertArray['Location_Country'] != '' && $insertArray['Location_Country'] != '0') {
-                            $countryData = db_get_country_name($insertArray['Location_Country']);
-                            $applicantArray['country_name'] = $countryData['country_name'];
-                            $applicantArray['country_code'] = $countryData['country_code'];
-                        } else {
-                            $applicantArray['country_name'] = '';
-                            $applicantArray['country_code'] = '';
-                        }
-
-                        $this->adp_model->onboardApplicantToAdp($applicantArray);
+                    if (isset($v0['adp_onboarding_template_code']) && !empty($v0['adp_onboarding_template_code']) && $v0['adp_onboarding_template_code'] != NULL && $v0['adp_onboarding_template_code'] != 0) {
+                        $insertArray['adp_onboarding_template_code'] = $v0['adp_onboarding_template_code'];
                     }
 
 
-                    //
+                    //New Fields End
+                    // Insert employee
+
+                    $employeeId = $this->import_csv_model->InsertNewUser($insertArray);
+
+                    //ADP onboarding   
+                    if (isset($v0['adp_onboarding_template_code']) && !empty($v0['adp_onboarding_template_code']) && $v0['adp_onboarding_template_code'] != NULL && $v0['adp_onboarding_template_code'] != 0) {
+
+                        if (checkADPStatus($companyId) > 0) {
+
+                            $adpCompanyCode = get_adp_company_code($companyId);
+                            if ($adpCompanyCode['adp_company_location'] != '') {
+                                $this->load->model('2022/Adp_model', 'adp_model');
+
+                                $applicantArray = [];
+                                $applicantArray['first_name'] = $insertArray['first_name'] != '' ? $insertArray['first_name'] : '';
+                                $applicantArray['last_name'] =  $insertArray['last_name'] != '' ? $insertArray['last_name'] : '';
+                                $applicantArray['hireDate'] = $insertArray['registration_date'] != '' ? $insertArray['registration_date'] : '';
+                                $applicantArray['dob'] =  $insertArray['dob'] != '' ? $insertArray['dob'] : '';
+                                $applicantArray['email'] =  $insertArray['email'] != '' ? $insertArray['email'] : '';
+                                $applicantArray['address'] = $insertArray['Location_Address'] != '' ? $insertArray['Location_Address'] : '';
+                                $applicantArray['city'] = $insertArray['Location_City'] != '' ? $insertArray['Location_City'] : '';
+                                $applicantArray['zipcode'] = $insertArray['Location_ZipCode'] != '' ? $insertArray['Location_ZipCode'] : '';
+                                $applicantArray['SSN'] = $insertArray['ssn'] != '' ? $insertArray['ssn'] : '';
+                                $applicantArray['gender'] = $insertArray['gender'] != '' ? $insertArray['gender'] : '';
+
+                                if ($insertArray['Location_Country'] != '' &&  $insertArray['Location_Country'] != '0') {
+                                    $countryData = db_get_country_name($insertArray['Location_Country']);
+                                    $applicantArray['country_name'] = $countryData['country_name'];
+                                    $applicantArray['country_code'] = $countryData['country_code'];
+                                } else {
+                                    $applicantArray['country_name'] = '';
+                                    $applicantArray['country_code'] = '';
+                                }
+
+                                $this->adp_model->onboardApplicantToAdp($applicantArray, $v0['adp_onboarding_template_code'], $adpCompanyCode['adp_company_location']);
+                            }
+                        }
+                    }
+
                     // Manage employee status
                     $this->manageEmployeeStatus($employeeId, $v0);
                     //
@@ -720,7 +730,6 @@ class Import_csv extends Public_Controller
                 $statusArray['employee_status'] = 8;
                 $statusArray['details'] = isset($data['rehire_reason']) ? $data['rehire_reason'] : '';
                 $statusArray['status_change_date'] = isset($data['rehire_date']) && !empty($data['rehire_date']) ? formatDateToDB($data['rehire_date']) : NULL;
-
 
                 $this->import_csv_model->UpdateRehireDateInUsers(formatDateToDB($data['rehire_date']), $employeeId);
             }

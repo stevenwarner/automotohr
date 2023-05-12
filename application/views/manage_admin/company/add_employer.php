@@ -67,123 +67,123 @@
 
 
 
-                                                    <?php if(isCompanyOnComplyNet($company_sid)!=0){?>
+                                                    <?php if (isCompanyOnComplyNet($company_sid) != 0) { ?>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="field-row">
-                                                    <label>ComplyNet Job Title</label>
+                                                            <div class="field-row">
+                                                                <label>ComplyNet Job Title</label>
 
-                                                        <div class="hr-select-dropdown">
-                                                            <select name="complynet_job_title" id="complynet_job_title" class="invoice-fields">
-                                                                <option selected value="null">
-                                                                    Please select job title
-                                                                </option>
-                                                                <option value="BDC Person">
-                                                                BDC Person
-                                                                </option>
-                                                                <option  value="Body Shop Estimator">
-                                                                Body Shop Estimator
-                                                                </option>
-                                                                <option  value="Body Shop Manager">
-                                                                Body Shop Manager
-                                                                </option>
-                                                                <option  value="Body Shop Tech">
-                                                                Body Shop Tech
-                                                                </option>
-                                                                <option  value="Cashier">
-                                                                Cashier
-                                                                </option>
-                                                                <option  value="CFO">
-                                                                CFO
-                                                                </option>
-                                                                <option  value="Detail Manager">
-                                                                Detail Manager
-                                                                </option>
-                                                                <option  value="Detailer">
-                                                                Detailer
-                                                                </option>
-                                                                <option  value="F&I Manager">
-                                                                F&I Manager
-                                                                </option>
-                                                                <option  value="F&I Writer">
-                                                                F&I Writer
-                                                                </option>
-                                                                <option  value="Fixed Operations Director">
-                                                                Fixed Operations Director
-                                                                </option>
-                                                                <option  value="GM">
-                                                                GM
-                                                                </option>
-                                                                <option  value="HR Assistant">
-                                                                HR Assistant
-                                                                </option>
-                                                                <option  value="HR Manager">
-                                                                HR Manager
-                                                                </option>
-                                                                <option  value="IT">
-                                                                IT
-                                                                </option>
-                                                                <option  value="Office Employee">
-                                                                Office Employee
-                                                                </option>
-                                                                <option  value="Office Manager">
-                                                                Office Manager
-                                                                </option>
-                                                                <option  value="Owner">
-                                                                Owner
-                                                                </option>
-                                                                <option  value="Parts Desk">
-                                                                Parts Desk
-                                                                </option>
-                                                                <option  value="Parts Driver">
-                                                                Parts Driver
-                                                                </option>
-                                                                <option  value="Parts Manager">
-                                                                Parts Manager
-                                                                </option>
-                                                                <option value="Parts Sales">
-                                                                Parts Sales
-                                                                </option>
-                                                                <option  value="Parts Shipper">
-                                                                Parts Shipper
-                                                                </option>
-                                                                <option  value="Porter">
-                                                                Porter
-                                                                </option>
-                                                                <option  value="Receptionist">
-                                                                Receptionist
-                                                                </option>
-                                                                <option  value="Sales Employee">
-                                                                Sales Employee
-                                                                </option>
-                                                                <option  value="Sales Manager">
-                                                                Sales Manager
-                                                                </option>
-                                                                <option  value="Sales Person">
-                                                                Sales Person
-                                                                </option>
-                                                                <option  value="Service Advisor">
-                                                                Service Advisor
-                                                                </option>
-                                                                <option value="Service Director">
-                                                                Service Director
-                                                                </option>
-                                                                <option value="Service Manager">
-                                                                Service Manager
-                                                                </option>
-                                                                <option  value="Service Office">
-                                                                Service Office
-                                                                </option>
-                                                                <option  value="Service Tech">
-                                                                Service Tech
-                                                                </option>
-                                                                <option  value="Warranty Clerk">
-                                                                Warranty Clerk
-                                                                </option>
-                                                            </select>
+                                                                <div class="hr-select-dropdown">
+                                                                    <select name="complynet_job_title" id="complynet_job_title" class="invoice-fields">
+                                                                        <option selected value="null">
+                                                                            Please select job title
+                                                                        </option>
+                                                                        <option value="BDC Person">
+                                                                            BDC Person
+                                                                        </option>
+                                                                        <option value="Body Shop Estimator">
+                                                                            Body Shop Estimator
+                                                                        </option>
+                                                                        <option value="Body Shop Manager">
+                                                                            Body Shop Manager
+                                                                        </option>
+                                                                        <option value="Body Shop Tech">
+                                                                            Body Shop Tech
+                                                                        </option>
+                                                                        <option value="Cashier">
+                                                                            Cashier
+                                                                        </option>
+                                                                        <option value="CFO">
+                                                                            CFO
+                                                                        </option>
+                                                                        <option value="Detail Manager">
+                                                                            Detail Manager
+                                                                        </option>
+                                                                        <option value="Detailer">
+                                                                            Detailer
+                                                                        </option>
+                                                                        <option value="F&I Manager">
+                                                                            F&I Manager
+                                                                        </option>
+                                                                        <option value="F&I Writer">
+                                                                            F&I Writer
+                                                                        </option>
+                                                                        <option value="Fixed Operations Director">
+                                                                            Fixed Operations Director
+                                                                        </option>
+                                                                        <option value="GM">
+                                                                            GM
+                                                                        </option>
+                                                                        <option value="HR Assistant">
+                                                                            HR Assistant
+                                                                        </option>
+                                                                        <option value="HR Manager">
+                                                                            HR Manager
+                                                                        </option>
+                                                                        <option value="IT">
+                                                                            IT
+                                                                        </option>
+                                                                        <option value="Office Employee">
+                                                                            Office Employee
+                                                                        </option>
+                                                                        <option value="Office Manager">
+                                                                            Office Manager
+                                                                        </option>
+                                                                        <option value="Owner">
+                                                                            Owner
+                                                                        </option>
+                                                                        <option value="Parts Desk">
+                                                                            Parts Desk
+                                                                        </option>
+                                                                        <option value="Parts Driver">
+                                                                            Parts Driver
+                                                                        </option>
+                                                                        <option value="Parts Manager">
+                                                                            Parts Manager
+                                                                        </option>
+                                                                        <option value="Parts Sales">
+                                                                            Parts Sales
+                                                                        </option>
+                                                                        <option value="Parts Shipper">
+                                                                            Parts Shipper
+                                                                        </option>
+                                                                        <option value="Porter">
+                                                                            Porter
+                                                                        </option>
+                                                                        <option value="Receptionist">
+                                                                            Receptionist
+                                                                        </option>
+                                                                        <option value="Sales Employee">
+                                                                            Sales Employee
+                                                                        </option>
+                                                                        <option value="Sales Manager">
+                                                                            Sales Manager
+                                                                        </option>
+                                                                        <option value="Sales Person">
+                                                                            Sales Person
+                                                                        </option>
+                                                                        <option value="Service Advisor">
+                                                                            Service Advisor
+                                                                        </option>
+                                                                        <option value="Service Director">
+                                                                            Service Director
+                                                                        </option>
+                                                                        <option value="Service Manager">
+                                                                            Service Manager
+                                                                        </option>
+                                                                        <option value="Service Office">
+                                                                            Service Office
+                                                                        </option>
+                                                                        <option value="Service Tech">
+                                                                            Service Tech
+                                                                        </option>
+                                                                        <option value="Warranty Clerk">
+                                                                            Warranty Clerk
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    </div>
-                                    <?php }?>
+                                                    <?php } ?>
 
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -332,6 +332,34 @@
                                                             </div>
                                                         </div>
                                                     </div>
+
+
+                                                   <?php  if (checkADPStatus($company_sid) > 0) { ?>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                            <div class="row js-timezone-row">
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <div class=" input-grey ">
+                                                                    <?php $onboarding_template_code = get_onboarding_template_code_list();?>
+                                                                        <?php $field_id = 'adp_onboarding_template_code'; ?>
+                                                                        <?php echo form_label('ADP Template Code:', $field_id); ?>
+                                                                        <select class="invoice-fields" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>">
+                                                                            <option value=''>Please select a code</option>
+                                                                            <?php foreach ($onboarding_template_code as $codeRow) { ?>
+                                                                                <option <?php echo $codeRow['code'] == $onboarding_applicant_template_code['adp_onboarding_template_code'] ? 'selected="selected"' : ''; ?> value="<?php echo $codeRow['code']; ?>">
+                                                                                    <?php echo $codeRow['code']; ?>
+                                                                                </option>
+                                                                            <?php } ?>
+                                                                        </select>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php }?>
+
+
 
 
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

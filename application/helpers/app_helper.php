@@ -288,15 +288,14 @@ if (!function_exists('get_adp_company_code')) {
 
 
 //
-if (!function_exists('get_employee_onboarding_template_code')) {
-
-    function get_employee_onboarding_template_code($user_sid)
+if (!function_exists('get_onboarding_template_code_list')) {
+    function get_onboarding_template_code_list()
     {
-        $this->db->select('adp_onboarding_template_code');
-        $this->db->where('sid', $user_sid);
-        $record_obj = $this->db->get('users');
-        $record_arr = $record_obj->row_array();
+        $CI = &get_instance();
+        $CI->db->select('*');
+        $record_obj = $CI->db->get('adp_onboarding_template_code');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
         return $record_arr;
     }
 }
-

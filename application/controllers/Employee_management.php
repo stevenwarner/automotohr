@@ -440,6 +440,9 @@ class Employee_management extends Public_Controller
                 $timezone = $this->input->post('timezone');
                 $maiden_name = $this->input->post('maiden_name');
 
+                $adp_onboarding_template_code = $this->input->post('adp_onboarding_template_code', true);
+
+
 
                 //
                 $teamId = $this->input->post('teamId');
@@ -480,6 +483,8 @@ class Employee_management extends Public_Controller
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
                 $user_information['maiden_name'] = $maiden_name;
+                $user_information['adp_onboarding_template_code'] = $adp_onboarding_template_code;
+
 
                 if ($departmenId != '' && $teamId != '') {
                     $user_information['department_sid'] = $departmenId;
@@ -496,38 +501,45 @@ class Employee_management extends Public_Controller
 
                 if (checkADPStatus($company_id) > 0) {
 
-                    $this->load->model('2022/Adp_model', 'adp_model');
+                    $adpCompanyCode = get_adp_company_code($company_id);
 
-                    $applicantArray = [];
-                    $applicantArray['first_name'] = $user_information['first_name'];
-                    $applicantArray['last_name'] =  $user_information['last_name'];
-                    $applicantArray['hireDate'] = $user_information['joined_at'];
-                    $applicantArray['dob'] = '';
-                    $applicantArray['email'] = $user_information['email'];
-                    $applicantArray['address'] = $user_information['Location_Address'];
-                    $applicantArray['city'] = $user_information['Location_City'];
-                    $applicantArray['zipcode'] = $user_information['Location_ZipCode'];
-                    $applicantArray['SSN'] = '';
-                    $applicantArray['gender'] = $user_information['gender'];
+                    if ($adp_onboarding_template_code != '' && $adpCompanyCode['adp_company_location'] != '') {
+                        $this->load->model('2022/Adp_model', 'adp_model');
 
-                    if ($user_information['Location_Country'] != '' &&  $user_information['Location_Country'] != '0') {
-                        $countryData = db_get_country_name($user_information['Location_Country']);
-                        $applicantArray['country_name'] = $countryData['country_name'];
-                        $applicantArray['country_code'] = $countryData['country_code'];
-                    } else {
-                        $applicantArray['country_name'] = '';
-                        $applicantArray['country_code'] = '';
+                        $applicantArray = [];
+                        $applicantArray['first_name'] = $user_information['first_name'];
+                        $applicantArray['last_name'] =  $user_information['last_name'];
+                        $applicantArray['hireDate'] = $user_information['joined_at'];
+                        $applicantArray['dob'] = '';
+                        $applicantArray['email'] = $user_information['email'];
+                        $applicantArray['address'] = $user_information['Location_Address'];
+                        $applicantArray['city'] = $user_information['Location_City'];
+                        $applicantArray['zipcode'] = $user_information['Location_ZipCode'];
+                        $applicantArray['SSN'] = '';
+                        $applicantArray['gender'] = $user_information['gender'];
+
+                        if ($user_information['Location_Country'] != '' &&  $user_information['Location_Country'] != '0') {
+                            $countryData = db_get_country_name($user_information['Location_Country']);
+                            $applicantArray['country_name'] = $countryData['country_name'];
+                            $applicantArray['country_code'] = $countryData['country_code'];
+                        } else {
+                            $applicantArray['country_name'] = '';
+                            $applicantArray['country_code'] = '';
+                        }
                     }
                 }
 
 
+                $adpCompanyCode = get_adp_company_code($company_id);
 
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
+
                     $employee_sid = $this->employee_model->add_employee($user_information);
 
-                    $this->adp_model->onboardApplicantToAdp($applicantArray);
-
+                    if ($adp_onboarding_template_code != '' && $adpCompanyCode['adp_company_location'] != '') {
+                        $this->adp_model->onboardApplicantToAdp($applicantArray, $adp_onboarding_template_code, $adpCompanyCode['adp_company_location']);
+                    }
 
                     //
                     if ($departmenId != '' && $teamId != '') {
@@ -537,7 +549,6 @@ class Employee_management extends Public_Controller
                         $team_information['created_at'] = date('Y-m-d H:i:s');
                         $this->employee_model->add_employee_to_team($team_information);
                     }
-
 
 
                     $replacement_array['firstname'] = $first_name;
@@ -552,7 +563,9 @@ class Employee_management extends Public_Controller
                     $link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_registration') . '/' . $verification_key . '">' . 'Update Login Credentials' . '</a>';
                     $employee_sid = $this->employee_model->add_employee($user_information);
 
-                    $this->adp_model->onboardApplicantToAdp($applicantArray);
+                    if ($adp_onboarding_template_code != '' && $adpCompanyCode['adp_company_location'] != '') {
+                        $this->adp_model->onboardApplicantToAdp($applicantArray, $adp_onboarding_template_code, $adpCompanyCode['adp_company_location']);
+                    }
 
 
                     //
@@ -2502,7 +2515,6 @@ class Employee_management extends Public_Controller
 
                 // only run for employee
                 if (checkEmployeeAdpStatus($sid)) {
-
                     // load the model
                     $this->load->model('2022/Adp_model', 'adp_model');
                     //

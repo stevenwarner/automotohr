@@ -184,6 +184,7 @@
         employmentTitles = <?=json_encode(array('employmenttype', 'employment', 'employmentstatus'));?>;
         middlenameTitles = <?=json_encode(array('middlename', 'middleinitial', 'middlenameinitial'));?>;
         nicknameTitles = <?=json_encode(array('nick_name', 'nickname'));?>;
+        adptemplatecodeTitles = <?=json_encode(array('adp_template_code', 'adptemplatecode','templatecode'));?>;
 
         loader('hide');
         // 
@@ -430,9 +431,11 @@
             for(i; i < len; i++) if(index == array[i].trim()) return 'middle_name';
             i = 0; len = nicknameTitles.length; array = nicknameTitles;
             for(i; i < len; i++) if(index == array[i].trim()) return 'nick_name';
+            i = 0; len = adptemplatecodeTitles.length; array = adptemplatecodeTitles;
+            for(i; i < len; i++) if(index == array[i].trim()) return 'adp_onboarding_template_code';
             return -1;
         }
-
+        
         //
         var chunkOBJ = {
             current: 0,
