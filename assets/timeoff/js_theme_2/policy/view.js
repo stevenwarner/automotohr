@@ -50,6 +50,15 @@ $(function () {
                 employeeId: employeeId,
                 public: 0
             }
+        },
+        MigratePolicy: {
+            Main: {
+                action: "migrate_employee_requests_policy",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
+            }
         }
     },
         oldState = {},
@@ -100,7 +109,7 @@ $(function () {
     //
     $(document).on('click', '.jsManagePolicy', function () {
         Modal({
-            Id: 1,
+            Id: 'jsManagePolicy',
             Title: `Policy History for ${$(this).closest('.jsBox').data('name')}`,
             Body: getManagePolicyTemplate(),
             Loader: 'jsManagePolicyLoader'
@@ -208,12 +217,30 @@ $(function () {
     $(document).on('change', '#jsAssigPolicyToAll', function () {
         //
         let newPolicy = $(this).val();
-        // $('select.jsAssignNewPolicy').val(newPolicy).trigger('change');
+        //
+        $(".jsAssignNewPolicy").val(newPolicy).change();
+    });
 
-        if (newPolicy != PolicyID) {
-            $('.jsAssignNewPolicy').select2('val', newPolicy);
+    //
+    $(document).on('click', '.jsTransferPolicyBTN', function () {
+        //
+        var employeesList = [];
+        //
+        $('.jsAssignNewPolicy').each(function (index, select) {
+            var newPolicy = $(this).val();
+            //
+            if (newPolicy != PolicyID) {
+                employeesList.push({
+                    'employeeId': $(this).closest('.jsEmployeeRow').data('sid'),
+                    'oldPolicyId': PolicyID,
+                    'newPolicyId': newPolicy
+                }); 
+            }
+        });
+        //
+        if (employeesList.length) {
+            migrateRequestPolicy(employeesList)        
         }
-        
     });
 
     //
@@ -504,23 +531,44 @@ $(function () {
 
             //
             $('#jsManagePolicyTable').html(resp.View);
-            //
-            $('.jsAssignNewPolicy').select2({
-                closeOnSelect: false
-            });
-            //
-            console.log(policyId)            
-            // $('.jsAssignNewPolicy').select2('val', policyId);
-            // $('select.jsAssignNewPolicy').val(policyId).trigger('change');
-            //
+                //
             $('#jsAssigPolicyToAll').select2({
-                closeOnSelect: false
+                closeOnSelect: true
             });
             //
-            console.log(policyId)
             $('#jsAssigPolicyToAll').select2('val', policyId);
             //
             ml(false, 'jsManagePolicyLoader');
+        });
+    }
+
+    function migrateRequestPolicy (data) {
+        //
+        ml(true, 'jsManagePolicyLoader');
+        //
+        xhr = $.post(handlerURL, Object.assign(callOBJ.MigratePolicy.Main, {
+            Data: data
+        }), (resp) => {
+            //
+            xhr = null;
+            //
+            if (resp.Redirect === true) {
+                alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+                    window.location.reload();
+                });
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                alertify.alert('WARNING!', resp.Response, () => { });
+                //
+                ml(false, 'jsManagePolicyLoader');
+                //
+                return;
+            }
+            //
+            ml(false, 'jsManagePolicyLoader');
+            $("#jsManagePolicy").hide();
         });
     }
 

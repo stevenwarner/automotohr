@@ -36,13 +36,13 @@
         <tbody id="jsManagePolicyTable">
             <?php if (!empty($company_employees)) { ?>
                 <?php foreach ($company_employees as $key => $employee) { ?>
-                    <tr>
+                    <tr class="jsEmployeeRow" data-sid="<?php echo $employee['sid']; ?>">
                         <td><?php echo remakeEmployeeName($employee); ?></td>
                         <td><?php echo count($employee['timeoffs']) > 1 ? count($employee['timeoffs'])." Requests" : "1 Request"; ?></td>
                         <td>
-                            <select name="policies[]" class="jsAssignNewPolicy">
+                            <select name="policies[]" class="jsAssignNewPolicy invoice-fields">
                                 <?php foreach ($company_policies as $key => $policy) { ?>
-                                    <option value="c"><?php echo $policy['title']; ?></option>
+                                    <option value="<?php echo $policy['sid']; ?>"><?php echo $policy['title']; ?></option>
                                 <?php } ?>    
                             </select>
                         </td>

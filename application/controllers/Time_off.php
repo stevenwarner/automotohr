@@ -2956,7 +2956,42 @@ class Time_off extends Public_Controller
                     'company_policies' => $policies
                 ], true);
                 $this->resp();
-                break;    
+                break;   
+
+            case "migrate_employee_requests_policy":
+                //
+                $employeeList = $post['Data'];
+                //
+                if (empty($employeeList)) {
+                    $this->res['Response'] = 'We are unable to process your request.';
+                    $this->resp();
+                }
+                //
+                foreach ($employeeList as $employee) {
+                    $oldPolicy = $employee['oldPolicyId'];
+                    $newPolicy = $employee['newPolicyId'];
+                    $employeeSid = $employee['employeeId'];
+                    $this->timeoff_model->updateEmployeeRequestPolicy($employeeSid, $oldPolicy, $newPolicy);
+                    //
+                    $in = [];
+                    $in['policy_sid'] = $newPolicy;
+                    $in['employee_sid'] = $post['employerId'];
+                    $in['action'] = 'update';
+                    //
+                    $note = [];
+                    $note['title'] = $this->timeoff_model->getPolicyTitleById($oldPolicy);
+                    $note['employee_sid'] = $employee['employeeId'];
+                    $note['transferred'] = true;
+                    //
+                    $in['note'] = json_encode($note);
+                    //
+                    $this->timeoff_model->insertPolicyHistory($in);               
+                }
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->resp();
+                break;      
 
                 // Fetch company types
             case 'get_types_by_company':
