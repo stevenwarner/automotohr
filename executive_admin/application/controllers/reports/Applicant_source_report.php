@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Applicant_source_report extends CI_Controller
 {
@@ -20,19 +20,22 @@ class Applicant_source_report extends CI_Controller
             $data['title'] = 'Applicant Source Report';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
+
             $keyword = urldecode($keyword);
             $job_sid = urldecode($job_sid);
             $applicant_type = urldecode($applicant_type);
             $start_date = urldecode($start_date);
             $end_date = urldecode($end_date);
 
-            if(!empty($start_date) && $start_date != 'all') {
+            if (!empty($start_date) && $start_date != 'all') {
                 $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
             } else {
                 $start_date_applied = date('Y-m-d 00:00:00');
             }
 
-            if(!empty($end_date) && $end_date != 'all') {
+            if (!empty($end_date) && $end_date != 'all') {
                 $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
             } else {
                 $end_date_applied = date('Y-m-d 23:59:59');
@@ -43,12 +46,12 @@ class Applicant_source_report extends CI_Controller
                 $data['job_sid_array']                                          = explode(',', $job_sid);
             }
 
-//            $applicant_types = array();
-//            $applicant_types[] = 'Applicant';
-//            $applicant_types[] = 'Talent Network';
-//            $applicant_types[] = 'Manual Candidate';
-//            $applicant_types[] = 'Re-Assigned Candidates';
-//            $applicant_types[] = 'Job Fair';
+            //            $applicant_types = array();
+            //            $applicant_types[] = 'Applicant';
+            //            $applicant_types[] = 'Talent Network';
+            //            $applicant_types[] = 'Manual Candidate';
+            //            $applicant_types[] = 'Re-Assigned Candidates';
+            //            $applicant_types[] = 'Job Fair';
             $applicant_types = explode(',', APPLICANT_TYPE_ATS);
             $data['applicant_types'] = $applicant_types;
 
@@ -57,7 +60,7 @@ class Applicant_source_report extends CI_Controller
             $per_page = PAGINATION_RECORDS_PER_PAGE;
 
             $offset = 0;
-            if($page_number > 1){
+            if ($page_number > 1) {
                 $offset = ($page_number - 1) * $per_page;
             }
 
@@ -122,6 +125,10 @@ class Applicant_source_report extends CI_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name', getCompanyNameBySid($company_sid)]);
+
+
                     fputcsv($output, array('Job Title', 'First Name', 'Last Name', 'Date Applied', 'Applicant Source', 'IP Address'));
 
                     foreach ($data['applicants'] as $applicant) {
@@ -151,5 +158,4 @@ class Applicant_source_report extends CI_Controller
             redirect(base_url('login'), "refresh");
         }
     }
-
 }

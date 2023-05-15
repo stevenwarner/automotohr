@@ -1,25 +1,31 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Weekly_activity_overview_report extends CI_Controller {
-    
-    public function __construct() {
-        
+class Weekly_activity_overview_report extends CI_Controller
+{
+
+    public function __construct()
+    {
+
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         // $this->load->library("pagination");
         $this->load->model('Reports_model');
     }
-    public function index($company_sid) {
+    public function index($company_sid)
+    {
         if ($this->session->userdata('executive_loggedin')) {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Weekly Activity Overview Report Including Executive Admins';
             $data['company_sid'] = $company_sid;
-            
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
+
             //**** working code ****//
-            
+
             if (isset($_POST['export']) && $_POST['export'] == 'export_data') {
-                
+
                 $week_span = $_POST['excel_week_span'];
                 if ($week_span != '') {
                     $week_dates = explode('-', $week_span);
@@ -38,6 +44,8 @@ class Weekly_activity_overview_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+                    fputcsv($output, ['Company Name', getCompanyNameBySid($company_sid)]);
+
                     foreach ($companies as $company) {
                         if (sizeof($company['active_employers']) > 0 || sizeof($company['inactive_employers']) > 0) {
                             fputcsv($output, array(ucwords($company['CompanyName'])));
@@ -80,11 +88,12 @@ class Weekly_activity_overview_report extends CI_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-    
-    public function ajax_responder() {
+
+    public function ajax_responder()
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
         $perform_action = $this->input->post('perform_action');
-     
+
         switch ($perform_action) {
             case 'get_weekly_activity_overview':
                 $this->form_validation->set_rules('week_span', 'week_span', 'required|trim|xss_clean');
@@ -95,14 +104,13 @@ class Weekly_activity_overview_report extends CI_Controller {
                 break;
         }
         if ($this->form_validation->run() == false) {
-            
         } else {
             $perform_action = $this->input->post('perform_action');
-            
+
             switch ($perform_action) {
-                
+
                 case 'get_weekly_activity_overview':
-                    
+
                     $company_sid = $this->input->post('company_sid');
                     $week_span = $this->input->post('week_span');
                     $start_date = $this->input->post('start_date');
@@ -113,10 +121,10 @@ class Weekly_activity_overview_report extends CI_Controller {
                     $week_start = $week_start . ' 00:00:00';
                     $week_end = $end_date->format('Y-m-d');
                     $week_end = $week_end . ' 23:59:59';
-                    
+
                     $companies = $this->Reports_model->get_company_activity_overview($company_sid, $week_start, $week_end);
                     $my_data['companies'] = $companies;
-                    
+
                     $this->load->view('reports/activity_overview_report_partial', $my_data);
                     break;
                 default:

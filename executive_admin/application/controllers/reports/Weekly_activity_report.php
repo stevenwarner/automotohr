@@ -12,6 +12,8 @@ class Weekly_activity_report extends CI_Controller {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Weekly Activity Report';
             $data['company_sid'] = $company_sid;
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
             
             //**** working code ****//
             $perform_action = $this->input->post('perform_action');
@@ -42,6 +44,8 @@ class Weekly_activity_report extends CI_Controller {
                         header('Content-Type: text/csv; charset=utf-8');
                         header('Content-Disposition: attachment; filename=data.csv');
                         $output = fopen('php://output', 'w');
+
+                        fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
                      
                         $employers = $this->Reports_model->generate_activity_log_data_for_view($company_sid, $week_start, $week_end);
                         $company_details = get_company_details($company_sid);

@@ -17,6 +17,8 @@ class Job_categories_report extends CI_Controller {
             $data['title'] = 'Active New Hire Categories';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             //**** working code ****//
             $data['categories'] = $this->Reports_model->GetAllJobCategoriesWhereApplicantsAreHired($company_sid);
             //**** working code ****//
@@ -29,6 +31,7 @@ class Job_categories_report extends CI_Controller {
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
 
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
                     fputcsv($output, array('Sr. No', 'Category', 'Hire Count'));
 
                     foreach ($data['categories'] as $key => $category) {

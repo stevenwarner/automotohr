@@ -17,6 +17,11 @@ class Applicants_report extends CI_Controller {
             $data['title'] = 'Applicants Report';
             $data['company_sid'] = $company_sid;
 
+
+            $companyinfo = getCompanyInfo($company_sid);
+            $data['companyName'] = $companyinfo['company_name'];
+
+
             //**** working code ****//
             $data['flag'] = false;
 
@@ -133,6 +138,10 @@ class Applicants_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+
+
                     fputcsv($output, array('Job Title', 'First Name', 'Last Name', 'Email', 'Phone Number', 'Date Applied', 'Applicant Type', 'Questionnaire Score', 'Reviews Score'));
 
                     foreach ($applicants as $applicant) {

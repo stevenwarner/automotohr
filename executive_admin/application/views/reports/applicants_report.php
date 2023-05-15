@@ -101,7 +101,7 @@
                                 <div class="field-row">
                                     <label class="">Date From</label>
                                     <?php $start_date = $this->uri->segment(8) != 'all' && $this->uri->segment(8) != '' ? urldecode($this->uri->segment(8)) : date('m-d-Y');?>
-                                    <input class="invoice-fields"
+                                    <input class="invoice-fields "
                                            placeholder="<?php echo date('m-d-Y'); ?>"
                                            type="text"
                                            name="start_date_applied"
@@ -414,6 +414,7 @@
         mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/font-awesome.css'); ?>" type="text/css" />');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.css'); ?>" type="text/css" />');
         mywindow.document.write('</head><body >');
+        mywindow.document.write('<table> <tr><td>&nbsp;</td></tr><tr><td><b><?php echo $companyName; ?></b></td></tr><tr><td>&nbsp;</td></tr></table >');
         mywindow.document.write(data);
         mywindow.document.write('</body></html>');
         mywindow.document.write('<scr' + 'ipt src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');

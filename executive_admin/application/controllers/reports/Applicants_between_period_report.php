@@ -20,6 +20,9 @@ class Applicants_between_period_report extends CI_Controller
             $data['title'] = 'Applicants Between Period Report';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
+
             $start_date = urldecode($start_date);
             $end_date = urldecode($end_date);
             $keyword = urldecode($keyword);
@@ -105,6 +108,9 @@ class Applicants_between_period_report extends CI_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+                   
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+
                     fputcsv($output, array('Job Title', 'Applicant Name', 'Application Date'));
 
                     foreach ($data['applicants'] as $applicant) {

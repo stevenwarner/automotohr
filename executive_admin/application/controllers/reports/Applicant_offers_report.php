@@ -16,6 +16,7 @@ class Applicant_offers_report extends CI_Controller {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Applicant Offers Report';
             $data['company_sid'] = $company_sid;
+            $data['companyName'] = getCompanyNameBySid($company_sid);
 
             //**** working code ****//
             $data['flag'] = false;
@@ -56,6 +57,8 @@ class Applicant_offers_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
 
                     fputcsv($output, array('Offer Date', 'Job Title', 'Applicant Name', 'Email', 'Employee Type'));
 

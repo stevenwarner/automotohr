@@ -17,6 +17,9 @@ class New_hires_report extends CI_Controller {
             $data['title'] = 'New Hires Report';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
+
             //**** working code ****//
             $data['flag'] = false;
             $this->form_validation->set_data($this->input->get(NULL, true));
@@ -62,6 +65,8 @@ class New_hires_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
 
                     if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {
                         fputcsv($output, array('Job Title', 'Applicant Name', 'Hired On'));

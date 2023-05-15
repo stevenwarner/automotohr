@@ -1,21 +1,27 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Jobs_per_month_report extends CI_Controller {
+class Jobs_per_month_report extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->library("pagination");
         $this->load->model('Reports_model');
     }
 
-    public function index($company_sid) {
+    public function index($company_sid)
+    {
         if ($this->session->userdata('executive_loggedin')) {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Jobs Per Month Report';
             $data['company_sid'] = $company_sid;
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
+
             $status = 0;
             //**** working code ****//
             if (isset($_GET['submit']) && $_GET['submit'] == 'Apply Filters') {
@@ -32,21 +38,21 @@ class Jobs_per_month_report extends CI_Controller {
             $jan_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-01-' . $year, '31-01-' . $year, $status);
 
             if (is_leap_year($year)) {
-                $feb_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-02-' . $year, '29-02-' . $year,$status);
+                $feb_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-02-' . $year, '29-02-' . $year, $status);
             } else {
-                $feb_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-02-' . $year, '28-02-' . $year,$status);
+                $feb_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-02-' . $year, '28-02-' . $year, $status);
             }
 
-            $mar_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-03-' . $year, '31-03-' . $year,$status);
-            $apr_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-04-' . $year, '30-04-' . $year,$status);
-            $may_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-05-' . $year, '31-05-' . $year,$status);
-            $jun_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-06-' . $year, '30-06-' . $year,$status);
-            $jul_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-07-' . $year, '31-07-' . $year,$status);
-            $aug_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-08-' . $year, '31-08-' . $year,$status);
-            $sep_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-09-' . $year, '30-09-' . $year,$status);
-            $oct_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-10-' . $year, '31-10-' . $year,$status);
-            $nov_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-11-' . $year, '30-11-' . $year,$status);
-            $dec_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-12-' . $year, '31-12-' . $year,$status);
+            $mar_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-03-' . $year, '31-03-' . $year, $status);
+            $apr_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-04-' . $year, '30-04-' . $year, $status);
+            $may_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-05-' . $year, '31-05-' . $year, $status);
+            $jun_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-06-' . $year, '30-06-' . $year, $status);
+            $jul_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-07-' . $year, '31-07-' . $year, $status);
+            $aug_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-08-' . $year, '31-08-' . $year, $status);
+            $sep_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-09-' . $year, '30-09-' . $year, $status);
+            $oct_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-10-' . $year, '31-10-' . $year, $status);
+            $nov_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-11-' . $year, '30-11-' . $year, $status);
+            $dec_jobs = $this->Reports_model->get_all_hired_jobs($company_sid, '01-12-' . $year, '31-12-' . $year, $status);
 
             $chart_data = array(
                 array('January', count($jan_jobs)),
@@ -90,6 +96,9 @@ class Jobs_per_month_report extends CI_Controller {
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
 
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+
+
                     foreach ($data['jobs'] as $month => $jobList) {
                         fputcsv($output, array($month));
                         fputcsv($output, array('Job Title', 'Filled Date'));
@@ -119,5 +128,4 @@ class Jobs_per_month_report extends CI_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-
 }

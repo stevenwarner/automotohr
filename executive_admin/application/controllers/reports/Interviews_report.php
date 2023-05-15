@@ -17,6 +17,8 @@ class Interviews_report extends CI_Controller {
             $data['company_sid'] = $company_sid;
             $company_users = $this->Reports_model->GetAllUsers($company_sid);
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             foreach ($company_users as $key => $user) {
                 $employer_events = $this->Reports_model->GetAllEventsByCompanyAndEmployer($user['parent_sid'], $user['sid']);
                 $company_users[$key]['events'] = $employer_events;
@@ -29,6 +31,7 @@ class Interviews_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
 
                     foreach ($data['users_events'] as $user_event) {
                         fputcsv($output, array(ucwords($user_event['first_name'] . ' ' . $user_event['last_name'])));
