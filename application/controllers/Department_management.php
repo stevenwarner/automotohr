@@ -653,6 +653,7 @@ class Department_management extends Public_Controller
                 ->where([
                     'employee_sid' => $approver,
                     'status' => 1,
+                    'is_archived' => 0,
                     'is_department' => (int)$isDepartment,
                 ])
                 ->get('timeoff_approvers')
