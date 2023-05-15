@@ -2911,6 +2911,21 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
+            case "get_allowed_employees":
+                //
+                $allowed_employees = $this->timeoff_model->getPolicyEmployees($post['policyId'], $post['companyId']);
+                $policy_title = $this->timeoff_model->getPolicyTitleById($post['policyId']);
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['View'] = $this->load->view('timeoff/partials/policies/allowed_employees', [
+                    'allowed_employees' => $allowed_employees,
+                    'policy_title' => $policy_title
+                ], true);
+                //
+                $this->resp();
+                break;       
+
             case "get_policy_request":
                 //
                 $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($post['companyId']);

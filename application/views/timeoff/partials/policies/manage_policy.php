@@ -51,7 +51,7 @@
             <?php } else { ?>
                 <tr>
                     <td colspan="4">
-                        <p class="alert alert-info text-center">No employee gound against this policy</p>
+                        <p class="alert alert-info text-center">No employee found against this policy</p>
                     </td>
                 </tr>
             <?php } ?>

@@ -59,6 +59,15 @@ $(function () {
                 employeeId: employeeId,
                 public: 0
             }
+        },
+        AllowedEmployees: {
+            Main: {
+                action: "get_allowed_employees",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
+            }
         }
     },
         oldState = {},
@@ -121,6 +130,18 @@ $(function () {
         }, () => {
             // Fetch Employee
             fetchPolicyRequests($(this).closest('.jsBox').data('id'));
+        });
+    });
+    //
+    $(document).on('click', '.jsAllowedPolicyEmployees', function () {
+        Modal({
+            Id: 'jsAllowedPolicyEmployees',
+            Title: `Employees entitled for ${$(this).closest('.jsBox').data('name')}`,
+            Body: getAllowedPolicyEmployee(),
+            Loader: 'jsAllowedPolicyEmployeesLoader'
+        }, () => {
+            // Fetch Employee
+            fetchAllowedEmployees($(this).closest('.jsBox').data('id'));
         });
     });
     // Filter buttons
@@ -476,7 +497,7 @@ $(function () {
                             <th>Action Taken</th>
                         </tr>
                     </thead>
-                    <tbody id="jsPolicyHistoryTable"></tbody>
+                    <tbody id="jsAllowedPolicyEmployeeTable"></tbody>
                 </table>
             </div>
         `;
@@ -488,6 +509,15 @@ $(function () {
     function getManagePolicyTemplate() {
         let html = `
             <div id="jsManagePolicyTable">    
+            </div>
+        `;
+        return html;
+    }
+
+    //
+    function getAllowedPolicyEmployee() {
+        let html = `
+            <div id="jsAllowedPolicyEmployeeTable">    
             </div>
         `;
         return html;
@@ -627,87 +657,6 @@ $(function () {
             $("#jsManagePolicy").hide();
         });
     }
-
-    //
-    function getPolicyBox(v) {
-        let title = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'Activate Policy' : 'Deactivate Policy',
-            icon = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'fa-check-square-o' : 'fa-archive',
-            cl = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'js-activate-btn' : 'js-archive-btn';
-        //
-        let accruals = JSON.parse(v.accruals);
-        //
-        let rows = '';
-        //
-        rows += `<div class="col-sm-4">`;
-        rows += `    <div class="csBox csShadow csRadius5 jsBox" data-id="${v.policy_id}" data-name="${v.policy_title}">`;
-        rows += `        <!-- Box Header -->`;
-        rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
-
-        rows += `            <span class="pull-right">`;
-        rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsManagePolicy" title="Manage Policy" placement="top"><i class="fa fa-cog"></i></span>`;
-        rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
-        rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistory" title="View history" placement="top"><i class="fa fa-history"></i></span>`;
-        rows += `            </span>`;
-        rows += `            <div class="clearfix"></div>`;
-        rows += `        </div>`;
-        rows += `        <!-- Box Content -->`;
-        rows += `        <div class="csBoxContent">`;
-        rows += `            <!-- Section 1 -->`;
-        rows += `            <div class="csBoxContentDateSection pt10 pb10">`;
-        rows += `                <div class="col-sm-12">`;
-        rows += `                    <h3>${ucwords(v.policy_title)} (<span class="text-${v.category_type == 1 ? "" : "danger"}">${v.category_type == 1 ? "Paid" : "Unpaid"}</span>)</h3>`;
-        rows += `                    <p>(${getTypeNames(v.type_sid)})</p>`;
-        rows += `                </div>`;
-        rows += `                <div class="clearfix"></div>`;
-        rows += `            </div>`;
-        rows += `            <!-- Section 3 -->`;
-        rows += `            <div class="csBoxBalanceSection">`;
-        rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${accruals.applicableDate === null || accruals.applicableDate == '' || accruals.applicableDate == 0 ? "Joining Date" : moment(accruals.applicableDate, '').format(timeoffDateFormat)}</strong></p>`;
-        rows += `                    <p>Applicable Date</p>`;
-        rows += `                </div>`;
-        rows += `                <div class="clearfix"></div>`;
-        rows += `            </div>`;
-        rows += `            <!-- Section 3 -->`;
-        rows += `            <div class="csBoxBalanceSection">`;
-        rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${accruals.carryOverCheck == 'yes' ? 'Yes' : 'No'}</strong></p>`;
-        rows += `                    <p>Carryover</p>`;
-        rows += `                </div>`;
-        rows += `                <div class="clearfix"></div>`;
-        rows += `            </div>`;
-        rows += `            <!-- Section 3 -->`;
-        rows += `            <div class="csBoxBalanceSection">`;
-        rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${getAccrualText(accruals)}</strong></p>`;
-        rows += `                    <p>Accruals</p>`;
-        rows += `                </div>`;
-        rows += `                <div class="clearfix"></div>`;
-        rows += `            </div>`;
-        rows += `            <!-- Section 3 -->`;
-        rows += `            <div class="csBoxBalanceSection">`;
-        rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${getAccrualText(accruals, true)}</strong></p>`;
-        rows += `                    <p>New Hire</p>`;
-        rows += `                </div>`;
-        rows += `                <div class="clearfix"></div>`;
-        rows += `            </div>`;
-        rows += `        </div>`;
-        rows += `            `;
-        rows += `        <!-- Box Footer -->`;
-        rows += `        <div class="csBoxFooter">`;
-        rows += `            <div class="col-sm-12">`;
-        if (v.default_policy == 0) {
-            rows += `                <button class="btn btn-orange form-control ${cl}"><i class="fa ${icon}"></i>${title}</button>`;
-        }
-        rows += `            </div>`;
-        rows += `        </div>`;
-        rows += `    </div>`;
-        rows += `</div>`;
-
-
-        return rows;
-    }
 	//
 	function getPolicyBox(v) {
 		let title =
@@ -733,9 +682,10 @@ $(function () {
 		rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
 
 		rows += `            <span class="pull-right">`;
+		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsAllowedPolicyEmployees" title="policy Employee(s)" placement="top"><i class="fa fa-users"></i></span>`;
+		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsManagePolicy" title="Manage Policy" placement="top"><i class="fa fa-cog"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistoryBtn" title="History" placement="top"><i class="fa fa-history"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
-		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistory" title="View history" placement="top"><i class="fa fa-history"></i></span>`;
 		rows += `            </span>`;
 		rows += `            <div class="clearfix"></div>`;
 		rows += `        </div>`;
@@ -813,6 +763,40 @@ $(function () {
 
 		return rows;
 	}
+
+	//
+	function fetchAllowedEmployees (policyId) {
+        //
+        ml(true, 'jsAllowedPolicyEmployeesLoader');
+        //
+        $('#jsAllowedPolicyEmployeeTable').html('');
+        //
+        xhr = $.post(handlerURL, Object.assign(callOBJ.AllowedEmployees.Main, {
+            policyId: policyId
+        }), (resp) => {
+            //
+            xhr = null;
+            //
+            if (resp.Redirect === true) {
+                alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+                    window.location.reload();
+                });
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                alertify.alert('WARNING!', resp.Response, () => { });
+                //
+                ml(false, 'jsAllowedPolicyEmployeesLoader');
+                //
+                return;
+            }
+
+            //
+            $('#jsAllowedPolicyEmployeeTable').html(resp.View);
+            ml(false, 'jsAllowedPolicyEmployeesLoader');
+        });
+    }
 
 	/**
 	 * Capture history click event
