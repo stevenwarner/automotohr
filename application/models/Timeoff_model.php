@@ -6530,6 +6530,7 @@ class Timeoff_model extends CI_Model
                 $employees[$ekey]['allowed_time'] = $employeeTimeoffInfo['AllowedTime']['text']; 
                 $employees[$ekey]['remaining_time'] = $employeeTimeoffInfo['RemainingTime']['text']; 
                 $employees[$ekey]['consumed_time'] = $employeeTimeoffInfo['ConsumedTime']['text']; 
+                $employees[$ekey]['remaining_minutes'] = $employeeTimeoffInfo['RemainingTime']['M']['minutes']; 
             }    
             //
         }

@@ -1,8 +1,12 @@
 <style type="text/css">
     .modifyDate{
-        style="vertical-align: middle;
+        vertical-align: middle;
         font-size: 16px !important;
         font-weight: 600;
+    }
+
+    .finishTime {
+        background: #f2dede !important;
     }
 </style>
 <div class="row">
@@ -23,7 +27,7 @@
         <tbody id="jsManagePolicyTable">
             <?php if (!empty($allowed_employees)) { ?>
                 <?php foreach ($allowed_employees as $employee) { ?>
-                    <tr>
+                    <tr class="<?php echo $employee['remaining_minutes'] < 1 ? 'finishTime' : ''; ?>">
                         <td style="vertical-align: middle;">
                             <strong><?php echo remakeEmployeeName($employee); ?></strong>
                             <br>
