@@ -1787,40 +1787,40 @@ class Gusto_payroll_model extends CI_Model
         $request['ssn'] = $post['ssn'];
         $request['version'] = $gustoEmployeeDetails['version'];
         // lets update the employee profile
-        // $response = updateOnboardEmployeeProfile(
-        //     $request,
-        //     $gustoEmployeeDetails['payroll_employee_uuid'],
-        //     $gustoCompany
-        // );
-        // // check for Gusto errors
-        // if ($errors = hasGustoErrors($response)) {
-        //     return $doReturn ? $errors : sendResponse(200, $errors);
-        // }
-        // // set the user update array
-        // $userArray = [];
-        // $userArray['first_name'] = $request['first_name'];
-        // $userArray['last_name'] = $request['last_name'];
-        // $userArray['middle_initial'] = $request['middle_initial'];
-        // $userArray['email'] = $request['email'];
-        // $userArray['ssn'] = $request['ssn'];
-        // $userArray['dob'] = $request['date_of_birth'];
-        // if ($post['startDate']) {
-        //     $userArray['joined_at'] = formatDateToDB($post['startDate'], SITE_DATE, DB_DATE);
-        // }
-        // // update the users table
-        // updateUserById($userArray, $post['employeeId']);
-        // // set the payroll employee array
-        // $payrollEmployeeArray = [];
-        // $payrollEmployeeArray['version'] = $response['version'];
-        // $payrollEmployeeArray['personal_profile'] = 1;
-        // $payrollEmployeeArray['updated_at'] = getSystemDate();
-        // $payrollEmployeeArray['response_body'] = json_encode($response);
-        //
-        // if ($post['workLocation']) {
-        //     $payrollEmployeeArray['work_address_sid'] = $post['workLocation'];
-        // }
+        $response = updateOnboardEmployeeProfile(
+            $request,
+            $gustoEmployeeDetails['payroll_employee_uuid'],
+            $gustoCompany
+        );
+        // check for Gusto errors
+        if ($errors = hasGustoErrors($response)) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        // set the user update array
+        $userArray = [];
+        $userArray['first_name'] = $request['first_name'];
+        $userArray['last_name'] = $request['last_name'];
+        $userArray['middle_initial'] = $request['middle_initial'];
+        $userArray['email'] = $request['email'];
+        $userArray['ssn'] = $request['ssn'];
+        $userArray['dob'] = $request['date_of_birth'];
+        if ($post['startDate']) {
+            $userArray['joined_at'] = formatDateToDB($post['startDate'], SITE_DATE, DB_DATE);
+        }
+        // update the users table
+        updateUserById($userArray, $post['employeeId']);
+        // set the payroll employee array
+        $payrollEmployeeArray = [];
+        $payrollEmployeeArray['version'] = $response['version'];
+        $payrollEmployeeArray['personal_profile'] = 1;
+        $payrollEmployeeArray['updated_at'] = getSystemDate();
+        $payrollEmployeeArray['response_body'] = json_encode($response);
+        
+        if ($post['workLocation']) {
+            $payrollEmployeeArray['work_address_sid'] = $post['workLocation'];
+        }
         // update the table
-        // $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
+        $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
         // if location is set
         if ($post['workLocation'] && $post['startDate']) {
             // get the required things for job & compensation
@@ -1846,7 +1846,7 @@ class Gusto_payroll_model extends CI_Model
                     $newPost,
                     $gustoEmployeeDetails,
                     $gustoCompany,
-                    false
+                    true
                 );
             }
         }
@@ -1900,8 +1900,8 @@ class Gusto_payroll_model extends CI_Model
         // lets check the job first
         if (
             !$this->db
-                ->where('employee_sid', $post['employeeId'])
-                ->count_all_results('payroll_employee_jobs')
+            ->where('employee_sid', $post['employeeId'])
+            ->count_all_results('payroll_employee_jobs')
         ) {
             // we need to add job and compensation
             // lets fetch the job from Gusto
@@ -1918,10 +1918,15 @@ class Gusto_payroll_model extends CI_Model
                 // add the job to Gusto
                 // check if location exists
                 $gustoEmployeeWorkLocation = $this->db
-                    ->select('work_address_sid')
-                    ->where('employee_sid', $post['employeeId'])
+                    ->select('payroll_company_locations.gusto_uuid')
+                    ->join(
+                        'payroll_company_locations',
+                        'payroll_company_locations.gusto_location_id = payroll_employees.work_address_sid',
+                        'inner'
+                    )
+                    ->where('payroll_employees.employee_sid', $post['employeeId'])
                     ->get('payroll_employees')
-                    ->row_array()['work_address_sid'];
+                    ->row_array()['gusto_uuid'];
                 // check the work location
                 if (!$gustoEmployeeWorkLocation) {
                     // set error
@@ -1950,12 +1955,200 @@ class Gusto_payroll_model extends CI_Model
                     $gustoEmployeeDetails['payroll_employee_uuid'],
                     $gustoCompany
                 );
-                _e($response, true);
-
+                // check for errors
+                if ($errors = hasGustoErrors($response)) {
+                    return $doReturn ? $errors : sendResponse(200, $errors);
+                }
+                //
+                $this->checkAndAddJobs($response, $post['employeeId']);
             } else {
+                $this->checkAndAddJobs($gustoJob, $post['employeeId']);
             }
         } else {
             // we need to update job and compensation
+            // check if location exists
+            $gustoEmployeeWorkLocation = $this->db
+                ->select('payroll_company_locations.gusto_uuid')
+                ->join(
+                    'payroll_company_locations',
+                    'payroll_company_locations.gusto_location_id = payroll_employees.work_address_sid',
+                    'inner'
+                )
+                ->where('payroll_employees.employee_sid', $post['employeeId'])
+                ->get('payroll_employees')
+                ->row_array()['gusto_uuid'];
+            // check the work location
+            if (!$gustoEmployeeWorkLocation) {
+                // set error
+                $errors['errors'][] = 'Employee\'s work location is required.';
+                // send response
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // check if employee start date is present
+            // get the required things for job & compensation
+            $employeeStartDate = getUserStartDate($post['employeeId'], true);
+            // check the date as well
+            if (!$employeeStartDate) {
+                // set error
+                $errors['errors'][] = 'Employee\'s start date is required.';
+                // send response
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // get the primary job
+            $employeePrimaryJob = $this->db
+            ->select('version, sid, payroll_uid')
+            ->where([
+                'employee_sid' => $post['employeeId'],
+                'is_primary' => 1
+            ])
+            ->get('payroll_employee_jobs')
+            ->row_array();
+            //
+            if (!$employeePrimaryJob) {
+                // set error
+                $errors['errors'][] = 'Employee\'s primary job not found.';
+                // send response
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // let's update the job first
+            // create request
+            $request = [];
+            $request['title'] = $post['title'];
+            $request['location_uuid'] = $gustoEmployeeWorkLocation;
+            $request['hire_date'] = $employeeStartDate;
+            $request['version'] = $employeePrimaryJob['version'];
+            // create job on Gusto
+            $response = updateEmployeeJobOnGusto(
+                $request,
+                $employeePrimaryJob['payroll_uid'],
+                $gustoCompany
+            );
+            // check for errors
+            if ($errors = hasGustoErrors($response)) {
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            //
+            $this->checkAndAddJobs($response, $post['employeeId']);
         }
+        // send response
+        return $doReturn ? $errors : sendResponse(200, ['Employee\'s job is successfully updated.']);
+    }
+
+    /**
+     * Handle job
+     * 
+     * @param array $jobs
+     * @param int   $employeeId
+     * 
+     * @return int
+     */
+    public function checkAndAddJobs(array $jobs, int $employeeId)
+    {
+        // check for empty compensations
+        if (!$jobs) {
+            return false;
+        }
+        // for non-array
+        if (!isset($jobs[0])) {
+            $t = $jobs;
+            $jobs = [];
+            $jobs[0] = $t;
+        }
+        //
+        $activeJobId = 0;
+        // loop through compensations
+        foreach ($jobs as $job) {
+            // add the job
+            $jobArray = [];
+            $jobArray['payroll_uid'] = $job['uuid'];
+            $jobArray['payroll_job_id'] = NULL;
+            $jobArray['payroll_location_id'] = $job['location_uuid'];
+            $jobArray['current_compensation_id'] = $job['current_compensation_uuid'];
+            $jobArray['title'] = $job['title'];
+            $jobArray['rate'] = $job['rate'];
+            $jobArray['payment_unit'] = $job['payment_unit'];
+            $jobArray['hire_date'] = $job['hire_date'];
+            $jobArray['version'] = $job['version'];
+            $jobArray['last_modified_by'] = 0;
+            $jobArray['is_primary'] = $job['primary'];
+            $jobArray['is_deleted'] = 0;
+            
+            // set where array
+            $where = ['employee_sid' => $employeeId, 'payroll_uid' => $job['uuid']];
+            // check if job exists
+            if ($jobRecord = $this->db->select('sid')->where($where)->get('payroll_employee_jobs')->row_array()) {
+                // job found
+                if ($job['primary']) {
+                    $activeJobId = $jobRecord['sid'];
+                }
+                //
+                $jobId = $jobRecord['sid'];
+                $jobArray['updated_at'] = getSystemDate();
+                //
+                $this->db->where('sid', $jobRecord['sid'])->update('payroll_employee_jobs', $jobArray);
+            } else {
+                // insert job
+                $jobArray['employee_sid'] = $employeeId;
+                $jobArray['created_at'] = $jobArray['updated_at'] = getSystemDate();
+                //
+                $jobId = $this->db->insert('payroll_employee_jobs', $jobArray);
+                //
+                if ($job['primary']) {
+                    $activeJobId = $jobId;
+                }
+            }
+            // handle the compensations
+            $this->checkAndCompensation($job['compensations'], $jobId);
+        }
+
+        //
+        return $activeJobId;
+    }
+
+    /**
+     * Handle job compensations
+     * 
+     * @param array $compensations
+     * @param int   $jobId
+     * 
+     * @return bool
+     */
+    public function checkAndCompensation(array $compensations, int $jobId)
+    {
+        // check for empty compensations
+        if (!$compensations) {
+            return false;
+        }
+        
+        // loop through compensations
+        foreach ($compensations as $compensation) {
+            // set array
+            $compensationArray = [];
+            $compensationArray['payroll_job_sid'] = $jobId;
+            $compensationArray['payroll_id'] = $compensation['uuid'];
+            $compensationArray['rate'] = $compensation['rate'];
+            $compensationArray['payment_unit'] = $compensation['payment_unit'];
+            $compensationArray['flsa_status'] = $compensation['flsa_status'];
+            $compensationArray['version'] = $compensation['version'];
+            $compensationArray['effective_date'] = $compensation['effective_date'];
+            $compensationArray['adjust_for_minimum_wage'] = $compensation['adjust_for_minimum_wage'];
+            $compensationArray['minimum_wages'] = json_encode($compensation['minimum_wages']);
+            //
+            $where = ['payroll_job_sid' => $jobId, 'payroll_id' => $compensation['uuid']];
+            // check if already exists
+            if (!$this->db->where($where)->count_all_results('payroll_employee_job_compensations')) {
+                // insert
+                $compensationArray['last_modified_by'] = 0;
+                $compensationArray['created_at'] = $compensationArray['updated_at'] = getSystemDate();
+                //
+                $this->db->insert('payroll_employee_job_compensations', $compensationArray);
+            } else {
+                // update
+                $compensationArray['updated_at'] = getSystemDate();
+                $this->db->where($where)->update('payroll_employee_job_compensations', $compensationArray);
+            }
+        }
+        //
+        return true;
     }
 }
