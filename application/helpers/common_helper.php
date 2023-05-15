@@ -14439,11 +14439,17 @@ if (!function_exists('SendResponse')) {
         //
         if ($status == 401) {
             header("HTTP/1.0 401 Unauthorized");
+            if ($data) {
+                echo json_encode($data);
+            }
             exit(0);
         }
         //
         if ($status == 400) {
             header("HTTP/1.0 400 Bad Request");
+            if ($data) {
+                echo json_encode($data);
+            }
             exit(0);
         }
         //

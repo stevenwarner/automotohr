@@ -13,6 +13,8 @@ class Daily_activity_detailed_overview_report extends CI_Controller {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Daily Activity Detailed Overview Report Including Executive Admins';
             $data['company_sid'] = $company_sid;
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
             
             //**** working code ****//
             
@@ -37,6 +39,8 @@ class Daily_activity_detailed_overview_report extends CI_Controller {
                         header('Content-Type: text/csv; charset=utf-8');
                         header('Content-Disposition: attachment; filename=data.csv');
                         $output = fopen('php://output', 'w');
+
+                        fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
                         
                         foreach ($companies as $company) {
                             

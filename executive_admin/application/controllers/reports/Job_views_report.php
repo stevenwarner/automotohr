@@ -17,11 +17,23 @@ class Job_views_report extends CI_Controller {
             $data['title'] = 'Job Views Report';
             $data['company_sid'] = $company_sid;
 
+
+            if (isset($_POST['job_status'])) {
+                $jobStatus = $_POST['job_status'];
+            } else {
+                $jobStatus = 'all';
+            }
+
+
+
             //**** working code ****//
-            $all_jobs = $this->Reports_model->get_all_jobs_views_applicants_count($company_sid);
+            $all_jobs = $this->Reports_model->get_all_jobs_views_applicants_count_filter($company_sid,$jobStatus);
             $data['all_jobs'] = $all_jobs;
             $total_views = 0;
             $total_applicants = 0;
+
+            $data['jobstatus'] = $jobStatus;
+            $data['companyName'] = getCompanyNameBySid($company_sid);
 
             foreach ($all_jobs as $job) {
                 $total_views += intval($job['views']);
@@ -39,6 +51,8 @@ class Job_views_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
 
                     fputcsv($output, array('Date', 'Job Title', 'Views', 'Applicants'));
 

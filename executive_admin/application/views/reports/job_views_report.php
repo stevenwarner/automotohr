@@ -1,3 +1,23 @@
+<script type="text/javascript">
+
+    function print_page(elem) {
+        var data = ($(elem).html());
+        var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
+
+        mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/font-awesome.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.css'); ?>" type="text/css" />');
+        mywindow.document.write('</head><body >');
+        mywindow.document.write('<table> <tr><td>&nbsp;</td></tr><tr><td><b><?php echo getCompanyNameBySid($company_sid); ?></b></td></tr><tr><td>&nbsp;</td></tr></table >');
+        mywindow.document.write(data);
+        mywindow.document.write('</body></html>');
+        mywindow.document.write('<scr' + 'ipt src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
+        mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
+        mywindow.document.close();
+        mywindow.focus();
+    }
+</script>
 <div class="main">
     <div class="container">
         <div class="row">
@@ -5,10 +25,10 @@
                 <div class="heading-title page-title">
                     <h1 class="page-title"><i class="fa fa-dashboard"></i><?php echo $title; ?></h1>
                     <a class="black-btn pull-right" href="<?php echo base_url('dashboard/reports/' . $company_sid); ?>">
-                        <i class="fa fa-long-arrow-left"></i> 
+                        <i class="fa fa-long-arrow-left"></i>
                         Back to Reports
                     </a>
-                </div>   
+                </div>
                 <!-- counts -->
                 <div class="job-views-applicants">
                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
@@ -36,15 +56,57 @@
                         </div>
                     </div>
                 </div>
+            
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div style="margin-top: 15px; margin-left: -15px; margin-right: -15px;">
+
+                    <form id="form-filters" method="post" enctype="multipart/form-data" action="">
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label>Job Status</label>
+                            <div class="hr-select-dropdown">
+                                <select class="invoice-fields" name="job_status" id="job_status">
+                                    <option value="all">All</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <label></label>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <button class="btn btn-success btn-block" id="btn_apply_filters">Filter</button>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <a class="btn btn-success btn-block" id="clear" href="<?php echo base_url('reports/job_views_report/'.$company_sid); ?>/">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+
                 <!-- counts -->
                 <?php if (isset($all_jobs) && !empty($all_jobs)) { ?>
                     <div class="bt-panel">
                         <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                            <i class="fa fa-print" aria-hidden="true"></i> 
+                            <i class="fa fa-print" aria-hidden="true"></i>
                             Print
                         </a>
                         <form method="post" id="export" name="export">
                             <input type="hidden" name="submit" value="Export" />
+                            <input type="hidden" name="job_status" value="<?php echo $jobstatus;?>" />
+
                             <button class="btn btn-success" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export To Excel</button>
                         </form>
                     </div>
@@ -66,10 +128,15 @@
                                     </thead>
                                     <tbody>
                                         <?php if (isset($all_jobs) && !empty($all_jobs)) { ?>
-                                            <?php foreach ($all_jobs as $job) { ?>
+                                            <?php foreach ($all_jobs as $job) {
+                                                $state = $city = '';
+                                                if (isset($job['Location_City']) && $job['Location_City'] != null && $job['Location_City'] != '') $city = ' - ' . ucfirst($job['Location_City']);
+                                                if (isset($job['Location_State']) && $job['Location_State'] != null && $job['Location_State'] != '') $state = ', ' . db_get_state_name($job['Location_State'])['state_name'];
+                                            ?>
                                                 <tr>
                                                     <td>
-<!--                                                        --><?php //echo convert_date_to_frontend_format($job['activation_date']); ?>
+                                                        <!--                                                        --><?php //echo convert_date_to_frontend_format($job['activation_date']); 
+                                                                                                                        ?>
                                                         <?php echo reset_datetime(array(
                                                             'datetime' => $job['activation_date'],
                                                             // 'from_format' => 'h:iA', // Y-m-d H:i:s
@@ -79,7 +146,7 @@
                                                             '_this' => $this
                                                         )) ?>
                                                     </td>
-                                                    <td><?php echo ucwords($job['Title']); ?></td>
+                                                    <td><?php echo ucwords($job['Title'] . $city . $state); ?></td>
                                                     <?php if ($job['active'] == 0) { ?>
                                                         <td style="color:red">Inactive</td>
                                                     <?php } else if ($job['active'] == 1) { ?>
@@ -87,8 +154,8 @@
                                                     <?php } else if ($job['active'] == 2) { ?>
                                                         <td style="color:red;">Archived</td>
                                                     <?php } ?>
-                                                    <td style="color: <?php echo($job['views'] == 0 ? 'red' : 'green'); ?>;"><?php echo $job['views']; ?></td>
-                                                    <td style="color: <?php echo($job['applicant_count'] == 0 ? 'red' : 'green'); ?>;"><?php echo $job['applicant_count']; ?></td>
+                                                    <td style="color: <?php echo ($job['views'] == 0 ? 'red' : 'green'); ?>;"><?php echo $job['views']; ?></td>
+                                                    <td style="color: <?php echo ($job['applicant_count'] == 0 ? 'red' : 'green'); ?>;"><?php echo $job['applicant_count']; ?></td>
 
                                                 </tr>
                                             <?php } ?>
@@ -109,35 +176,20 @@
                 <?php if (isset($all_jobs) && !empty($all_jobs)) { ?>
                     <div class="bt-panel">
                         <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                            <i class="fa fa-print" aria-hidden="true"></i> 
+                            <i class="fa fa-print" aria-hidden="true"></i>
                             Print
                         </a>
                         <form method="post" id="export" name="export">
                             <input type="hidden" name="submit" value="Export" />
                             <button class="btn btn-success" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export To Excel</button>
                         </form>
-                    </div> 
+                    </div>
                 <?php } ?>
-            </div>               					
+            </div>
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    function print_page(elem)
-    {
-        var data = ($(elem).html());
-        var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
 
-        mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
-        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>" type="text/css" />');
-        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/font-awesome.css'); ?>" type="text/css" />');
-        mywindow.document.write('<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.css'); ?>" type="text/css" />');
-        mywindow.document.write('</head><body >');
-        mywindow.document.write(data);
-        mywindow.document.write('</body></html>');
-        mywindow.document.write('<scr' + 'ipt src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
-        mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
-        mywindow.document.close();
-        mywindow.focus();
-    }
+<script type="text/javascript">
+$("#job_status").val('<?php echo $jobstatus;?>');
 </script>

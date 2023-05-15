@@ -15,6 +15,8 @@ class Daily_activity_overview_report extends CI_Controller {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Daily Activity Overview Report';
             $data['company_sid'] = $company_sid;
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
             
             //**** working code ****//
             if (isset($_POST['export']) && $_POST['export'] == 'export_data') {
@@ -34,6 +36,8 @@ class Daily_activity_overview_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
                     
                     foreach ($companies as $company) {
                         if (sizeof($company['active_employers']) > 0 || sizeof($company['inactive_employers']) > 0) {

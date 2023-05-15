@@ -17,6 +17,8 @@ class Applicant_interview_scores_report extends CI_Controller {
             $data['title'] = 'Advanced Hr Reports - Applicant Interview Scores';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             $keyword = urldecode($keyword);
             
             $data['companies_applicant_scores'] = $this->Reports_model->get_applicant_interview_scores($company_sid,$keyword);
@@ -28,6 +30,8 @@ class Applicant_interview_scores_report extends CI_Controller {
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
                     
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+
                     fputcsv($output, array('Total : '.count($data['companies_applicant_scores']).' Applicant Interview(s)'));
                     fputcsv($output, array('Interview Date', 'Applicant', 'Conducted By', 'For Position', 'Applicant Evaluation Score', 'Job Relevancy Evaluation Score', 'Applicant Overall Score', 'Job Relevancy Overall Score', 'Star Rating'));
                     
