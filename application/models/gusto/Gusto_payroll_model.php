@@ -2296,10 +2296,10 @@ class Gusto_payroll_model extends CI_Model
         }
         // get the federal tax sid, and version
         $employeeFederalTax = $this->db
-        ->select('sid, version, w4_data_type')
-        ->where($where)
-        ->get('payroll_employee_federal_tax')
-        ->row_array();
+            ->select('sid, version, w4_data_type')
+            ->where($where)
+            ->get('payroll_employee_federal_tax')
+            ->row_array();
         // create request
         $request = [];
         $request['filing_status'] = $post['federalFilingStatus'];
@@ -2332,8 +2332,8 @@ class Gusto_payroll_model extends CI_Model
         $insertArray['updated_at'] = getSystemDate();
         // update it
         $this->db
-        ->where('sid', $employeeFederalTax['sid'])
-        ->update('payroll_employee_federal_tax', $insertArray);
+            ->where('sid', $employeeFederalTax['sid'])
+            ->update('payroll_employee_federal_tax', $insertArray);
         // set the payroll employee array
         $payrollEmployeeArray = [];
         $payrollEmployeeArray['federal_tax'] = 1;
@@ -2379,17 +2379,75 @@ class Gusto_payroll_model extends CI_Model
         if ($errors['errors']) {
             return $doReturn ? $errors : SendResponse(200, $errors);
         }
-
-        die('sdas');
+        //
+        // set split type
+        $splitType = null;
+        $splits = null;
+        //
+        if (
+            $post['paymentMethod'] == 'Direct Deposit' &&
+            !$this->db
+                ->where('employee_sid', $post['employeeId'])
+                ->count_all_results('payroll_employee_bank_accounts')
+        ) {
+            $errors['errors'][] = 'Please add at least one bank account.';
+            return $doReturn ? $errors : SendResponse(200, $errors);
+        }
+        if ($post['paymentMethod'] == 'Direct Deposit') {
+            // get banks
+            $bankAccounts = $this->db
+                ->select('
+                    payroll_employee_bank_accounts.payroll_bank_uuid,
+                    payroll_employee_bank_accounts.name,
+                    payroll_employee_bank_accounts.account_percentage,
+                    bank_account_details.deposit_type
+                ')
+                ->join(
+                    'bank_account_details',
+                    'payroll_employee_bank_accounts.direct_deposit_id = bank_account_details.sid',
+                    'inner'
+                )
+                ->where('payroll_employee_bank_accounts.employee_sid', $post['employeeId'])
+                ->where('payroll_employee_bank_accounts.is_deleted', 0)
+                ->get('payroll_employee_bank_accounts')
+                ->result_array();
+            // set split type
+            $splitType = ucfirst($bankAccounts[0]['deposit_type']);
+            $splits = [];
+            //
+            foreach ($bankAccounts as $index => $account) {
+                // set split
+                $splits[$index] = [];
+                $splits[$index]['uuid'] = $account['payroll_bank_uuid'];
+                $splits[$index]['name'] = $account['name'];
+                $splits[$index]['priority'] = $index + 1;
+                //
+                if ($account['deposit_type'] == 'percentage') {
+                    //
+                    $splits[$index]['split_amount'] = $account['account_percentage'];
+                    //
+                    if ($index == 1) {
+                        $splits[$index]['split_amount'] = 100 - $bankAccounts[0]['account_percentage'];
+                    }
+                } else {
+                    if ($index == 1) {
+                        $splits[$index]['split_amount'] = null;
+                    } else {
+                        $splits[$index]['split_amount'] = $account['account_percentage'];
+                    }
+                }
+            }
+        }
         // set where array
         $where = [
             'employee_sid' => $post['employeeId']
         ];
+        $this->db->where($where)->delete('payroll_employee_payment_method');
         // let check if we have federal tax
         // in our system
         if (!$this->db->where($where)->count_all_results('payroll_employee_payment_method')) {
             // get the federal tax from Gusto
-         $gustoPaymentMethod = getEmployeePaymentMethodFromGusto(
+            $gustoPaymentMethod = getEmployeePaymentMethodFromGusto(
                 $gustoEmployeeDetails['payroll_employee_uuid'],
                 $gustoCompany
             );
@@ -2401,60 +2459,167 @@ class Gusto_payroll_model extends CI_Model
             $insertArray = [];
             $insertArray['employee_sid'] = $post['employeeId'];
             $insertArray['company_sid'] = $post['companyId'];
-            $insertArray['payment_method'] = $gustoPaymentMethod['payment_method'];
-            $insertArray['split_method'] = $gustoPaymentMethod['split_method'];
-            $insertArray['splits'] = json_encode($gustoPaymentMethod['splits']);
+            $insertArray['payment_method'] = $gustoPaymentMethod['type'];
+            $insertArray['split_method'] = $gustoPaymentMethod['split_by'];
+            $insertArray['splits'] = json_encode($gustoPaymentMethod['splits'] ?? []);
             $insertArray['version'] = $gustoPaymentMethod['version'];
             $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
             // insert it
             $this->db->insert('payroll_employee_payment_method', $insertArray);
         }
-        // // get the federal tax sid, and version
-        // $employeeFederalTax = $this->db
-        //     ->select('sid, version, w4_data_type')
-        //     ->where($where)
-        //     ->get('payroll_employee_federal_tax')
-        //     ->row_array();
-        // // create request
-        // $request = [];
-        // $request['filing_status'] = $post['federalFilingStatus'];
-        // $request['extra_withholding'] = $post['extraWithholding'];
-        // $request['two_jobs'] = $post['multipleJobs'];
-        // $request['dependents_amount'] = $post['dependentTotal'];
-        // $request['other_income'] = $post['otherIncome'];
-        // $request['deductions'] = $post['deductions'];
-        // $request['w4_data_type'] = $employeeFederalTax['w4_data_type'];
-        // $request['version'] = $employeeFederalTax['version'];
-        // // make request
-        // $response = updateEmployeeFederalTaxOnGusto(
-        //     $request,
-        //     $gustoEmployeeDetails['payroll_employee_uuid'],
-        //     $gustoCompany
-        // );
-        // // check for errors
-        // if ($errors = hasGustoErrors($response)) {
-        //     return $doReturn ? $errors : sendResponse(200, $errors);
-        // }
-        // $insertArray = [];
-        // $insertArray['filing_status'] = $response['filing_status'];
-        // $insertArray['extra_withholding'] = $response['extra_withholding'];
-        // $insertArray['multiple_jobs'] = $response['two_jobs'];
-        // $insertArray['dependent'] = $response['dependents_amount'];
-        // $insertArray['other_income'] = $response['other_income'];
-        // $insertArray['deductions'] = $response['deductions'];
-        // $insertArray['w4_data_type'] = $response['w4_data_type'];
-        // $insertArray['version'] = $response['version'];
-        // $insertArray['updated_at'] = getSystemDate();
-        // // update it
-        // $this->db
-        //     ->where('sid', $employeeFederalTax['sid'])
-        //     ->update('payroll_employee_federal_tax', $insertArray);
-        // // set the payroll employee array
-        // $payrollEmployeeArray = [];
-        // $payrollEmployeeArray['federal_tax'] = 1;
-        // $payrollEmployeeArray['updated_at'] = getSystemDate();
-        // // update the table
-        // $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
+        // get sid and record
+        $employeePaymentMethod = $this->db
+            ->select('sid, version')
+            ->where($where)
+            ->get('payroll_employee_payment_method')
+            ->row_array();
+        // set request array
+        $request = [];
+        $request['version'] = $employeePaymentMethod['version'];
+        $request['type'] = ucfirst($post['paymentMethod']);
+        $request['split_by'] = $splitType;
+        $request['splits'] = $splits;
+        // make request
+        $response = updateEmployeePaymentMethodOnGusto(
+            $request,
+            $gustoEmployeeDetails['payroll_employee_uuid'],
+            $gustoCompany
+        );
+        // check for errors
+        if ($errors = hasGustoErrors($response)) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        if ($post['paymentMethod'] == 'Check') {
+            $this->db->where('employee_sid', $post['employeeId'])->update('payroll_employee_bank_accounts', ['is_deleted' => 1]);
+        }
+        // set insert array
+        $insertArray = [];
+        $insertArray['payment_method'] = $response['type'];
+        $insertArray['split_method'] = $response['split_by'];
+        $insertArray['splits'] = json_encode($response['splits'] ?? []);
+        $insertArray['version'] = $response['version'];
+        $insertArray['updated_at'] = getSystemDate();
+        // update it
+        $this->db
+            ->where('sid', $employeePaymentMethod['sid'])
+            ->update('payroll_employee_payment_method', $insertArray);
+
+        // send response
+        return $doReturn ? $errors : sendResponse(200, [
+            'success' => 'Employee\'s payment method is successfully updated.'
+        ]);
+    }
+
+    /**
+     * Handle employee bank account add
+     * 
+     * Handles employee bank account add process from the 
+     * UI of super admin and employer panel
+     * 
+     * @param array $post
+     * @param array $gustoEmployeeDetails
+     * @param array $gustoCompany
+     * @param bool  $doReturn
+     * @return array
+     */
+    public function handleEmployeeBankAccountAddForOnboarding(
+        array $post,
+        array $gustoEmployeeDetails,
+        array $gustoCompany,
+        bool $doReturn
+    ) {
+        // set default response
+        $errors = [];
+        // let verify the data
+        // check
+        if (!$post['paymentMethod']) {
+            $errors['errors'][] = 'Payment method is required.';
+        }
+        if (!in_array($post['paymentMethod'], ['Check', 'Direct Deposit'])) {
+            $errors['errors'][] = 'Payment method cna be either \'Check\' or \'Direct Deposit\'.';
+        }
+        // check if error happened
+        if ($errors['errors']) {
+            return $doReturn ? $errors : SendResponse(200, $errors);
+        }
+
+        die('sdas');
+        // TODO
+        // check bank account and pass on splits object
+        // if payment method is direct deposit
+        //
+        if (
+            $post['paymentMethod'] == 'Direct Deposit' &&
+            !$this->db
+                ->where('employee_sid', $post['employeeId'])
+                ->count_all_results('payroll_employee_bank_accounts')
+        ) {
+            $errors['errors'][] = 'Please add at least one bank account.';
+            return $doReturn ? $errors : SendResponse(200, $errors);
+        }
+        // set where array
+        $where = [
+            'employee_sid' => $post['employeeId']
+        ];
+        // let check if we have federal tax
+        // in our system
+        if (!$this->db->where($where)->count_all_results('payroll_employee_payment_method')) {
+            // get the federal tax from Gusto
+            $gustoPaymentMethod = getEmployeePaymentMethodFromGusto(
+                $gustoEmployeeDetails['payroll_employee_uuid'],
+                $gustoCompany
+            );
+            // check for errors
+            if ($errors = hasGustoErrors($gustoPaymentMethod)) {
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // set insert array
+            $insertArray = [];
+            $insertArray['employee_sid'] = $post['employeeId'];
+            $insertArray['company_sid'] = $post['companyId'];
+            $insertArray['payment_method'] = $gustoPaymentMethod['type'];
+            $insertArray['split_method'] = $gustoPaymentMethod['split_by'];
+            $insertArray['splits'] = json_encode($gustoPaymentMethod['splits'] ?? []);
+            $insertArray['version'] = $gustoPaymentMethod['version'];
+            $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+            // insert it
+            $this->db->insert('payroll_employee_payment_method', $insertArray);
+        }
+        // get sid and record
+        $employeePaymentMethod = $this->db
+            ->select('sid, version')
+            ->where($where)
+            ->get('payroll_employee_payment_method')
+            ->row_array();
+        // set request array
+        $request = [];
+        $request['version'] = $employeePaymentMethod['version'];
+        $request['type'] = ucfirst($post['paymentMethod']);
+        $request['split_by'] = $request['type'] == 'Check' ? null : 'Amount';
+        $request['splits'] = $request['type'] == 'Check' ? null : [];
+        // make request
+        $response = updateEmployeePaymentMethodOnGusto(
+            $request,
+            $gustoEmployeeDetails['payroll_employee_uuid'],
+            $gustoCompany
+        );
+        // check for errors
+
+        if ($errors = hasGustoErrors($response)) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        // set insert array
+        $insertArray = [];
+        $insertArray['payment_method'] = $response['type'];
+        $insertArray['split_method'] = $response['split_by'];
+        $insertArray['splits'] = json_encode($response['splits'] ?? []);
+        $insertArray['version'] = $response['version'];
+        $insertArray['updated_at'] = getSystemDate();
+        // update it
+        $this->db
+            ->where('sid', $employeePaymentMethod['sid'])
+            ->update('payroll_employee_payment_method', $insertArray);
 
         // send response
         return $doReturn ? $errors : sendResponse(200, [
@@ -2662,5 +2827,148 @@ class Gusto_payroll_model extends CI_Model
         $this->checkAndAddJobs($gustoJob, $employeeId);
         //
         return [];
+    }
+
+    /**
+     * Push employee bank accounts to Gusto
+     * 
+     * @param int $employeeId
+     * @return array
+     */
+    public function syncEmployeeBankAccountsWithGusto(int $companyId, int $employeeId)
+    {
+        //
+        $errors = [];
+        // get gusto employee details
+        $gustoEmployeeDetails = $this->db
+            ->select('payroll_employee_uuid, version')
+            ->where([
+                'company_sid' => $companyId,
+                'employee_sid' => $employeeId
+            ])
+            ->get('payroll_employees')
+            ->row_array();
+        // double check the intrusion
+        if (!$gustoEmployeeDetails) {
+            // add the error
+            $errors['errors'][] = 'Employee not found.';
+            // send back response
+            return $errors;
+        }
+        // get the company details
+        $gustoCompany =
+            $this->db
+            ->select('
+                gusto_company_sid, 
+                gusto_company_uid,
+                access_token,
+                refresh_token
+            ')
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('payroll_companies')
+            ->row_array();
+
+        // double check the intrusion
+        if (!$gustoCompany) {
+            // add the error
+            $errors['errors'][] = 'Company credentials not found.';
+            // send back response
+            return $errors;
+        }
+        // get the employee bank accounts
+        $bankAccounts  = $this->db
+            ->select('
+            sid,
+            account_title,
+            routing_transaction_number,
+            account_number,
+            financial_institution_name,
+            account_type,
+            deposit_type,
+            account_percentage,
+        ')
+            ->where([
+                'users_type' => 'employee',
+                'users_sid' => $employeeId
+            ])
+            ->limit(2)
+            ->get('bank_account_details')
+            ->result_array();
+            
+        // check bank accounts
+        if (!$bankAccounts) {
+            $errors['errors'][] = 'No bank accounts found.';
+            return $errors;
+        }
+        // loop through the data
+        foreach ($bankAccounts as $account) {
+            // check if linked with Gusto
+            $gustoBankAccount = $this->db
+                ->select('sid, direct_deposit_id, payroll_bank_uuid')
+                ->where('direct_deposit_id', $account['sid'])
+                ->where('is_deleted', 0)
+                ->get('payroll_employee_bank_accounts')
+                ->row_array();
+            //
+            if (!$gustoBankAccount) {
+                // need to add
+                // create request array
+                $request = [];
+                $request['name'] = $account['account_title'];
+                $request['routing_number'] = $account['routing_transaction_number'];
+                $request['account_number'] = $account['account_number'];
+                $request['account_type'] = ucfirst($account['account_type']);
+                // make call
+                $response = addEmployeeBankAccountToGusto(
+                    $request,
+                    $gustoEmployeeDetails['payroll_employee_uuid'],
+                    $gustoCompany
+                );
+                // check for errors
+                if ($err = hasGustoErrors($response)) {
+                    $errors['errors'] = $err['errors'];
+                    continue;
+                }
+                // set insert array
+                $insertArray = [];
+                $insertArray['employee_sid'] = $employeeId;
+                $insertArray['direct_deposit_id'] = $account['sid'];
+                $insertArray['payroll_bank_uuid'] = $response['uuid'];
+                $insertArray['account_type'] = $response['account_type'];
+                $insertArray['name'] = $response['name'];
+                $insertArray['routing_number'] = $response['routing_number'];
+                $insertArray['account_number'] = $response['hidden_account_number'];
+                $insertArray['account_percentage'] = $account['account_percentage'];
+                $insertArray['is_deleted'] = 0;
+                $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+                // insert
+                $this->db->insert('payroll_employee_bank_accounts', $insertArray);
+            }
+        }
+        // get employee payment method
+        $employeePaymentMethod = $this->db
+            ->select('payment_method')
+            ->where('employee_sid', $employeeId)
+            ->get('payroll_employee_payment_method')
+            ->row_array()['payment_method'];
+        //
+        if ($employeePaymentMethod == 'Direct Deposit') {
+            $this->db
+                ->where('employee_sid', $employeeId)
+                ->delete('payroll_employee_payment_method');
+            //
+            $this->handleEmployeePaymentMethodForOnboarding(
+                [
+                    'employeeId' => $employeeId,
+                    'companyId' => $companyId,
+                    'paymentMethod' => $employeePaymentMethod
+                ],
+                $gustoEmployeeDetails,
+                $gustoCompany,
+                true
+            );
+        }
     }
 }

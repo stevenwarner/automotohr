@@ -816,12 +816,19 @@ class Payroll_ajax extends CI_Controller
                     'status' => 'data_completed',
                     'html' => $this->load->view($this->path . $page, $data, true)
                 ]);
-            }    
+            }
         }
         //
         if ($page === "get-company-employee-payment-method") {
             //
             $data['employee_sid'] = $_GET["employee_id"];
+            // load model
+            $this->load->model('gusto/Gusto_payroll_model', 'gusto_payroll_model');
+            // sync employees with gusto
+            $this->gusto_payroll_model->syncEmployeeBankAccountsWithGusto(
+                $companyId,
+                $_GET['employee_id']
+            );
             //
             $data['payment_method'] = $this->pm->GetEmployeePaymentMethod($_GET["employee_id"]);
             //
@@ -839,9 +846,9 @@ class Payroll_ajax extends CI_Controller
                 foreach ($splits as $k => $v) {
                     //
                     $splits[$k] = array_merge($splits[$k], $this->db
-                        ->where('payroll_bank_uuid', $v['uuid'])
-                        ->get('payroll_employee_bank_accounts')
-                        ->row_array());
+                    ->where('payroll_bank_uuid', $v['uuid'])
+                    ->get('payroll_employee_bank_accounts')
+                    ->row_array());
                 }
                 //
                 $data['payment_method']['splits'] = json_encode($splits);

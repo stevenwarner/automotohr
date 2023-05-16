@@ -352,7 +352,7 @@ class Gusto_payroll extends CI_Controller
         }
         //
         $func = 'handleEmployee'.str_replace(' ', '', ucwords(str_replace('_', ' ', $type))).'ForOnboarding';
-        //
+        
         $this->gusto_payroll_model->$func(
             $post,
             $gustoEmployeeDetails,

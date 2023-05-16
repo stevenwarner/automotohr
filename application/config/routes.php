@@ -1725,6 +1725,7 @@ $route['gusto/employee/compensation']['post'] = 'gusto/Gusto_payroll/onboardEmpl
 $route['gusto/employee/home_address']['post'] = 'gusto/Gusto_payroll/onboardEmployee/home_address';
 $route['gusto/employee/federal_tax']['post'] = 'gusto/Gusto_payroll/onboardEmployee/federal_tax';
 $route['gusto/employee/payment_method']['post'] = 'gusto/Gusto_payroll/onboardEmployee/payment_method';
+$route['gusto/employee/bank_account_add']['post'] = 'gusto/Gusto_payroll/onboardEmployee/bank_account_add';
 
 
 /**

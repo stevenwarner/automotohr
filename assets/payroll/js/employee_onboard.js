@@ -649,7 +649,7 @@ $(function EmployeeOnboard() {
 				ECB
 			);
 		}
-        if (!o.email.verifyEmail()) {
+		if (!o.email.verifyEmail()) {
 			return alertify.alert(
 				"Warning!",
 				"Email address is not valid.",
@@ -1010,45 +1010,45 @@ $(function EmployeeOnboard() {
 		//
 		var o = {};
 		//
-		o.RoutingNumber = $(".jsRoutingNumber").val().replace(/[^\d]/g, "");
-		o.AccountNumber = $(".jsAccountNumber").val().replace(/[^\d]/g, "");
-		o.AccountType = $(".jsAccountType option:selected").val();
-		o.BankName = $(".jsBankName").val().trim();
+		o.routingNumber = $(".jsRoutingNumber").val().replace(/[^\d]/g, "");
+		o.accountNumber = $(".jsAccountNumber").val().replace(/[^\d]/g, "");
+		o.accountType = $(".jsAccountType option:selected").val();
+		o.bankName = $(".jsBankName").val().trim();
 		o.employeeId = selectedEmployeeId;
 		o.bankId = selectedBankId;
 		// Validation
-		if (!o.BankName) {
+		if (!o.bankName) {
 			return alertify.alert("Warning!", "Bank name is mandatory.", ECB);
 		}
-		if (!o.RoutingNumber) {
+		if (!o.routingNumber) {
 			return alertify.alert(
 				"Warning!",
 				"Routing number is mandatory.",
 				ECB
 			);
 		}
-		if (o.RoutingNumber.length !== 9) {
+		if (o.routingNumber.length !== 9) {
 			return alertify.alert(
 				"Warning!",
 				"Routing number must be of 9 digits.",
 				ECB
 			);
 		}
-		if (!o.AccountNumber) {
+		if (!o.accountNumber) {
 			return alertify.alert(
 				"Warning!",
 				"Account number is mandatory.",
 				ECB
 			);
 		}
-		if (o.AccountNumber.length !== 9) {
+		if (o.accountNumber.length !== 9) {
 			return alertify.alert(
 				"Warning!",
 				"Account number must be of 9 digits.",
 				ECB
 			);
 		}
-		if (!o.AccountType || o.AccountType == "0") {
+		if (!o.accountType || o.accountType == "0") {
 			return alertify.alert(
 				"Warning!",
 				"Please, select the account type.",
@@ -1060,7 +1060,7 @@ $(function EmployeeOnboard() {
 		//
 		xhr = $.ajax({
 			method: "POST",
-			url: baseURI + "payroll/onboard_employee/bank_account/" + companyId,
+			url: baseURI + "gusto/employee/bank_account_add",
 			data: o,
 		})
 			.done(function (resp) {
@@ -1069,7 +1069,7 @@ $(function EmployeeOnboard() {
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
 				//
-				if (!resp.status) {
+				if (resp.errors) {
 					return alertify.alert(
 						"Error!",
 						typeof resp.errors === "object"
@@ -1081,7 +1081,7 @@ $(function EmployeeOnboard() {
 
 				return alertify.alert(
 					"Success!",
-					resp.response,
+					resp.success,
 					UpdateEmployeePaymentMethod
 				);
 			})
@@ -1099,10 +1099,11 @@ $(function EmployeeOnboard() {
 		event.preventDefault();
 		//
 		var o = {};
-		o.PaymentMethod = $(".jsPaymentMethod option:selected").val();
+		o.paymentMethod = $(".jsPaymentMethod option:selected").val();
 		o.employeeId = selectedEmployeeId;
+		o.companyId = companyId;
 		// Validation
-		if (!o.PaymentMethod || o.PaymentMethod == 0) {
+		if (!o.paymentMethod || o.paymentMethod == 0) {
 			return alertify.alert(
 				"Warning!",
 				"Please select a payment method.",
@@ -1114,7 +1115,7 @@ $(function EmployeeOnboard() {
 		//
 		xhr = $.ajax({
 			method: "POST",
-			url: baseURI + "payroll/onboard_employee/onboard/" + companyId,
+			url: baseURI + "gusto/employee/payment_method",
 			data: o,
 		})
 			.done(function (resp) {
@@ -1123,23 +1124,22 @@ $(function EmployeeOnboard() {
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
 				//
-				if (!resp.status) {
+				if (resp.errors) {
 					return alertify.alert(
 						"Error!",
-						typeof resp.response === "object"
-							? resp.response.join("<br/>")
-							: resp.response,
+						typeof resp.errors === "object"
+							? resp.errors.join("<br/>")
+							: resp.errors,
 						ECB
 					);
 				}
 
-				return alertify.alert("Success!", resp.response, () => {
+				return alertify.alert("Success!", resp.success, () => {
 					$(".jsModalCancel").click();
 					window.location.reload();
 				});
 			})
 			.error(HandleError);
-		//
 	}
 
 	/**
