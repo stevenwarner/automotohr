@@ -1948,6 +1948,11 @@ if (!function_exists('PayrollURL')) {
         $urls['getEmployeeJobsFromGusto'] = 'v1/employees/' . ($key) . '/jobs';
         $urls['createEmployeeJobOnGusto'] = 'v1/employees/' . ($key) . '/jobs';
         $urls['updateEmployeeJobOnGusto'] = 'v1/jobs/' . ($key) . '';
+        $urls['updateEmployeeHomeAddressOnGusto'] = 'v1/employees/' . ($key) . '/home_address';
+        $urls['getEmployeeHomeAddressFromGusto'] = 'v1/employees/' . ($key) . '/home_address';
+        $urls['updateEmployeeJobCompensation'] = 'v1/compensations/' . ($key) . '';
+        $urls['getEmployeeFederalTaxFromGusto'] = 'v1/employees/' . ($key) . '/federal_taxes';
+        $urls['updateEmployeeFederalTaxOnGusto'] = 'v1/employees/' . ($key) . '/federal_taxes';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -1993,6 +1998,16 @@ if (!function_exists('MakeCall')) {
             'response_code' => $info['http_code'],
             'response_headers' => json_encode($info)
         ]);
+        // network issue
+        if ($info['http_code'] == '0') {
+            return [
+                'errors' => [
+                    [
+                        'message' => 'Network issue: failed to reach payroll provider.'
+                    ]
+                ]
+            ];
+        }
         // Check for aut error
         if ($info['http_code'] == 401) {
             return [
@@ -3793,6 +3808,8 @@ if (!function_exists('createEmployeeJobOnGusto')) {
         return $response;
     }
 }
+
+
 if (!function_exists('updateEmployeeJobOnGusto')) {
     /**
      * Update job
@@ -3839,6 +3856,325 @@ if (!function_exists('updateEmployeeJobOnGusto')) {
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
                 return updateEmployeeJobOnGusto($request, $jobUUID, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+
+if (!function_exists('updateEmployeeHomeAddressOnGusto')) {
+    /**
+     * Update employee home address
+     * 
+     * Update employee home address on Gusto.
+     * 
+     * @version 1.0
+     * @param array  $request
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function updateEmployeeHomeAddressOnGusto($request, $employeeId, $company)
+    {
+        //
+        $response =  MakeCall(
+            PayrollURL('updateEmployeeHomeAddressOnGusto', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateEmployeeHomeAddressOnGusto($request, $employeeId, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('getEmployeeHomeAddressFromGusto')) {
+    /**
+     * Get employee home address
+     * 
+     * Get employee home address on Gusto.
+     * 
+     * @version 1.0
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function getEmployeeHomeAddressFromGusto($employeeId, $company)
+    {
+        //
+        $response =  MakeCall(
+            PayrollURL('getEmployeeHomeAddressFromGusto', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getEmployeeHomeAddressFromGusto($employeeId, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('updateEmployeeJobCompensation')) {
+    /**
+     * Update employee compensation
+     * 
+     * Get employee compensation on Gusto.
+     * 
+     * @version 1.0
+     * @param array  $request
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function updateEmployeeJobCompensation($request, $employeeId, $company)
+    {
+        //
+        $response =  MakeCall(
+            PayrollURL('updateEmployeeJobCompensation', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateEmployeeJobCompensation($request, $employeeId, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('getEmployeeFederalTaxFromGusto')) {
+    /**
+     * Get employee federal tax
+     * 
+     * Get employee federal tax on Gusto.
+     * 
+     * @version 1.0
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function getEmployeeFederalTaxFromGusto($employeeId, $company)
+    {
+        //
+        $response =  MakeCall(
+            PayrollURL('getEmployeeFederalTaxFromGusto', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getEmployeeFederalTaxFromGusto($employeeId, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('updateEmployeeFederalTaxOnGusto')) {
+    /**
+     * Update employee federal tax
+     * 
+     * Get employee federal tax on Gusto.
+     * 
+     * @version 1.0
+     * @param array  $request
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function updateEmployeeFederalTaxOnGusto($request, $employeeId, $company)
+    {
+        //
+        $response =  MakeCall(
+            PayrollURL('updateEmployeeFederalTaxOnGusto', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateEmployeeFederalTaxOnGusto($request, $employeeId, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('getEmployeePaymentMethodFromGusto')) {
+    /**
+     * Update employee federal tax
+     * 
+     * Get employee federal tax on Gusto.
+     * 
+     * @version 1.0
+     * @param array  $request
+     * @param string $employeeId
+     * @param array  $company
+     * @return array
+     */
+    function getEmployeePaymentMethodFromGusto($request, $employeeId, $company)
+    {
+        //
+        $response =  MakeCall(
+            PayrollURL('getEmployeePaymentMethodFromGusto', $employeeId),
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, [
+                    'gusto_company_uid' => $company['gusto_company_uid']
+                ], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getEmployeePaymentMethodFromGusto($request, $employeeId, $company);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }

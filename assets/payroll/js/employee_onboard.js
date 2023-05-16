@@ -723,15 +723,15 @@ $(function EmployeeOnboard() {
 			.val()
 			.trim()
 			.replace(/[^0-9.]/g, "");
-		o.flsaStatus = $(".jsEmployeeType option:selected").val();
-		o.paymentUnit = $(".jsSalaryType option:selected").val();
+		o.flsa_status = $(".jsEmployeeType option:selected").val();
+		o.payment_unit = $(".jsSalaryType option:selected").val();
 		o.employeeId = selectedEmployeeId;
 		o.companyId = companyId;
 		// Validation
 		if (!o.title) {
 			return alertify.alert("Warning!", "Job title is mandatory.", ECB);
 		}
-		if (!o.flsaStatus || o.flsaStatus == 0) {
+		if (!o.flsa_status || o.flsa_status == 0) {
 			return alertify.alert(
 				"Warning!",
 				"Employee type is mandatory.",
@@ -745,7 +745,7 @@ $(function EmployeeOnboard() {
 				ECB
 			);
 		}
-		if (!o.paymentUnit || o.paymentUnit == 0) {
+		if (!o.payment_unit || o.payment_unit == 0) {
 			return alertify.alert("Warning!", "Salary type is mandatory.", ECB);
 		}
 		//
@@ -761,22 +761,22 @@ $(function EmployeeOnboard() {
 				xhr = null;
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
-				// //
-				// if (!resp.status) {
-				// 	return alertify.alert(
-				// 		"Error!",
-				// 		typeof resp.errors === "object"
-				// 			? resp.errors.join("<br/>")
-				// 			: resp.errors,
-				// 		ECB
-				// 	);
-				// }
-				// //
-				// return alertify.alert(
-				// 	"Success!",
-				// 	resp.response,
-				// 	UpdateCompanyEmployeeAddress
-				// );
+				//
+				if (resp.errors) {
+					return alertify.alert(
+						"Error!",
+						typeof resp.errors === "object"
+							? resp.errors.join("<br/>")
+							: resp.errors,
+						ECB
+					);
+				}
+				//
+				return alertify.alert(
+					"Success!",
+					resp.success,
+					UpdateCompanyEmployeeAddress
+				);
 			})
 			.error(ErrorHandler);
 		//
@@ -792,28 +792,29 @@ $(function EmployeeOnboard() {
 		event.preventDefault();
 		//
 		var o = {};
-		o.Street1 = $(".jsStreet1").val().trim();
-		o.Street2 = $(".jsStreet2").val().trim();
-		o.Country = "USA";
-		o.City = $(".jsCity").val().trim();
-		o.State = $(".jsState option:selected").val();
-		o.Zipcode = $(".jsZip").val().trim();
-		o.PhoneNumber = $(".jsPhoneNumber").val().replace(/[^\d]/g, "");
+		o.street1 = $(".jsStreet1").val().trim();
+		o.street2 = $(".jsStreet2").val().trim();
+		o.country = "USA";
+		o.city = $(".jsCity").val().trim();
+		o.state = $(".jsState option:selected").val();
+		o.Zipc = $(".jsZip").val().trim();
+		o.phoneNumber = $(".jsPhoneNumber").val().replace(/[^\d]/g, "");
 		o.employeeId = selectedEmployeeId;
+		o.companyId = companyId;
 		// Validation
-		if (!o.Street1) {
+		if (!o.street1) {
 			return alertify.alert("Warning!", "Street 1 is mandatory.", ECB);
 		}
-		if (!o.City) {
+		if (!o.city) {
 			return alertify.alert("Warning!", "City is mandatory.", ECB);
 		}
-		if (!o.State) {
+		if (!o.state) {
 			return alertify.alert("Warning!", "State is mandatory.", ECB);
 		}
-		if (!o.Zipcode) {
+		if (!o.zip) {
 			return alertify.alert("Warning!", "Zip is mandatory.", ECB);
 		}
-		if (o.Zipcode.length != 5) {
+		if (o.zip.length != 5) {
 			return alertify.alert(
 				"Warning!",
 				"Zip must be 5 characters long.",
@@ -821,7 +822,7 @@ $(function EmployeeOnboard() {
 			);
 		}
 
-		if (o.PhoneNumber && o.PhoneNumber.length != 10) {
+		if (o.phoneNumber && o.phoneNumber.length != 10) {
 			return alertify.alert(
 				"Warning!",
 				"Phone number must be of 10 digits long.",
@@ -833,7 +834,7 @@ $(function EmployeeOnboard() {
 		//
 		xhr = $.ajax({
 			method: "POST",
-			url: baseURI + "payroll/onboard_employee/home_address/" + companyId,
+			url: baseURI + "gusto/employee/home_address",
 			data: o,
 		})
 			.done(function (resp) {
@@ -842,7 +843,7 @@ $(function EmployeeOnboard() {
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
 				//
-				if (!resp.status) {
+				if (!resp.errors) {
 					return alertify.alert(
 						"Error!",
 						typeof resp.errors === "object"
@@ -854,7 +855,7 @@ $(function EmployeeOnboard() {
 				//
 				return alertify.alert(
 					"Success!",
-					resp.response,
+					resp.success,
 					UpdateEmployeeFederalTax
 				);
 			})
@@ -872,17 +873,18 @@ $(function EmployeeOnboard() {
 		event.preventDefault();
 		//
 		var o = {};
-		o.FederalFilingStatus = $(
+		o.federalFilingStatus = $(
 			".jsFederalFilingStatus option:selected"
 		).val();
-		o.MultipleJobs = $(".jsMultipleJobs option:selected").val();
-		o.DependentTotal = $(".jsDependentTotal").val();
-		o.OtherIncome = $(".jsOtherIncome").val();
-		o.Deductions = $(".jsDeductions").val();
-		o.ExtraWithholding = $(".jsExtraWithholding").val();
+		o.multipleJobs = $(".jsMultipleJobs option:selected").val();
+		o.dependentTotal = $(".jsDependentTotal").val();
+		o.otherIncome = $(".jsOtherIncome").val();
+		o.deductions = $(".jsDeductions").val();
+		o.extraWithholding = $(".jsExtraWithholding").val();
 		o.employeeId = selectedEmployeeId;
+		o.companyId = companyId;
 		// Validation
-		if (!o.FederalFilingStatus || o.FederalFilingStatus == 0) {
+		if (!o.federalFilingStatus || o.federalFilingStatus == 0) {
 			return alertify.alert(
 				"Warning!",
 				"Federal Filing Status is mandatory.",
@@ -894,7 +896,7 @@ $(function EmployeeOnboard() {
 		//
 		xhr = $.ajax({
 			method: "POST",
-			url: baseURI + "payroll/onboard_employee/federal_tax/" + companyId,
+			url: baseURI + "gusto/employee/federal_tax",
 			data: o,
 		})
 			.done(function (resp) {
@@ -903,7 +905,7 @@ $(function EmployeeOnboard() {
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
 				//
-				if (!resp.status) {
+				if (resp.errors) {
 					return alertify.alert(
 						"Error!",
 						typeof resp.errors === "object"
@@ -915,7 +917,7 @@ $(function EmployeeOnboard() {
 
 				return alertify.alert(
 					"Success!",
-					resp.response,
+					resp.success,
 					UpdateEmployeeStateTax
 				);
 			})

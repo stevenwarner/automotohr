@@ -1815,7 +1815,7 @@ class Gusto_payroll_model extends CI_Model
         $payrollEmployeeArray['personal_profile'] = 1;
         $payrollEmployeeArray['updated_at'] = getSystemDate();
         $payrollEmployeeArray['response_body'] = json_encode($response);
-        
+
         if ($post['workLocation']) {
             $payrollEmployeeArray['work_address_sid'] = $post['workLocation'];
         }
@@ -1894,14 +1894,14 @@ class Gusto_payroll_model extends CI_Model
             $errors['errors'][] = 'Payment unit is required.';
         }
         // check if error happened
-        if ($errors['errors']) {
+        if (isset($errors['errors'])) {
             return $doReturn ? $errors : SendResponse(200, $errors);
         }
         // lets check the job first
         if (
             !$this->db
-            ->where('employee_sid', $post['employeeId'])
-            ->count_all_results('payroll_employee_jobs')
+                ->where('employee_sid', $post['employeeId'])
+                ->count_all_results('payroll_employee_jobs')
         ) {
             // we need to add job and compensation
             // lets fetch the job from Gusto
@@ -1961,8 +1961,30 @@ class Gusto_payroll_model extends CI_Model
                 }
                 //
                 $this->checkAndAddJobs($response, $post['employeeId']);
+                // update compensation
+                $response = $this->updateEmployeeCompensationOnGusto([
+                    'rate' => $post['rate'],
+                    'payment_unit' => $post['payment_unit'],
+                    'flsa_status' => $post['flsa_status']
+                ], $post['employeeId'], $gustoEmployeeDetails['payroll_employee_uuid'], $gustoCompany);
+                //
+                if (isset($response['errors'])) {
+                    // send response
+                    return $doReturn ? $errors : sendResponse(200, $response);
+                }
             } else {
                 $this->checkAndAddJobs($gustoJob, $post['employeeId']);
+                // update compensation
+                $response = $this->updateEmployeeCompensationOnGusto([
+                    'rate' => $post['rate'],
+                    'payment_unit' => $post['payment_unit'],
+                    'flsa_status' => $post['flsa_status']
+                ], $post['employeeId'], $gustoEmployeeDetails['payroll_employee_uuid'], $gustoCompany);
+                //
+                if (isset($response['errors'])) {
+                    // send response
+                    return $doReturn ? $errors : sendResponse(200, $response);
+                }
             }
         } else {
             // we need to update job and compensation
@@ -1996,13 +2018,13 @@ class Gusto_payroll_model extends CI_Model
             }
             // get the primary job
             $employeePrimaryJob = $this->db
-            ->select('version, sid, payroll_uid')
-            ->where([
-                'employee_sid' => $post['employeeId'],
-                'is_primary' => 1
-            ])
-            ->get('payroll_employee_jobs')
-            ->row_array();
+                ->select('version, sid, payroll_uid')
+                ->where([
+                    'employee_sid' => $post['employeeId'],
+                    'is_primary' => 1
+                ])
+                ->get('payroll_employee_jobs')
+                ->row_array();
             //
             if (!$employeePrimaryJob) {
                 // set error
@@ -2029,9 +2051,415 @@ class Gusto_payroll_model extends CI_Model
             }
             //
             $this->checkAndAddJobs($response, $post['employeeId']);
+            // update compensation
+            $response = $this->updateEmployeeCompensationOnGusto([
+                'rate' => $post['rate'],
+                'payment_unit' => $post['payment_unit'],
+                'flsa_status' => $post['flsa_status']
+            ], $post['employeeId'], $gustoEmployeeDetails['payroll_employee_uuid'], $gustoCompany);
+            //
+            if (isset($response['errors'])) {
+                // send response
+                return $doReturn ? $errors : sendResponse(200, $response);
+            }
         }
+        // set the payroll employee array
+        $payrollEmployeeArray = [];
+        $payrollEmployeeArray['work_address'] = 1;
+        $payrollEmployeeArray['compensation'] = 1;
+        $payrollEmployeeArray['updated_at'] = getSystemDate();
+        // update the table
+        $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
+
         // send response
-        return $doReturn ? $errors : sendResponse(200, ['Employee\'s job is successfully updated.']);
+        return $doReturn ? $errors : sendResponse(200, ['success' => 'Employee\'s job is successfully updated.']);
+    }
+
+    /**
+     * Handle employee onboard home address
+     * 
+     * Handles employee onboard home address process from the 
+     * UI of super admin and employer panel
+     * 
+     * @param array $post
+     * @param array $gustoEmployeeDetails
+     * @param array $gustoCompany
+     * @param bool  $doReturn
+     * @return array
+     */
+    public function handleEmployeeHomeAddressForOnboarding(
+        array $post,
+        array $gustoEmployeeDetails,
+        array $gustoCompany,
+        bool $doReturn
+    ) {
+        // set default response
+        $errors = [];
+        // let verify the data
+        // check for street 1
+        if (!$post['street1']) {
+            $errors['errors'][] = 'Street 1 is required.';
+        }
+        // check for city
+        if (!$post['city']) {
+            $errors['errors'][] = 'City is required.';
+        }
+        // check for state
+        if (!$post['state']) {
+            $errors['errors'][] = 'State is required.';
+        }
+        // check for zip
+        if (!$post['zip']) {
+            $errors['errors'][] = 'Zip is required.';
+        }
+        // check if error happened
+        if ($errors['errors']) {
+            return $doReturn ? $errors : SendResponse(200, $errors);
+        }
+        // check if home address is already synced
+        if (!$this->db->where(['employee_sid' => $post['employeeId'], 'active' => 1])->count_all_results('payroll_employee_address')) {
+            // insert it
+            // check the home address on Gusto
+            $gustoEmployeeHomeAddress = getEmployeeHomeAddressFromGusto(
+                $gustoEmployeeDetails['payroll_employee_uuid'],
+                $gustoCompany
+            );
+            // check for errors
+            if ($errors = hasGustoErrors($gustoEmployeeHomeAddress)) {
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // if address present
+            if ($gustoEmployeeHomeAddress) {
+                // set insert array
+                $insertArray = [];
+                $insertArray['gusto_uuid'] = $gustoEmployeeHomeAddress['uuid'];
+                $insertArray['employee_sid'] = $post['employeeId'];
+                $insertArray['street_1'] = $gustoEmployeeHomeAddress['street_1'];
+                $insertArray['street_2'] = $gustoEmployeeHomeAddress['street_2'];
+                $insertArray['city'] = $gustoEmployeeHomeAddress['city'];
+                $insertArray['state'] = $gustoEmployeeHomeAddress['state'];
+                $insertArray['zip'] = $gustoEmployeeHomeAddress['zip'];
+                $insertArray['country'] = $gustoEmployeeHomeAddress['country'];
+                $insertArray['active'] = $gustoEmployeeHomeAddress['active'];
+                $insertArray['effective_date'] = $gustoEmployeeHomeAddress['effective_date'];
+                $insertArray['version'] = $gustoEmployeeHomeAddress['version'];
+                $insertArray['courtesy_withholding'] = $gustoEmployeeHomeAddress['courtesy_withholding'];
+                $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+                // insert the home address
+                $this->db->insert('payroll_employee_address', $insertArray);
+            }
+        } else {
+            // update
+            // get version and sid
+            $employeeHomeAddress = $this->db
+                ->select('sid, version')
+                ->get('payroll_employee_address')
+                ->row_array();
+            // create request
+            $request = [];
+            $request['version'] = $employeeHomeAddress['version'];
+            $request['street_1'] = $post['street1'];
+            $request['street_2'] = $post['street2'] ?? '';
+            $request['state'] = ucwords($post['state']);
+            $request['city'] = $post['city'];
+            $request['zip'] = $post['zip'];
+            $request['active'] = true;
+            // send update call
+            $response = updateEmployeeHomeAddressOnGusto(
+                $request,
+                $gustoEmployeeDetails['payroll_employee_uuid'],
+                $gustoCompany
+            );
+            // check for errors
+            if ($errors = hasGustoErrors($response)) {
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // create update system array
+            $insertArray = $request;
+            $insertArray['country'] = $response['country'];
+            $insertArray['version'] = $response['version'];
+            $insertArray['effective_date'] = $response['effective_date'];
+            $insertArray['courtesy_withholding'] = $response['courtesy_withholding'];
+            $insertArray['gusto_uuid'] = $response['uuid'];
+            $insertArray['updated_at'] = getSystemDate();
+            // update the array
+            $this->db
+                ->where('sid', $employeeHomeAddress['sid'])
+                ->update('payroll_employee_address', $insertArray);
+        }
+
+        // set user array
+        $userArray = [];
+        $userArray['Location_Address'] = $insertArray['street_1'];
+        $userArray['Location_Address_2'] = $insertArray['street_2'];
+        $userArray['Location_City'] = $insertArray['city'];
+        $userArray['Location_ZipCode'] = $insertArray['zip'];
+        // update the users table
+        updateUserById($userArray, $post['employeeId']);
+        //
+        // set the payroll employee array
+        $payrollEmployeeArray = [];
+        $payrollEmployeeArray['home_address'] = 1;
+        $payrollEmployeeArray['updated_at'] = getSystemDate();
+        // update the table
+        $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
+
+        // send response
+        return $doReturn ? $errors : sendResponse(200, ['success' => 'Employee\'s home address is successfully updated.']);
+    }
+
+    /**
+     * Handle employee onboard federal tax
+     * 
+     * Handles employee onboard federal tax process from the 
+     * UI of super admin and employer panel
+     * 
+     * @param array $post
+     * @param array $gustoEmployeeDetails
+     * @param array $gustoCompany
+     * @param bool  $doReturn
+     * @return array
+     */
+    public function handleEmployeeFederalTaxForOnboarding(
+        array $post,
+        array $gustoEmployeeDetails,
+        array $gustoCompany,
+        bool $doReturn
+    ) {
+        // set default response
+        $errors = [];
+        // let verify the data
+        // check
+        if (!$post['federalFilingStatus']) {
+            $errors['errors'][] = 'Federal filing status is required.';
+        }
+        // check
+        if (!$post['multipleJobs']) {
+            $errors['errors'][] = 'Multiple jobs is required.';
+        }
+        // check
+        if (!$post['dependentTotal']) {
+            $errors['errors'][] = 'Dependent total is required.';
+        }
+        // check
+        if (!$post['otherIncome']) {
+            $errors['errors'][] = 'Other income is required.';
+        }
+        // check
+        if (!$post['deductions']) {
+            $errors['errors'][] = 'Deductions is required.';
+        }
+        // check
+        if (!$post['extraWithholding']) {
+            $errors['errors'][] = 'Extra withholding is required.';
+        }
+        // check if error happened
+        if ($errors['errors']) {
+            return $doReturn ? $errors : SendResponse(200, $errors);
+        }
+        // reset fields
+        $post['otherIncome'] = number_format($post['otherIncome'], 2);
+        $post['deductions'] = number_format($post['deductions'], 2);
+        $post['extraWithholding'] = number_format($post['extraWithholding'], 2);
+        // set where array
+        $where = [
+            'employee_sid' => $post['employeeId'],
+            'company_sid' => $post['companyId']
+        ];
+        // let check if we have federal tax
+        // in our system
+        if (!$this->db->where($where)->count_all_results('payroll_employee_federal_tax')) {
+            // get the federal tax from Gusto
+            $gustoFederalTax = getEmployeeFederalTaxFromGusto(
+                $gustoEmployeeDetails['payroll_employee_uuid'],
+                $gustoCompany
+            );
+            // check for errors
+            if ($errors = hasGustoErrors($gustoFederalTax)) {
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // set insert array
+            $insertArray = [];
+            $insertArray['employee_sid'] = $post['employeeId'];
+            $insertArray['company_sid'] = $post['companyId'];
+            $insertArray['filing_status'] = $gustoFederalTax['filing_status'];
+            $insertArray['extra_withholding'] = $gustoFederalTax['extra_withholding'];
+            $insertArray['multiple_jobs'] = $gustoFederalTax['two_jobs'];
+            $insertArray['dependent'] = $gustoFederalTax['dependents_amount'];
+            $insertArray['other_income'] = $gustoFederalTax['other_income'];
+            $insertArray['deductions'] = $gustoFederalTax['deductions'];
+            $insertArray['w4_data_type'] = $gustoFederalTax['w4_data_type'];
+            $insertArray['version'] = $gustoFederalTax['version'];
+            $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+            // insert it
+            $this->db->insert('payroll_employee_federal_tax', $insertArray);
+        }
+        // get the federal tax sid, and version
+        $employeeFederalTax = $this->db
+        ->select('sid, version, w4_data_type')
+        ->where($where)
+        ->get('payroll_employee_federal_tax')
+        ->row_array();
+        // create request
+        $request = [];
+        $request['filing_status'] = $post['federalFilingStatus'];
+        $request['extra_withholding'] = $post['extraWithholding'];
+        $request['two_jobs'] = $post['multipleJobs'];
+        $request['dependents_amount'] = $post['dependentTotal'];
+        $request['other_income'] = $post['otherIncome'];
+        $request['deductions'] = $post['deductions'];
+        $request['w4_data_type'] = $employeeFederalTax['w4_data_type'];
+        $request['version'] = $employeeFederalTax['version'];
+        // make request
+        $response = updateEmployeeFederalTaxOnGusto(
+            $request,
+            $gustoEmployeeDetails['payroll_employee_uuid'],
+            $gustoCompany
+        );
+        // check for errors
+        if ($errors = hasGustoErrors($response)) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        $insertArray = [];
+        $insertArray['filing_status'] = $response['filing_status'];
+        $insertArray['extra_withholding'] = $response['extra_withholding'];
+        $insertArray['multiple_jobs'] = $response['two_jobs'];
+        $insertArray['dependent'] = $response['dependents_amount'];
+        $insertArray['other_income'] = $response['other_income'];
+        $insertArray['deductions'] = $response['deductions'];
+        $insertArray['w4_data_type'] = $response['w4_data_type'];
+        $insertArray['version'] = $response['version'];
+        $insertArray['updated_at'] = getSystemDate();
+        // update it
+        $this->db
+        ->where('sid', $employeeFederalTax['sid'])
+        ->update('payroll_employee_federal_tax', $insertArray);
+        // set the payroll employee array
+        $payrollEmployeeArray = [];
+        $payrollEmployeeArray['federal_tax'] = 1;
+        $payrollEmployeeArray['updated_at'] = getSystemDate();
+        // update the table
+        $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
+
+        // send response
+        return $doReturn ? $errors : sendResponse(200, [
+            'success' => 'Employee\'s federal tax is successfully updated.'
+        ]);
+    }
+
+    /**
+     * Handle employee onboard payment method
+     * 
+     * Handles employee onboard payment method process from the 
+     * UI of super admin and employer panel
+     * 
+     * @param array $post
+     * @param array $gustoEmployeeDetails
+     * @param array $gustoCompany
+     * @param bool  $doReturn
+     * @return array
+     */
+    public function handleEmployeePaymentMethodForOnboarding(
+        array $post,
+        array $gustoEmployeeDetails,
+        array $gustoCompany,
+        bool $doReturn
+    ) {
+        // set default response
+        $errors = [];
+        // let verify the data
+        // check
+        if (!$post['paymentMethod']) {
+            $errors['errors'][] = 'Payment method is required.';
+        }
+        if (!in_array($post['paymentMethod'], ['Check', 'Direct Deposit'])) {
+            $errors['errors'][] = 'Payment method cna be either \'Check\' or \'Direct Deposit\'.';
+        }
+        // check if error happened
+        if ($errors['errors']) {
+            return $doReturn ? $errors : SendResponse(200, $errors);
+        }
+
+        die('sdas');
+        // set where array
+        $where = [
+            'employee_sid' => $post['employeeId']
+        ];
+        // let check if we have federal tax
+        // in our system
+        if (!$this->db->where($where)->count_all_results('payroll_employee_payment_method')) {
+            // get the federal tax from Gusto
+         $gustoPaymentMethod = getEmployeePaymentMethodFromGusto(
+                $gustoEmployeeDetails['payroll_employee_uuid'],
+                $gustoCompany
+            );
+            // check for errors
+            if ($errors = hasGustoErrors($gustoPaymentMethod)) {
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            // set insert array
+            $insertArray = [];
+            $insertArray['employee_sid'] = $post['employeeId'];
+            $insertArray['company_sid'] = $post['companyId'];
+            $insertArray['payment_method'] = $gustoPaymentMethod['payment_method'];
+            $insertArray['split_method'] = $gustoPaymentMethod['split_method'];
+            $insertArray['splits'] = json_encode($gustoPaymentMethod['splits']);
+            $insertArray['version'] = $gustoPaymentMethod['version'];
+            $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+            // insert it
+            $this->db->insert('payroll_employee_payment_method', $insertArray);
+        }
+        // // get the federal tax sid, and version
+        // $employeeFederalTax = $this->db
+        //     ->select('sid, version, w4_data_type')
+        //     ->where($where)
+        //     ->get('payroll_employee_federal_tax')
+        //     ->row_array();
+        // // create request
+        // $request = [];
+        // $request['filing_status'] = $post['federalFilingStatus'];
+        // $request['extra_withholding'] = $post['extraWithholding'];
+        // $request['two_jobs'] = $post['multipleJobs'];
+        // $request['dependents_amount'] = $post['dependentTotal'];
+        // $request['other_income'] = $post['otherIncome'];
+        // $request['deductions'] = $post['deductions'];
+        // $request['w4_data_type'] = $employeeFederalTax['w4_data_type'];
+        // $request['version'] = $employeeFederalTax['version'];
+        // // make request
+        // $response = updateEmployeeFederalTaxOnGusto(
+        //     $request,
+        //     $gustoEmployeeDetails['payroll_employee_uuid'],
+        //     $gustoCompany
+        // );
+        // // check for errors
+        // if ($errors = hasGustoErrors($response)) {
+        //     return $doReturn ? $errors : sendResponse(200, $errors);
+        // }
+        // $insertArray = [];
+        // $insertArray['filing_status'] = $response['filing_status'];
+        // $insertArray['extra_withholding'] = $response['extra_withholding'];
+        // $insertArray['multiple_jobs'] = $response['two_jobs'];
+        // $insertArray['dependent'] = $response['dependents_amount'];
+        // $insertArray['other_income'] = $response['other_income'];
+        // $insertArray['deductions'] = $response['deductions'];
+        // $insertArray['w4_data_type'] = $response['w4_data_type'];
+        // $insertArray['version'] = $response['version'];
+        // $insertArray['updated_at'] = getSystemDate();
+        // // update it
+        // $this->db
+        //     ->where('sid', $employeeFederalTax['sid'])
+        //     ->update('payroll_employee_federal_tax', $insertArray);
+        // // set the payroll employee array
+        // $payrollEmployeeArray = [];
+        // $payrollEmployeeArray['federal_tax'] = 1;
+        // $payrollEmployeeArray['updated_at'] = getSystemDate();
+        // // update the table
+        // $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
+
+        // send response
+        return $doReturn ? $errors : sendResponse(200, [
+            'success' => 'Employee\'s federal tax is successfully updated.'
+        ]);
     }
 
     /**
@@ -2072,7 +2500,7 @@ class Gusto_payroll_model extends CI_Model
             $jobArray['last_modified_by'] = 0;
             $jobArray['is_primary'] = $job['primary'];
             $jobArray['is_deleted'] = 0;
-            
+
             // set where array
             $where = ['employee_sid' => $employeeId, 'payroll_uid' => $job['uuid']];
             // check if job exists
@@ -2119,7 +2547,7 @@ class Gusto_payroll_model extends CI_Model
         if (!$compensations) {
             return false;
         }
-        
+
         // loop through compensations
         foreach ($compensations as $compensation) {
             // set array
@@ -2150,5 +2578,89 @@ class Gusto_payroll_model extends CI_Model
         }
         //
         return true;
+    }
+
+    /**
+     * Update job compensation and versions
+     * 
+     * @param array  $post
+     * @param int    $employeeId
+     * @param string $employeeUid
+     * @param array  $gustoCompany
+     * @return array
+     */
+    public function updateEmployeeCompensationOnGusto(
+        array $post,
+        int $employeeId,
+        string $employeeUId,
+        array $gustoCompany
+    ) {
+        // get the active compensation
+        $employeeCompensation = $this->db
+            ->select('
+            payroll_employee_job_compensations.sid,
+            payroll_employee_job_compensations.version,
+            payroll_employee_job_compensations.payroll_id
+        ')
+            ->join(
+                'payroll_employee_job_compensations',
+                'payroll_employee_job_compensations.payroll_id = payroll_employee_jobs.current_compensation_id',
+                'inner'
+            )
+            ->where([
+                'payroll_employee_jobs.employee_sid' => $employeeId,
+                'payroll_employee_jobs.is_primary' => 1
+            ])
+            ->get('payroll_employee_jobs')
+            ->row_array();
+        //
+        if (!$employeeCompensation) {
+            return ['errors' => ['Compensation not found.']];
+        }
+        // set update array
+        $request = [];
+        $request['version'] = $employeeCompensation['version'];
+        $request['rate'] = $post['rate'];
+        $request['payment_unit'] = $post['payment_unit'];
+        $request['flsa_status'] = $post['flsa_status'];
+        // make call
+        $response = updateEmployeeJobCompensation(
+            $request,
+            $employeeCompensation['payroll_id'],
+            $gustoCompany
+        );
+        // check for errors
+        if ($errors = hasGustoErrors($response)) {
+            return $errors;
+        }
+        // set update array
+        $updateArray = [];
+        $updateArray['rate'] = $response['rate'];
+        $updateArray['payment_unit'] = $response['payment_unit'];
+        $updateArray['flsa_status'] = $response['flsa_status'];
+        $updateArray['adjust_for_minimum_wage'] = $response['adjust_for_minimum_wage'];
+        $updateArray['minimum_wages'] = json_encode($response['minimum_wages']);
+        $updateArray['version'] = $response['version'];
+        $updateArray['effective_date'] = $response['effective_date'];
+        $updateArray['updated_at'] = getSystemDate();
+        // update it
+        $this->db->where([
+            'sid' => $employeeCompensation['sid']
+        ])->update(
+            'payroll_employee_job_compensations',
+            $updateArray
+        );
+        //
+        $gustoJob = getEmployeeJobsFromGusto(
+            $employeeUId,
+            $gustoCompany
+        );
+        // check for errors
+        if ($errors = hasGustoErrors($gustoJob)) {
+            return $errors;
+        }
+        $this->checkAndAddJobs($gustoJob, $employeeId);
+        //
+        return [];
     }
 }

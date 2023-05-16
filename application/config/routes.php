@@ -1722,6 +1722,9 @@ $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_te
 // Employee onboard
 $route['gusto/employee/profile']['post'] = 'gusto/Gusto_payroll/onboardEmployee/profile';
 $route['gusto/employee/compensation']['post'] = 'gusto/Gusto_payroll/onboardEmployee/compensation';
+$route['gusto/employee/home_address']['post'] = 'gusto/Gusto_payroll/onboardEmployee/home_address';
+$route['gusto/employee/federal_tax']['post'] = 'gusto/Gusto_payroll/onboardEmployee/federal_tax';
+$route['gusto/employee/payment_method']['post'] = 'gusto/Gusto_payroll/onboardEmployee/payment_method';
 
 
 /**
