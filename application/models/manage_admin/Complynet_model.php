@@ -30,8 +30,6 @@ class Complynet_model extends CI_Model
                 $this->db->where('response_code <>', 200);
             }
         }
-
-        
         //
         if ($method && $method != 'all') {
             $this->db->where('LOWER(request_method)', $method);

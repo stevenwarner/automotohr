@@ -32,4 +32,11 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
+    public function missingEmployee () {
+        $this->load->model('2022/Complynet_model', 'complynet_model');
+        //
+        $this->complynet_model->fixUnhandleEmployees();
+        die("I am here");
+    }
+
 }
