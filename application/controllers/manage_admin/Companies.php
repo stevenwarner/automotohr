@@ -688,6 +688,7 @@ class Companies extends Admin_Controller
         $name = $name == null ? 'all' : str_replace('_', ' ', urldecode($name));
         $email = $email == null ? 'all' : urldecode($email);
         $this->data['administrators'] = $this->company_model->get_executive_administrators($name, $email);
+
         $this->data['page_title'] = 'Manage Company Executive Admins';
         $this->form_validation->set_rules('executive_admin_sid', 'executive_admin_sid', 'required|xss_clean|trim');
         $this->data['flag'] = true;
@@ -695,6 +696,31 @@ class Companies extends Admin_Controller
         if ($this->form_validation->run() == false) {
             $this->render('manage_admin/company/executive_admin/admin_listing');
         } else {
+
+            //
+            if ($this->input->post('checkit')) {
+                $selectedadmins = $this->input->post('checkit');
+                $action = $this->input->post('action');
+
+                $msg = $action==1 ? 'Marked as Admin Plus':' Unmarked as Admin Plus';
+
+
+
+                if (!empty($selectedadmins)) {
+                    foreach ($selectedadmins as $adminsid) {
+                        $logged_in_sids = $this->company_model->get_executive_user_logged_in_sids($adminsid);
+
+                        if (!empty($logged_in_sids)) {
+                            $this->company_model->set_executive_access_level_plus($logged_in_sids, $action);
+                        }
+                    }
+                }
+                $this->session->set_flashdata('message', 'Employee are sucessfully '. $msg);
+
+                redirect('manage_admin/companies/executive_administrators', 'refresh');
+            }
+
+
             $executive_admin_sid = $this->input->post('executive_admin_sid');
             $executive_admin_info = $this->company_model->get_administrator($executive_admin_sid);
             $session_array = array();

@@ -3037,4 +3037,33 @@ class Company_model extends CI_Model
         $this->db->where('user_sid', $company_sid);
         $this->db->update('portal_employer', $data);
     }
+
+
+
+    //
+    function get_executive_user_logged_in_sids($sid)
+    {
+        $this->db->select('logged_in_sid');
+        $this->db->where('executive_admin_sid', $sid);
+        $record_obj = $this->db->get('executive_user_companies');
+        $data = $record_obj->result_array();
+        $logged_in_sid = [];
+        if (!empty($data)) {
+            foreach ($data as $key => $val) {
+                $logged_in_sid[] = $val['logged_in_sid'];
+            }
+        }
+        return $logged_in_sid;
+    }
+
+
+
+
+    function set_executive_access_level_plus($sids, $action)
+    {
+        $data = array();
+        $data['access_level_plus'] = $action == 1 ? '1' : '0';
+        $this->db->where_in('sid', $sids);
+        $this->db->update('users', $data);
+    }
 }
