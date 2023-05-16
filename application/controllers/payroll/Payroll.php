@@ -429,22 +429,7 @@ class Payroll extends CI_Controller
             $signFormData['signature_text'] = $_POST['signature'];
             $signFormData['agree'] = true;
             $signFormData['signed_by_ip_address'] = getUserIP();
-            // $signedData = $this->signPayrollDocument($company_sid, $formInfo['form_uuid'], $myId, $signFormData);
-            //
-            $signedData = array(
-                'Status' => 1,
-                'Message' => 'Document Found',
-                'Form' => array(
-                    'uuid' => '5809284d-fa53-4e09-8cb7-430bbe33a6d6',
-                    'name' => 'employee_direct_deposit',
-                    'title' => 'Employee Direct Deposit Authorization',
-                    'description' => 'This document authorizes Gusto to transfer money to and from your bank account.',
-                    'requires_signing' => '',
-                    'draft' => '',
-                    'employee_uuid' => '6dd48eb3-78cc-457b-abe0-109ea0813102'
-                )
-
-            );
+            $signedData = $this->signPayrollDocument($company_sid, $formInfo['form_uuid'], $myId, $signFormData);
             //
             if ($signedData['Status'] == 1 && empty($signedData['Form']['requires_signing'])) {
                 $data_to_update = [];

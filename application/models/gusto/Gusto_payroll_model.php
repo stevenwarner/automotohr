@@ -2896,7 +2896,7 @@ class Gusto_payroll_model extends CI_Model
             ->limit(2)
             ->get('bank_account_details')
             ->result_array();
-            
+
         // check bank accounts
         if (!$bankAccounts) {
             $errors['errors'][] = 'No bank accounts found.';
@@ -2971,4 +2971,5 @@ class Gusto_payroll_model extends CI_Model
             );
         }
     }
+
 }

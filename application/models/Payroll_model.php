@@ -1162,7 +1162,7 @@ class Payroll_model extends CI_Model{
 
 	public function getEmployeeFormInfo ($formId) {
 		$query = $this->db
-		->select('form_uuid, title, requires_signing, is_signed')
+		->select('form_uuid, title, requires_signing, is_signed,signature_text,signed_by_ip_address')
 		->where('sid', $formId)
 		->get('payroll_employees_forms')
 		->row_array();

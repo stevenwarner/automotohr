@@ -11,7 +11,7 @@ if (isPayrollOrPlus()) {
     //
 
     if ($isGustoAdmin > 0) {
-        
+
         $navpills[] = [
             'title' => 'Company',
             'url' => '/company',
@@ -79,15 +79,16 @@ $navpills[] = [
     'url' => '/my',
     'slug' => '',
     'icon' => 'pie-chart',
-    'segment' => 'my'
+    'segment' => 'payroll/my'
 ];
 
+//
 $navpills[] = [
     'title' => 'My Payroll Documents',
     'url' => 'my_payroll_documents',
     'slug' => '',
     'icon' => 'file',
-    'segment' => 'my_payroll_documents'
+    'segment' => 'payroll/my_payroll_documents'
 ];
 
 //

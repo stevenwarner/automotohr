@@ -307,3 +307,43 @@ if (!function_exists('getUserStartDate')) {
         );
     }
 }
+
+if (!function_exists('isEmployeeOnPayroll')) {
+    /**
+     * Check employee on payroll
+     * 
+     * @param int $employeeId
+     * @return int
+     */
+    function isEmployeeOnPayroll(int $employeeId)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // check
+        return $CI->db
+        ->where([
+            'employee_sid' => $employeeId
+        ])
+        ->count_all_results('payroll_employees');
+    }
+}
+
+if (!function_exists('hasPayrollDocuments')) {
+    /**
+     * Check employee on payroll
+     * 
+     * @param int $employeeId
+     * @return int
+     */
+    function hasPayrollDocuments(int $employeeId)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // check
+        return $CI->db
+            ->where([
+                'employee_sid' => $employeeId
+            ])
+            ->count_all_results('payroll_employees_forms');
+    }
+}

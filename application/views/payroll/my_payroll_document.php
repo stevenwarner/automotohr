@@ -8,12 +8,25 @@
             <!-- Sidebar -->
             <!--  -->
             <div class="col-sm-12 col-xs-12">
-                <div class="">
-                    <span class="pull-left">
-                        <h3 class="">Payroll Document</h3>
-                    </span>
-                </div>
                 <div>
+                    <?php if ($formInfo['signed_by_ip_address']) { ?>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-success">
+                                    <p class="csF18">
+                                        <i class="fa fa-check-circle-o" aria-hidden="true"></i> <?= $formInfo['title'] ?> <strong class="text-success">COMPLETED</strong>
+                                    </p>
+                                    <hr>
+                                    <p class="csF14">
+                                        <strong>IP Address:</strong> <?= $formInfo['signed_by_ip_address']; ?>
+                                    </p>
+                                    <p class="csF14">
+                                        <strong>Signature Text:</strong> <?= $formInfo['signature_text']; ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="panel panel-blue">
@@ -21,7 +34,7 @@
                                     <b><?php echo $formInfo['title']; ?></b>
                                 </div>
                                 <div class="panel-body">
-                                   <iframe src="<?php echo $formData['Form']['document_url']; ?>" class="uploaded-file-preview js-hybrid-iframe" style="width:100%; height:80em;" frameborder="0"></iframe>
+                                    <iframe src="<?php echo $formData['Form']['document_url']; ?>" class="uploaded-file-preview js-hybrid-iframe" style="width:100%; height:80em;" frameborder="0"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -37,12 +50,12 @@
                                         </div>
                                         <div class="panel-body">
                                             <p class="domain_message">Hint: Please type your First and Last Name (<small>Max characters limit is 30</small>)</p>
-                                            <input data-rule-required="true" type="text" class="form-control" name="signature" id="jsemployeeSignature"  maxlength="30" value="<?php echo set_value('signature', $signature); ?>"  placeholder="John Doe" autocomplete="off"/>
+                                            <input data-rule-required="true" type="text" class="form-control" name="signature" id="jsemployeeSignature" maxlength="30" value="<?php echo set_value('signature', $signature); ?>" placeholder="John Doe" autocomplete="off" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        
+
                             <div class="row">
                                 <div class="col-xs-12 text-justify">
                                     <?php
@@ -51,7 +64,7 @@
                                     echo '<p>' . str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_DESCRIPTION) . '</p>';
                                     ?>
                                 </div>
-                            </div> 
+                            </div>
 
                             <div class="row">
                                 <div class="col-xs-12">
@@ -69,7 +82,7 @@
                                     <button onclick="func_save_e_signature();" type="button" class="btn blue-button break-word-text disabled_consent_btn"><?php echo SIGNATURE_CONSENT_BUTTON; ?></button>
                                 </div>
                             </div>
-                        </form>    
+                        </form>
                     <?php } ?>
                 </div>
             </div>
@@ -83,6 +96,7 @@
         errorElement: 'p',
         errorElementClass: 'text-danger'
     });
+
     function func_save_e_signature() {
         if ($('#user_consent_form').valid()) {
             var employeeSignature = $('#jsemployeeSignature').val();
@@ -91,7 +105,7 @@
                 alertify.alert("Warning", "Please add you name.");
                 return
             }
-            
+
 
             alertify.confirm(
                 'Are you Sure?',
@@ -105,7 +119,7 @@
                 ok: 'I Consent and Accept!',
                 cancel: 'Cancel'
             });
-            
+
         }
     }
 </script>

@@ -13,7 +13,7 @@
                         <h3 class="">My Payroll Documents</h3>
                     </span>
                     <span class="pull-right">
-                        <h3>Total: <?=count($formInfo['Forms']);?></h3>
+                        <h3>Total: <?=count($formInfo);?></h3>
                     </span>
                 </div>
                 <div class="">
@@ -42,7 +42,7 @@
                                                         <p><?=$form['requires_signing'] == 1 ? 'Yes' : 'No';?></p>
                                                     </td>
                                                     <td class="text-right">
-                                                        <p><?=$form['requires_signing'] == 1 && $form['is_signed'] == 0 ? 'Pending' : 'Completed';?></p>
+                                                        <p><?=$form['requires_signing'] == 1 && $form['is_signed'] == 0 ? 'PENDING' : 'COMPLETED';?></p>
                                                     </td>
                                                     <td class="text-right">
                                                         <a href="<?php echo base_url('payroll/my_document/').$form['sid']; ?>" class="btn btn-orange jsViewFile" title="View Form" placement="top">
