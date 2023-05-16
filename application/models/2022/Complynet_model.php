@@ -1815,14 +1815,18 @@ class Complynet_model extends CI_Model
                     $isActive = $this->checkPrimaryEmployeeActive($employee['new_employee_sid'], $employee['to_company_sid']);
                     //
                     if ($checkSecondary == 1 && $checkPrimary == 0 && $isActive == 1) {
-                        $notMoved[] = [
+                        $employeeInfo = [
                             'oldEmployeeId' => $employee['previous_employee_sid'],
                             'oldCompanyId' => $employee['from_company_sid'],
                             'newEmployeeId' => $employee['new_employee_sid'],
                             'newCompanyId' => $employee['to_company_sid']
                         ];
                         //
+                        $notMoved[] = $employeeInfo;
+                        //
                         echo "this employee is not move on complynet ". getUserNameBySID($employee['new_employee_sid']). " in company ".getCompanyNameBySid($employee['to_company_sid'])."<br>" ;
+                        //
+                        // $this->manageEmployee($employeeInfo);
                     } else if ($checkSecondary == 0 && $checkPrimary == 0 && $isActive == 1) {
                         $isTransferd = $this->isSecondaryEmployeeTransferd($employee['previous_employee_sid'], $employee['from_company_sid']);
                         //
@@ -1830,14 +1834,18 @@ class Complynet_model extends CI_Model
                             $checkSecondary = $this->checkEmployeeOnComplynet($isTransferd['previous_employee_sid'], $isTransferd['from_company_sid']);
                             //
                             if ($checkSecondary == 1) {
-                                $notMoved[] = [
+                                $employeeInfo = [
                                     'oldEmployeeId' => $isTransferd['previous_employee_sid'],
                                     'oldCompanyId' => $isTransferd['from_company_sid'],
                                     'newEmployeeId' => $employee['new_employee_sid'],
                                     'newCompanyId' => $employee['to_company_sid']
                                 ];
                                 //
+                                $notMoved[] = $employeeInfo;
+                                //
                                 echo "this employee is not move on complynet ". getUserNameBySID($isTransferd['new_employee_sid']). " in company ".getCompanyNameBySid($isTransferd['to_company_sid'])."<br>" ;
+                                //
+                                // $this->manageEmployee($employeeInfo);
                             }
                         }
                     }
