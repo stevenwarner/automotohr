@@ -311,9 +311,10 @@ class Copy_employees extends Admin_Controller
                 if ($formpost['timeoff'] == 1) {
                     $this->transferEmployeeTimeoff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company);
                 }
-
                 //
-                $this->manageEmployee($passArray);
+                $this->load->model('2022/Complynet_model', 'complynet_model');
+                //
+                $this->complynet_model->manageEmployee($passArray);
 
                 echo json_encode($resp);
             } else {
@@ -798,7 +799,11 @@ class Copy_employees extends Admin_Controller
 
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
-                $this->manageEmployee($passArray);
+                //
+                $this->load->model('2022/Complynet_model', 'complynet_model');
+                //
+                $this->complynet_model->manageEmployee($passArray);
+                //
                 echo json_encode($resp);
             }
         }
@@ -1470,28 +1475,5 @@ class Copy_employees extends Admin_Controller
 
         echo 'employee copy successfully';
         die('stop');
-    }
-
-    /**
-     * 
-     */
-    public function manageEmployee(array $passArray)
-    {
-        // $passArray = [
-        //     'oldEmployeeId' => 49245,
-        //     'oldCompanyId' => 8578,
-        //     'newEmployeeId' => 49246,
-        //     'newCompanyId' => 31338
-        // ];
-        // load ComplyNet model
-        $this->load->model('2022/Complynet_model', 'complynet_model');
-        //
-        $departmentAdded = $this->complynet_model->checkAndMoveEmployeeDepartmentAndTeam($passArray);
-        //
-        if (!$departmentAdded) {
-            return false;
-        }
-        // transfer employee to another location
-        $this->complynet_model->transferEmployeeToAnotherLocation($passArray);
     }
 }

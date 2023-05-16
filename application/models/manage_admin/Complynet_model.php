@@ -41,6 +41,7 @@ class Complynet_model extends CI_Model
             $this->db->where('created_at BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
         }
 
+        $this->db->order_by('created_at', 'DESC');
         $this->db->from('complynet_calls');
 
 
