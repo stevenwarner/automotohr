@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -12,7 +12,7 @@
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-file-o"></i>Forms And Documents</h1>
-                                        <a href="<?php echo base_url('manage_admin/documents/send/'. $company_sid); ?>" class="black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Send Documents</a>
+                                        <a href="<?php echo base_url('manage_admin/documents/send/' . $company_sid); ?>" class="black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Send Documents</a>
                                         <a href="<?php echo base_url('manage_admin/companies') ?>" class="black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Back to Companies</a>
                                         <?php if (isset($company_sid) && $company_sid > 0) { ?>
                                             <a href="<?php echo base_url('manage_admin/companies/manage_company/' . $company_sid) ?>" class="black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Back to Manage Company</a>
@@ -40,7 +40,7 @@
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 field-row">
                                                         <label>&nbsp;</label>
-                                                        <a id="clear" href="<?= base_url('manage_admin/documents')?>" class="btn btn-success btn-block" style="padding: 9px;">Clear</a>
+                                                        <a id="clear" href="<?= base_url('manage_admin/documents') ?>" class="btn btn-success btn-block" style="padding: 9px;">Clear</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -50,7 +50,9 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="hr-box">
-                                                    <div class="hr-box-header"><h4 class="hr-registered">Total Companies: <?php echo count($companies_documents); ?></h4></div>
+                                                    <div class="hr-box-header">
+                                                        <h4 class="hr-registered">Total Companies: <?php echo count($companies_documents); ?></h4>
+                                                    </div>
                                                     <div class="table-responsive hr-innerpadding">
                                                         <table class="table table-bordered table-striped table-hover">
                                                             <thead>
@@ -59,6 +61,7 @@
                                                                     <th class="text-center" colspan="3">Credit Card Authorization</th>
                                                                     <th class="text-center" colspan="3">End User License Agreement</th>
                                                                     <th class="text-center" colspan="3">Company Contacts</th>
+                                                                    <th class="text-center" colspan="3">Payroll Agreement</th>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-center" colspan="2">Status</th>
@@ -67,22 +70,28 @@
                                                                     <th class="text-center">Action</th>
                                                                     <th class="text-center" colspan="2">Status</th>
                                                                     <th class="text-center">Action</th>
+
+                                                                    <th class="text-center" colspan="2">Status</th>
+                                                                    <th class="text-center">Action</th>
+
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                            <?php           $inactive_companies = array();
+                                                                <?php $inactive_companies = array();
 
-                                                            foreach ($companies_documents as $company_documents) {
+                                                                foreach ($companies_documents as $company_documents) {
 
-                                                                    if($company_documents['active'] == 0) {
+                                                                    if ($company_documents['active'] == 0) {
                                                                         $inactive_companies[] = $company_documents;
                                                                         continue;
                                                                     }
-                                                                    
+
                                                                     $rec_status = 'Not Sent';
                                                                     $cc_status = 'Not Sent';
                                                                     $eula_status = 'Not Sent';
                                                                     $company_contacts_status = 'Not Sent';
+
+                                                                    $fpa_status = 'Not Sent';
 
                                                                     if (!empty($company_documents['rec_payment_auth'])) {
                                                                         $rec_status = $company_documents['rec_payment_auth']['status'];
@@ -98,13 +107,21 @@
 
                                                                     if (!empty($company_documents['contacts'])) {
                                                                         $company_contacts_status = $company_documents['contacts']['status'];
-                                                                    } ?>
+                                                                    }
+
+                                                                    //
+
+                                                                    if (!empty($company_documents['fpa'])) {
+                                                                        $fpa_status = $company_documents['fpa']['status'];
+                                                                    }
+
+                                                                ?>
                                                                     <tr>
                                                                         <td><?php echo ucwords($company_documents['CompanyName']); ?><br>
-                                                                            <?php   if ($company_documents['active'] == 1) { ?>
-                                                                                        <span style="color:green;">Active</span>
+                                                                            <?php if ($company_documents['active'] == 1) { ?>
+                                                                                <span style="color:green;">Active</span>
                                                                             <?php   } else { ?>
-                                                                                        <span style="color:red;">In-Active</span>
+                                                                                <span style="color:red;">In-Active</span>
                                                                             <?php   } ?>
                                                                         </td>
                                                                         <td class="text-center">
@@ -121,24 +138,27 @@
                                                                                     <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
                                                                                     <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
                                                                                     <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
-                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor' ); ?>" />
+                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
                                                                                     <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('credit_card_authorization', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
                                                                                 </form>
                                                                             </td>
                                                                         <?php } elseif (strtolower($cc_status) == 'generated') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                <a href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
                                                                             </td>
                                                                         <?php } elseif (strtolower($cc_status) == 'pre-filled' || strtolower($cc_status) == 'sent') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                <a href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
                                                                             </td>
                                                                         <?php } elseif (strtolower($cc_status) == 'signed') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
-                                                                                <a  href="<?php echo base_url('manage_admin/documents/regenerate_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
+                                                                                <a href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                <a href="<?php echo base_url('manage_admin/documents/regenerate_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
                                                                             </td>
                                                                         <?php } ?>
+
+
+
                                                                         <td class="text-center">
                                                                             <span class="<?php echo strtolower(str_replace(' ', '-', $eula_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $eula_status)) ?></span>
                                                                         </td>
@@ -153,24 +173,26 @@
                                                                                     <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
                                                                                     <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
                                                                                     <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
-                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor' ); ?>" />
+                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
                                                                                     <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('eula', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
                                                                                 </form>
                                                                             </td>
                                                                         <?php } elseif (strtolower($eula_status) == 'generated') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                <a href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
                                                                             </td>
                                                                         <?php } elseif (strtolower($eula_status) == 'pre-filled' || strtolower($eula_status) == 'sent') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                <a href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
                                                                             </td>
                                                                         <?php } elseif (strtolower($eula_status) == 'signed') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
-                                                                                <a  href="<?php echo base_url('manage_admin/documents/regenerate_enduser_license_agreement' . '/' . $company_documents['eula']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
+                                                                                <a href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                <a href="<?php echo base_url('manage_admin/documents/regenerate_enduser_license_agreement' . '/' . $company_documents['eula']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
                                                                             </td>
                                                                         <?php } ?>
+
+
                                                                         <td class="text-center">
                                                                             <span class="<?php echo strtolower(str_replace(' ', '-', $company_contacts_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $company_contacts_status)) ?></span>
                                                                         </td>
@@ -185,157 +207,200 @@
                                                                                     <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
                                                                                     <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
                                                                                     <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
-                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor' ); ?>" />
+                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
                                                                                     <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('company_contacts', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
                                                                                 </form>
                                                                             </td>
+                                                                            
                                                                         <?php } elseif (strtolower($company_contacts_status) == 'generated') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
                                                                             </td>
                                                                         <?php } elseif (strtolower($company_contacts_status) == 'pre-filled' || strtolower($company_contacts_status) == 'sent') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
                                                                             </td>
                                                                         <?php } elseif (strtolower($company_contacts_status) == 'signed') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
-                                                                                <a  href="<?php echo base_url('manage_admin/documents/regenerate_company_contacts_document' . '/' . $company_documents['contacts']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
+                                                                                <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                <a href="<?php echo base_url('manage_admin/documents/regenerate_company_contacts_document' . '/' . $company_documents['contacts']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
                                                                             </td>
                                                                         <?php } ?>
+
+
+
+                                                                        <!-- Payroll Agreement -->
+
+                                                                        <td class="text-center">
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $fpa_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $fpa_status)) ?></span>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <?php if (strtolower($fpa_status) == 'not sent' || strtolower($fpa_status) == 'generated' || strtolower($fpa_status) == 'pre-filled' || strtolower($fpa_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($fpa_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </td>
+                                                                        <?php if (strtolower($fpa_status) == 'not sent') { ?>
+                                                                            <td class="text-center">
+                                                                                <form id="form_generate_fpa_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
+                                                                                    <input type="hidden" id="form_to_send" name="form_to_send" value="fpa" />
+                                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
+                                                                                    <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
+                                                                                    <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
+                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
+                                                                                    <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('fpa', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
+                                                                                </form>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($fpa_status) == 'generated') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('form_payroll_agreement' . '/' . $company_documents['fpa']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($fpa_status) == 'pre-filled' || strtolower($fpa_status) == 'sent') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('form_payroll_agreement' . '/' . $company_documents['fpa']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($fpa_status) == 'signed') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('form_payroll_agreement' . '/' . $company_documents['fpa']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                <a href="<?php echo base_url('manage_admin/documents/regenerate_enduser_payroll_agreement' . '/' . $company_documents['fpa']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate </a>
+                                                                            </td>
+                                                                        <?php } ?>
+
+                                                                        <!-- -->
+
+
+
                                                                     </tr>
-                                                                <?php } 
-                                                                
-                                                            if(!empty($inactive_companies)) {
-                                                                foreach ($inactive_companies as $company_documents) {                                                                  
-                                                                    $rec_status = 'Not Sent';
-                                                                    $cc_status = 'Not Sent';
-                                                                    $eula_status = 'Not Sent';
-                                                                    $company_contacts_status = 'Not Sent';
+                                                                    <?php }
 
-                                                                    if (!empty($company_documents['rec_payment_auth'])) {
-                                                                        $rec_status = $company_documents['rec_payment_auth']['status'];
-                                                                    }
+                                                                if (!empty($inactive_companies)) {
+                                                                    foreach ($inactive_companies as $company_documents) {
+                                                                        $rec_status = 'Not Sent';
+                                                                        $cc_status = 'Not Sent';
+                                                                        $eula_status = 'Not Sent';
+                                                                        $company_contacts_status = 'Not Sent';
 
-                                                                    if (!empty($company_documents['cc_auth'])) {
-                                                                        $cc_status = $company_documents['cc_auth']['status'];
-                                                                    }
+                                                                        if (!empty($company_documents['rec_payment_auth'])) {
+                                                                            $rec_status = $company_documents['rec_payment_auth']['status'];
+                                                                        }
 
-                                                                    if (!empty($company_documents['eula'])) {
-                                                                        $eula_status = $company_documents['eula']['status'];
-                                                                    }
+                                                                        if (!empty($company_documents['cc_auth'])) {
+                                                                            $cc_status = $company_documents['cc_auth']['status'];
+                                                                        }
 
-                                                                    if (!empty($company_documents['contacts'])) {
-                                                                        $company_contacts_status = $company_documents['contacts']['status'];
-                                                                    } ?>
-                                                                    
-                                                                    <tr>
-                                                                        <td><?php echo ucwords($company_documents['CompanyName']); ?><br>
-                                                                            <?php   if ($company_documents['active'] == 1) { ?>
-                                                                                        <span style="color:green;">Active</span>
-                                                                            <?php   } else { ?>
-                                                                                        <span style="color:red;">In-Active</span>
-                                                                            <?php   } ?>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $cc_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $cc_status)) ?></span>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <?php if (strtolower($cc_status) == 'not sent' || strtolower($cc_status) == 'generated' || strtolower($cc_status) == 'pre-filled' || strtolower($cc_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($cc_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
-                                                                        </td>
-                                                                        <?php if (strtolower($cc_status) == 'not sent') { ?>
-                                                                            <td class="text-center">
-                                                                                <form id="form_generate_credit_card_authorization_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
-                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
-                                                                                    <input type="hidden" id="form_to_send" name="form_to_send" value="credit_card_authorization" />
-                                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
-                                                                                    <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
-                                                                                    <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
-                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor' ); ?>" />
-                                                                                    <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('credit_card_authorization', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
-                                                                                </form>
+                                                                        if (!empty($company_documents['eula'])) {
+                                                                            $eula_status = $company_documents['eula']['status'];
+                                                                        }
+
+                                                                        if (!empty($company_documents['contacts'])) {
+                                                                            $company_contacts_status = $company_documents['contacts']['status'];
+                                                                        } ?>
+
+                                                                        <tr>
+                                                                            <td><?php echo ucwords($company_documents['CompanyName']); ?><br>
+                                                                                <?php if ($company_documents['active'] == 1) { ?>
+                                                                                    <span style="color:green;">Active</span>
+                                                                                <?php   } else { ?>
+                                                                                    <span style="color:red;">In-Active</span>
+                                                                                <?php   } ?>
                                                                             </td>
-                                                                        <?php } elseif (strtolower($cc_status) == 'generated') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                <span class="<?php echo strtolower(str_replace(' ', '-', $cc_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $cc_status)) ?></span>
                                                                             </td>
-                                                                        <?php } elseif (strtolower($cc_status) == 'pre-filled' || strtolower($cc_status) == 'sent') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                <?php if (strtolower($cc_status) == 'not sent' || strtolower($cc_status) == 'generated' || strtolower($cc_status) == 'pre-filled' || strtolower($cc_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($cc_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
                                                                             </td>
-                                                                        <?php } elseif (strtolower($cc_status) == 'signed') { ?>
+                                                                            <?php if (strtolower($cc_status) == 'not sent') { ?>
+                                                                                <td class="text-center">
+                                                                                    <form id="form_generate_credit_card_authorization_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
+                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
+                                                                                        <input type="hidden" id="form_to_send" name="form_to_send" value="credit_card_authorization" />
+                                                                                        <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
+                                                                                        <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
+                                                                                        <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
+                                                                                        <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
+                                                                                        <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('credit_card_authorization', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
+                                                                                    </form>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($cc_status) == 'generated') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($cc_status) == 'pre-filled' || strtolower($cc_status) == 'sent') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($cc_status) == 'signed') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                </td>
+                                                                            <?php } ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                <span class="<?php echo strtolower(str_replace(' ', '-', $eula_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $eula_status)) ?></span>
                                                                             </td>
-                                                                        <?php } ?>
-                                                                        <td class="text-center">
-                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $eula_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $eula_status)) ?></span>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <?php if (strtolower($eula_status) == 'not sent' || strtolower($eula_status) == 'generated' || strtolower($eula_status) == 'pre-filled' || strtolower($eula_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($eula_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
-                                                                        </td>
-                                                                        <?php if (strtolower($eula_status) == 'not sent') { ?>
                                                                             <td class="text-center">
-                                                                                <form id="form_generate_eula_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
-                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
-                                                                                    <input type="hidden" id="form_to_send" name="form_to_send" value="eula" />
-                                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
-                                                                                    <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
-                                                                                    <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
-                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor' ); ?>" />
-                                                                                    <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('eula', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
-                                                                                </form>
+                                                                                <?php if (strtolower($eula_status) == 'not sent' || strtolower($eula_status) == 'generated' || strtolower($eula_status) == 'pre-filled' || strtolower($eula_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($eula_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
                                                                             </td>
-                                                                        <?php } elseif (strtolower($eula_status) == 'generated') { ?>
+                                                                            <?php if (strtolower($eula_status) == 'not sent') { ?>
+                                                                                <td class="text-center">
+                                                                                    <form id="form_generate_eula_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
+                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
+                                                                                        <input type="hidden" id="form_to_send" name="form_to_send" value="eula" />
+                                                                                        <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
+                                                                                        <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
+                                                                                        <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
+                                                                                        <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
+                                                                                        <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('eula', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
+                                                                                    </form>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($eula_status) == 'generated') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($eula_status) == 'pre-filled' || strtolower($eula_status) == 'sent') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($eula_status) == 'signed') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                </td>
+                                                                            <?php } ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                <span class="<?php echo strtolower(str_replace(' ', '-', $company_contacts_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $company_contacts_status)) ?></span>
                                                                             </td>
-                                                                        <?php } elseif (strtolower($eula_status) == 'pre-filled' || strtolower($eula_status) == 'sent') { ?>
                                                                             <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                <?php if (strtolower($company_contacts_status) == 'not sent' || strtolower($company_contacts_status) == 'generated' || strtolower($company_contacts_status) == 'pre-filled' || strtolower($company_contacts_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($company_contacts_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
                                                                             </td>
-                                                                        <?php } elseif (strtolower($eula_status) == 'signed') { ?>
-                                                                            <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_end_user_license_agreement' . '/' . $company_documents['eula']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
-                                                                            </td>
-                                                                        <?php } ?>
-                                                                        <td class="text-center">
-                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $company_contacts_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $company_contacts_status)) ?></span>
-                                                                        </td>
-                                                                        <td class="text-center">
-                                                                            <?php if (strtolower($company_contacts_status) == 'not sent' || strtolower($company_contacts_status) == 'generated' || strtolower($company_contacts_status) == 'pre-filled' || strtolower($company_contacts_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($company_contacts_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
-                                                                        </td>
-                                                                        <?php if (strtolower($company_contacts_status) == 'not sent') { ?>
-                                                                            <td class="text-center">
-                                                                                <form id="form_generate_company_contacts_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
-                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
-                                                                                    <input type="hidden" id="form_to_send" name="form_to_send" value="company_contacts" />
-                                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
-                                                                                    <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
-                                                                                    <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
-                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor' ); ?>" />
-                                                                                    <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('company_contacts', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
-                                                                                </form>
-                                                                            </td>
-                                                                        <?php } elseif (strtolower($company_contacts_status) == 'generated') { ?>
-                                                                            <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
-                                                                            </td>
-                                                                        <?php } elseif (strtolower($company_contacts_status) == 'pre-filled' || strtolower($company_contacts_status) == 'sent') { ?>
-                                                                            <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
-                                                                            </td>
-                                                                        <?php } elseif (strtolower($company_contacts_status) == 'signed') { ?>
-                                                                            <td class="text-center">
-                                                                                <a  href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
-                                                                            </td>
-                                                                        <?php } ?>
-                                                                    </tr>
+                                                                            <?php if (strtolower($company_contacts_status) == 'not sent') { ?>
+                                                                                <td class="text-center">
+                                                                                    <form id="form_generate_company_contacts_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
+                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
+                                                                                        <input type="hidden" id="form_to_send" name="form_to_send" value="company_contacts" />
+                                                                                        <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
+                                                                                        <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
+                                                                                        <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
+                                                                                        <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
+                                                                                        <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('company_contacts', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
+                                                                                    </form>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($company_contacts_status) == 'generated') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($company_contacts_status) == 'pre-filled' || strtolower($company_contacts_status) == 'sent') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                                </td>
+                                                                            <?php } elseif (strtolower($company_contacts_status) == 'signed') { ?>
+                                                                                <td class="text-center">
+                                                                                    <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                </td>
+                                                                            <?php } ?>
+                                                                        </tr>
                                                                 <?php }
-                                                            }  ?>
+                                                                }  ?>
                                                             </tbody>
                                                         </table>
-                                                    </div>                                           
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -441,23 +506,23 @@
 
 <script>
     $(document).keypress(function(e) {
-        if(e.which == 13) { // enter pressed
+        if (e.which == 13) { // enter pressed
             $('#search_btn').click();
         }
     });
 
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('#name').on('keyup', update_url);
         $('#name').on('blur', update_url);
-        $('#search_btn').on('click', function(e){
+        $('#search_btn').on('click', function(e) {
             e.preventDefault();
             update_url();
             window.location = $(this).attr('href').toString();
         });
     });
 
-    function update_url(){
-        var url = '<?php echo isset($company_sid) ? base_url('manage_admin/documents/'.$company_sid) : base_url('manage_admin/documents/0'); ?>';
+    function update_url() {
+        var url = '<?php echo isset($company_sid) ? base_url('manage_admin/documents/' . $company_sid) : base_url('manage_admin/documents/0'); ?>';
         var name = $('#name').val();
 
         name = name == '' ? 'all' : name;
@@ -471,19 +536,21 @@
             message_name = 'Credit Card Authorization';
         } else if (form_name == 'eula') {
             message_name = 'End User License Agreement';
+        } else if (form_name == 'fpa') {
+            message_name = 'Payroll Agreement';
         }
 
         alertify.confirm(
-                'Are You Sure?',
-                'Are you sure you want to ' + action + ' <strong>' + message_name + '</strong> form to <strong>' + company_name + '</strong> ?',
-                function () {
-                    var form_id = 'form_' + action + '_' + form_name + '_' + company_sid;
-                    console.log(form_id);
-                    $('#' + form_id).submit();
-                },
-                function () {
-                    //cancel
-                }
+            'Are You Sure?',
+            'Are you sure you want to ' + action + ' <strong>' + message_name + '</strong> form to <strong>' + company_name + '</strong> ?',
+            function() {
+                var form_id = 'form_' + action + '_' + form_name + '_' + company_sid;
+                console.log(form_id);
+                $('#' + form_id).submit();
+            },
+            function() {
+                //cancel
+            }
         )
     }
 

@@ -820,6 +820,10 @@ $route['manage_admin/documents/(:any)'] = 'manage_admin/documents/index/$1';
 $route['manage_admin/documents/regenerate_credit_card_authorization/(:any)'] = 'manage_admin/documents/regenerate_credit_card_authorization/$1';
 $route['manage_admin/documents/regenerate_enduser_license_agreement/(:any)'] = 'manage_admin/documents/regenerate_enduser_license_agreement/$1';
 $route['manage_admin/documents/regenerate_company_contacts_document/(:any)'] = 'manage_admin/documents/regenerate_company_contacts_document/$1';
+
+$route['manage_admin/documents/regenerate_enduser_payroll_agreement/(:any)'] = 'manage_admin/documents/regenerate_enduser_payroll_agreement/$1';
+
+
 $route['manage_admin/documents/(:any)/(:any)'] = 'manage_admin/documents/index/$1/$2';
 $route['manage_admin/documents'] = 'manage_admin/documents';
 $route['manage_admin/documents/check_signed_forms'] = 'manage_admin/documents/check_signed_forms';
@@ -1718,3 +1722,8 @@ $route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProf
 
 //
 $route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';
+
+
+// Payroll Agreement
+$route['form_payroll_agreement/(:any)'] = 'form_payroll_agreement/index/$1';
+$route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$1/$2';

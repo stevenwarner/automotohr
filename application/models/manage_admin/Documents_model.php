@@ -16,7 +16,7 @@ class Documents_model extends CI_Model
             // $this->db->where('active', 1);
             $this->db->where('parent_sid', 0);
             $this->db->where('career_page_type', 'standard_career_site');
-            if(!empty($company_name) && $company_name != 'all'){
+            if (!empty($company_name) && $company_name != 'all') {
                 $this->db->like('CompanyName', $company_name);
             }
             $this->db->order_by('sid', 'DESC');
@@ -27,7 +27,7 @@ class Documents_model extends CI_Model
             $this->db->where('parent_sid', 0);
             $this->db->where('career_page_type', 'standard_career_site');
             $this->db->where('sid', $company_sid);
-            if(!empty($company_name) && $company_name != 'all'){
+            if (!empty($company_name) && $company_name != 'all') {
                 $this->db->like('CompanyName', $company_name);
             }
             $this->db->order_by('sid', 'DESC');
@@ -65,6 +65,22 @@ class Documents_model extends CI_Model
                 }
 
 
+
+                //Get Payroll Agreement Form
+                $this->db->select('*');
+                $this->db->limit(1);
+                $this->db->order_by('sid', 'DESC');
+                $this->db->where('company_sid', $company_sid);
+                $eula = $this->db->get('form_payroll_agreement')->result_array();
+
+                if (!empty($eula)) {
+                    $companies[$key]['fpa'] = $eula[0];
+                } else {
+                    $companies[$key]['fpa'] = array();
+                }
+
+
+
                 //Get Company Contacts Form
                 $this->db->select('*');
                 $this->db->limit(1);
@@ -97,7 +113,7 @@ class Documents_model extends CI_Model
                 $this->db->select('sid, first_name, last_name, email, alternative_email');
                 $this->db->where('is_primary_admin', 1);
                 $this->db->where('parent_sid', $company_sid);
-                $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+                $this->db->order_by(SORT_COLUMN, SORT_ORDER);
                 $admin = $this->db->get('users')->result_array();
 
                 if (!empty($admin)) {
@@ -105,7 +121,6 @@ class Documents_model extends CI_Model
                 } else {
                     $companies[$key]['administrator'] = array();
                 }
-
             }
         }
 
@@ -133,10 +148,11 @@ class Documents_model extends CI_Model
             $this->db->insert('form_document_company_contacts', $dataToSave);
         } elseif (strtolower($document) == 'uploaded_document') {
             $this->db->insert('forms_documents_uploaded', $dataToSave);
+        } elseif (strtolower($document) == 'payroll_agreement') {
+            $this->db->insert('form_payroll_agreement', $dataToSave);
         }
 
         $this->insert_document_ip_tracking_record($company_sid, 0, getUserIP(), $document, 'new_generated', $_SERVER['HTTP_USER_AGENT']);
-
     }
 
     function insert_affiliate_document_record($marketing_agency_sid, $verification_key, $status)
@@ -173,6 +189,8 @@ class Documents_model extends CI_Model
                 $this->db->update('form_document_company_contacts', $dataToSave);
             } elseif (strtolower($document) == 'uploaded_document') {
                 $this->db->update('forms_documents_uploaded', $dataToSave);
+            } elseif (strtolower($document) == 'form_payroll_agreement') {
+                $this->db->update('form_payroll_agreement', $dataToSave);
             }
         }
     }
@@ -193,7 +211,6 @@ class Documents_model extends CI_Model
             $this->db->join('users', 'users.sid = form_document_eula.company_sid', 'left');
 
             $document_data = $this->db->get('form_document_eula')->result_array();
-
         } elseif ($document == 'form_affiliate_end_user_license_agreement') {
 
             $this->db->select('form_affiliate_end_user_license_agreement.*');
@@ -204,7 +221,6 @@ class Documents_model extends CI_Model
             $this->db->join('marketing_agencies', 'marketing_agencies.sid = form_affiliate_end_user_license_agreement.marketing_agency_sid', 'left');
 
             $document_data = $this->db->get('form_affiliate_end_user_license_agreement')->result_array();
-
         } elseif ($document == 'credit_card_authorization_form') {
             $this->db->select('form_document_credit_card_authorization.*');
             $this->db->select('users.CompanyName, users.sid as users_company_sid');
@@ -282,7 +298,6 @@ class Documents_model extends CI_Model
                 } else {
                     $document_data[0]['creative_person'] = $creative_person;
                 }
-
             }
         } elseif ($document == 'uploaded_document') {
             $this->db->select('forms_documents_uploaded.*');
@@ -295,6 +310,18 @@ class Documents_model extends CI_Model
             $this->db->join('users', 'users.sid = forms_documents_uploaded.company_sid', 'left');
 
             $document_data = $this->db->get('forms_documents_uploaded')->result_array();
+        } elseif ($document == 'form_payroll_agreement') {
+
+            $this->db->select('form_payroll_agreement.*');
+            $this->db->select('users.CompanyName, users.sid as users_company_sid');
+            $this->db->limit(1);
+
+            $this->db->where('form_payroll_agreement.verification_key', $verification_key);
+            //$this->db->where('form_document_eula.status', 'sent');
+
+            $this->db->join('users', 'users.sid = form_payroll_agreement.company_sid', 'left');
+
+            $document_data = $this->db->get('form_payroll_agreement')->result_array();
         }
 
         if (!empty($document_data)) {
@@ -316,8 +343,12 @@ class Documents_model extends CI_Model
             $this->db->select('sid, username as full_name, email');
             $this->db->where('sid', $sid);
             $agent_data = $this->db->get('users')->result_array();
+        } elseif ($target == 'form_payroll_agreement') {
+            $this->db->select('sid, username as full_name, email');
+            $this->db->where('sid', $sid);
+            $agent_data = $this->db->get('users')->result_array();
         }
-        
+
 
         if (!empty($agent_data)) {
             return $agent_data[0];
@@ -342,6 +373,8 @@ class Documents_model extends CI_Model
                 $this->db->update('form_document_company_contacts', $dataToSave);
             } elseif (strtolower($document) == 'uploaded_document') {
                 $this->db->update('forms_documents_uploaded', $dataToSave);
+            } elseif (strtolower($document) == 'form_payroll_agreement') {
+                $this->db->update('form_payroll_agreement', $dataToSave);
             }
         }
     }
@@ -362,7 +395,7 @@ class Documents_model extends CI_Model
     {
         $this->db->select('sid, first_name, last_name, email');
         $this->db->where('parent_sid', $company_sid);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $data = $this->db->get('users')->result_array();
 
         return $data;
@@ -393,6 +426,8 @@ class Documents_model extends CI_Model
             $data = $this->db->get('form_document_eula')->result_array();
         } elseif (strtolower($document) == 'company_contacts') {
             $data = $this->db->get('form_document_company_contacts')->result_array();
+        } elseif (strtolower($document) == 'form_payroll_agreement') {
+            $data = $this->db->get('form_payroll_agreement')->result_array();
         }
 
         if (!empty($data)) {
@@ -433,15 +468,16 @@ class Documents_model extends CI_Model
         return $this->db->get('form_document_credit_card_authorization')->result_array();
     }
 
-    function insert_document_ip_tracking_record($company_sid,
-                                                $logged_in_sid,
-                                                $ip_address,
-                                                $document,
-                                                $document_status,
-                                                $user_agent,
-                                                $user_sid = null,
-                                                $user_type = null)
-    {
+    function insert_document_ip_tracking_record(
+        $company_sid,
+        $logged_in_sid,
+        $ip_address,
+        $document,
+        $document_status,
+        $user_agent,
+        $user_sid = null,
+        $user_type = null
+    ) {
         $data_to_insert = array();
         $data_to_insert['company_sid'] = $company_sid;
         $data_to_insert['logged_in_sid'] = $logged_in_sid;
@@ -450,24 +486,25 @@ class Documents_model extends CI_Model
         $data_to_insert['document_status'] = $document_status;
         $data_to_insert['user_agent'] = $user_agent;
 
-        if($user_sid != null) {
+        if ($user_sid != null) {
             $data_to_insert['user_sid'] = $user_sid;
         }
 
-        if($user_type != null) {
+        if ($user_type != null) {
             $data_to_insert['user_type'] = $user_type;
         }
 
         $this->db->insert('documents_ip_tracking', $data_to_insert);
     }
 
-    function get_document_ip_tracking_record($company_sid, $document, $status = 'signed', $user_sid = null, $user_type = null){
+    function get_document_ip_tracking_record($company_sid, $document, $status = 'signed', $user_sid = null, $user_type = null)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('document', $document);
         $this->db->where('document_status', $status);
 
-        if($user_sid != null && $user_type != null) {
+        if ($user_sid != null && $user_type != null) {
             $this->db->where('user_sid', $user_sid);
             $this->db->where('user_type', $user_type);
         }
@@ -479,19 +516,20 @@ class Documents_model extends CI_Model
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
-        if(!empty($records_arr)){
+        if (!empty($records_arr)) {
             return $records_arr[0];
         } else {
             return array();
         }
     }
 
-    function update_commission_info($record_sid, $marketing_agency_sid, $value, $type){
+    function update_commission_info($record_sid, $marketing_agency_sid, $value, $type)
+    {
 
         $this->db->where('sid', $record_sid);
         $this->db->where('marketing_agency_sid', $marketing_agency_sid);
         $dataToUpdate = array();
-        
+
         if ($type == 'closed_qualified_customers') {
             $dataToUpdate['closed_qualified_customers'] = $value;
         } elseif ($type == 'commission_schedule_percentage') {
@@ -503,7 +541,8 @@ class Documents_model extends CI_Model
         $this->db->update('form_affiliate_end_user_license_agreement', $dataToUpdate);
     }
 
-    function get_applicant_signature($company_sid, $user_sid){
+    function get_applicant_signature($company_sid, $user_sid)
+    {
         $this->db->select('signature_bas64_image, signature_timestamp');
         $this->db->where('sid', $user_sid);
         $this->db->where('employer_sid', $company_sid);
@@ -511,93 +550,102 @@ class Documents_model extends CI_Model
         $records_obj = $this->db->get('portal_job_applications');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr[0];
         } else {
             return array();
         }
     }
 
-    function get_employee_signature ($sid) {
+    function get_employee_signature($sid)
+    {
         $this->db->select('signature_bas64_image, signature_timestamp');
         $this->db->where('sid', $sid);
         $records_obj = $this->db->get('e_signatures_data');
 
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr[0];
         } else {
             return array();
         }
     }
 
-    function get_credit_card_information ($verification_key) {
+    function get_credit_card_information($verification_key)
+    {
         $this->db->select('*');
         $this->db->where('verification_key', $verification_key);
         $records_obj = $this->db->get('form_document_credit_card_authorization');
 
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr[0];
         } else {
             return array();
         }
-    } 
+    }
 
-    function insert_credit_card_authorization_history ($data_to_insert) { 
+    function insert_credit_card_authorization_history($data_to_insert)
+    {
         $this->db->insert('form_document_credit_card_authorization_history', $data_to_insert);
     }
 
-    function regenerate_credit_card_authorization ($record_sid, $data_to_update) {
+    function regenerate_credit_card_authorization($record_sid, $data_to_update)
+    {
         $this->db->where('sid', $record_sid);
         $this->db->update('form_document_credit_card_authorization', $data_to_update);
     }
 
-    function get_enduser_license_agreement_information ($verification_key) {
+    function get_enduser_license_agreement_information($verification_key)
+    {
         $this->db->select('*');
         $this->db->where('verification_key', $verification_key);
         $records_obj = $this->db->get('form_document_eula');
 
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr[0];
         } else {
             return array();
         }
     }
 
-    function insert_enduser_license_agreement_history ($data_to_insert) { 
+    function insert_enduser_license_agreement_history($data_to_insert)
+    {
         $this->db->insert('form_document_eula_history', $data_to_insert);
     }
 
-    function regenerate_enduser_license_agreement ($record_sid, $data_to_update) {
+    function regenerate_enduser_license_agreement($record_sid, $data_to_update)
+    {
         $this->db->where('sid', $record_sid);
         $this->db->update('form_document_eula', $data_to_update);
     }
 
-    function get_company_contacts_information ($verification_key) {
+    function get_company_contacts_information($verification_key)
+    {
         $this->db->select('*');
         $this->db->where('verification_key', $verification_key);
         $records_obj = $this->db->get('form_document_company_contacts');
 
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr[0];
         } else {
             return array();
         }
     }
 
-    function get_company_contacts_details_information ($company_sid, $record_sid) {
+    function get_company_contacts_details_information($company_sid, $record_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('form_document_company_contacts_sid', $record_sid);
@@ -605,33 +653,38 @@ class Documents_model extends CI_Model
 
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr;
         } else {
             return array();
         }
     }
 
-    function insert_company_contacts_history ($data_to_insert) { 
+    function insert_company_contacts_history($data_to_insert)
+    {
         $this->db->insert('form_document_company_contacts_history', $data_to_insert);
     }
 
-    function regenerate_company_contacts_document ($record_sid, $data_to_update) {
+    function regenerate_company_contacts_document($record_sid, $data_to_update)
+    {
         $this->db->where('sid', $record_sid);
         $this->db->update('form_document_company_contacts', $data_to_update);
     }
 
-    function insert_company_contacts_detail_history ($data_to_insert) { 
+    function insert_company_contacts_detail_history($data_to_insert)
+    {
         $this->db->insert('form_document_company_contact_details_history', $data_to_insert);
     }
 
-    function delete_company_contacts_detail ($record_sid) {
+    function delete_company_contacts_detail($record_sid)
+    {
         $this->db->where('sid', $record_sid);
         $this->db->delete('form_document_company_contact_details');
     }
 
-    function get_all_default_categories () {
+    function get_all_default_categories()
+    {
         $this->db->select('sid, name, status, sort_order, created_date');
         $this->db->where('company_sid', 0);
         $this->db->where('created_by_sid', 0);
@@ -639,8 +692,8 @@ class Documents_model extends CI_Model
 
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr;
         } else {
             return array();
@@ -648,9 +701,10 @@ class Documents_model extends CI_Model
     }
 
 
-    function check_unique_with_name($company_sid, $name, $sid = null){
-        $this->db->where('company_sid',$company_sid);
-        $this->db->where('name',$name);
+    function check_unique_with_name($company_sid, $name, $sid = null)
+    {
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('name', $name);
         //
         if ($sid != null) {
             $this->db->where('sid <>', $sid);
@@ -661,27 +715,59 @@ class Documents_model extends CI_Model
         return $result;
     }
 
-    function add_category($data){
-        $this->db->insert('documents_category_management',$data);
+    function add_category($data)
+    {
+        $this->db->insert('documents_category_management', $data);
         return $this->db->insert_id();
     }
 
-    function get_category($sid){
+    function get_category($sid)
+    {
         $this->db->select('sid, name, status, sort_order, description');
         $this->db->where('sid', $sid);
         $category = $this->db->get('documents_category_management')->row_array();
         //
-        if(!empty($category)){
+        if (!empty($category)) {
             return $category;
         } else {
             return array();
         }
     }
 
-    function update_category($sid, $data){
+    function update_category($sid, $data)
+    {
         $this->db->where('sid', $sid);
         $category = $this->db->update('documents_category_management', $data);
         return $category;
     }
-    
+
+    //
+    function get_enduser_payroll_agreement_information($verification_key)
+    {
+        $this->db->select('*');
+        $this->db->where('verification_key', $verification_key);
+        $records_obj = $this->db->get('form_payroll_agreement');
+
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    //
+    function insert_enduser_payroll_agreement_history($data_to_insert)
+    {
+        $this->db->insert('form_document_fpa_history', $data_to_insert);
+    }
+
+    //
+    function regenerate_enduser_payroll_agreement($record_sid, $data_to_update)
+    {
+        $this->db->where('sid', $record_sid);
+        $this->db->update('form_payroll_agreement', $data_to_update);
+    }
 }

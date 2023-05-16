@@ -249,3 +249,21 @@ if (!function_exists('getPolicyDifference')) {
         return $differenceArray;
     }
 }
+
+
+
+
+//
+
+if (!function_exists('acceptGustoAgreement')) {
+  
+    function acceptGustoAgreement($name)
+    {
+        if ($name != '' && $name != null) {
+        }
+    
+        return false;
+
+    }
+}
+

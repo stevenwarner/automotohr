@@ -563,6 +563,21 @@
                                                                         </span>
                                                                     </div>
                                                                 </li>
+
+
+
+                                                                <li>
+                                                                    <label>Payroll Agreement</label>
+                                                                    <div class="text text-center">
+                                                                        <?php $fpa_status = ($company_documents_status['fpa_status'] != '' ? $company_documents_status['fpa_status'] : 'Not Generated'); ?>
+                                                                        <span class="<?php echo strtolower(str_replace(' ', '-', $fpa_status)); ?>">
+                                                                            <?php echo ucwords(str_replace('-', ' ', $fpa_status)) ?>
+                                                                            <?php if (strtolower($fpa_status) == 'not sent' || strtolower($fpa_status) == 'generated' || strtolower($fpa_status) == 'pre-filled' || strtolower($fpa_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($fpa_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+
+
                                                             </ul>
                                                         </div>
                                                     </div>
