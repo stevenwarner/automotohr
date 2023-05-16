@@ -1685,4 +1685,20 @@ class Complynet_model extends CI_Model
         //
         return ['errors' => 'Failed to add employees'];
     }
+
+
+    /**
+     * 
+     */
+    public function manageEmployee(array $passArray)
+    {
+        //
+        $departmentAdded = $this->checkAndMoveEmployeeDepartmentAndTeam($passArray);
+        //
+        if (!$departmentAdded) {
+            return false;
+        }
+        // transfer employee to another location
+        $this->transferEmployeeToAnotherLocation($passArray);
+    }
 }

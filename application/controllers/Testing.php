@@ -65,6 +65,18 @@ class Testing extends CI_Controller
 
     public function fixTransferEmployees()
     {
+        $passArray = [
+            'oldEmployeeId' => 48031,
+            'oldCompanyId' => 16443,
+            'newEmployeeId' => 53055,
+            'newCompanyId' => 48063
+        ];
+        //
+        $this->load->model('2022/Complynet_model', 'complynet_model');
+        //
+        $this->complynet_model->manageEmployee($passArray);
+        die("Stop debuging");
+        //
         // get all ComplyNet employees
         $employees = $this->db
             ->select('employee_sid')
