@@ -1805,7 +1805,7 @@ class Complynet_model extends CI_Model
         if (!empty($complynetCompanies)) {
                 //
             $transferEmployees = $this->getTransferedEmployees($complynetCompanies);
-            _e($transferEmployees,true);
+            // _e($transferEmployees,true);
             //
             if (!empty($transferEmployees)) {
                 foreach ($transferEmployees as $employee) {
