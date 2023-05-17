@@ -47,7 +47,7 @@ class Testing extends CI_Controller
         $this->load->model('2022/Complynet_model', 'complynet_model');
         //
         foreach ($employees as $employee) {
-            $this->complynet_model->manageEmployee();
+            $this->complynet_model->manageEmployee($employee);
         }
            
         // //
