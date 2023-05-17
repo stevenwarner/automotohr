@@ -1685,34 +1685,35 @@ class Complynet_model extends CI_Model
                         ]
                     );
                 }
-            }
-        } else {
-            //
-            $response = $this->clib->updateUser($updateArray);
-            //
-            if (preg_match('/\s+Update/i', $response)) {
                 //
-                if (!$this->db->where(['employee_sid' => $passArray['newEmployeeId']])->count_all_results('complynet_employees')) {
-                    // add the new record
-                    $this->db->insert('complynet_employees', $complyArray);
-                }
-                //  get the employee
-                $employeeObj = $this->clib->getEmployeeByEmail($email);
-                //
-                if (isset($employeeObj[0]['Id'])) {
-                    $employeeObj = findTheRightEmployee($employeeObj, $complyArray['complynet_company_sid'], $complyArray['complynet_location_sid']);
-                    //
-                    if ($employeeObj) {
-                        $this->db->where([
-                            'employee_sid' => $passArray['newEmployeeId']
-                        ])->update('complynet_employees', [
-                            'complynet_employee_sid' => $employeeObj['Id'],
-                            'complynet_json' => json_encode($employeeObj)
-                        ]);
-                    }
-                }
                 return ['success' => 'Employee synced.'];
+            } 
+        }
+        //
+        $response = $this->clib->updateUser($updateArray);
+        //
+        if (preg_match('/\s+Update/i', $response)) {
+            //
+            if (!$this->db->where(['employee_sid' => $passArray['newEmployeeId']])->count_all_results('complynet_employees')) {
+                // add the new record
+                $this->db->insert('complynet_employees', $complyArray);
             }
+            //  get the employee
+            $employeeObj = $this->clib->getEmployeeByEmail($email);
+            //
+            if (isset($employeeObj[0]['Id'])) {
+                $employeeObj = findTheRightEmployee($employeeObj, $complyArray['complynet_company_sid'], $complyArray['complynet_location_sid']);
+                //
+                if ($employeeObj) {
+                    $this->db->where([
+                        'employee_sid' => $passArray['newEmployeeId']
+                    ])->update('complynet_employees', [
+                        'complynet_employee_sid' => $employeeObj['Id'],
+                        'complynet_json' => json_encode($employeeObj)
+                    ]);
+                }
+            }
+            return ['success' => 'Employee synced.'];
         }
         //
         return ['errors' => 'Failed to add employees'];
