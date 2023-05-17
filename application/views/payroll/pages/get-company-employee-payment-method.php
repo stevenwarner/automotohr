@@ -1,9 +1,11 @@
-<!--  -->
-<div class="container-fluid">
+<?php
+$payroll_bank_accounts = $payment_method['splits'] ? json_decode($payment_method['splits'], true) : [];
+?><!--  -->
+<div class="container">
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->
-            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex'=> "employee_payment", "subIndex" => ""]);?>
+            <?php $this->load->view('payroll/pages/sidebar', ['mainIndex' => "employee_payment", "subIndex" => ""]); ?>
             <!-- Main Content -->
             <div class="col-md-9 col-sm-12">
                 <!-- Heading -->
@@ -32,32 +34,32 @@
                             Select payment method <span class="csRequired"></span>
                         </label>
                         <select class="form-control jsPaymentMethod">
-                            <option value="Direct Deposit" <?=!empty($payment_method) &&  $payment_method['payment_method'] === "Direct Deposit" ? 'selected="selected"' : 'selected="selected"';?>>Direct Deposit</option>
-                            <option value="Check" <?=!empty($payment_method) &&  $payment_method['payment_method'] === "Check" ? 'selected="selected"' : '';?>>Check</option>
+                            <option value="Direct Deposit" <?= !empty($payment_method) &&  $payment_method['payment_method'] === "Direct Deposit" ? 'selected="selected"' : 'selected="selected"'; ?>>Direct Deposit</option>
+                            <option value="Check" <?= !empty($payment_method) &&  $payment_method['payment_method'] === "Check" ? 'selected="selected"' : ''; ?>>Check</option>
                         </select>
                     </div>
                 </div>
-                <br>  
+                <br>
                 <?php
-                    $addBankAccount = "";
-                    $addSplitType = "";
-                    $jsBaseOnDD = "";
+                $addBankAccount = "";
+                $addSplitType = "";
+                $jsBaseOnDD = "";
 
-                    if (!empty($payment_method) && $payment_method['payment_method'] === "Check") {
-                        $addBankAccount = 'style="display:none;"';
-                        $addSplitType = 'style="display:none;"';
-                        $jsBaseOnDD = 'style="display:none;"';
-                    }
+                if (!empty($payment_method) && $payment_method['payment_method'] === "Check") {
+                    $addBankAccount = 'style="display:none;"';
+                    $addSplitType = 'style="display:none;"';
+                    $jsBaseOnDD = 'style="display:none;"';
+                }
                 ?>
                 <!--  -->
-                <div class="row jsBaseOnC" <?=$payment_method['payment_method'] != 'Check' ? 'style="display: none;"' : '';?>>
+                <div class="row jsBaseOnC" <?= $payment_method['payment_method'] != 'Check' ? 'style="display: none;"' : ''; ?>>
                     <div class="col-sm-12">
                         <p class="csF16">By selecting Check as the payment method you will be required to write a physical check to this employee every payday (we will tell you the exact amount to pay).</p>
                     </div>
                 </div>
                 <!--  -->
                 <br>
-                <div class="row jsBaseOnDD" <?=$addBankAccount?>>
+                <div class="row jsBaseOnDD" <?= $addBankAccount ?>>
                     <div class="col-md-12 col-xs-12">
                         <label class="csF18 csB7">
                             Employee bank account
@@ -65,18 +67,18 @@
                         <p class="csF16">
                             Enter the details of the bank account the employee wishes to be paid with. Multiple accounts can be added after continuing this page.
                         </p>
-                        <span style="<?=!empty($payment_method) ? 'displayed:none;' : '';?>">
-                            <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;</i><a href="javascript:;" class="jsAddEmployeeBankAccount" data-account_id="0">Add bank account</a>
-                        </span>
+                        <?php if (count($payroll_bank_accounts) < 2) { ?>
+                            <span style="<?= !empty($payment_method) ? 'displayed:none;' : ''; ?>">
+                                <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;&nbsp;</i><a href="javascript:;" class="jsAddEmployeeBankAccount" data-account_id="0">Add bank account</a>
+                            </span>
+                        <?php } ?>
                     </div>
                 </div>
                 <br>
-                <div class="jsBaseOnDD" <?=$jsBaseOnDD;?>>
-                <?php
-                    $payroll_bank_accounts = $payment_method['splits'] ? json_decode($payment_method['splits'], true) : [];
-                ?>
+                <div class="jsBaseOnDD" <?= $jsBaseOnDD; ?>>
+
                     <?php if (!empty($payroll_bank_accounts)) { ?>
-                        <?php foreach ($payroll_bank_accounts as $account) { ?>
+                        <?php foreach ($payroll_bank_accounts as $account) {?>
                             <div class="row">
                                 <div class="col-sm-6">
                                     <p class="csF16">

@@ -1,5 +1,5 @@
 <!--  -->
-<div class="container-fluid">
+<div class="container">
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->

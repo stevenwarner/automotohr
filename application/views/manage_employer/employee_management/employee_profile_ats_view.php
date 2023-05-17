@@ -169,6 +169,16 @@ if (checkIfAppIsEnabled('timeoff')) {
 
                                             </div>
                                             <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Payment Method:</label>
+                                                    <select class="invoice-fields" name="payment_method">                                                                
+                                                        <option <?= $employer["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
+                                                        <option <?= $employer["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
+                                                    </select> 
+                                                    <?php echo form_error('payment_method'); ?>
+                                                </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                     <label>address:</label>
                                                     <input class="invoice-fields" value="<?php echo set_value('Location_Address', $employer["Location_Address"]); ?>" type="text" name="Location_Address">

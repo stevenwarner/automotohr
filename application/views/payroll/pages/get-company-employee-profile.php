@@ -1,7 +1,7 @@
 <!--  -->
 <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets') ?>/css/jquery-ui-datepicker-custom.css">
 <script src="<?php echo base_url('assets') ?>/js/jquery.datetimepicker.js"></script>
-<div class="container-fluid">
+<div class="container">
     <div class="csPageWrap">
         <div class="row">
             <!-- left sidebar -->

@@ -361,6 +361,7 @@ class employers extends Admin_Controller
             $data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
             $data['eeoc_code'] = $this->input->post('eeoc_code');
             $data['salary_benefits'] = $this->input->post('salary_benefits');
+            $data['payment_method'] = $this->input->post('payment_method');
             //
             $data['languages_speak'] = null;
             //
@@ -476,6 +477,15 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone', true);
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
+            //
+            $this->company_model->update_user($sid, $data, 'Employer');
+            //
+            // Check and Update employee basic profile info
+            $this->checkAndUpdateProfileInfo(
+                $sid,
+                $employer_detail[0],
+                $data
+            );
 
             //
             $oldData = $this->db
@@ -507,6 +517,104 @@ class employers extends Admin_Controller
                 redirect('manage_admin/employers/edit_employer/' . $sid, 'refresh');
             }
         }
+    }
+
+    private function checkAndUpdateProfileInfo (
+        $employeeId,
+        $employeeDetail,
+        $dataToInsert
+    ) {
+        // New employee profile data
+        $newProfileData = [];
+        $newProfileData['first_name'] = $dataToInsert['first_name'];
+        $newProfileData['last_name'] = $dataToInsert['last_name'];
+        $newProfileData['dob'] = $dataToInsert['dob'];
+        $newProfileData['email'] = $dataToInsert['email'];
+        $newProfileData['ssn'] = $dataToInsert['ssn'];
+        //
+        // Old employee profile data
+        $oldProfileData = [];
+        $oldProfileData['first_name'] = $employeeDetail['first_name'];
+        $oldProfileData['last_name'] = $employeeDetail['last_name'];
+        $oldProfileData['email'] = $employeeDetail['email'];
+        $oldProfileData['ssn'] = $employeeDetail['ssn'];
+        $oldProfileData['dob'] = $employeeDetail['dob'];
+        //
+        $profileDifference = $this->findDifference($oldProfileData, $newProfileData);
+        //
+        if ($profileDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'profile');
+        }
+        //
+        // New employee address data
+        $newAddressData = [];
+        $newAddressData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newAddressData['Location_City'] = $dataToInsert['Location_City'];
+        $newAddressData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newAddressData['Location_State'] = $dataToInsert['Location_State'];
+        //
+        // Old employee address data
+        $oldAddressData = [];
+        $oldAddressData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldAddressData['Location_City'] = $employeeDetail['Location_City'];
+        $oldAddressData['Location_State'] = $employeeDetail['Location_State'];
+        $oldAddressData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        //
+        $addressDifference = $this->findDifference($oldAddressData, $newAddressData);
+        //
+        if ($addressDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'address');
+        }
+        //
+        // New employee payment method
+        $newPaymentData = [];
+        $newPaymentData['payment_method'] = $dataToInsert['payment_method'];
+        //
+        // Old employee payment method
+        $oldPaymentData = [];
+        $oldPaymentData['payment_method'] = $employeeDetail['payment_method'];
+        //
+        $paymentMethodDifference = $this->findDifference($oldPaymentData, $newPaymentData);
+        //
+        if ($paymentMethodDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'payment_method');
+        }
+    }
+
+    /**
+     * 
+     */
+    function findDifference($previous_data, $form_data)
+    {
+        // 
+        $profile_changed = 0;
+        //
+        $dt = [];
+        //
+        if (!empty($previous_data)) {
+            foreach ($previous_data as $key => $data) {
+                //
+                if (!isset($form_data[$key])) {
+                    continue;
+                }
+                //   
+                if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
+                    //
+                    $dt[$key] = [
+                        'old' => $data,
+                        'new' => $form_data[$key]
+                    ];
+                    //
+                    $profile_changed = 1;
+                }
+            }
+        }
+        //
+
+        return ['profile_changed' => $profile_changed, 'data' => $dt];
     }
 
     public function add_employer($company_sid = null)
@@ -558,6 +666,7 @@ class employers extends Admin_Controller
                 $action = $this->input->post('action');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+                $payment_method = $this->input->post('payment_method');
                 $employee_type = $this->input->post('employee_type');
                 $salt = generateRandomString(48);
 
@@ -589,6 +698,7 @@ class employers extends Admin_Controller
                 $insert_data['salt'] = $salt;
                 $insert_data['gender'] = $gender;
                 $insert_data['timezone'] = $timezone;
+                $insert_data['payment_method'] = $payment_method;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
 

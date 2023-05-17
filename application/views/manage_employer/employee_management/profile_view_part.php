@@ -56,8 +56,16 @@
             <label class="csF16">Job Title</label>
             <p class="dummy-invoice-fields"><?= GetVal($employer["job_title"]); ?></p>
         </div>
-
     </div>
+    <!--  -->
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <label class="csF16">Payment Method</label>
+            <p class="dummy-invoice-fields"><?= $employer["payment_method"] == 'direct_deposit' ? 'Direct Deposit' : 'Check'; ?></p>
+        </div>
+    </div>
+
     <!--  -->
     <br>
     <div class="row">

@@ -298,6 +298,15 @@
                                                         </div>
                                                     </div>
 
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                            <label>Payment Method:</label>
+                                                            <select class="invoice-fields" name="payment_method">
+                                                                <option <?= $user_information["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
+                                                                <option <?= $user_information["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
+                                                            </select>    
+                                                        </div>
+                                                    </div>
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
 

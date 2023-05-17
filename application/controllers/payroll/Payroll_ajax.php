@@ -129,6 +129,7 @@ class Payroll_ajax extends CI_Controller
                 "users.job_title",
                 "users.ssn",
                 "users.dob",
+                "users.email",
                 "users.middle_name",
                 "users.pay_plan_flag",
                 "users.on_payroll"
@@ -159,6 +160,12 @@ class Payroll_ajax extends CI_Controller
             //
             if ($companyDetails['on_payroll'] == '1') {
                 return SendResponse(200, ['errors' => ['Company already in use for payroll']]);
+            }
+            //
+            // Check if ENI is already used
+            if ($this->db->where('gusto_company_uid', $companyDetails['ein'])->count_all_results('payroll_companies')) {
+                // return if EIN already in used
+                return SendResponse(200, ['errors' => ['EIN already in used.']]);
             }
             // Let's onboard the company
             // Make request array
@@ -754,6 +761,15 @@ class Payroll_ajax extends CI_Controller
             //
             $data['employee_job_info'] = $this->pm->GetEmployeeJobDetails($_GET["employee_id"]);
             //
+            if (!$data['employee_job_info']) {
+                $data['employee_job_info'] = $this->db->select('
+                    "Exempt" as flsa_status,
+                    job_title as title,
+                    hourly_rate as rate,
+                    "Hour" as payment_unit
+                ')->where('sid', $_GET["employee_id"])->get('users')->row_array();
+            }
+            //
             return SendResponse(200, [
                 'JOB_ID' => $data['employee_job_info']['sid'],
                 'JOB_HIRE_DATE' => $data['employee_job_info']['hire_date'],
@@ -775,21 +791,44 @@ class Payroll_ajax extends CI_Controller
         }
         //
         if ($page === "get-company-employee-state-tax") {
+            $statePrerequisite = $this->pm->checkStatePrerequisite($_GET["employee_id"]);
             //
-            $data['employee_sid'] = $_GET["employee_id"];
-            //
-            $data['state_tax_info'] = $this->pm->GetEmployeeStateTaxDetails($_GET["employee_id"]);
-            //
-            return SendResponse(200, [
-                'API_KEY' => getAPIKey(),
-                'EMPLOYEE_URL' => getAPIUrl("employees"),
-                'html' => $this->load->view($this->path . $page, $data, true)
-            ]);
+            if ($statePrerequisite['status'] == 'data_missing') {
+                $page = 'state_prerequisite';
+                $data['work_address'] = $statePrerequisite['work_address'];
+                $data['federal_tax'] = $statePrerequisite['federal_tax'];
+                //
+                return SendResponse(200, [
+                    'API_KEY' => getAPIKey(),
+                    'EMPLOYEE_URL' => getAPIUrl("employees"),
+                    'status' => 'data_missing',
+                    'html' => $this->load->view($this->path . $page, $data, true)
+                ]);
+            } else {
+                //
+                $data['employee_sid'] = $_GET["employee_id"];
+                //
+                $data['state_tax_info'] = $this->pm->GetEmployeeStateTaxDetails($_GET["employee_id"]);
+                //
+                return SendResponse(200, [
+                    'API_KEY' => getAPIKey(),
+                    'EMPLOYEE_URL' => getAPIUrl("employees"),
+                    'status' => 'data_completed',
+                    'html' => $this->load->view($this->path . $page, $data, true)
+                ]);
+            }
         }
         //
         if ($page === "get-company-employee-payment-method") {
             //
             $data['employee_sid'] = $_GET["employee_id"];
+            // load model
+            $this->load->model('gusto/Gusto_payroll_model', 'gusto_payroll_model');
+            // sync employees with gusto
+            $this->gusto_payroll_model->syncEmployeeBankAccountsWithGusto(
+                $companyId,
+                $_GET['employee_id']
+            );
             //
             $data['payment_method'] = $this->pm->GetEmployeePaymentMethod($_GET["employee_id"]);
             //
@@ -807,9 +846,9 @@ class Payroll_ajax extends CI_Controller
                 foreach ($splits as $k => $v) {
                     //
                     $splits[$k] = array_merge($splits[$k], $this->db
-                        ->where('payroll_bank_uuid', $v['uuid'])
-                        ->get('payroll_employee_bank_accounts')
-                        ->row_array());
+                    ->where('payroll_bank_uuid', $v['uuid'])
+                    ->get('payroll_employee_bank_accounts')
+                    ->row_array());
                 }
                 //
                 $data['payment_method']['splits'] = json_encode($splits);

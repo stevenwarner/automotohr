@@ -854,8 +854,7 @@
                                             </div>
                                         </div>
                                     <?php } ?>
-
-                                    <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
+                                    <?php if (isEmployeeOnPayroll($this->session->userdata('logged_in')['employer_detail']['sid']) || isPayrollAuthorizePerson($this->session->userdata('logged_in')['employer_detail']['email'])) { ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">

@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class logs extends Admin_Controller
 {
@@ -21,7 +21,7 @@ class logs extends Admin_Controller
         ];
     }
 
-//contact us logs
+    //contact us logs
     public function contactus_enquiries()
     {
         $this->data['page_title'] = 'Contact Us Enquiries';
@@ -49,7 +49,7 @@ class logs extends Admin_Controller
         }
 
 
-//--------------------Search section End---------------//
+        //--------------------Search section End---------------//
         if (isset($search_data['start']) && $search_data['start'] != "" && isset($search_data['end']) && $search_data['end'] != "")
             $db_products = $this->logs_model->get_contact_logs_date($search, $between);
         else
@@ -75,30 +75,31 @@ class logs extends Admin_Controller
         }
     }
 
-//email logs 
-    public function email_enquiries($user_name = 'all', $email = 'all', $start_date = 'all', $end_date = 'all', $name_search = 'all') {
+    //email logs 
+    public function email_enquiries($user_name = 'all', $email = 'all', $start_date = 'all', $end_date = 'all', $name_search = 'all')
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'email_enquiries_log';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-        
-        
+
+
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
 
         $this->data['page_title'] = 'Email Enquiries';
-        $this->data['groups'] = $this->ion_auth->groups()->result();       
+        $this->data['groups'] = $this->ion_auth->groups()->result();
         $user_name = urldecode($user_name);
         $email = urldecode($email);
         $name_search = urldecode($name_search);
 
-        if(!empty($start_date) && $start_date != 'all') {
+        if (!empty($start_date) && $start_date != 'all') {
             $start_date_db = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
         } else {
             $start_date_db = null;
         }
 
-        if(!empty($end_date) && $end_date != 'all') {
+        if (!empty($end_date) && $end_date != 'all') {
             $end_date_db = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
         } else {
             $end_date_db = null;
@@ -107,17 +108,17 @@ class logs extends Admin_Controller
         $total_records = $this->logs_model->get_email_enquiries_logs($user_name, $email, $start_date_db, $end_date_db, null, null, true, $name_search);
         $this->load->library('pagination');
         $pagination_base = base_url('manage_admin/email_enquiries') . '/' . urlencode($user_name) . '/' . urlencode($email) . '/' .  urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($name_search);
-        
+
         $records_per_page                                                       = PAGINATION_RECORDS_PER_PAGE;
         $uri_segment                                                            = 8;
         $keywords                                                               = '';
         $offset                                                                 = 0;
         $page_number                                                            = ($this->uri->segment(8)) ? $this->uri->segment(8) : 1;
-        
+
         if ($page_number > 1) {
             $offset                                                             = ($page_number - 1) * $records_per_page;
         }
-        
+
         //echo $pagination_base;
         $config = array();
         $config["base_url"] = $pagination_base;
@@ -157,20 +158,21 @@ class logs extends Admin_Controller
         $this->data['to_records'] = $total_records < $records_per_page ? $total_records : $offset + $records_per_page;
         $email_logs = $this->logs_model->get_email_enquiries_logs($user_name, $email, $start_date_db, $end_date_db, $records_per_page, $offset, false, $name_search);
         //echo strip_tags($email_logs[0]['message'], '<h2>').'<hr><br><hr>'.$email_logs[0]['message'];
-        
+
         //echo '<br>';
-//        $length_start = strpos($email_logs[0]['message'],'Dear');
-//        $message_start = substr($email_logs[0]['message'], $length_start);
-//        $length_end = strpos($message_start,'</h2>');
-//        echo $message_name = substr($message_start, 0, $length_end-1);
-//        exit;
+        //        $length_start = strpos($email_logs[0]['message'],'Dear');
+        //        $message_start = substr($email_logs[0]['message'], $length_start);
+        //        $length_end = strpos($message_start,'</h2>');
+        //        echo $message_name = substr($message_start, 0, $length_end-1);
+        //        exit;
         $this->data['Flag'] = true;
         $this->data['logs'] = $email_logs;
         $this->render('manage_admin/logs/email_log_view');
     }
 
     //SMS Log
-    public function sms_enquiries($name_search = 'all', $email = 'all',$sender='all',$status='all',$start_date = 'all', $end_date = 'all') {
+    public function sms_enquiries($name_search = 'all', $email = 'all', $sender = 'all', $status = 'all', $start_date = 'all', $end_date = 'all')
+    {
 
         $redirect_url = 'manage_admin';
         $function_name = 'sms_enquiries_log';
@@ -180,26 +182,26 @@ class logs extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
 
         $this->data['page_title'] = 'SMS Enquiries';
-        $this->data['groups'] = $this->ion_auth->groups()->result();       
+        $this->data['groups'] = $this->ion_auth->groups()->result();
         $sender = urldecode($sender);
         $email = urldecode($email);
         $name_search = urldecode($name_search);
         $status = urldecode($status);
 
-        if(!empty($start_date) && $start_date != 'all') {
+        if (!empty($start_date) && $start_date != 'all') {
             $start_date_db = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
         } else {
             $start_date_db = null;
         }
 
-        if(!empty($end_date) && $end_date != 'all') {
+        if (!empty($end_date) && $end_date != 'all') {
             $end_date_db = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
         } else {
             $end_date_db = null;
         }
 
-      
-        $total_records = $this->logs_model->get_sms_enquiries_logs($sender,$status,$email, $start_date_db, $end_date_db, null, null, true, $name_search);
+
+        $total_records = $this->logs_model->get_sms_enquiries_logs($sender, $status, $email, $start_date_db, $end_date_db, null, null, true, $name_search);
         $this->load->library('pagination');
         //  $first_link                                                              =1;
         // $first_link_url                                                         =10;
@@ -208,11 +210,11 @@ class logs extends Admin_Controller
         $keywords                                                               = '';
         $offset                                                                 = 0;
         $page_number                                                            = ($this->uri->segment(9)) ? $this->uri->segment(9) : 1;
-        
+
         if ($page_number > 1) {
             $offset                                                             = ($page_number - 1) * $records_per_page;
         }
-        $pagination_base = base_url('manage_admin/sms_enquiries') . '/' . urlencode($name_search) . '/' .urlencode($email). '/'.urlencode($sender) . '/' .urlencode($status).'/'. urlencode($start_date) . '/' . urlencode($end_date);
+        $pagination_base = base_url('manage_admin/sms_enquiries') . '/' . urlencode($name_search) . '/' . urlencode($email) . '/' . urlencode($sender) . '/' . urlencode($status) . '/' . urlencode($start_date) . '/' . urlencode($end_date);
         //echo $pagination_base;
         $config = array();
         $config["base_url"] = $pagination_base;
@@ -252,26 +254,27 @@ class logs extends Admin_Controller
         $this->data['from_records'] = $offset == 0 ? 1 : $offset;
         $this->data['to_records'] = $total_records < $records_per_page ? $total_records : $offset + $records_per_page;
         // $email_logs = $this->logs_model->get_email_enquiries_logs($user_name, $email, $start_date_db, $end_date_db, $records_per_page, $offset, false, $name_search);
-        $sms_logs =$this->logs_model->get_sms_enquiries_logs($sender,$status,$email, $start_date_db, $end_date_db, $records_per_page, $offset, false, $name_search);
-        $sms_company_name=$this->logs_model->get_company_sms_info();
+        $sms_logs = $this->logs_model->get_sms_enquiries_logs($sender, $status, $email, $start_date_db, $end_date_db, $records_per_page, $offset, false, $name_search);
+        $sms_company_name = $this->logs_model->get_company_sms_info();
 
-       
-       
+
+
         //echo strip_tags($email_logs[0]['message'], '<h2>').'<hr><br><hr>'.$email_logs[0]['message'];
-        
+
         //echo '<br>';
-//        $length_start = strpos($email_logs[0]['message'],'Dear');
-//        $message_start = substr($email_logs[0]['message'], $length_start);
-//        $length_end = strpos($message_start,'</h2>');
-//        echo $message_name = substr($message_start, 0, $length_end-1);
-//        exit;
+        //        $length_start = strpos($email_logs[0]['message'],'Dear');
+        //        $message_start = substr($email_logs[0]['message'], $length_start);
+        //        $length_end = strpos($message_start,'</h2>');
+        //        echo $message_name = substr($message_start, 0, $length_end-1);
+        //        exit;
         $this->data['Flag'] = true;
         // $this->data['logs'] = $email_logs;
         $this->data['sms_company_name'] = $sms_company_name;
         $this->data['sms_logs'] = $sms_logs;
         $this->render('manage_admin/logs/sms_log_view');
     }
-     public function modules($module_name = 'all', $is_disabled = 'all',$is_ems_module='all',$stage='all'){
+    public function modules($module_name = 'all', $is_disabled = 'all', $is_ems_module = 'all', $stage = 'all')
+    {
         $this->load->library('pagination');
         $module_name = urldecode($module_name);
         $is_disabled = urldecode($is_disabled);
@@ -290,10 +293,10 @@ class logs extends Admin_Controller
         if ($page_number > 1) {
             $offset = ($page_number - 1) * $records_per_page;
         }
-        $pagination_base = base_url('manage_admin/modules') . '/' . urlencode($module_name) . '/' .urlencode($is_disabled). '/'.urlencode($is_ems_module) . '/' .urlencode($stage);
-        $Module_data=$this->logs_model->get_module_data($module_name,$is_disabled,$is_ems_module, $stage);
-        $total_records = $this->logs_model->get_module_data($module_name,$is_disabled, $is_ems_module, $stage, null, null, true);
-       
+        $pagination_base = base_url('manage_admin/modules') . '/' . urlencode($module_name) . '/' . urlencode($is_disabled) . '/' . urlencode($is_ems_module) . '/' . urlencode($stage);
+        $Module_data = $this->logs_model->get_module_data($module_name, $is_disabled, $is_ems_module, $stage);
+        $total_records = $this->logs_model->get_module_data($module_name, $is_disabled, $is_ems_module, $stage, null, null, true);
+
         $config = array();
         $config["base_url"] = $pagination_base;
         $config["total_rows"] = $total_records;
@@ -326,72 +329,74 @@ class logs extends Admin_Controller
         $this->data['current_page'] = $page_number;
         $this->data['from_records'] = $offset == 0 ? 1 : $offset;
         $this->data['to_records'] = $total_records < $records_per_page ? $total_records : $offset + $records_per_page;
-        $Module_data=$this->logs_model->get_module_data($module_name,$is_disabled,$is_ems_module, $stage,$records_per_page, $offset, false);
+        $Module_data = $this->logs_model->get_module_data($module_name, $is_disabled, $is_ems_module, $stage, $records_per_page, $offset, false);
         $this->data['groups'] = $this->ion_auth->groups()->result();
-          
-        $this->data['module_data']=$Module_data;
-        $this->render('manage_admin/modules/index'); 
-     }
-     public function edit_module($sid){
-       
+
+        $this->data['module_data'] = $Module_data;
+        $this->render('manage_admin/modules/index');
+    }
+    public function edit_module($sid)
+    {
+
         $this->load->helper('url');
         $redirect_url = 'manage_admin';
         $function_name = 'email_enquiries_log';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
-        
+
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $this->data['page_title'] = 'Modules';
-        $this->data['groups'] = $this->ion_auth->groups()->result(); 
-        $module_data=$this->logs_model->get_specific_module_data($sid);
-        $this->data['module_data']=$module_data[0];
+        $this->data['groups'] = $this->ion_auth->groups()->result();
+        $module_data = $this->logs_model->get_specific_module_data($sid);
+        $this->data['module_data'] = $module_data[0];
         $this->form_validation->set_rules('module_name', 'module_name', 'required');
         if ($this->form_validation->run() == false) {
             $this->render('manage_admin/modules/edit_module');
-        }else{
-            $update_array=array();
-            $name= $this->input->post('module_name');
-            $stage= $this->input->post('stage');
-            $disabled= $this->input->post('is_disabled');
-            $ems= $this->input->post('is_ems_module');
-            $submit= $this->input->post('submit_button');
-            $update_array['module_name']=$name;
-            $update_array['stage']=$stage;
-            $update_array['is_disabled']=$disabled;
-            $update_array['is_ems_module']=$ems;
-            $this->logs_model->update_module_data($sid,$update_array);
-            if($submit!=""&& $submit=='Save'){
-             $this->session->set_flashdata('message', '<strong>Success</strong> Your data has been saved successfully!');
-            redirect(base_url("manage_admin/modules")) ;
+        } else {
+            $update_array = array();
+            $name = $this->input->post('module_name');
+            $stage = $this->input->post('stage');
+            $disabled = $this->input->post('is_disabled');
+            $ems = $this->input->post('is_ems_module');
+            $submit = $this->input->post('submit_button');
+            $update_array['module_name'] = $name;
+            $update_array['stage'] = $stage;
+            $update_array['is_disabled'] = $disabled;
+            $update_array['is_ems_module'] = $ems;
+            $this->logs_model->update_module_data($sid, $update_array);
+            if ($submit != "" && $submit == 'Save') {
+                $this->session->set_flashdata('message', '<strong>Success</strong> Your data has been saved successfully!');
+                redirect(base_url("manage_admin/modules"));
             }
         }
-     }
-     function change_company_status(){
-            $comany_sid = $this->input->post("company_sid");
-            $status = $this->input->post("status");
-            $module_id = $this->input->post("module_id");
-            if($status){
-                $data = array('complynet_status'=>0);
-                $return_data = array(
-                    'btnValue' => 'Disable',
-                    'label'     => 'Enabled',
-                    'value'     =>  1
-                );
-            }
-            else{
-                $data = array('complynet_status'=>1);
-                $return_data = array(
-                    'btnValue' => 'Enable',
-                    'label'     => 'Disabled',
-                    'value'     =>  0
-                );
-            }
-            $this->company_model->update_user_status($sid,$data);
-            print_r(json_encode($return_data));
     }
-    
-    public function company_module($sid){
+    function change_company_status()
+    {
+        $comany_sid = $this->input->post("company_sid");
+        $status = $this->input->post("status");
+        $module_id = $this->input->post("module_id");
+        if ($status) {
+            $data = array('complynet_status' => 0);
+            $return_data = array(
+                'btnValue' => 'Disable',
+                'label'     => 'Enabled',
+                'value'     =>  1
+            );
+        } else {
+            $data = array('complynet_status' => 1);
+            $return_data = array(
+                'btnValue' => 'Enable',
+                'label'     => 'Disabled',
+                'value'     =>  0
+            );
+        }
+        $this->company_model->update_user_status($sid, $data);
+        print_r(json_encode($return_data));
+    }
+
+    public function company_module($sid)
+    {
         $this->load->helper('url');
         //
         $this->load->helper('common_helper');
@@ -403,8 +408,8 @@ class logs extends Admin_Controller
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $this->data['page_title'] = 'Company Module';
-        $this->data['groups'] = $this->ion_auth->groups()->result(); 
-        $this->data['module_data']= $this->logs_model->getModuleInfo($sid);
+        $this->data['groups'] = $this->ion_auth->groups()->result();
+        $this->data['module_data'] = $this->logs_model->getModuleInfo($sid);
         //
         $active_companies = $this->logs_model->get_all_active_companies();
         //
@@ -415,14 +420,15 @@ class logs extends Admin_Controller
         //
         $this->data['company_data'] = $active_companies;
         //
-        if($sid == 7){
-            $this->render('payroll/company_module'); 
-        } else{
-            $this->render('manage_admin/modules/company_module'); 
+        if ($sid == 7) {
+            $this->render('payroll/company_module');
+        } else {
+            $this->render('manage_admin/modules/company_module');
         }
     }
-    
-    public function notification_email_log ($email = 'all', $start_date = 'all', $end_date = 'all') {
+
+    public function notification_email_log($email = 'all', $start_date = 'all', $end_date = 'all')
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'notification_email_log';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -431,15 +437,15 @@ class logs extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
 
         $this->data['page_title'] = 'Notification Email Enquiries';
-        $this->data['groups'] = $this->ion_auth->groups()->result(); 
+        $this->data['groups'] = $this->ion_auth->groups()->result();
         $email = urldecode($email);
-        if(!empty($start_date) && $start_date != 'all') {
+        if (!empty($start_date) && $start_date != 'all') {
             $start_date_db = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
         } else {
             $start_date_db = null;
         }
 
-        if(!empty($end_date) && $end_date != 'all') {
+        if (!empty($end_date) && $end_date != 'all') {
             $end_date_db = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
         } else {
             $end_date_db = null;
@@ -448,17 +454,17 @@ class logs extends Admin_Controller
         $total_records = $this->logs_model->get_notification_email_logs($email, $start_date_db, $end_date_db, null, null, true);
         $this->load->library('pagination');
         $pagination_base = base_url('manage_admin/notification_email_log') . '/' . urlencode($email) . '/' .  urlencode($start_date) . '/' . urlencode($end_date);
-        
+
         $records_per_page                                                       = PAGINATION_RECORDS_PER_PAGE;
         $uri_segment                                                            = 6;
         $keywords                                                               = '';
         $offset                                                                 = 0;
         $page_number                                                            = ($this->uri->segment(6)) ? $this->uri->segment(6) : 1;
-        
+
         if ($page_number > 1) {
             $offset                                                             = ($page_number - 1) * $records_per_page;
         }
-        
+
         //echo $pagination_base;
         $config = array();
         $config["base_url"] = $pagination_base;
@@ -493,7 +499,7 @@ class logs extends Admin_Controller
         $this->data['from_records'] = $offset == 0 ? 1 : $offset;
         $this->data['to_records'] = $total_records < $records_per_page ? $total_records : $offset + $records_per_page;
         $email_logs = $this->logs_model->get_notification_email_logs($email, $start_date_db, $end_date_db, $records_per_page, $offset, false);
-        
+
         $this->data['Flag'] = true;
         $this->data['logs'] = $email_logs;
         $this->data['logs'] = $email_logs;
@@ -538,7 +544,7 @@ class logs extends Admin_Controller
             $this->data['groups'] = $this->ion_auth->groups()->result();
 
             // $log_data = $this->logs_model->get_email_log_detail($edit_id);
-             $sms_log = $this->logs_model->get_sms_log_detail($edit_id);
+            $sms_log = $this->logs_model->get_sms_log_detail($edit_id);
             // if (!empty($log_data)) {
             //     $result = $log_data[0];
             //     $username = $result['username'];
@@ -600,13 +606,14 @@ class logs extends Admin_Controller
 
 
     //
-    function UpdatePayroll(){
+    function UpdatePayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() != 'post' ||
             empty($this->input->post(NULL))
-        ){
+        ) {
             res($this->resp);
         }
         //
@@ -614,14 +621,14 @@ class logs extends Admin_Controller
         // 
         $this->load->model('Payroll_model', 'pm');
         //
-        switch($post['action']):
+        switch ($post['action']):
             case "update_ein":
                 // Check if EIN number already exists
                 $exists = $this->pm->CheckEINNumber($post['ein'], $post['companyId']);
                 //
-                if($exists){
+                if ($exists) {
                     $this->resp['Response'] = 'EIN number already exists for another company.';
-                    res($this->resp) ;
+                    res($this->resp);
                 }
                 //
                 $this->pm->UpdateCompanyEIN($post['companyId'], ['ssn' => $post['ein']]);
@@ -635,7 +642,7 @@ class logs extends Admin_Controller
                 //
                 $this->pm->UpdatePC(
                     [
-                        'is_active' => $post['status'] ? 0 :1
+                        'is_active' => $post['status'] ? 0 : 1
                     ],
                     [
                         'company_sid' => $post['companyId']
@@ -643,23 +650,40 @@ class logs extends Admin_Controller
                 );
                 //
                 $this->resp['Status'] = true;
-                $this->resp['Response'] = 'You have successfully '.( $post['status'] ? 'disabled' : 'enabled' ).' the company for payroll.';
+                $this->resp['Response'] = 'You have successfully ' . ($post['status'] ? 'disabled' : 'enabled') . ' the company for payroll.';
                 break;
             case "refresh_token":
                 // Load Curl Helper
-                $this->load->helper('curl');
+                $this->load->model('Payroll_model', 'payroll_model');
+                $this->load->helper('Payroll_helper');
                 //
-                SendRequest(
-                    base_url('refresh_token'), [
-                        CURLOPT_CUSTOMREQUEST => 'POST',
-                        CURLOPT_POSTFIELDS => array(
-                            'sid' => $post['companyId']
-                        ),
-                        CURLOPT_HTTPHEADER => [
-                            'X-Requested-With: XMLHttpRequest'
-                        ]
+                $companyId = $this->input->post('companyId', TRUE);
+                //
+                $company = $this->payroll_model->GetCompany(
+                    $companyId,
+                    [
+                        'gusto_company_uid',
+                        'access_token',
+                        'refresh_token'
                     ]
                 );
+                //
+                $response = RefreshToken([
+                    'access_token' => $company['access_token'],
+                    'refresh_token' => $company['refresh_token']
+                ]);
+
+                if (isset($response['access_token'])) {
+                    $this->payroll_model->UpdatePC([
+                        'old_access_token' => $company['access_token'],
+                        'old_refresh_token' => $company['refresh_token'],
+                        'access_token' => $response['access_token'],
+                        'refresh_token' => $response['refresh_token']
+                    ], [
+                        'company_sid' => $companyId
+                    ]);
+                    //
+                }
                 //
                 $this->resp['Status'] = true;
                 $this->resp['Response'] = 'You have successfully generated new tokens.';
@@ -669,7 +693,8 @@ class logs extends Admin_Controller
         res($this->resp);
     }
 
-    function company_onboarding ($company_sid) {
+    function company_onboarding($company_sid)
+    {
         //
         $this->load->helper("payroll_helper");
         //
@@ -684,25 +709,22 @@ class logs extends Admin_Controller
         ];
         //
         $response =  MakeCall(
-            $url ,[
+            $url,
+            [
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => json_encode($request),
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Content-Type: application/json'
                 )
-            ] 
+            ]
         );
         //
-        if(isset($response['errors']['auth'])){
-            $this->data["iframe_url"] = "https://gws-flows.gusto-demo.com/flows/lO2BHHAMCScPVV9G5WEURW0Im_nP9mGYloQgjUWbenQ"; 
+        if (isset($response['errors']['auth'])) {
+            $this->data["iframe_url"] = "https://gws-flows.gusto-demo.com/flows/lO2BHHAMCScPVV9G5WEURW0Im_nP9mGYloQgjUWbenQ";
         } else {
             $this->data["iframe_url"] = $response["url"];
         }
         $this->render('payroll/payroll_company_flow');
-
-
-        
     }
-
 }

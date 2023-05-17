@@ -382,6 +382,12 @@ class Direct_deposit extends Public_Controller
                 $data_to_update['updated_by'] = $updated_by;
 
                 $this->direct_deposit_model->updateDDA($data_to_update, $record_sid);
+
+                $this->checkAndUpdateBankDetail(
+                    $user_sid,
+                    $old_bank_record,
+                    $data_to_update
+                );
             } else {
                 $data_to_insert = array();
                 $data_to_insert['company_sid'] = $company_sid;
@@ -438,6 +444,68 @@ class Direct_deposit extends Public_Controller
 
             echo 'success';
         }
+    }
+
+     private function checkAndUpdateBankDetail (
+        $employeeId,
+        $previousDetail,
+        $newDetail
+    ) {
+      
+        // New employee profile data
+        $newBankData = [];
+        $newBankData['account_type'] = $dataToInsert['account_type'];
+        $newBankData['account_number'] = $dataToInsert['account_number'];
+        $newBankData['routing_transaction_number'] = $dataToInsert['routing_transaction_number'];
+        $newBankData['financial_institution_name'] = $dataToInsert['financial_institution_name'];
+        //
+        // Old employee profile data
+        $oldBankData = [];
+        $oldBankData['account_type'] = $previousDetail['account_type'];
+        $oldBankData['account_number'] = $previousDetail['account_number'];
+        $oldBankData['routing_transaction_number'] = $previousDetail['routing_transaction_number'];
+        $oldBankData['financial_institution_name'] = $previousDetail['financial_institution_name'];
+        //
+        $profileDifference = $this->findDifference($oldBankData, $newBankData);
+        //
+        if ($profileDifference['profile_changed'] == 1) {
+            // want to discuss with mubashir
+            // $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            // $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'bank_detail');
+        }
+    }
+
+    /**
+     * 
+     */
+    function findDifference($previous_data, $form_data)
+    {
+        // 
+        $profile_changed = 0;
+        //
+        $dt = [];
+        //
+        if (!empty($previous_data)) {
+            foreach ($previous_data as $key => $data) {
+                //
+                if (!isset($form_data[$key])) {
+                    continue;
+                }
+                //   
+                if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
+                    //
+                    $dt[$key] = [
+                        'old' => $data,
+                        'new' => $form_data[$key]
+                    ];
+                    //
+                    $profile_changed = 1;
+                }
+            }
+        }
+        //
+
+        return ['profile_changed' => $profile_changed, 'data' => $dt];
     }
 
     public function get_e_signature () {

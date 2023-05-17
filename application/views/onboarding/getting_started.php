@@ -900,7 +900,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
                         <?php $this->load->view('attendance/2022/clock_blue'); ?>
 
-                        <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll']) { ?>
+                        <?php if (isEmployeeOnPayroll($employee_sid)) { ?>
                             <!-- Payroll -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
@@ -909,7 +909,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <h2>Payroll</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?php echo $TotalPayStubs; ?><sub>Pay Stub(s)</sub></span>
+                                                <span><?php echo $TotalPayStubs ?? 0; ?><sub>Pay Stub(s)</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>View Pay Stubs</h3>
@@ -920,8 +920,6 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
-
-
                     </div>
                 </div>
             </div>

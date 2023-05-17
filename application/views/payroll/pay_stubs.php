@@ -6,9 +6,8 @@
         <!-- Main Content Area -->
         <div class="row">
             <!-- Sidebar -->
-            <?php $this->load->view('employee_info_sidebar_ems'); ?>
             <!--  -->
-            <div class="col-sm-9 col-xs-12">
+            <div class="col-sm-12 col-xs-12">
                 <div class="">
                     <span class="pull-left">
                         <h3 class="">My Pay Stubs</h3>

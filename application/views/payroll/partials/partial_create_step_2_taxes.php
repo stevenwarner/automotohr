@@ -1,39 +1,9 @@
 <?php
-    // Taxes & Debits
-    $taxDebitArray = [
-        'taxes' => [],
-        'total' => 0,
-        'employee_total' => 0,
-        'employer_total' => 0
-    ];
-
-    //
-    foreach($Payroll['employee_compensations'] as $Row){
-        //
-        if(!isset($Row['taxes'])){
-            continue;
-        }
-        //
-        foreach($Row['taxes'] as $tax){
-            //
-            if(!isset($taxDebitArray['taxes'][$tax['name']])){
-                $taxDebitArray['taxes'][$tax['name']] = [
-                    'name' => $tax['name'],
-                    'employee_total' => 0,
-                    'employer_total' => 0,
-                ];
-            }
-            //
-            $type = $tax['employer'] ? 'employer_total' : 'employee_total';
-            //
-            $taxDebitArray['taxes'][$tax['name']][$type] += $tax['amount'];
-            //
-            $taxDebitArray[$type] += $tax['amount'];
-            $taxDebitArray['total'] += $tax['amount'];
-        }
-    }
-    //
-    asort($taxDebitArray['taxes']);
+    $companyItems = ['CA ETT','CA SUI','FUTA'];
+    $employeeItems = ['Federal Income Tax','Additional Medicare','CA State Income Tax','CA SDI'];
+    $shareItems = ['Social Security','Medicare'];
+    $employeesTotal = 0;
+    $companyTotal = 0;
 ?>
 <br>
 <div class="row">
@@ -68,7 +38,7 @@
                                 <h1 class="csF18 csB7 mt0 mb0 csW">By Your Company</h1>
                             </th>
                         </tr>
-                        <?php foreach($taxDebitArray['taxes'] as $v): ?>
+                        <?php foreach($payrollReceipt['taxes'] as $v): ?>
                             <tr>
                                 <td class="vam ban">
                                     <span class="csF16 csB7">
@@ -77,12 +47,34 @@
                                 </td>
                                 <td class="text-right ban vam">
                                     <span class="csF16 csB7">
-                                        <?=$v['employee_total'] == 0 ? 'N/A' : '$'.(number_format($v['employee_total'], 2));?>
+                                        <?php 
+                                            if (in_array($v['name'], $shareItems)) {
+                                                $shareEmployee = $v['amount'] / 2;
+                                                echo '$'.(number_format($shareEmployee, 2));
+                                                $employeesTotal = $employeesTotal + $shareEmployee;
+                                            } else if (in_array($v['name'], $employeeItems)) {
+                                                echo '$'.(number_format($v['amount'], 2));
+                                                $employeesTotal = $employeesTotal + $v['amount'];
+                                            } else {
+                                                echo 'N/A';
+                                            }
+                                        ?>
                                     </span>
                                 </td>
                                 <td class="text-right ban vam">
                                     <span class="csF16 csB7">
-                                        <?=$v['employer_total'] == 0 ? 'N/A' : '$'.(number_format($v['employer_total'], 2));?>
+                                        <?php 
+                                            if (in_array($v['name'], $shareItems)) {
+                                                $shareCompany = $v['amount'] / 2;
+                                                echo '$'.(number_format($shareCompany, 2));
+                                                $companyTotal = $companyTotal + $shareCompany;
+                                            } else if(in_array($v['name'], $companyItems)) {
+                                                echo '$'.(number_format($v['amount'], 2));
+                                                $companyTotal = $companyTotal + $v['amount'];
+                                            } else {
+                                                echo 'N/A';
+                                            }
+                                        ?>
                                     </span>
                                 </td>
                             </tr>
@@ -97,12 +89,12 @@
                             </td>
                             <td class="text-right ban vam">
                                 <p class="csF16 csB7">
-                                    <strong>$<?=number_format($taxDebitArray['employee_total'], 2);?></strong>
+                                    <strong>$<?=number_format($employeesTotal, 2);?></strong>
                                 </p>
                             </td>
                             <td class="text-right ban vam">
                                 <p class="csF16 csB7">
-                                    <strong>$<?=number_format($taxDebitArray['employer_total'], 2);?></strong>
+                                    <strong>$<?=number_format($companyTotal, 2);?></strong>
                                 </p>
                             </td>
                         </tr>
@@ -132,7 +124,7 @@
                             </td>
                             <td class="text-right ban vam">
                                 <p>
-                                    $<?=number_format($Payroll['totals']['net_pay_debit'], 2);?>
+                                    $<?=number_format($payrollReceipt['totals']['net_pay_debit'], 2);?>
                                 </p>
                             </td>
                         </tr>
@@ -144,7 +136,7 @@
                             </td>
                             <td class="text-right ban vam">
                                 <p>
-                                   $<?=number_format($Payroll['totals']['reimbursements'], 2);?>
+                                   $<?=number_format($payrollReceipt['totals']['reimbursement_debit'], 2);?>
                                 </p>
                             </td>
                         </tr>
@@ -156,7 +148,7 @@
                             </td>
                             <td class="text-right ban vam">
                                 <p>
-                                   $<?=number_format(0, 2);?>
+                                   $<?=number_format($payrollReceipt['totals']['child_support_debit'], 2);?>
                                 </p>
                             </td>
                         </tr>
@@ -168,7 +160,7 @@
                             </td>
                             <td class="text-right ban vam">
                                 <p>
-                                    $<?=number_format($taxDebitArray['total'], 2);?>
+                                    $<?=number_format($payrollReceipt['totals']['tax_debit'], 2);?>
                                 </p>
                             </td>
                         </tr>

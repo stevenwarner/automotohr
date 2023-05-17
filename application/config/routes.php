@@ -1424,7 +1424,13 @@ $route["payroll/company"]['get'] = "payroll/Payroll/CompanyOnboard";
 $route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
 $route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
+$route["payroll/manage-admin"]['get'] = "payroll/Payroll/ManageAdmins";
+$route["payroll/service-terms"]['get'] = "payroll/Payroll/ServiceTerms";
+$route["payroll/settings"]['get'] = "payroll/Payroll/Settings";
 $route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
+$route["payroll/my_payroll_documents"]['get'] = "payroll/Payroll/MyPayrollDocuments";
+$route["payroll/my_document/(:num)"]['get'] = "payroll/Payroll/MyDocument/$1";
+$route["payroll/my_document/(:num)"]['post'] = "payroll/Payroll/MyDocument/$1";
 $route["payroll/history"]['get'] = "payroll/Payroll/PayrollHistory";
 $route["payroll/history/(:num)"]['get'] = "payroll/Payroll/PayrollSingleHistory/$1";
 //
@@ -1518,6 +1524,10 @@ $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
 /**
  * 
  */
+$route['payroll/(:num)/admin']['post'] = "payroll/Payroll_onboard/AddAdmin/$1";
+$route['payroll/(:num)/service']['post'] = "payroll/Payroll_onboard/AcceptServiceTerms/$1";
+$route['payroll/(:num)/settings']['post'] = "payroll/Payroll_onboard/Settings/$1";
+
 $route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/OnboardCompany/$1";
 $route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";
 $route['payroll/onboard_employee/(:num)/(:num)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeFromPayroll/$1/$2";
@@ -1686,6 +1696,21 @@ $route['compose_message_help'] = "Private_messages/compose_message_help";
 $route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
 $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';
 
+/**
+ * Payroll routes for Gusto
+ */
+// Admins
+$route['get_payroll_admins/(:num)']['get'] = 'gusto/Gusto_payroll/getAdmins/$1';
+$route['payroll/admin/(:num)']['post'] = 'gusto/Gusto_payroll/addAdmin/$1';
+// Signatories
+$route['payroll/signatories/(:num)']['get'] = 'gusto/Gusto_payroll/getSignatories/$1';
+$route['payroll/signatory/(:num)']['post'] = 'gusto/Gusto_payroll/addSignatory/$1';
+$route['payroll/signatories/(:num)/(:num)']['delete'] = 'gusto/Gusto_payroll/deleteSignatory/$1/$2';
+$route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory/$1';
+// Sync
+$route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
+$route['gusto/company/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishCompanyOnboard/$1';
+$route['gusto/employee/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishEmployeeOnboard/$1';
 
 //Job Title Templates
 $route['manage_admin/job_title_templates'] = 'manage_admin/job_title_templates/index';
@@ -1695,6 +1720,14 @@ $route['manage_admin/job_title_templates/edit/(:any)'] = 'manage_admin/job_title
 $route['manage_admin/job_title_groups'] = 'manage_admin/job_title_templates/index';
 $route['manage_admin/job_title_groups/add'] = 'manage_admin/job_title_templates/add_edit_group';
 $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit_group/$1';
+
+// Employee onboard
+$route['gusto/employee/profile']['post'] = 'gusto/Gusto_payroll/onboardEmployee/profile';
+$route['gusto/employee/compensation']['post'] = 'gusto/Gusto_payroll/onboardEmployee/compensation';
+$route['gusto/employee/home_address']['post'] = 'gusto/Gusto_payroll/onboardEmployee/home_address';
+$route['gusto/employee/federal_tax']['post'] = 'gusto/Gusto_payroll/onboardEmployee/federal_tax';
+$route['gusto/employee/payment_method']['post'] = 'gusto/Gusto_payroll/onboardEmployee/payment_method';
+$route['gusto/employee/bank_account_add']['post'] = 'gusto/Gusto_payroll/onboardEmployee/bank_account_add';
 
 
 /**

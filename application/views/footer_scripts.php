@@ -24,6 +24,16 @@
 <?php if (checkIfAppIsEnabled('payroll') && $this->session->userdata('logged_in') && array_intersect($this->uri->segment_array(), ['payroll', 'dashboard'])) : ?>
     <script src="<?= base_url(_m("assets/payroll/js/payroll_company_onboard", 'js', '1.0.1')); ?>"></script>
     <script src="<?= base_url(_m("assets/payroll/js/employee_onboard", 'js', '1.0.1')); ?>"></script>
+
+
+    <script>
+        String.prototype.verifyEmail = function() {
+            return this.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g) === null ? false : true;
+        }
+    </script>
+    <script src="<?= base_url(_m("assets/gusto/js/company_onboard", 'js', '1.0.1')); ?>"></script>
+
+
 <?php endif; ?>
 <?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) : ?>
     <script src="<?= base_url(_m("assets/attendance/js/main", 'js', '1.0.1')); ?>"></script>

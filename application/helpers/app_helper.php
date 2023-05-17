@@ -277,3 +277,130 @@ if (!function_exists('getPolicyDifference')) {
         return $differenceArray;
     }
 }
+
+if (!function_exists('updateUserById')) {
+    /**
+     * Update user
+     * 
+     * Central point to update user in system, the system will user information to
+     * all the other places, like profile, w4, I9, full employment etc.
+     * 
+     * @param array $updateArray
+     * @param int   $employeeId
+     */
+    function updateUserById(array $updateArray, int $employeeId)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // update the user in "users" table
+        $CI->db->where(['sid' => $employeeId])->update('users', $updateArray);
+    }
+}
+
+if (!function_exists('getUserStartDate')) {
+    /**
+     * Get user joining date
+     * 
+     * Get the user start date; registration date, joined dated
+     * and rehire date
+     * 
+     * @param int  $employeeId
+     * @param bool $includeRehireDate Optional Default is "false"
+     * @return array
+     */
+    function getUserStartDate(int $employeeId, bool $includeRehireDate)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // get user dates
+        $employeeDetails = $CI->db
+            ->select('
+            registration_date,
+            joined_at,
+            rehire_date
+        ')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        // check the details
+        if (!$employeeDetails) {
+            return '';
+        }
+        // get the latest date
+        return get_employee_latest_joined_date(
+            $employeeDetails['registration_date'],
+            $employeeDetails['joined_at'],
+            $includeRehireDate ? $employeeDetails['rehire_date'] : '',
+            false
+        );
+    }
+}
+
+if (!function_exists('isEmployeeOnPayroll')) {
+    /**
+     * Check employee on payroll
+     * 
+     * @param int $employeeId
+     * @return int
+     */
+    function isEmployeeOnPayroll(int $employeeId)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // check
+        return $CI->db
+            ->where([
+                'employee_sid' => $employeeId
+            ])
+            ->count_all_results('payroll_employees');
+    }
+}
+
+if (!function_exists('hasPayrollDocuments')) {
+    /**
+     * Check employee on payroll
+     * 
+     * @param int $employeeId
+     * @return int
+     */
+    function hasPayrollDocuments(int $employeeId)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // check
+        return $CI->db
+            ->where([
+                'employee_sid' => $employeeId
+            ])
+            ->count_all_results('payroll_employees_forms');
+    }
+}
+
+if (!function_exists('isPayrollAuthorizePerson')) {
+    /**
+     * Check employee on payroll
+     * 
+     * @param string $email
+     * @return int
+     */
+    function isPayrollAuthorizePerson(string $email)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // check
+        $has = $CI->db
+            ->where([
+                'email' => $email
+            ])
+            ->count_all_results('payroll_signatories');
+        if ($has) {
+            return $has;
+        }
+        // check
+        return $CI->db
+            ->where([
+                'email_address' => $email
+            ])
+            ->count_all_results('payroll_company_admin');
+    }
+}

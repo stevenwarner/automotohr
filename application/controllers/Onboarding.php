@@ -4939,7 +4939,7 @@ class Onboarding extends CI_Controller
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
                 $this->load->view('main/footer');
-            } else {
+            } else {_e($this->input->post(),true,true);
                 $perform_action = $this->input->post('perform_action');
                 switch ($perform_action) {
                     case 'assign_document':
