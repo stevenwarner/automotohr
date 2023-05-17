@@ -33,9 +33,67 @@ class Testing extends CI_Controller
     }
 
     public function missingEmployee () {
+        $jsonString = '[
+            {
+                "oldEmployeeId": "28197",
+                "oldCompanyId": "28144",
+                "newEmployeeId": "52989",
+                "newCompanyId": "16439"
+            },
+            {
+                "oldEmployeeId": "51221",
+                "oldCompanyId": "50063",
+                "newEmployeeId": "52675",
+                "newCompanyId": "50060"
+            },
+            {
+                "oldEmployeeId": "51250",
+                "oldCompanyId": "50063",
+                "newEmployeeId": "52648",
+                "newCompanyId": "50060"
+            },
+            {
+                "oldEmployeeId": "50852",
+                "oldCompanyId": "50060",
+                "newEmployeeId": "52637",
+                "newCompanyId": "50063"
+            },
+            {
+                "oldEmployeeId": "51675",
+                "oldCompanyId": "16463",
+                "newEmployeeId": "52459",
+                "newCompanyId": "32484"
+            },
+            {
+                "oldEmployeeId": "18464",
+                "oldCompanyId": "16420",
+                "newEmployeeId": "50348",
+                "newCompanyId": "32484"
+            },
+            {
+                "oldEmployeeId": "24672",
+                "oldCompanyId": "16465",
+                "newEmployeeId": "50074",
+                "newCompanyId": "16463"
+            },
+            {
+                "oldEmployeeId": "35303",
+                "oldCompanyId": "16463",
+                "newEmployeeId": "50073",
+                "newCompanyId": "16465"
+            }
+        ]';
+        //
+        $employees = json_decode($jsonString,true);
+        //
         $this->load->model('2022/Complynet_model', 'complynet_model');
         //
-        $this->complynet_model->fixUnhandleEmployees();
+        foreach ($employees as $employee) {
+            $this->complynet_model->manageEmployee($employee);
+        }
+           
+        // //
+        // $this->complynet_model->fixUnhandleEmployees();
         die("I am here");
     }
 
