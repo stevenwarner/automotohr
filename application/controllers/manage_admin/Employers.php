@@ -478,6 +478,11 @@ class employers extends Admin_Controller
             }
 
             //
+            $data['overtime'] = $this->input->post('overtime');
+            $data['double_overtime'] = $this->input->post('double_overtime');
+
+
+            //
             $oldData = $this->db
                 ->select('first_name, last_name, email, PhoneNumber, parent_sid')
                 ->where('sid', $sid)->get('users')->row_array();

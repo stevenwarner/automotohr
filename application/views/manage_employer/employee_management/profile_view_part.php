@@ -258,6 +258,26 @@
             </p>
         </div>
     </div>
+
+    <?php if ($access_level_plus == 1) { ?>
+
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Overtime</label>
+                <p class="dummy-invoice-fields">
+                    X <?= GetVal($employer['overtime']); ?>
+                </p>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Double Overtime</label>
+                <p class="dummy-invoice-fields">
+                    X <?= GetVal($employer['double_overtime']); ?>
+                </p>
+            </div>
+        </div>
+    <?php } ?>
+
     <br>
     <div class="row">
         <div class="col-md-6 col-xs-12">
@@ -326,99 +346,99 @@
     <div class="row">
         <div class="col-sm-6">
             <label class="csF16">Union Member</label>
-            <p class="dummy-invoice-fields" <?= $employer['union_member'] ? "style='height: 100px'":''?>><?= $employer['union_member'] ? 'Yes <br><br>'.$employer['union_name'] : 'No'; ?></p>
+            <p class="dummy-invoice-fields" <?= $employer['union_member'] ? "style='height: 100px'" : '' ?>><?= $employer['union_member'] ? 'Yes <br><br>' . $employer['union_name'] : 'No'; ?></p>
 
         </div>
     </div>
     <br />
-   
 
-<?php if ($timeOff == 'enable') { ?>
-    <div class="row">
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Shift Time</label>
-            <?php
-            $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
-            $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
-            ?>
-            <p class="dummy-invoice-fields" id="employee_shift_time">
 
-            </p>
+    <?php if ($timeOff == 'enable') { ?>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Shift Time</label>
+                <?php
+                $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
+                $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
+                ?>
+                <p class="dummy-invoice-fields" id="employee_shift_time">
+
+                </p>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Break Time</label>
+                <?php
+                $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
+                $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
+                ?>
+                <p class="dummy-invoice-fields" id="employee_break_timing">
+
+                </p>
+            </div>
         </div>
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Break Time</label>
-            <?php
-            $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
-            $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
-            ?>
-            <p class="dummy-invoice-fields" id="employee_break_timing">
-
-            </p>
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Week Days Off</label>
+                <p class="dummy-invoice-fields">
+                    <?php if (isset($employer["offdays"])) { ?>
+                        <?php echo str_replace(",", ", ", $employer["offdays"]); ?>
+                    <?php } else { ?>
+                        Not Specified
+                    <?php } ?>
+                </p>
+            </div>
+            <div class="col-md-6 col-xs-12" id="display_employee_shift_detaail">
+                <!-- Employee shift information come here -->
+            </div>
         </div>
-    </div>
+    <?php } ?>
+    <!--  -->
     <br>
-    <div class="row">
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Week Days Off</label>
-            <p class="dummy-invoice-fields">
-                <?php if (isset($employer["offdays"])) { ?>
-                    <?php echo str_replace(",", ", ", $employer["offdays"]); ?>
-                <?php } else { ?>
-                    Not Specified
-                <?php } ?>
-            </p>
-        </div>
-        <div class="col-md-6 col-xs-12" id="display_employee_shift_detaail">
-            <!-- Employee shift information come here -->
-        </div>
-    </div>
-<?php } ?>
-<!--  -->
-<br>
-<!--  -->
-<br>
-<div class="row">
-    <div class="col-md-12 col-xs-12">
-        <label class="csF16">Interests</label>
-        <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["interests"]) ? $extra_info["interests"] : ''); ?></p>
-    </div>
-</div>
-<!--  -->
-<br>
-<div class="row">
-    <div class="col-md-12 col-xs-12">
-        <label class="csF16">Short Bio</label>
-        <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''); ?></p>
-    </div>
-</div>
-<?php if (checkIfAppIsEnabled('timeoff')) { ?>
     <!--  -->
     <br>
     <div class="row">
         <div class="col-md-12 col-xs-12">
-            <label class="csF16">Policies</label>
-            <?php
-            if (!empty($policies)) {
-                foreach ($policies as $key => $policy) {
-                    if (!$policy['Implements']) {
-                        continue;
-                    }
-            ?>
-                    <p style="<?= $key % 2 === 0 ? "background-color: #eee;" : ""; ?> padding: 10px;">
-                        <strong>Policy Title:</strong> <?php echo $policy['Title']; ?>
-                        <br /><span><strong>Remaining Time:</strong>
-                            <?= $policy['RemainingTime']; ?></span>
-                        <br /><span><strong>Employment Status:</strong>
-                            <?= ucwords($policy['EmployementStatus']); ?></span>
-                        <br /><span><strong>Entitled:</strong>
-                            <?= $policy['Implements'] ? 'Yes' : 'No'; ?></span>
-                    </p>
-            <?php   }
-            }
-            ?>
+            <label class="csF16">Interests</label>
+            <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["interests"]) ? $extra_info["interests"] : ''); ?></p>
         </div>
     </div>
-<?php } ?>
+    <!--  -->
+    <br>
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <label class="csF16">Short Bio</label>
+            <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''); ?></p>
+        </div>
+    </div>
+    <?php if (checkIfAppIsEnabled('timeoff')) { ?>
+        <!--  -->
+        <br>
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <label class="csF16">Policies</label>
+                <?php
+                if (!empty($policies)) {
+                    foreach ($policies as $key => $policy) {
+                        if (!$policy['Implements']) {
+                            continue;
+                        }
+                ?>
+                        <p style="<?= $key % 2 === 0 ? "background-color: #eee;" : ""; ?> padding: 10px;">
+                            <strong>Policy Title:</strong> <?php echo $policy['Title']; ?>
+                            <br /><span><strong>Remaining Time:</strong>
+                                <?= $policy['RemainingTime']; ?></span>
+                            <br /><span><strong>Employment Status:</strong>
+                                <?= ucwords($policy['EmployementStatus']); ?></span>
+                            <br /><span><strong>Entitled:</strong>
+                                <?= $policy['Implements'] ? 'Yes' : 'No'; ?></span>
+                        </p>
+                <?php   }
+                }
+                ?>
+            </div>
+        </div>
+    <?php } ?>
 </div>
 
 <?php if (isset($employer["YouTubeVideo"]) && $employer["YouTubeVideo"] != "") {

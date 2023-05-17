@@ -508,6 +508,27 @@
                                                     </li>
 
                                                     <li>
+                                                        <?php echo form_label('Overtime', 'overtime'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <input type="number" class="hr-form-fileds" name="overtime" id="overtime" value="<?php echo $data['overtime']!=''? $data['overtime'] : OVERTIME ?>">
+                                                            <?php
+                                                            echo form_error('overtime');
+                                                            ?>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <?php echo form_label('Double Overtime', 'double_overtime'); ?>
+                                                        <div class="hr-fields-wrap">
+                                                            <input type="number" class="hr-form-fileds" name="double_overtime" id="double_overtime" value="<?php echo $data['double_overtime']!=''? $data['double_overtime'] : DOUBLE_OVERTIME ?>">
+                                                            <?php
+                                                            echo form_error('double_overtime');
+                                                            ?>
+                                                        </div>
+                                                    </li>
+
+
+                                                    <li>
                                                         <?php echo form_label('Flat Rate Technician', 'flat_rate_technician'); ?>
                                                         <div class="hr-fields-wrap">
                                                             <input type="text" class="hr-form-fileds" name="flat_rate_technician" id="jsFRT" value="<?php echo $data['flat_rate_technician']; ?>">

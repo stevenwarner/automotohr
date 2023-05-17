@@ -320,18 +320,42 @@ if ($_ssv) {
                                                 <?= GetVal($applicant_info['hourly_rate']); ?>
                                             </p>
                                         </div>
+
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Hourly Technician</label>
                                             <p class="dummy-invoice-fields">
                                                 <?= GetVal($applicant_info['hourly_technician']); ?>
                                             </p>
                                         </div>
+
+
+
+
+                                        <?php if ($access_level_plus == 1) { ?>
+
+
+                                            <div class="col-md-6 col-xs-12">
+                                                <label class="csF16">Overtime</label>
+                                                <p class="dummy-invoice-fields">
+                                                   X <?= GetVal($applicant_info['overtime']); ?>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6 col-xs-12">
+                                                <label class="csF16">Double Overtime</label>
+                                                <p class="dummy-invoice-fields">
+                                                   X <?= GetVal($applicant_info['double_overtime']); ?>
+                                                </p>
+                                            </div>
+
+                                        <?php } ?>
+
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Flat Rate Technician</label>
                                             <p class="dummy-invoice-fields">
                                                 <?= GetVal($applicant_info['flat_rate_technician']); ?>
                                             </p>
                                         </div>
+
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Semi Monthly Salary</label>
                                             <p class="dummy-invoice-fields">
@@ -638,6 +662,24 @@ if ($_ssv) {
                                                 </div>
                                                 <!--  -->
                                             </div>
+
+                                            <?php if ($access_level_plus == 1) { ?>
+
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Overtime:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('overtime', $applicant_info["overtime"] != '' ? $applicant_info["overtime"] : OVERTIME); ?>" type="number" name="overtime">
+                                                    </div>
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Double Overtime:</label>
+                                                        <input class="invoice-fields" value="<?php echo $applicant_info["double_overtime"] != '' ? $applicant_info["double_overtime"] : DOUBLE_OVERTIME; ?>" type="number" name="double_overtime">
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
+
+
                                             <div class="row">
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">

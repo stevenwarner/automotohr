@@ -585,6 +585,9 @@ class Application_tracking_system extends Public_Controller
             }
             $data['company_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
 
+            $data['access_level_plus'] = $data["session"]["employer_detail"]["access_level_plus"];
+
+
             if (!empty($data['session']['employer_detail']['timezone']))
                 $data['employer_timezone'] =   $data['session']['employer_detail']['timezone'];
             else
@@ -859,7 +862,7 @@ class Application_tracking_system extends Public_Controller
                 // Added on: 03-05-2019
                 unset($user_data['DOB']);
 
-
+             
                 // Reset phone number
                 $user_data['phone_number'] = isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['phone_number'];
                 $secondary_phonenumber    = isset($formpost['txt_secondary_phonenumber']) ? $formpost['txt_secondary_phonenumber'] : $this->input->post('secondary_PhoneNumber', true);

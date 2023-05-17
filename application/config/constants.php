@@ -676,3 +676,7 @@ define('EMPLOYEE_SURVEYS', 'employeesurvey');
 
 // Holds the EFFECT MAGIC CODES
 define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);
+
+//
+define('OVERTIME', 1.5); // applicant/employee profile
+define('DOUBLE_OVERTIME', 2.0); // applicant/employee profile

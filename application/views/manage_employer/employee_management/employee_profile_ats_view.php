@@ -415,6 +415,28 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <!--  -->
                                             </div>
+
+
+
+
+                                            <?php if ($access_level_plus == 1) { ?>
+
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Overtime:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('overtime', $employer["overtime"] != '' ? $employer["overtime"] : OVERTIME); ?>" type="number" name="overtime">
+                                                    </div>
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Double Overtime:</label>
+                                                        <input class="invoice-fields" value="<?php echo $employer["double_overtime"] != '' ? $employer["double_overtime"] : DOUBLE_OVERTIME; ?>" type="number" name="double_overtime">
+                                                    </div>
+
+                                                </div>
+                                            <?php } ?>
+
+
+
                                             <div class="row">
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">

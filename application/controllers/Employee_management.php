@@ -1749,6 +1749,18 @@ class Employee_management extends Public_Controller
                     if (!empty($this->input->post('semi_monthly_draw', true))) {
                         $data_to_insert['semi_monthly_draw'] = $this->input->post('semi_monthly_draw', true);
                     }
+
+                    //
+                    if (!empty($this->input->post('overtime', true))) {
+                        $data_to_insert['overtime'] = $this->input->post('overtime', true);
+                    }
+                    if (!empty($this->input->post('double_overtime', true))) {
+                        $data_to_insert['double_overtime'] = $this->input->post('double_overtime', true);
+                    }
+
+
+
+
                     //
                     if (preg_match(XSYM_PREG, $data_to_insert['ssn'])) unset($data_to_insert);
 
