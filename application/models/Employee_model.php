@@ -2000,18 +2000,36 @@
         }
 
         // $this->db->where('is_executive_admin', 0);
-        if ($keyword != null) {
-            $tK = preg_replace('/\s+/', '|', strtolower($keyword));
-            $phoneKeyword = preg_replace('/[^0-9]/', '', $keyword);
+
+
+
+        if (($keyword != null && $keyword != 'all')) {
+            $multiple_keywords = explode(',', $keyword);
             $this->db->group_start();
-            $this->db->where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($keyword) . "' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
-            if ($phoneKeyword) {
-                $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneKeyword, false);
-                $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '1' . $phoneKeyword, false);
-                $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '+1' . $phoneKeyword, false);
+
+            for ($i = 0; $i < count($multiple_keywords); $i++) {
+
+                $tK = preg_replace('/\s+/', '|', strtolower($multiple_keywords[$i]));
+                $this->db->or_where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($keyword) . "' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+
+                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/', '', $multiple_keywords[$i]);
+                $this->db->or_like('users.email', $multiple_keywords[$i]);
+                $this->db->or_like('users.username', $multiple_keywords[$i]);
+                if ($phoneRegex) {
+                    $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber, "[^0-9]", "")', preg_replace('/[^0-9]/', '', $multiple_keywords[$i]), false);
+                }
+               // $this->db->or_like('users.job_title', $multiple_keywords[$i]);
+                $this->db->or_like('users.access_level', $multiple_keywords[$i]);
+                $this->db->or_like('users.registration_date', $multiple_keywords[$i]);
             }
+
             $this->db->group_end();
         }
+
+
+
+
+
 
         $this->db->where('sid != ' . $sid);
         //
