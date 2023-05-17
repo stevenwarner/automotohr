@@ -1728,13 +1728,6 @@ class Complynet_model extends CI_Model
         $this->transferEmployeeToAnotherLocation($passArray);
     }
 
-    public function checkEmployeeOnComplynet ($employeeId, $companyId) {
-        $this->db->where('employee_sid', $employeeId);
-        $this->db->where('company_sid', $companyId);
-        $this->db->from('complynet_employees');
-        return $this->db->count_all_results();
-    }
-
     public function getComplynetCompanies () {
         $this->db->select('company_sid');
         $record_obj = $this->db->get('complynet_companies');
@@ -1746,6 +1739,13 @@ class Complynet_model extends CI_Model
         } else {
             return array();
         }
+    }
+
+    public function checkEmployeeOnComplynet ($employeeId, $companyId) {
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('company_sid', $companyId);
+        $this->db->from('complynet_employees');
+        return $this->db->count_all_results();
     }
 
     public function getTransferedEmployees ($companiesIds) {
