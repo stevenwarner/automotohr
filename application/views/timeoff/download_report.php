@@ -20,7 +20,7 @@
 
     <body>
         <div style="width: 750px;" id="grid">
-            <div class="">
+            <div class="row">
                 <div class="col-xs-6">
                     <p>Company: <strong><?=$session['company_detail']['CompanyName'];?></strong></p>
                     <p>Employee Name:
@@ -46,6 +46,10 @@
                 </div>
                 <hr />
             </div>
+            <div class="row" style="margin: 5px 5px;">
+                <div class="col-lg-2" style="background: rgba(242, 222, 222, .5); padding: 16px;"></div>
+                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The allotted time off has been consumed.</div>
+            </div>
             <div class="col-sm-12">
                 <table class="table table-striped table-condensed table-bordered">
                     <caption></caption>
@@ -63,22 +67,17 @@
                         <?php 
                 if(!empty($data)){
                     foreach($data as $row){
-                        echo '<tr>';
-                        echo '  <td>'.( ucwords($row['first_name'].' '.$row['last_name']) ).' <br /> '.( remakeEmployeeName($row, false) ).' <br /> '.( !empty($row['employee_number']) ? $row['employee_number'] : $row['employeeId'] ).'</td>';
-                        echo '  <td>'.( $row['title'] ).'</td>';
-                        echo '  <td>'.( $row['consumed_time'] ).'</td>';
-                        echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_from_date'])->format('m/d/Y') ).'</td>';
-                        echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_to_date'])->format('m/d/Y') ).'</td>';
-                        $status = $row['status']; 
-
-                        if ($status == 'approved') {
-                            echo '<td><p class="text-success"><b>APPROVED</b></p></td>';
-                        } else if ($status == 'rejected') {
-                            echo '<td><p class="text-danger"><b>REJECTED</b></p></td>';
-                        } else if ($status == 'pending') {
-                            echo '<td><p class="text-warning"><b>PENDING</b></p></td>';
+                        $processRequest = splitTimeoffRequest($row);
+                        //
+                        if ($processRequest['type'] == 'multiple') {
+                            //
+                            foreach ($processRequest['requestData'] as $split) {
+                                echo generateTimeoffRequestSlot($split, 'multiple');
+                            }
+                            //
+                        } else {
+                            echo generateTimeoffRequestSlot($processRequest['requestData'], 'single');
                         }
-                        echo '</tr>';
                     }
                 } else{
                     echo '<tr><td colspan="5">Sorry, no records found.</td></tr>';

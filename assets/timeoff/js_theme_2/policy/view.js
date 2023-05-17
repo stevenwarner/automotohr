@@ -42,9 +42,37 @@ $(function () {
 					public: 0,
 				},
 			},
+			ManagePolicy: {
+				Main: {
+					action: "get_policy_requests_with_employees",
+					companyId: companyId,
+					employerId: employerId,
+					employeeId: employeeId,
+					public: 0,
+				},
+			},
+			MigratePolicy: {
+				Main: {
+					action: "migrate_employee_requests_policy",
+					companyId: companyId,
+					employerId: employerId,
+					employeeId: employeeId,
+					public: 0,
+				},
+			},
+			AllowedEmployees: {
+				Main: {
+					action: "get_allowed_employees",
+					companyId: companyId,
+					employerId: employerId,
+					employeeId: employeeId,
+					public: 0,
+				},
+			},
 		},
 		oldState = {},
-		xhr = null;
+		xhr = null,
+		PolicyID = 0;
 
 	//
 	window.timeoff.PaginationOBJ.CompanyPolicies = callOBJ.CompanyPolicies;
@@ -94,6 +122,40 @@ $(function () {
 			() => {
 				// Fetch history
 				fetchPolicyHistory($(this).closest(".jsBox").data("id"));
+			}
+		);
+	});
+	//
+	$(document).on("click", ".jsManagePolicy", function () {
+		Modal(
+			{
+				Id: "jsManagePolicy",
+				Title: `Policy History for ${$(this)
+					.closest(".jsBox")
+					.data("name")}`,
+				Body: getManagePolicyTemplate(),
+				Loader: "jsManagePolicyLoader",
+			},
+			() => {
+				// Fetch Employee
+				fetchPolicyRequests($(this).closest(".jsBox").data("id"));
+			}
+		);
+	});
+	//
+	$(document).on("click", ".jsAllowedPolicyEmployees", function () {
+		Modal(
+			{
+				Id: "jsAllowedPolicyEmployees",
+				Title: `Employees entitled for ${$(this)
+					.closest(".jsBox")
+					.data("name")}`,
+				Body: getAllowedPolicyEmployee(),
+				Loader: "jsAllowedPolicyEmployeesLoader",
+			},
+			() => {
+				// Fetch Employee
+				fetchAllowedEmployees($(this).closest(".jsBox").data("id"));
 			}
 		);
 	});
@@ -226,6 +288,36 @@ $(function () {
 				cancel: "NO",
 			})
 			.setHeader("CONFIRM!");
+	});
+
+	//
+	$(document).on("change", "#jsAssigPolicyToAll", function () {
+		//
+		let newPolicy = $(this).val();
+		//
+		$(".jsAssignNewPolicy").val(newPolicy).change();
+	});
+
+	//
+	$(document).on("click", ".jsTransferPolicyBTN", function () {
+		//
+		var employeesList = [];
+		//
+		$(".jsAssignNewPolicy").each(function (index, select) {
+			var newPolicy = $(this).val();
+			//
+			if (newPolicy != PolicyID) {
+				employeesList.push({
+					employeeId: $(this).closest(".jsEmployeeRow").data("sid"),
+					oldPolicyId: PolicyID,
+					newPolicyId: newPolicy,
+				});
+			}
+		});
+		//
+		if (employeesList.length) {
+			migrateRequestPolicy(employeesList);
+		}
 	});
 
 	//
@@ -420,11 +512,29 @@ $(function () {
                             <th>Action Taken</th>
                         </tr>
                     </thead>
-                    <tbody id="jsPolicyHistoryTable"></tbody>
+                    <tbody id="jsAllowedPolicyEmployeeTable"></tbody>
                 </table>
             </div>
         `;
 
+		return html;
+	}
+
+	//
+	function getManagePolicyTemplate() {
+		let html = `
+            <div id="jsManagePolicyTable">    
+            </div>
+        `;
+		return html;
+	}
+
+	//
+	function getAllowedPolicyEmployee() {
+		let html = `
+            <div id="jsAllowedPolicyEmployeeTable">    
+            </div>
+        `;
 		return html;
 	}
 
@@ -464,7 +574,6 @@ $(function () {
 				}
 				//
 				let rows = "";
-				//
 				if (resp.Data.length === 0) {
 					rows = `
                     <tr>
@@ -496,6 +605,99 @@ $(function () {
 		);
 	}
 
+	function fetchPolicyRequests(policyId) {
+		//
+		PolicyID = policyId;
+		//
+		ml(true, "jsManagePolicyLoader");
+		//
+		$("#jsPolicyHistoryTable").html("");
+		//
+		xhr = $.post(
+			handlerURL,
+			Object.assign(callOBJ.ManagePolicy.Main, {
+				policyId: policyId,
+			}),
+			(resp) => {
+				//
+				xhr = null;
+				//
+				if (resp.Redirect === true) {
+					alertify.alert(
+						"WARNING!",
+						"Your session expired. Please, re-login to continue.",
+						() => {
+							window.location.reload();
+						}
+					);
+					return;
+				}
+				//
+				if (resp.Status === false) {
+					alertify.alert("WARNING!", resp.Response, () => {});
+					//
+					ml(false, "jsManagePolicyLoader");
+					//
+					return;
+				}
+
+				//
+				$("#jsManagePolicyTable").html(resp.View);
+				//
+				$("#jsAssigPolicyToAll").select2({
+					closeOnSelect: true,
+				});
+				//
+				$("#jsAssigPolicyToAll").select2("val", policyId);
+				//
+				ml(false, "jsManagePolicyLoader");
+			}
+		);
+	}
+
+	function migrateRequestPolicy(data) {
+		//
+		ml(true, "jsManagePolicyLoader");
+		//
+		xhr = $.post(
+			handlerURL,
+			Object.assign(callOBJ.MigratePolicy.Main, {
+				Data: data,
+			}),
+			(resp) => {
+				//
+				xhr = null;
+				//
+				if (resp.Redirect === true) {
+					alertify.alert(
+						"WARNING!",
+						"Your session expired. Please, re-login to continue.",
+						() => {
+							window.location.reload();
+						}
+					);
+					return;
+				}
+				//
+				if (resp.Status === false) {
+					alertify.alert("WARNING!", resp.Response, () => {});
+					//
+					ml(false, "jsManagePolicyLoader");
+					//
+					return;
+				}
+				//
+				ml(false, "jsManagePolicyLoader");
+				return alertify.alert(
+					"Success",
+					"The time off requests of the selected employees have been successfully transferred.",
+					function () {
+						$("#jsManagePolicy .jsModalCancel").trigger("click");
+					}
+				);
+			}
+		);
+	}
 	//
 	function getPolicyBox(v) {
 		let title =
@@ -521,9 +723,10 @@ $(function () {
 		rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
 
 		rows += `            <span class="pull-right">`;
+		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsAllowedPolicyEmployees" title="Policy applicable employee(s)" placement="top"><i class="fa fa-users"></i></span>`;
+		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsManagePolicy" title="Manage Policy" placement="top"><i class="fa fa-cog"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistoryBtn" title="History" placement="top"><i class="fa fa-history"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
-		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistory" title="View history" placement="top"><i class="fa fa-history"></i></span>`;
 		rows += `            </span>`;
 		rows += `            <div class="clearfix"></div>`;
 		rows += `        </div>`;
@@ -600,6 +803,48 @@ $(function () {
 		rows += `</div>`;
 
 		return rows;
+	}
+
+	//
+	function fetchAllowedEmployees(policyId) {
+		//
+		ml(true, "jsAllowedPolicyEmployeesLoader");
+		//
+		$("#jsAllowedPolicyEmployeeTable").html("");
+		//
+		xhr = $.post(
+			handlerURL,
+			Object.assign(callOBJ.AllowedEmployees.Main, {
+				policyId: policyId,
+			}),
+			(resp) => {
+				//
+				xhr = null;
+				//
+				if (resp.Redirect === true) {
+					alertify.alert(
+						"WARNING!",
+						"Your session expired. Please, re-login to continue.",
+						() => {
+							window.location.reload();
+						}
+					);
+					return;
+				}
+				//
+				if (resp.Status === false) {
+					alertify.alert("WARNING!", resp.Response, () => {});
+					//
+					ml(false, "jsAllowedPolicyEmployeesLoader");
+					//
+					return;
+				}
+
+				//
+				$("#jsAllowedPolicyEmployeeTable").html(resp.View);
+				ml(false, "jsAllowedPolicyEmployeesLoader");
+			}
+		);
 	}
 
 	/**

@@ -62,6 +62,33 @@ if (!function_exists('getPolicyDifference')) {
         $oldDataArray = json_decode($oldData['note'], true);
         $oldDataAccrualArray = json_decode($oldDataArray['accruals'], true);
         //
+        if ($oldDataArray['transferred']) {
+            //
+            $differenceArray =  [
+                'policy_title' => [
+                    'old_value' => $oldDataArray['title'],
+                    'new_value' => $newDataArray['title']
+                ],
+                'transferred' => [
+                    'old_value' => '',
+                    'new_value' => 'The time off requests of the following employee have been successfully transferred from the "<strong>' . $oldDataArray['title'] . '</strong>" policy.'
+                ]
+            ];
+            // get CI instance
+            $CI = &get_instance();
+            // tag in for employees
+            if ($oldDataArray['employee_sid']) {
+                // get the employee details
+                $user = $CI->db->select(getUserFields())
+                    ->where('sid', $oldDataArray['employee_sid'])
+                    ->get('users')
+                    ->row_array();
+                $differenceArray['transferred']['new_value'] .= '<br/><br/><p><strong>' . (remakeEmployeeName($user)) . '</strong></p>';
+            }
+
+            return $differenceArray;
+        }
+        //
         if (!isset($oldDataArray['title']) && isset($oldDataArray['is_archived'])) {
             // only when there is a difference
             if ($$oldDataArray['is_archived'] != $newDataArray['is_archived']) {
@@ -75,6 +102,7 @@ if (!function_exists('getPolicyDifference')) {
             //
             return [];
         }
+        $differenceArray = [];
         // set proper data array
         $newDataDifferenceArray = [];
         $newDataDifferenceArray['policy_title'] = $newDataArray['title'];
@@ -184,9 +212,9 @@ if (!function_exists('getPolicyDifference')) {
                 $oldEmployeesList = explode(',', $differenceArray['employees']['old_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $oldEmployeesList)
-                ->get('users')
-                ->result_array();
+                    ->where_in('sid', $oldEmployeesList)
+                    ->get('users')
+                    ->result_array();
                 //
                 $differenceArray['employees']['old_value'] = [];
                 //
@@ -200,8 +228,8 @@ if (!function_exists('getPolicyDifference')) {
                 $newEmployeeList = explode(',', $differenceArray['employees']['new_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $newEmployeeList)
-                ->get('users')
+                    ->where_in('sid', $newEmployeeList)
+                    ->get('users')
                     ->result_array();
                 //
                 $differenceArray['employees']['new_value'] = [];
@@ -218,9 +246,9 @@ if (!function_exists('getPolicyDifference')) {
                 $oldEmployeesList = explode(',', $differenceArray['allowed_approver']['old_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $oldEmployeesList)
-                ->get('users')
-                ->result_array();
+                    ->where_in('sid', $oldEmployeesList)
+                    ->get('users')
+                    ->result_array();
                 //
                 $differenceArray['allowed_approver']['old_value'] = [];
                 //
@@ -234,8 +262,8 @@ if (!function_exists('getPolicyDifference')) {
                 $newEmployeeList = explode(',', $differenceArray['allowed_approver']['new_value']);
                 // get the employee details
                 $users = $CI->db->select(getUserFields())
-                ->where_in('sid', $newEmployeeList)
-                ->get('users')
+                    ->where_in('sid', $newEmployeeList)
+                    ->get('users')
                     ->result_array();
                 //
                 $differenceArray['allowed_approver']['new_value'] = [];

@@ -288,7 +288,7 @@ class Time_off extends Public_Controller
      *
      */
     function policies($page = 'view', $id = NULL, $filter = NULL)
-    {
+    {        
         $data = array();
         $this->check_login($data);
         $employer_detail = $data['session']['employer_detail'];
@@ -1187,23 +1187,29 @@ class Time_off extends Public_Controller
             if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
                 unset($company_employees[$ekey]);
             } else {
-                foreach ($timeoffRequests as $tkey => $request) {
+                //
+                foreach ($timeoffRequests as $request) {
+                    //
                     if ($employee['sid'] == $request['employee_sid']) {
                         $policy_sid = $request['timeoff_policy_sid'];
                         $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
-                        $company_employees[$ekey]['timeoffs'][$tkey] = $request;
+                        //
+                        $processRequest = splitTimeoffRequest($request);
+                        //
+                        if ($processRequest['type'] == 'multiple') {
+                            //
+                            foreach ($processRequest['requestData'] as $split) {
+                                $company_employees[$ekey]['timeoffs'][] = $split;
+                            }
+                            //
+                        } else {
+                            $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
+                        }
+
                     }
                 }
             }
         }
-        //
-
-        // echo '<pre>';
-        // echo print_r($data['assign_departments']);
-        // echo print_r($data['assign_teams']);
-        // die('stop');
-        //
-
         //
         $data['company_employees'] = $company_employees;
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
@@ -2904,6 +2910,103 @@ class Time_off extends Public_Controller
                 $this->res['Data'] = $policyHistory;
                 $this->resp();
                 break;
+
+            case "get_allowed_employees":
+                //
+                $allowed_employees = $this->timeoff_model->getPolicyEmployees($post['policyId'], $post['companyId']);
+                $policy_title = $this->timeoff_model->getPolicyTitleById($post['policyId']);
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['View'] = $this->load->view('timeoff/partials/policies/allowed_employees', [
+                    'allowed_employees' => $allowed_employees,
+                    'policy_title' => $policy_title
+                ], true);
+                //
+                $this->resp();
+                break;       
+
+            case "get_policy_request":
+                //
+                $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($post['companyId']);
+                $policyRequests = $this->timeoff_model->getPolicyRequests($post['policyId']);
+                $policies = $this->timeoff_model->getAllActivePolicies($post['companyId']);
+                //
+                if (empty($policyRequests)) {
+                    $this->res['Response'] = 'We are unable to find requests against this policy.';
+                }
+                //
+                $empTimeoff = array_column($policyRequests, 'employee_sid');
+                //
+                foreach ($company_employees as $ekey => $employee) {
+                    if (!in_array($employee['sid'], $empTimeoff)) {
+                        unset($company_employees[$ekey]);
+                    } else {
+                        //
+                        foreach ($policyRequests as $request) {
+                            //
+                            if ($employee['sid'] == $request['employee_sid']) {
+                                //
+                                $processRequest = splitTimeoffRequest($request);
+                                //
+                                if ($processRequest['type'] == 'multiple') {
+                                    //
+                                    foreach ($processRequest['requestData'] as $split) {
+                                        $company_employees[$ekey]['timeoffs'][] = $split;
+                                    }
+                                    //
+                                } else {
+                                    $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
+                                }
+
+                            }
+                        }
+                    }
+                }
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['View'] = $this->load->view('timeoff/partials/policies/manage_policy', [
+                    'company_employees' => $company_employees,
+                    'company_policies' => $policies
+                ], true);
+                $this->resp();
+                break;   
+
+            case "migrate_employee_requests_policy":
+                //
+                $employeeList = $post['Data'];
+                //
+                if (empty($employeeList)) {
+                    $this->res['Response'] = 'We are unable to process your request.';
+                    $this->resp();
+                }
+                //
+                foreach ($employeeList as $employee) {
+                    $oldPolicy = $employee['oldPolicyId'];
+                    $newPolicy = $employee['newPolicyId'];
+                    $employeeSid = $employee['employeeId'];
+                    $this->timeoff_model->updateEmployeeRequestPolicy($employeeSid, $oldPolicy, $newPolicy);
+                    //
+                    $in = [];
+                    $in['policy_sid'] = $newPolicy;
+                    $in['employee_sid'] = $post['employerId'];
+                    $in['action'] = 'update';
+                    //
+                    $note = [];
+                    $note['title'] = $this->timeoff_model->getPolicyTitleById($oldPolicy);
+                    $note['employee_sid'] = $employee['employeeId'];
+                    $note['transferred'] = true;
+                    //
+                    $in['note'] = json_encode($note);
+                    //
+                    $this->timeoff_model->insertPolicyHistory($in);               
+                }
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->resp();
+                break;      
 
                 // Fetch company types
             case 'get_types_by_company':
@@ -4739,6 +4842,26 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed...';
                 $this->resp();
                 break;
+
+            case "get_policy_requests_with_employees":
+                // get all requests for active employees
+                $policyRequests = $this->timeoff_model->getPolicyRequestsWithEmployees($post['policyId'], true);
+                //
+                if (!$policyRequests) {
+                    $this->res['Response'] = 'We are unable to find requests against this policy.';
+                    return $this->resp();
+                }
+                $policies = $this->timeoff_model->getAllPolicies($post['companyId']);
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['View'] = $this->load->view('timeoff/partials/policies/manage_policy', [
+                    'policyRequests' => $policyRequests,
+                    'policies' => $policies,
+                    'selectedPolicyId' => $post['policyId']
+                ], true);
+                $this->resp();
+                break;   
 
                 // Create employee time off
             case 'create_employee_timeoff':
