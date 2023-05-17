@@ -1661,6 +1661,11 @@ class Complynet_model extends CI_Model
         if (isset($employeeObj[0]['Id'])) {
             $employeeObj = findTheRightEmployee($employeeObj, $complyArray['complynet_company_sid'], $complyArray['complynet_location_sid']);
             //
+            if (!$employeeObj['AltId']) {
+                mail('mubashar@automotohr.com', 'Employee ALTId is missing: ', json_encode($employeeObj));
+                return ['errors' => 'Employees ALTId is missing'];
+            }
+            //
             if ($employeeObj) {
                 //
                 if (!$this->db->where(['employee_sid' => $passArray['newEmployeeId']])->count_all_results('complynet_employees')) {
