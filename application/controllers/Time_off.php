@@ -4851,7 +4851,7 @@ class Time_off extends Public_Controller
                     $this->res['Response'] = 'We are unable to find requests against this policy.';
                     return $this->resp();
                 }
-                $policies = $this->timeoff_model->getAllPolicies($post['companyId'], true);
+                $policies = $this->timeoff_model->getAllPolicies($post['companyId']);
                 //
                 $this->res['Code'] = 'SUCCESS';
                 $this->res['Status'] = true;
