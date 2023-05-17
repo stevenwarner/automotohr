@@ -55,6 +55,9 @@
                                         <table class="table table-striped">
                                             <thead>
                                                 <th>
+                                                    Company
+                                                </th>
+                                                <th>
                                                     Employee
                                                 </th>
                                                 <th>
@@ -66,6 +69,7 @@
                                                     <?php foreach ($records as $record) : ?>
                                                         <?php $profileData = json_decode($record['profile_data'], true); ?>
                                                         <tr>
+                                                            <td><?php echo $record['CompanyName']; ?></td>
                                                             <td>
                                                                 <strong><?= remakeEmployeeName($record); ?></strong>
                                                                 <br>

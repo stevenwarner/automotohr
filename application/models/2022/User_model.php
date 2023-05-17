@@ -723,7 +723,8 @@ class User_model extends CI_Model
                 users.access_level,
                 users.access_level_plus,
                 users.is_executive_admin,
-                users.job_title
+                users.job_title,
+                users.CompanyName
             ')
             ->group_start()
             ->where("profile_history.profile_data REGEXP '\"job_title\"'")
