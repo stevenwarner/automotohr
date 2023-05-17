@@ -286,14 +286,14 @@ if (!function_exists('getUserStartDate')) {
         $CI = &get_instance();
         // get user dates
         $employeeDetails = $CI->db
-        ->select('
+            ->select('
             registration_date,
             joined_at,
             rehire_date
         ')
-        ->where('sid', $employeeId)
-        ->get('users')
-        ->row_array();
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
         // check the details
         if (!$employeeDetails) {
             return '';
@@ -321,10 +321,10 @@ if (!function_exists('isEmployeeOnPayroll')) {
         $CI = &get_instance();
         // check
         return $CI->db
-        ->where([
-            'employee_sid' => $employeeId
-        ])
-        ->count_all_results('payroll_employees');
+            ->where([
+                'employee_sid' => $employeeId
+            ])
+            ->count_all_results('payroll_employees');
     }
 }
 
@@ -345,5 +345,34 @@ if (!function_exists('hasPayrollDocuments')) {
                 'employee_sid' => $employeeId
             ])
             ->count_all_results('payroll_employees_forms');
+    }
+}
+
+if (!function_exists('isPayrollAuthorizePerson')) {
+    /**
+     * Check employee on payroll
+     * 
+     * @param string $email
+     * @return int
+     */
+    function isPayrollAuthorizePerson(string $email)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // check
+        $has = $CI->db
+            ->where([
+                'email' => $email
+            ])
+            ->count_all_results('payroll_signatories');
+        if ($has) {
+            return $has;
+        }
+        // check
+        return $CI->db
+            ->where([
+                'email_address' => $email
+            ])
+            ->count_all_results('payroll_company_admin');
     }
 }

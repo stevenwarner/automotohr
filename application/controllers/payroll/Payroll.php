@@ -73,7 +73,9 @@ class Payroll extends CI_Controller
         $this->data['title'] = 'Payroll | Company';
         $this->data['load_view'] = 0;
         //
-        $this->data['PageScripts'] = [];
+        $this->data['PageScripts'] = [
+            time() => 'payroll/js/companySync'
+        ];
         //
         $session = $this->session->userdata('logged_in');
         //

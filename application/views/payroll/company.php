@@ -3,6 +3,13 @@
         <!-- Header -->
         <?php $this->load->view('payroll/navbar'); ?>
         <br />
+        <div class="row">
+            <div class="col-sm-12 text-right" style="padding-right:20px ! important;">
+                <button class="btn btn-success jsSyncCompany"><i class="fa fa-refresh"></i> Sync</button>
+                <button class="btn btn-success"><i class="fa fa-check-circle"></i> Finish Onboarding</button>
+            </div>
+        </div>
+        <br />
         <!-- Main Content Area -->
         <div class="row">
             <!--  -->

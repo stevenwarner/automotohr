@@ -83,13 +83,15 @@ $navpills[] = [
 ];
 
 //
-$navpills[] = [
-    'title' => 'My Payroll Documents',
-    'url' => 'my_payroll_documents',
-    'slug' => '',
-    'icon' => 'file',
-    'segment' => 'payroll/my_payroll_documents'
-];
+if (isEmployeeOnPayroll($this->session->userdata('logged_in')['employer_detail']['sid'])) {
+    $navpills[] = [
+        'title' => 'My Payroll Documents',
+        'url' => 'my_payroll_documents',
+        'slug' => '',
+        'icon' => 'file',
+        'segment' => 'payroll/my_payroll_documents'
+    ];
+}
 
 //
 $lis = '';

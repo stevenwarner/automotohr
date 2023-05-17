@@ -797,7 +797,7 @@ $(function EmployeeOnboard() {
 		o.country = "USA";
 		o.city = $(".jsCity").val().trim();
 		o.state = $(".jsState option:selected").val();
-		o.Zipc = $(".jsZip").val().trim();
+		o.zip = $(".jsZip").val().trim();
 		o.phoneNumber = $(".jsPhoneNumber").val().replace(/[^\d]/g, "");
 		o.employeeId = selectedEmployeeId;
 		o.companyId = companyId;
@@ -843,7 +843,7 @@ $(function EmployeeOnboard() {
 				//
 				ml(false, "jsEmployeeOnboardModelLoader");
 				//
-				if (!resp.errors) {
+				if (resp.errors) {
 					return alertify.alert(
 						"Error!",
 						typeof resp.errors === "object"
@@ -892,7 +892,12 @@ $(function EmployeeOnboard() {
 			);
 		}
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		o.deductions = o.deductions ? parseFloat(o.deductions).toFixed(2) : 0.0;
+		o.otherIncome = o.otherIncome ? parseFloat(o.otherIncome).toFixed(2) : 0.0;
+		o.extraWithholding = o.extraWithholding ? parseFloat(o.extraWithholding).toFixed(2) : 0.0;
+		o.dependentTotal = o.dependentTotal ? parseFloat(o.dependentTotal).toFixed(2) : 0.0;
+			//
+			ml(true, "jsEmployeeOnboardModelLoader");
 		//
 		xhr = $.ajax({
 			method: "POST",

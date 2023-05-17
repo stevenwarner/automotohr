@@ -2731,7 +2731,7 @@ class Gusto_payroll_model extends CI_Model
             // check if already exists
             if (!$this->db->where($where)->count_all_results('payroll_employee_job_compensations')) {
                 // insert
-                $compensationArray['last_modified_by'] = 0;
+                $compensationArray['last_updated_by'] = 0;
                 $compensationArray['created_at'] = $compensationArray['updated_at'] = getSystemDate();
                 //
                 $this->db->insert('payroll_employee_job_compensations', $compensationArray);
