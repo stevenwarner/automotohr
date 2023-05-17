@@ -2972,4 +2972,196 @@ class Gusto_payroll_model extends CI_Model
         }
     }
 
+    /**
+     * 
+     */
+    public function checkAndFinishCompanyOnboard(int $companyId, bool $doReturn = false)
+    {
+        // get the company details
+        $gustoCompany =
+            $this->db
+            ->select('
+                gusto_company_sid, 
+                gusto_company_uid,
+                access_token,
+                refresh_token
+            ')
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('payroll_companies')
+            ->row_array();
+
+        // double check the intrusion
+        if (!$gustoCompany) {
+            // add the error
+            $errors['errors'][] = 'Company credentials not found.';
+            // send back response
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        // get the onboard status
+        $response = getCompanyOnboardStatusFromGusto(
+            $gustoCompany
+        );
+        //
+        if ($errors = hasGustoErrors($response)) {
+            // send back response
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        if ($response['onboarding_completed']) {
+            //
+            $errors = ['success' => ['Company onboarding already completed.']];
+            //
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        // 
+        $isAllStepsDone = 1;
+        $allSteps = [];
+        //
+        foreach ($response['onboarding_steps'] as $step) {
+            //
+            $allSteps[] = [
+                'title' => $step['title'],
+                'required' => $step['required'],
+                'completed' => $step['completed']
+            ];
+            //
+            if ($step['required'] == 1 && $step['completed'] == 0) {
+                $isAllStepsDone = 0;
+            }
+        }
+        //
+        if ($isAllStepsDone == 0) {
+            //
+            $errors['errors'] = [];
+            $errors['errors'][] = ['Please complete the required onboarding steps.'];
+            $errors['steps'] = $allSteps;
+        } else {
+            // onboard a company
+            $response = finishCompanyOnboardOnGusto($gustoCompany);
+            //
+            if ($errors = hasGustoErrors($response)) {
+                // send back response
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            $response = approveCompanyOnboardOnGusto($gustoCompany);
+            //
+            if ($errors = hasGustoErrors($response)) {
+                // send back response
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            $errors = [];
+            $errors['success'] = ['All the required steps for company onboarding are completed, and company successfully onboard.'];
+        }
+        //
+        return $doReturn ? $errors : sendResponse(200, $errors);
+    }
+
+    /**
+     * 
+     */
+    public function checkAndFinishEmployeeOnboard(int $employeeId, bool $doReturn = false)
+    {
+        //
+        $errors = [];
+        // get gusto employee details
+        $gustoEmployeeDetails = $this->db
+            ->select('payroll_employee_uuid, version, company_sid')
+            ->where([
+                'employee_sid' => $employeeId
+            ])
+            ->get('payroll_employees')
+            ->row_array();
+        // double check the intrusion
+        if (!$gustoEmployeeDetails) {
+            // add the error
+            $errors['errors'][] = 'Employee not found.';
+            // send back response
+            return $errors;
+        }
+        // get the company details
+        $gustoCompany =
+            $this->db
+            ->select('
+                gusto_company_sid, 
+                gusto_company_uid,
+                access_token,
+                refresh_token
+            ')
+            ->where([
+                'company_sid' => $gustoEmployeeDetails['company_sid']
+            ])
+            ->get('payroll_companies')
+            ->row_array();
+
+        // double check the intrusion
+        if (!$gustoCompany) {
+            // add the error
+            $errors['errors'][] = 'Company credentials not found.';
+            // send back response
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        // get the onboard status
+        $response = getEmployeeOnboardStatusFromGusto(
+            $gustoEmployeeDetails['payroll_employee_uuid'],
+            $gustoCompany
+        );
+        //
+        if ($errors = hasGustoErrors($response)) {
+            // send back response
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        if ($response['onboarding_status'] != 'admin_onboarding_incomplete') {
+            //
+            $errors = ['success' => ['Employee onboarding already completed.']];
+            //
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        // 
+        $isAllStepsDone = 1;
+        $allSteps = [];
+        //
+        foreach ($response['onboarding_steps'] as $step) {
+            //
+            $allSteps[] = [
+                'title' => $step['title'],
+                'required' => $step['required'],
+                'completed' => $step['completed']
+            ];
+            //
+            if ($step['required'] == 1 && $step['completed'] == 0) {
+                $isAllStepsDone = 0;
+            }
+        }
+        //
+        if ($isAllStepsDone == 0) {
+            //
+            $errors['errors'] = [];
+            $errors['errors'][] = ['Please complete the required onboarding steps.'];
+            $errors['steps'] = $allSteps;
+        } else {
+            // onboard a company
+            $response = finishEmployeeOnboardOnGusto(
+                ['onboarding_status' => 'onboarding_completed'],
+                $gustoEmployeeDetails['payroll_employee_uuid'],
+                $gustoCompany
+            );
+            //
+            if ($errors = hasGustoErrors($response)) {
+                // send back response
+                return $doReturn ? $errors : sendResponse(200, $errors);
+            }
+            //
+            $this->db->where('employee_sid', $employeeId)->update(
+                'payroll_employees', [
+                    'onboard_completed' => 1
+                ]);
+            $errors = [];
+            $errors['success'] = ['All the required steps for employee onboarding are completed, and employee successfully onboard.'];
+        }
+        //
+        return $doReturn ? $errors : sendResponse(200, $errors);
+    }
 }

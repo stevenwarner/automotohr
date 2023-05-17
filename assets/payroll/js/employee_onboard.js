@@ -274,31 +274,37 @@ $(function EmployeeOnboard() {
 				'"><strong>' +
 				employee.payroll_onboard_status["status"].toUpperCase() +
 				"</strong>";
-			trs +=
-				'<div class="jsToggleOnboardItemsTable hidden"><br><br>        <table class="table table-striped table-condensed ">';
-			trs += "            <tbody>";
-			//
-			for (var index in employee.payroll_onboard_status.details) {
-				var ss = employee.payroll_onboard_status.details[index];
-				trs += "                <tr>";
+			if (employee.payroll_onboard_status["status"] == "pending") {
 				trs +=
-					'                    <th class="vam">' +
-					index.replace(/_/g, " ").toUpperCase() +
-					"</th>";
-				trs +=
-					'                    <td class="text-right vam text-' +
-					(ss == 1 ? "success" : "danger") +
-					'">' +
-					(ss == 1 ? "Completed" : "Pending") +
-					"</td>";
-				trs += "                </tr>";
+					'<div class="jsToggleOnboardItemsTable hidden"><br><br>        <table class="table table-striped table-condensed ">';
+				trs += "            <tbody>";
+				//
+				for (var index in employee.payroll_onboard_status.details) {
+					var ss = employee.payroll_onboard_status.details[index];
+					trs += "                <tr>";
+					trs +=
+						'                    <th class="vam">' +
+						index.replace(/_/g, " ").toUpperCase() +
+						"</th>";
+					trs +=
+						'                    <td class="text-right vam text-' +
+						(ss == 1 ? "success" : "danger") +
+						'">' +
+						(ss == 1 ? "Completed" : "Pending") +
+						"</td>";
+					trs += "                </tr>";
+				}
+				trs += "            </tbody>";
+				trs += "        </table></div>";
 			}
-			trs += "            </tbody>";
-			trs += "        </table></div>";
 			trs += "    </td>";
 			trs += '    <td class="text-right vam">';
-			trs +=
-				'        <button class="btn btn-orange jsToggleOnboardItems"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Pending Items</button>';
+			if (employee.payroll_onboard_status["status"] == "pending") {
+				trs +=
+					'        <button class="btn btn-orange jsToggleOnboardItems"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;Pending Items</button>';
+				trs +=
+					'        <button class="btn btn-success jsFinishEmployeeOnboard"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Finish Onboard</button>';
+			}
 			trs +=
 				'        <button class="btn btn-warning jsPayrollEmployeeEdit"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Edit</button>';
 			if (
@@ -325,6 +331,15 @@ $(function EmployeeOnboard() {
 			.closest(".jsPayrollOnEmployeeRow")
 			.find(".jsToggleOnboardItemsTable")
 			.removeClass("hidden");
+	});
+
+	$(document).on("click", ".jsFinishEmployeeOnboard", function (event) {
+		//
+		event.preventDefault();
+		//
+		let employeeId = $(this).closest(".jsPayrollOnEmployeeRow").data("id");
+		//
+		handleEmployeeOnboardProcess(employeeId);
 	});
 
 	/**
@@ -893,11 +908,17 @@ $(function EmployeeOnboard() {
 		}
 		//
 		o.deductions = o.deductions ? parseFloat(o.deductions).toFixed(2) : 0.0;
-		o.otherIncome = o.otherIncome ? parseFloat(o.otherIncome).toFixed(2) : 0.0;
-		o.extraWithholding = o.extraWithholding ? parseFloat(o.extraWithholding).toFixed(2) : 0.0;
-		o.dependentTotal = o.dependentTotal ? parseFloat(o.dependentTotal).toFixed(2) : 0.0;
-			//
-			ml(true, "jsEmployeeOnboardModelLoader");
+		o.otherIncome = o.otherIncome
+			? parseFloat(o.otherIncome).toFixed(2)
+			: 0.0;
+		o.extraWithholding = o.extraWithholding
+			? parseFloat(o.extraWithholding).toFixed(2)
+			: 0.0;
+		o.dependentTotal = o.dependentTotal
+			? parseFloat(o.dependentTotal).toFixed(2)
+			: 0.0;
+		//
+		ml(true, "jsEmployeeOnboardModelLoader");
 		//
 		xhr = $.ajax({
 			method: "POST",
@@ -1521,6 +1542,75 @@ $(function EmployeeOnboard() {
 			"Error!",
 			"The system failed to process your request. (" + error.status + ")"
 		);
+	}
+	let xhr2 = null;
+	/**
+	 *
+	 * @param {int} employeeCode
+	 */
+	function handleEmployeeOnboardProcess(employeeCode) {
+		$(
+			'.jsPayrollOnEmployeeRow[data-id="' +
+				employeeCode +
+				'"] .jsFinishEmployeeOnboard i'
+		).addClass("fa-spin fa-spinner");
+		$(
+			'.jsPayrollOnEmployeeRow[data-id="' +
+				employeeCode +
+				'"] .jsFinishEmployeeOnboard'
+		).addClass("disabled");
+
+		xhr2 = $.get(
+			window.location.origin +
+				"/gusto/employee/" +
+				employeeCode +
+				"/onboard/finish"
+		)
+			.success(function (resp) {
+				xhr2 = null;
+				$(
+					'.jsPayrollOnEmployeeRow[data-id="' +
+						employeeCode +
+						'"] .jsFinishEmployeeOnboard i'
+				).removeClass("fa-spin fa-spinner");
+				$(
+					'.jsPayrollOnEmployeeRow[data-id="' +
+						employeeCode +
+						'"] .jsFinishEmployeeOnboard'
+				).removeClass("disabled");
+				//
+				if (resp.view) {
+					return Model(
+						{
+							Title: "Employee Onboard Steps",
+							Id: "jsStepModal",
+							Loader: "jsStepModalLoader",
+							Body: resp.view,
+						},
+						function () {
+							ml(false, "jsStepModalLoader");
+						}
+					);
+				}
+				//
+				if (resp.errors) {
+					return alertify.alert("Error", resp.errors.join("<br />"));
+				}
+				window.location.reload();
+			})
+			.fail(function () {
+				xhr2 = null;
+				$(
+					'.jsPayrollOnEmployeeRow[data-id="' +
+						employeeCode +
+						'"] .jsFinishEmployeeOnboard i'
+				).removeClass("fa-spin fa-spinner");
+				$(
+					'.jsPayrollOnEmployeeRow[data-id="' +
+						employeeCode +
+						'"] .jsFinishEmployeeOnboard'
+				).removeClass("disabled");
+			});
 	}
 
 	/**

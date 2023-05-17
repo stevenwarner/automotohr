@@ -1709,6 +1709,8 @@ $route['payroll/signatories/(:num)/(:num)']['delete'] = 'gusto/Gusto_payroll/del
 $route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory/$1';
 // Sync
 $route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
+$route['gusto/company/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishCompanyOnboard/$1';
+$route['gusto/employee/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishEmployeeOnboard/$1';
 
 //Job Title Templates
 $route['manage_admin/job_title_templates'] = 'manage_admin/job_title_templates/index';

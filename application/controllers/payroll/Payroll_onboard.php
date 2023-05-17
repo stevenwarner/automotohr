@@ -183,6 +183,7 @@ class Payroll_onboard extends CI_Controller
                 'payroll_employees.federal_tax',
                 'payroll_employees.state_tax',
                 'payroll_employees.payment_method',
+                'payroll_employees.onboard_completed',
                 'payroll_employees.employee_form_signing',
                 'payroll_employees.payroll_employee_id',
                 'payroll_employees.payroll_employee_uuid'

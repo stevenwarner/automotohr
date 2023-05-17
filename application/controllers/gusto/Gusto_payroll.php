@@ -360,4 +360,32 @@ class Gusto_payroll extends CI_Controller
             false
         );
     }
+
+    /**
+     * 
+     */
+    public function checkAndFinishCompanyOnboard(int $companyId)
+    {
+        //
+        $response = $this->gusto_payroll_model->checkAndFinishCompanyOnboard($companyId, true);
+        //
+        if(isset($response['steps'])) {
+            return sendResponse(200, ['view' => $this->load->view('payroll/onboardSteps', $response, true)]);
+        }
+        return sendResponse(200, $response);
+    }
+    
+    /**
+     * 
+     */
+    public function checkAndFinishEmployeeOnboard(int $employeeId)
+    {
+        //
+        $response = $this->gusto_payroll_model->checkAndFinishEmployeeOnboard($employeeId, true);
+        //
+        if(isset($response['steps'])) {
+            return sendResponse(200, ['view' => $this->load->view('payroll/employeeOnboardSteps', $response, true)]);
+        }
+        return sendResponse(200, $response);
+    }
 }
