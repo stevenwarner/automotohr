@@ -33,9 +33,25 @@ class Testing extends CI_Controller
     }
 
     public function missingEmployee () {
+        $jsonString = '[
+            {
+                "oldEmployeeId": "18459",
+                "oldCompanyId": "16418",
+                "newEmployeeId": "53134",
+                "newCompanyId": "16404"
+            }
+        ]';
+        //
+        $employees = json_decode($jsonString,true);
+        //
         $this->load->model('2022/Complynet_model', 'complynet_model');
         //
-        $this->complynet_model->fixUnhandleEmployees();
+        foreach ($employees as $employee) {
+            $this->complynet_model->manageEmployee();
+        }
+           
+        // //
+        // $this->complynet_model->fixUnhandleEmployees();
         die("I am here");
     }
 
