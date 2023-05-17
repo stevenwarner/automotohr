@@ -65,12 +65,6 @@ class Testing extends CI_Controller
                 "newCompanyId": "32484"
             },
             {
-                "oldEmployeeId": "17306",
-                "oldCompanyId": "16404",
-                "newEmployeeId": "51747",
-                "newCompanyId": "16418"
-            },
-            {
                 "oldEmployeeId": "18464",
                 "oldCompanyId": "16420",
                 "newEmployeeId": "50348",
