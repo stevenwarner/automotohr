@@ -1,6 +1,6 @@
 <style type="text/css">
-    .modifyDate{
-        vertical-align: middle;
+    .modifyDate {
+        vertical-align: middle !important;
         font-size: 16px !important;
         font-weight: 600;
     }
@@ -9,19 +9,21 @@
         background: #f2dede !important;
     }
 </style>
-<div class="row">
-    <div class="col-xs-6">
-        <p style="font-size: 16px;"><strong>Number Of Employees:</strong> <span><?php echo count($allowed_employees); ?></span></p>
+<?php if (!empty($allowed_employees)) { ?>
+    <div class="row">
+        <div class="col-xs-12">
+            <p class="alert alert-danger" style="font-size: 16px;"><strong><em>This policy is applicable to the following employees.</em></p>
+        </div>
     </div>
-</div>
-<div class="tabel-responsive">
+<?php } ?>
+<div class="table-responsive">
     <table class="table table-striped csCustomTableHeader">
         <thead>
             <tr>
                 <th>Employee</th>
-                <th>Allowed Time</th>
-                <th>Consumed Time</th>
-                <th>Remaining Time</th>
+                <th class="text-right">Allowed Time</th>
+                <th class="text-right">Consumed Time</th>
+                <th class="text-right">Remaining Time</th>
             </tr>
         </thead>
         <tbody id="jsManagePolicyTable">
@@ -33,19 +35,18 @@
                             <br>
                             <?php echo $employee['anniversary_text']; ?>
                         </td>
-                        <td class="modifyDate"><?php echo $employee['allowed_time']; ?></td>
-                        <td class="modifyDate"><?php echo $employee['consumed_time']; ?></td>
-                        <td class="modifyDate"><?php echo $employee['remaining_time']; ?></td>
+                        <td class="modifyDate text-right"><?php echo $employee['allowed_time']; ?></td>
+                        <td class="modifyDate text-right"><?php echo $employee['consumed_time']; ?></td>
+                        <td class="modifyDate text-right"><?php echo $employee['remaining_time']; ?></td>
                     </tr>
                 <?php } ?>
             <?php } else { ?>
                 <tr>
                     <td colspan="4">
-                        <p class="alert alert-info text-center">No employee found against this policy</p>
+                        <p class="alert alert-info text-center">No employees found against this policy.</p>
                     </td>
                 </tr>
             <?php } ?>
         </tbody>
     </table>
-</div>    
 </div>

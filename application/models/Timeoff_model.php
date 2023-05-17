@@ -452,7 +452,7 @@ class Timeoff_model extends CI_Model
         //
         return $policies;
     }
-    
+
 
     /**
      * Get company types
@@ -6227,11 +6227,11 @@ class Timeoff_model extends CI_Model
      */
     function updateEmployeeRequestPolicy($employeeID, $oldPolicyId, $newPolicyId)
     {
-        $this->db->where('employee_sid ', $employeeID);
+        $this->db->where('employee_sid', $employeeID);
         $this->db->where('timeoff_policy_sid', $oldPolicyId);
         $this->db->update('timeoff_requests', [
-                    'timeoff_policy_sid' => $newPolicyId
-                ]);
+            'timeoff_policy_sid' => $newPolicyId
+        ]);
     }
 
     /**
@@ -6439,10 +6439,17 @@ class Timeoff_model extends CI_Model
             if (isset($history[$index + 1])) {
                 $compareWithArray = $history[$index + 1];
             }
-            // lets compare the array
-            $differenceArray = getPolicyDifference($value, $compareWithArray);
+            
+            if (preg_match('/trasnsferred/i', $value['note'])) {
+                // lets compare the array
+                $differenceArray = getPolicyDifference($value, $currentPolicyCompare);
+            } else{
+                
+                // lets compare the array
+                $differenceArray = getPolicyDifference($value, $compareWithArray);
+            }
             //
-            if($differenceArray) {
+            if ($differenceArray) {
                 // set the record array
                 $records[] = [
                     'action' => $value['action'],
@@ -6475,7 +6482,7 @@ class Timeoff_model extends CI_Model
         //
         if (empty($policy)) {
             return [];
-        }  
+        }
         //
         // Fetch all active employees 
         $this->db->select('
@@ -6507,7 +6514,7 @@ class Timeoff_model extends CI_Model
                 $v['joined_at'],
                 $v['registration_date'],
                 $v['rehire_date']
-            );               
+            );
             //
             $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
             //
@@ -6521,17 +6528,17 @@ class Timeoff_model extends CI_Model
                     $policy,
                     $balances,
                     $v['employee_type']
-                )['total'];   
+                )['total'];
             //
             if (empty($employeeTimeoffInfo['PolicyIds'])) {
                 unset($employees[$ekey]);
             } else {
                 //
-                $employees[$ekey]['allowed_time'] = $employeeTimeoffInfo['AllowedTime']['text']; 
-                $employees[$ekey]['remaining_time'] = $employeeTimeoffInfo['RemainingTime']['text']; 
-                $employees[$ekey]['consumed_time'] = $employeeTimeoffInfo['ConsumedTime']['text']; 
-                $employees[$ekey]['remaining_minutes'] = $employeeTimeoffInfo['RemainingTime']['M']['minutes']; 
-            }    
+                $employees[$ekey]['allowed_time'] = $employeeTimeoffInfo['AllowedTime']['text'];
+                $employees[$ekey]['remaining_time'] = $employeeTimeoffInfo['RemainingTime']['text'];
+                $employees[$ekey]['consumed_time'] = $employeeTimeoffInfo['ConsumedTime']['text'];
+                $employees[$ekey]['remaining_minutes'] = $employeeTimeoffInfo['RemainingTime']['M']['minutes'];
+            }
             //
         }
         //
@@ -6583,5 +6590,69 @@ class Timeoff_model extends CI_Model
             ->result_array();
         //
         return $policies;
+    }
+
+
+    /**
+     * Get policy requests by id
+     * 
+     * @employee  Aleem Shaukat
+     * @date      12/05/2023
+     * 
+     * @param int $policyId
+     * @param bool $isActive
+     * 
+     * @return array
+     */
+    function getPolicyRequestsWithEmployees($policyId, bool $isActive = true)
+    {
+        $this->db
+            ->select('
+            ' . (getUserFields()) . '
+            timeoff_requests.request_from_date,
+            timeoff_requests.request_to_date,
+            timeoff_requests.requested_time
+        ')
+            ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
+            ->where('timeoff_requests.timeoff_policy_sid', $policyId);
+        //
+        if ($isActive) {
+            $this->db->where('users.active', 1);
+            $this->db->where('users.terminated_status', 0);
+        }
+        return $this->db
+            ->get('timeoff_requests')
+            ->result_array();
+    }
+
+    /**
+     * Get all active policy by company id
+     * 
+     * @employee  Aleem Shaukat
+     * @date      12/05/2023
+     * 
+     * @param int  $companyId
+     * @param bool $isActive
+     * 
+     * @return array
+     */
+    function getAllPolicies(int $companyId, bool $isActive = true)
+    {
+        $this->db
+            ->select('
+            sid,
+            title,
+            is_archived,
+            policy_category_type
+        ')
+            ->where('company_sid', $companyId)
+            ->order_by('policy_category_type', 'DESC');
+        //
+        if ($isActive) {
+            $this->db->where('is_archived', 0);
+        }
+        //
+        return $this->db->get('timeoff_policies')
+        ->result_array();
     }
 }

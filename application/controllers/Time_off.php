@@ -4843,6 +4843,26 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
+            case "get_policy_requests_with_employees":
+                // get all requests for active employees
+                $policyRequests = $this->timeoff_model->getPolicyRequestsWithEmployees($post['policyId'], true);
+                //
+                if (!$policyRequests) {
+                    $this->res['Response'] = 'We are unable to find requests against this policy.';
+                    return $this->resp();
+                }
+                $policies = $this->timeoff_model->getAllPolicies($post['companyId'], true);
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['View'] = $this->load->view('timeoff/partials/policies/manage_policy', [
+                    'policyRequests' => $policyRequests,
+                    'policies' => $policies,
+                    'selectedPolicyId' => $post['policyId']
+                ], true);
+                $this->resp();
+                break;   
+
                 // Create employee time off
             case 'create_employee_timeoff':
                 // _e($formpost, true, true);
