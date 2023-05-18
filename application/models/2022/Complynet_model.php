@@ -1643,6 +1643,7 @@ class Complynet_model extends CI_Model
         // check the missing data
         echo "before check the missing data check<br>";
         if (checkEmployeeMissingData($employee)) {
+            _e(checkEmployeeMissingData($employee),true);
             return checkEmployeeMissingData($employee);
         }
         // get the comply department id
