@@ -1598,12 +1598,15 @@ class Complynet_model extends CI_Model
             ->get('complynet_employees')
             ->row_array();
         //
+            echo "before complyOldEmployee check<br>";
         if (!$complyOldEmployee) {
             return ['errors' => "Transferred employee was not on ComplyNet."];
         }
         // check if company is on ComplyNet
         $company = $this->getIntegratedCompany($passArray['newCompanyId']);
         // if not then return
+        echo "before company check<br>";
+
         if (!$company) {
             return ['errors' => 'Company is not on ComplyNet'];
         }
@@ -1616,6 +1619,8 @@ class Complynet_model extends CI_Model
             $passArray['newEmployeeId']
         );
         // in case employee not found
+        echo "before Employee check<br>";
+
         if (!$employee) {
             return ['errors' => 'Employee not found.'];
         }
@@ -1626,6 +1631,7 @@ class Complynet_model extends CI_Model
         //
         $this->load->library('Complynet/Complynet_lib', '', 'clib');
         // //
+        echo "before findEmployeeBySid check<br>";
         if ($this->findEmployeeBySid($passArray['newEmployeeId'], $passArray['newCompanyId'])) {
             $errorArray[] = 'Employee already synced with ComplyNet.';
             return $errorArray;
