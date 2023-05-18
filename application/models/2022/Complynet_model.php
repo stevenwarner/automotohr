@@ -318,7 +318,7 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
-
+        _e($record,true);
         if ($record) {
             if ($returnComplyId) {
                 return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
@@ -351,6 +351,7 @@ class Complynet_model extends CI_Model
             ->get('complynet_departments')
             ->row_array();
         //
+        _e($record,true);    
         if ($record) {
             // lets double check it
             $response = $this->getComplyNetDepartmentByAhrId(
@@ -359,6 +360,7 @@ class Complynet_model extends CI_Model
                 $record['complynet_department_sid'],
                 $employeeId
             );
+            _e($response,true);
             //
             if ($response != '0') {
                 return $response;
@@ -399,6 +401,8 @@ class Complynet_model extends CI_Model
         $locations = $this->clib->getComplyNetDepartments(
             $result['complynet_location_sid']
         );
+        //
+       _e($locations,true);
         //
         if (!$locations) {
             return 0;
@@ -1633,16 +1637,16 @@ class Complynet_model extends CI_Model
             return checkEmployeeMissingData($employee);
         }
         // get the comply department id
+        _e($employee['sid'],true);
         $complyDepartmentId = $this->getEmployeeDepartmentId(
             $employee['sid']
         );
+        die("please stop");
         //
         if ($complyDepartmentId === 0) {
-            $complyDepartmentId = $this->getEmployeeComplynetDepartmentId($employee['sid']);
-            if ($complyDepartmentId === 0) {
-                $errorArray[] = 'Department not found.';
-                return $errorArray;
-            }
+
+            $errorArray[] = 'Department not found.';
+            return $errorArray;
         }
         //
         $complyJobRoleId = $this->getAndSetJobRoleId(
@@ -1761,39 +1765,5 @@ class Complynet_model extends CI_Model
         // transfer employee to another location
         $this->transferEmployeeToAnotherLocation($passArray);
     }
-
-    /**
-     * Get employee department
-     *
-     * @param int $employeeId
-     * @param bool $returnComplyId Optional
-     * @return string
-     */
-    public function getEmployeeComplynetDepartmentId(
-        int $employeeId,
-        bool $returnComplyId = true
-    ) {
-        //
-        $record =
-            $this->db
-            ->select('departments_management.sid')
-            ->where('departments_employee_2_team.employee_sid', $employeeId)
-            ->from('departments_employee_2_team')
-            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
-            ->get()
-            ->row_array();
-        //
-
-        if ($record) {
-            if ($returnComplyId) {
-                return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
-            } else {
-                return $record['sid'];
-            }
-        }
-        //
-        return 0;
-    }
-
     
 }
