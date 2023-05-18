@@ -1638,8 +1638,11 @@ class Complynet_model extends CI_Model
         );
         //
         if ($complyDepartmentId === 0) {
-            $errorArray[] = 'Department not found.';
-            return $errorArray;
+            $complyDepartmentId = $this->getEmployeeComplynetDepartmentId($employee['sid']);
+            if ($complyDepartmentId === 0) {
+                $errorArray[] = 'Department not found.';
+                return $errorArray;
+            }
         }
         //
         $complyJobRoleId = $this->getAndSetJobRoleId(
@@ -1757,6 +1760,39 @@ class Complynet_model extends CI_Model
         }
         // transfer employee to another location
         $this->transferEmployeeToAnotherLocation($passArray);
+    }
+
+    /**
+     * Get employee department
+     *
+     * @param int $employeeId
+     * @param bool $returnComplyId Optional
+     * @return string
+     */
+    public function getEmployeeComplynetDepartmentId(
+        int $employeeId,
+        bool $returnComplyId = true
+    ) {
+        //
+        $record =
+            $this->db
+            ->select('departments_management.sid')
+            ->where('departments_employee_2_team.employee_sid', $employeeId)
+            ->from('departments_employee_2_team')
+            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+            ->get()
+            ->row_array();
+        //
+
+        if ($record) {
+            if ($returnComplyId) {
+                return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
+            } else {
+                return $record['sid'];
+            }
+        }
+        //
+        return 0;
     }
 
     
