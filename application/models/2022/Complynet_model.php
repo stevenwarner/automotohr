@@ -1633,6 +1633,7 @@ class Complynet_model extends CI_Model
         // //
         echo "before findEmployeeBySid check<br>";
         if ($this->findEmployeeBySid($passArray['newEmployeeId'], $passArray['newCompanyId'])) {
+            _e("ff",true);
             _e($this->db->last_query(),true);
             $errorArray[] = 'Employee already synced with ComplyNet.';
             return $errorArray;
