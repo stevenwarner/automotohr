@@ -1591,7 +1591,7 @@ class Complynet_model extends CI_Model
      * @return bool
      */
     public function transferEmployeeToAnotherLocation(array $passArray)
-    {
+    {echo "function start from here<br>";
         // check if employee is on ComplyNet
         $complyOldEmployee = $this->db
             ->where('employee_sid', $passArray['oldEmployeeId'])
