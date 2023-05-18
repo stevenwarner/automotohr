@@ -1637,6 +1637,7 @@ class Complynet_model extends CI_Model
             return checkEmployeeMissingData($employee);
         }
         // get the comply department id
+        echo "start from here<br>";
         _e($employee['sid'],true);
         $complyDepartmentId = $this->getEmployeeDepartmentId(
             $employee['sid']
