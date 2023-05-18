@@ -318,7 +318,7 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
-        _e($record,true);
+
         if ($record) {
             if ($returnComplyId) {
                 return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
@@ -351,7 +351,6 @@ class Complynet_model extends CI_Model
             ->get('complynet_departments')
             ->row_array();
         //
-        _e($record,true);    
         if ($record) {
             // lets double check it
             $response = $this->getComplyNetDepartmentByAhrId(
@@ -360,7 +359,6 @@ class Complynet_model extends CI_Model
                 $record['complynet_department_sid'],
                 $employeeId
             );
-            _e($response,true);
             //
             if ($response != '0') {
                 return $response;
@@ -401,8 +399,6 @@ class Complynet_model extends CI_Model
         $locations = $this->clib->getComplyNetDepartments(
             $result['complynet_location_sid']
         );
-        //
-       _e($locations,true);
         //
         if (!$locations) {
             return 0;
@@ -1591,22 +1587,19 @@ class Complynet_model extends CI_Model
      * @return bool
      */
     public function transferEmployeeToAnotherLocation(array $passArray)
-    {echo "function start from here<br>";
+    {
         // check if employee is on ComplyNet
         $complyOldEmployee = $this->db
             ->where('employee_sid', $passArray['oldEmployeeId'])
             ->get('complynet_employees')
             ->row_array();
         //
-            echo "before complyOldEmployee check<br>";
         if (!$complyOldEmployee) {
             return ['errors' => "Transferred employee was not on ComplyNet."];
         }
         // check if company is on ComplyNet
         $company = $this->getIntegratedCompany($passArray['newCompanyId']);
         // if not then return
-        echo "before company check<br>";
-
         if (!$company) {
             return ['errors' => 'Company is not on ComplyNet'];
         }
@@ -1619,8 +1612,6 @@ class Complynet_model extends CI_Model
             $passArray['newEmployeeId']
         );
         // in case employee not found
-        echo "before Employee check<br>";
-
         if (!$employee) {
             return ['errors' => 'Employee not found.'];
         }
@@ -1631,28 +1622,21 @@ class Complynet_model extends CI_Model
         //
         $this->load->library('Complynet/Complynet_lib', '', 'clib');
         // //
-        echo "before findEmployeeBySid check<br>";
         if ($this->findEmployeeBySid($passArray['newEmployeeId'], $passArray['newCompanyId'])) {
-            _e("ff",true);
-            _e($this->db->last_query(),true);
             $errorArray[] = 'Employee already synced with ComplyNet.';
             return $errorArray;
         }
         $employee['complynet_job_title'] = $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
 
         // check the missing data
-        echo "before check the missing data check<br>";
         if (checkEmployeeMissingData($employee)) {
-            _e(checkEmployeeMissingData($employee),true);
+            mail('mubashar@automotohr.com', 'Employee '.getUserNameBySID($employee['sid']).' data missing while moving on complynet: ', json_encode(checkEmployeeMissingData($employee)));
             return checkEmployeeMissingData($employee);
         }
         // get the comply department id
-        echo "start from here<br>";
-        _e($employee['sid'],true);
         $complyDepartmentId = $this->getEmployeeDepartmentId(
             $employee['sid']
         );
-        die("please stop");
         //
         if ($complyDepartmentId === 0) {
 
