@@ -1641,6 +1641,7 @@ class Complynet_model extends CI_Model
         $employee['complynet_job_title'] = $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
 
         // check the missing data
+        echo "before check the missing data check<br>";
         if (checkEmployeeMissingData($employee)) {
             return checkEmployeeMissingData($employee);
         }
