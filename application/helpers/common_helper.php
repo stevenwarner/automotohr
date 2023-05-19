@@ -16647,3 +16647,20 @@ if (!function_exists('get_company_module_status')) {
         return $result[$fieldName];
     }
 }
+
+
+
+//
+if (!function_exists('get_executive_administrator_admin_plus_status')) {
+    function get_executive_administrator_admin_plus_status($executiveAdminSid, $companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('users.access_level_plus');
+        $CI->db->where('executive_admin_sid', $executiveAdminSid);
+        $CI->db->where('company_sid', $companySid);
+        $CI->db->join('users', 'executive_user_companies.logged_in_sid = users.sid', 'left');
+        $result = $CI->db->get('executive_user_companies')->row_array();
+        return $result;
+    }
+
+}

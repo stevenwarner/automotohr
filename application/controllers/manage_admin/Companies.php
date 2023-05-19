@@ -702,7 +702,7 @@ class Companies extends Admin_Controller
                 $selectedadmins = $this->input->post('checkit');
                 $action = $this->input->post('action');
 
-                $msg = $action==1 ? 'Marked as Admin Plus':' Unmarked as Admin Plus';
+                $msg = $action == 1 ? 'Marked as Admin Plus' : ' Unmarked as Admin Plus';
 
 
 
@@ -715,7 +715,7 @@ class Companies extends Admin_Controller
                         }
                     }
                 }
-                $this->session->set_flashdata('message', 'Employee are sucessfully '. $msg);
+                $this->session->set_flashdata('message', 'Employee are sucessfully ' . $msg);
 
                 redirect('manage_admin/companies/executive_administrators', 'refresh');
             }
@@ -789,9 +789,15 @@ class Companies extends Admin_Controller
                 }
             }
 
+
             $this->data['standard_companies'] = $standard_companies;
             $this->data['corporate_companies'] = $corporate_companies;
             $this->data['access_companies'] = $access_companies;
+            $this->data['exec_admin_id'] = $exec_admin_id;
+
+            // print_r($standard_companies);
+            // die();
+
             $this->render('manage_admin/company/executive_admin/manage_executive_administrator');
         } else {
             $perform_action = $this->input->post('perform_action');
@@ -829,6 +835,22 @@ class Companies extends Admin_Controller
 
                     echo 'success';
                     break;
+                case 'mark_admin_plus':
+
+                    $company_sid = $this->input->post('company_sid');
+                    $executive_admin_sid = $this->input->post('executive_admin_sid');
+                    $this->company_model->set_executive_access_level_plus_single_company($executive_admin_sid, $company_sid, 'mark_admin_plus');
+                    echo 'success';
+                    break;
+
+                case 'unmark_admin_plus':
+
+                    $company_sid = $this->input->post('company_sid');
+                    $executive_admin_sid = $this->input->post('executive_admin_sid');
+                    $this->company_model->set_executive_access_level_plus_single_company($executive_admin_sid, $company_sid, 'unmark_admin_plus');
+                    echo 'success';
+                    break;
+
                 case 'configure_corporate_company_access':
                     $executive_admin_sid = $this->input->post('executive_admin_sid');
                     $company_sid = $this->input->post('company_sid');
