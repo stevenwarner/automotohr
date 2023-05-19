@@ -8446,6 +8446,8 @@ class Hr_documents_management_model extends CI_Model
         $groups = $this->get_all_documents_group($company_sid, 1);
         $active_groups = [];
         $in_active_groups = [];
+        $group_ids = [];
+        $group_status = '';
         $sendGroupEmail = 0;
 
         if (!empty($groups)) {
