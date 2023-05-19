@@ -141,8 +141,12 @@
                                     <tr data-id="<?= $employee['sid'] ?>">
                                         <td>
                                             <?php
-                                            $empData = json_decode($employee['complynet_json']);
-                                            echo '<strong>' . $empData[0]->FirstName . ' ' . $empData[0]->LastName . '</strong>';
+                                            $empData = json_decode($employee['complynet_json'], true);
+                                            if ($empData['FirstName']) {
+                                                echo '<strong>' . $empData['FirstName'] . ' ' . $empData['LastName'] . '</strong>';
+                                            } else {
+                                                echo '<strong>' . $empData[0]['FirstName'] . ' ' . $empData[0]['LastName'] . '</strong>';
+                                            }
                                             echo '<br> <b> Employee Status:</b> ' . (GetEmployeeStatus($employee['last_status_text'], $employee['active'])) . '<br>';
                                             echo $employee['email'];
                                             ?>
