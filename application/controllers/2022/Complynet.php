@@ -470,7 +470,7 @@ class Complynet extends Admin_Controller
             //
             $this->db
             ->where('company_sid', $companyId)
-            ->where_not_in('complynet_department_id', $activeComplyNetIds)
+            ->where_not_in('complynet_department_sid', $activeComplyNetIds)
             ->delete('complynet_departments');
         }
 
