@@ -1386,7 +1386,6 @@ if ($user_type == 'applicant') {
                                                                                             <?php } ?>
                                                                                         </td>
                                                                                         <td class="col-lg-6 text-center">
-                                                                                            </form>
                                                                                             <?php if (!empty($eeo_form_info)) { ?>
                                                                                                 <?php if ($eeo_form_info['status']) { ?>
                                                                                                     <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
