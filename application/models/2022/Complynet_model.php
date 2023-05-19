@@ -1481,20 +1481,21 @@ class Complynet_model extends CI_Model
         //
         // Get Employee Complynet department
         $complynetEmployeeDepartmentId = $this->getComplyNetEmployeeDepartment($passArray['oldEmployeeId']);
+        //
+        $whereArray = [];
+        $whereArray['departments_employee_2_team.employee_sid'] = $passArray['oldEmployeeId'];
+        //
+        if ($complynetEmployeeDepartmentId) {
+            $whereArray['departments_management.sid'] = $complynetEmployeeDepartmentId;
+        } else {
+            $whereArray['departments_management.is_deleted'] = 0;
+            $whereArray['departments_team_management.is_deleted'] = 0;
+        }
         // get the employee's current department and team name
-        
         $this->db->select('
             departments_management.name as department_name,
             departments_team_management.name
-        ')->where([
-            'departments_management.is_deleted' => 0,
-            'departments_team_management.is_deleted' => 0,
-            'departments_employee_2_team.employee_sid' => $passArray['oldEmployeeId']
-        ]);
-        //
-        if ($complynetEmployeeDepartmentId) {
-            $this->db->or_where('departments_management.sid', $complynetEmployeeDepartmentId);
-        }
+        ')->where($whereArray);
         //
         $this->db->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid');
         $this->db->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid');
@@ -1593,6 +1594,7 @@ class Complynet_model extends CI_Model
             ->where('employee_sid', $passArray['oldEmployeeId'])
             ->get('complynet_employees')
             ->row_array();
+
         //
         if (!$complyOldEmployee) {
             return ['errors' => "Transferred employee was not on ComplyNet."];
@@ -1626,10 +1628,16 @@ class Complynet_model extends CI_Model
             $errorArray[] = 'Employee already synced with ComplyNet.';
             return $errorArray;
         }
+        //
         $employee['complynet_job_title'] = $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
-
+        $oldComplynetEmployeeData =  $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
         // check the missing data
+        $complyOldEmployeeInfo = json_decode($complyOldEmployee['complynet_json'],true);
+        //
+        $employee = $this->addMissingEmployeeInfo($complyOldEmployeeInfo[0], $employee);
+
         if (checkEmployeeMissingData($employee)) {
+            //
             mail('mubashar@automotohr.com', 'Employee '.getUserNameBySID($employee['sid']).' data missing while moving on complynet: ', json_encode(checkEmployeeMissingData($employee)));
             return checkEmployeeMissingData($employee);
         }
@@ -1759,6 +1767,24 @@ class Complynet_model extends CI_Model
         }
         // transfer employee to another location
         $this->transferEmployeeToAnotherLocation($passArray);
+    }
+
+    public function addMissingEmployeeInfo ($oldEmployee, $newEmployee) {
+        //
+        if (!$newEmployee['first_name']) {
+            $newEmployee['first_name'] = $oldEmployee['first_name'];
+        }
+        if (!$newEmployee['last_name']) {
+            $newEmployee['last_name'] = $oldEmployee['last_name'];
+        }
+        if (!$newEmployee['PhoneNumber']) {
+            $newEmployee['PhoneNumber'] = $oldEmployee['PhoneNumber'];
+        }
+        if (!$newEmployee['complynet_job_title']) {;
+            $newEmployee['complynet_job_title'] = $oldEmployee['JobRole'];
+        }
+        //
+        return $newEmployee;
     }
     
 }
