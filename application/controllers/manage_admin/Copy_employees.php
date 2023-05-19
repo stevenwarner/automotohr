@@ -876,7 +876,7 @@ class Copy_employees extends Admin_Controller
                     $insertPolicy['type_sid'] = $typeSid;
                     $insertPolicy['creator_sid'] = $primaryAdminSid;
                     $insertPolicy['title'] = $policy['title'];
-                    $insertPolicy['assigned_employees'] = str_replace($secondaryEmployeeSid, '', $policy['assigned_employees']) != $policy['assigned_employees'] ? $primaryEmployeeSid : '';
+                    $insertPolicy['assigned_employees'] = $primaryEmployeeSid; 
                     $insertPolicy['off_days'] = $policy['off_days'];
                     $insertPolicy['note'] = $policy['note'];
                     $insertPolicy['is_default'] = $policy['is_default'];
@@ -891,7 +891,7 @@ class Copy_employees extends Admin_Controller
                     $insertPolicy['is_included'] = $policy['is_included'];
                     $insertPolicy['reset_policy'] = $policy['reset_policy'];
                     $insertPolicy['accruals'] = $policy['accruals'];
-                    $insertPolicy['is_entitled_employee'] = $policy['is_entitled_employee'];
+                    $insertPolicy['is_entitled_employee'] = 1;
                     $insertPolicy['policy_category_type'] = $policy['policy_category_type'];
                     $insertPolicy['allowed_approvers'] = '';
                     //
