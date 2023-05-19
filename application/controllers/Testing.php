@@ -32,45 +32,4 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
-    public function missingEmployee () {
-        $jsonString = '[
-            {   
-              "oldEmployeeId": "28197",
-              "oldCompanyId": "28144",
-              "newEmployeeId": "52989",
-              "newCompanyId": "16439"
-            },
-            {  
-              "oldEmployeeId": "24672",
-              "oldCompanyId": "16465",
-              "newEmployeeId": "50074",
-              "newCompanyId": "16463"
-            },
-            {   
-              "oldEmployeeId": "35303",
-              "oldCompanyId": "16463",
-              "newEmployeeId": "50073",
-              "newCompanyId": "16465"
-            },
-            {   
-              "oldEmployeeId": "50852",
-              "oldCompanyId": "50060",
-              "newEmployeeId": "52637",
-              "newCompanyId": "50063"
-            }
-        ]';
-        //
-        $employees = json_decode($jsonString,true);
-        //
-        $this->load->model('2022/Complynet_model', 'complynet_model');
-        //
-        foreach ($employees as $employee) {
-            $this->complynet_model->manageEmployee($employee);
-        }
-           
-        // //
-        // $this->complynet_model->fixUnhandleEmployees();
-        die("I am here");
-    }
-
 }
