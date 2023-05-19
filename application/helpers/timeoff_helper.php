@@ -863,7 +863,7 @@ if (!function_exists('splitTimeoffRequest')) {
         //
         $response = [
             'type' => "single",
-            'requestData' => $request 
+            'requestData' => $request
         ];
         //
         $fromDate = date_create($request['request_from_date']);
@@ -877,8 +877,8 @@ if (!function_exists('splitTimeoffRequest')) {
             $response['type'] = 'multiple';
             $requestedTimePerDay = $request['requested_time'] / $requestDays;
             //
-            for ($i=0; $i < $requestDays; $i++) { 
-                $requestDate = date("Y-m-d", strtotime($i.'days', strtotime($request['request_from_date'])));
+            for ($i = 0; $i < $requestDays; $i++) {
+                $requestDate = date("Y-m-d", strtotime($i . 'days', strtotime($request['request_from_date'])));
                 //
                 $split = $request;
                 $split['requested_time'] = $requestedTimePerDay;
@@ -888,7 +888,7 @@ if (!function_exists('splitTimeoffRequest')) {
                 //
                 $requestData[] = $split;
             }
-             
+
             $response['requestData'] = $requestData;
         } else {
             $response['requestData']['request_status'] = getTimeoffRequestStatus($request['request_from_date']);
@@ -915,29 +915,29 @@ if (!function_exists('generateTimeoffRequestSlot')) {
         $consumed_time = $request['consumed_time'];
         //
         if ($type == 'multiple') {
-            $hours = floor($request['requested_time'] / 60); 
+            $hours = floor($request['requested_time'] / 60);
 
             if ($hours > 1) {
-                $consumed_time = $hours.' Hours';
+                $consumed_time = $hours . ' Hours';
             } else {
-                $consumed_time = $hours.' Hour';
+                $consumed_time = $hours . ' Hour';
             }
         }
         //
         $rowColor =  str_replace('CONSUMED', '', $request['request_status']) != $request['request_status'] ? 'background-color:  #f2dede !important;' : '';
         //
         $html =  '';
-        $html .= '<tr style="'.$rowColor.'">';
-        $html .= '  <td>'.( ucwords($request['first_name'].' '.$request['last_name']) ).' <br /> '.( remakeEmployeeName($request, false) ).' <br /> '.( !empty($request['employee_number']) ? $request['employee_number'] : $request['employeeId'] ).'</td>';
-        $html .= '  <td>'.( $request['title'] ).'</td>';
-        $html .= '  <td>'.( $consumed_time ).'</td>';
-        $html .= '  <td>'.( DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y') ).'</td>';
-        $html .= '  <td>'.( DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('m/d/Y') ).'</td>';
+        $html .= '<tr style="' . $rowColor . '">';
+        $html .= '  <td>' . (ucwords($request['first_name'] . ' ' . $request['last_name'])) . ' <br /> ' . (remakeEmployeeName($request, false)) . ' <br /> ' . (!empty($request['employee_number']) ? $request['employee_number'] : $request['employeeId']) . '</td>';
+        $html .= '  <td>' . ($request['title']) . '</td>';
+        $html .= '  <td>' . ($consumed_time) . '</td>';
+        $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y')) . '</td>';
+        $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('m/d/Y')) . '</td>';
         //
-        $status = $request['status']; 
+        $status = $request['status'];
         //
         if ($status == 'approved') {
-            $html .= '<td><strong class="text-success">APPROVED</strong> ('.$request['request_status'].')</td>';
+            $html .= '<td><strong class="text-success">APPROVED</strong> (' . $request['request_status'] . ')</td>';
         } else if ($status == 'rejected') {
             $html .= '<td><strong class="text-danger">REJECTED</strong> (<strong class="text-warning">PENDING</strong>)</td>';
         } else if ($status == 'pending') {
@@ -946,5 +946,71 @@ if (!function_exists('generateTimeoffRequestSlot')) {
         $html .= '</tr>';
         //
         return $html;
+    }
+}
+
+if (!function_exists('getEmployeeManualBalance')) {
+    /**
+     * Get employee balance
+     * 
+     * Get employee manual balance for current cycle
+     * 
+     * @param int    $employeeId
+     * @param string $policyImplementDate
+     * @param string $policyNextResetDate
+     * @param int    $balance Optional
+     * 
+     * @return int
+     */
+    function getEmployeeManualBalance(
+        int $employeeId,
+        string $policyImplementDate,
+        string $policyNextResetDate,
+        int $balance = 0
+    ) {
+        // set default 
+        $balanceToReturn = $balance;
+        //
+        if ($policyImplementDate < '2023-05-20') {
+            return $balanceToReturn;
+        }
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $balances =
+            $this->db
+            ->select('
+            timeoff_balances.policy_sid,
+            timeoff_balances.user_sid,
+            timeoff_balances.is_added,
+            timeoff_balances.added_time
+        ')
+            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
+            ->where('timeoff_policies.company_sid', $employeeId)
+            ->where('timeoff_policies.is_archived', 0)
+            ->where('timeoff_balances.effective_at >=', $policyImplementDate, FALSE)
+            ->where('timeoff_balances.effective_at <=', $policyNextResetDate, FALSE)
+            ->get('timeoff_balances')
+            ->result_array();
+        //
+        if (empty($balances)) {
+            return 0;
+        }
+        //
+        $t = [];
+        //
+        foreach ($balances as $balance) {
+            //
+            $bb = $balance['user_sid'] . '-' . $balance['policy_sid'];
+            //
+            if (!isset($t[$bb])) $t[$bb] = 0;
+            //
+            if ($balance['is_added'] == '1') $t[$bb] += $balance['added_time'];
+            else $t[$bb] -= $balance['added_time'];
+        }
+        //
+        return $t;
+        //
+        return $balanceToReturn;
     }
 }

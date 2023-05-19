@@ -318,8 +318,6 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
-        _e("employee id " .$employeeId,true);
-        _e($record,true);
         if ($record) {
             if ($returnComplyId) {
                 return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
@@ -352,7 +350,6 @@ class Complynet_model extends CI_Model
             ->get('complynet_departments')
             ->row_array();
         //
-        _e($record,true);
         if ($record) {
             // lets double check it
             $response = $this->getComplyNetDepartmentByAhrId(
@@ -401,7 +398,6 @@ class Complynet_model extends CI_Model
         $locations = $this->clib->getComplyNetDepartments(
             $result['complynet_location_sid']
         );
-        _e($locations,true);
         //
         if (!$locations) {
             return 0;
