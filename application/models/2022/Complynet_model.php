@@ -1451,6 +1451,24 @@ class Complynet_model extends CI_Model
         return $complyRoleId;
     }
 
+    function getComplyNetEmployeeDepartment($employeeId)
+    {
+        $this->db->select('complynet_departments.department_sid');
+        $this->db->where('complynet_employees.employee_sid', $employeeId);
+        $this->db->join('complynet_departments', 'complynet_departments.complynet_department_sid = complynet_employees.complynet_department_sid', 'inner');
+
+        $record_obj = $this->db->get('complynet_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr['department_sid'];
+        } else {
+            return '';
+        }
+    }
+
+
     /**
      * Copy employee department and team
      * 
@@ -1460,24 +1478,30 @@ class Complynet_model extends CI_Model
      */
     public function checkAndMoveEmployeeDepartmentAndTeam(array $passArray)
     {
-        // get the employee's current department and team name
-        $records =
-            $this->db
-            ->select('
-                departments_management.name as department_name,
-                departments_team_management.name
-            ')
-            ->where([
-                'departments_management.is_deleted' => 0,
-                'departments_team_management.is_deleted' => 0,
-                'departments_employee_2_team.employee_sid' => $passArray['oldEmployeeId']
-            ])
-            ->from('departments_employee_2_team')
-            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
-            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
-            ->get()
-            ->result_array();
         //
+        // Get Employee Complynet department
+        $complynetEmployeeDepartmentId = $this->getComplyNetEmployeeDepartment($passArray['oldEmployeeId']);
+        // get the employee's current department and team name
+        
+        $this->db->select('
+            departments_management.name as department_name,
+            departments_team_management.name
+        ')->where([
+            'departments_management.is_deleted' => 0,
+            'departments_team_management.is_deleted' => 0,
+            'departments_employee_2_team.employee_sid' => $passArray['oldEmployeeId']
+        ]);
+        //
+        if ($complynetEmployeeDepartmentId) {
+            $this->db->or_where('departments_management.sid', $complynetEmployeeDepartmentId);
+        }
+        //
+        $this->db->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid');
+        $this->db->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid');
+        $record_obj = $this->db->get('departments_employee_2_team');
+        $records = $record_obj->result_array();
+        $record_obj->free_result();
+        //  
         if (!$records) {
             return false;
         }
@@ -1606,6 +1630,7 @@ class Complynet_model extends CI_Model
 
         // check the missing data
         if (checkEmployeeMissingData($employee)) {
+            mail('mubashar@automotohr.com', 'Employee '.getUserNameBySID($employee['sid']).' data missing while moving on complynet: ', json_encode(checkEmployeeMissingData($employee)));
             return checkEmployeeMissingData($employee);
         }
         // get the comply department id
@@ -1614,6 +1639,7 @@ class Complynet_model extends CI_Model
         );
         //
         if ($complyDepartmentId === 0) {
+
             $errorArray[] = 'Department not found.';
             return $errorArray;
         }
@@ -1734,6 +1760,5 @@ class Complynet_model extends CI_Model
         // transfer employee to another location
         $this->transferEmployeeToAnotherLocation($passArray);
     }
-
     
 }
