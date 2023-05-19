@@ -318,7 +318,7 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
-        _e(""emp id .$employeeId,true);
+        _e("employee id " .$employeeId,true);
         _e($record,true);
         if ($record) {
             if ($returnComplyId) {
