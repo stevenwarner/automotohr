@@ -3066,4 +3066,30 @@ class Company_model extends CI_Model
         $this->db->where_in('sid', $sids);
         $this->db->update('users', $data);
     }
+
+
+
+    //
+    function set_executive_access_level_plus_single_company($executiveAdminSid, $companySid, $action)
+    {
+
+        $this->db->select('logged_in_sid');
+        $this->db->where('executive_admin_sid', $executiveAdminSid);
+        $this->db->where('company_sid', $companySid);
+        $result = $this->db->get('executive_user_companies')->row_array();
+
+        if (!empty($result)) {
+
+            $data = array();
+            if ($action == 'mark_admin_plus') {
+                $data['access_level_plus'] =  1;
+            } elseif ($action == 'unmark_admin_plus') {
+                $data['access_level_plus'] =  0;
+            }
+
+            $this->db->where('sid', $result['logged_in_sid']);
+            $this->db->where('parent_sid', $companySid);
+            $this->db->update('users', $data);
+        }
+    }
 }
