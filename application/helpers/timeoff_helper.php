@@ -403,6 +403,19 @@ if (!function_exists('getEmployeeAccrual')) {
         $currentDate = getSystemDate('Y-m-d');
         $effectedDate2 = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
         //
+        $newEffectiveDateWithCurrentYear = preg_replace('/[0-9]{4}/i', date('Y'), $effectedDate2);
+        $policyNextResetDate = date($newEffectiveDateWithCurrentYear, strtotime('+1 year'));
+        //
+
+        $balanceInMinutes = getEmployeeManualBalance(
+            $employeeId,
+            $policyId,
+            $newEffectiveDateWithCurrentYear,
+            $policyNextResetDate,
+            $balanceInMinutes
+        );
+
+        //
         $consumeDate = '';
         //
         if (strtotime($currentDate) >= strtotime($effectedDate)) {
@@ -956,6 +969,7 @@ if (!function_exists('getEmployeeManualBalance')) {
      * Get employee manual balance for current cycle
      * 
      * @param int    $employeeId
+     * @param int    $policyId
      * @param string $policyImplementDate
      * @param string $policyNextResetDate
      * @param int    $balance Optional
@@ -964,53 +978,52 @@ if (!function_exists('getEmployeeManualBalance')) {
      */
     function getEmployeeManualBalance(
         int $employeeId,
+        int $policyId,
         string $policyImplementDate,
         string $policyNextResetDate,
         int $balance = 0
     ) {
         // set default 
         $balanceToReturn = $balance;
-        //
-        if ($policyImplementDate < '2023-05-20') {
-            return $balanceToReturn;
-        }
+              
         // get CI instance
         $CI = &get_instance();
-        //
-        $balances =
-            $this->db
+
+        // Get Companysid
+        $companyId = getEmployeeUserParent_sid($employeeId);
+
+        $currentDate = getSystemDate('Y-m-d');
+
+        $CI->db
             ->select('
-            timeoff_balances.policy_sid,
-            timeoff_balances.user_sid,
             timeoff_balances.is_added,
+            effective_at,
             timeoff_balances.added_time
-        ')
-            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
-            ->where('timeoff_policies.company_sid', $employeeId)
-            ->where('timeoff_policies.is_archived', 0)
-            ->where('timeoff_balances.effective_at >=', $policyImplementDate, FALSE)
-            ->where('timeoff_balances.effective_at <=', $policyNextResetDate, FALSE)
-            ->get('timeoff_balances')
-            ->result_array();
+        ');
+        $CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner');
+        $CI->db->where('timeoff_policies.company_sid', $companyId);
+        $CI->db->where('timeoff_balances.user_sid', $employeeId);
+        $CI->db->where('timeoff_policies.sid', $policyId);
+        $CI->db->where('timeoff_policies.is_archived', 0);
+        $CI->db->where('timeoff_balances.effective_at >=', $policyImplementDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $policyNextResetDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $currentDate); // current date
+
+        $balances =  $CI->db->get('timeoff_balances')->result_array();
+        _e($CI->db->last_query(), true);
+        _e($balances, true, true);
         //
         if (empty($balances)) {
             return 0;
         }
         //
-        $t = [];
+        $balanceToReturn = 0;
         //
-        foreach ($balances as $balance) {
+        foreach ($balances as $rowBalance) {
             //
-            $bb = $balance['user_sid'] . '-' . $balance['policy_sid'];
-            //
-            if (!isset($t[$bb])) $t[$bb] = 0;
-            //
-            if ($balance['is_added'] == '1') $t[$bb] += $balance['added_time'];
-            else $t[$bb] -= $balance['added_time'];
+            if ($rowBalance['is_added'] == '1') $balanceToReturn += $rowBalance['added_time'];
+            else $balanceToReturn -= $rowBalance['added_time'];
         }
-        //
-        return $t;
-        //
         return $balanceToReturn;
     }
 }
