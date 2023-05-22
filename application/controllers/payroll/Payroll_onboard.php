@@ -150,13 +150,16 @@ class Payroll_onboard extends CI_Controller
     public function Settings($companyId)
     {
         //
-        $post = $this->session->post(null, true);
+        $post = $this->input->post(null, true);
         //
         $request = [];
-        $request['fast_payment_limit'] = $post['fast_payment_limit'];
+        $request['fast_payment_limit'] = $post['fast_payment_limit'] ?? 0;
         $request['payment_speed'] = $post['payment_speed'];
         //
-        $this->UpdatePaymentConfig($companyId, $request);
+        $response = $this->UpdatePaymentConfig($companyId, $request);
+        if ($response['errors']) {
+            return sendResponse(200, ['errors' => $response['errors']]);
+        }
         //
         return sendResponse(200, ['status' => true]);
     }
@@ -1872,21 +1875,15 @@ class Payroll_onboard extends CI_Controller
         $response = UpdatePaymentConfig($request, $company_details);
         //
         if (isset($response['errors'])) {
-            //
-            $errors = [];
-            //
-            foreach ($response['errors'] as $error) {
-                $errors[] = $error[0]['message'];
-            }
             // Error took place
-            return false;
+            return hasGustoErrors($response);
         }
         //
         $ia = [];
         $ia['fast_payment_limit'] = $response['fast_payment_limit'];
         $ia['payment_speed'] = $request['payment_speed'];
         $ia['partner_uid'] = $request['partner_uuid'];
-        $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ia['updated_at'] = getSystemDate();
         //
         $this->pm->UpdatePayroll('payroll_settings', $ia, ['company_sid' => $companyId]);
         //
