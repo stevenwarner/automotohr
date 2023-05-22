@@ -69,7 +69,7 @@ class Copy_employees extends Admin_Controller
     }
 
     public function get_companies_employees($company_sid, $employee_type, $page, $to_company_sid, $employee_sortby, $employee_sort_orderby, $employee_keyword = '')
-    {
+    {die("here");
 
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'copy_employees');
