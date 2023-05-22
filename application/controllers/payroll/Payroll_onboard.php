@@ -153,7 +153,7 @@ class Payroll_onboard extends CI_Controller
         $post = $this->input->post(null, true);
         //
         $request = [];
-        $request['fast_payment_limit'] = $post['fast_payment_limit'] ?? 0;
+        $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
         $request['payment_speed'] = $post['payment_speed'];
         //
         $response = $this->UpdatePaymentConfig($companyId, $request);
