@@ -160,6 +160,14 @@ if (!function_exists('generateRequestBody')) {
             $requestBody['events'][0]['data']['transform']['worker']['person']['birthName']['familyName1'] =  $value;
         }
 
+
+        //EEOC VETERAN
+        if ($field['name'] == 'veteran') {
+            $requestBody['events'][0]['data']['transform']['worker']['person']['militaryClassificationCodes']['codeValue'] =  $value;
+        }
+
+
+
         //
         return $requestBody;
     }

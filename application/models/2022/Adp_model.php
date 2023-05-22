@@ -402,6 +402,20 @@ class Adp_model extends CI_Model
                         ]
                     ]
                 ]
+            ],
+            'veteran' => [
+                'tag' => 'Workers - Demographic Data Management',
+                'name' => 'veteran',
+                'url' => '/events/hr/v1/worker.milltary-classification.change',
+                'body' => [
+                    "worker" => [
+                        "person" => [
+                            "militaryClassificationCodes" => [
+                                "codeValue" => "Disabled Veteran"
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
     }
