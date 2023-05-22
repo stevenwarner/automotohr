@@ -37,12 +37,12 @@ $(function Settings() {
 			payment_speed: $("#jsPayrollSettingsSpeed").val(),
 			fast_speed_limit: $("#jsPayrollSettingsLimit")
 				.val()
-				.replace(/[^0-9]/g, ""),
+				.replace(/[^0-9]/g, "")
 		};
 		//
 		var _this = $(this);
 		//
-		if (obj.payment_speed == "2-day" && !fast_speed_limit) {
+		if (obj.payment_speed == "2-day" && !obj.fast_speed_limit) {
 			return alertify.alert(
 				"Warning!",
 				"Fast payment limit is required.",
