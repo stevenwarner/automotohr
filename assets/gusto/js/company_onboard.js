@@ -91,8 +91,8 @@ $(function companyOnboard() {
             //
             ml(false, 'jsManageGustoAdminsModalLoader');
             //
-            if (response.error) {
-                return alertify.alert('Error!', response.error, function () { });
+            if (response.errors) {
+                return alertify.alert('Error!', response.errors.join('<br />'), function () { });
             }
             return alertify.alert('Success!', response.success, function () {
                 //
