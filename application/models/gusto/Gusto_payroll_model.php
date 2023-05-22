@@ -88,13 +88,7 @@ class Gusto_payroll_model extends CI_Model
         //
         if (isset($response['errors'])) {
             //
-            $errors = [];
-            //
-            foreach ($response['errors'] as $error) {
-                $errors[] = $error[0];
-            }
-            //
-            return $errors;
+            return hasGustoErrors($response);
         }
         //
         if (

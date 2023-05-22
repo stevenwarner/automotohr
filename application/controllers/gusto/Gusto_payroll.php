@@ -51,6 +51,16 @@ class Gusto_payroll extends CI_Controller
             'last_name' => $post['lastName'],
             'email' => $post['emailAddress']
         ], $companyId);
+
+        if ($response['errors']) {
+            //
+            return SendResponse(
+                200,
+                [
+                    'errors' => $response['errors']
+                ]
+            );
+        }
         //
         return SendResponse(
             200,
@@ -351,8 +361,8 @@ class Gusto_payroll extends CI_Controller
             return SendResponse(200, $errors);
         }
         //
-        $func = 'handleEmployee'.str_replace(' ', '', ucwords(str_replace('_', ' ', $type))).'ForOnboarding';
-        
+        $func = 'handleEmployee' . str_replace(' ', '', ucwords(str_replace('_', ' ', $type))) . 'ForOnboarding';
+
         $this->gusto_payroll_model->$func(
             $post,
             $gustoEmployeeDetails,
@@ -369,12 +379,12 @@ class Gusto_payroll extends CI_Controller
         //
         $response = $this->gusto_payroll_model->checkAndFinishCompanyOnboard($companyId, true);
         //
-        if(isset($response['steps'])) {
+        if (isset($response['steps'])) {
             return sendResponse(200, ['view' => $this->load->view('payroll/onboardSteps', $response, true)]);
         }
         return sendResponse(200, $response);
     }
-    
+
     /**
      * 
      */
@@ -383,7 +393,7 @@ class Gusto_payroll extends CI_Controller
         //
         $response = $this->gusto_payroll_model->checkAndFinishEmployeeOnboard($employeeId, true);
         //
-        if(isset($response['steps'])) {
+        if (isset($response['steps'])) {
             return sendResponse(200, ['view' => $this->load->view('payroll/employeeOnboardSteps', $response, true)]);
         }
         return sendResponse(200, $response);
