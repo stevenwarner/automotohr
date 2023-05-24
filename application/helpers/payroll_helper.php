@@ -2172,8 +2172,19 @@ if (!function_exists('EmployeePayrollOnboardStatus')) {
      */
     function EmployeePayrollOnboardStatus($o)
     {
+        //
+        $ra['details'] = [
+            'personal_profile' => 1,
+            'compensation' => 1,
+            'home_address' => 1,
+            'federal_tax' => 1,
+            'state_tax' => 1,
+            'payment_method' => 1,
+            'employee_form_signing' => 1
+        ];
+        $ra['status'] = 'completed';
         if ($o['onboard_completed'] == 1) {
-            return ['status' => 'completed'];
+            return $ra;
         }
         //
         $ra = [];

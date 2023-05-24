@@ -2527,97 +2527,57 @@ class Gusto_payroll_model extends CI_Model
         $errors = [];
         // let verify the data
         // check
-        if (!$post['paymentMethod']) {
-            $errors['errors'][] = 'Payment method is required.';
+        if (!$post['bankName']) {
+            $errors['errors'][] = 'Bank name is required.';
         }
-        if (!in_array($post['paymentMethod'], ['Check', 'Direct Deposit'])) {
-            $errors['errors'][] = 'Payment method cna be either \'Check\' or \'Direct Deposit\'.';
+        if (strlen($post['routingNumber']) != 9) {
+            $errors['errors'][] = 'Routing number is required. It must consists of 9 digits.';
+        }
+        //
+        if (!$post['accountNumber']) {
+            $errors['errors'][] = 'Account number is required.';
+        }
+        if (!in_array($post['accountType'], ['Savings', 'Checking'])) {
+            $errors['errors'][] = 'Account type can be either \'Savings\' or \'Checking\'.';
         }
         // check if error happened
         if ($errors['errors']) {
             return $doReturn ? $errors : SendResponse(200, $errors);
         }
-
-        die('sdas');
-        // TODO
-        // check bank account and pass on splits object
-        // if payment method is direct deposit
-        //
-        if (
-            $post['paymentMethod'] == 'Direct Deposit' &&
-            !$this->db
-                ->where('employee_sid', $post['employeeId'])
-                ->count_all_results('payroll_employee_bank_accounts')
-        ) {
-            $errors['errors'][] = 'Please add at least one bank account.';
-            return $doReturn ? $errors : SendResponse(200, $errors);
-        }
-        // set where array
-        $where = [
-            'employee_sid' => $post['employeeId']
-        ];
-        // let check if we have federal tax
-        // in our system
-        if (!$this->db->where($where)->count_all_results('payroll_employee_payment_method')) {
-            // get the federal tax from Gusto
-            $gustoPaymentMethod = getEmployeePaymentMethodFromGusto(
-                $gustoEmployeeDetails['payroll_employee_uuid'],
-                $gustoCompany
-            );
-            // check for errors
-            if ($errors = hasGustoErrors($gustoPaymentMethod)) {
-                return $doReturn ? $errors : sendResponse(200, $errors);
-            }
-            // set insert array
-            $insertArray = [];
-            $insertArray['employee_sid'] = $post['employeeId'];
-            $insertArray['company_sid'] = $post['companyId'];
-            $insertArray['payment_method'] = $gustoPaymentMethod['type'];
-            $insertArray['split_method'] = $gustoPaymentMethod['split_by'];
-            $insertArray['splits'] = json_encode($gustoPaymentMethod['splits'] ?? []);
-            $insertArray['version'] = $gustoPaymentMethod['version'];
-            $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
-            // insert it
-            $this->db->insert('payroll_employee_payment_method', $insertArray);
-        }
-        // get sid and record
-        $employeePaymentMethod = $this->db
-            ->select('sid, version')
-            ->where($where)
-            ->get('payroll_employee_payment_method')
-            ->row_array();
         // set request array
         $request = [];
-        $request['version'] = $employeePaymentMethod['version'];
-        $request['type'] = ucfirst($post['paymentMethod']);
-        $request['split_by'] = $request['type'] == 'Check' ? null : 'Amount';
-        $request['splits'] = $request['type'] == 'Check' ? null : [];
+        $request['name'] = $post['bankName'];
+        $request['routing_number'] = $post['routingNumber'];
+        $request['account_number'] = $post['accountNumber'];
+        $request['account_type'] = $post['accountType'];
         // make request
-        $response = updateEmployeePaymentMethodOnGusto(
+        $response = addEmployeeBankAccountToGusto(
             $request,
             $gustoEmployeeDetails['payroll_employee_uuid'],
             $gustoCompany
         );
         // check for errors
-
         if ($errors = hasGustoErrors($response)) {
             return $doReturn ? $errors : sendResponse(200, $errors);
         }
         // set insert array
         $insertArray = [];
-        $insertArray['payment_method'] = $response['type'];
-        $insertArray['split_method'] = $response['split_by'];
-        $insertArray['splits'] = json_encode($response['splits'] ?? []);
-        $insertArray['version'] = $response['version'];
-        $insertArray['updated_at'] = getSystemDate();
-        // update it
+        $insertArray['employee_sid'] = $post['employeeId'];
+        $insertArray['direct_deposit_id'] = 0;
+        $insertArray['payroll_bank_uuid'] = $response['uuid'];
+        $insertArray['name'] = $response['name'];
+        $insertArray['routing_number'] = $response['routing_number'];
+        $insertArray['account_number'] = $response['hidden_account_number'];
+        $insertArray['account_type'] = $response['account_type'];
+        $insertArray['account_percentage'] = 0;
+        $insertArray['is_deleted'] = 0;
+        $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+        // insert it
         $this->db
-            ->where('sid', $employeePaymentMethod['sid'])
-            ->update('payroll_employee_payment_method', $insertArray);
-
+            ->update('payroll_employee_bank_accounts', $insertArray);
         // send response
         return $doReturn ? $errors : sendResponse(200, [
-            'success' => 'Employee\'s federal tax is successfully updated.'
+            'success' => 'Employee\'s bank account is successfully updated.'
         ]);
     }
 
@@ -3109,6 +3069,13 @@ class Gusto_payroll_model extends CI_Model
         //
         if ($response['onboarding_status'] != 'admin_onboarding_incomplete') {
             //
+            $this->db->where('employee_sid', $employeeId)->update(
+                'payroll_employees',
+                [
+                    'onboard_completed' => 1
+                ]
+            );
+            //
             $errors = ['success' => ['Employee onboarding already completed.']];
             //
             return $doReturn ? $errors : sendResponse(200, $errors);
@@ -3149,9 +3116,11 @@ class Gusto_payroll_model extends CI_Model
             }
             //
             $this->db->where('employee_sid', $employeeId)->update(
-                'payroll_employees', [
+                'payroll_employees',
+                [
                     'onboard_completed' => 1
-                ]);
+                ]
+            );
             $errors = [];
             $errors['success'] = ['All the required steps for employee onboarding are completed, and employee successfully onboard.'];
         }

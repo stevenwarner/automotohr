@@ -1041,6 +1041,7 @@ $(function EmployeeOnboard() {
 		o.accountType = $(".jsAccountType option:selected").val();
 		o.bankName = $(".jsBankName").val().trim();
 		o.employeeId = selectedEmployeeId;
+		o.companyId = companyId;
 		o.bankId = selectedBankId;
 		// Validation
 		if (!o.bankName) {
