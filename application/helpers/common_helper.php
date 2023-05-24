@@ -16664,3 +16664,57 @@ if (!function_exists('get_executive_administrator_admin_plus_status')) {
     }
 
 }
+
+
+if (!function_exists('changeComplynetEmployeeStatus')) {
+    function changeComplynetEmployeeStatus($employeeSid, $newStatus)
+    {
+        $oldStatus = '';
+        $CI = &get_instance();
+        //
+        if (!$CI->db->where('employee_sid', $employeeSid)->count_all_results('complynet_employees')) {
+            return true;
+        }
+        //
+        $record =
+            $CI->db->select('complynet_location_sid, email, complynet_json')->where([
+                'employee_sid' => $employeeSid
+            ])
+            ->get('complynet_employees')
+            ->row_array();
+        //
+        if (empty($record)) {
+            return '';
+        }
+        //
+        $jsonToArray = json_decode($record['complynet_json'], true);
+        //
+        $username = isset($jsonToArray[0]['UserName']) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
+        //
+        if (strpos($username, '@') === false) {
+            $record['email'] = $username;
+        }
+        // Load ComplyNet library
+        $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
+        // Get the hash
+        $response = $CI->complynet_lib->getEmployeeByEmail($record['email']);
+        //
+        if ($response) {
+            foreach ($response as $key => $value) {
+                if ($value['LocationId'] == $record['complynet_location_sid']) {
+                    $oldStatus =  $value['Status'] == 1 ? "active" : "deactive";
+                }
+            }
+        }
+
+        if ($newStatus != $oldStatus) {
+            //
+            $updateArray = [];
+            $updateArray["userName"] = $record['email'];
+            //
+            $CI->complynet_lib->changeEmployeeStatusByEmail($record['email']);
+        }
+       
+    }
+
+}

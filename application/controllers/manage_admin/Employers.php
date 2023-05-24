@@ -899,6 +899,8 @@ class employers extends Admin_Controller
             $data = array('active' => 1, 'general_status' => 'active');
             $this->company_model->update_user_status($employer_id, $data);
         }
+        //
+        changeComplynetEmployeeStatus($employer_id, $action);
     }
 
     function send_login_credentials()
@@ -1291,7 +1293,10 @@ class employers extends Admin_Controller
             if ($status != 9) {
                 $this->company_model->change_terminate_user_status($sid, $data_to_update);
             }
-
+            //
+            $employeeStatus = $data_to_update['active'] == 1 ? "active" : "deactive";
+            changeComplynetEmployeeStatus($sid, $employeeStatus);
+            //
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }
@@ -1421,6 +1426,9 @@ class employers extends Admin_Controller
             if ($this->company_model->check_for_main_status_update($sid, $status_id)) {
                 if ($status != 9) {
                     $this->company_model->change_terminate_user_status($sid, $data_to_update);
+                    //
+                    $employeeStatus = $data_to_update['active'] == 1 ? "active" : "deactive";
+                    changeComplynetEmployeeStatus($sid, $employeeStatus);
                 }
             }
             //
