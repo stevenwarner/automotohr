@@ -2574,7 +2574,7 @@ class Gusto_payroll_model extends CI_Model
         $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
         // insert it
         $this->db
-            ->update('payroll_employee_bank_accounts', $insertArray);
+            ->insert('payroll_employee_bank_accounts', $insertArray);
         // send response
         return $doReturn ? $errors : sendResponse(200, [
             'success' => 'Employee\'s bank account is successfully updated.'
