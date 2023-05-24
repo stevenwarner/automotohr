@@ -2755,7 +2755,7 @@ if (!function_exists('getComplyNetLink')) {
         //
         $username = isset($jsonToArray[0]['UserName']) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
         //
-        if (strpos($username, '@') !== false) {
+        if (strpos($username, '@') === false) {
             $record['email'] = $username;
         }
         // Load ComplyNet library
