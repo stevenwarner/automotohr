@@ -1289,6 +1289,8 @@ class employers extends Admin_Controller
                 $data_transfer_log_update['to_company_sid'] = $company_detail[0]['sid'];;
                 $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
                 $this->company_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+                //
+                // ToDo if transfer then complynet status update pending
             }
             if ($status != 9) {
                 $this->company_model->change_terminate_user_status($sid, $data_to_update);
@@ -1419,6 +1421,8 @@ class employers extends Admin_Controller
 
                 //
                 $this->db->where('sid', $sid)->update('users', ['transfer_date' => $data_transfer_log_update['employee_copy_date']]);
+                //
+                // ToDo if transfer then complynet status update pending
             }
 
 

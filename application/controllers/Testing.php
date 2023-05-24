@@ -32,8 +32,4 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
-    function changeStatus () {
-        changeComplynetEmployeeStatus(17127, 'active');
-    }
-
 }

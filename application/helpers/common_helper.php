@@ -16669,11 +16669,18 @@ if (!function_exists('get_executive_administrator_admin_plus_status')) {
 if (!function_exists('changeComplynetEmployeeStatus')) {
     function changeComplynetEmployeeStatus($employeeSid, $newStatus)
     {
+        $res = [];
+        $res['Status'] = FALSE;
+        $res['Response'] = '';
+        $res['Code'] = '200';
+        //
         $oldStatus = '';
+        //
         $CI = &get_instance();
         //
         if (!$CI->db->where('employee_sid', $employeeSid)->count_all_results('complynet_employees')) {
-            return true;
+            $res['Response'] = 'Employee is not on complynet.';
+            return $res;
         }
         //
         $record =
@@ -16684,7 +16691,8 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
             ->row_array();
         //
         if (empty($record)) {
-            return '';
+            $res['Response'] = 'Employee data not found in system.';
+            return $res;
         }
         //
         $jsonToArray = json_decode($record['complynet_json'], true);
@@ -16713,6 +16721,11 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
             $updateArray["userName"] = $record['email'];
             //
             $CI->complynet_lib->changeEmployeeStatusByEmail($record['email']);
+            //
+            $res['Status'] = TRUE;
+            $res['Response'] = 'Employee status update successfully.';
+            return $res;
+
         }
        
     }
