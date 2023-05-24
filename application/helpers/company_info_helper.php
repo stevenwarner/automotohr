@@ -2753,7 +2753,7 @@ if (!function_exists('getComplyNetLink')) {
         //
         $jsonToArray = json_decode($record['complynet_json'], true);
         //
-        $username = isset($jsonToArray[0]) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
+        $username = isset($jsonToArray[0]['UserName']) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
         //
         if (strpos($username, '@') !== false) {
             $record['email'] = $username;
