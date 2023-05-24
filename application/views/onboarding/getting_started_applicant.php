@@ -55,33 +55,43 @@
             <div class="col-lg-10">
                 <div class="full-width applicant-bio">
                     <div class="joining-date">
-                        <h2 class="text-blue">Your first day is</h2>
-                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 calendar-icon text-right">
-                            <?php
-                            //
-                            if (empty($locations) && !empty($companyDefaultAddress)) {
-                                $companyDefaultAddress['location_address'] = ltrim($companyDefaultAddress['location_address'], ', ');
-                                $locations[] = $companyDefaultAddress;
-                            }
-                            $address = '';
-                            if (!empty($locations)) {
-                                $address = $locations[0]['location_address'];
-                                $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
-                                $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($address) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
-                                $show_map = '<p><b>Address:</b> ' . $address . ' </p>';
-                                $show_map .= '<p> ' . $map_anchor . ' </p>';
-                                echo $show_map;
-                            } elseif (!empty($company_info['Location_Address'])) {
-                                $address = $company_info['Location_Address'];
-                                $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
-                                $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($address) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
-                                $show_map = '<p><b>Address:</b> ' . $address . ' </p>';
-                                $show_map .= '<p> ' . $map_anchor . ' </p>';
-                                echo $show_map;
-                            }
-                            ?>
+                        <h2 class="text-blue">Your first day is <?php if (!empty($joining_date)) { ?>
+                                <?php
+                                                                    $date = DateTime::createFromFormat('m/d/Y', $joining_date)->format('Y-m-d');
+                                                                    echo reset_datetime(array('datetime' => $date, '_this' => $this, 'new_zone' => 'PST'));
+                                ?>
 
-                            <!--                            <figure><i class="fa fa-calendar-check-o fa-5x"></i></figure>-->
+
+                            <?php } ?></h2>
+                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 calendar-icon text-right">
+                            <h2>
+                                <?php
+                                //
+                                if (empty($locations) && !empty($companyDefaultAddress)) {
+                                    $companyDefaultAddress['location_address'] = ltrim($companyDefaultAddress['location_address'], ', ');
+                                    $locations[] = $companyDefaultAddress;
+                                }
+                                $address = '';
+                                if (!empty($locations)) {
+                                    $address = $locations[0]['location_address'];
+                                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
+                                    $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($address) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
+                                    $show_map = '<p><b>Address:</b> ' . $address . ' </p>';
+                                    $show_map .= '<p> ' . $map_anchor . ' </p>';
+                                    echo $show_map;
+                                } elseif (!empty($company_info['Location_Address'])) {
+                                    $address = $company_info['Location_Address'];
+                                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
+                                    $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($address) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
+                                    $show_map = '<p><b>Address:</b> ' . $address . ' </p>';
+                                    $show_map .= '<p> ' . $map_anchor . ' </p>';
+                                    echo $show_map;
+                                }
+                                ?>
+                                </h2>
+
+
+                            <!-- <figure><i class="fa fa-calendar-check-o fa-5x"></i></figure>-->
                         </div>
                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 text-left">
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 text-right">
@@ -89,17 +99,6 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 text-left">
                                 <div class="text">
-                                    <?php if (!empty($joining_date)) { ?>
-                                        <strong>
-                                            <i class="fa fa-calendar"></i>
-                                            <?php
-                                            $date = DateTime::createFromFormat('m/d/Y', $joining_date)->format('Y-m-d');
-                                            echo reset_datetime(array('datetime' => $date, '_this' => $this, 'new_zone' => 'PST'));
-                                            ?>
-                                        </strong>
-
-                                    <?php } ?>
-
                                     <?php if (!empty($timings)) { ?>
                                         <div class="text">
                                             <i class="fa fa-clock-o"></i> <b><?php echo $timings[0]['title']; ?></b>, <?php echo DateTime::createFromFormat('H:i:s', $timings[0]['start_time'])->format('h:i a') . ' - ' . DateTime::createFromFormat('H:i:s', $timings[0]['end_time'])->format('h:i a'); ?>
@@ -108,7 +107,7 @@
                                     <?php if (!empty($locations)) { ?>
                                         <div class="text">
                                             <i class="fa fa-map-marker"></i>
-                                            <b><?php echo $locations[0]['location_title']; ?></b>, <?php echo $locations[0]['location_address']; ?>
+                                            <b><?php echo $locations[0]['location_title']; ?></b>, <b><?php echo $locations[0]['location_address']; ?></b>
                                         </div>
                                         <?php $phone = isset($locations[0]['location_telephone']) && !empty($locations[0]['location_telephone']) ? $locations[0]['location_telephone'] : '' ?>
                                         <div class="text">
@@ -122,7 +121,7 @@
                                     <?php               } else { ?>
                                         <div class="text">
                                             <i class="fa fa-fax"></i>
-                                            <?php echo $company_info['Location_Address']; ?>
+                                          <b>  <?php echo $company_info['Location_Address']; ?></b>
                                         </div>
                                     <?php               } ?>
                                 </div>
