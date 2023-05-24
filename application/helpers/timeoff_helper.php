@@ -399,14 +399,15 @@ if (!function_exists('getEmployeeAccrual')) {
                 $accruals['plans']
             );
         }
-        // 
+        // today's date
         $currentDate = getSystemDate('Y-m-d');
+        // the latest date
         $effectedDate2 = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
-        //
+        // change the year to current
         $newEffectiveDateWithCurrentYear = preg_replace('/[0-9]{4}/i', date('Y'), $effectedDate2);
-        $policyNextResetDate = date($newEffectiveDateWithCurrentYear, strtotime('+1 year'));
-        //
-
+        // change the year to next
+        $policyNextResetDate = date(DB_DATE, strtotime("$newEffectiveDateWithCurrentYear +1 year"));
+        // get employee manual balance
         $balanceInMinutes = getEmployeeManualBalance(
             $employeeId,
             $policyId,
@@ -983,17 +984,21 @@ if (!function_exists('getEmployeeManualBalance')) {
         string $policyNextResetDate,
         int $balance = 0
     ) {
-        // set default 
+        // set default balance to incoming balance
         $balanceToReturn = $balance;
-              
+        // get current date
+        $currentDate = getSystemDate('Y-m-d');
+        // check if date is for production
+        if ($currentDate < '2023-05-24') {
+            return $balanceToReturn;
+        }
+        // reset the value to 0
+        $balanceToReturn = 0;
         // get CI instance
         $CI = &get_instance();
-
-        // Get Companysid
-        $companyId = getEmployeeUserParent_sid($employeeId);
-
-        $currentDate = getSystemDate('Y-m-d');
-
+        // Get Company id
+        $companyId = getUserColumnByWhere(['sid' => $employeeId], ['parent_sid'])['parent_sid'];
+        //
         $CI->db
             ->select('
             timeoff_balances.is_added,
@@ -1008,22 +1013,17 @@ if (!function_exists('getEmployeeManualBalance')) {
         $CI->db->where('timeoff_balances.effective_at >=', $policyImplementDate);
         $CI->db->where('timeoff_balances.effective_at <=', $policyNextResetDate);
         $CI->db->where('timeoff_balances.effective_at <=', $currentDate); // current date
-
         $balances =  $CI->db->get('timeoff_balances')->result_array();
-        _e($CI->db->last_query(), true);
-        _e($balances, true, true);
-        //
+        // return 0 when no balance is found
         if (empty($balances)) {
-            return 0;
+            return $balanceToReturn;
         }
-        //
-        $balanceToReturn = 0;
-        //
+        // loop through the balances
         foreach ($balances as $rowBalance) {
-            //
-            if ($rowBalance['is_added'] == '1') $balanceToReturn += $rowBalance['added_time'];
-            else $balanceToReturn -= $rowBalance['added_time'];
+            if ($rowBalance['is_added'] == '1') $balanceToReturn += $rowBalance['added_time']; // on add
+            else $balanceToReturn -= $rowBalance['added_time']; // on subtract
         }
+        // return the # of minutes
         return $balanceToReturn;
     }
 }

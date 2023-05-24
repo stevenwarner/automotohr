@@ -404,3 +404,28 @@ if (!function_exists('isPayrollAuthorizePerson')) {
             ->count_all_results('payroll_company_admin');
     }
 }
+
+if (!function_exists('getUserColumnByWhere')) {
+    /**
+     * Get user data from where
+     * 
+     * @param array $whereArray
+     * @param array $columns Optional Default is '[*]'
+     * @return array
+     */
+    function getUserColumnByWhere(
+        array $whereArray,
+        array $columns = ['*']
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        // prepare query
+        $CI->db->select($columns);
+        $CI->db->where($whereArray);
+        $CI->db->limit(1);
+        // execute the query
+        $result = $CI->db->get('users')->row_array();
+        // send back result
+        return $result;
+    }
+}
