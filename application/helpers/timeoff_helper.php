@@ -399,9 +399,23 @@ if (!function_exists('getEmployeeAccrual')) {
                 $accruals['plans']
             );
         }
-        // 
+        // today's date
         $currentDate = getSystemDate('Y-m-d');
+        // the latest date
         $effectedDate2 = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
+        // change the year to current
+        $newEffectiveDateWithCurrentYear = preg_replace('/[0-9]{4}/i', date('Y'), $effectedDate2);
+        // change the year to next
+        $policyNextResetDate = date(DB_DATE, strtotime("$newEffectiveDateWithCurrentYear +1 year"));
+        // get employee manual balance
+        $balanceInMinutes = getEmployeeManualBalance(
+            $employeeId,
+            $policyId,
+            $newEffectiveDateWithCurrentYear,
+            $policyNextResetDate,
+            $balanceInMinutes
+        );
+
         //
         $consumeDate = '';
         //
@@ -956,6 +970,7 @@ if (!function_exists('getEmployeeManualBalance')) {
      * Get employee manual balance for current cycle
      * 
      * @param int    $employeeId
+     * @param int    $policyId
      * @param string $policyImplementDate
      * @param string $policyNextResetDate
      * @param int    $balance Optional
@@ -964,53 +979,51 @@ if (!function_exists('getEmployeeManualBalance')) {
      */
     function getEmployeeManualBalance(
         int $employeeId,
+        int $policyId,
         string $policyImplementDate,
         string $policyNextResetDate,
         int $balance = 0
     ) {
-        // set default 
+        // set default balance to incoming balance
         $balanceToReturn = $balance;
-        //
-        if ($policyImplementDate < '2023-05-20') {
+        // get current date
+        $currentDate = getSystemDate('Y-m-d');
+        // check if date is for production
+        if ($currentDate < '2023-05-24') {
             return $balanceToReturn;
         }
+        // reset the value to 0
+        $balanceToReturn = 0;
         // get CI instance
         $CI = &get_instance();
+        // Get Company id
+        $companyId = getUserColumnByWhere(['sid' => $employeeId], ['parent_sid'])['parent_sid'];
         //
-        $balances =
-            $this->db
+        $CI->db
             ->select('
-            timeoff_balances.policy_sid,
-            timeoff_balances.user_sid,
             timeoff_balances.is_added,
+            effective_at,
             timeoff_balances.added_time
-        ')
-            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
-            ->where('timeoff_policies.company_sid', $employeeId)
-            ->where('timeoff_policies.is_archived', 0)
-            ->where('timeoff_balances.effective_at >=', $policyImplementDate, FALSE)
-            ->where('timeoff_balances.effective_at <=', $policyNextResetDate, FALSE)
-            ->get('timeoff_balances')
-            ->result_array();
-        //
+        ');
+        $CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner');
+        $CI->db->where('timeoff_policies.company_sid', $companyId);
+        $CI->db->where('timeoff_balances.user_sid', $employeeId);
+        $CI->db->where('timeoff_policies.sid', $policyId);
+        $CI->db->where('timeoff_policies.is_archived', 0);
+        $CI->db->where('timeoff_balances.effective_at >=', $policyImplementDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $policyNextResetDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $currentDate); // current date
+        $balances =  $CI->db->get('timeoff_balances')->result_array();
+        // return 0 when no balance is found
         if (empty($balances)) {
-            return 0;
+            return $balanceToReturn;
         }
-        //
-        $t = [];
-        //
-        foreach ($balances as $balance) {
-            //
-            $bb = $balance['user_sid'] . '-' . $balance['policy_sid'];
-            //
-            if (!isset($t[$bb])) $t[$bb] = 0;
-            //
-            if ($balance['is_added'] == '1') $t[$bb] += $balance['added_time'];
-            else $t[$bb] -= $balance['added_time'];
+        // loop through the balances
+        foreach ($balances as $rowBalance) {
+            if ($rowBalance['is_added'] == '1') $balanceToReturn += $rowBalance['added_time']; // on add
+            else $balanceToReturn -= $rowBalance['added_time']; // on subtract
         }
-        //
-        return $t;
-        //
+        // return the # of minutes
         return $balanceToReturn;
     }
 }
