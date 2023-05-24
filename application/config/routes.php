@@ -1751,3 +1751,7 @@ $route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProf
 
 //
 $route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';
+
+
+//
+$route['manage_admin/copy_employees/get_policy_popup/(:any)/(:any)'] = 'manage_admin/Copy_employees/get_policy_popup/$1/$2';

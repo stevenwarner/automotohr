@@ -1087,4 +1087,30 @@ class Copy_employees_model extends CI_Model
     {
         $this->db->insert('timeoff_transfer_log', $insertArray);
     }
+
+
+
+    //
+
+
+    public function getCompanyPolicies($companySid)
+    {
+        $this->db->select('sid,title');
+        $this->db->where('company_sid', $companySid);
+        $this->db->from('timeoff_policies');
+        $record_obj = $this->db->get();
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->result_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result;
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
+    }
 }

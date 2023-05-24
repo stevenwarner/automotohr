@@ -1,3 +1,8 @@
+<style>
+    .modal-backdrop {
+        z-index: -1 !important;
+    }
+</style>
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php
 $active_companies = '';
@@ -66,7 +71,7 @@ foreach ($companies as $company)
                                                     <label>Employees Type</label>
                                                     <div class="hr-fields-wrap">
                                                         <select id="js-employee-type" style="width: 100%;">
-                                                            
+
                                                             <option value="all" selected="selected">All</option>
                                                             <option value="active">Active</option>
                                                             <option value="leave">Leave</option>
@@ -123,7 +128,7 @@ foreach ($companies as $company)
                                                             <input type="checkbox" id="jsMoveTimeoff" />
                                                             <div class="control__indicator"></div>
                                                         </label>
-                                                        
+
                                                     </div>
                                                 </li>
 
@@ -170,6 +175,32 @@ foreach ($companies as $company)
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div id="jsModalContainer">
+        <div class="modal fade" id="jsPolicyModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">header</h4>
+                    </div>
+                    <div class="modal-body" id="jsPolicySync">
+                        dffsf
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success jsSavePolicy">Save</button>
                     </div>
                 </div>
             </div>
@@ -503,7 +534,15 @@ foreach ($companies as $company)
                     copy_employee_count = selected_employees.length;
                     loader();
                     $('#js-loader-text').html('Please wait, we are copying employee');
-                    copy_employees();
+
+                    //
+                    if ($('#jsMoveTimeoff').is(':checked')) {
+                        openPolicyPopup();
+
+                    }
+
+                    // copy_employees();
+
 
                 }, function() {
                     alertify.error('Cancel')
@@ -616,5 +655,31 @@ foreach ($companies as $company)
             row += emp['job_title'] ? ' [' + emp['job_title'] + ']' : '';
             //
             return row;
+        }
+
+
+        function openPolicyPopup() {
+
+            event.preventDefault();
+            //
+            var modal = $('#jsModalContainer').html();
+            $('#jsPolicyModal').modal();
+
+            var fromCompanyId = $('#js-from-company').val();
+            var toCompanyId = $('#js-to-company').val();
+
+            var myurl = "<?php echo base_url('manage_admin/copy_employees/get_policy_popup') ?>" + "/" + fromCompanyId + "/" + toCompanyId;
+            $.ajax({
+                type: "GET",
+                url: myurl,
+                async: false,
+                success: function(data) {
+                    $("#jsPolicySync").html(data.view);
+                },
+                error: function(data) {
+
+                }
+            });
+
         }
     </script>

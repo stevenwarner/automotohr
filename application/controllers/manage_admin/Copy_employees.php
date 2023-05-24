@@ -69,7 +69,7 @@ class Copy_employees extends Admin_Controller
     }
 
     public function get_companies_employees($company_sid, $employee_type, $page, $to_company_sid, $employee_sortby, $employee_sort_orderby, $employee_keyword = '')
-    {die("here");
+    {
 
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'copy_employees');
@@ -1476,4 +1476,21 @@ class Copy_employees extends Admin_Controller
         echo 'employee copy successfully';
         die('stop');
     }
+
+function get_policy_popup($fromCompanySid,$toCompanySid){
+
+    //
+     $formCompanyPolicies = $this->copy_employees_model->getCompanyPolicies($fromCompanySid);
+     $toCompanyPolicies = $this->copy_employees_model->getCompanyPolicies($toCompanySid);
+
+    $view = $this->load->view('timeoff/popups/popup_policies', ['formCompanyPolicies' => $formCompanyPolicies,'toCompanyPolicies' => $toCompanyPolicies,'toCompanySid' => $toCompanySid,'fromCompanySid' => $fromCompanySid], true);
+        //  
+        return SendResponse(200, ['view' => $view]);
+
+
+
+}
+
+
+
 }
