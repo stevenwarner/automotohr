@@ -29,24 +29,25 @@ class Courses extends Admin_Controller {
         // ** Check Security Permissions Checks - End ** //
         
         $this->data['page_title'] = 'Courses';
-        $companies = $this->couses_model->get_all_companies();
+        $companies = $this->couses_model->getAllCompanies();
+        $courses = $this->couses_model->getAllCourses();
         $this->data['standard_companies'] = $companies;
         //
-        $courses = array();
-        $courses[0]['sid'] = 1; 
-        $courses[0]['title'] = "Work Place Eathic"; 
-        $courses[0]['type'] = "Scorm"; 
-        $courses[0]['version'] = "1.2"; 
-        $courses[0]['status'] = 1; 
-        $courses[1]['sid'] = 2; 
-        $courses[1]['title'] = "Time off Policies";
-        $courses[1]['type'] = "Scorm"; 
-        $courses[1]['version'] = "2004 4th Edition"; 
-        $courses[1]['status'] = 1;
-        $courses[2]['sid'] = 3; 
-        $courses[2]['title'] = "Basic Work Enviourment"; 
-        $courses[2]['type'] = "Manual";  
-        $courses[2]['status'] = 0;
+        // $courses = array();
+        // $courses[0]['sid'] = 1; 
+        // $courses[0]['title'] = "Work Place Eathic"; 
+        // $courses[0]['type'] = "Scorm"; 
+        // $courses[0]['version'] = "1.2"; 
+        // $courses[0]['status'] = 1; 
+        // $courses[1]['sid'] = 2; 
+        // $courses[1]['title'] = "Time off Policies";
+        // $courses[1]['type'] = "Scorm"; 
+        // $courses[1]['version'] = "2004 4th Edition"; 
+        // $courses[1]['status'] = 1;
+        // $courses[2]['sid'] = 3; 
+        // $courses[2]['title'] = "Basic Work Enviourment"; 
+        // $courses[2]['type'] = "Manual";  
+        // $courses[2]['status'] = 0;
         $this->data['courses'] = $courses;
         //
         $this->render('manage_admin/courses/index');
@@ -258,11 +259,6 @@ class Courses extends Admin_Controller {
 
             case 'upload_zip':
                 //
-                $newFileName ='6kqje_2023_04_24_how-to-get-started-working-from-home-scorm12';
-                $this->res['path'] = $newFileName;
-                $this->res['Code'] = "SUCCESS";
-                $this->res['Status'] = true;
-                $this->resp();
                 $random = generateRandomString(5);
                 $timestemp = date('Y_m_d');
                 $target_file_name = basename($_FILES["upload_zip"]["name"]);
@@ -306,7 +302,7 @@ class Courses extends Admin_Controller {
                             in_array($courseContent['version'], $this->scorm_versions)
                         ) {
                             //
-                            $this->res['Response'] = $newFileName;
+                            $this->res['Path'] = $newFileName;
                             $this->res['Code'] = "SUCCESS";
                             $this->res['Status'] = true;
                             $this->resp();

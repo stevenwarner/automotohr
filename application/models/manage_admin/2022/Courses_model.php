@@ -8,7 +8,7 @@ class Courses_model extends CI_Model {
 
     // FUNCTIONS related to bulk email
     
-    function get_all_companies() {
+    function getAllCompanies() {
         $this->db->select('sid, CompanyName');
         $this->db->where('parent_sid', 0);
         $this->db->where('terminated_status', 0);
@@ -16,6 +16,12 @@ class Courses_model extends CI_Model {
         $this->db->where('is_paid', 1);
         $this->db->order_by('sid', 'DESC');
         return $this->db->get('users')->result_array();
+    }
+
+    function getAllCourses() {
+        $this->db->select('*');
+        $this->db->order_by('title', 'ASC');
+        return $this->db->get('lms_default_courses')->result_array();
     }
 
     public function GetAllActiveTemplates() {

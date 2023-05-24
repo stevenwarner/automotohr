@@ -37,7 +37,7 @@ $(function () {
                 }
                 //
                 if (resp.Status === true) {
-                    courseDetails.upoadFile = resp.path;
+                    courseDetails.upoadFile = resp.Path;
                     saveCourseDetails(courseDetails);
                 }
             },
@@ -74,7 +74,10 @@ $(function () {
                 if (resp.Status === true) {
                     alertify.alert(
                         "SUCCESS!",
-                        resp.Response
+                        resp.Response,
+                        function () {
+                            window.location.href = baseURI+'manage_admin/courses';
+                        }
                     );
                     //
                     $('.jsLMSLoader').hide();
