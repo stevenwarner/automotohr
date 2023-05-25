@@ -234,7 +234,7 @@ class Companies extends Admin_Controller
         $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
         $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
         $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-        $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+        $this->form_validation->set_rules('PhoneNumber', 'Primary Number', 'trim|xss_clean');
         $this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
         $this->form_validation->set_rules('WebSite', 'Website', 'trim|xss_clean|valid_url');
         $this->form_validation->set_rules('accounts_contact_person', 'Accounts Contact Person', 'trim|xss_clean|alpha_numeric_spaces');
@@ -685,9 +685,10 @@ class Companies extends Admin_Controller
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-        $name = $name == null ? 'all' : urldecode($name);
+        $name = $name == null ? 'all' : str_replace('_', ' ', urldecode($name));
         $email = $email == null ? 'all' : urldecode($email);
         $this->data['administrators'] = $this->company_model->get_executive_administrators($name, $email);
+
         $this->data['page_title'] = 'Manage Company Executive Admins';
         $this->form_validation->set_rules('executive_admin_sid', 'executive_admin_sid', 'required|xss_clean|trim');
         $this->data['flag'] = true;
@@ -695,6 +696,31 @@ class Companies extends Admin_Controller
         if ($this->form_validation->run() == false) {
             $this->render('manage_admin/company/executive_admin/admin_listing');
         } else {
+
+            //
+            if ($this->input->post('checkit')) {
+                $selectedadmins = $this->input->post('checkit');
+                $action = $this->input->post('action');
+
+                $msg = $action == 1 ? 'Marked as Admin Plus' : ' Unmarked as Admin Plus';
+
+
+
+                if (!empty($selectedadmins)) {
+                    foreach ($selectedadmins as $adminsid) {
+                        $logged_in_sids = $this->company_model->get_executive_user_logged_in_sids($adminsid);
+
+                        if (!empty($logged_in_sids)) {
+                            $this->company_model->set_executive_access_level_plus($logged_in_sids, $action);
+                        }
+                    }
+                }
+                $this->session->set_flashdata('message', 'Employee are sucessfully ' . $msg);
+
+                redirect('manage_admin/companies/executive_administrators', 'refresh');
+            }
+
+
             $executive_admin_sid = $this->input->post('executive_admin_sid');
             $executive_admin_info = $this->company_model->get_administrator($executive_admin_sid);
             $session_array = array();
@@ -763,9 +789,15 @@ class Companies extends Admin_Controller
                 }
             }
 
+
             $this->data['standard_companies'] = $standard_companies;
             $this->data['corporate_companies'] = $corporate_companies;
             $this->data['access_companies'] = $access_companies;
+            $this->data['exec_admin_id'] = $exec_admin_id;
+
+            // print_r($standard_companies);
+            // die();
+
             $this->render('manage_admin/company/executive_admin/manage_executive_administrator');
         } else {
             $perform_action = $this->input->post('perform_action');
@@ -803,6 +835,22 @@ class Companies extends Admin_Controller
 
                     echo 'success';
                     break;
+                case 'mark_admin_plus':
+
+                    $company_sid = $this->input->post('company_sid');
+                    $executive_admin_sid = $this->input->post('executive_admin_sid');
+                    $this->company_model->set_executive_access_level_plus_single_company($executive_admin_sid, $company_sid, 'mark_admin_plus');
+                    echo 'success';
+                    break;
+
+                case 'unmark_admin_plus':
+
+                    $company_sid = $this->input->post('company_sid');
+                    $executive_admin_sid = $this->input->post('executive_admin_sid');
+                    $this->company_model->set_executive_access_level_plus_single_company($executive_admin_sid, $company_sid, 'unmark_admin_plus');
+                    echo 'success';
+                    break;
+
                 case 'configure_corporate_company_access':
                     $executive_admin_sid = $this->input->post('executive_admin_sid');
                     $company_sid = $this->input->post('company_sid');
@@ -1500,6 +1548,12 @@ class Companies extends Admin_Controller
                         $this->company_model->set_phone_pattern_module($company_sid, $this->input->post('phone_pattern_module', TRUE));
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
 
+                        break;
+                    case 'set_bulk_email_status':
+                        $company_sid = $this->input->post('company_sid');
+                        $bulk_email_status = $this->input->post('bulk_email_status');
+                        $this->company_model->set_bulk_email_status($company_sid, $bulk_email_status);
+                        redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
                         break;
                 }
             }
@@ -3152,6 +3206,11 @@ class Companies extends Admin_Controller
             $flow_info = CreateCompanyFlowLink($this->data['company_info']);
             //
             $onboarding_link = isset($flow_info['url']) ? $flow_info['url'] : '';
+            //
+            $this->data['PageScripts'] = [
+                'js/app_helper',
+                time() => 'gusto/js/company_onboard'
+            ];
         }
         //
         $this->data['company_status'] = $company_status;

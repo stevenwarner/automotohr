@@ -173,6 +173,9 @@ $route['export_time_off'] = 'Time_off/export';
 $route['timeoff/export'] = 'Time_off/export';
 $route['download_export_timeoff/(:num)'] = 'Time_off/download_export_timeoff/$1';
 
+// Time off policy history
+$route['timeoff/policy/(:num)/history']['get'] = 'Time_off/getPolicyHistory/$1';
+
 // Added on: 07-10-2019
 $route['pto/my/(:any)'] = 'Paid_time_off/my_pto/$1';
 // Added on: 12-09-2019
@@ -1000,6 +1003,12 @@ $route['resend_screening_questionnaire/(:any)/(:any)/(:any)/(:any)'] = 'resend_s
 $route['manage_admin/reports/invoice_item_usage/'] = 'manage_admin/reports/invoice_item_usage/index/';
 $route['manage_admin/reports/invoice_item_usage/(:any)/(:any)/(:any)'] = 'manage_admin/reports/invoice_item_usage/index/$1/$2/$3';
 $route['manage_admin/reports/invoice_item_usage/(:any)/(:any)/(:any)/(:num)'] = 'manage_admin/reports/invoice_item_usage/index/$1/$2/$3/$4';
+//Manage Admin Complynet report
+$route['manage_admin/reports/complynet_report/'] = 'manage_admin/reports/complynet_report/index';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4/$5';
+$route['manage_admin/reports/complynet_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:num)/(:num)'] = 'manage_admin/reports/complynet_report/index/$1/$2/$3/$4/$5/$6/$7';
+$route['manage_admin/reports/complynet_report/getDetail/(:num)'] = 'manage_admin/reports/complynet_report/getDetail/$1';
 //Manage Admin Credit Card Statuses
 $route['manage_admin/cc_expires/(:any)'] = 'manage_admin/cc_expires/index/$1';
 $route['manage_admin/cc_expires/(:any)/(:any)'] = 'manage_admin/cc_expires/index/$1/$2';
@@ -1415,7 +1424,13 @@ $route["payroll/company"]['get'] = "payroll/Payroll/CompanyOnboard";
 $route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
 $route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
+$route["payroll/manage-admin"]['get'] = "payroll/Payroll/ManageAdmins";
+$route["payroll/service-terms"]['get'] = "payroll/Payroll/ServiceTerms";
+$route["payroll/settings"]['get'] = "payroll/Payroll/Settings";
 $route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
+$route["payroll/my_payroll_documents"]['get'] = "payroll/Payroll/MyPayrollDocuments";
+$route["payroll/my_document/(:num)"]['get'] = "payroll/Payroll/MyDocument/$1";
+$route["payroll/my_document/(:num)"]['post'] = "payroll/Payroll/MyDocument/$1";
 $route["payroll/history"]['get'] = "payroll/Payroll/PayrollHistory";
 $route["payroll/history/(:num)"]['get'] = "payroll/Payroll/PayrollSingleHistory/$1";
 //
@@ -1509,6 +1524,10 @@ $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
 /**
  * 
  */
+$route['payroll/(:num)/admin']['post'] = "payroll/Payroll_onboard/AddAdmin/$1";
+$route['payroll/(:num)/service']['post'] = "payroll/Payroll_onboard/AcceptServiceTerms/$1";
+$route['payroll/(:num)/settings']['post'] = "payroll/Payroll_onboard/Settings/$1";
+
 $route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/OnboardCompany/$1";
 $route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";
 $route['payroll/onboard_employee/(:num)/(:num)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeFromPayroll/$1/$2";
@@ -1700,6 +1719,21 @@ $route['compose_message_help'] = "Private_messages/compose_message_help";
 $route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
 $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';
 
+/**
+ * Payroll routes for Gusto
+ */
+// Admins
+$route['get_payroll_admins/(:num)']['get'] = 'gusto/Gusto_payroll/getAdmins/$1';
+$route['payroll/admin/(:num)']['post'] = 'gusto/Gusto_payroll/addAdmin/$1';
+// Signatories
+$route['payroll/signatories/(:num)']['get'] = 'gusto/Gusto_payroll/getSignatories/$1';
+$route['payroll/signatory/(:num)']['post'] = 'gusto/Gusto_payroll/addSignatory/$1';
+$route['payroll/signatories/(:num)/(:num)']['delete'] = 'gusto/Gusto_payroll/deleteSignatory/$1/$2';
+$route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory/$1';
+// Sync
+$route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
+$route['gusto/company/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishCompanyOnboard/$1';
+$route['gusto/employee/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishEmployeeOnboard/$1';
 
 //Job Title Templates
 $route['manage_admin/job_title_templates'] = 'manage_admin/job_title_templates/index';
@@ -1709,6 +1743,14 @@ $route['manage_admin/job_title_templates/edit/(:any)'] = 'manage_admin/job_title
 $route['manage_admin/job_title_groups'] = 'manage_admin/job_title_templates/index';
 $route['manage_admin/job_title_groups/add'] = 'manage_admin/job_title_templates/add_edit_group';
 $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit_group/$1';
+
+// Employee onboard
+$route['gusto/employee/profile']['post'] = 'gusto/Gusto_payroll/onboardEmployee/profile';
+$route['gusto/employee/compensation']['post'] = 'gusto/Gusto_payroll/onboardEmployee/compensation';
+$route['gusto/employee/home_address']['post'] = 'gusto/Gusto_payroll/onboardEmployee/home_address';
+$route['gusto/employee/federal_tax']['post'] = 'gusto/Gusto_payroll/onboardEmployee/federal_tax';
+$route['gusto/employee/payment_method']['post'] = 'gusto/Gusto_payroll/onboardEmployee/payment_method';
+$route['gusto/employee/bank_account_add']['post'] = 'gusto/Gusto_payroll/onboardEmployee/bank_account_add';
 
 
 /**
@@ -1723,3 +1765,13 @@ $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
 // Download document zip file
 $route['download_document_zip/(:any)']['get'] = 'Hr_documents_management/downloadDocumentZipFile/$1';
+
+// Redirect to ComplyNet
+$route['cn/redirect'] = 'Testing/redirectToComply';
+$route['cn/redirect/(:num)'] = 'Testing/redirectToComply/$1';
+
+//
+$route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProfileDataReport';
+
+//
+$route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';

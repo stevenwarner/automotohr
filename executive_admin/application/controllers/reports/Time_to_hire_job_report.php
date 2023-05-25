@@ -1,21 +1,26 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Time_to_hire_job_report extends CI_Controller {
+class Time_to_hire_job_report extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->library("pagination");
         $this->load->model('Reports_model');
     }
 
-    public function index($company_sid, $keyword = 'all') {
+    public function index($company_sid, $keyword = 'all')
+    {
         if ($this->session->userdata('executive_loggedin')) {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Applicants Report - Time To Hire';
             $data['company_sid'] = $company_sid;
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
 
             $keyword = urldecode($keyword);
 
@@ -61,6 +66,8 @@ class Time_to_hire_job_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name', getCompanyNameBySid($company_sid)]);
                     fputcsv($output, array('Job Title', 'Job Date', 'Applicants', 'Average Days To Hire'));
 
                     foreach ($data['jobs'] as $job) {
@@ -85,5 +92,4 @@ class Time_to_hire_job_report extends CI_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-
 }

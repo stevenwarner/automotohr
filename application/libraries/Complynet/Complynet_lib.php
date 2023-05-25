@@ -198,6 +198,25 @@ class Complynet_lib
         );
     }
 
+    /**
+     * Change user status
+     *
+     * @param array $upd
+     * @return array
+     */
+    public function changeEmployeeStatusByEmail(
+        array $upd
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'User',
+            'DELETE',
+            $upd
+        );
+    }
+
      /**
      * Get user hash
      *

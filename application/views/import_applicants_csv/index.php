@@ -21,7 +21,7 @@
                                     </div>
                                     <div class="panel-body">
                                         <pre>
-<b>First Name, Last Name, E-Mail, Contact Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Resume URL, Cover Letter URL, Job Title</b><br>
+<b>First Name, Last Name, E-Mail, Primary Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Resume URL, Cover Letter URL, Job Title</b><br>
 Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/jason_snow_resume.docx, https://yourwebsite.com/cover_letter/jason_snow_cover.docx, General Manager
 Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Manager Sales
 Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Technical Manager
@@ -122,7 +122,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             lastNameTitles = <?= json_encode(array('lastname', 'lname')); ?>,
             firstNameTitles = <?= json_encode(array('firstname', 'fname')); ?>,
             coverLetterTitles = <?= json_encode(array('coverletter', 'coverletterurl')); ?>,
-            phoneNumberTitles = <?= json_encode(array('phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber')); ?>,
+            phoneNumberTitles = <?= json_encode(array('phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber','primarynumber')); ?>,
             accessLevelTitles = <?= json_encode(array('accesslevel')); ?>,
             emailAddressTitles = <?= json_encode(array('email', 'emailaddress')); ?>,
             profilePictureTitles = <?= json_encode(array('profile', 'profilepicture', 'profilepictureurl')); ?>;

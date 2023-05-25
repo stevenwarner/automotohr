@@ -19,13 +19,15 @@ class Aws_lib
      */
     public function __construct()
     {
+        //
+        $awsCreds = getCreds('AHR')->AWS;
+        //
         $this->s3 = S3Client::factory(array(
-            //'region' => 'us-west-1',
-            'region' => 'us-east-1',
-            'version' => '2006-03-01',
+            'region' => $awsCreds->REGION,
+            'version' => $awsCreds->VERSION,
             'credentials' => array(
-                'key' => 'AKIAVVRKKAOC5IFJ5RZV',
-                'secret' => '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'
+                'key' => $awsCreds->CREDENTIALS->KEY,
+                'secret' => $awsCreds->CREDENTIALS->SECRET
             )
         ));
     }

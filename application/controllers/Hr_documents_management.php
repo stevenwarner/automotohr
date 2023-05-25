@@ -1845,6 +1845,25 @@ class Hr_documents_management extends Public_Controller
                             }
                         }
 
+                        if ($source == 'uploaded') {
+                            if ($fetch_data == 'original') {
+                                $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+                            } else if ($fetch_data == 'modified') {
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_record($user_type, $user_sid, $document_sid);
+                            } else {
+                                $history_sid = $this->input->post('history_sid');
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_history_record($user_type, $user_sid, $document_sid, $history_sid);
+                            }
+
+                            //
+                            echo $this->load->view(
+                                'hr_documents_management/uploaded_document_preview_partial',
+                                $document_info,
+                                true
+                            );
+                            return;
+                        }
+
                         if ($source == 'offer') {
                             $document_info = $this->hr_documents_management_model->get_offer_letter_details($company_sid, $document_sid);
                         }
@@ -3154,6 +3173,8 @@ class Hr_documents_management extends Public_Controller
                     $group_sid = $group['sid'];
                     $group_ids[] = $group_sid;
                     $group_documents = $this->hr_documents_management_model->get_all_documents_in_group($group_sid, 0, $pp_flag);
+                    $otherDocuments = getGroupOtherDocuments($group);
+                    $otherDocumentCount = count($otherDocuments);
 
                     if ($group_status) {
                         $active_groups[] = array(
@@ -3171,8 +3192,9 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
-                            'documents' => $group_documents
+                            'documents_count' => count($group_documents) + $otherDocumentCount,
+                            'documents' => $group_documents,
+                            'other_documents' => $otherDocuments
                         );
                     } else {
                         $in_active_groups[] = array(
@@ -3190,8 +3212,9 @@ class Hr_documents_management extends Public_Controller
                             'occupational_license' => $group['occupational_license'],
                             'emergency_contacts' => $group['emergency_contacts'],
                             'dependents' => $group['dependents'],
-                            'documents_count' => count($group_documents),
-                            'documents' => $group_documents
+                            'documents_count' => count($group_documents) + $otherDocumentCount,
+                            'documents' => $group_documents,
+                            'other_documents' => $otherDocuments
                         );
                     }
                 }
@@ -5253,7 +5276,7 @@ class Hr_documents_management extends Public_Controller
 
                     if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
                         if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
+                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($employer_sid, 'employee');
 
                             if (empty($is_eeoc_assign)) {
                                 $eeoc_data_to_insert = array();
@@ -12552,7 +12575,7 @@ class Hr_documents_management extends Public_Controller
             //
             shell_exec("cd $dir; zip -r $dt *");
             //
-            redirect('download_document_zip/'.$download_file, 'auto');
+            redirect('download_document_zip/' . $download_file, 'auto');
         }
 
         $this->zip->download($download_file);
@@ -15517,7 +15540,7 @@ class Hr_documents_management extends Public_Controller
     public function downloadDocumentZipFile($fileName)
     {
         //
-        $fileWithPath = ROOTPATH.'temp_files/employee_export/'.$fileName;
+        $fileWithPath = ROOTPATH . 'temp_files/employee_export/' . $fileName;
         // Download file
         header('Content-type: application/zip');
         header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');

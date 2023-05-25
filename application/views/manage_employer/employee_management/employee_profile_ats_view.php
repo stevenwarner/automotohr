@@ -127,7 +127,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <?php echo form_error('email'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Phone number:</label>
+                                                    <label>Primary number: <?php if (get_company_module_status($company_id = $session["company_detail"]["sid"], 'primary_number_required') == 1) { ?><span class="staric">*</span><?php } ?></label>
                                                     <?= $input_group_start; ?>
                                                     <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('PhoneNumber', $primary_phone_number); ?>" type="text" name="PhoneNumber">
                                                     <?= $input_group_end; ?>
@@ -167,6 +167,16 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
 
 
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Payment Method:</label>
+                                                    <select class="invoice-fields" name="payment_method">                                                                
+                                                        <option <?= $employer["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
+                                                        <option <?= $employer["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
+                                                    </select> 
+                                                    <?php echo form_error('payment_method'); ?>
+                                                </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
@@ -239,7 +249,6 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <label>Employment Type:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="employee-type" id="employee-type">
-                                                            <option value="0">Select Employment Type</option>
                                                             <?php if (!empty($employment_types)) { ?>
                                                                 <?php foreach ($employment_types as $key => $employment_type) { ?>
                                                                     <option value="<?= $key ?>" <?php if (strtolower($employer['employee_type']) == $key) {
@@ -529,6 +538,62 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             </script>
 
                                             <br />
+
+
+
+
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Union Member:</label>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="row">
+                                                <div class="col-sm-12">
+
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                        <label class="control control--radio " style="margin-left: -10px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $employer['union_member'] ? 'checked' : '' ?>>
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                        <label class="control control--radio " style="margin-left: -20px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $employer['union_member'] ? '' : 'checked' ?>>
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </div>
+
+                                                    <br>
+                                                    <br>
+                                                    <div class="row jsunionname">
+                                                        <div class="col-sm-12">
+                                                            <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $employer['union_name']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <script>
+                                                        <?php if ($employer['union_member'] == 0) { ?>
+                                                            $('.jsunionname').hide();
+                                                        <?php } ?>
+
+                                                        $('.unionmember').on('click', function() {
+                                                            var selected = $(this).val();
+                                                            if (selected == '1') {
+                                                                $('.jsunionname').show();
+
+                                                            } else {
+                                                                $('.jsunionname').hide();
+                                                            }
+                                                        });
+                                                    </script>
+
+                                                </div>
+                                            </div>
+
+
 
 
                                             <?php if ($timeOff == 'enable') { ?>
@@ -1604,6 +1669,14 @@ if (checkIfAppIsEnabled('timeoff')) {
                     min: 0,
                     max: 59
                 },
+
+                <?php if (get_company_module_status($session["company_detail"]["sid"], 'primary_number_required') == 1) { ?>
+                    PhoneNumber: {
+                        required: true
+                    },
+                <?php  } ?>
+
+
                 <?php if ($access_level_plus == 1 && IS_PTO_ENABLED == 1) { ?>
                     shift_hours: {
                         required: true,

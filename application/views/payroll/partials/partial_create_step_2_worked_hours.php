@@ -1,40 +1,3 @@
-<?php
-    // Taxes & Debits
-    $taxDebitArray = [
-        'taxes' => [],
-        'total' => 0,
-        'employee_total' => 0,
-        'employer_total' => 0
-    ];
-
-    //
-    foreach($Payroll['employee_compensations'] as $Row){
-        //
-        if(!isset($Row['taxes'])){
-            continue;
-        }
-        //
-        foreach($Row['taxes'] as $tax){
-            //
-            if(!isset($taxDebitArray['taxes'][$tax['name']])){
-                $taxDebitArray['taxes'][$tax['name']] = [
-                    'name' => $tax['name'],
-                    'employee_total' => 0,
-                    'employer_total' => 0,
-                ];
-            }
-            //
-            $type = $tax['employer'] ? 'employer_total' : 'employee_total';
-            //
-            $taxDebitArray['taxes'][$tax['name']][$type] += $tax['amount'];
-            //
-            $taxDebitArray[$type] += $tax['amount'];
-            $taxDebitArray['total'] += $tax['amount'];
-        }
-    }
-    //
-    asort($taxDebitArray['taxes']);
-?>
 <div class="row">
     <div class="col-sm-12">
         <!-- Taxes & Debits -->
@@ -68,7 +31,7 @@
                                 <tr>
                                     <th scope="col" class="vam ban csBG2">
                                         <h1 class="csF18 csB7 mt0 mb0 csW">
-                                            Employees (<?=count($Payroll['employee_compensations']);?>)
+                                            Employees (<?=count($payrollReceipt['employee_compensations']);?>)
                                         </h1>
                                     </th>
                                     <th scope="col" class="vam ban csBG2">
@@ -104,28 +67,38 @@
                                 </tr>
 
                                 <!--  -->
-                                <?php foreach($Payroll['employee_compensations'] as $row): ?>
+                                <?php foreach($payrollReceipt['employee_compensations'] as $row): ?>
                                     <?php 
                                         //
-                                        $emp = $PayrollEmployees[$row['employee_id']];
+                                        $compensationType = '';
+                                        $regularWorkedHours = 0.00;
+                                        $overtimeHours = 0.00;
+                                        $doubleOvertimeHours = 0.00;
                                         //
-                                        $regularWorkedHours = !empty($row['hourly_compensations']) ? $row['hourly_compensations']['regular-hours']['hours'] : WORK_WEEK_HOURS;
-                                        //
-                                        $overtimeHours = !empty($row['hourly_compensations']) && isset($row['hourly_compensations']['overtime']) ? $row['hourly_compensations']['overtime']['hours'] : 0.00;
-                                        //
-                                        $doubleOvertimeHours = !empty($row['hourly_compensations']) && isset($row['hourly_compensations']['double-overtime']) ? $row['hourly_compensations']['double-overtime']['hours'] : 0.00;
+                                        if (!empty($row['hourly_compensations'])) {
+                                            foreach ($row['hourly_compensations'] as $compensation) {
+                                                if ($compensation['name'] == 'Regular Hours') {
+                                                    $compensationType = $compensation['flsa_status'] == 'Nonexempt' ? "Paid by the hour" : "Salary/No overtime";
+                                                    $regularWorkedHours = $compensation['hours'];
+                                                } else if ($compensation['name'] == 'Overtime') {
+                                                    $overtimeHours = $compensation['hours'];
+                                                } else if ($compensation['name'] == 'Double overtime') {
+                                                    $doubleOvertimeHours = $compensation['hours'];
+                                                }
+                                            }
+                                        }
                                         //
                                         $totalHours = number_format(($regularWorkedHours + $overtimeHours + $doubleOvertimeHours), 2);
                                     ?>
                                     <tr>
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                               <?=($emp['last_name'].', '.$emp['first_name']);?>
+                                               <?=($row['employee_last_name'].', '.$row['employee_first_name']);?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                               <?=$emp['jobs'][0]['payment_unit'];?>
+                                               <?=$compensationType;?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban text-right">
@@ -167,7 +140,7 @@
                                 <tr>
                                     <th scope="col" class="vam ban csBG2">
                                         <h1 class="csF18 csB7 mt0 mb0 csW">
-                                            Employees (<?=count($Payroll['employee_compensations']);?>)
+                                            Employees (<?=count($payrollReceipt['employee_compensations']);?>)
                                         </h1>
                                     </th>
                                     <th scope="col" class="vam ban csBG2">
@@ -198,30 +171,38 @@
                                 </tr>
 
                                 <!--  -->
-                                <?php foreach($Payroll['employee_compensations'] as $row): ?>
+                                <?php foreach($payrollReceipt['employee_compensations'] as $row): ?>
                                     <?php 
                                         //
-                                        $emp = $PayrollEmployees[$row['employee_id']];
+                                        $compensationType = '';
+                                        $regularWorkedAmount = 0.00;
+                                        $overtimeAmount = 0.00;
+                                        $doubleOvertimeAmount = 0.00;
                                         //
-                                        $rateByHour = number_format((float)ResetRate($emp['jobs'][0]['rate'], $emp['jobs'][0]['payment_unit']), 2);
-                                        //
-                                        $regularWorkedAmount =  (!empty($row['hourly_compensations']) ? $row['hourly_compensations']['regular-hours']['hours'] : WORK_WEEK_HOURS) * $rateByHour;
-                                        //
-                                        $overtimeAmount = !empty($row['hourly_compensations']) ? $row['hourly_compensations']['overtime']['hours'] * $rateByHour *  $row['hourly_compensations']['overtime']['compensation_multiplier'] : 0;
-                                        //
-                                        $doubleOvertimeAmount = !empty($row['hourly_compensations']) ? $row['hourly_compensations']['double-overtime']['hours'] * $rateByHour *  $row['hourly_compensations']['double-overtime']['compensation_multiplier'] : 0;
+                                        if (!empty($row['hourly_compensations'])) {
+                                            foreach ($row['hourly_compensations'] as $compensation) {
+                                                if ($compensation['name'] == 'Regular Hours') {
+                                                    $compensationType = $compensation['flsa_status'] == 'Nonexempt' ? "Paid by the hour" : "Salary/No overtime";
+                                                    $regularWorkedAmount = $compensation['amount'];
+                                                } else if ($compensation['name'] == 'Overtime') {
+                                                    $overtimeAmount = $compensation['amount'];
+                                                } else if ($compensation['name'] == 'Double overtime') {
+                                                    $doubleOvertimeAmount = $compensation['amount'];
+                                                }
+                                            }
+                                        }
                                         //
                                         $totalAmount = number_format(($regularWorkedAmount + $overtimeAmount + $doubleOvertimeAmount), 2);
                                     ?>
                                     <tr>
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                               <?=($emp['last_name'].', '.$emp['first_name']);?>
+                                               <?=($row['employee_last_name'].', '.$row['employee_first_name']);?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                               <?=$emp['jobs'][0]['payment_unit'];?>
+                                               <?=$compensationType;?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban text-right">
@@ -260,7 +241,7 @@
                                 <tr>
                                     <th scope="col" class="vam ban csBG2">
                                         <h1 class="csF18 csB7 mt0 mb0 csW">
-                                            Employees (<?=count($Payroll['employee_compensations']);?>)
+                                            Employees (<?=count($payrollReceipt['employee_compensations']);?>)
                                         </h1>
                                     </th>
                                     <th scope="col" class="vam ban csBG2 text-right">
@@ -311,44 +292,51 @@
                                 ?>
 
                                 <!--  -->
-                                <?php foreach($Payroll['employee_compensations'] as $row): ?>
+                                <?php foreach($payrollReceipt['employee_compensations'] as $row): ?>
                                     <?php 
                                         //
-                                        $emp = $PayrollEmployees[$row['employee_id']];
+                                        $payment_method = $row['payment_method'];
+                                        $netPay = $row['net_pay'];
+                                        $grossPay = 0.00;
+                                        //
+                                        if (!empty($row['hourly_compensations'])) {
+                                            foreach ($row['hourly_compensations'] as $compensation) {
+                                                if ($compensation['name'] == 'Regular Hours') {
+                                                    $grossPay = $compensation['amount'];
+                                                }
+                                            }
+                                        }
                                         //
                                         $totalDeductions = 0.00;
                                         //
                                         if(!empty($row['deductions'])){
-                                            $totalDeductions = array_sum(array_column($row['deductions'], 'amount'));
+                                            $totalDeductions = $row['deductions'];
                                         }
                                         //
                                         $totalBenifits = 0.00;
                                         //
                                         if(!empty($row['benefits'])){
-                                            $totalBenifits = array_sum(array_column($row['benefits'], 'employee_deduction'));
+                                            $totalBenifits = $row['benefits'];
                                         }
                                         //
                                         $totalReimbursement = 0.00;
                                         //
-                                        if(!empty($row['fixed_compensations']['reimbursement'])){
-                                            $totalReimbursement = array_sum(array_column($row['fixed_compensations']['reimbursement'], 'amount'));
+                                        if(!empty($row['total_reimbursement'])){
+                                            $totalReimbursement = $row['total_reimbursement'];
                                         }
                                         //
                                         $totalTaxes = 0.00;
                                         //
-                                        if(!empty($row['taxes'])){
-                                            $totalTaxes = array_sum(array_column(array_filter($row['taxes'], function($tax){
-                                                if(!$tax['employer']) {
-                                                    return 1;
-                                                }
-                                            }), 'amount'));
+                                        if(!empty($row['total_tax'])){
+                                            $totalTaxes = $row['taxes'];
                                         }
                                         //
-                                        $totalPayment = ($row['gross_pay'] +
+                                        $totalPayment = ($grossPay +
                                          $totalReimbursement ) - ($totalDeductions + $totalTaxes + $totalBenifits);
                                         //
                                         $gSubTotal += $totalPayment;
-                                        $gTotalGrossPay += $row['gross_pay'];
+                                        $gTotalGrossPay += $grossPay;
+                                        $gTotalNetPay += $netPay;
                                         $gTotalDeductions += $totalDeductions;
                                         $gTotalReimbursements += $totalReimbursement;
                                         $gTotalEmployeeTaxes += $totalTaxes;
@@ -358,17 +346,17 @@
                                     <tr>
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                           <?=($emp['last_name'].', '.$emp['first_name']);?>
+                                           <?=($row['employee_last_name'].', '.$row['employee_first_name']);?>
                                            </h6>
                                        </td> 
                                        <td class="vam ban">
                                            <h6 class="csF16">
-                                               <?=$row['payment_method'];?>
+                                               <?=$payment_method;?>
                                            </h6>
                                        </td>
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               $<?=number_format($row['gross_pay'], 2);?>
+                                               $<?=number_format($grossPay, 2);?>
                                            </h6>
                                        </td>
                                        <td class="vam ban text-right">
@@ -393,7 +381,7 @@
                                         </td>
                                        <td class="vam ban text-right">
                                            <h6 class="csF16">
-                                               $<?=number_format($totalPayment, 2);?>
+                                               $<?=number_format($netPay, 2);?>
                                            </h6>
                                        </td>
                                     </tr>
@@ -433,7 +421,7 @@
                                     </td>
                                     <td class="vam ban text-right">
                                         <h6 class="csF16 csB7">
-                                            $<?=number_format($gSubTotal, 2);?>
+                                            $<?=number_format($gTotalNetPay, 2);?>
                                         </h6>
                                     </td>
                                 </tr>

@@ -35,7 +35,7 @@ class Manual_candidate extends Public_Controller
             $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
             $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
             $this->form_validation->set_rules('email', 'Email', 'trim|xss_clean|valid_email');
-            $this->form_validation->set_rules('phone_number', 'Phone Number', 'trim|xss_clean|callback_alpha_dash_space');
+            $this->form_validation->set_rules('phone_number', 'Primary Number', 'trim|xss_clean|callback_alpha_dash_space');
             $this->form_validation->set_rules('city ', 'City', 'trim|xss_clean');
             $this->form_validation->set_rules('address', 'Address', 'trim|xss_clean');
             $this->form_validation->set_rules('country', 'Country', 'trim|xss_clean');

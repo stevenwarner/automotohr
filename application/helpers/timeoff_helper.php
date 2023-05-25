@@ -399,15 +399,43 @@ if (!function_exists('getEmployeeAccrual')) {
                 $accruals['plans']
             );
         }
-        // Get consumed time
-        $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
-            $policyId,
+        // today's date
+        $currentDate = getSystemDate('Y-m-d');
+        // the latest date
+        $effectedDate2 = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
+        // change the year to current
+        $newEffectiveDateWithCurrentYear = preg_replace('/[0-9]{4}/i', date('Y'), $effectedDate2);
+        // change the year to next
+        $policyNextResetDate = date(DB_DATE, strtotime("$newEffectiveDateWithCurrentYear +1 year"));
+        // get employee manual balance
+        $balanceInMinutes = getEmployeeManualBalance(
             $employeeId,
-            $accruals['method'],
-            $accruals['frequency'],
-            $todayDate
+            $policyId,
+            $newEffectiveDateWithCurrentYear,
+            $policyNextResetDate,
+            $balanceInMinutes
         );
+
         //
+        $consumeDate = '';
+        //
+        if (strtotime($currentDate) >= strtotime($effectedDate)) {
+            $consumeDate = $effectedDate2;
+            $consumeDate = preg_replace('/[0-9]{4}/', date('Y', strtotime('now')), $consumeDate);
+            $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
+                $policyId,
+                $employeeId,
+                $consumeDate
+            );
+        } else {
+            $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
+                $policyId,
+                $employeeId,
+                $accruals['method'],
+                $accruals['frequency'],
+                $todayDate
+            );
+        }
         $monthsWorked = 1;
         $hasCarryOver = 0;
         //
@@ -510,7 +538,7 @@ if (!function_exists('getEmployeeAccrual')) {
         }
 
         $currentDate = getSystemDate('Y-m-d');
-        $effectedDate = checkDateFormate( $effectedDate ) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
+        $effectedDate = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
         //
         if (strtotime($currentDate) >= strtotime($effectedDate)) {
 
@@ -805,5 +833,197 @@ if (!function_exists('getButton')) {
             str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
         {{text}}             
         </a>');
+    }
+}
+
+
+/**
+ * Get time off request status
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $requestDate
+ * 
+ * @return String
+ */
+if (!function_exists('getTimeoffRequestStatus')) {
+    function getTimeoffRequestStatus($requestDate)
+    {
+        $date_now = date("Y-m-d");
+        $requestDate = date('Y-m-d', strtotime($requestDate));
+        //
+        if ($date_now < $requestDate) {
+            return '<strong class="text-warning">PENDING</strong>';
+        } else {
+            return '<strong class="text-success">CONSUMED</strong>';
+        }
+    }
+}
+
+/**
+ * Split time off request
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $request
+ * 
+ * @return Array
+ */
+if (!function_exists('splitTimeoffRequest')) {
+    function splitTimeoffRequest($request)
+    {
+        //
+        $response = [
+            'type' => "single",
+            'requestData' => $request
+        ];
+        //
+        $fromDate = date_create($request['request_from_date']);
+        $toDate = date_create($request['request_to_date']);
+        //
+        $requestInterval = $fromDate->diff($toDate);
+        $requestDays = $requestInterval->format('%d') + 1;
+        //
+        if ($requestDays > 1) {
+            $requestData = [];
+            $response['type'] = 'multiple';
+            $requestedTimePerDay = $request['requested_time'] / $requestDays;
+            //
+            for ($i = 0; $i < $requestDays; $i++) {
+                $requestDate = date("Y-m-d", strtotime($i . 'days', strtotime($request['request_from_date'])));
+                //
+                $split = $request;
+                $split['requested_time'] = $requestedTimePerDay;
+                $split['request_from_date'] = $requestDate;
+                $split['request_to_date'] = $requestDate;
+                $split['request_status'] = getTimeoffRequestStatus($requestDate);
+                //
+                $requestData[] = $split;
+            }
+
+            $response['requestData'] = $requestData;
+        } else {
+            $response['requestData']['request_status'] = getTimeoffRequestStatus($request['request_from_date']);
+        }
+        //
+        return $response;
+    }
+}
+
+/**
+ * Split time off request
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $request
+ * @param Array  $string
+ * 
+ * @return string
+ */
+if (!function_exists('generateTimeoffRequestSlot')) {
+    function generateTimeoffRequestSlot($request, $type)
+    {
+        $consumed_time = $request['consumed_time'];
+        //
+        if ($type == 'multiple') {
+            $hours = floor($request['requested_time'] / 60);
+
+            if ($hours > 1) {
+                $consumed_time = $hours . ' Hours';
+            } else {
+                $consumed_time = $hours . ' Hour';
+            }
+        }
+        //
+        $rowColor =  str_replace('CONSUMED', '', $request['request_status']) != $request['request_status'] ? 'background-color:  #f2dede !important;' : '';
+        //
+        $html =  '';
+        $html .= '<tr style="' . $rowColor . '">';
+        $html .= '  <td>' . (ucwords($request['first_name'] . ' ' . $request['last_name'])) . ' <br /> ' . (remakeEmployeeName($request, false)) . ' <br /> ' . (!empty($request['employee_number']) ? $request['employee_number'] : $request['employeeId']) . '</td>';
+        $html .= '  <td>' . ($request['title']) . '</td>';
+        $html .= '  <td>' . ($consumed_time) . '</td>';
+        $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y')) . '</td>';
+        $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('m/d/Y')) . '</td>';
+        //
+        $status = $request['status'];
+        //
+        if ($status == 'approved') {
+            $html .= '<td><strong class="text-success">APPROVED</strong> (' . $request['request_status'] . ')</td>';
+        } else if ($status == 'rejected') {
+            $html .= '<td><strong class="text-danger">REJECTED</strong> (<strong class="text-warning">PENDING</strong>)</td>';
+        } else if ($status == 'pending') {
+            $html .= '<td><strong class="text-warning">PENDING</strong> (<strong class="text-warning">PENDING</strong>)</td>';
+        }
+        $html .= '</tr>';
+        //
+        return $html;
+    }
+}
+
+if (!function_exists('getEmployeeManualBalance')) {
+    /**
+     * Get employee balance
+     * 
+     * Get employee manual balance for current cycle
+     * 
+     * @param int    $employeeId
+     * @param int    $policyId
+     * @param string $policyImplementDate
+     * @param string $policyNextResetDate
+     * @param int    $balance Optional
+     * 
+     * @return int
+     */
+    function getEmployeeManualBalance(
+        int $employeeId,
+        int $policyId,
+        string $policyImplementDate,
+        string $policyNextResetDate,
+        int $balance = 0
+    ) {
+        // set default balance to incoming balance
+        $balanceToReturn = $balance;
+        // get current date
+        $currentDate = getSystemDate('Y-m-d');
+        // check if date is for production
+        if ($currentDate < '2023-05-24') {
+            return $balanceToReturn;
+        }
+        // reset the value to 0
+        $balanceToReturn = 0;
+        // get CI instance
+        $CI = &get_instance();
+        // Get Company id
+        $companyId = getUserColumnByWhere(['sid' => $employeeId], ['parent_sid'])['parent_sid'];
+        //
+        $CI->db
+            ->select('
+            timeoff_balances.is_added,
+            effective_at,
+            timeoff_balances.added_time
+        ');
+        $CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner');
+        $CI->db->where('timeoff_policies.company_sid', $companyId);
+        $CI->db->where('timeoff_balances.user_sid', $employeeId);
+        $CI->db->where('timeoff_policies.sid', $policyId);
+        $CI->db->where('timeoff_policies.is_archived', 0);
+        $CI->db->where('timeoff_balances.effective_at >=', $policyImplementDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $policyNextResetDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $currentDate); // current date
+        $balances =  $CI->db->get('timeoff_balances')->result_array();
+        // return 0 when no balance is found
+        if (empty($balances)) {
+            return $balanceToReturn;
+        }
+        // loop through the balances
+        foreach ($balances as $rowBalance) {
+            if ($rowBalance['is_added'] == '1') $balanceToReturn += $rowBalance['added_time']; // on add
+            else $balanceToReturn -= $rowBalance['added_time']; // on subtract
+        }
+        // return the # of minutes
+        return $balanceToReturn;
     }
 }

@@ -354,7 +354,7 @@ class Users extends CI_Controller
             $contact_name = $this->input->post('name');
             $contact_email = $this->input->post('email');
             $contact_message = strip_tags($this->input->post('message'));
-            $is_blocked_email = $this->users_model->check_if_blocked($contact_email);
+            $is_blocked_email = checkForBlockedEmail($contact_email);
 
             //
             if(preg_match('/.ru$/', $contact_email)){

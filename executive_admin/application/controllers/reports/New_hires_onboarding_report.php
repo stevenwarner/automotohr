@@ -1,21 +1,26 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class New_hires_onboarding_report extends CI_Controller {
+class New_hires_onboarding_report extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->library("pagination");
         $this->load->model('Reports_model');
     }
 
-    public function index($company_sid) {
+    public function index($company_sid)
+    {
         if ($this->session->userdata('executive_loggedin')) {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'New Onboarding Hires Report';
             $data['company_sid'] = $company_sid;
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
 
             //**** working code ****//
             $data['flag'] = false;
@@ -63,6 +68,8 @@ class New_hires_onboarding_report extends CI_Controller {
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
 
+                    fputcsv($output, ['Company Name', getCompanyNameBySid($company_sid)]);
+
                     if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {
                         fputcsv($output, array('Job Title', 'Applicant Name', 'Hired On'));
                     } else {
@@ -95,5 +102,4 @@ class New_hires_onboarding_report extends CI_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-
 }

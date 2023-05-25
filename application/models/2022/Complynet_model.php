@@ -318,10 +318,9 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
-
         if ($record) {
             if ($returnComplyId) {
-                return $this->getComplyNetLinkedDepartmentById($record['sid']);
+                return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
             } else {
                 return $record['sid'];
             }
@@ -337,12 +336,13 @@ class Complynet_model extends CI_Model
      * @return string
      */
     public function getComplyNetLinkedDepartmentById(
-        int $departmentId
+        int $departmentId,
+        int $employeeId = 0
     ) {
         //
         $record =
             $this->db
-            ->select('complynet_department_sid')
+            ->select('complynet_department_sid, department_name, complynet_department_sid')
             ->where([
                 'department_sid' => $departmentId,
                 'complynet_department_sid !=  ' => 'A'
@@ -351,10 +351,68 @@ class Complynet_model extends CI_Model
             ->row_array();
         //
         if ($record) {
-            return $record['complynet_department_sid'];
+            // lets double check it
+            $response = $this->getComplyNetDepartmentByAhrId(
+                $departmentId,
+                $record['department_name'],
+                $record['complynet_department_sid'],
+                $employeeId
+            );
+            //
+            if ($response != '0') {
+                return $response;
+            }
+            return 0;
         }
         //
         return 0;
+    }
+
+    private function getComplyNetDepartmentByAhrId(
+        int $departmentId,
+        string $departmentName,
+        string $departmentUUID,
+        int $employeeId
+    ) {
+        // get the company location id
+        $result = $this->db
+            ->select('parent_sid')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        //
+        if (!$result) {
+            return 0;
+        }
+        //
+        $result = $this->db
+            ->select('complynet_location_sid')
+            ->where('company_sid', $result['parent_sid'])
+            ->get('complynet_companies')
+            ->row_array();
+        //
+        if (!$result) {
+            return 0;
+        }
+        //
+        $locations = $this->clib->getComplyNetDepartments(
+            $result['complynet_location_sid']
+        );
+        //
+        if (!$locations) {
+            return 0;
+        }
+        //
+        $locationId = 0;
+        //
+        foreach ($locations as $department) {
+            //
+            if ($department['Id'] == $departmentUUID) {
+                $locationId = $department['Id'];
+            }
+        }
+        //
+        return $locationId;
     }
 
     /**
@@ -605,12 +663,12 @@ class Complynet_model extends CI_Model
                         $reportError = array();
                         $reportError['location_ID'] = $complyLocationId;
                         $reportError['response'] = $response;
-                        $reportError['complynetObject'] = json_decode([
+                        $reportError['complynetObject'] = json_encode([
                             'ParentId' => $complyLocationId,
                             'Name' => $value['name']
                         ]);
                         //
-                        $message = 'Department not created on ComplayNet against location ID <strong>' . $complyLocationId . '</strong>';
+                        $message = 'Department not created on ComplyNet against location ID <strong>' . $complyLocationId . '</strong>';
                         //
                         $this->sendEmailToDeveloper($message, $reportError);
                         //
@@ -1391,4 +1449,341 @@ class Complynet_model extends CI_Model
         //
         return $complyRoleId;
     }
+
+    function getComplyNetEmployeeDepartment($employeeId)
+    {
+        $this->db->select('complynet_departments.department_sid');
+        $this->db->where('complynet_employees.employee_sid', $employeeId);
+        $this->db->join('complynet_departments', 'complynet_departments.complynet_department_sid = complynet_employees.complynet_department_sid', 'inner');
+
+        $record_obj = $this->db->get('complynet_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr['department_sid'];
+        } else {
+            return '';
+        }
+    }
+
+
+    /**
+     * Copy employee department and team
+     * 
+     * @param array $passArray
+     * 
+     * @return bool
+     */
+    public function checkAndMoveEmployeeDepartmentAndTeam(array $passArray)
+    {
+        //
+        // Get Employee Complynet department
+        $complynetEmployeeDepartmentId = $this->getComplyNetEmployeeDepartment($passArray['oldEmployeeId']);
+        //
+        $whereArray = [];
+        $whereArray['departments_employee_2_team.employee_sid'] = $passArray['oldEmployeeId'];
+        //
+        if ($complynetEmployeeDepartmentId) {
+            $whereArray['departments_management.sid'] = $complynetEmployeeDepartmentId;
+        } else {
+            $whereArray['departments_management.is_deleted'] = 0;
+            $whereArray['departments_team_management.is_deleted'] = 0;
+        }
+        // get the employee's current department and team name
+        $this->db->select('
+            departments_management.name as department_name,
+            departments_team_management.name
+        ')->where($whereArray);
+        //
+        $this->db->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid');
+        $this->db->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid');
+        $record_obj = $this->db->get('departments_employee_2_team');
+        $records = $record_obj->result_array();
+        $record_obj->free_result();
+        //  
+        if (!$records) {
+            return false;
+        }
+        //
+        foreach ($records as $record) {
+            //
+            $departmentId = 0;
+            $teamId = 0;
+            //
+            $slug = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $record['department_name']));
+            $slugTeam = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $record['name']));
+            // check if department exists
+            if ($this->db->where(['LOWER(REGEXP_REPLACE(name, "[^a-zA-Z0-9]", "")) = ' => $slug, 'company_sid' => $passArray['newCompanyId']])->count_all_results('departments_management')) {
+                //
+                $departmentId = $this->db
+                    ->select('sid')
+                    ->where(['LOWER(REGEXP_REPLACE(name, "[^a-zA-Z0-9]", "")) = ' => $slug, 'company_sid' => $passArray['newCompanyId']])
+                    ->get('departments_management')
+                    ->row_array()['sid'];
+                //
+                if ($this->db->where([
+                    'LOWER(REGEXP_REPLACE(name, "[^a-zA-Z0-9]", "")) = ' => $slugTeam,
+                    'company_sid' => $passArray['newCompanyId'],
+                    'department_sid' => $departmentId
+                ])->count_all_results('departments_team_management')) {
+                    //
+                    $teamId = $this->db
+                        ->select('sid')
+                        ->where([
+                            'LOWER(REGEXP_REPLACE(name, "[^a-zA-Z0-9]", "")) = ' => $slugTeam,
+                            'company_sid' => $passArray['newCompanyId'],
+                            'department_sid' => $departmentId
+                        ])
+                        ->get('departments_team_management')
+                        ->row_array()['sid'];
+                }
+            } else {
+                //
+                $this->db->insert('departments_management', [
+                    'name' => $record['department_name'],
+                    'status' => 1,
+                    'company_sid' => $passArray['newCompanyId'],
+                    'created_date' => getSystemDate()
+                ]);
+                //
+                $departmentId = $this->db->insert_id();
+            }
+
+            //
+            if ($teamId == 0) {
+                //
+                $this->db->insert('departments_team_management', [
+                    'name' => $record['name'],
+                    'department_sid' => $departmentId,
+                    'status' => 1,
+                    'company_sid' => $passArray['newCompanyId'],
+                    'created_date' => getSystemDate()
+                ]);
+            }
+            //
+            if (!$this->db->where([
+                'department_sid' => $departmentId,
+                'team_sid' => $teamId,
+                'employee_sid' => $passArray['newEmployeeId'],
+            ])->count_all_results('departments_employee_2_team')) {
+                // let link the employee to it
+                $this->db->insert('departments_employee_2_team', [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId,
+                    'employee_sid' => $passArray['newEmployeeId'],
+                    'created_at' => getSystemDate()
+                ]);
+            }
+        }
+        //
+        return true;
+    }
+
+    /**
+     * Transfer employee from one location to another
+     * 
+     * @param array $passArray
+     * @return bool
+     */
+    public function transferEmployeeToAnotherLocation(array $passArray)
+    {
+        // check if employee is on ComplyNet
+        $complyOldEmployee = $this->db
+            ->where('employee_sid', $passArray['oldEmployeeId'])
+            ->get('complynet_employees')
+            ->row_array();
+
+        //
+        if (!$complyOldEmployee) {
+            return ['errors' => "Transferred employee was not on ComplyNet."];
+        }
+        // check if company is on ComplyNet
+        $company = $this->getIntegratedCompany($passArray['newCompanyId']);
+        // if not then return
+        if (!$company) {
+            return ['errors' => 'Company is not on ComplyNet'];
+        }
+        // resync departments to make sure all is working
+        $this->syncDepartments($passArray['newCompanyId']);
+        // get new employee profile
+        // Get company job roles
+        $employee = $this->getCompanyEmployee(
+            $passArray['newCompanyId'],
+            $passArray['newEmployeeId']
+        );
+        // in case employee not found
+        if (!$employee) {
+            return ['errors' => 'Employee not found.'];
+        }
+        // set a default error array
+        $errorArray = [];
+        // lower the email address
+        $email = strtolower($employee['email']);
+        //
+        $this->load->library('Complynet/Complynet_lib', '', 'clib');
+        // //
+        if ($this->findEmployeeBySid($passArray['newEmployeeId'], $passArray['newCompanyId'])) {
+            $errorArray[] = 'Employee already synced with ComplyNet.';
+            return $errorArray;
+        }
+        //
+        $employee['complynet_job_title'] = $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
+        $oldComplynetEmployeeData =  $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
+        // check the missing data
+        $complyOldEmployeeInfo = json_decode($complyOldEmployee['complynet_json'],true);
+        //
+        $employee = $this->addMissingEmployeeInfo($complyOldEmployeeInfo[0], $employee);
+
+        if (checkEmployeeMissingData($employee)) {
+            //
+            mail('mubashar@automotohr.com', 'Employee '.getUserNameBySID($employee['sid']).' data missing while moving on complynet: ', json_encode(checkEmployeeMissingData($employee)));
+            return checkEmployeeMissingData($employee);
+        }
+        // get the comply department id
+        $complyDepartmentId = $this->getEmployeeDepartmentId(
+            $employee['sid']
+        );
+        //
+        if ($complyDepartmentId === 0) {
+
+            $errorArray[] = 'Department not found.';
+            return $errorArray;
+        }
+        //
+        $complyJobRoleId = $this->getAndSetJobRoleId(
+            $complyDepartmentId,
+            $employee['complynet_job_title']
+        );
+        if ($complyJobRoleId === 0) {
+            $errorArray[] = 'Job role not found.';
+            return $errorArray;
+        }
+        //
+        if (empty($complyJobRoleId)) {
+            $errorArray[] = 'Job role not found.';
+            return $errorArray;
+        }
+        // set update array
+        $updateArray = [];
+        $updateArray["firstName"] = $employee['first_name'];
+        $updateArray["lastName"] = $employee['last_name'];
+        $updateArray["userName"] = $email;
+        $updateArray["email"] = $email;
+        $updateArray["companyId"] = $company['complynet_company_sid'];
+        $updateArray["locationId"] = $company['complynet_location_sid'];
+        $updateArray["departmentId"] = $complyDepartmentId;
+        $updateArray["jobRoleId"] = $complyJobRoleId;
+        $updateArray["PhoneNumber"] = $employee['PhoneNumber'];
+        $updateArray["password"] = 'password';
+        $updateArray["TwoFactor"] = false;
+        $updateArray["AltId"] = $complyOldEmployee['alt_id'];
+        // // set insert array
+        $complyArray = $complyOldEmployee;
+        unset($complyArray['sid']);
+        $complyArray['company_sid'] = $passArray['newCompanyId'];
+        $complyArray['employee_sid'] = $passArray['newEmployeeId'];
+        $complyArray['complynet_company_sid'] = $company['complynet_company_sid'];
+        $complyArray['complynet_location_sid'] = $company['complynet_location_sid'];
+        $complyArray['complynet_department_sid'] = $complyDepartmentId;
+        $complyArray['complynet_job_role_sid'] = $complyJobRoleId;
+        $complyArray['created_at'] = $complyArray['updated_at'] = getSystemDate();
+        // lets check the employee
+        $employeeObj = $this->clib->getEmployeeByEmail($email);
+        //
+        if (isset($employeeObj[0]['Id'])) {
+            //
+            if (!$employeeObj[0]['AltId']) {
+                mail('mubashar@automotohr.com', 'Employee ALTId is missing: ', json_encode($employeeObj));
+                return ['errors' => 'Employees ALTId is missing'];
+            }
+            //
+            $employeeObj = findTheRightEmployee($employeeObj, $complyArray['complynet_company_sid'], $complyArray['complynet_location_sid']);
+            //
+            if ($employeeObj) {
+                //
+                if (!$this->db->where(['employee_sid' => $passArray['newEmployeeId']])->count_all_results('complynet_employees')) {
+                    $complyArray['complynet_employee_sid'] = $employeeObj['Id'];
+                    $complyArray['complynet_json'] = json_encode($employeeObj);
+                    // add the new record
+                    $this->db->insert('complynet_employees', $complyArray);
+                } else {
+                    //
+                    $this->db->where([
+                        'employee_sid' => $passArray['newEmployeeId']
+                    ])->update('complynet_employees',
+                        [
+                            'complynet_employee_sid' => $employeeObj['Id'],
+                            'complynet_json' => json_encode($employeeObj)
+                        ]
+                    );
+                }
+                //
+                return ['success' => 'Employee synced.'];
+            } 
+        }
+        //
+        $response = $this->clib->updateUser($updateArray);
+        //
+        if (preg_match('/\s+Update/i', $response)) {
+            //
+            if (!$this->db->where(['employee_sid' => $passArray['newEmployeeId']])->count_all_results('complynet_employees')) {
+                // add the new record
+                $this->db->insert('complynet_employees', $complyArray);
+            }
+            //  get the employee
+            $employeeObj = $this->clib->getEmployeeByEmail($email);
+            //
+            if (isset($employeeObj[0]['Id'])) {
+                $employeeObj = findTheRightEmployee($employeeObj, $complyArray['complynet_company_sid'], $complyArray['complynet_location_sid']);
+                //
+                if ($employeeObj) {
+                    $this->db->where([
+                        'employee_sid' => $passArray['newEmployeeId']
+                    ])->update('complynet_employees', [
+                        'complynet_employee_sid' => $employeeObj['Id'],
+                        'complynet_json' => json_encode($employeeObj)
+                    ]);
+                }
+            }
+            return ['success' => 'Employee synced.'];
+        }
+        //
+        return ['errors' => 'Failed to add employees'];
+    }
+
+
+    /**
+     * 
+     */
+    public function manageEmployee(array $passArray)
+    {
+        //
+        $departmentAdded = $this->checkAndMoveEmployeeDepartmentAndTeam($passArray);
+        //
+        if (!$departmentAdded) {
+            return false;
+        }
+        // transfer employee to another location
+        $this->transferEmployeeToAnotherLocation($passArray);
+    }
+
+    public function addMissingEmployeeInfo ($oldEmployee, $newEmployee) {
+        //
+        if (!$newEmployee['first_name']) {
+            $newEmployee['first_name'] = $oldEmployee['first_name'];
+        }
+        if (!$newEmployee['last_name']) {
+            $newEmployee['last_name'] = $oldEmployee['last_name'];
+        }
+        if (!$newEmployee['PhoneNumber']) {
+            $newEmployee['PhoneNumber'] = $oldEmployee['PhoneNumber'];
+        }
+        if (!$newEmployee['complynet_job_title']) {;
+            $newEmployee['complynet_job_title'] = $oldEmployee['JobRole'];
+        }
+        //
+        return $newEmployee;
+    }
+    
 }

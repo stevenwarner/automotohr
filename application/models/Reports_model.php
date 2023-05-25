@@ -2121,13 +2121,13 @@ class Reports_model extends CI_Model
             return $r;
         }
         //
-        foreach($holderArray as $k => $v):
+        foreach ($holderArray as $k => $v) :
             //
-            if($v['allowed_departments']):
+            if ($v['allowed_departments']) :
                 $holderArray[$k]['allowed_departments'] = $this->getDepartmentByIds(explode(',', $v['allowed_departments']), 'name');
             endif;
             //
-            if($v['allowed_teams']):
+            if ($v['allowed_teams']) :
                 $holderArray[$k]['allowed_teams'] = $this->getTeamByIds(explode(',', $v['allowed_teams']), 'name');
             endif;
 
@@ -2147,9 +2147,9 @@ class Reports_model extends CI_Model
         $documentStatus = [],
         $doCount = false,
         $limit = []
-    ){
+    ) {
         //
-        if(!$doCount):
+        if (!$doCount) :
             //
             $this->db->select('
                 documents_assigned.user_sid,
@@ -2168,21 +2168,21 @@ class Reports_model extends CI_Model
         endif;
         // Common
         $this->db
-        ->from('documents_assigned')
-        ->join('users', 'users.sid = documents_assigned.user_sid')
-        ->where('documents_assigned.user_type', 'employee')
-        ->where('users.terminated_status', 0)
-        ->where('users.active', 1)
-        ->where('documents_assigned.company_sid', $companyId);
+            ->from('documents_assigned')
+            ->join('users', 'users.sid = documents_assigned.user_sid')
+            ->where('documents_assigned.user_type', 'employee')
+            ->where('users.terminated_status', 0)
+            ->where('users.active', 1)
+            ->where('documents_assigned.company_sid', $companyId);
         // Filter
 
         // Employee filter
-        if($employeeArray):
+        if ($employeeArray) :
             $this->db->where_in('documents_assigned.user_sid', $employeeArray);
         endif;
-        
+
         // Status filter
-        if($documentStatus[0] !== 'all'):
+        if ($documentStatus[0] !== 'all') :
             $this->db->group_start();
             //
             if (in_array("confidential", $documentStatus)) {
@@ -2202,11 +2202,11 @@ class Reports_model extends CI_Model
             $this->db->group_end();
         endif;
         //
-        if($doCount):
+        if ($doCount) :
             return $this->db->count_all_results();
         endif;
         //
-        if(isset($limit[0])):
+        if (isset($limit[0])) :
             $this->db->limit($limit[0], $limit[1]);
         endif;
         //
@@ -2223,22 +2223,22 @@ class Reports_model extends CI_Model
     private function getDepartmentByIds(
         $ids,
         $column
-    ){
+    ) {
         //
-        $d = 
-        $this->db
-        ->select($column)
-        ->where_in('sid', $ids)
-        ->order_by('name', 'ASC')
-        ->get('departments_management');
+        $d =
+            $this->db
+            ->select($column)
+            ->where_in('sid', $ids)
+            ->order_by('name', 'ASC')
+            ->get('departments_management');
         //
-        if(!$d){
+        if (!$d) {
             return [];
         }
         //
         $records = $d->result_array();
         //
-        if(!$records){
+        if (!$records) {
             return [];
         }
         //
@@ -2251,22 +2251,22 @@ class Reports_model extends CI_Model
     private function getTeamByIds(
         $ids,
         $column
-    ){
+    ) {
         //
-        $d = 
-        $this->db
-        ->select($column)
-        ->where_in('sid', $ids)
-        ->order_by('name', 'ASC')
-        ->get('departments_team_management');
+        $d =
+            $this->db
+            ->select($column)
+            ->where_in('sid', $ids)
+            ->order_by('name', 'ASC')
+            ->get('departments_team_management');
         //
-        if(!$d){
+        if (!$d) {
             return [];
         }
         //
         $records = $d->result_array();
         //
-        if(!$records){
+        if (!$records) {
             return [];
         }
         //
@@ -2276,17 +2276,18 @@ class Reports_model extends CI_Model
     /**
      * 
      */
-    public function getEmployeeByIdsOBJ($ids){
+    public function getEmployeeByIdsOBJ($ids)
+    {
         //
         $result = $this->db
-        ->select(getUserFields('users'))
-        ->where_in('sid', $ids)
-        ->get('users')
-        ->result_array();
+            ->select(getUserFields('users'))
+            ->where_in('sid', $ids)
+            ->get('users')
+            ->result_array();
         //
         $obj = [];
         //
-        foreach($result as $v){
+        foreach ($result as $v) {
             $obj[$v['userId']] = remakeEmployeeName($v);
         }
         return $obj;
@@ -2296,126 +2297,123 @@ class Reports_model extends CI_Model
 
 
 
-      //
-      function GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
-      {
-          $this->db->select('first_name,last_name,job_title as Title, joined_at as hired_date, Location_City , Location_State');
-          $this->db->where('users.applicant_sid', null);
-          $this->db->where('users.parent_sid', $company_sid);
-  
-          if ($start_date != null && $end_date != null) {
-              $this->db->where('users.joined_at BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
-          }
-  
-  
-          if (!empty($keyword) && $keyword != 'all') {
-              $multiple_keywords = explode(' ', $keyword);
-           
-  
-              if (count($multiple_keywords) == 1) {
-                  $this->db->group_start();
-                  $this->db->like('first_name', $keyword);
-                  $this->db->or_like('last_name', $keyword);
-                  $this->db->group_end();
-              } else {
-                  
-                  foreach ($multiple_keywords as $keywrd) {
-                      $this->db->group_start();
-                      $this->db->like('first_name', $keywrd);
-                      $this->db->or_like('last_name', $keywrd);
-                      $this->db->group_end();
-                  }
-                  
-              }
-          }https://www.youtube.com/watch?v=s0A56zmIsUo
-  
-  
-          if ($limit !== null && $offset !== null) {
-              $limit = $limit / 2;
-              $offset = $offset / 2;
-              $this->db->limit($limit, $offset);
-          }
-  
-          $this->db->order_by('hired_date', 'DESC');
-  
-          if ($count_only == false) {
-              return  $this->db->get('users')->result_array();
-           
-          } else {
-              return  $this->db->get('users')->num_rows();
-         
-          }
-          
-      }
+    //
+    function GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+    {
+        $this->db->select('first_name,last_name,job_title as Title, joined_at as hired_date, Location_City , Location_State');
+        $this->db->where('users.applicant_sid', null);
+        $this->db->where('users.parent_sid', $company_sid);
+
+        if ($start_date != null && $end_date != null) {
+            $this->db->where('users.joined_at BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
+        }
 
 
-   //
-   function GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
-   {
+        if (!empty($keyword) && $keyword != 'all') {
+            $multiple_keywords = explode(' ', $keyword);
 
-       $employeeCount = $this->GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword, $hired_status, $job_sid, $applicant_type, $applicant_status, $count_only, $limit, $offset);
 
-       $this->db->select('portal_applicant_jobs_list.date_applied,portal_applicant_jobs_list.job_sid,portal_applicant_jobs_list.desired_job_title,portal_applicant_jobs_list.applicant_type,portal_job_applications.first_name,portal_job_applications.last_name,portal_job_applications.hired_date,portal_job_applications.sid');
-       //        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
-       $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
-       $this->db->where('portal_applicant_jobs_list.archived', 0);
+            if (count($multiple_keywords) == 1) {
+                $this->db->group_start();
+                $this->db->like('first_name', $keyword);
+                $this->db->or_like('last_name', $keyword);
+                $this->db->group_end();
+            } else {
 
-       if (!empty($keyword) && $keyword != 'all') {
-           $multiple_keywords = explode(' ', $keyword);
+                foreach ($multiple_keywords as $keywrd) {
+                    $this->db->group_start();
+                    $this->db->like('first_name', $keywrd);
+                    $this->db->or_like('last_name', $keywrd);
+                    $this->db->group_end();
+                }
+            }
+        }
+        https: //www.youtube.com/watch?v=s0A56zmIsUo
 
-           if (count($multiple_keywords) == 1) {
-               $this->db->group_start();
-               $this->db->like('portal_job_applications.first_name', $keyword);
-               $this->db->or_like('portal_job_applications.last_name', $keyword);
-               $this->db->group_end();
-           } else {
-               foreach ($multiple_keywords as $keywrd) {
-                   $this->db->group_start();
-                   $this->db->like('portal_job_applications.first_name', $keywrd);
-                   $this->db->or_like('portal_job_applications.last_name', $keywrd);
-                   $this->db->group_end();
-               }
-           }
-       }
 
-       $check_jobs_exists = explode(',', $job_sid);
+        if ($limit !== null && $offset !== null) {
+            $limit = $limit / 2;
+            $offset = $offset / 2;
+            $this->db->limit($limit, $offset);
+        }
 
-       if (!in_array('all', $check_jobs_exists)) {
-           if (is_array($check_jobs_exists)) {
-               $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
-           } else {
-               $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
-           }
-       }
+        $this->db->order_by('hired_date', 'DESC');
 
-       if (!empty($applicant_status) && $applicant_status != 'all') {
-           $this->db->like('portal_applicant_jobs_list.status', $applicant_status);
-       }
+        if ($count_only == false) {
+            return  $this->db->get('users')->result_array();
+        } else {
+            return  $this->db->get('users')->num_rows();
+        }
+    }
 
-       if (!empty($applicant_type) && $applicant_type != 'all') {
-           $this->db->where('portal_applicant_jobs_list.applicant_type', $applicant_type);
-       }
 
-       if ($hired_status != null) {
-           $this->db->where('portal_job_applications.hired_status', $hired_status);
-       }
+    //
+    function GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+    {
 
-       if ($start_date != null && $end_date != null) {
-           $this->db->where('portal_job_applications.hired_date BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
-       }
+        $employeeCount = $this->GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword, $hired_status, $job_sid, $applicant_type, $applicant_status, $count_only, $limit, $offset);
 
-       if ($limit !== null && $offset !== null) {
-           $limit = $limit / 2;
-           $offset = $offset / 2;
-           $this->db->limit($limit, $offset);
-       }
+        $this->db->select('portal_applicant_jobs_list.date_applied,portal_applicant_jobs_list.job_sid,portal_applicant_jobs_list.desired_job_title,portal_applicant_jobs_list.applicant_type,portal_job_applications.first_name,portal_job_applications.last_name,portal_job_applications.hired_date,portal_job_applications.sid');
+        //        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
+        $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
+        $this->db->where('portal_applicant_jobs_list.archived', 0);
 
-       $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
+        if (!empty($keyword) && $keyword != 'all') {
+            $multiple_keywords = explode(' ', $keyword);
 
-       $this->db->order_by('portal_applicant_jobs_list.date_applied', 'DESC');
-       $this->db->group_by('portal_applicant_jobs_list.portal_job_applications_sid');
+            if (count($multiple_keywords) == 1) {
+                $this->db->group_start();
+                $this->db->like('portal_job_applications.first_name', $keyword);
+                $this->db->or_like('portal_job_applications.last_name', $keyword);
+                $this->db->group_end();
+            } else {
+                foreach ($multiple_keywords as $keywrd) {
+                    $this->db->group_start();
+                    $this->db->like('portal_job_applications.first_name', $keywrd);
+                    $this->db->or_like('portal_job_applications.last_name', $keywrd);
+                    $this->db->group_end();
+                }
+            }
+        }
 
-       if ($count_only == false) {
+        $check_jobs_exists = explode(',', $job_sid);
+
+        if (!in_array('all', $check_jobs_exists)) {
+            if (is_array($check_jobs_exists)) {
+                $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
+            } else {
+                $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
+            }
+        }
+
+        if (!empty($applicant_status) && $applicant_status != 'all') {
+            $this->db->like('portal_applicant_jobs_list.status', $applicant_status);
+        }
+
+        if (!empty($applicant_type) && $applicant_type != 'all') {
+            $this->db->where('portal_applicant_jobs_list.applicant_type', $applicant_type);
+        }
+
+        if ($hired_status != null) {
+            $this->db->where('portal_job_applications.hired_status', $hired_status);
+        }
+
+        if ($start_date != null && $end_date != null) {
+            $this->db->where('portal_job_applications.hired_date BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
+        }
+
+        if ($limit !== null && $offset !== null) {
+            $limit = $limit / 2;
+            $offset = $offset / 2;
+            $this->db->limit($limit, $offset);
+        }
+
+        $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
+
+        $this->db->order_by('portal_applicant_jobs_list.date_applied', 'DESC');
+        $this->db->group_by('portal_applicant_jobs_list.portal_job_applications_sid');
+
+        if ($count_only == false) {
             $applications = $this->db->get('portal_applicant_jobs_list')->result_array();
 
             foreach ($applications as $key => $application) {
@@ -2426,8 +2424,8 @@ class Reports_model extends CI_Model
                     $this->db->where('sid', $application['job_sid']);
 
                     $applications[$key] = array_merge(
-                       $applications[$key],
-                       $this->db->get('portal_job_listings')->row_array()
+                        $applications[$key],
+                        $this->db->get('portal_job_listings')->row_array()
                     );
                 }
                 //
@@ -2435,14 +2433,41 @@ class Reports_model extends CI_Model
             }
 
             $applications = array_merge($employeeCount, $applications);
-          
+
             return $applications;
-       } else {
-           $applicantCount = $this->db->get('portal_applicant_jobs_list')->num_rows();
-           $newHireCount = $employeeCount + $applicantCount;
-           return $newHireCount;
-       }
-   }
+        } else {
+            $applicantCount = $this->db->get('portal_applicant_jobs_list')->num_rows();
+            $newHireCount = $employeeCount + $applicantCount;
+            return $newHireCount;
+        }
+    }
 
 
+
+
+    function get_all_jobs_views_applicants_count_filter($company_sid, $jobStatus)
+    {
+        $this->db->select('*');
+        $this->db->where('user_sid', $company_sid);
+
+        if ($jobStatus != 'all') {
+            $this->db->where('active', $jobStatus);
+        }
+        $this->db->where('active <> ', 2);
+
+        $this->db->order_by('sid', 'DESC');
+        $return_data = $this->db->get('portal_job_listings')->result_array();
+
+        if (!empty($return_data)) {
+            foreach ($return_data as $key => $row) {
+                $job_sid = $row['sid'];
+                $this->db->select('sid');
+                $this->db->where('job_sid', $job_sid);
+                $this->db->from('portal_applicant_jobs_list');
+                $count = $this->db->count_all_results();
+                $return_data[$key]['applicant_count'] = $count;
+            }
+        }
+        return $return_data;
+    }
 }

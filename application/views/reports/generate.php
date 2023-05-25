@@ -252,7 +252,7 @@
                                                                         <th>First Name</th>
                                                                         <th>Last Name</th>
                                                                         <th>Email</th>
-                                                                        <th class="text-center">Phone Number</th>
+                                                                        <th class="text-center">Primary Number</th>
                                                                         <th class="text-center">Date Applied</th>
                                                                         <th>Applicant Type</th>
                                                                         <th>Applicant Source</th>
@@ -497,6 +497,7 @@
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>" type="text/css" />');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/css/chosen.css'); ?>" type="text/css" />');
         mywindow.document.write('</head><body >');
+        mywindow.document.write('<table> <tr><td>&nbsp;</td></tr><tr><td><b><?php echo $companyName; ?></b></td></tr><tr><td>&nbsp;</td></tr></table >');
         mywindow.document.write(data);
         mywindow.document.write('</body></html>');
         mywindow.document.write('<scr' + 'ipt src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');

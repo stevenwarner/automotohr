@@ -16,6 +16,9 @@ class Applicants_referrals_report extends CI_Controller {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Applicants Referrals Report';
             $data['company_sid'] = $company_sid;
+            
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
 
             //**** working code ****//
             $references = $this->Reports_model->get_references($company_sid);
@@ -42,6 +45,9 @@ class Applicants_referrals_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+
 
                     foreach ($users as $user => $references) {
                         fputcsv($output, array($user, ucwords($references[0]['users_type'])));

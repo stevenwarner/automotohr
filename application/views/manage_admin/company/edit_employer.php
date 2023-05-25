@@ -15,6 +15,13 @@
                                     </div>
 
                                     <div class="edit-email-template">
+                                        <div class="row">
+                                            <div class="col-sm-12 text-center">
+                                                <img src="<?= AWS_S3_BUCKET_URL . $company_detail[0]['Logo']; ?>" alt="<?= $company_detail[0]['CompanyName']; ?>" style="width: 75px; height: 75px;" />
+                                                <p><?= $company_detail[0]['CompanyName']; ?></p>
+                                            </div>
+                                        </div>
+                                        <hr>
                                         <?php if (count($creator)) { ?>
                                             <p>Employee created by : <strong><?= remakeEmployeeName($creator, true) . ' [' . ($creator['email']) . '] (' . ($creator['active'] == 1 ? 'Active' : 'InActive') . ')'; ?></strong></p>
                                             <hr />
@@ -292,7 +299,10 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Phone Number', 'cell_number'); ?>
+
+                                                    <?php
+                                                    $requiredText = get_company_module_status($data['parent_sid'], 'primary_number_required') == 1 ? '<span class="hr-required">*</span>' : ''; ?>
+                                                    <?php echo form_label('Primary Number' . $requiredText, 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
@@ -355,6 +365,18 @@
                                                         <?php echo form_error('gender'); ?>
                                                     </div>
                                                 </li>
+                                                <li>
+                                                    <label>Payment Method</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-select-dropdown">
+                                                            <select class="invoice-fields" name="payment_method">                                                                
+                                                                <option <?= $data["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
+                                                                <option <?= $data["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
+                                                            </select> 
+                                                        </div>
+                                                        <?php echo form_error('payment_method'); ?>
+                                                    </div>
+                                                </li>                                               
                                                 <li>
                                                     <label>Marital Status</label>
                                                     <div class="hr-fields-wrap">
@@ -652,18 +674,74 @@
                                                         <br>
                                                         <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                                                             <div class="col-sm-12">
-                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
+                                                                <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" id='otherOtherLanguage' />
                                                                 <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
                                                             </div>
                                                         </div>
 
                                                         <script>
                                                             $('[name="secondaryOption"]').click(function() {
+
+                                                                if ($('[name="secondaryOption"]').is(":checked")) {
+                                                                    $('#otherOtherLanguage').val('<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>');
+
+                                                                } else {
+                                                                    $('#otherOtherLanguage').val('');
+                                                                }
+
                                                                 $('.jsOtherLanguage').toggleClass('dn');
                                                             });
                                                         </script>
                                                     </div>
                                                 </li>
+
+
+                                                <li>
+                                                    <label>Union Member:</label>
+                                                    <div class="hr-fields-wrap">
+
+
+                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio " style="margin-left: -20px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $data['union_member'] ? 'checked' : '' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                            <label class="control control--radio " style="margin-left: -10px;">No <input type="radio" name="union_member" value="0" class="unionmember" <?php echo $data['union_member'] ? '' : 'checked' ?>>
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+
+                                                        <br>
+                                                        <br>
+                                                        <div class="row jsunionname">
+                                                            <div class="col-sm-12">
+                                                                <input type="text" class="invoice-fields" name="union_name" placeholder="Union Name" value="<?php echo $data['union_name']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <script>
+                                                            <?php if ($data['union_member'] == 0) { ?>
+                                                                $('.jsunionname').hide();
+                                                            <?php } ?>
+
+                                                            $('.unionmember').on('click', function() {
+                                                                var selected = $(this).val();
+                                                                if (selected == '1') {
+                                                                    $('.jsunionname').show();
+
+                                                                } else {
+                                                                    $('.jsunionname').hide();
+                                                                }
+                                                            });
+                                                        </script>
+                                                    </div>
+                                                    <br>
+                                                </li>
+                                                <br>
+
+
                                                 <?php
                                                 $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);
                                                 //
@@ -776,8 +854,8 @@
 </script>
 <script>
     $('.js-update-employee').on("click", function(event) {
-
         // Check for phone number
+
         if ($('#PhoneNumber').val() != '' && $('#PhoneNumber').val().trim() != '(___) ___-____' && !fpn($('#PhoneNumber').val(), '', true)) {
             alertify.alert('Error!', 'Invalid phone number.', function() {
                 return;
@@ -791,6 +869,20 @@
         // Check the fields
         if ($('#PhoneNumber').val().trim() == '(___) ___-____') $('#PhoneNumber').val('');
         else $(this).append('<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + ($('#PhoneNumber').val().replace(/\D/g, '')) + '" />');
+
+
+
+        <?php if (get_company_module_status($data['parent_sid'], 'primary_number_required') == 1) { ?>
+            if ($('#PhoneNumber').val() == '' || $('#PhoneNumber').val().trim() == '(___) ___-____') {
+                alertify.alert('Error!', 'Invalid phone number.', function() {
+                    return;
+                });
+                event.preventDefault();
+                return;
+            }
+
+        <?php } ?>
+        
 
         var min_flag = 0,
             hrs_flag = 0,
@@ -1106,7 +1198,7 @@
 
 
 
-    <?php if ($data['job_title_type'] != '0') { ?>
+    <?php if ($templateTitles && $data['job_title_type'] != '0') { ?>
         $('#temppate_job_title').show();
         $('#temppate_job_title').val('<?php echo $data['job_title_type'] . '#' . $data['job_title']; ?>');
         $('#job_title').hide();

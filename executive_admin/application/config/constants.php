@@ -189,3 +189,5 @@ define('STORE_DEFAULT_TIMEZONE_ABBR', 'PST');
 // 8-07-2019
 // Wether to show or hide timezone
 define('IS_TIMEZONE_ACTIVE', TRUE);
+
+define('DOB_LIMIT', '1900:+1');

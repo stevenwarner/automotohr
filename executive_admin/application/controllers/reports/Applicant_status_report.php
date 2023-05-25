@@ -17,6 +17,9 @@ class Applicant_status_report extends CI_Controller {
             $data['title'] = 'Applicant Status Report';
             $data['company_sid'] = $company_sid;
 
+
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             //**** working code ****//
             /*
             $data['flag'] = false;
@@ -131,6 +134,9 @@ class Applicant_status_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+                    
                     fputcsv($output, array('Application Date', 'Applicant Name', 'Job Title', 'Email', 'Status'));
                     
                     foreach ($data['applicants'] as $applicant) {

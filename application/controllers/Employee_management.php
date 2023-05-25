@@ -400,7 +400,11 @@ class Employee_management extends Public_Controller
             $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-            $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+
+            if (get_company_module_status($company_id, 'primary_number_required') == 1) {
+                $this->form_validation->set_rules('PhoneNumber', 'Primary Number', 'trim|xss_clean');
+            }
+
             $this->form_validation->set_rules('job_title', 'Job Title', 'trim|xss_clean');
             $this->form_validation->set_rules('registration_date', 'Starting Date', 'trim|xss_clean');
             $this->form_validation->set_message('is_unique', '%s is already registered!');
@@ -439,10 +443,17 @@ class Employee_management extends Public_Controller
                 $send_welcome_email = $this->input->post('send_welcome_email');
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
+                $payment_method = $this->input->post('payment_method');
                 $timezone = $this->input->post('timezone');
                 //
                 $teamId = $this->input->post('teamId');
                 $departmenId = '';
+
+                //
+                // $unionName = $this->input->post('union_name');
+                // $unionMember = $this->input->post('union_member');
+
+
                 //
                 if ($teamId && $teamId != 0) {
                     $departmenId = getDepartmentColumnByTeamId($teamId, 'department_sid');
@@ -471,6 +482,7 @@ class Employee_management extends Public_Controller
 
 
                 $user_information['gender'] =  $gender;
+                $user_information['payment_method'] =  $payment_method;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
                 $user_information['last_name'] = $last_name;
@@ -499,6 +511,9 @@ class Employee_management extends Public_Controller
                 $user_information['eeoc_code'] = ''; //$eeocCode;
                 $user_information['salary_benefits'] = ''; // $salaryBenefits;
 
+                //
+                // $user_information['union_name'] = $unionName;
+                // $user_information['union_member'] = $unionMember;
 
                 //
                 if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
@@ -1408,10 +1423,16 @@ class Employee_management extends Public_Controller
                 $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-                $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+
+                if (get_company_module_status($company_id, 'primary_number_required') == 1) {
+                    $this->form_validation->set_rules('PhoneNumber', 'Primary Number', 'trim|xss_clean');
+                }
+
                 $this->form_validation->set_rules('access_level', 'Access Level', 'trim|xss_clean');
                 $this->form_validation->set_rules('break_hours', 'break_hours', 'trim|xss_clean|min_length[1]|max_length[24]');
                 $this->form_validation->set_rules('break_mins', 'break_mins', 'trim|xss_clean|min_length[1]|max_length[59]');
+
+
                 //
                 $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
                 //
@@ -1550,9 +1571,7 @@ class Employee_management extends Public_Controller
                     $extra_info_arr['interests'] = $this->input->post('interests');
                     $extra_info_arr['short_bio'] = $this->input->post('short_bio');
 
-
                     $full_emp_app = array();
-
 
                     $video_source = $this->input->post('video_source');
                     $video_id = '';
@@ -1637,7 +1656,17 @@ class Employee_management extends Public_Controller
                         'team_sid' => $teamId,
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status'),
+                        'payment_method' => $this->input->post('payment_method'),
                     );
+
+                    //
+                    $data_to_insert['union_member'] = $this->input->post('union_member');
+                    $data_to_insert['union_name'] = $this->input->post('union_name');
+
+                    if ($data_to_insert['union_member'] == 0) {
+                        $data_to_insert['union_name'] = '';
+                    }
+
 
                     //
                     if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
@@ -1645,11 +1674,6 @@ class Employee_management extends Public_Controller
                         $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                         $data_to_insert['job_title'] = $templetJobTitleDataArray[1];
                         $data_to_insert['job_title_type'] = $templetJobTitleDataArray[0];
-
-                        $userComplynetJobTitle = get_user_complynettitle($sid);
-                        if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
-                            $data_to_insert['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
-                        }
                     } else {
                         $data_to_insert['job_title_type'] = 0;
                     }
@@ -1852,6 +1876,13 @@ class Employee_management extends Public_Controller
                         $this->input->post(null, true),
                         $employee_detail,
                         $sid,
+                        $data_to_insert
+                    );
+                    //
+                    // Check and Update employee basic profile info
+                    $this->checkAndUpdateProfileInfo(
+                        $sid,
+                        $employee_detail,
                         $data_to_insert
                     );
                     //
@@ -2386,13 +2417,11 @@ class Employee_management extends Public_Controller
                     'PhoneNumber' => $this->input->post('txt_phonenumber', true) ? $this->input->post('txt_phonenumber', true) : $this->input->post('PhoneNumber', true),
                     'video_type' => $video_source,
                     'YouTubeVideo' => $video_id,
-                    'job_title' => $this->input->post('job_title'),
                     'extra_info' => $extra_info,
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
                     'marital_status' => $this->input->post('marital_status'),
                     'gender' => $gender
-
                 );
 
                 //
@@ -2470,7 +2499,6 @@ class Employee_management extends Public_Controller
                 $newCompareData['secondary_PhoneNumber'] = $post['secondary_PhoneNumber'];
                 $newCompareData['other_email'] = $post['other_email'];
                 $newCompareData['other_PhoneNumber'] = $post['other_PhoneNumber'];
-                $newCompareData['job_title'] = $post['job_title'];
                 $newCompareData['division'] = $post['division'];
                 $newCompareData['linkedin_profile_url'] = $post['linkedin_profile_url'];
                 $newCompareData['employee_number'] = $post['employee_number'];
@@ -2478,19 +2506,19 @@ class Employee_management extends Public_Controller
                 $newCompareData['office_location'] = $post['office_location'];
 
                 //
-                if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
-                    $templetJobTitleData = $this->input->post('template_job_title');
-                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
-                    $data['job_title'] = $templetJobTitleDataArray[1];
-                    $data['job_title_type'] = $templetJobTitleDataArray[0];
+                // if ($this->input->post('template_job_title') && $this->input->post('template_job_title') != '0') {
+                //     $templetJobTitleData = $this->input->post('template_job_title');
+                //     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                //     $data['job_title'] = $templetJobTitleDataArray[1];
+                //     $data['job_title_type'] = $templetJobTitleDataArray[0];
 
-                    $userComplynetJobTitle = get_user_complynettitle($sid);
-                    if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
-                        $data['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
-                    }
-                } else {
-                    $data['job_title_type'] = 0;
-                }
+                //     $userComplynetJobTitle = get_user_complynettitle($sid);
+                //     if ($userComplynetJobTitle == 'null' || $userComplynetJobTitle == '') {
+                //         $data['complynet_job_title'] = get_templet_complynettitle($templetJobTitleDataArray[0]);
+                //     }
+                // } else {
+                //     $data['job_title_type'] = 0;
+                // }
 
 
 
@@ -2519,6 +2547,13 @@ class Employee_management extends Public_Controller
                     ]);
                 }
 
+                //
+                // Check and Update employee basic profile info
+                $this->checkAndUpdateProfileInfo(
+                    $sid,
+                    $employee_detail,
+                    $data
+                );
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
 
@@ -3769,7 +3804,71 @@ class Employee_management extends Public_Controller
         }
         return false;
     }
-
+ 
+    private function checkAndUpdateProfileInfo (
+        $employeeId,
+        $employeeDetail,
+        $dataToInsert
+    ) {
+        // New employee profile data
+        $newProfileData = [];
+        $newProfileData['first_name'] = $dataToInsert['first_name'];
+        $newProfileData['last_name'] = $dataToInsert['last_name'];
+        $newProfileData['dob'] = $dataToInsert['dob'];
+        $newProfileData['email'] = $dataToInsert['email'];
+        $newProfileData['ssn'] = $dataToInsert['ssn'];
+        //
+        // Old employee profile data
+        $oldProfileData = [];
+        $oldProfileData['first_name'] = $employeeDetail['first_name'];
+        $oldProfileData['last_name'] = $employeeDetail['last_name'];
+        $oldProfileData['email'] = $employeeDetail['email'];
+        $oldProfileData['ssn'] = $employeeDetail['ssn'];
+        $oldProfileData['dob'] = $employeeDetail['dob'];
+        //
+        $profileDifference = $this->findDifference($oldProfileData, $newProfileData);
+        //
+        if ($profileDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'profile');
+        }
+        //
+        // New employee address data
+        $newAddressData = [];
+        $newAddressData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newAddressData['Location_City'] = $dataToInsert['Location_City'];
+        $newAddressData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newAddressData['Location_State'] = $dataToInsert['Location_State'];
+        //
+        // Old employee address data
+        $oldAddressData = [];
+        $oldAddressData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldAddressData['Location_City'] = $employeeDetail['Location_City'];
+        $oldAddressData['Location_State'] = $employeeDetail['Location_State'];
+        $oldAddressData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        //
+        $addressDifference = $this->findDifference($oldAddressData, $newAddressData);
+        //
+        if ($addressDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'address');
+        }
+        //
+        // New employee payment method
+        $newPaymentData = [];
+        $newPaymentData['payment_method'] = $dataToInsert['payment_method'];
+        //
+        // Old employee payment method
+        $oldPaymentData = [];
+        $oldPaymentData['payment_method'] = $employeeDetail['payment_method'];
+        //
+        $paymentMethodDifference = $this->findDifference($oldPaymentData, $newPaymentData);
+        //
+        if ($paymentMethodDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'payment_method');
+        }
+    }
 
     /**
      * Saves the difference
@@ -3821,6 +3920,13 @@ class Employee_management extends Public_Controller
         $newCompareData['other_email'] = $post['other_email'];
         $newCompareData['other_PhoneNumber'] = $post['other_PhoneNumber'];
 
+        //
+        $newCompareData['union_member'] = $post['union_member'];
+        $newCompareData['union_name'] = $post['union_name'];
+        if ($newCompareData['union_member'] == 0) {
+            $newCompareData['union_name'] = '';
+        }
+
         // Old Data
         $oldCompareData = [];
         $oldCompareData['first_name'] = $employeeDetail['first_name'];
@@ -3865,6 +3971,13 @@ class Employee_management extends Public_Controller
         $oldCompareData['other_PhoneNumber'] = $employeeDetailExtra['other_PhoneNumber'];
 
         //
+
+        $oldCompareData['union_member'] = $employeeDetail['union_member'];
+        $oldCompareData['union_name'] = $employeeDetail['union_name'];
+
+
+
+        //
         $difference = $this->findDifference($oldCompareData, $newCompareData);
         //
         if ($difference['profile_changed'] == 0) {
@@ -3883,6 +3996,13 @@ class Employee_management extends Public_Controller
 
     function send_login_credentials_bulk()
     {
+        //
+        $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
+        if (get_company_module_status($companyId, 'bulk_email') == 0) {
+            echo "error";
+            exit;
+        }
+
         //
         $sids = $this->input->post('sids');
         $action = $this->input->post('action');

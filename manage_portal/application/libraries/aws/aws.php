@@ -1,30 +1,38 @@
-<?php 
+<?php
 require 'aws-autoloader.php';
+
 use Aws\S3\S3Client;
 use Aws\Common\Exception\MultipartUploadException;
 use Aws\S3\Model\MultipartUpload\UploadBuilder;
 
-class AwsSdk {
+class AwsSdk
+{
     private $client;
 
-    function __construct() {
+    function __construct()
+    {
+        //
+        $awsCredentials = getCreds('AHR')->AWS->CREDENTIALS;
+        //
         $this->client = S3Client::factory(array(
-            'key' => 'AKIAVVRKKAOC5IFJ5RZV',
-            'secret' => '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'
-        ));  
+            'key' => $awsCredentials->KEY,
+            'secret' => $awsCredentials->SECRET
+        ));
     }
-    
-    public function getFromBucket($key, $bucket){
+
+    public function getFromBucket($key, $bucket)
+    {
         $result = $this->client->getObject(array(
             'Bucket' => $bucket,
             'Key'    => $key
-            ));
+        ));
         return $result;
     }
-    
-    public function putToBucket($key , $filePath , $bucket){
-        
-        ini_set('max_execution_time', 0); 
+
+    public function putToBucket($key, $filePath, $bucket)
+    {
+
+        ini_set('max_execution_time', 0);
         $uploader = UploadBuilder::newInstance()
             ->setClient($this->client)
             ->setSource($filePath)
@@ -44,37 +52,38 @@ class AwsSdk {
             return 0;
         }
     }
-    
-    public function deleteObj($key, $bucket){
+
+    public function deleteObj($key, $bucket)
+    {
         $result = $this->client->deleteObject(array(
             'Bucket' => $bucket,
             'Key'    => $key
         ));
         return $result;
     }
-    
-    public function createBucket($bucket){
-        
+
+    public function createBucket($bucket)
+    {
+
         $result = $this->client->createBucket(array(
             'Bucket' => $bucket
         ));
         // Wait until the bucket is created
         $this->client->waitUntilBucketExists(array('Bucket' => $bucket));
     }
-    
-    public function deleteBucket($bucket){
+
+    public function deleteBucket($bucket)
+    {
         $result = $this->client->deleteBucket(array(
             'Bucket' => $bucket
         ));
     }
-    
-    public function getUrl($key, $bucket){
+
+    public function getUrl($key, $bucket)
+    {
         $plainUrl = $this->client->getObjectUrl($bucket, $key);
         return $plainUrl;
     }
-    
-    
-    
 }
 
 //main
@@ -92,5 +101,3 @@ echo "Get result: ".$res['Body'];
 $aws->deleteBucket('wallyBucket');
 
 */
-
-?>

@@ -204,12 +204,17 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
                                             <div class="col-xs-2 text-left" style="padding-right: 0px;">
                                                 <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
-
+                                                
                                             </div>
-                                            <div class="col-xs-3 text-left" style="padding-right: 0px; padding-left: 5px">
-                                                <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email_login"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Login Email</a>
+                                            
+                                            <?php if (get_company_module_status($session['company_detail']['sid'], 'bulk_email') == 1) { ?>
+                                                <div class="col-xs-3 text-left" style="padding-right: 0px; padding-left: 5px">
+                                                    <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email_login"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Login Email</a>
 
-                                            </div>
+                                                </div>
+                                            <?php } ?>
+
+
                                             <div class="col-xs-3" style="padding-right: 0px; padding-left: 5px">
                                                 <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
                                             </div>
@@ -351,7 +356,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 ?>
                                                                 <!-- Languages -->
                                                                 <br />
-                                                                <strong>I Speak:</strong> <?=showLanguages($employee['languages_speak']);?>
+                                                                <strong>I Speak:</strong> <?= showLanguages($employee['languages_speak']); ?>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -675,7 +680,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
 <script type="text/javascript">
     function deactivate_single_employee(id) {
-        window.location.href = "<?= base_url() ?>employee_status/"+id
+        window.location.href = "<?= base_url() ?>employee_status/" + id
         // alertify.confirm("Please Confirm Deactivate", "Are you sure you want to Deactivate employee?",
         //     function() {
         //         // url = "<?= base_url() ?>employee_management/deactivate_single_employee";

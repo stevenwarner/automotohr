@@ -247,4 +247,33 @@
             return array();
         }
     }
+
+
+//
+function get_all_employeesNew($company_sid){
+    $this->db->select('sid');
+    $this->db->select('first_name');
+    $this->db->select('last_name');
+    $this->db->order_by("concat(first_name,' ',last_name)","ASC",false);
+    $this->db->select('email');
+    $this->db->select('access_level');
+    $this->db->select('access_level_plus');
+    $this->db->select('is_executive_admin');
+    $this->db->select('pay_plan_flag');
+    $this->db->select('job_title');
+
+    $this->db->where('parent_sid', $company_sid);
+    $this->db->where('username !=', '');
+    $this->db->where('terminated_status', 0);
+    $this->db->where('active', 1);
+    $this->db->where('access_level!=','Employee');
+
+    $this->db->order_by('access_level', 'ASC');
+
+    $records_obj = $this->db->get('users');
+    $records_arr = $records_obj->result_array();
+    $records_obj->free_result();
+    return $records_arr;
+}
+
 }

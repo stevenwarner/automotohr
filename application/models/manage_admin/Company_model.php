@@ -248,11 +248,11 @@ class Company_model extends CI_Model
             $this->db->group_start();
 
             for ($i = 0; $i < count($multiple_keywords); $i++) {
-                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/','',$multiple_keywords[$i]);
+                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/', '', $multiple_keywords[$i]);
                 $this->db->or_like('table_one.email', $multiple_keywords[$i]);
                 $this->db->or_like('table_one.username', $multiple_keywords[$i]);
                 if ($phoneRegex) {
-                    $this->db->or_like('REGEXP_REPLACE(table_one.PhoneNumber, "[^0-9]", "")', preg_replace('/[^0-9]/','',$multiple_keywords[$i]), false);
+                    $this->db->or_like('REGEXP_REPLACE(table_one.PhoneNumber, "[^0-9]", "")', preg_replace('/[^0-9]/', '', $multiple_keywords[$i]), false);
                 }
                 $this->db->or_like('table_one.job_title', $multiple_keywords[$i]);
                 $this->db->or_like('table_one.access_level', $multiple_keywords[$i]);
@@ -3026,6 +3026,70 @@ class Company_model extends CI_Model
             $this->db->update('helpbox_info_for_company', $dataToInsert);
         } else {
             $this->db->insert('helpbox_info_for_company', $dataToInsert);
+        }
+    }
+
+    //
+    function set_bulk_email_status($company_sid, $bulk_email_status)
+    {
+        $data = array();
+        $data['bulk_email'] = intval($bulk_email_status);
+        $this->db->where('user_sid', $company_sid);
+        $this->db->update('portal_employer', $data);
+    }
+
+
+
+    //
+    function get_executive_user_logged_in_sids($sid)
+    {
+        $this->db->select('logged_in_sid');
+        $this->db->where('executive_admin_sid', $sid);
+        $record_obj = $this->db->get('executive_user_companies');
+        $data = $record_obj->result_array();
+        $logged_in_sid = [];
+        if (!empty($data)) {
+            foreach ($data as $key => $val) {
+                $logged_in_sid[] = $val['logged_in_sid'];
+            }
+        }
+        return $logged_in_sid;
+    }
+
+
+
+
+    function set_executive_access_level_plus($sids, $action)
+    {
+        $data = array();
+        $data['access_level_plus'] = $action == 1 ? '1' : '0';
+        $this->db->where_in('sid', $sids);
+        $this->db->update('users', $data);
+    }
+
+
+
+    //
+    function set_executive_access_level_plus_single_company($executiveAdminSid, $companySid, $action)
+    {
+
+        $this->db->select('logged_in_sid');
+        $this->db->where('executive_admin_sid', $executiveAdminSid);
+        $this->db->where('company_sid', $companySid);
+        $result = $this->db->get('executive_user_companies')->row_array();
+
+        if (!empty($result)) {
+
+            $data = array();
+            if ($action == 'mark_admin_plus') {
+                $data['access_level_plus'] =  1;
+            } elseif ($action == 'unmark_admin_plus') {
+                $data['access_level_plus'] =  0;
+            }
+
+            $this->db->where('sid', $result['logged_in_sid']);
+            $this->db->where('parent_sid', $companySid);
+            $this->db->update('users', $data);
         }
     }
 }

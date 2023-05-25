@@ -110,7 +110,7 @@
                                                             <th>ID</th>
                                                             <th>Contact Name</th>
                                                             <th>Company Name</th>
-                                                            <th>Phone Number</th>
+                                                            <th>Primary Number</th>
                                                             <th>Registration Date</th>
                                                             <th>Expiry Date</th>
                                                             <th>Status</th>

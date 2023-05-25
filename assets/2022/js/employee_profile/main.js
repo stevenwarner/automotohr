@@ -75,6 +75,7 @@ $(function () {
             let rows = '';
             //
             let data = JSON.parse(record.profile_data);
+
             //
             // Create head
             rows += '<br />';
@@ -98,10 +99,14 @@ $(function () {
             rows += '<hr />';
             //
             let innerRows = '';
+            //  console.log(data['union_member'])
             for (let index in data) {
                 //
                 let newData = data[index]['new'] || '-';
                 let oldData = data[index]['old'] || '-';
+                if (index == 'union_member') {
+                    //   console.log(data)
+                }
                 //
                 if (index.toLowerCase() == 'location_state') {
                     newData = response.states[newData] || '-';
@@ -132,10 +137,25 @@ $(function () {
                 }
                 //
                 innerRows += '   <tr>';
-                innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + '</strong></td>';
+                if (index != 'union_member') {
+
+                    if (index == 'PhoneNumber') {
+                        innerRows += '<td><strong> PRIMARY NUMBER </strong></td>';
+                    } else {
+                        innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + 'dd</strong></td>';
+                    }
+                }
+
+               
                 //
                 if (index == 'action') {
                     innerRows += '       <td class="bg-danger text-center" colspan="2">Deleted</td>';
+                } else if (index == 'union_member') {
+                    //  innerRows += '       <td class="bg-danger">' + (oldData == 1 ? 'Yes' :'No') + '</td>';
+                    //   innerRows += '       <td class="bg-success">' + (newData == 1 ?'Yes':'No') + '</td>';
+                } else if (index == 'union_name') {
+                    innerRows += '       <td class="bg-danger">' + (oldData == '-' ? 'No' : 'Yes <br>' + oldData) + '</td>';
+                    innerRows += '       <td class="bg-success">' + (newData == '-' ? 'No' : 'Yes <br>' + newData) + '</td>';
                 } else {
                     innerRows += '       <td class="bg-danger">' + (oldData) + '</td>';
                     innerRows += '       <td class="bg-success">' + (newData) + '</td>';

@@ -10,34 +10,26 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
     }
 
-  
-
-    public function fix_merge()
+    /**
+     * 
+     */
+    public function redirectToComply(int $employeeId = 0)
     {
-        $this->load->model('2022/complynet_model', 'complynet_model');
-        echo $this->complynet_model->syncJobRoles(
-            '90AE8942-8150-4423-90A1-9FF8160A1376',
-            'Body Shop Manager'
-        );
-        die('END');
-        $this->tm->get_merge_employee();
+        // check if we need to read from session
+        if ($employeeId === 0) {
+            $employeeId = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        }
+        // if employee is not found
+        if ($employeeId == 0) {
+            return redirect('/dashboard');
+        }
+        // generate link
+        $complyLink = getComplyNetLink(0, $employeeId);
+        //
+        if (!$complyLink) {
+            return redirect('/dashboard');
+        }
+        redirect($complyLink);
     }
 
-
-
-    // Enable Rehired Employees
-
-
-    // public function enableRehiredemployees()
-    // {
-
-    //     $employeesData = $this->tm->getRehiredemployees();
-
-    //     if (!empty($employeesData)) {
-    //         foreach ($employeesData as $employeeRow) {
-    //             $this->tm->updateEmployee($employeeRow['sid']);
-    //         }
-    //     }
-    //     echo "Done";
-    // }
 }

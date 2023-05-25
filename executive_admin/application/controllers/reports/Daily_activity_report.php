@@ -17,6 +17,8 @@ class Daily_activity_report extends CI_Controller {
             $data['title'] = 'Daily Activity Report';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             //**** working code ****//
             $perform_action = $this->input->post('perform_action');
             switch ($perform_action) {
@@ -43,6 +45,8 @@ class Daily_activity_report extends CI_Controller {
                         header('Content-Type: text/csv; charset=utf-8');
                         header('Content-Disposition: attachment; filename=data.csv');
                         $output = fopen('php://output', 'w');
+
+                        fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
 
                         $employers = $this->Reports_model->generate_activity_log_data_for_view($company_sid, $start_date, $end_date);
                         $company_details = get_company_details($company_sid);

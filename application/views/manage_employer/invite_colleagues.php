@@ -43,7 +43,7 @@
                                                     <?php echo form_error('last_name'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Phone Number</label>
+                                                    <label>Primary Number <?php if (get_company_module_status($company_id, 'primary_number_required') == 1) { ?><span class="staric">*</span> <?php } ?></label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="PhoneNumber" id="PhoneNumber" value="<?php
                                                                                                                                                                 if (isset($formpost['PhoneNumber'])) {
                                                                                                                                                                     echo $formpost['PhoneNumber'];
@@ -61,20 +61,24 @@
                                                     <?php echo form_error('email'); ?>
                                                 </li>
                                                 <li class="form-col-100 autoheight">
-                                                    <label>Job Title<span class="staric">*</span> &nbsp;&nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption" checked> Add Manual &nbsp;
-                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption"> From Drop Down
+                                                    <?php $templateTitles = get_templet_jobtitles($company_id); ?>
+                                                    <label>Job Title<span class="staric">*</span> &nbsp;&nbsp;&nbsp;
+                                                        <?php if ($templateTitles) { ?>
+                                                            <input type="radio" name="title_option" value="manual" class="titleoption" checked> Add Manual &nbsp;
+                                                            <input type="radio" name="title_option" value="dropdown" class="titleoption"> From Drop Down
+                                                        <?php } ?>
                                                     </label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="job_title" id="job_title" value="<?php echo set_value('job_title'); ?>">
                                                     <?php echo form_error('job_title'); ?>
 
-                                                    <?php $templateTitles = get_templet_jobtitles($company_id); ?>
-
-                                                    <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
-                                                        <option value="0">Please select job title</option>
-                                                        <?php foreach ($templateTitles as $titleRow) { ?>
-                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
-                                                        <?php } ?>
-                                                    </select>
+                                                    <?php if ($templateTitles) { ?>
+                                                        <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
+                                                            <option value="0">Please select job title</option>
+                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    <?php } ?>
 
                                                 </li>
                                                 <li class="form-col-100">
@@ -136,7 +140,14 @@
                                                         <option <?= $formpost["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
                                                         <option <?= $formpost["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
                                                     </select>
+                                                </li>
 
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Payment Method:</label>
+                                                    <select class="invoice-fields" name="payment_method">                                                                
+                                                        <option <?= $formpost["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
+                                                        <option <?= $formpost["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
+                                                    </select>
                                                 </li>
 
 
@@ -381,6 +392,13 @@
                     required: true,
                     email: true
                 },
+
+                <?php if (get_company_module_status($company_id, 'primary_number_required') == 1) { ?>
+                    PhoneNumber: {
+                        required: true
+                    },
+                <?php } ?>
+
                 Location_City: {
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
@@ -412,6 +430,13 @@
                 salary_amount: {
                     required: 'Salary amount is required'
                 },
+                <?php if (get_company_module_status($company_id, 'primary_number_required') == 1) { ?>
+
+                    PhoneNumber: {
+                        required: 'Primary Number'
+                    },
+                <?php } ?>
+
                 registration_date: {
                     required: 'Starting Date is required'
                 },
@@ -478,17 +503,18 @@
 
     $('.jsSelect2').select2();
 
+    <?php if ($templateTitles) { ?>
+        $('.titleoption').click(function() {
+            var titleOption = $(this).val();
+            if (titleOption == 'dropdown') {
+                $('#template_job_title').show();
+                $('#job_title').hide();
+            } else if (titleOption == 'manual') {
+                $('#template_job_title').hide();
+                $('#template_job_title').val('0');
+                $('#job_title').show();
+            }
 
-    $('.titleoption').click(function() {
-        var titleOption = $(this).val();
-        if (titleOption == 'dropdown') {
-            $('#template_job_title').show();
-            $('#job_title').hide();
-        } else if (titleOption == 'manual') {
-            $('#template_job_title').hide();
-            $('#template_job_title').val('0');
-            $('#job_title').show();
-        }
-
-    });
+        });
+    <?php } ?>
 </script>

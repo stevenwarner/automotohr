@@ -88,7 +88,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row">
-                                                        <label>Phone Number</label>
+                                                        <label>Primary Number</label>
                                                         <?php echo form_input('PhoneNumber', set_value('PhoneNumber'), 'class="hr-form-fileds"'); ?>
                                                         <?php echo form_error('PhoneNumber'); ?>
                                                     </div>

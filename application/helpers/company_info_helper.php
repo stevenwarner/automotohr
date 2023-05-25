@@ -2741,7 +2741,7 @@ if (!function_exists('getComplyNetLink')) {
         }
         // Get email
         $record =
-            $CI->db->select('email')->where([
+            $CI->db->select('email, complynet_json')->where([
                 'employee_sid' => $employeeId
             ])
             ->get('complynet_employees')
@@ -2750,13 +2750,36 @@ if (!function_exists('getComplyNetLink')) {
         if (empty($record)) {
             return '';
         }
+        //
+        $jsonToArray = json_decode($record['complynet_json'], true);
+        //
+        $username = isset($jsonToArray[0]['UserName']) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
+        //
+        if (strpos($username, '@') === false) {
+            $record['email'] = $username;
+        }
         // Load ComplyNet library
         $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
         // Get the hash
         $response = $CI->complynet_lib->getUserHash($record['email']);
         //
-        if ($response == 'Array') {
-            return '';
+        if ($response == 'Array' || !$response) {
+            // let's try one more time with current email
+            $currentRecord = $CI->db
+                ->select('email')
+                ->where('sid', $employeeId)
+                ->get('users')
+                ->row_array();
+            //
+            if (!$currentRecord) {
+                return '';
+            }
+            // Get the hash
+            $response = $CI->complynet_lib->getUserHash($currentRecord['email']);
+            //
+            if ($response == 'Array' || !$response) {
+                return '';
+            }
         }
         return $response;
     }
@@ -2825,7 +2848,9 @@ if (!function_exists('getComplyNetEmployeeCheck')) {
             return '';
         }
         //
-        if ($employee['complynet_onboard'] == 1) {
+        $CI = &get_instance();
+        //
+        if ($CI->db->where('employee_sid', $employee['sid'])->count_all_results('complynet_employees')) {
             return '<button class="btn btn-xs csBG2" title="Employee is on ComplyNet"><i class="fa fa-shield _csM0"></i></button>';
         }
         //
@@ -3052,5 +3077,60 @@ if (!function_exists('checkAndSetEEOCForUser')) {
         $CI->db->where('sid', $lastRecord['sid'])->update('portal_eeo_form', $lastRecord);
         //
         return $lastRecord['sid'];
+    }
+}
+
+
+if (!function_exists('getGroupOtherDocuments')) {
+    /**
+     * check and get group verification
+     * and general documents
+     * 
+     * @param array $group
+     * @param bool  $doCount Optional
+     * @return int|array
+     */
+    function getGroupOtherDocuments(array $group, bool $doCount = false)
+    {
+        //
+        $documentArray = [];
+        // check for I9
+        if ($group['i9'] == 1) {
+            $documentArray[] = 'I9 Fillable';
+        }
+        // check for w4
+        if ($group['w4'] == 1) {
+            $documentArray[] = 'W4 Fillable';
+        }
+        // check for w9
+        if ($group['w9'] == 1) {
+            $documentArray[] = 'W9 Fillable';
+        }
+        // check for eeoc
+        if ($group['eeoc'] == 1) {
+            $documentArray[] = 'EEOC';
+        }
+        // check for dependents
+        if ($group['dependents'] == 1) {
+            $documentArray[] = 'Dependents';
+        }
+        // check for DDI
+        if ($group['direct_deposit'] == 1) {
+            $documentArray[] = 'Direct Deposit Information';
+        }
+        // check for driving license
+        if ($group['drivers_license'] == 1) {
+            $documentArray[] = 'Drivers License Information';
+        }
+        // check for emergency contacts
+        if ($group['emergency_contacts'] == 1) {
+            $documentArray[] = 'Emergency Contacts';
+        }
+        // check for occupational license
+        if ($group['occupational_license'] == 1) {
+            $documentArray[] = 'Occupational License Information';
+        }
+        //
+        return $doCount ? count($documentArray) : $documentArray;
     }
 }

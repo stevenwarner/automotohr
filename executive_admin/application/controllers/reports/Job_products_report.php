@@ -17,6 +17,8 @@ class Job_products_report extends CI_Controller {
             $data['title'] = 'Job Products Report';
             $data['company_sid'] = $company_sid;
 
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             /** search criteria * */
             /*
             if (isset($_GET['submit']) && $_GET['submit'] == 'Search') {
@@ -152,6 +154,8 @@ class Job_products_report extends CI_Controller {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
+
+                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
 
                     fputcsv($output, array('Job ID', 'Job Title', 'Product Name', 'Advertised Date'));
 

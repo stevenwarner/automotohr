@@ -10421,6 +10421,22 @@ if (!function_exists('fetch_admin_sms_notifications')) {
         return $_this->sms_model->get_sms_admin(0);
     }
 }
+/**
+ * Get SMS notifications
+ * Ceated on: 22-07-2019
+ *
+ * @param $_this Instance
+ *
+ * @return Integer
+ */
+if (!function_exists('getProfileDataChange')) {
+    function getProfileDataChange($_this)
+    {
+        // load user model
+        $_this->load->model('2022/User_model', 'user_model');
+        return $_this->user_model->getEmployeeHistory([]);
+    }
+}
 
 /**
  * Send email to applicant/employee to update the number
@@ -14423,11 +14439,17 @@ if (!function_exists('SendResponse')) {
         //
         if ($status == 401) {
             header("HTTP/1.0 401 Unauthorized");
+            if ($data) {
+                echo json_encode($data);
+            }
             exit(0);
         }
         //
         if ($status == 400) {
             header("HTTP/1.0 400 Bad Request");
+            if ($data) {
+                echo json_encode($data);
+            }
             exit(0);
         }
         //
@@ -16467,6 +16489,58 @@ if (!function_exists('showLanguages')) {
 
 
 //
+if (!function_exists('isGustoAdmin')) {
+    function isGustoAdmin($email, $companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid');
+        $CI->db->from('payroll_company_admin');
+        $CI->db->where('email_address ', $email);
+        $CI->db->where('company_sid', $companySid);
+        $rows = $CI->db->count_all_results();
+        return $rows;
+    }
+}
+
+//
+if (!function_exists('getActiveEmployees')) {
+    function getActiveEmployees($company_sid)
+    {
+        $CI = &get_instance();
+
+        $CI->db->select('
+            sid, first_name, last_name, middle_name, nick_name,
+            email, PhoneNumber, dob, job_title, access_level, access_level_plus,
+            Location_Address, Location_Address_2, Location_City, Location_State,
+            Location_City, Location_ZipCode, Location_Country
+        ');
+        $where = array(
+            'parent_sid' => $company_sid,
+            'active' => 1,
+            'is_executive_admin'  => 0,
+            'terminated_status' => 0
+        );
+        return $CI->db->get_where('users', $where)->result_array();
+    }
+}
+
+//
+if (!function_exists('checkTermsAccepted')) {
+    function checkTermsAccepted($company_sid)
+    {
+        $CI = &get_instance();
+
+        $CI->db->where('terms_accepted', 1);
+        $CI->db->where('company_sid ', $company_sid);
+        //
+        if ($CI->db->count_all_results('payroll_companies')) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
 if (!function_exists('get_templet_jobtitles')) {
     function get_templet_jobtitles($companyId)
     {
@@ -16567,5 +16641,115 @@ if (!function_exists('get_employee_drivers_license')) {
         $CI->db->where('users_sid', $emp_id);
         $CI->db->where('license_type ', 'drivers');
         return $CI->db->get('license_information')->row_array();
+    }
+}
+
+//
+if (!function_exists('get_company_module_status')) {
+    function get_company_module_status($companySid, $fieldName)
+    {
+        $CI = &get_instance();
+        $CI->db->select($fieldName);
+        $CI->db->where('user_sid', $companySid);
+        $result = $CI->db->get('portal_employer')->row_array();
+        return $result[$fieldName];
+    }
+}
+
+
+
+//
+if (!function_exists('get_executive_administrator_admin_plus_status')) {
+    function get_executive_administrator_admin_plus_status($executiveAdminSid, $companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('users.access_level_plus');
+        $CI->db->where('executive_admin_sid', $executiveAdminSid);
+        $CI->db->where('company_sid', $companySid);
+        $CI->db->join('users', 'executive_user_companies.logged_in_sid = users.sid', 'left');
+        $result = $CI->db->get('executive_user_companies')->row_array();
+        return $result;
+    }
+}
+
+
+if (!function_exists('changeComplynetEmployeeStatus')) {
+    /**
+     * Check and update status on ComplyNet
+     * 
+     * @method get_instance
+     * 
+     * @param int    $employeeId
+     * @param string $newStatus active|deactive
+     * @param bool   $doReturn Optional
+     * @return array
+     */
+    function changeComplynetEmployeeStatus(int $employeeId, string $newStatus, bool $doReturn = true)
+    {
+        // set default response array
+        $res = [];
+        // set default old status
+        $oldStatus = '';
+        // get CI instance
+        $CI = &get_instance();
+        // check if employee is already synced with ComplyNet
+        if (!$CI->db->where('employee_sid', $employeeId)->count_all_results('complynet_employees')) {
+            $res['errors'][] = 'The employee has not yet been synchronized with ComplyNet.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // get the employee details
+        $record =
+            $CI->db->select('complynet_location_sid, email, complynet_json')->where([
+                'employee_sid' => $employeeId
+            ])
+            ->get('complynet_employees')
+            ->row_array();
+        // check if something happens in between
+        if (empty($record)) {
+            $res['errors'][] = 'The employee has not yet been synchronized with ComplyNet.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // decode the json to array
+        $jsonToArray = json_decode($record['complynet_json'], true);
+        // set the username of employee on ComplyNet
+        $username = isset($jsonToArray[0]['UserName']) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
+        // if username is not email then set it to username
+        if (strpos($username, '@') === false) {
+            $record['email'] = $username;
+        }
+        // Load ComplyNet library
+        $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
+        // Get the employee
+        $response = $CI->complynet_lib->getEmployeeByEmail($record['email']);
+        // if ComplyNet don't have this employee
+        if (!$response) {
+            $res['errors'][] = 'ComplyNet does not have a record of the selected employee.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // get the employee agianst right location0
+        foreach ($response as $key => $value) {
+            if ($value['LocationId'] == $record['complynet_location_sid']) {
+                $oldStatus =  $value['Status'] == 1 ? "active" : "deactive";
+            }
+        }
+        // if the employee is not found
+        if ($oldStatus == '') {
+            $res['errors'][] = 'The ComplyNet status of selected employee could not be located.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // skip if both status are same
+        if ($newStatus != $oldStatus) {
+            //
+            $updateArray = [];
+            $updateArray["userName"] = $record['email'];
+            //
+            $CI->complynet_lib->changeEmployeeStatusByEmail($record['email']);
+            //
+            $res['success'] = 'The status of the selected employee has been updated to "' . (ucfirst($newStatus)) . '".';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        //
+        $res['success'] = 'The employee\'s status had already been marked as "' . (ucfirst($newStatus)) . '".';
+        return $doReturn ? $res : sendResponse(200, $res);
     }
 }

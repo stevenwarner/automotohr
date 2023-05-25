@@ -62,7 +62,7 @@
                                                 <input class="invoice-fields" type="text" name="city">
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>phone number:</label>
+                                                <label>Primary number:</label>
                                                 <input class="invoice-fields" type="text" name="zipcode">
                                             </li>
                                             <li class="form-col-50-left">

@@ -296,7 +296,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <?php } ?>
                                             <span>
                                                 <button class="btn btn-orange jsCompanyHelpBoxBtn">
-                                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;<?=$getCompanyHelpboxInfo[0]['button_text'];?>
+                                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;<?= $getCompanyHelpboxInfo[0]['button_text']; ?>
                                                 </button>
                                             </span>
                                         </span>
@@ -385,7 +385,8 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                 } ?>
 
 
-                <?php if ($employee_handbook_enable) { ?>
+                <?php
+                if ($employee_handbook_enable) { ?>
                     <!--  -->
                     <div class="row">
                         <br>
@@ -444,9 +445,19 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                                 ?>
                                                             </td>
                                                             <td class="text-center hidden-xs">
+                                                            <?php if ($document['document_type'] == 'generated' ) { ?>
                                                                 <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/print"); ?>" class="btn btn-orange" target="_blank">Print</a>
-                                                                <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/download"); ?>" class="btn btn-black" target="_blank">Download</a>
-                                                                <a onclick="func_get_generated_document_preview(<?= $document['sid']; ?>,'generated', 'Employee');" class="btn btn-info">View Sign</a>
+                                                               <?php }?>
+                                                                <?php if ($document['document_type'] == 'uploaded' ) { ?>
+                                                                    <a href="<?= base_url("hr_documents_management/download_upload_document/" . ($document['uploaded_document_s3_name'])); ?>" class="btn btn-black" target="_blank">Download</a>
+                                                                <?php }else if($document['document_type'] == 'hybrid_document'){
+
+                                                                } 
+                                                                else { ?>
+                                                                    <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/download"); ?>" class="btn btn-black" target="_blank">Download</a>
+                                                                <?php } ?>
+
+                                                                <a onclick="func_get_generated_document_preview(<?= $document['sid']; ?>,'<?= $document['document_type']; ?>', 'Employee');" class="btn btn-info">View Sign</a>
                                                             </td>
                                                         </tr>
                                                     <?php } ?>
@@ -732,44 +743,24 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                         ?>
                         <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_status) { ?>
                             <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
-                            <!-- Approval -->
-                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                <div class="widget-box">
-                                    <?php if ($complyNetLink) { ?>
-                                        <a href="<?= $complyNetLink; ?>" target="_blank">
+                            <?php if ($complyNetLink) { ?>
+                                <!-- ComplyNet -->
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="widget-box">
+                                        <a href="<?= base_url('cn/redirect'); ?>" target="_blank">
                                             <div class="link-box bg-complynet full-width">
                                                 <h2>Compliance <br /> Management System</h2>
-                                                <ul class="cs-jam-ul" style="position: relative; z-index:1;">
-                                                    <li>Dashboard</li>
-                                                </ul>
                                                 <div class="status-panel">
                                                     <h3>ComplyNet</h3>
                                                     <span>Show</span>
                                                 </div>
                                             </div>
                                         </a>
-                                    <?php } else { ?>
-                                        <span id="main">
-                                            <div class="link-box bg-complynet full-width">
-                                                <h2>Compliance <br /> Management System</h2>
-                                                <ul class="cs-jam-ul" style="position: relative; z-index:1;">
-
-                                                    <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
-                                                        <li><button id="js-dashboard" data-href="<?= base_url('complynet/dashboard'); ?>" class="btn btn-link" style="color: #ffffff; padding: 3px;">Dashboard</button></li>
-                                                    <?php } ?>
-                                                    <li><button id="js-login" data-href="<?= base_url('complynet/login'); ?>" class="btn btn-link" style="color: #ffffff; padding: 3px;">Login</button></li>
-
-                                                </ul>
-                                                <div class="status-panel">
-                                                    <h3>Complynet</h3>
-                                                    <span>Show</span>
-                                                </div>
-                                            </div>
-                                        </span>
-                                    <?php } ?>
-
+                                    </div>
                                 </div>
-                            </div>
+                            <?php
+                            } ?>
+
                         <?php } ?>
 
                         <!-- Authorised Signature  -->
@@ -911,7 +902,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
                         <?php $this->load->view('courses/partials/course_blue'); ?>
 
-                        <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll']) { ?>
+                        <?php if (isEmployeeOnPayroll($employee_sid)) { ?>
                             <!-- Payroll -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
@@ -920,7 +911,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <h2>Payroll</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?php echo $TotalPayStubs; ?><sub>Pay Stub(s)</sub></span>
+                                                <span><?php echo $TotalPayStubs ?? 0; ?><sub>Pay Stub(s)</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>View Pay Stubs</h3>
@@ -931,8 +922,6 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
-
-
                     </div>
                 </div>
             </div>
@@ -1551,16 +1540,17 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
         var my_request;
         var footer_print_btn;
         my_request = $.ajax({
+
             'url': '<?php echo base_url('hr_documents_management/ajax_responder'); ?>',
             'type': 'POST',
             'data': {
-
                 'perform_action': 'get_generated_document_preview',
                 'document_sid': document_sid,
                 'source': doc_flag,
                 'fetch_data': 'original'
             }
         });
+
 
 
         my_request.done(function(response) {

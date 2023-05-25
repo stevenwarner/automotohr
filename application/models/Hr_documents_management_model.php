@@ -8444,6 +8444,11 @@ class Hr_documents_management_model extends CI_Model
     function checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag, $employer_sid)
     {
         $groups = $this->get_all_documents_group($company_sid, 1);
+        $active_groups = [];
+        $in_active_groups = [];
+        $group_ids = [];
+        $group_status = '';
+        $sendGroupEmail = 0;
 
         if (!empty($groups)) {
             foreach ($groups as $key => $group) {
@@ -8501,6 +8506,8 @@ class Hr_documents_management_model extends CI_Model
 
         $groups_assign = $this->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
         $assigned_groups = array();
+
+        
 
         if (!empty($groups_assign)) {
             foreach ($groups_assign as $value) {

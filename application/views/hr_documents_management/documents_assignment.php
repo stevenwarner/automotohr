@@ -506,6 +506,16 @@ $assignIdObj = $confidential_sids;
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
+                                                                                    <!-- List verification and general documents with no actions -->
+                                                                                    <?php if($active_group['other_documents']): ?>
+                                                                                        <?php foreach($active_group['other_documents'] as $otherDocument): ?>
+                                                                                            <tr class="js-search-row">
+                                                                                                <td class="col-xs-8"><?=$otherDocument;?></td>
+                                                                                                <td>-</td>
+                                                                                                <td class="text-center">-</td>
+                                                                                            </tr>
+                                                                                        <?php endforeach; ?>
+                                                                                    <?php endif; ?>
                                                                                     <?php if ($active_group['documents_count'] > 0) { ?>
                                                                                         <?php foreach ($active_group['documents'] as $document) { ?>
                                                                                             <tr class="js-search-row">
@@ -5727,8 +5737,8 @@ if ($user_type == 'employee') {
 
                 //
                 if (dn.trim() == 'EEOC FORM') {
-                    if (<?= $eeo_form_info['status']; ?> != 1) {
-                        return;
+                    if (<?= $eeo_form_info['status']??0; ?> != 1) {
+                       return;
                     }
                 }
 

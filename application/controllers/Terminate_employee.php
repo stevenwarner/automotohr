@@ -179,11 +179,16 @@ class Terminate_employee extends Public_Controller
 
                     // Update the user table as well
                     $this->db->where('sid', $sid)->update('users', ['transfer_date' => formatDateToDB($status_change_date, 'm-d-Y', DB_DATE)]);
+                    //
+                    // ToDo if transfer then complynet status update pending
                 }
                 if ($status != 9) {
                     $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
                 }
-
+                //
+                $employeeStatus = $data_to_update['active'] == 1 ? "active" : "deactive";
+                changeComplynetEmployeeStatus($sid, $employeeStatus);
+                //
                 $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
                 redirect(base_url('employee_status/' . $sid), 'refresh');
             }
@@ -321,11 +326,15 @@ class Terminate_employee extends Public_Controller
                     $this->terminate_employee_model->employees_transfer_log_update($sid, $data_transfer_log_update);
                     // Update the user table as well
                     $this->db->where('sid', $sid)->update('users', ['transfer_date' => formatDateToDB($status_change_date, 'm-d-Y', DB_DATE)]);
+                    // ToDo if transfer then complynet status update pending
                 }
                 // Check its current status then update in user primary data
                 if ($this->terminate_employee_model->check_for_main_status_update($sid, $status_id)) {
                     if ($status != 9) {
                         $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
+                        //
+                        $employeeStatus = $data_to_update['active'] == 1 ? "active" : "deactive";
+                        changeComplynetEmployeeStatus($sid, $employeeStatus);
                     }
                 }
                 //

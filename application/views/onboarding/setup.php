@@ -1386,16 +1386,9 @@ if ($user_type == 'applicant') {
                                                                                             <?php } ?>
                                                                                         </td>
                                                                                         <td class="col-lg-6 text-center">
-                                                                                            </form>
                                                                                             <?php if (!empty($eeo_form_info)) { ?>
                                                                                                 <?php if ($eeo_form_info['status']) { ?>
-                                                                                                    <form id="form_remove_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
-                                                                                                        <input type="hidden" name="company_sid" value="<?= $company_sid; ?>" />
-                                                                                                        <input type="hidden" name="user_sid" value="<?= $user_sid; ?>" />
-                                                                                                        <input type="hidden" name="user_type" value="<?= $user_type; ?>" />
-                                                                                                    </form>
-                                                                                                    <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
+                                                                                                    <button onclick="func_remove_EEOC();" type="button" class="btn btn-danger">Revoke</button>
                                                                                                     <?php if ($eeo_form_info['is_expired'] != 1) { ?>
                                                                                                         <a class="btn btn-success jsResendEEOC" ref="javascript:void(0);" title="Send reminder email to <?= ucwords($user_info['first_name'] . ' ' . $user_info['last_name']); ?>" placement="top">
                                                                                                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
@@ -1403,13 +1396,7 @@ if ($user_type == 'applicant') {
                                                                                                         </a>
                                                                                                     <?php } ?>
                                                                                                 <?php } else { ?>
-                                                                                                    <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC" />
-                                                                                                        <input type="hidden" name="company_sid" value="<?= $company_sid; ?>" />
-                                                                                                        <input type="hidden" name="user_sid" value="<?= $user_sid; ?>" />
-                                                                                                        <input type="hidden" name="user_type" value="<?= $user_type; ?>" />
-                                                                                                    </form>
-                                                                                                    <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
+                                                                                                    <button onclick="func_assign_EEOC();" type="button" class="btn btn-warning">Re-Assign</button>
                                                                                                 <?php } ?>
                                                                                                 <?php if (isset($eeo_form_info['sid'])) { ?>
                                                                                                     <!--  -->
@@ -1865,138 +1852,6 @@ if ($user_type == 'applicant') {
 
 
                                     <?php } ?>
-                                    <!-- <div id="summary" class="step-summary">
-                                            <div class="row">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="well well-sm">
-                                                        <strong>Instructions:</strong>
-                                                        <p>It is the summary of all the steps. Please review it. You can re-configure any step in case of you missed anything.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div class="row">
-                                                <div class="panel-group grid-columns">
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                                                        <div id="office_locations" class="panel panel-default full-width">
-                                                            <div class="panel-heading">
-                                                                <strong>Office Locations</strong>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <?php /*if (!empty($office_locations)) { ?>
-                                                                    <ul class="list-group">
-                                                                        <?php foreach ($office_locations as $key => $location) { ?>
-                                                                            <li class="list-group-item list-item-onboarding" id="location_<?php echo $location['sid']; ?>">
-                                                                                <?php echo $location['location_title']; ?>
-                                                                            </li>
-                                                                        <?php } ?>
-                                                                    </ul>
-                                                                <?php } */ ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                                                        <div id="office_timings" class="panel panel-default full-width">
-                                                            <div class="panel-heading">
-                                                                <strong>Office Hours</strong>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <?php /*if (!empty($office_timings)) { ?>
-                                                                    <ul id="list-group">
-                                                                        <?php foreach ($office_timings as $key => $timing) { ?>
-                                                                            <li class="list-group-item list-item-onboarding" id="time_<?php echo $timing['sid']; ?>">
-                                                                                <?php echo $timing['title']; ?>
-                                                                            </li>
-                                                                        <?php } ?>
-                                                                    </ul>
-                                                                <?php } */ ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                                                        <div id="people_to_meet" class="panel panel-default full-width">
-                                                            <div class="panel-heading">
-                                                                <strong>People To Meet</strong>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <?php /*if (!empty($people_to_meet)) { ?>
-                                                                    <ul class="list-group">
-                                                                        <?php foreach ($people_to_meet as $key => $person) { ?>
-                                                                            <li class="list-group-item list-item-onboarding" id="person_<?php echo $person['sid']; ?>">
-                                                                                <?php echo $person['first_name'] . ' ' . $person['last_name']; ?>
-                                                                            </li>
-                                                                        <?php } ?>
-                                                                    </ul>
-                                                                <?php } */ ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                                                        <div id="what_to_bring" class="panel panel-default full-width">
-                                                            <div class="panel-heading">
-                                                                <strong>Useful Links</strong>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <?php /*if (!empty($useful_links)) { ?>
-                                                                    <ul class="list-group">
-                                                                        <?php foreach ($useful_links as $key => $link) { ?>
-                                                                            <li class="list-group-item list-item-onboarding" id="link_<?php echo $link['sid']; ?>">
-                                                                                <?php echo $link['link_title']; ?>
-                                                                            </li>
-                                                                        <?php } ?>
-                                                                    </ul>
-                                                                <?php } */ ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                                                        <div id="getting_started" class="panel panel-default full-width">
-                                                            <div class="panel-heading">
-                                                                <strong>What to Bring</strong>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <?php /*if (!empty($what_to_bring)) { ?>
-                                                                    <ul id="list-group">
-                                                                        <?php foreach ($what_to_bring as $key => $item) { ?>
-                                                                            <li class="list-group-item list-item-onboarding" id="item_<?php echo $item['sid']; ?>">
-                                                                                <?php echo $item['item_title']; ?>
-                                                                            </li>
-                                                                        <?php } ?>
-                                                                    </ul>
-                                                                <?php } */ ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                                                        <div id="learning_center" class="panel panel-default full-width">
-                                                            <div class="panel-heading">
-                                                                <strong>Learning Center</strong>
-                                                            </div>
-                                                            <div class="panel-body">
-                                                                <ul id="list-group">
-                                                                    <?php /*if (!empty($videos)) { ?>
-                                                                        <?php foreach ($videos as $document) { ?>
-                                                                            <li class="list-group-item list-item-onboarding" id="video_session_<?php echo $document['sid']; ?>">
-                                                                                <?php echo $document['video_title']; ?>
-                                                                            </li>
-                                                                        <?php } ?>
-                                                                    <?php } ?>
-
-                                                                    <?php if (!empty($sessions)) { ?>
-                                                                        <?php foreach ($sessions as $document) { ?>
-                                                                            <li class="list-group-item list-item-onboarding" id="tsession_<?php echo $document['sid']; ?>">
-                                                                                <?php echo $document['session_topic']; ?>
-                                                                            </li>
-                                                                        <?php } ?>
-                                                                    <?php } */ ?>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>-->
                                     </form>
                                 </div>
                             </div>
@@ -3824,16 +3679,28 @@ if ($user_type == 'applicant') {
         });
     });
     //
-    function func_remove_EEOC() {
+    function func_remove_EEOC(event) {
         alertify.confirm(
             'Are you sure?',
             'Are you sure you want to revoke this document?',
             function() {
+                generateForm('remove_EEOC', 'form_remove_EEOC');
                 $('#form_remove_EEOC').submit();
             },
             function() {
                 alertify.alert("Warning", 'Cancelled!');
             });
+    }
+
+    function generateForm(formAction, formId) {
+        var form = '<form id="' + (formId) + '" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">';
+        form += ' <input type="hidden" id="perform_action" name="perform_action" value="' + (formAction) + '" />';
+        form += ' <input type="hidden" name="company_sid" value="<?= $company_sid; ?>" />';
+        form += ' <input type="hidden" name="user_sid" value="<?= $user_sid; ?>" />';
+        form += ' <input type="hidden" name="user_type" value="<?= $user_type; ?>" />';
+        form += ' </form>';
+
+        $('body').remove('#' + (formId) + '').append(form);
     }
     //
     function func_assign_EEOC() {
@@ -3841,6 +3708,7 @@ if ($user_type == 'applicant') {
             'Are you sure?',
             'Are you sure you want to assign this document?',
             function() {
+                generateForm('assign_EEOC', 'form_assign_EEOC')
                 $('#form_assign_EEOC').submit();
             },
             function() {

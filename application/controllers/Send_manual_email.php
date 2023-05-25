@@ -452,6 +452,7 @@ class Send_manual_email extends Public_Controller
         $attach_body       = '';
         $attachments       = $this->portal_email_templates_model->get_all_email_template_attachments($temp_id);
 
+
         if (sizeof($attachments) > 0) {
             $attach_body .= '<br> Please Review The Following Attachments: <br>';
 
@@ -470,7 +471,7 @@ class Send_manual_email extends Public_Controller
             $employee_data  = $this->portal_email_templates_model->get_employee_data($employee_id, $company_sid);
 
             //
-            $toArray = array($company_name, $today, $employee_data['first_name'], $employee_data['last_name'],$employee_data['job_title'], $employee_data['first_name'] . ' ' . $employee_data['last_name'], $employee_data['email']);
+            $toArray = array($company_name, $today, $employee_data['first_name'], $employee_data['last_name'], $employee_data['job_title'], $employee_data['first_name'] . ' ' . $employee_data['last_name'], $employee_data['email']);
             $subject = $post_subject;
             $body    = $post_body;
             replace_magic_quotes($subject, $fromArray, $toArray);

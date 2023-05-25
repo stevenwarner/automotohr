@@ -145,12 +145,21 @@ class Copy_employees extends Admin_Controller
                 $resp['response'] = 'No employee found.';
                 echo json_encode($resp);
             }
+            // set array
+            $passArray = [
+                'oldEmployeeId' => $employee_sid,
+                'oldCompanyId' => $from_company,
+                'newEmployeeId' => 0,
+                'newCompanyId' => $to_company
+            ];
 
             $date = date('Y-m-d H:i:s', strtotime('now'));
 
             if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
                 $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
                 $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
+                //
+                $passArray['newEmployeeId'] = $primary_employee_sid;
 
                 $secondary_employee_email    = $employee['email'];
                 //
@@ -302,6 +311,10 @@ class Copy_employees extends Admin_Controller
                 if ($formpost['timeoff'] == 1) {
                     $this->transferEmployeeTimeoff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company);
                 }
+                //
+                $this->load->model('2022/Complynet_model', 'complynet_model');
+                //
+                $this->complynet_model->manageEmployee($passArray);
 
                 echo json_encode($resp);
             } else {
@@ -786,15 +799,20 @@ class Copy_employees extends Admin_Controller
 
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
+                //
+                $this->load->model('2022/Complynet_model', 'complynet_model');
+                //
+                $this->complynet_model->manageEmployee($passArray);
+                //
                 echo json_encode($resp);
             }
         }
     }
 
-    private function transferEmployeeTimeoff (
-        $secondaryEmployeeSid, 
-        $primaryEmployeeSid, 
-        $secondaryCompanySid, 
+    private function transferEmployeeTimeoff(
+        $secondaryEmployeeSid,
+        $primaryEmployeeSid,
+        $secondaryCompanySid,
         $primaryCompanySid
     ) {
         //
@@ -846,7 +864,7 @@ class Copy_employees extends Admin_Controller
                     array_push($moveCategorysIds, $category_sid);
                     //
                 } else {
-                    $typeSid = $this->copy_employees_model->getCategoryTypeSid($category_sid, $primaryCompanySid);
+                    $typeSid = $this->copy_employees_model->getCategoryTypeById($category_sid, $primaryCompanySid);
                 }
                 //
                 // check policy exist in primary company
@@ -858,7 +876,7 @@ class Copy_employees extends Admin_Controller
                     $insertPolicy['type_sid'] = $typeSid;
                     $insertPolicy['creator_sid'] = $primaryAdminSid;
                     $insertPolicy['title'] = $policy['title'];
-                    $insertPolicy['assigned_employees'] = str_replace($secondaryEmployeeSid, '', $policy['assigned_employees']) != $policy['assigned_employees'] ? $primaryEmployeeSid : '';
+                    $insertPolicy['assigned_employees'] = $primaryEmployeeSid; 
                     $insertPolicy['off_days'] = $policy['off_days'];
                     $insertPolicy['note'] = $policy['note'];
                     $insertPolicy['is_default'] = $policy['is_default'];
@@ -873,7 +891,7 @@ class Copy_employees extends Admin_Controller
                     $insertPolicy['is_included'] = $policy['is_included'];
                     $insertPolicy['reset_policy'] = $policy['reset_policy'];
                     $insertPolicy['accruals'] = $policy['accruals'];
-                    $insertPolicy['is_entitled_employee'] = $policy['is_entitled_employee'];
+                    $insertPolicy['is_entitled_employee'] = 1;
                     $insertPolicy['policy_category_type'] = $policy['policy_category_type'];
                     $insertPolicy['allowed_approvers'] = '';
                     //
@@ -882,7 +900,7 @@ class Copy_employees extends Admin_Controller
                     $movePolicy = 'yes';
                     array_push($movePolicysTitle, $policy['title']);
                 } else {
-                    $policySid = $this->copy_employees_model->getRequestPolicySid($policy['title'], $typeSid, $primaryCompanySid);
+                    $policySid = $this->copy_employees_model->getRequestActivePolicyId($policy['title'], $typeSid, $primaryCompanySid);
                     //
                     // check if primary employee exist in previous company policy 
                     // then add employee into new company policy too
@@ -896,7 +914,7 @@ class Copy_employees extends Admin_Controller
                         if (empty($assignedEmployees)) {
                             $dataToUpdate['assigned_employees'] = $primaryEmployeeSid;
                         } else if (str_replace($primaryEmployeeSid, '', $assignedEmployees) == $assignedEmployees) {
-                            $dataToUpdate['assigned_employees'] = $assignedEmployees.','.$primaryEmployeeSid;
+                            $dataToUpdate['assigned_employees'] = $assignedEmployees . ',' . $primaryEmployeeSid;
                         }
                         $this->copy_employees_model->updateCompanyPolicy($policySid, $dataToUpdate);
                     }
@@ -982,7 +1000,6 @@ class Copy_employees extends Admin_Controller
                     $moveBalance = 'yes';
                     array_push($moveBalancesIds, $balance['sid']);
                 }
-                
             }
         }
         //

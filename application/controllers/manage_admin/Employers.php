@@ -292,6 +292,7 @@ class employers extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $employer_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
+        $this->data['company_detail'] = $company_detail;
         $this->data['creator'] = $employer_detail[0]['created_by'] == null ? [] : $this->company_model->getEmployeeCreator($employer_detail[0]['created_by']);
         $this->data['show_timezone'] = isset($company_detail[0], $company_detail[0]['timezone']) ? $company_detail[0]['timezone'] : '';
         $this->data['page_title'] = 'Edit Employer';
@@ -360,30 +361,34 @@ class employers extends Admin_Controller
             $data['workers_compensation_code'] = $this->input->post('workers_compensation_code');
             $data['eeoc_code'] = $this->input->post('eeoc_code');
             $data['salary_benefits'] = $this->input->post('salary_benefits');
+            $data['payment_method'] = $this->input->post('payment_method');
             //
             $data['languages_speak'] = null;
             //
             $languages_speak = $this->input->post('secondaryLanguages');
+
             //
+
+            $data['union_name'] = $this->input->post('union_name');
+            $data['union_member'] = $this->input->post('union_member');
+            
+            if ($data['union_member'] == 0) {
+                $data['union_name'] = '';
+            }
+
             if ($languages_speak) {
                 $data['languages_speak'] = implode(',', $languages_speak);
             }
 
-
+            
             if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
                 $templetJobTitleData = $this->input->post('temppate_job_title');
                 $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                 $data['job_title'] = $templetJobTitleDataArray[1];
                 $data['job_title_type'] = $templetJobTitleDataArray[0];
-
-                if ($this->input->post('complynet_job_title') == 'null' && $this->input->post('complynet_job_title', true)) {
-                    $templetComplynetjobtitle = get_templet_complynettitle($templetJobTitleDataArray[0]);
-                    $data['complynet_job_title'] = $templetComplynetjobtitle;
-                }
             } else {
                 $data['job_title_type'] = 0;
             }
-
 
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
@@ -472,6 +477,15 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone', true);
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
+            //
+            $this->company_model->update_user($sid, $data, 'Employer');
+            //
+            // Check and Update employee basic profile info
+            $this->checkAndUpdateProfileInfo(
+                $sid,
+                $employer_detail[0],
+                $data
+            );
 
             //
             $oldData = $this->db
@@ -505,6 +519,104 @@ class employers extends Admin_Controller
         }
     }
 
+    private function checkAndUpdateProfileInfo (
+        $employeeId,
+        $employeeDetail,
+        $dataToInsert
+    ) {
+        // New employee profile data
+        $newProfileData = [];
+        $newProfileData['first_name'] = $dataToInsert['first_name'];
+        $newProfileData['last_name'] = $dataToInsert['last_name'];
+        $newProfileData['dob'] = $dataToInsert['dob'];
+        $newProfileData['email'] = $dataToInsert['email'];
+        $newProfileData['ssn'] = $dataToInsert['ssn'];
+        //
+        // Old employee profile data
+        $oldProfileData = [];
+        $oldProfileData['first_name'] = $employeeDetail['first_name'];
+        $oldProfileData['last_name'] = $employeeDetail['last_name'];
+        $oldProfileData['email'] = $employeeDetail['email'];
+        $oldProfileData['ssn'] = $employeeDetail['ssn'];
+        $oldProfileData['dob'] = $employeeDetail['dob'];
+        //
+        $profileDifference = $this->findDifference($oldProfileData, $newProfileData);
+        //
+        if ($profileDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'profile');
+        }
+        //
+        // New employee address data
+        $newAddressData = [];
+        $newAddressData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newAddressData['Location_City'] = $dataToInsert['Location_City'];
+        $newAddressData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newAddressData['Location_State'] = $dataToInsert['Location_State'];
+        //
+        // Old employee address data
+        $oldAddressData = [];
+        $oldAddressData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldAddressData['Location_City'] = $employeeDetail['Location_City'];
+        $oldAddressData['Location_State'] = $employeeDetail['Location_State'];
+        $oldAddressData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        //
+        $addressDifference = $this->findDifference($oldAddressData, $newAddressData);
+        //
+        if ($addressDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'address');
+        }
+        //
+        // New employee payment method
+        $newPaymentData = [];
+        $newPaymentData['payment_method'] = $dataToInsert['payment_method'];
+        //
+        // Old employee payment method
+        $oldPaymentData = [];
+        $oldPaymentData['payment_method'] = $employeeDetail['payment_method'];
+        //
+        $paymentMethodDifference = $this->findDifference($oldPaymentData, $newPaymentData);
+        //
+        if ($paymentMethodDifference['profile_changed'] == 1) {
+            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'payment_method');
+        }
+    }
+
+    /**
+     * 
+     */
+    function findDifference($previous_data, $form_data)
+    {
+        // 
+        $profile_changed = 0;
+        //
+        $dt = [];
+        //
+        if (!empty($previous_data)) {
+            foreach ($previous_data as $key => $data) {
+                //
+                if (!isset($form_data[$key])) {
+                    continue;
+                }
+                //   
+                if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
+                    //
+                    $dt[$key] = [
+                        'old' => $data,
+                        'new' => $form_data[$key]
+                    ];
+                    //
+                    $profile_changed = 1;
+                }
+            }
+        }
+        //
+
+        return ['profile_changed' => $profile_changed, 'data' => $dt];
+    }
+
     public function add_employer($company_sid = null)
     {
         $redirect_url = 'manage_admin';
@@ -528,7 +640,11 @@ class employers extends Admin_Controller
             $this->form_validation->set_rules('alternative_email', 'Alternative Email', 'trim|valid_email');
             $this->form_validation->set_rules('job_title', 'Job Title', 'trim');
             $this->form_validation->set_rules('direct_business_number', 'Direct Business Number', 'trim');
+            
+           if(get_company_module_status($company_sid, 'primary_number_required') == 1) {
             $this->form_validation->set_rules('cell_number', 'Cell Number', 'trim');
+           }
+
             $this->form_validation->set_rules('security_access_level', 'Security Access Level', 'required|trim');
 
             if ($this->form_validation->run() == false) {
@@ -550,6 +666,7 @@ class employers extends Admin_Controller
                 $action = $this->input->post('action');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+                $payment_method = $this->input->post('payment_method');
                 $employee_type = $this->input->post('employee_type');
                 $salt = generateRandomString(48);
 
@@ -581,6 +698,7 @@ class employers extends Admin_Controller
                 $insert_data['salt'] = $salt;
                 $insert_data['gender'] = $gender;
                 $insert_data['timezone'] = $timezone;
+                $insert_data['payment_method'] = $payment_method;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
 
@@ -781,6 +899,8 @@ class employers extends Admin_Controller
             $data = array('active' => 1, 'general_status' => 'active');
             $this->company_model->update_user_status($employer_id, $data);
         }
+        //
+        changeComplynetEmployeeStatus($employer_id, $action);
     }
 
     function send_login_credentials()
@@ -1169,11 +1289,16 @@ class employers extends Admin_Controller
                 $data_transfer_log_update['to_company_sid'] = $company_detail[0]['sid'];;
                 $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
                 $this->company_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+                //
+                // ToDo if transfer then complynet status update pending
             }
             if ($status != 9) {
                 $this->company_model->change_terminate_user_status($sid, $data_to_update);
             }
-
+            //
+            $employeeStatus = $data_to_update['active'] == 1 ? "active" : "deactive";
+            changeComplynetEmployeeStatus($sid, $employeeStatus);
+            //
             $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
         }
@@ -1296,6 +1421,8 @@ class employers extends Admin_Controller
 
                 //
                 $this->db->where('sid', $sid)->update('users', ['transfer_date' => $data_transfer_log_update['employee_copy_date']]);
+                //
+                // ToDo if transfer then complynet status update pending
             }
 
 
@@ -1303,6 +1430,9 @@ class employers extends Admin_Controller
             if ($this->company_model->check_for_main_status_update($sid, $status_id)) {
                 if ($status != 9) {
                     $this->company_model->change_terminate_user_status($sid, $data_to_update);
+                    //
+                    $employeeStatus = $data_to_update['active'] == 1 ? "active" : "deactive";
+                    changeComplynetEmployeeStatus($sid, $employeeStatus);
                 }
             }
             //

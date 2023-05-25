@@ -465,6 +465,16 @@ class Complynet extends Admin_Controller
         $data['records'] = $complyDepartments;
 
         //
+        if ($complyDepartments) {
+            $activeComplyNetIds = array_column($complyDepartments, 'Id');
+            //
+            $this->db
+            ->where('company_sid', $companyId)
+            ->where_not_in('complynet_department_sid', $activeComplyNetIds)
+            ->delete('complynet_departments');
+        }
+
+        //
         return SendResponse(
             200,
             [
@@ -761,4 +771,5 @@ class Complynet extends Admin_Controller
         //
         exit('Roles processed.');
     }
+
 }

@@ -1,5 +1,5 @@
 <!--  -->
-<div class="container-fluid">
+<div class="container">
     <div class="csPageWrap">
         <!-- Heading -->
         <div class="row">

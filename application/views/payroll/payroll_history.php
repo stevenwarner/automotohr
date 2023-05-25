@@ -7,10 +7,8 @@
     <!--  -->
     <div class="row">
         <div class="container-fluid">
-            <!-- Side Bar -->
-            <?php $this->load->view('employee_info_sidebar_ems'); ?>
             <!-- Main Content Area -->
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <!-- Main Content Area -->
                 <div class="row">
                     <div class="col-sm-12">
@@ -28,10 +26,10 @@
                         <li role="presentation" class="active">
                             <a href="#regular" aria-controls="regular" role="tab" data-toggle="tab">Regular Payroll</a>
                         </li>
-                        <li role="presentation" disabled class="disabled">
+                        <li role="presentation" disabled class="disabled" style="display: none;">
                             <a href="javascript:void(0);">Off-cycle Payroll</a>
                         </li>
-                        <li role="presentation" disabled class="disabled">
+                        <li role="presentation" disabled class="disabled" style="display: none;">
                             <a href="javascript:void(0);">Contractor Payroll</a>
                         </li>
                     </ul>
@@ -57,13 +55,7 @@
                                             <tbody>
                                                 <?php if(!empty($payrollHistory)) { $ins = []; ?>
                                                     <?php foreach($payrollHistory as $history){ ?>
-                                                        <?php $payroll = json_decode($history['payroll_json']); 
-                                                            //
-                                                            if(in_array($payroll->payroll_id, $ins)){
-                                                                continue;
-                                                            }
-                                                            $ins[] = $payroll->payroll_id;
-                                                        ?>
+                                                        <?php $payroll = json_decode($history['payroll_json']);?>
                                                         <tr 
                                                             data-id="<?=$payroll->payroll_id;?>"
                                                             data-sd="<?=formatDateToDB($payroll->pay_period->start_date, DB_DATE, DATE);?>"
@@ -83,13 +75,13 @@
                                                                 $<?=number_format($payroll->totals->company_debit, 2, '.', ',');?>
                                                             </td>
                                                             <td class="vam">
-                                                                <!-- <a href="<?=base_url('payroll/history/'.($history['sid']).'');?>" class="btn btn-orange">
+                                                                <a href="<?=base_url('payroll/history/'.($history['sid']).'');?>" class="btn btn-orange">
                                                                     <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View details
-                                                                </a> -->
-                                                                -
-                                                                <?php if($payroll->payroll_deadline > date('Y-m-d', strtotime('now')) ): ?>
+                                                                </a>
+                                                                <!-- - -->
+                                                                <!-- <?php if($payroll->payroll_deadline > date('Y-m-d', strtotime('now')) ): ?>
                                                                     <button class="btn btn-black jsCancelPayroll">Cancel Payroll</button>
-                                                                <?php endif; ?>
+                                                                <?php endif; ?> -->
                                                             </td>
                                                         </tr>
                                                     <?php } ?>
