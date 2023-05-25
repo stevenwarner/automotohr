@@ -905,13 +905,13 @@ class Copy_employees_model extends CI_Model
             return 0;
         }
     }
-    
+
     public function getRequestActivePolicyId($title, $categoryTypeSid, $companySid)
     {
         //
         $table = 'timeoff_policies';
         $where = [
-            'title' => $title, 
+            'title' => $title,
             'type_sid' => $categoryTypeSid,
             'company_sid' => $companySid
         ];
@@ -1111,6 +1111,36 @@ class Copy_employees_model extends CI_Model
             }
         } else {
             return array();
+        }
+    }
+
+
+
+
+    public function addNewCompanyPolicy($toCompanySid, $fromCompanySid, $fromPolicyId)
+    {
+        $this->db->select('*');
+        $this->db->where('company_sid', $fromCompanySid);
+        $this->db->where('sid', $fromPolicyId);
+        $this->db->from('timeoff_policies');
+        $record_obj = $this->db->get();
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+
+                $result['company_sid'] = $toCompanySid;
+                unset($result['sid']);
+                //
+                $this->db->insert('timeoff_policies', $result);
+                return $this->db->insert_id();
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
         }
     }
 }

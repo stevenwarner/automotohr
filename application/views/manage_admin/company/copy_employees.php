@@ -200,7 +200,7 @@ foreach ($companies as $company)
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success jsSavePolicy">Save</button>
+                        <button type="button" class="btn btn-success jsSavePolicyValidate">Save</button>
                     </div>
                 </div>
             </div>
@@ -537,11 +537,16 @@ foreach ($companies as $company)
 
                     //
                     if ($('#jsMoveTimeoff').is(':checked')) {
+                        loader('hide');
+
                         openPolicyPopup();
 
+                    } else {
+                        loader();
+                        copy_employees();
                     }
 
-                    // copy_employees();
+
 
 
                 }, function() {
@@ -566,7 +571,8 @@ foreach ($companies as $company)
         }
 
 
-        function copy_employees() {
+        function copy_employees(timeOfPolicyHolder) {
+
             if (selected_employees.length > 0 && selected_employees[current_employee] === undefined) {
                 loader(false);
                 $('#js-loader-text').html('');
@@ -593,6 +599,8 @@ foreach ($companies as $company)
             employee.transferred_note = $("#transferred_note").val();
             employee.timeoff = $('#jsMoveTimeoff').is(':checked') ? 1 : 0;
 
+            employee.timeOfPolicyHolder = timeOfPolicyHolder;
+
             var myurl = "<?php echo base_url('manage_admin/copy_employees/copy_companies_employees') ?>";
             $.post(myurl, employee, function(resp) {
                 if (resp.status === false) {
@@ -604,7 +612,7 @@ foreach ($companies as $company)
                 if (current_employee <= copy_employee_count) {
                     current_employee++;
                     setTimeout(function() {
-                        copy_employees()
+                        copy_employees(timeOfPolicyHolder)
                     }, 1000);
                 } else {
                     loader(false);
@@ -675,6 +683,7 @@ foreach ($companies as $company)
                 async: false,
                 success: function(data) {
                     $("#jsPolicySync").html(data.view);
+                    loader('hide');
                 },
                 error: function(data) {
 
@@ -682,4 +691,63 @@ foreach ($companies as $company)
             });
 
         }
+    </script>
+
+
+
+
+
+    <script>
+        function mapPolicies() {
+            var policylist = [];
+
+            $(".tocompanyselect").each(function(index, select) {
+                var toPolicyId = $(this).val();
+                var fromPolicyId = $(this).closest(".rowdata").data("from_policy");
+
+                policylist.push({
+                    fromPolicyId: fromPolicyId,
+                    toPolicyId: toPolicyId
+                });
+
+            });
+
+            return policylist;
+        }
+
+
+        //
+        $(".jsSavePolicyValidate").on('click', function() {
+            //
+            let policyHolder = mapPolicies()
+
+            // console.log(policyHolder);
+            var newPolicyCount = 0;
+            for (i = 0; i < policyHolder.length; i++) {
+                if (policyHolder[i]['toPolicyId'] == '0') {
+                    newPolicyCount++;
+                }
+
+            }
+
+            //
+            if (newPolicyCount > 0) {
+                alertify.confirm('New Policies', newPolicyCount + ' New policies will be add  ', function() {
+                    $('#jsPolicyModal').modal('hide');
+                    loader();
+
+                    copy_employees(policyHolder);
+                    $("body").removeClass("ajs-no-overflow");
+                }, function() {
+                    alertify.error('Cancel')
+                });
+            } else {
+                $('#jsPolicyModal').modal('hide');
+                loader('hide');
+                copy_employees(policyHolder);
+
+
+            }
+
+        });
     </script>
