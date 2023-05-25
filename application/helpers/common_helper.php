@@ -16662,37 +16662,44 @@ if (!function_exists('get_executive_administrator_admin_plus_status')) {
         $result = $CI->db->get('executive_user_companies')->row_array();
         return $result;
     }
-
 }
 
 
 if (!function_exists('changeComplynetEmployeeStatus')) {
-    function changeComplynetEmployeeStatus($employeeSid, $newStatus)
+    /**
+     * Check and update status on ComplyNet
+     * 
+     * @method get_instance
+     * 
+     * @param int    $employeeId
+     * @param string $newStatus active|deactive
+     * @param bool   $doReturn Optional
+     * @return array
+     */
+    function changeComplynetEmployeeStatus(int $employeeId, string $newStatus, bool $doReturn = true)
     {
+        // set default response array
         $res = [];
-        $res['Status'] = FALSE;
-        $res['Response'] = '';
-        $res['Code'] = '200';
         //
         $oldStatus = '';
         //
         $CI = &get_instance();
         //
-        if (!$CI->db->where('employee_sid', $employeeSid)->count_all_results('complynet_employees')) {
-            $res['Response'] = 'Employee is not on complynet.';
-            return $res;
+        if (!$CI->db->where('employee_sid', $employeeId)->count_all_results('complynet_employees')) {
+            $res['errors'][] = 'The employee has not yet been synchronized with ComplyNet.';
+            return $doReturn ? $res : sendResponse(200, $res);
         }
         //
         $record =
             $CI->db->select('complynet_location_sid, email, complynet_json')->where([
-                'employee_sid' => $employeeSid
+                'employee_sid' => $employeeId
             ])
             ->get('complynet_employees')
             ->row_array();
         //
         if (empty($record)) {
-            $res['Response'] = 'Employee data not found in system.';
-            return $res;
+            $res['errors'][] = 'The employee has not yet been synchronized with ComplyNet.';
+            return $doReturn ? $res : sendResponse(200, $res);
         }
         //
         $jsonToArray = json_decode($record['complynet_json'], true);
@@ -16704,8 +16711,13 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
         }
         // Load ComplyNet library
         $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
-        // Get the hash
+        // Get the employee
         $response = $CI->complynet_lib->getEmployeeByEmail($record['email']);
+        //
+        if (!$response) {
+            $res['errors'][] = 'ComplyNet does not have a record of the selected employee.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
         //
         if ($response) {
             foreach ($response as $key => $value) {
@@ -16714,7 +16726,12 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
                 }
             }
         }
-
+        //
+        if ($oldStatus == '') {
+            $res['errors'][] = 'The ComplyNet status of selected employee could not be located.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        //
         if ($newStatus != $oldStatus) {
             //
             $updateArray = [];
@@ -16722,12 +16739,11 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
             //
             $CI->complynet_lib->changeEmployeeStatusByEmail($record['email']);
             //
-            $res['Status'] = TRUE;
-            $res['Response'] = 'Employee status update successfully.';
-            return $res;
-
+            $res['success'] = 'The status of the selected employee has been updated to "' . (ucfirst($newStatus)) . '".';
+            return $doReturn ? $res : sendResponse(200, $res);
         }
-       
+        //
+        $res['success'] = 'The employee\'s status had already been marked as "' . (ucfirst($newStatus)) . '".';
+        return $doReturn ? $res : sendResponse(200, $res);
     }
-
 }
