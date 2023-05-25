@@ -429,3 +429,79 @@ if (!function_exists('getUserColumnByWhere')) {
         return $result;
     }
 }
+
+if (!function_exists('getComplynetUsers')) {
+    /**
+     * Get inactive Complynet user
+     * @param string $status
+     * @param string $columns
+     * 
+     * @return array
+     */
+    function getComplynetUsers($status, $columns) {
+        //
+        $CI = &get_instance();
+        //
+        $CI->db->select($columns);
+        //
+        if ($status == 'active') {
+            $CI->db->where('users.active', 1);
+            $CI->db->or_where('users.terminated_status', 0);
+        } else {
+            $CI->db->where('users.active', 0);
+            $CI->db->or_where('users.terminated_status', 1);
+        }    
+        //
+        $CI->db->from('complynet_employees');
+        $CI->db->join('users', 'users.sid = complynet_employees.employee_sid');
+        $result = $CI->db->get()->result_array();
+        //
+        if(count($result) && $status == 'inactive'){
+            foreach ($result as $key => $v) {
+                // Check if employee status is terminated but Its also active then skip this record
+                if($v['active'] == 1 && $v['terminated_status'] == 1) unset($result[$key]);
+            }
+            // Reset the array indexes
+            $result = array_values($result);
+        }
+        //
+        return $result;
+    }
+}
+
+if (!function_exists('getComplynetUser')) {
+    /**
+     * Get Complynet user
+     * @param string $email
+     * @return array
+     */
+    function getComplynetUser(string $email) {
+        //
+        $CI = &get_instance();
+        //
+        $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
+        $response = $CI->complynet_lib->getEmployeeByEmail($email);
+        //
+        return $response;
+    }
+}
+
+if (!function_exists('updateComplynetUserStatus')) {
+    /**
+     * Update Complynet user status
+     * @param array $email
+     */
+    function updateComplynetUserStatus($email) {
+        //
+        $CI = &get_instance();
+        //
+        $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
+        //
+        $updateArray = [];
+        $updateArray["userName"] = $emmail;
+        //
+        $CI->complynet_lib->changeEmployeeStatusByEmail($updateArray);
+    }
+}
+
+

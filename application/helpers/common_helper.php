@@ -16735,7 +16735,7 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
             $updateArray = [];
             $updateArray["userName"] = $record['email'];
             //
-            $CI->complynet_lib->changeEmployeeStatusByEmail($record['email']);
+            $CI->complynet_lib->changeEmployeeStatusByEmail($updateArray);
             //
             $res['success'] = 'The status of the selected employee has been updated to "' . (ucfirst($newStatus)) . '".';
             return $doReturn ? $res : sendResponse(200, $res);
