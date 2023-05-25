@@ -1,9 +1,11 @@
 <div class="row">
     <div class="col-sm-6">
-        <label>From Company</label>
+        
+        <b><span id="fromCompanyName"></span></b><br><br>
     </div>
     <div class="col-sm-6">
-        <label>To Company</label>
+        <b><span id="toCompanyName"></span></b><br><br>
+       
     </div>
 
 </div>
@@ -27,12 +29,12 @@
     <?php if (!empty($formCompanyPolicies)) {
         foreach ($formCompanyPolicies as $rowPolicy) {
     ?>
-            <div class="row rowdata" data-from_policy='<?php echo $rowPolicy['sid'] ?>'>
+            <div class="row rowdata" data-from_policy='<?php echo $rowPolicy['sid'] ?>' style=" background-color: #eee;  margin-left: 3px; margin-right: 3px;">
                 <div class="col-sm-6">
-                    <label><?php echo $rowPolicy['title'] ?></label>
+                    <label style="margin-top: 10px"><?php echo $rowPolicy['title'] ?></label>
                 </div>
 
-                <div class="col-sm-6">
+                <div class="col-sm-6" style="padding-right:0px">
                     <?php echo $toCompanyPoliciesDropdown; ?>
                 </div>
             </div><br>

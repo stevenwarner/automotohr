@@ -1095,8 +1095,10 @@ class Copy_employees_model extends CI_Model
 
     public function getCompanyPolicies($companySid)
     {
-        $this->db->select('sid,title');
-        $this->db->where('company_sid', $companySid);
+        $this->db->select('timeoff_policies.sid,timeoff_policies.title');
+        $this->db->where('timeoff_policies.company_sid', $companySid);
+        $this->db->group_by('timeoff_policies.sid');
+        $this->db->join('timeoff_requests', 'timeoff_requests.timeoff_policy_sid = timeoff_policies.sid');
         $this->db->from('timeoff_policies');
         $record_obj = $this->db->get();
         //

@@ -182,24 +182,19 @@ foreach ($companies as $company)
     </div>
 
 
-
-
-
-
-
     <div id="jsModalContainer">
         <div class="modal fade" id="jsPolicyModal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">header</h4>
+                        <h4 class="modal-title">Polices List</h4>
                     </div>
                     <div class="modal-body" id="jsPolicySync">
-                        dffsf
+                        
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default jsClosemodel">Close</button>
                         <button type="button" class="btn btn-success jsSavePolicyValidate">Save</button>
                     </div>
                 </div>
@@ -684,6 +679,14 @@ foreach ($companies as $company)
                 success: function(data) {
                     $("#jsPolicySync").html(data.view);
                     loader('hide');
+                    var fromCompanyName = $("#js-from-company option:selected").text();
+                    var toCompanyName = $("#js-to-company option:selected").text();
+                    $("#fromCompanyName").text("From Company: "+fromCompanyName);
+                    $("#toCompanyName").text("To Company: "+toCompanyName);
+                    
+
+                    console.log(fromCompanyName + '#' + toCompanyName);
+
                 },
                 error: function(data) {
 
@@ -740,6 +743,7 @@ foreach ($companies as $company)
                     $("body").removeClass("ajs-no-overflow");
                 }, function() {
                     alertify.error('Cancel')
+
                 });
             } else {
                 $('#jsPolicyModal').modal('hide');
@@ -749,5 +753,10 @@ foreach ($companies as $company)
 
             }
 
+        });
+
+        $(".jsClosemodel").on('click', function() {
+            $('#jsPolicyModal').modal('hide');
+            $("body").removeClass("ajs-no-overflow");
         });
     </script>
