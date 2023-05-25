@@ -32,4 +32,12 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
+    public function syncStatus () {
+        _e(syncComplynetEmployeeStatus(0),true);
+    }
+
+    public function missingData () {
+        _e(getComplynetEmployeeMissingData(0),true);
+    }
+
 }
