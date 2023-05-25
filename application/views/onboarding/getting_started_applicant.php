@@ -64,7 +64,7 @@
 
                             <?php } ?></h2>
                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 calendar-icon text-right">
-                            <h2>
+                            <h4>
                                 <?php
                                 //
                                 if (empty($locations) && !empty($companyDefaultAddress)) {
@@ -88,7 +88,7 @@
                                     echo $show_map;
                                 }
                                 ?>
-                                </h2>
+                                </h4>
 
 
                             <!-- <figure><i class="fa fa-calendar-check-o fa-5x"></i></figure>-->
