@@ -1113,9 +1113,9 @@ class Complynet_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            $checkSecondary = $this->checkEmployeeOnComplynet($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
+            $result = $this->checkEmployeeOnComplynet($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
             //
-            if ($checkSecondary == 0) {
+            if ($result == 0) {
                 $result = $this->isSecondaryEmployeeTransferd($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
             }
             //
