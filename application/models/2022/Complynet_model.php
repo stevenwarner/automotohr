@@ -888,12 +888,6 @@ class Complynet_model extends CI_Model
             return SendResponse(200, ['errors' => checkEmployeeMissingData($employee)]);
         }
         //
-        $istransfard = $this->checkIsEmployeeTransfered($employeeId);
-        //
-        if ($istransfard) {
-            return 'System link employee successfully.';
-        }
-        //
         $complyDepartmentId = $this->getEmployeeDepartmentId(
             $employee['sid']
         );
@@ -925,6 +919,16 @@ class Complynet_model extends CI_Model
                 return $errorArray;
             }
             return SendResponse(200, ['errors' => $errorArray]);
+        }
+        //
+        $isTransferred = $this->checkIsEmployeeTransferred($employeeId);
+        //
+        if ($isTransferred) {
+            //
+            if ($doReturn) {
+                return ['System failed to link employee with ComplyNet.'];
+            }
+            return SendResponse(200, ['success' => true]);
         }
 
         // Check employee by email
@@ -1099,7 +1103,8 @@ class Complynet_model extends CI_Model
         ]]);
     }
 
-    public function checkIsEmployeeTransfered ($employeeId) {
+    public function checkIsEmployeeTransferred($employeeId)
+    {
         $this->db->select('sid, previous_employee_sid, from_company_sid, new_employee_sid, to_company_sid');
         $this->db->where_in('new_employee_sid', $employeeId);
         $this->db->order_by('sid', 'DESC');
@@ -1108,9 +1113,9 @@ class Complynet_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            $result =$this->isSecondaryEmployeeTransferd ($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
+            $result = $this->isSecondaryEmployeeTransferd($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
             //
-            if (empty($result)){
+            if (empty($result)) {
                 return false;
             }
             //
@@ -1133,7 +1138,8 @@ class Complynet_model extends CI_Model
         }
     }
 
-    public function isSecondaryEmployeeTransferd ($employeeId, $companyId) {
+    public function isSecondaryEmployeeTransferd($employeeId, $companyId)
+    {
         $this->db->select('sid, previous_employee_sid, from_company_sid, new_employee_sid, to_company_sid');
         $this->db->where('new_employee_sid', $employeeId);
         $this->db->where('to_company_sid', $companyId);
@@ -1155,7 +1161,8 @@ class Complynet_model extends CI_Model
         }
     }
 
-    public function checkEmployeeOnComplynet ($employeeId, $companyId) {
+    public function checkEmployeeOnComplynet($employeeId, $companyId)
+    {
         $this->db->where('employee_sid', $employeeId);
         $this->db->where('company_sid', $companyId);
         $this->db->from('complynet_employees');
@@ -1700,13 +1707,13 @@ class Complynet_model extends CI_Model
         $employee['complynet_job_title'] = $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
         $oldComplynetEmployeeData =  $this->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
         // check the missing data
-        $complyOldEmployeeInfo = json_decode($complyOldEmployee['complynet_json'],true);
+        $complyOldEmployeeInfo = json_decode($complyOldEmployee['complynet_json'], true);
         //
         $employee = $this->addMissingEmployeeInfo($complyOldEmployeeInfo[0], $employee);
 
         if (checkEmployeeMissingData($employee)) {
             //
-            mail('mubashar@automotohr.com', 'Employee '.getUserNameBySID($employee['sid']).' data missing while moving on complynet: ', json_encode(checkEmployeeMissingData($employee)));
+            mail('mubashar@automotohr.com', 'Employee ' . getUserNameBySID($employee['sid']) . ' data missing while moving on complynet: ', json_encode(checkEmployeeMissingData($employee)));
             return checkEmployeeMissingData($employee);
         }
         // get the comply department id
@@ -1780,7 +1787,8 @@ class Complynet_model extends CI_Model
                     //
                     $this->db->where([
                         'employee_sid' => $passArray['newEmployeeId']
-                    ])->update('complynet_employees',
+                    ])->update(
+                        'complynet_employees',
                         [
                             'complynet_employee_sid' => $employeeObj['Id'],
                             'complynet_json' => json_encode($employeeObj)
@@ -1789,7 +1797,7 @@ class Complynet_model extends CI_Model
                 }
                 //
                 return ['success' => 'Employee synced.'];
-            } 
+            }
         }
         //
         $response = $this->clib->updateUser($updateArray);
@@ -1837,7 +1845,8 @@ class Complynet_model extends CI_Model
         return $this->transferEmployeeToAnotherLocation($passArray);
     }
 
-    public function addMissingEmployeeInfo ($oldEmployee, $newEmployee) {
+    public function addMissingEmployeeInfo($oldEmployee, $newEmployee)
+    {
         //
         if (!$newEmployee['first_name']) {
             $newEmployee['first_name'] = $oldEmployee['first_name'];
@@ -1854,5 +1863,4 @@ class Complynet_model extends CI_Model
         //
         return $newEmployee;
     }
-    
 }
