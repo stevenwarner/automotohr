@@ -14,6 +14,11 @@ class AppVerify{
      *  @author  Mubashir Ahmed 
      */
     function loginToAPI(){
-        // LoginToAPI();
+        // // get CI instance
+        // $CI = & get_instance();
+        // // load the library
+        // $CI->load->library('Api_auth');
+        // // call the event
+        // $CI->api_auth->checkAndLogin();
     }
 }

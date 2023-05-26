@@ -39,4 +39,4 @@ if ($AHR->PROFILER_SHOW || $AHR->PROFILER_LOG) {
         'filepath' => 'hooks',
         'params'   => array()
     );
-}        
+}

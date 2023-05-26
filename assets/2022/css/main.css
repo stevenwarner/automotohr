@@ -1,0 +1,58 @@
+.caption h3 {
+	margin-top: 0px !important;
+	color: #fff !important;
+}
+
+.caption h4 {
+	margin-bottom: 0px !important;
+	color: #fff !important;
+}
+
+.success-block {
+	background: #28a745 !important;
+}
+
+.error-block {
+	background: #dc3545 !important;
+}
+
+.post-block {
+	background: #007bff !important;
+}
+
+.put-block {
+	background: #674ead !important;
+}
+
+pre {
+	background: #000 !important;
+	color: #fff !important;
+}
+
+.vam {
+	vertical-align: middle !important;
+}
+
+.thumbnail {
+	border-radius: 5px;
+	box-shadow: 0 0 5px 1px #eee;
+}
+
+/* Panel */
+.csPanelHeading {
+	margin-top: 5px;
+	font-size: 16px;
+}
+
+/* Table */
+.table-black thead th:nth-child(1){
+	border-radius: 7px 0 0 0;
+}
+.table-black thead th:last-child{
+	border-radius: 0 7px 0 0;
+}
+.table-black thead th{
+	background-color: #000;
+	border-color: #000;
+	color: #fff;;
+}

@@ -149,6 +149,7 @@ if (
     $this->uri->segment(2) == 'turnover_cost_calculator_logs' ||
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
+    base_url(uri_string()) == site_url('sa/lms/courses') ||
     $this->uri->segment(2) == 'job_title_templates' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
@@ -660,7 +661,7 @@ if (
                                     //echo 'class="active"';
                                     //}
                                     ?> href="<?php //echo site_url('manage_admin/sms_enquiries'); 
-                                            ?>">SMS Enquiries
+                                                ?>">SMS Enquiries
                                     Log</a>
                             </div>
                         <?php } ?>
@@ -695,13 +696,13 @@ if (
                         <?php } ?>
 
 
-                            <div class="menu-item">
-                                <a <?php
-                                    if (base_url(uri_string()) == site_url('manage_admin/job_title_templates') || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_templates') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_templates')) || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_template_groups') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_template_groups'))) {
-                                        echo 'class="active"';
-                                    }
-                                    ?> href="<?php echo site_url('manage_admin/job_title_templates'); ?>">Job Titles</a>
-                            </div>
+                        <div class="menu-item">
+                            <a <?php
+                                if (base_url(uri_string()) == site_url('manage_admin/job_title_templates') || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_templates') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_templates')) || (($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_title_template_groups') || ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_title_template_groups'))) {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('manage_admin/job_title_templates'); ?>">Job Titles</a>
+                        </div>
 
 
 
@@ -772,7 +773,17 @@ if (
                                     ?> href="<?php echo site_url('manage_admin/blocked_ips'); ?>">Blocked IPs</a>
                             </div>
                         <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'lms_courses')) { ?>
+                            <div class="menu-item">
+                                <a <?php
+                                    if (base_url(uri_string()) == site_url('sa/lms/courses') || $this->uri->segment(2) == 'sa') {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('sa/lms/courses'); ?>">LMS Courses</a>
+                            </div>
+                        <?php } ?>
                     </div>
+
                 </li>
             <?php } ?>
             <?php $functions_names = array('activation_orders', 'accurate_background', 'manage_document'); ?>
@@ -964,7 +975,7 @@ if (
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('employee_profile_data_report'); ?>">Employee Profile Data Report</a>
                         </div>
-                         <div class="menu-item">
+                        <div class="menu-item">
                             <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/main/facebook_job_report')) !== false || ($this->uri->segment(3) == 'main/facebook_job_report')) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/reports/main/facebook_job_report'); ?>">Facebook Jobs Report</a>
@@ -1163,7 +1174,7 @@ if (
                                 } ?> href="<?php echo site_url('manage_admin/reports/applicant_origination_tracker/all/all/all/all'); ?>">Applicant Origination Tracker Report</a>
                         </div>-->
                         <?php } ?>
-                         <?php if (check_access_permissions_for_view($security_details, 'complynet_report')) { ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'complynet_report')) { ?>
                             <div class="menu-item">
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/complynet_report')) !== false || ($this->uri->segment(3) == 'complynet_report')) {
                                         echo 'class="active"';
