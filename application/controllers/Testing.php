@@ -96,50 +96,6 @@ class Testing extends CI_Controller
         return $doReturn ? $res : sendResponse(200, $res);
     }
 
-    public function getComplynetEmployeeMissingData()
-    {
-        // set default response array
-        $res = [];
-        //
-        $columns = "complynet_employees.complynet_location_sid, complynet_employees.email, complynet_employees.complynet_json, users.sid";
-        $activeEmployees = getComplynetUsers('active', $columns);
-        //
-        // check if employee is already synced with ComplyNet
-        if (empty($activeEmployees)) {
-            $res['errors'][] = 'No synchronized ComplyNet employees found with missing data.';
-            return $doReturn ? $res : sendResponse(200, $res);
-        }
-        //
-        $employeeResponse = [];
-        //
-        foreach ($activeEmployees as $employee) {
-            // decode the json to array
-            $jsonToArray = json_decode($employee['complynet_json'], true);
-            //
-            $userAltId = isset($jsonToArray[0]['AltId']) ? $jsonToArray[0]['AltId'] : $jsonToArray['AltId'];
-            //
-            if (!$userAltId) {
-                // set the username of employee on ComplyNet
-                $username = isset($jsonToArray[0]['UserName']) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
-                // if username is not email then set it to username
-                if (strpos($username, '@') === false) {
-                    $employee['email'] = $username;
-                }
-                //
-                $employeeResponse[] = [
-                    'EmployeeName' => getUserNameBySID($employee['sid']),
-                    'ComplynetEmail' => $employee['email'],
-                    'AutomotoHRId' => "AHR".$employee['sid']
-                ];
-            }
-            
-        }
-        //
-        $res['success'][] = "Records Found";
-        $res['Data'] = json_encode($employeeResponse);
-        return $doReturn ? $res : sendResponse(200, $res);
-    }
-
     public function syncStatus () {
         _e($this->syncComplynetEmployeeStatus(0),true);
     }

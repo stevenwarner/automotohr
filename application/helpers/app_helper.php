@@ -444,16 +444,19 @@ if (!function_exists('getComplynetUsers')) {
         //
         $CI->db->select($columns);
         //
+        $CI->db->where('complynet_employees.updated_at', date('Y-m-d H:i:s', strtotime('2023-05-23 00:00:00')));
+        //
         if ($status == 'active') {
             $CI->db->where('users.active', 1);
-            $CI->db->or_where('users.terminated_status', 0);
+            $CI->db->where('users.terminated_status', 0);
         } else {
             $CI->db->where('users.active', 0);
-            $CI->db->or_where('users.terminated_status', 1);
+            $CI->db->where('users.terminated_status', 1);
         }    
         //
         $CI->db->from('complynet_employees');
         $CI->db->join('users', 'users.sid = complynet_employees.employee_sid');
+        $CI->db->limit(100);
         $result = $CI->db->get()->result_array();
         //
         if(count($result) && $status == 'inactive'){
@@ -489,9 +492,9 @@ if (!function_exists('getComplynetUser')) {
 if (!function_exists('updateComplynetUserStatus')) {
     /**
      * Update Complynet user status
-     * @param array $email
+     * @param string $email
      */
-    function updateComplynetUserStatus($email) {
+    function updateComplynetUserStatus(string $email) {
         //
         $CI = &get_instance();
         //
@@ -501,6 +504,24 @@ if (!function_exists('updateComplynetUserStatus')) {
         $updateArray["userName"] = $emmail;
         //
         $CI->complynet_lib->changeEmployeeStatusByEmail($updateArray);
+    }
+}
+
+if (!function_exists('updateComplynetUserjson')) {
+    /**
+     * Update Complynet user json
+     * @param int $employeeId
+     * @param array $employeeObj
+     */
+    function updateComplynetUserjson(int $employeeId, array $employeeObj) {
+        //
+        $CI = &get_instance();
+        //
+        $updateArray = [];
+        $updateArray['complynet_json'] = json_encode($employeeObj);
+        $updateArray['updated_at'] = getSystemDate();
+        //
+        $CI->db->where(['employee_sid' => $employeeId])->update('complynet_employees', $updateArray);
     }
 }
 
