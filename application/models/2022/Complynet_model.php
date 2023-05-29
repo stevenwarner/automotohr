@@ -1113,10 +1113,17 @@ class Complynet_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            $result = $this->checkEmployeeOnComplynet($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
-            //
-            if ($result == 0) {
-                $result = $this->isSecondaryEmployeeTransferd($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
+            // set default record
+            $result = [
+                'previous_employee_sid' => $record_arr['previous_employee_sid'],
+                'from_company_sid' => $record_arr['from_company_sid']
+            ];
+            // check for old data
+            $result1 = $this->checkEmployeeOnComplynet($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
+            // check if employee is not on ComplyNet
+            if ($result1 == 0) {
+                // get the ComplyNet employee
+                $result = $this->isSecondaryEmployeeTransferred($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
             }
             //
             if (empty($result)) {
@@ -1142,7 +1149,7 @@ class Complynet_model extends CI_Model
         }
     }
 
-    public function isSecondaryEmployeeTransferd($employeeId, $companyId)
+    public function isSecondaryEmployeeTransferred($employeeId, $companyId)
     {
         $this->db->select('sid, previous_employee_sid, from_company_sid, new_employee_sid, to_company_sid');
         $this->db->where('new_employee_sid', $employeeId);
@@ -1156,7 +1163,7 @@ class Complynet_model extends CI_Model
             $checkSecondary = $this->checkEmployeeOnComplynet($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
             //
             if ($checkSecondary == 0 && $checkPrimary == 0) {
-                return $this->isSecondaryEmployeeTransferd($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
+                return $this->isSecondaryEmployeeTransferred($record_arr['previous_employee_sid'], $record_arr['from_company_sid']);
             } else {
                 return $record_arr;
             }
