@@ -2190,7 +2190,7 @@ class Employee_management extends Public_Controller
                 $data_states[$value['sid']] = db_get_active_states($value['sid']);
             }
 
-            $data_states_encode = htmlentities(json_encode($data_states));
+            $data_states_encode = json_encode($data_states);
             $data['active_countries'] = $data_countries;
             $data['active_states'] = $data_states;
             $data['states'] = $data_states_encode;

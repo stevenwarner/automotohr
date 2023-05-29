@@ -194,9 +194,9 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                                 <div class="form-group">
                                     <?php $field_id = $field_country; ?>
                                     <?php $country_id = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
-                                    <?php echo form_label('Country: <span class="required">*</span>', $field_id); ?>
+                                    <?php echo form_label('Country ff: <span class="required">*</span>', $field_id); ?>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control " data-rule-required="true" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, '<?php echo $field_state ?>')">
+                                        <select class="form-control " data-rule-required="true" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, '' ,'<?php echo $field_state ?>')">
                                             <option value="">Please Select</option>
                                             <?php foreach ($active_countries as $active_country) { ?>
                                                 <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
@@ -736,7 +736,9 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
     </div>
 </div>
 
+
 <script type="text/javascript">
+   
     $(document).ready(function() {
         $(".jsReadonly").prop('disabled', true);
         //       $('form').validate();
@@ -769,6 +771,31 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
             $('#upload_input').hide();
         }
     });
+
+    var selectedCountry = '<?php echo $country_id; ?>';
+    var selectedState = '<?php echo $state_id; ?>';
+    var states =  <?=$states?>;
+    //
+    if (selectedCountry.length > 0 && selectedState.length == 0) {
+        getCountryAllStates(selectedCountry)
+    }
+
+    function getCountryAllStates(countryId) {
+        var html = '<option value="">Select State</option>';
+        //
+        if (countryId == '') {
+            $('#Location_State').html('<option value="">Select Country</option>');
+        } else {
+            allstates = states[countryId];
+            //
+            for (var i = 0; i < allstates.length; i++) {
+                var id = allstates[i].sid;
+                var name = allstates[i].state_name;
+                html += '<option value="' + id + '">' + name + '</option>';
+            }
+            $('#Location_State').html(html);
+        }
+    }
 
     function getStates(val, states, select_id) {
         var html = '';
