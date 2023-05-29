@@ -194,7 +194,7 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                                 <div class="form-group">
                                     <?php $field_id = $field_country; ?>
                                     <?php $country_id = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
-                                    <?php echo form_label('Country ff: <span class="required">*</span>', $field_id); ?>
+                                    <?php echo form_label('Country: <span class="required">*</span>', $field_id); ?>
                                     <div class="hr-select-dropdown">
                                         <select class="form-control " data-rule-required="true" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, '' ,'<?php echo $field_state ?>')">
                                             <option value="">Please Select</option>
@@ -774,7 +774,7 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
 
     var selectedCountry = '<?php echo $country_id; ?>';
     var selectedState = '<?php echo $state_id; ?>';
-    var states =  <?=$states?>;
+    var countryStates =  <?=$states?>;
     //
     if (selectedCountry.length > 0 && selectedState.length == 0) {
         getCountryAllStates(selectedCountry)
@@ -786,7 +786,7 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
         if (countryId == '') {
             $('#Location_State').html('<option value="">Select Country</option>');
         } else {
-            allstates = states[countryId];
+            allstates = countryStates[countryId];
             //
             for (var i = 0; i < allstates.length; i++) {
                 var id = allstates[i].sid;
@@ -803,7 +803,7 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
         if (val == '') {
             $('#state').html('<option value="">Select State</option><option value="">Please Select your country</option>');
         } else {
-            allstates = states[val];
+            allstates = countryStates[val];
             html += '<option value="">Select State</option>';
 
             for (var i = 0; i < allstates.length; i++) {
