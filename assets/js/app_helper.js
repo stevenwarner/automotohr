@@ -59,7 +59,12 @@ if (typeof $ !== "undefined") {
 	$(document).on("click", ".jsExpandAdminView", function (event) {
 		//
 		event.preventDefault();
-		// 3076
+		// 
+		$(this).toggleClass('btn-success')
+		$(".jsExpandContent").toggleClass('col-sm-12 col-md-12 col-lg-12 col-xs-12 col-lg-9 col-md-9 col-sm-9');
+		$(".jsExpandSideBar").toggleClass(
+			"hidden"
+		);
 	});
 
 }

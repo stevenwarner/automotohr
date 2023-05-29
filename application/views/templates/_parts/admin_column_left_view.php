@@ -275,7 +275,7 @@ if (
 }
 
 ?>
-<div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 no-padding">
+<div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 no-padding jsExpandSideBar">
     <div class="nav-menu">
         <ul>
             <?php $functions_names = array('list_admin_users', 'add_subaccount', 'edit_my_account', 'list_admin_groups', 'create_admin_groups', 'automotive_groups', 'financial_reports', 'financial_reports_index'); ?>

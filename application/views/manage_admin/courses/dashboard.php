@@ -7,7 +7,7 @@
                 <!-- Left column -->
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <!-- Main content area -->
-                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding jsExpandContent">
                     <div class="dashboard-content">
                         <div class="dash-inner-block">
 
