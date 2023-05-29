@@ -1751,3 +1751,9 @@ $route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProf
 
 //
 $route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';
+
+
+/**
+ * CRON Jobs
+ */
+$route['cron/remove_employee_duplicate_teams'] = 'Cron_common/removeEmployeeFromDuplicateGroups';

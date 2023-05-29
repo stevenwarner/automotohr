@@ -904,4 +904,47 @@ class Cron_common extends CI_Controller
                 'employee_type' => 'fulltime'
             ]);
     }
+
+    /**
+     * Remove duplicate teams
+     * @todo Check the source issue and remove this CRON job
+     */
+    public function removeEmployeeFromDuplicateGroups()
+    {
+        // get all records
+        $records = $this->db
+            ->select('id, department_sid, team_sid, employee_sid')
+            ->order_by('id', 'desc')
+            ->get('departments_employee_2_team')
+            ->result_array();
+        // check for empty records
+        if (!$records) {
+            exit('No records found');
+        }
+        // set default remove array
+        $removeIds = [];
+        // set default validate array
+        $safeIds = [];
+        // loop through data
+        foreach ($records as $record) {
+            // create slug
+            $slug = $record['employee_sid'] . '_' . $record['department_sid'] . '-' . $record['team_sid'];
+            // check if record already exists
+            if (!isset($safeIds[$slug])) {
+                $safeIds[$slug] = true;
+                continue;
+            }
+            // push to remove ids
+            $removeIds[] = $record['id'];
+        }
+        //
+        _e(count($safeIds), true);
+        _e(count($removeIds), true);
+        //
+        if ($removeIds) {
+            $this->db->where_in('id', $removeIds)->delete('departments_employee_2_team');
+        }
+        //
+        exit('All done!');
+    }
 }
