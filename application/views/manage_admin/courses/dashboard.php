@@ -11,145 +11,30 @@
                     <div class="dashboard-content">
                         <div class="dash-inner-block">
 
+                            <!-- Title -->
+
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                    <div class="heading-title page-title">
+                                <div class="heading-title page-title">
+                                    <div class="col-lg-10 col-md-10 col-xs-10 col-sm-10">
                                         <h1 class="page-title">
                                             <i class="fa fa-book"></i>
                                             LMS Courses
                                         </h1>
                                     </div>
+                                    <div class="col-xs-2 text-right">
+                                        <button class="btn btn-secondary jsExpandAdminView" title="Expand view" placement="top">
+                                            <i class="fa fa-expand" aria-hidden="true"></i> Expand View
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <br />
 
+                            <!--  -->
                             <div style="position: relative;">
                                 <!-- Loader -->
                                 <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
-                                <!-- Tabs -->
-                                <div class="row">
-                                    <!-- Active courses -->
-                                    <div class="col-xs-12 col-md-2">
-                                        <div class="thumbnail success-block">
-                                            <div class="caption">
-                                                <h3 id="">0</h3>
-                                                <h4><strong>Active</strong></h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- InActive courses -->
-                                    <div class="col-xs-12 col-md-2">
-                                        <div class="thumbnail error-block">
-                                            <div class="caption">
-                                                <h3 id="">0</h3>
-                                                <h4><strong>InActive</strong></h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Total courses -->
-                                    <div class="col-xs-12 col-md-2">
-                                        <div class="thumbnail post-block">
-                                            <div class="caption">
-                                                <h3 id="">0</h3>
-                                                <h4><strong>Total</strong></h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Main table -->
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-4">
-                                                <p class="csPanelHeading"><strong>Default Courses</strong></p>
-                                            </div>
-                                            <div class="col-sm-12 col-md-8 text-right">
-                                                <button class="btn btn-success"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Add Course</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel-body">
-
-                                        <!-- Filter -->
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-4">
-                                                <label><strong>Title</strong></label>
-                                                <input type="text" class="jsCourseTitle form-control" />
-                                            </div>
-                                            <div class="col-xs-12 col-md-4">
-                                                <label><strong>Status</strong></label>
-                                                <select class="jsCourseTitle form-control">
-                                                    <option value="all">All</option>
-                                                    <option value="active">Active</option>
-                                                    <option value="inactive">InActive</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-xs-12 col-md-4">
-                                                <label><strong>Job Titles</strong></label>
-                                                <select class="jsCourseTitle form-control">
-                                                    <option value="all">All</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-12 text-right">
-                                                <button class="btn btn-success">Apply Search</button>
-                                                <button class="btn btn-inverse">Clear Search</button>
-                                            </div>
-                                        </div>
-
-                                        <br>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped table-black">
-                                                        <thead>
-                                                            <tr>
-                                                                <th scope="col">Title</th>
-                                                                <th scope="col">Description</th>
-                                                                <th scope="col text-center">Job Titles</th>
-                                                                <th scope="col text-center">Status</th>
-                                                                <th scope="col text-center">Created At</th>
-                                                                <th scope="col text-center">Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td class="vam"><strong>Harassment 101</strong></td>
-                                                                <td class="vam">Some text goes here and here....</td>
-                                                                <td class="vam text-center">
-                                                                    <p><strong>(20) job titles found</strong></p>
-                                                                    <button class="btn btn-link">View All</button>
-                                                                </td>
-                                                                <td class="vam text-center bg-success">
-                                                                    <strong>ACTIVE</strong>
-                                                                </td>
-                                                                <td class="vam text-center">
-                                                                    19 April 2023, Tuesday
-                                                                </td>
-                                                                <td class="vam text-center">
-                                                                    <button class="btn btn-danger" title="Disable the course" placement="top">
-                                                                        <i class="fa fa-ban"></i>
-                                                                    </button>
-                                                                    <button class="btn btn-success" title="Activate the course" placement="top">
-                                                                        <i class="fa fa-shield"></i>
-                                                                    </button>
-                                                                    <button class="btn btn-success" title="View course details" placement="top">
-                                                                        <i class="fa fa-eye"></i>
-                                                                    </button>
-                                                                    <button class="btn btn-warning" title="View course" placement="top">
-                                                                        <i class="fa fa-edit"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Main area -->
+                                <div id="jsDefaultCoursesView"></div>
                             </div>
                         </div>
                     </div>
@@ -157,4 +42,62 @@
             </div>
         </div>
     </div>
+</div>
+<!-- Filter -->
+<div class="csFilterSection jsFilterSection hidden" data-key="jsPageLoader">
+    <!--  -->
+    <div class="panel panel-theme">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-xs-10">
+                    <p class="csPanelHeading"><strong><i class="fa fa-filter"></i>&nbsp;Filter</strong></p>
+                </div>
+                <div class="col-xs-2 text-right">
+                    <button class="btn btn-black jsFilterSectionHideBtn" data-key="jsPageLoader">
+                        <i class="fa fa-times-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body jsFilterPanel">
+            <!-- Filter -->
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <label><strong>Title</strong></label>
+                    <input type="text" class="jsCourseTitleDefaultCourse form-control" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <label><strong>Status</strong></label>
+                    <select class="jsCourseStatusDefaultCourse form-control">
+                        <option value="all">All</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">InActive</option>
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <label><strong>Job Titles</strong></label>
+                    <select class="jsCourseJobTitleDefaultCourse" style="width: 100%;" multiple></select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right">
+                    <button class="btn btn-theme form-control jsApplyFilterDefaultCourse">Apply Search</button>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right">
+                    <a href="<?= base_url('sa/lms/courses'); ?>" class="btn btn-black  form-control">Clear Search</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

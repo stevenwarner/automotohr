@@ -56,3 +56,47 @@ pre {
 	border-color: #000;
 	color: #fff;;
 }
+
+/*  */
+.panel-theme {
+	border-radius: 3px;
+	border: 0;
+	box-shadow: 0 0 10px .5px #ccc;
+}
+.panel-theme .panel-heading{
+	background-color: #fd7a2a;
+	color: #fff;
+}
+
+/*  */
+.btn-black{
+	background-color: #000;
+	color: #fff;
+}
+.btn-black:hover,
+.btn-black:active{
+	background-color: #333;
+	color: #fff;
+}
+
+.btn-theme{
+	background-color: #fd7a2a;
+	color: #fff;
+}
+.btn-theme:hover,
+.btn-theme:active{
+	background-color: #f58e4e;
+	color: #fff;
+}
+
+/* Filter */
+.csFilterSection{
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 350px;
+	z-index: 1;
+}
+.csFilterSection .panel-body{
+	overflow-y: auto;
+}

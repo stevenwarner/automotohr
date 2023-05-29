@@ -31,3 +31,35 @@ if (typeof CB === "undefined") {
 	 */
 	function CB() {}
 }
+
+if (typeof $ !== "undefined") {
+	// set filter height
+	$(".jsFilterPanel").height(window.innerHeight);
+	//
+	$(document).on("click", ".jsFilterSectionBtn", function (event) {
+		//
+		event.preventDefault();
+		//
+		let key = $(this).data("key");
+		//
+		$(".jsFilterSection[data-key='" + key + "']").removeClass('hidden');
+	});
+
+	//
+	$(document).on("click", ".jsFilterSectionHideBtn", function (event) {
+		//
+		event.preventDefault();
+		//
+		let key = $(this).data("key");
+		//
+		$(".jsFilterSection[data-key='" + key + "']").addClass('hidden');
+	});
+	
+	//
+	$(document).on("click", ".jsExpandAdminView", function (event) {
+		//
+		event.preventDefault();
+		// 3076
+	});
+
+}
