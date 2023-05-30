@@ -10,6 +10,21 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
     }
 
+
+
+    function test()
+    {
+
+        $this->load->helper('timeoff_helper');
+
+     $employeeids = array(49290, 49288);
+       
+     //  $employeeids = array(49288);
+
+        $employeeTimeoffDetails = getEmployeeTimeoffData('2023-05-25', '2023-05-28', $employeeids);
+        print_r($employeeTimeoffDetails);
+    }
+
     /**
      * 
      */
@@ -31,5 +46,4 @@ class Testing extends CI_Controller
         }
         redirect($complyLink);
     }
-
 }

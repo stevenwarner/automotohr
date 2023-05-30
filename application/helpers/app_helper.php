@@ -429,3 +429,200 @@ if (!function_exists('getUserColumnByWhere')) {
         return $result;
     }
 }
+
+
+
+//
+if (!function_exists('getEmployeeTimeoffData_old')) {
+
+    function getEmployeeTimeoffData_old(
+        $startDate,
+        $endDate,
+        $employeeSid = []
+    ) {
+
+
+
+        $employeetimeoffDetails['employeeSid'] = '';
+        $employeetimeoffDetails['timeoffFromDate'] = $startDate;
+        $employeetimeoffDetails['timeoffToData'] = $endDate;
+        $employeetimeoffDetails['hourlyRate'] = '0';
+        $employeetimeoffDetails['TotalTime'] = '0';
+        $employeetimeoffDetails['Total'] = '0';
+        $employeetimeoffDetails['breakDown'] = '';
+
+        $employeestimeoffData = [];
+
+
+
+        // get CI instance
+        $CI = &get_instance();
+
+        $CI->db->select(
+            '
+        timeoff_requests.request_from_date,
+        timeoff_requests.request_to_date,
+        timeoff_requests.requested_time,
+        users.sid,
+        users.first_name,
+        users.hourly_rate'
+        );
+        if (!empty($employeeSid)) {
+            $CI->db->where_in('timeoff_requests.employee_sid', $employeeSid);
+        }
+
+        $CI->db->where('timeoff_policies.policy_category_type', 1);
+        $CI->db->where('timeoff_requests.request_from_date >=', $startDate);
+        $CI->db->where('timeoff_requests.request_to_date <=', $endDate);
+        $CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid');
+        $CI->db->join('users', 'users.sid = timeoff_requests.employee_sid');
+        $CI->db->order_by('users.sid', 'ASC');
+
+
+        $result =   $CI->db->get('timeoff_requests')->result_array();
+
+
+        $brakdownarray = [];
+        if (!empty($result)) {
+
+            foreach ($result as $rowData) {
+
+                $employeetimeoffDetails['employeeSid'] = $rowData['sid'];
+                $employeetimeoffDetails['hourlyRate'] = $rowData['hourly_rate'];
+                $requestarray['request_from_date'] = $rowData['request_from_date'];
+                $requestarray['request_to_date'] = $rowData['request_to_date'];
+                $requestarray['requested_time'] = $rowData['requested_time'];
+                $responsedata = splitTimeoffRequest($requestarray);
+
+                //
+                if ($responsedata['type'] == 'single') {
+                    $employeetimeoffDetails['TotalTime'] += $responsedata['requestData']['requested_time'];
+                    unset($responsedata['requestData']['request_status']);
+                }
+                //
+                if ($responsedata['type'] == 'multiple') {
+                    foreach ($responsedata['requestData'] as $key => $val) {
+                        $employeetimeoffDetails['TotalTime'] += $responsedata['requestData'][$key]['requested_time'];
+                        unset($responsedata['requestData'][$key]['request_status']);
+                    }
+                }
+
+                $brakdownarray[] = $responsedata['requestData'];
+            }
+
+            //
+            if ($employeetimeoffDetails['TotalTime'] > 0) {
+                $employeetimeoffDetails['TotalTime'] = ($employeetimeoffDetails['TotalTime'] / 60);
+            }
+
+            $employeetimeoffDetails['breakDown'] = $brakdownarray;
+            $employeetimeoffDetails['Total'] = ($employeetimeoffDetails['TotalTime'] * $employeetimeoffDetails['hourlyRate']);
+        }
+
+        //
+        $employeestimeoffData[] = $employeetimeoffDetails;
+        return $employeestimeoffData;
+        //print_r($employeetimeoffDetails);
+    }
+}
+
+
+
+
+
+
+
+
+
+//
+
+if (!function_exists('getEmployeeTimeoffData')) {
+
+    function getEmployeeTimeoffData(
+        $startDate,
+        $endDate,
+        $employeeSid = []
+    ) {
+
+
+        $employeetimeoffDetails['employeeSid'] = '';
+        $employeetimeoffDetails['timeoffFromDate'] = $startDate;
+        $employeetimeoffDetails['timeoffToData'] = $endDate;
+        $employeetimeoffDetails['hourlyRate'] = '0';
+        $employeetimeoffDetails['TotalTime'] = '0';
+        $employeetimeoffDetails['Total'] = '0';
+        $employeetimeoffDetails['breakDown'] = '';
+
+        // get CI instance
+        $CI = &get_instance();
+
+        $CI->db->select(
+            '
+        timeoff_requests.request_from_date,
+        timeoff_requests.request_to_date,
+        timeoff_requests.requested_time,
+        users.sid,
+        users.hourly_rate'
+        );
+        if (!empty($employeeSid)) {
+            $CI->db->where_in('timeoff_requests.employee_sid', $employeeSid);
+        }
+
+        $CI->db->where('timeoff_policies.policy_category_type', 1);
+        $CI->db->where('timeoff_requests.request_from_date >=', $startDate);
+        $CI->db->where('timeoff_requests.request_to_date <=', $endDate);
+        $CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid');
+        $CI->db->join('users', 'users.sid = timeoff_requests.employee_sid');
+        $CI->db->order_by('users.sid', 'ASC');
+
+        $result =   $CI->db->get('timeoff_requests')->result_array();
+
+
+        $mainArray = [];
+
+        if (!empty($result)) {
+
+            foreach ($result as $rowData) {
+                //
+                if (!isset($mainArray[$rowData['sid']])) {
+                    $mainArray[$rowData['sid']] = [
+                        'employeeId' => $rowData['sid'],
+                        'hourlyRate' => $rowData['hourly_rate'],
+                        'from_date' => $startDate,
+                        'to_date' => $endDate,
+                        'workedHours' => 0,
+                        'amountToPay' => 0,
+                        'breakDewn' => []
+                    ];
+                }
+
+                //
+                $mainArray[$rowData['sid']]['workedHours'] += ($rowData['requested_time'] / 60);
+                $mainArray[$rowData['sid']]['amountToPay'] += (($rowData['requested_time'] / 60) * $rowData['hourly_rate']);
+
+                //
+                $requestarray['request_from_date'] = $rowData['request_from_date'];
+                $requestarray['request_to_date'] = $rowData['request_to_date'];
+                $requestarray['requested_time'] = $rowData['requested_time'];
+
+                $responsedata = splitTimeoffRequest($requestarray);
+
+                //
+                if ($responsedata['type'] == 'single') {
+                    unset($responsedata['requestData']['request_status']);
+                }
+                //
+                if ($responsedata['type'] == 'multiple') {
+                    foreach ($responsedata['requestData'] as $key => $val) {
+                        unset($responsedata['requestData'][$key]['request_status']);
+                    }
+                }
+
+                $mainArray[$rowData['sid']]['breakDewn'][] = $responsedata['requestData'];
+            }
+        }
+
+        //
+        return $mainArray;
+    }
+}
