@@ -429,3 +429,35 @@ if (!function_exists('getUserColumnByWhere')) {
         return $result;
     }
 }
+
+
+//
+if (!function_exists('getEmployeeAnniversary')) {
+    /**
+     * Get Employee Joining data 
+     * 
+     * @return array
+     */
+    function getEmployeeAnniversary(
+        string $joiningDate
+    ) {
+        //
+        $returnArray = [];
+        $returnArray['ad'] = $joiningDate;
+        //
+        $currentDate = getSystemDate('Y-m-d');
+        $joiningDateWithCurrentYear = preg_replace('/[0-9]{4}/', getSystemDate('Y'), $joiningDate);
+        //
+        if ($currentDate < $joiningDateWithCurrentYear) {
+            // 
+            $returnArray['lastdate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y', '-1 year'), $joiningDate);
+            $returnArray['upcomingdate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y'), $joiningDate);
+        } else {
+            // 
+            $returnArray['lastdate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y'), $joiningDate);
+            $returnArray['upcomingdate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y', '+1 year'), $joiningDate);
+        }
+        //
+        return $returnArray;
+    }
+}

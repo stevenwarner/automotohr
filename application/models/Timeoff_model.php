@@ -2371,7 +2371,9 @@ class Timeoff_model extends CI_Model
     function getEmployeeConsumedTimeByResetDate(
         $policyId,
         $employeeId,
-        $consumeDate
+        $lastdateDate,
+        $upcomingdate
+
     ) {
 
         //
@@ -2387,7 +2389,8 @@ class Timeoff_model extends CI_Model
             ->where('archive', 0);
         //
         $this->db->group_start();
-        $this->db->where("request_from_date >=", $consumeDate); // 2023-04-16
+        $this->db->where("request_from_date >=", $lastdateDate);
+        $this->db->where("request_from_date <=", $upcomingdate);
         $this->db->group_end();
         //
         $result = $this->db->get();
@@ -6439,12 +6442,12 @@ class Timeoff_model extends CI_Model
             if (isset($history[$index + 1])) {
                 $compareWithArray = $history[$index + 1];
             }
-            
+
             if (preg_match('/trasnsferred/i', $value['note'])) {
                 // lets compare the array
                 $differenceArray = getPolicyDifference($value, $currentPolicyCompare);
-            } else{
-                
+            } else {
+
                 // lets compare the array
                 $differenceArray = getPolicyDifference($value, $compareWithArray);
             }
@@ -6653,6 +6656,6 @@ class Timeoff_model extends CI_Model
         }
         //
         return $this->db->get('timeoff_policies')
-        ->result_array();
+            ->result_array();
     }
 }
