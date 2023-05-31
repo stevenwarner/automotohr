@@ -20,9 +20,9 @@ if (!empty($policyRequests)) {
 ?>
 
 <div class="row">
-    <div class="col-sm-10">
+    <div class="col-sm-9">
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3" style="text-align: right;">
         <button class="btn btn-success jsTransferPolicyBTN">Change Policy For Selected Employees</button>
     </div>
 </div>
@@ -55,9 +55,9 @@ if (!empty($policyRequests)) {
     </table>
 </div>
 <div class="row">
-    <div class="col-sm-10">
+    <div class="col-sm-9">
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3" style="text-align: right;">
         <button class="btn btn-success jsTransferPolicyBTN">Change Policy For Selected Employees</button>
     </div>
 </div>
