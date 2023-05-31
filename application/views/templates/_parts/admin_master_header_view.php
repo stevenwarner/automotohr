@@ -47,6 +47,7 @@
         }
     }
     ?>
+    
     <?php if(!isset($loadUp)) { ?>
     <!-- Include MultiSelect -->
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>">

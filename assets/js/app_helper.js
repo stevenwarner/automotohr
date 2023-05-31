@@ -32,6 +32,117 @@ if (typeof CB === "undefined") {
 	function CB() {}
 }
 
+if (typeof getErrorsStringFromArray === "undefined") {
+	/**
+	 * Error message
+	 *
+	 * @param {*} errorArray
+	 * @param {*} errorMessage
+	 * @returns
+	 */
+	function getErrorsStringFromArray(errorArray, errorMessage) {
+		return (
+			"<strong><p>" +
+			(errorMessage
+				? errorMessage
+				: "Please, resolve the following errors") +
+			"</p></strong><br >" +
+			errorArray.join("<br />")
+		);
+	}
+}
+
+if (typeof getBrowserVersion === "undefined") {
+	function getBrowserVersion() {
+		var ua = navigator.userAgent;
+		var tem;
+		var M =
+			ua.match(
+				/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i
+			) || [];
+		if (/trident/i.test(M[1])) {
+			tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+			return "IE " + (tem[1] || "");
+		}
+		if (M[1] === "Chrome") {
+			tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+			if (tem != null)
+				return tem.slice(1).join(" ").replace("OPR", "Opera");
+		}
+		M = M[2]
+			? [M[1], M[2]]
+			: [navigator.appName, navigator.appVersion, "-?"];
+		if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
+		return M;
+	}
+}
+
+if (typeof generateBrowserAlert === "undefined") {
+	function generateBrowserAlert() {
+		//
+		const compatibleListObj = {
+			chrome: 55,
+			edge: 14,
+			firefox: 52,
+			opera: 42,
+			safari: 10.1,
+			chromeandroid: 55,
+			firefoxandroid: 52,
+			operaandroid: 42,
+			safariios: 10.3,
+			samsumginternet: 6.0,
+		};
+		// get browser version
+		const browserVersion = getBrowserVersion();
+		//
+		if (
+			compatibleListObj[browserVersion[0].toLowerCase()] &&
+			browserVersion[1] <
+				compatibleListObj[browserVersion[0].toLowerCase()]
+		) {
+			return alert(
+				"This module require '" +
+					browserVersion[0] +
+					"' with version greater or equal then '" +
+					browserVersion[1] +
+					"'."
+			);
+		}
+	}
+}
+
+if (typeof uploadFile === "undefined") {
+	/**
+	 * Upload file to the server
+	 * @param {*} fileObject
+	 * @returns
+	 */
+	function uploadFile(fileObject) {
+		return new Promise(function (resolve) {
+			// create form instance
+			const formData = new FormData();
+			// set the file object
+			formData.append("file", fileObject);
+			// push the file to server
+			$.ajax({
+				url: apiURL + "uploader",
+				method: "POST",
+				timeout: 0,
+				processData: false,
+				mimeType: "multipart/form-data",
+				contentType: false,
+				data: formData,
+			})
+				.success(function (response) {
+					resolve(response);
+				})
+				.fail(function () {
+					resolve({});
+				});
+		});
+	}
+}
+
 if (typeof $ !== "undefined") {
 	// set filter height
 	$(".jsFilterPanel").height(window.innerHeight);
@@ -42,7 +153,7 @@ if (typeof $ !== "undefined") {
 		//
 		let key = $(this).data("key");
 		//
-		$(".jsFilterSection[data-key='" + key + "']").removeClass('hidden');
+		$(".jsFilterSection[data-key='" + key + "']").removeClass("hidden");
 	});
 
 	//
@@ -52,19 +163,18 @@ if (typeof $ !== "undefined") {
 		//
 		let key = $(this).data("key");
 		//
-		$(".jsFilterSection[data-key='" + key + "']").addClass('hidden');
+		$(".jsFilterSection[data-key='" + key + "']").addClass("hidden");
 	});
-	
+
 	//
 	$(document).on("click", ".jsExpandAdminView", function (event) {
 		//
 		event.preventDefault();
-		// 
-		$(this).toggleClass('btn-success')
-		$(".jsExpandContent").toggleClass('col-sm-12 col-md-12 col-lg-12 col-xs-12 col-lg-9 col-md-9 col-sm-9');
-		$(".jsExpandSideBar").toggleClass(
-			"hidden"
+		//
+		$(this).toggleClass("btn-success");
+		$(".jsExpandContent").toggleClass(
+			"col-sm-12 col-md-12 col-lg-12 col-xs-12 col-lg-9 col-md-9 col-sm-9"
 		);
+		$(".jsExpandSideBar").toggleClass("hidden");
 	});
-
 }

@@ -45,14 +45,18 @@ class Courses extends Admin_Controller
         $this->data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         // load CSS
         $this->data['PageCSS'] = [
-            '1.2.0' => 'v1/plugins/ms_modal/main',
-            '2022/css/main'
+            ['1.2.0', 'v1/plugins/ms_uploader/main'],
+            ['1.2.0', 'v1/plugins/ms_modal/main'],
+            ['1.0', '2022/css/main']
         ];
         // load JS
         $this->data['PageScripts'] = [
-            time() => 'js/app_helper',
-            '1.2.0' => 'v1/plugins/ms_modal/main',
-            'v1/lms/sa/main'
+            ['1.0', 'js/app_helper'],
+            ['1.2.0', 'v1/plugins/ms_uploader/main'],
+            ['1.2.0', 'v1/plugins/ms_modal/main'],
+            ['1.0', 'v1/common'],
+            ['1.0', 'v1/lms/create_course'],
+            ['1.0', 'v1/lms/sa/main'],
         ];
         // get access token
         $this->data['apiAccessToken'] = getApiAccessToken(

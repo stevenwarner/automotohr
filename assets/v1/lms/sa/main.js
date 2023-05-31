@@ -75,6 +75,16 @@ $(function LMSCourses() {
 	});
 
 	/**
+	 * Add course
+	 */
+	$(document).on("click", ".jsAddCourse", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+		startCreateCourseProcess(0);
+	});
+
+	/**
 	 * convert filter object to string
 	 * @returns
 	 */
@@ -202,13 +212,6 @@ $(function LMSCourses() {
 				);
 			});
 	}
-
-	//
-	$.ajaxSetup({
-		headers: {
-			Authorization: "Bearer " + apiAccessToken,
-		},
-	});
 	//
 	getLMSDefaultCourses();
 	getDefaultJobTitles();

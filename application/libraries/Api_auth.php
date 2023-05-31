@@ -80,7 +80,7 @@ class Api_auth
         $currentDateWithTime = getSystemDate();
         $expireDateWithTime = getSystemDate(DB_DATE_WITH_TIME, $result['updated_at'] . '+ ' . ($result['expires_in'] ?? '0') . ' seconds');
         //
-        if (!$result['expires_in'] || ($currentDateWithTime <= $expireDateWithTime)) {
+        if (!$result['expires_in'] || ($currentDateWithTime >= $expireDateWithTime)) {
             $this->loginToAPIServer($result);
         }
     }
