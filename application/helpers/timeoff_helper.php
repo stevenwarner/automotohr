@@ -271,16 +271,6 @@ if (!function_exists('getEmployeeAccrual')) {
         //
         $employeeWorkedInMinutes =  ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
         //
-        // $planTimeInTimestamp = new DateTime(date('Y-m-d', $employeeJoiningDateOBJ->format('U')));
-        // $planTimeInTimestamp->add(new DateInterval('P'.($plan['accrualType']).''.( $plan['accrualTypeM'] == 'years' ? 'Y' : 'M' ).''));
-        // $planTimeInTimestamp = $planTimeInTimestamp->format('Y-m-d');
-        // //
-        // $r['Plans'][] = 
-        // [
-        //     'time' => get_array_from_minutes( ($accruals['rate']+$plan['accrualRate']) * 60, $durationInMinutes / 60, $slug)['text'],
-        //     'date' => $planTimeInTimestamp
-        // ];
-        //
         if (!empty($accruals['plans'])) {
             foreach ($accruals['plans'] as $plan) {
                 //
@@ -307,7 +297,7 @@ if (!function_exists('getEmployeeAccrual')) {
             $durationInMinutes,
             $todayDate
         );
-        // Check if employee is on probabtion
+        // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
             $accrualRate = $accruals['newHireRate'];
@@ -401,37 +391,30 @@ if (!function_exists('getEmployeeAccrual')) {
         }
         // today's date
         $currentDate = getSystemDate('Y-m-d');
-        // the latest date
-        //  $effectedDate2 = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
-        // change the year to current
-        //$newEffectiveDateWithCurrentYear = preg_replace('/[0-9]{4}/i', date('Y'), $effectedDate2);
-        // change the year to next
-        // $policyNextResetDate = date(DB_DATE, strtotime("$newEffectiveDateWithCurrentYear +1 year"));
-        // get employee manual balance
-
-
+        // make sure date is in right format i.e. Y-m-d
+        $effectedDate = checkDateFormate($effectedDate) ?
+            formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) :
+            $effectedDate;
         //
         $employeeAnniversaryDate = getEmployeeAnniversary($effectedDate);
-
-
+        // get employee manual balance for current cycle
+        // against policy id
         $balanceInMinutes = getEmployeeManualBalance(
             $employeeId,
             $policyId,
-            $employeeAnniversaryDate['lastdate'],
-            $employeeAnniversaryDate['upcomingdate'],
+            $employeeAnniversaryDate['lastAnniversaryDate'],
+            $employeeAnniversaryDate['upcomingAnniversaryDate'],
             $balanceInMinutes
         );
-
-        //
-
-        if (($currentDate >= $employeeAnniversaryDate['lastdate']) && ($employeeAnniversaryDate['lastdate'] < $employeeAnniversaryDate['upcomingdate'])) {
-            //  $consumeDate = $effectedDate2;
-            // $consumeDate = preg_replace('/[0-9]{4}/', date('Y', strtotime('now')), $consumeDate);
+        // get consumed time in current cycle
+        if (
+            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
+        ) {
             $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
                 $policyId,
                 $employeeId,
-                $employeeAnniversaryDate['lastdate'],
-                $employeeAnniversaryDate['upcomingdate']
+                $employeeAnniversaryDate['lastAnniversaryDate'],
+                $employeeAnniversaryDate['upcomingAnniversaryDate']
             );
         } else {
             $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
@@ -542,32 +525,28 @@ if (!function_exists('getEmployeeAccrual')) {
             $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
             $r['ConsumedTime'] = $tmp;
         }
-
-        $currentDate = getSystemDate('Y-m-d');
-        //  $effectedDate = checkDateFormate($effectedDate) ? formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) : $effectedDate;
-        //
-       // echo $currentDate;
-       // print_r($employeeAnniversaryDate);
-
-        if (($currentDate >= $employeeAnniversaryDate['lastdate']) && ($employeeAnniversaryDate['lastdate'] < $employeeAnniversaryDate['upcomingdate'])) {
+        // for adding time off balance
+        if (
+            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
+        ) {
             //
             if ($allowedTime != 0) {
-                // This section add allowed balance of current year
-                $company_sid = $_this->timeoff_model->getEmployeeCompanySid($employeeId);
-                $policyName = $_this->timeoff_model->getPolicyNameById($policyId);
-                //
-                $added_by = getCompanyAdminSid($company_sid);
-                // $effectedDate = preg_replace('/[0-9]{4}/', date('Y', strtotime('now')), $effectedDate);
                 //
                 $is_added = $_this->timeoff_model->checkAllowedBalanceAdded(
                     $employeeId,
                     $policyId,
                     1,
-                    $employeeAnniversaryDate['lastdate'],
+                    $employeeAnniversaryDate['lastAnniversaryDate'],
                     $allowedTime
                 );
                 //
                 if ($is_added == 0) {
+                    // This section add allowed balance of current year
+                    $company_sid = $_this->timeoff_model->getEmployeeCompanySid($employeeId);
+                    $policyName = $_this->timeoff_model->getPolicyNameById($policyId);
+                    //
+                    $added_by = getCompanyAdminSid($company_sid);
+                    //
                     $balanceToAdd = array();
                     $balanceToAdd['user_sid'] = $employeeId;
                     $balanceToAdd['policy_sid'] = $policyId;
@@ -575,7 +554,7 @@ if (!function_exists('getEmployeeAccrual')) {
                     $balanceToAdd['is_added'] = 1;
                     $balanceToAdd['added_time'] = $allowedTime;
                     $balanceToAdd['note'] = 'On <b>' . date('M d, Y,', strtotime('now')) . ' at ' . date('g:i A,', strtotime('now')) . '</b> a balance of ' . $accruals['applicableTime'] . ' hours was added in accordance with the <b>"' . $policyName . '"</b> policy.';
-                    $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastdate'];
+                    $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastAnniversaryDate'];
                     //
 
                     $_this->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);

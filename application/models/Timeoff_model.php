@@ -2371,8 +2371,8 @@ class Timeoff_model extends CI_Model
     function getEmployeeConsumedTimeByResetDate(
         $policyId,
         $employeeId,
-        $lastdateDate,
-        $upcomingdate
+        $lastAnniversaryDate,
+        $upcomingAnniversaryDate
 
     ) {
 
@@ -2389,8 +2389,8 @@ class Timeoff_model extends CI_Model
             ->where('archive', 0);
         //
         $this->db->group_start();
-        $this->db->where("request_from_date >=", $lastdateDate);
-        $this->db->where("request_from_date <=", $upcomingdate);
+        $this->db->where("request_from_date >=", $lastAnniversaryDate);
+        $this->db->where("request_from_date <", $upcomingAnniversaryDate);
         $this->db->group_end();
         //
         $result = $this->db->get();
