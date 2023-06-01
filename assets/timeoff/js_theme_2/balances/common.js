@@ -21,7 +21,7 @@ let cmnOBJ = {
 
 //
 fetchEmployees();
-// fetchPolicies();
+fetchPolicies();
 
 //
 $(document).on('click', '.jsExpandBalance', function(e) {
@@ -125,7 +125,8 @@ function fetchEmployees() {
 
 // Polciies
 function fetchPolicies() {
-    $.post(handlerURL, cmnOBJ.Policies.Main, function(resp) {
+
+      $.post(handlerURL, cmnOBJ.Policies.Main, function(resp) {
         //
         if (resp.Redirect === true) {
             alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
@@ -152,6 +153,7 @@ function fetchPolicies() {
         $('#js-filter-policies').select2();
     });
 }
+
 
 //
 function getImportHTML() {
