@@ -143,6 +143,32 @@ if (typeof uploadFile === "undefined") {
 	}
 }
 
+if (typeof uploadStream === "undefined") {
+	/**
+	 * Upload stream to the server
+	 * @param {*} streamData
+	 * @returns
+	 */
+	function uploadStream(streamData) {
+		return new Promise(function (resolve) {
+			// push the file to server
+			$.ajax({
+				url: apiURL + "uploader/stream",
+				method: "POST",
+				timeout: 0,
+				contentType: "application/json",
+				data: JSON.stringify({stream: streamData}),
+			})
+				.success(function (response) {
+					resolve(response);
+				})
+				.fail(function () {
+					resolve({});
+				});
+		});
+	}
+}
+
 if (typeof $ !== "undefined") {
 	// set filter height
 	$(".jsFilterPanel").height(window.innerHeight);
