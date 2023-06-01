@@ -500,7 +500,7 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         $this->data['hide_employer_section'] = 1;
         // Get processed payrolls
-
+        
         //
         $this->data['payrollHistory'] = $this->pm->GetPayrollColumns(
             'payroll_company_processed_history',
@@ -1895,10 +1895,14 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
+            // res([
+            //     'Status' => false,
+            //     'Errors' => $errors
+            // ]);
         } else {
             //
             return [

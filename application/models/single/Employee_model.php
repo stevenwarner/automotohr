@@ -257,6 +257,13 @@ class Employee_model extends CI_Model{
         $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_state_tax');
         $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_payment_method');
         $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_bank_accounts');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employees_forms');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employees_pay_stubs');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_benefits');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_benefits_history');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_garnishments');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_garnishments_history');
+        $this->db->where('employee_sid', $employeeId)->delete('payroll_employee_jobs_history');
     }
 
     /**

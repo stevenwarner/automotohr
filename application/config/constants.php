@@ -676,3 +676,6 @@ define('EMPLOYEE_SURVEYS', 'employeesurvey');
 
 // Holds the EFFECT MAGIC CODES
 define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);
+
+// Payroll Fast Payment Limit
+define('FAST_PAYMENT_LIMIT', 500);

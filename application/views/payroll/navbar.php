@@ -19,6 +19,15 @@ if (isPayrollOrPlus()) {
             'icon' => 'building',
             'segment' => 'company'
         ];
+        $navpills[] = [
+            'title' => 'Create Partner Company On Gusto',
+            'url' => 'javascript:void(0)',
+            'slug' => '',
+            'icon' => 'handshake-o',
+            'segment' => 'company',
+            'class' => 'jsAddCompanyToGusto',
+            'data-cid' => $companySid
+        ];
         // Dashboard
         $navpills[] = [
             'title' => 'Employees',
@@ -115,7 +124,7 @@ foreach ($navpills as $tab) {
     } else {
 
         //
-        $lis .= '<li><a ' . (isset($tab['props']) ? $tab['props'] : "") . ' class="csF16 ' . (isset($tab['class']) ? $tab['class'] : '') . ' ' . ($tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '') . '" href="' . ($tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL . $tab['url']) . '"  data-cid="' . ($tab['data-cid']  ? $tab['data-cid'] : '') . '" ><i class="fa fa-' . ($tab['icon']) . '"></i> ' . ($tab['title']) . '</a></li>';
+        $lis .= '<li><a ' . (isset($tab['props']) ? $tab['props'] : "") . ' class="csF16 ' . (isset($tab['class']) ? $tab['class'] : '') . ' ' . ($tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '') . '" href="' . ($tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL . $tab['url']) . '"  data-cid="' . ($tab['data-cid']  ? $tab['data-cid'] : '') . '"  data-company_sid="' . ($tab['data-cid']  ? $tab['data-cid'] : '') . '" ><i class="fa fa-' . ($tab['icon']) . '"></i> ' . ($tab['title']) . '</a></li>';
     }
 }
 ?>

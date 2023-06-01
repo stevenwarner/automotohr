@@ -153,7 +153,8 @@ class Payroll_onboard extends CI_Controller
         $post = $this->input->post(null, true);
         //
         $request = [];
-        $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
+        // $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
+        $request['fast_payment_limit'] = FAST_PAYMENT_LIMIT;
         $request['payment_speed'] = $post['payment_speed'];
         //
         $response = $this->UpdatePaymentConfig($companyId, $request);
@@ -693,6 +694,10 @@ class Payroll_onboard extends CI_Controller
      */
     private function UpdateEmployeeAddressOnGusto($companyId, $employeeId)
     {
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $datetime = date('Y-m-d H:i:s', strtotime('now'));
         //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($employeeId, [
             "payroll_employees.payroll_employee_uuid"
@@ -709,6 +714,27 @@ class Payroll_onboard extends CI_Controller
             "payroll_employee_address.version"
         ], 'payroll_employee_address');
         //
+        // Get employee home address from gusto
+        $gustoEmployeeAddress = getEmployeeHomeAddressFromGusto($ed['payroll_employee_uuid'],  $company_details);
+        //
+        if (!isset($gustoEmployeeAddress['errors'])) {
+            // Update employee employee home address for payroll
+            $ua = [];
+            $ua['street_1'] = $gustoEmployeeAddress['street_1'];
+            $ua['street_2'] = $gustoEmployeeAddress['street_2'];
+            $ua['city'] = $gustoEmployeeAddress['city'];
+            $ua['state'] = $gustoEmployeeAddress['state'];
+            $ua['zip'] = $gustoEmployeeAddress['zip'];
+            $ua['version'] = $gustoEmployeeAddress['version'];
+            $ua['active'] = $gustoEmployeeAddress['active'];
+            $ua['country'] = $gustoEmployeeAddress['country'];
+            $ua['updated_at'] = $datetime;
+            //
+            $this->pm->UpdatePayroll('payroll_employee_address', $ua, ['sid' => $ei['sid']]);
+            //
+            $ei['version'] = $gustoEmployeeAddress['version'];
+        }
+        //
         $request = [];
         $request['street_1'] = $ei['Location_Address'];
         $request['street_2'] = $ei['Location_Address_2'];
@@ -716,8 +742,6 @@ class Payroll_onboard extends CI_Controller
         $request['state'] = $this->pm->GetStateCodeById($ei['Location_State']);
         $request['zip'] = $ei['Location_ZipCode'];
         $request['version'] = $ei['version'];
-        // Get company details
-        $company_details = $this->pm->GetPayrollCompany($companyId);
         //
         $response = UpdateEmployeeAddress($request, $ed['payroll_employee_uuid'],  $company_details);
         //
@@ -732,7 +756,6 @@ class Payroll_onboard extends CI_Controller
             return false;
         }
         //
-        $datetime = date('Y-m-d H:i:s', strtotime('now'));
         // Add entry to the payroll address
         $ia = [];
         $ia['street_1'] = $response['street_1'];
@@ -1220,10 +1243,37 @@ class Payroll_onboard extends CI_Controller
     private function EditEmployeeHomeAddress($companyId, $post)
     {
         //
+        // Get employee UUID
+        $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
+            "payroll_employees.payroll_employee_id"
+        ])['payroll_employee_id'];
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
         $ed = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
             "payroll_employee_address.sid",
             "payroll_employee_address.version"
         ], 'payroll_employee_address');
+        //
+        $gustoEmployeeAddress = getEmployeeHomeAddressFromGusto($employeeUUID,  $company_details);
+        //
+        if (!isset($gustoEmployeeAddress['errors'])) {
+            // Update employee employee home address for payroll
+            $ua = [];
+            $ua['street_1'] = $gustoEmployeeAddress['street_1'];
+            $ua['street_2'] = $gustoEmployeeAddress['street_2'];
+            $ua['city'] = $gustoEmployeeAddress['city'];
+            $ua['state'] = $gustoEmployeeAddress['state'];
+            $ua['zip'] = $gustoEmployeeAddress['zip'];
+            $ua['version'] = $gustoEmployeeAddress['version'];
+            $ua['active'] = $gustoEmployeeAddress['active'];
+            $ua['country'] = $gustoEmployeeAddress['country'];
+            $ua['updated_at'] = $this->datetime;
+            //
+            $this->pm->UpdatePayroll('payroll_employee_address', $ua, ['sid' => $ed['sid']]);
+            //
+            $ed['version'] = $gustoEmployeeAddress['version'];
+        }
         // Let's update the compensations
         $request = [];
         $request['street_1'] = $post['Street1'];
@@ -1232,12 +1282,6 @@ class Payroll_onboard extends CI_Controller
         $request['state'] = $post['State'];
         $request['zip'] = $post['Zipcode'];
         $request['version'] = $ed['version'];
-        //
-        $employeeUUID = $this->sem->GetEmployeeDetailWithPayroll($post['employeeId'], [
-            "payroll_employees.payroll_employee_id"
-        ])['payroll_employee_id'];
-        // Get company details
-        $company_details = $this->pm->GetPayrollCompany($companyId);
         //
         $response = UpdateEmployeeAddress($request, $employeeUUID,  $company_details);
         //
