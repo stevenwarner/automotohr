@@ -396,5 +396,4 @@ $(function createCourse() {
 	window.startCreateCourseProcess = startCreateCourseProcess;
 	// check if the browser version is old
 	generateBrowserAlert();
-	startCreateCourseProcess(0);
 });
