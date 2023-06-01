@@ -429,3 +429,30 @@ if (!function_exists('getUserColumnByWhere')) {
         return $result;
     }
 }
+
+if (!function_exists('isCompanyOnBoard')) {
+    /**
+     * Check company already onboard
+     *
+     * @return
+     */
+    function isCompanyOnBoard()
+    {
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        //
+        $has = $CI->db
+        ->where([
+            'company_sid' => $ses['company_detail']['sid']
+        ])
+        ->count_all_results('payroll_companies');
+        //
+        if ($has) {
+            return true;
+        }
+        // Don't created yet
+        return false;
+    }
+}

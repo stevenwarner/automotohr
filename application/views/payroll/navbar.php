@@ -19,15 +19,17 @@ if (isPayrollOrPlus()) {
             'icon' => 'building',
             'segment' => 'company'
         ];
-        $navpills[] = [
-            'title' => 'Create Partner Company On Gusto',
-            'url' => 'javascript:void(0)',
-            'slug' => '',
-            'icon' => 'handshake-o',
-            'segment' => 'company',
-            'class' => 'jsAddCompanyToGusto',
-            'data-cid' => $companySid
-        ];
+        if (!isCompanyOnBoard()) {
+            $navpills[] = [
+                'title' => 'Create Partner Company On Gusto',
+                'url' => 'javascript:void(0)',
+                'slug' => '',
+                'icon' => 'handshake-o',
+                'segment' => 'company',
+                'class' => 'jsAddCompanyToGusto',
+                'data-cid' => $companySid
+            ];
+        }
         // Dashboard
         $navpills[] = [
             'title' => 'Employees',
