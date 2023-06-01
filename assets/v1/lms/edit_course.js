@@ -10,46 +10,51 @@ $(function createCourse() {
 	let companyCode = 0;
 
 	/**
+	 * set the course id
+	 */
+	let courseCode = 0;
+
+	/**
 	 * set the modal reference
 	 */
-	let modalId = "jsCreateCourseModel";
+	let modalId = "jsEditCourseModel";
 
 	/**
 	 * set the model loader
 	 */
-	let modalLoaderId = "jsCreateCourseModelLoader";
+	let modalLoaderId = "jsEditCourseModelLoader";
 
 	/**
 	 * Create course save event
 	 */
-	$(document).on("click", ".jsAddCourseCreateBtn", function (event) {
+	$(document).on("click", ".jsEditCourseCreateBtn", function (event) {
 		// stop the default event
 		event.preventDefault();
 		// create the course object
 		const courseObj = {
-			course_title: $("#jsAddCourseTitle").val().trim(),
-			course_content: $("#jsAddCourseAbout").val().trim(),
-			job_titles: $("#jsAddCourseJobTitles").val() || [],
-			course_type: $(".jsAddCourseType:checked").val(),
-			course_file: $("#jsAddCourseFile").msFileUploader("get") || {},
+			course_title: $("#jsEditCourseTitle").val().trim(),
+			course_content: $("#jsEditCourseAbout").val().trim(),
+			job_titles: $("#jsEditCourseJobTitles").val() || [],
+			course_type: $(".jsEditCourseType:checked").val(),
+			course_file: $("#jsEditCourseFile").msFileUploader("get") || {},
 		};
 		//
-		handleCourseCreation(courseObj);
+		handleCourseUpdate(courseObj);
 	});
 
 	/**
-	 * Create a course
+	 * Edit a course
 	 *
-	 * @param {int} companyId
+	 * @param {int} courseId
 	 */
-	function startCreateCourseProcess(companyId) {
+	function startEditCourseProcess(courseId) {
 		// set the company Id
-		companyCode = companyId;
+		courseCode = courseId;
 		// load view
 		Modal(
 			{
 				Id: modalId,
-				Title: "Create Course",
+				Title: 'Edit Course <span id="jsEditCourseTtile"></span>',
 				Loader: modalLoaderId,
 				Cl: "container",
 				Ask: true,
@@ -69,7 +74,7 @@ $(function createCourse() {
 		}
 		//
 		XHR = $.ajax({
-			url: apiURL + "lms/course/view",
+			url: apiURL + "lms/course/view/" + courseCode,
 			method: "GET",
 		})
 			.success(function (resp) {
@@ -78,10 +83,10 @@ $(function createCourse() {
 				// load the view
 				$("#" + modalId + "Body").html(resp);
 				//
-				$("#jsAddCourseJobTitles").select2({
+				$("#jsEditCourseJobTitles").select2({
 					closeOnSelect: false,
 				});
-				$("#jsAddCourseFile").msFileUploader({
+				$("#jsEditCourseFile").msFileUploader({
 					fileLimit: "30mb",
 					allowedTypes: ["zip"],
 				});
@@ -107,7 +112,7 @@ $(function createCourse() {
 	 *
 	 * @param {*} courseObj
 	 */
-	async function handleCourseCreation(courseObj) {
+	async function handleCourseUpdate(courseObj) {
 		//
 		const errorArray = [];
 		// validate
@@ -157,7 +162,7 @@ $(function createCourse() {
 		courseObj.company_code = companyCode;
 		try {
 			//
-			const createCourseResponse = await createCourseCall(courseObj);
+			const createCourseResponse = await updateCourseCall(courseObj);
 			//
 			return alertify.alert(
 				"SUCCESS!",
@@ -178,12 +183,12 @@ $(function createCourse() {
 	}
 
 	/**
-	 * Create the default course
+	 * Update the default course
 	 *
 	 * @param {*} courseObj
 	 * @returns
 	 */
-	function createCourseCall(courseObj) {
+	function updateCourseCall(courseObj) {
 		return new Promise(function (resolve, reject) {
 			//
 			$.ajax({
@@ -202,7 +207,5 @@ $(function createCourse() {
 	}
 
 	// make the object available on window
-	window.startCreateCourseProcess = startCreateCourseProcess;
-	// check if the browser version is old
-	generateBrowserAlert();
+	window.startEditCourseProcess = startEditCourseProcess;
 });

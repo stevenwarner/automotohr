@@ -83,6 +83,16 @@ $(function LMSCourses() {
 		// call the function
 		startCreateCourseProcess(0);
 	});
+	
+	/**
+	 * Edit course
+	 */
+	$(document).on("click", ".jsEditCourse", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+		startEditCourseProcess($(this).closest('tr').data('id'));
+	});
 
 	/**
 	 * convert filter object to string
@@ -147,7 +157,7 @@ $(function LMSCourses() {
 	 */
 	function getDefaultJobTitles() {
 		// make the call
-		XHR = $.ajax({
+		$.ajax({
 			url: apiURL + "jobs/titles/default",
 			method: "GET",
 		}).success(function (response) {
@@ -212,7 +222,9 @@ $(function LMSCourses() {
 				);
 			});
 	}
+	// make it available to window
+	window.getLMSDefaultCourses = getLMSDefaultCourses;
 	//
-	getLMSDefaultCourses();
 	getDefaultJobTitles();
+	getLMSDefaultCourses();
 });

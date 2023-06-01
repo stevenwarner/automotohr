@@ -56,6 +56,7 @@ class Courses extends Admin_Controller
             ['1.2.0', 'v1/plugins/ms_modal/main'],
             ['1.0', 'v1/common'],
             ['1.0', 'v1/lms/create_course'],
+            ['1.0', 'v1/lms/edit_course'],
             ['1.0', 'v1/lms/sa/main'],
         ];
         // get access token
