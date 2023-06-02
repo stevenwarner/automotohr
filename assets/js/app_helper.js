@@ -157,7 +157,7 @@ if (typeof uploadStream === "undefined") {
 				method: "POST",
 				timeout: 0,
 				contentType: "application/json",
-				data: JSON.stringify({stream: streamData}),
+				data: JSON.stringify({ stream: streamData }),
 			})
 				.success(function (response) {
 					resolve(response);
@@ -171,7 +171,7 @@ if (typeof uploadStream === "undefined") {
 
 if (typeof $ !== "undefined") {
 	// set filter height
-	$(".jsFilterPanel").height(window.innerHeight);
+	$(".jsFilterPanel").height($(document).height());
 	//
 	$(document).on("click", ".jsFilterSectionBtn", function (event) {
 		//

@@ -12,12 +12,12 @@ $(function createCourse() {
 	/**
 	 * set the modal reference
 	 */
-	let modalId = "jsCreateCourseModel";
+	let modalId = "jsEditCourseModel";
 
 	/**
 	 * set the model loader
 	 */
-	let modalLoaderId = "jsCreateCourseModelLoader";
+	let modalLoaderId = "jsEditCourseModelLoader";
 
 	/**
 	 * set the default questions array
@@ -27,17 +27,17 @@ $(function createCourse() {
 	/**
 	 * Create course save event
 	 */
-	$(document).on("click", ".jsAddCourseCreateBtn", function (event) {
+	$(document).on("click", ".jsEditCourseCreateBtn", function (event) {
 		// stop the default event
 		event.preventDefault();
 		// create the course object
 		const courseObj = {
-			course_title: $("#jsAddCourseTitle").val().trim(),
-			course_content: $("#jsAddCourseAbout").val().trim(),
-			job_titles: $("#jsAddCourseJobTitles").val() || [],
-			course_type: $(".jsAddCourseType:checked").val(),
-			course_version: $("#jsAddCourseVersion").val(),
-			course_file: $("#jsAddCourseFile").msFileUploader("get") || {},
+			course_title: $("#jsEditCourseTitle").val().trim(),
+			course_content: $("#jsEditCourseAbout").val().trim(),
+			job_titles: $("#jsEditCourseJobTitles").val() || [],
+			course_type: $(".jsEditCourseType:checked").val(),
+			course_version: $("#jsEditCourseVersion").val(),
+			course_file: $("#jsEditCourseFile").msFileUploader("get") || {},
 			course_questions: questionsArray,
 		};
 		//
@@ -47,15 +47,15 @@ $(function createCourse() {
 	/**
 	 * Toggle between manual and SCORM
 	 */
-	$(document).on("click", ".jsAddCourseType", function () {
+	$(document).on("click", ".jsEditCourseType", function () {
 		// set defaults
-		$(".jsAddCourseScormBox").addClass("hidden");
-		$(".jsAddManualCourseBox").addClass("hidden");
+		$(".jsEditCourseScormBox").addClass("hidden");
+		$(".jsEditManualCourseBox").addClass("hidden");
 		// make view
 		if ($(this).val() === "scorm") {
-			$(".jsAddCourseScormBox").removeClass("hidden");
+			$(".jsEditCourseScormBox").removeClass("hidden");
 		} else {
-			$(".jsAddManualCourseBox").removeClass("hidden");
+			$(".jsEditManualCourseBox").removeClass("hidden");
 			loadQuestionsView();
 		}
 	});
@@ -63,7 +63,7 @@ $(function createCourse() {
 	/**
 	 * Add a question
 	 */
-	$(document).on("click", ".jsAddQuestionBtn", function (event) {
+	$(document).on("click", ".jsEditQuestionBtn", function (event) {
 		// stop the default behavior
 		event.preventDefault();
 		// handle add event
@@ -140,14 +140,14 @@ $(function createCourse() {
 	 *
 	 * @param {int} companyId
 	 */
-	function startCreateCourseProcess(companyId) {
+	function startEditCourseProcess(companyId) {
 		// set the company Id
 		companyCode = companyId;
 		// load view
 		Modal(
 			{
 				Id: modalId,
-				Title: "Create Course",
+				Title: 'Update Course <span id="jsEditCourseTitle"></span>',
 				Loader: modalLoaderId,
 				Cl: "container",
 				Ask: true,
@@ -176,14 +176,14 @@ $(function createCourse() {
 				// load the view
 				$("#" + modalId + "Body").html(resp);
 				//
-				$("#jsAddCourseVersion").select2({
+				$("#jsEditCourseVersion").select2({
 					minimumResultsForSearch: -1,
 				});
 				//
-				$("#jsAddCourseJobTitles").select2({
+				$("#jsEditCourseJobTitles").select2({
 					closeOnSelect: false,
 				});
-				$("#jsAddCourseFile").msFileUploader({
+				$("#jsEditCourseFile").msFileUploader({
 					fileLimit: "30mb",
 					allowedTypes: ["zip"],
 				});
@@ -336,7 +336,7 @@ $(function createCourse() {
 	function loadQuestionsView() {
 		// check the length of questions
 		if (!questionsArray.length) {
-			return $("#jsAddCourseQuestionsList").html(
+			return $("#jsEditCourseQuestionsList").html(
 				'<tr><th colspan="3"><p class="alert alert-info text-center">No questions found yet.</p></th></tr>'
 			);
 		}
@@ -363,7 +363,7 @@ $(function createCourse() {
 			tr += "</tr>";
 		});
 		//
-		$("#jsAddCourseQuestionsList").html(tr);
+		$("#jsEditCourseQuestionsList").html(tr);
 	}
 
 	/**
@@ -393,7 +393,7 @@ $(function createCourse() {
 	}
 
 	// make the object available on window
-	window.startCreateCourseProcess = startCreateCourseProcess;
+	window.startEditCourseProcess = startEditCourseProcess;
 	// check if the browser version is old
 	generateBrowserAlert();
 });

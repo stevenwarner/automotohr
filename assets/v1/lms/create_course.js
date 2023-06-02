@@ -37,7 +37,14 @@ $(function createCourse() {
 			job_titles: $("#jsAddCourseJobTitles").val() || [],
 			course_type: $(".jsAddCourseType:checked").val(),
 			course_version: $("#jsAddCourseVersion").val(),
-			course_file: $("#jsAddCourseFile").msFileUploader("get") || {},
+			course_file:
+				$(
+					"#" +
+						($(".jsAddCourseType:checked").val() === "scorm"
+							? "jsAddCourseFile"
+							: "jsAddCourseVideoFile") +
+						""
+				).msFileUploader("get") || {},
 			course_questions: questionsArray,
 		};
 		//
@@ -175,18 +182,25 @@ $(function createCourse() {
 				XHR = null;
 				// load the view
 				$("#" + modalId + "Body").html(resp);
-				//
+				// load select2 on course version
 				$("#jsAddCourseVersion").select2({
 					minimumResultsForSearch: -1,
 				});
-				//
+				// load select2 on course job titles
 				$("#jsAddCourseJobTitles").select2({
 					closeOnSelect: false,
 				});
+				// load image
 				$("#jsAddCourseFile").msFileUploader({
-					fileLimit: "30mb",
+					fileLimit: "50mb",
 					allowedTypes: ["zip"],
 				});
+				//
+				$("#jsAddCourseVideoFile").msFileUploader({
+					fileLimit: "50mb",
+					allowedTypes: ["mp4", "ppt", "pptx"],
+				});
+
 				// hide the loader
 				ml(false, modalLoaderId);
 			})
@@ -225,14 +239,18 @@ $(function createCourse() {
 		// set default question array
 		courseObj.course_questions = questionsArray;
 		// only when a file is uploaded
-		if (courseObj.course_type === "scorm") {
-			// check for empty file
-			if (!Object.keys(courseObj.course_file).length) {
-				errorArray.push("Please upload the SCORM file.");
-			} else if (courseObj.course_file.errorCode) {
-				errorArray.push(courseObj.course_file.errorCode);
-			}
-		} else if (!questionsArray.length) {
+		// check for empty file
+		if (!Object.keys(courseObj.course_file).length) {
+			errorArray.push(
+				"Please upload the " +
+					(courseObj.course_type === "manual" ? "Course" : "SCORM") +
+					" file."
+			);
+		} else if (courseObj.course_file.errorCode) {
+			errorArray.push(courseObj.course_file.errorCode);
+		}
+		// for manual course
+		if (courseObj.course_type === "manual" && !questionsArray.length) {
 			errorArray.push(
 				"At least one question is required for manual course."
 			);
@@ -248,22 +266,19 @@ $(function createCourse() {
 		}
 		// start the loader and upload the file
 		ml(true, modalLoaderId);
-		if (courseObj.course_type === "scorm") {
-			// upload file
-			let response = await uploadFile(courseObj.course_file);
-			// parse the JSON
-			response = JSON.parse(response);
-			// if file was not uploaded successfully
-			if (!response.data) {
-				return alertify.alert("ERROR", "Failed to upload file.", CB);
-			}
-			// set the file
-			courseObj.course_file = response.data;
-		} else {
-			courseObj.course_file = "";
+		// upload file
+		let response = await uploadFile(courseObj.course_file);
+		// parse the JSON
+		response = JSON.parse(response);
+		// if file was not uploaded successfully
+		if (!response.data) {
+			return alertify.alert("ERROR", "Failed to upload the file.", CB);
 		}
+		// set the file
+		courseObj.course_file = response.data;
 		// add company code
 		courseObj.company_code = companyCode;
+		//
 		try {
 			//
 			const createCourseResponse = await createCourseCall(courseObj);
@@ -347,8 +362,8 @@ $(function createCourse() {
 			//
 			tr += '<tr data-key="' + questionObj.question_id + '">';
 			tr += '	<td class="vam">' + questionObj.question_title + "</td>";
-			tr += '	<td class="vam">' + questionObj.question_type + "</td>";
-			tr += '	<td class="vam">';
+			tr += '	<td class="vam text-center">' + questionObj.question_type.replace(/_/ig, ' ').toUpperCase() + "</td>";
+			tr += '	<td class="vam text-center">';
 			// Edit button
 			tr +=
 				'		<button type="button" class="btn btn-warning jsEditQuestion" title="Edit question" placement="top">';

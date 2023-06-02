@@ -45,14 +45,20 @@ $(function LMSCourses() {
 		//
 		let courseId = $(this).closest("tr").data("id");
 		//
-		return alertify.confirm(
-			"Do you really want to enable this course?",
-			function () {
-				//
-				updateDefaultCourseStatus(courseId, true);
-			},
-			CB
-		);
+		return alertify
+			.confirm(
+				"Do you really want to enable this course?",
+				function () {
+					//
+					updateDefaultCourseStatus(courseId, true);
+				},
+				CB
+			)
+			.set("labels", {
+				ok: "Yes",
+				cancel: "No",
+			})
+			.setHeader("Confirm");
 	});
 
 	/**
@@ -64,14 +70,20 @@ $(function LMSCourses() {
 		//
 		let courseId = $(this).closest("tr").data("id");
 		//
-		return alertify.confirm(
-			"Do you really want to disable this course?",
-			function () {
-				//
-				updateDefaultCourseStatus(courseId, false);
-			},
-			CB
-		);
+		return alertify
+			.confirm(
+				"Do you really want to disable this course?",
+				function () {
+					//
+					updateDefaultCourseStatus(courseId, false);
+				},
+				CB
+			)
+			.set("labels", {
+				ok: "Yes",
+				cancel: "No",
+			})
+			.setHeader("Confirm");
 	});
 
 	/**
@@ -83,7 +95,7 @@ $(function LMSCourses() {
 		// call the function
 		startCreateCourseProcess(0);
 	});
-	
+
 	/**
 	 * Edit course
 	 */
@@ -91,7 +103,7 @@ $(function LMSCourses() {
 		// stop the default functionality
 		event.preventDefault();
 		// call the function
-		startEditCourseProcess($(this).closest('tr').data('id'));
+		startEditCourseProcess($(this).closest("tr").data("id"));
 	});
 
 	/**
@@ -127,7 +139,7 @@ $(function LMSCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-			url: apiURL + "sa/lms/course?" + getFilterAsString(),
+			url: apiURL + "lms/course?" + getFilterAsString(),
 			method: "GET",
 		})
 			.success(function (response) {
@@ -196,7 +208,7 @@ $(function LMSCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-			url: apiURL + "sa/lms/course/" + courseId + "/status",
+			url: apiURL + "lms/course/" + courseId + "/status",
 			method: "PUT",
 			headers: {
 				"content-type": "application/json",
