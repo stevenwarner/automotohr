@@ -533,6 +533,4 @@ $(function editCourse() {
 
 	// make the object available on window
 	window.startEditCourseProcess = startEditCourseProcess;
-	// check if the browser version is old
-	generateBrowserAlert();
 });

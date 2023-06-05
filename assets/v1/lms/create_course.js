@@ -404,6 +404,4 @@ $(function createCourse() {
 
 	// make the object available on window
 	window.startCreateCourseProcess = startCreateCourseProcess;
-	// check if the browser version is old
-	generateBrowserAlert();
 });
