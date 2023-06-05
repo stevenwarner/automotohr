@@ -1757,3 +1757,8 @@ $route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';
  * CRON Jobs
  */
 $route['cron/remove_employee_duplicate_teams'] = 'Cron_common/removeEmployeeFromDuplicateGroups';
+
+/**
+ * LMS Courses routes
+ */
+$route['sa/lms/courses'] = 'manage_admin/2022/Courses';

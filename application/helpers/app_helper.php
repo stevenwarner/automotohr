@@ -464,3 +464,26 @@ if (!function_exists('getEmployeeAnniversary')) {
         return $returnArray;
     }
 }
+
+if (!function_exists('getApiAccessToken')) {
+    /**
+     * Retrieve API access token
+     * 
+     * @param int $companyId
+     * @param int $employeeId
+     * 
+     * @return string
+     */
+    function getApiAccessToken(int $companyId, int $employeeId)
+    {
+        // return the data
+        return get_instance()->db
+            ->select('access_token')
+            ->where([
+                'company_sid' => $companyId,
+                'user_sid' => $employeeId
+            ])
+            ->get('api_credentials')
+            ->row_array()['access_token'];
+    }
+}

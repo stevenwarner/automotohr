@@ -88,13 +88,13 @@ if (!function_exists('GetScripts')) {
         foreach ($scripts as $script) {
             //
             if (is_array($script)) {
-                $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script[1], 'js', $script[0]))) . '"></script>';
+                $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script[1], 'js', $script[0]))) . '"></script>' . "\n\t";
             } else {
                 //
                 if (strpos($script, 'http') !== false) {
-                    $html .= '<script type="text/javascript" src="' . ($script) . '"></script>';
+                    $html .= '<script type="text/javascript" src="' . ($script) . '"></script>'."\n\t";
                 } else {
-                    $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script))) . '"></script>';
+                    $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script))) . '"></script>' . "\n\t";
                 }
             }
         }
@@ -121,13 +121,13 @@ if (!function_exists('GetCss')) {
         foreach ($scripts as $script) {
             //
             if (is_array($script)) {
-                $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script[1], 'css', $script[0]))) . '">';
+                $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script[1], 'css', $script[0]))) . '">' . "\n\t";
             } else {
                 //
                 if (strpos($script, 'http') !== false) {
-                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . ($script) . '" />';
+                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . ($script) . '" />' . "\n\t";
                 } else {
-                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script, 'css'))) . '">';
+                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script, 'css'))) . '">' . "\n\t";
                 }
             }
         }

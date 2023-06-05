@@ -11,8 +11,10 @@
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/responsive.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/jquery-ui-datepicker-custom.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/css/jquery.datetimepicker.css'); ?>">
+    <?php if(!isset($loadUp)) { ?>
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/star-rating.css'); ?>">
     <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <?php } ?>
 
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
 
@@ -45,6 +47,8 @@
         }
     }
     ?>
+    
+    <?php if(!isset($loadUp)) { ?>
     <!-- Include MultiSelect -->
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>">
     <script src="<?php echo site_url('assets/manage_admin/js/chosen.jquery.js'); ?>"></script>
@@ -59,6 +63,12 @@
     <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/tableHeadFixer.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/star-rating.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/Chart.bundle.min.js'); ?>"></script>
+    <?php } ?>
+
+    <?php if (isset($PageCSS)) : ?>
+        <!-- Stylesheets -->
+        <?= GetCss($PageCSS); ?>
+    <?php endif; ?>
 
 
     <title><?php echo $page_title; ?></title>
