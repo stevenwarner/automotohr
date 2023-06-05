@@ -60,7 +60,7 @@ class Courses extends Admin_Controller
             ['1.0', 'v1/lms/edit_question'],
             ['1.0', 'v1/lms/create_course'],
             ['1.0', 'v1/lms/edit_course'],
-            ['1.0', 'v1/lms/sa/main'],
+            ['1.0', 'v1/lms/main'],
         ];
         // get access token
         $this->data['apiAccessToken'] = getApiAccessToken(

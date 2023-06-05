@@ -1,4 +1,4 @@
-$(function createCourse() {
+$(function editCourse() {
 	/**
 	 * set the XHR
 	 */
@@ -8,6 +8,11 @@ $(function createCourse() {
 	 * set the company id
 	 */
 	let companyCode = 0;
+
+	/**
+	 * set the course id
+	 */
+	let courseCode = 0;
 
 	/**
 	 * set the modal reference
@@ -25,23 +30,59 @@ $(function createCourse() {
 	let questionsArray = [];
 
 	/**
+	 * SCORM uploader options
+	 */
+	let scormOptions = {
+		fileLimit: "50mb",
+		allowedTypes: ["zip"],
+	};
+
+	/**
+	 * Manual uploader options
+	 */
+	let manualOptions = {
+		fileLimit: "50mb",
+		allowedTypes: ["mp4", "ppt", "pptx"],
+	};
+
+	// set default course obj
+	let courseObj = {
+		course_title: "",
+		course_content: "",
+		job_titles: [],
+		course_type: "",
+		course_version: "",
+		course_file_name: "",
+		course_file: {},
+		course_questions: [],
+	};
+
+	/**
 	 * Create course save event
 	 */
 	$(document).on("click", ".jsEditCourseCreateBtn", function (event) {
 		// stop the default event
 		event.preventDefault();
 		// create the course object
-		const courseObj = {
+		courseObj = {
 			course_title: $("#jsEditCourseTitle").val().trim(),
 			course_content: $("#jsEditCourseAbout").val().trim(),
 			job_titles: $("#jsEditCourseJobTitles").val() || [],
 			course_type: $(".jsEditCourseType:checked").val(),
 			course_version: $("#jsEditCourseVersion").val(),
-			course_file: $("#jsEditCourseFile").msFileUploader("get") || {},
+			course_file_name: courseObj.course_file_name,
+			course_file:
+				$(
+					"#" +
+						($(".jsEditCourseType:checked").val() === "scorm"
+							? "jsEditCourseFile"
+							: "jsEditCourseVideoFile") +
+						""
+				).msFileUploader("get") || {},
 			course_questions: questionsArray,
 		};
 		//
-		handleCourseCreation(courseObj);
+		handleCourseUpdate(courseObj);
 	});
 
 	/**
@@ -84,7 +125,7 @@ $(function createCourse() {
 	/**
 	 * Delete question
 	 */
-	$(document).on("click", ".jsDeleteQuestion", function (event) {
+	$(document).on("click", ".jsDeleteQuestionEdit", function (event) {
 		// stop the default behavior
 		event.preventDefault();
 		//
@@ -101,7 +142,7 @@ $(function createCourse() {
 	/**
 	 * Edit question
 	 */
-	$(document).on("click", ".jsEditQuestion", function (event) {
+	$(document).on("click", ".jsEditQuestionEdit", function (event) {
 		// stop the default behavior
 		event.preventDefault();
 		//
@@ -129,7 +170,7 @@ $(function createCourse() {
 				questionsArray = tmpArray;
 				// regenerate view
 				loadQuestionsView();
-				// hide the loader
+				// hides the loader
 				ml(false, modalLoaderId);
 			}
 		);
@@ -140,14 +181,16 @@ $(function createCourse() {
 	 *
 	 * @param {int} companyId
 	 */
-	function startEditCourseProcess(companyId) {
+	function startEditCourseProcess(companyId, courseId) {
 		// set the company Id
 		companyCode = companyId;
+		// set course id
+		courseCode = courseId;
 		// load view
 		Modal(
 			{
 				Id: modalId,
-				Title: 'Update Course <span id="jsEditCourseTitle"></span>',
+				Title: 'Update Course <span id="jsEditCourseTitleHeader"></span>',
 				Loader: modalLoaderId,
 				Cl: "container",
 				Ask: true,
@@ -167,7 +210,7 @@ $(function createCourse() {
 		}
 		//
 		XHR = $.ajax({
-			url: apiURL + "lms/course/view",
+			url: apiURL + "lms/course/view/edit",
 			method: "GET",
 		})
 			.success(function (resp) {
@@ -175,41 +218,30 @@ $(function createCourse() {
 				XHR = null;
 				// load the view
 				$("#" + modalId + "Body").html(resp);
-				//
+				// load select2 on course version
 				$("#jsEditCourseVersion").select2({
 					minimumResultsForSearch: -1,
 				});
-				//
+				// load select2 on course job titles
 				$("#jsEditCourseJobTitles").select2({
 					closeOnSelect: false,
 				});
-				$("#jsEditCourseFile").msFileUploader({
-					fileLimit: "30mb",
-					allowedTypes: ["zip"],
-				});
-				// hide the loader
-				ml(false, modalLoaderId);
+				//
+				getCourseDetails();
 			})
-			.fail(function (response) {
+			.fail(handleErrorResponse)
+			.done(function () {
 				// empty the call
 				XHR = null;
-				// hide the loader
-				ml(false, "jsPageLoader");
-				//
-				return alertify.alert(
-					"Errors!",
-					response.responseJSON.errors.join("<br />"),
-					CB
-				);
 			});
 	}
 
 	/**
-	 * Handle course creation process
+	 * Handle course update process
 	 *
 	 * @param {*} courseObj
 	 */
-	async function handleCourseCreation(courseObj) {
+	async function handleCourseUpdate(courseObj) {
 		//
 		const errorArray = [];
 		// validate
@@ -224,15 +256,40 @@ $(function createCourse() {
 		}
 		// set default question array
 		courseObj.course_questions = questionsArray;
-		// only when a file is uploaded
-		if (courseObj.course_type === "scorm") {
-			// check for empty file
+		//
+		let isCourseTypeFile = false;
+		//
+		if (
+			courseObj.course_type === "scorm" &&
+			courseObj.course_file_name.match(/.zip$/) !== null
+		) {
+			isCourseTypeFile = true;
+		}
+		//
+		if (
+			courseObj.course_type === "manual" &&
+			courseObj.course_file_name.match(/.zip$/) === null
+		) {
+			isCourseTypeFile = true;
+		}
+		// if no file content is changed
+		if (!Object.keys(courseObj.course_file).length && !isCourseTypeFile) {
 			if (!Object.keys(courseObj.course_file).length) {
-				errorArray.push("Please upload the SCORM file.");
+				// only when a file is uploaded
+				// check for empty file
+				errorArray.push(
+					"Please upload the " +
+						(courseObj.course_type === "manual"
+							? "Course"
+							: "SCORM") +
+						" file."
+				);
 			} else if (courseObj.course_file.errorCode) {
 				errorArray.push(courseObj.course_file.errorCode);
 			}
-		} else if (!questionsArray.length) {
+		}
+		// for manual course
+		if (courseObj.course_type === "manual" && !questionsArray.length) {
 			errorArray.push(
 				"At least one question is required for manual course."
 			);
@@ -248,29 +305,35 @@ $(function createCourse() {
 		}
 		// start the loader and upload the file
 		ml(true, modalLoaderId);
-		if (courseObj.course_type === "scorm") {
+		//
+		if (!isCourseTypeFile) {
 			// upload file
 			let response = await uploadFile(courseObj.course_file);
 			// parse the JSON
 			response = JSON.parse(response);
 			// if file was not uploaded successfully
 			if (!response.data) {
-				return alertify.alert("ERROR", "Failed to upload file.", CB);
+				return alertify.alert(
+					"ERROR",
+					"Failed to upload the file.",
+					CB
+				);
 			}
 			// set the file
 			courseObj.course_file = response.data;
 		} else {
-			courseObj.course_file = "";
+			courseObj.course_file = courseObj.course_file_name;
 		}
 		// add company code
 		courseObj.company_code = companyCode;
+		//
 		try {
 			//
-			const createCourseResponse = await createCourseCall(courseObj);
+			const updateCourseResponse = await updateCourseCall(courseObj);
 			//
 			return alertify.alert(
 				"SUCCESS!",
-				createCourseResponse.data,
+				updateCourseResponse.data,
 				function () {
 					$("#" + modalId).remove();
 					//
@@ -293,14 +356,15 @@ $(function createCourse() {
 	 * @param {*} courseObj
 	 * @returns
 	 */
-	function createCourseCall(courseObj) {
+	function updateCourseCall(courseObj) {
 		return new Promise(function (resolve, reject) {
 			//
 			$.ajax({
-				url: apiURL + "lms/course",
-				method: "POST",
+				url: apiURL + "lms/course/" + courseCode,
+				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
+					Accept: "application/json",
 				},
 				data: JSON.stringify(courseObj),
 			})
@@ -347,16 +411,19 @@ $(function createCourse() {
 			//
 			tr += '<tr data-key="' + questionObj.question_id + '">';
 			tr += '	<td class="vam">' + questionObj.question_title + "</td>";
-			tr += '	<td class="vam">' + questionObj.question_type + "</td>";
-			tr += '	<td class="vam">';
+			tr +=
+				'	<td class="vam text-center">' +
+				questionObj.question_type.replace(/_/gi, " ").toUpperCase() +
+				"</td>";
+			tr += '	<td class="vam text-center">';
 			// Edit button
 			tr +=
-				'		<button type="button" class="btn btn-warning jsEditQuestion" title="Edit question" placement="top">';
+				'		<button type="button" class="btn btn-warning jsEditQuestionEdit" title="Edit question" placement="top">';
 			tr += '			<i class="fa fa-edit" aria-hidden="true"></i>';
 			tr += "		</button>";
 			// remove button
 			tr +=
-				'		<button type="button" class="btn btn-danger jsDeleteQuestion" title="Delete question" placement="top">';
+				'		<button type="button" class="btn btn-danger jsDeleteQuestionEdit" title="Delete question" placement="top">';
 			tr += '			<i class="fa fa-times-circle" aria-hidden="true"></i>';
 			tr += "		</button>";
 			tr += "	</td>";
@@ -390,6 +457,78 @@ $(function createCourse() {
 		});
 		//
 		return question[0];
+	}
+
+	/**
+	 *
+	 */
+	function getCourseDetails() {
+		XHR = $.ajax({
+			url: apiURL + "lms/course/" + courseCode,
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				"content-type": "application/json",
+			},
+		})
+			.success(function (response) {
+				//z
+				XHR = null;
+				//
+				setEditView(response.data);
+			})
+			.fail(function (response) {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+				//
+				return alertify.alert(
+					"Errors!",
+					response.responseJSON.errors.join("<br />"),
+					CB
+				);
+			});
+	}
+
+	/**
+	 * Set the edit view
+	 * @param {*} courseObj
+	 */
+	function setEditView(co) {
+		// set the title
+		$("#jsEditCourseTitleHeader").html(" - " + co.course_title);
+		$("#jsEditCourseTitle").val(co.course_title);
+		// set the course description
+		$("#jsEditCourseAbout").val(co.course_content);
+		// set the course job_titles
+		$("#jsEditCourseJobTitles").select2("val", co.job_titles);
+		// set the course course_type
+		$('.jsEditCourseType[value="' + co.course_type + '"]').prop(
+			"checked",
+			true
+		);
+		$('.jsEditCourseType[value="' + co.course_type + '"]').trigger("click");
+
+		// for SCORM
+		if (co.course_type === "scorm") {
+			// set uploader
+			scormOptions["placeholderImage"] = co.course_file_name;
+			// set scorm version
+			$("#jsEditCourseVersion").select2("val", co.course_version);
+		} else {
+			manualOptions["placeholderImage"] = co.course_file_name;
+			questionsArray = co.course_questions;
+			loadQuestionsView();
+		}
+		// load SCORM uploader
+		$("#jsEditCourseFile").msFileUploader(scormOptions);
+		// load manual uploader
+		$("#jsEditCourseVideoFile").msFileUploader(manualOptions);
+		// set file name
+		courseObj.course_file_name = co.course_file_name;
+		// hide the modal
+		ml(false, modalLoaderId);
 	}
 
 	// make the object available on window

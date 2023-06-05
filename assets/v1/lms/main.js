@@ -103,7 +103,7 @@ $(function LMSCourses() {
 		// stop the default functionality
 		event.preventDefault();
 		// call the function
-		startEditCourseProcess($(this).closest("tr").data("id"));
+		startEditCourseProcess(0, $(this).closest("tr").data("id"));
 	});
 
 	/**
@@ -150,17 +150,12 @@ $(function LMSCourses() {
 				// hide the loader
 				ml(false, "jsPageLoader");
 			})
-			.fail(function (response) {
+			.fail(handleErrorResponse)
+			.done(function () {
 				// empty the call
 				XHR = null;
 				// hide the loader
 				ml(false, "jsPageLoader");
-				//
-				return alertify.alert(
-					"Errors!",
-					response.responseJSON.errors.join("<br />"),
-					CB
-				);
 			});
 	}
 
@@ -221,17 +216,12 @@ $(function LMSCourses() {
 				alertify.success(response.success);
 				getLMSDefaultCourses();
 			})
-			.fail(function (response) {
+			.fail(handleErrorResponse)
+			.done(function () {
 				// empty the call
 				XHR = null;
 				// hide the loader
 				ml(false, "jsPageLoader");
-				//
-				return alertify.alert(
-					"Errors!",
-					response.responseJSON.errors.join("<br />"),
-					CB
-				);
 			});
 	}
 	// make it available to window

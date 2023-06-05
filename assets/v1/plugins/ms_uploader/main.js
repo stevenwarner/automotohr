@@ -420,6 +420,8 @@
 						tag = `<img class="img-responsive" src="${fullFileName}" />`;
 					else if ($.inArray(extension, ["mp4"]) !== -1)
 						tag = `<video style="width: 100%;" class="img-responsive" src="${fullFileName}" controls></video>`;
+					else if ($.inArray(extension, ["zip"]) !== -1)
+						tag = `<iframe frameborder="0" style="width: 100%; height: 600px;" class="jsMFUIframe" src="${fullFileName}"></iframe>`;
 					else
 						tag = `<iframe frameborder="0" style="width: 100%; height: 600px;" class="jsMFUIframe" src="https://docs.google.com/gview?url=${fullFileName}&embedded=true"></iframe>`;
 				} else {

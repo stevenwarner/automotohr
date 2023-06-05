@@ -204,3 +204,28 @@ if (typeof $ !== "undefined") {
 		$(".jsExpandSideBar").toggleClass("hidden");
 	});
 }
+
+if (typeof handleErrorResponse === "undefined") {
+	/**
+	 * Handle AJAX errors
+	 * @param {*} response
+	 * @returns
+	 */
+	function handleErrorResponse(response) {
+		// when connection is lost
+		if (response.status == 0) {
+			//
+			return alertify.alert(
+				"Errors!",
+				"The connection to the server has been lost. Kindly reach out to the system administrator for assistance.",
+				CB
+			);
+		}
+		// when error object came in
+		return alertify.alert(
+			"Errors!",
+			response.responseJSON.errors.join("<br />"),
+			CB
+		);
+	}
+}

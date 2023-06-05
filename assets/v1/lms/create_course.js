@@ -204,17 +204,12 @@ $(function createCourse() {
 				// hide the loader
 				ml(false, modalLoaderId);
 			})
-			.fail(function (response) {
+			.fail(handleErrorResponse)
+			.done(function () {
 				// empty the call
 				XHR = null;
 				// hide the loader
 				ml(false, "jsPageLoader");
-				//
-				return alertify.alert(
-					"Errors!",
-					response.responseJSON.errors.join("<br />"),
-					CB
-				);
 			});
 	}
 
