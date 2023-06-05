@@ -31,7 +31,7 @@
     let balanceFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startBalanceProcess(employeeId, employeeName,anniversarytext) {
+    async function startBalanceProcess(employeeId, employeeName, anniversarytext) {
         // Set the employee id
         balanceEmployeeId = employeeId;
         // Load Modal
@@ -96,11 +96,37 @@
                         </div>
                         <!-- -->
                         <div class="jsBalancePage" data-step="2" style="display: none;">
-                            <div class="">
-                                <h4><strong>Number Of Approved Time-offs</strong>: <span class="jsCreateTimeOffNumber">0</span></h4>
-                                <h4><strong>Total Time Approved</strong>: <span class="jsCreateTimeOffTimeTaken">0</span></h4>
-                                <h4><strong>Total Manual Allowed Balance</strong>: <span class="jsCreateTimeOffManualAllowedTime">0</span></h4>
+                           
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>Anniversary Cycles </label>
+                                <div>
+                                    <select id="jsAnniversaryCycles"></select>
+                                </div>
+                           </div>
+
+                           <div class="col-sm-6">
+                           <label>Policy </label>
+                              <div>
+                              <select id="jsBalancePolicyDetail"></select>
+                                </div>
+                             </div>
+
+                                
+                            </div> <br><br>
+
+                            <div class="row">
+                            <div class="col-sm-9">
                             </div>
+                            <div class="col-sm-3">
+
+                            <button type="button" class="btn btn-success btn-theme  jsFetchBtn">Featch</button>
+                            <button type="button" class="btn btn-black jsCleareBtn" >Cleare</button>
+ 
+                            </div>
+                            </div><br><br>
+                        
+
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
@@ -193,6 +219,14 @@
         });
         //
         $('#jsBalancePolicy').html(policyOptions);
+
+
+        //
+        $('#jsBalancePolicyDetail').html(policyOptions);
+        $('#jsBalancePolicyDetail').select2();
+
+
+
         //
         $('#jsBalancePolicy').select2({
             templateResult: (item) => {
@@ -209,6 +243,59 @@
         $('#jsBalanceType').select2({
             minimumResultsForSearch: -1
         });
+
+
+
+
+        // Get employee Anniversary Cycles
+        let AnniversaryCycles = await fetchAnniversaryCycles({
+            action: 'get_employee_anniversary_cycles',
+            companyId: <?= $company_sid; ?>,
+            employerId: <?= $employer_sid; ?>,
+            employeeId: balanceEmployeeId
+        });
+
+
+        let AnniversaryCycleOptions = '<option value="all">All</option>';
+
+        $.each(AnniversaryCycles['Data'], function(i, item) {
+            AnniversaryCycleOptions += '<option value="' + AnniversaryCycles['Data'][i].lastAnniversaryDate + '#' + AnniversaryCycles['Data'][i].upcomingAnniversaryDate + '">' + AnniversaryCycles['Data'][i].lastAnniversaryDate + ' -> ' + AnniversaryCycles['Data'][i].upcomingAnniversaryDate + '</option>';
+        });
+
+
+        $("#jsAnniversaryCycles").html(AnniversaryCycleOptions);
+        $("#jsAnniversaryCycles").select2();
+
+
+        $('#js-filter-from-date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeYear: true,
+            changeMonth: true,
+            onSelect: function(v) {
+                $('#js-filter-to-date').datepicker('option', 'minDate', v);
+            }
+        });
+
+        //
+        $('#js-filter-to-date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeYear: true,
+            changeMonth: true,
+        }).datepicker('option', 'minDate', $('#js-filter-from-date').val());
+
+
+        // Fetch employee Anniversary Cycles
+        function fetchAnniversaryCycles(obj) {
+            return new Promise((res, rej) => {
+                //
+                $.post("<?= base_url('timeoff/handler'); ?>", obj, function(resp) {
+                    res(resp);
+                });
+            });
+        }
+
+
+
         //
         $('.jsBPModalLoader').hide();
     }
@@ -235,6 +322,7 @@
             }
         })
     })
+
 
 
     // Fetch employee policies
@@ -551,7 +639,7 @@
             rows += '<tr>';
             rows += '   <td colspan="6">';
             if (balance.is_manual == 0 && balance.is_allowed == 1) {
-                rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
             } else {
                 rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
             }
@@ -579,16 +667,192 @@
     function fetchBalanceHistory() {
         return new Promise((res, rej) => {
             //
+            // let fromDate = $("#js-filter-from-date").val();
+            //   let toDate = $("#js-filter-to-date").val();
+
+            let anniversaryCycles = $("#jsAnniversaryCycles").val();
+            let policy = $("#jsBalancePolicyDetail").val();
+
+
+
+
             $.post("<?= base_url('timeoff/handler'); ?>", {
                 action: 'get_employee_balance_history',
                 companyId: <?= $company_sid; ?>,
                 employerId: <?= $employer_sid; ?>,
-                employeeId: balanceEmployeeId
+                employeeId: balanceEmployeeId,
+                anniversaryCycles: anniversaryCycles,
+                policyId: policy
             }, (resp) => {
                 res(resp);
             });
         });
     }
+
+
+    //
+    $(document).on('click', '.jsCleareBtn', async () => {
+        $("#jsAnniversaryCycles").select2("val", "all");
+        $("#jsBalancePolicyDetail").select2("val", "0");
+    });
+
+    //
+ 
+$(document).on('click', '.jsFetchBtn', async () => {
+
+$('.jsBalancePage').fadeOut(0);
+$('.jsBalancePage[data-step="2"]').fadeIn(200);
+//
+let balanceHistory = await fetchBalanceHistory();
+//
+if (balanceHistory.Status === false || balanceHistory.Data.length === 0) {
+    $('#jsBalanceHistoryTable').html(`
+        <tr>
+            <td colspan="6"><p class="text-center alert alert-info">No records found.</p></td>
+        </tr>
+    `);
+    //
+    return;
+}
+//
+$('#jsBalanceModal .modal-dialog').addClass('modal-lg');
+//
+$('#jsBalanceHistoryTable').html('');
+var
+    rows = '',
+    totalTOs = 0,
+    totalTimeTaken = {},
+    totalManualTime = {};
+//
+if (balanceHistory.Data[0].timeoff_breakdown.active.hour !== undefined) {
+    totalTimeTaken['hour'] = 0;
+    totalManualTime['hour'] = 0;
+}
+
+//
+if (balanceHistory.Data[0].timeoff_breakdown.active.minutes !== undefined) {
+    totalTimeTaken['minutes'] = 0;
+    totalManualTime['minutes'] = 0;
+}
+//
+
+
+var cycleYearArray = [];
+
+balanceHistory.Data.map(function(balance) {
+    //
+    var
+        startDate = '',
+        endDate = '',
+        employeeName = '',
+        employeeRole = '';
+    //
+    if (balance.is_manual == 0 && balance.is_allowed == 1) {
+        startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+        endDate = '';
+        employeeName = '-';
+        employeeRole = '';
+    } else if (balance.is_manual == 1) {
+        startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+        endDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+        employeeName = balance.first_name + ' ' + balance.last_name;
+        employeeRole = remakeEmployeeName(balance, false);
+        //
+        if (balance.timeoff_breakdown.active.hours !== undefined) {
+            //
+            if (totalManualTime['hours'] === undefined) {
+                totalManualTime['hours'] = 0;
+            }
+            totalManualTime['hours'] += balance.timeoff_breakdown.active.hours;
+        }
+        //
+        if (balance.timeoff_breakdown.active.minutes !== undefined) {
+            //
+            if (totalManualTime['minutes'] === undefined) {
+                totalManualTime['minutes'] = 0;
+            }
+            totalManualTime['minutes'] += balance.timeoff_breakdown.active.minutes;
+        }
+    } else {
+        totalTOs++;
+        startDate = moment(balance.request_from_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+        endDate = moment(balance.request_to_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+        employeeName = balance.approverName;
+        employeeRole = balance.approverRole;
+        //
+        if (balance.timeoff_breakdown.active.hours !== undefined) {
+            //
+            if (totalTimeTaken['hours'] === undefined) {
+                totalTimeTaken['hours'] = 0;
+            }
+            totalTimeTaken['hours'] += balance.timeoff_breakdown.active.hours;
+        }
+        //
+        if (balance.timeoff_breakdown.active.minutes !== undefined) {
+            //
+            if (totalTimeTaken['minutes'] === undefined) {
+                totalTimeTaken['minutes'] = 0;
+            }
+            totalTimeTaken['minutes'] += balance.timeoff_breakdown.active.minutes;
+        }
+
+    }
+    //
+
+    cycleYear = startDate.match(/(\d{4}-\d{4}|\d{4})/g);
+
+    var idx = cycleYearArray.indexOf(cycleYear[0]);
+    console.log(cycleYear[0]);
+    if (idx == -1) {
+        cycleYearArray.push(cycleYear[0]);
+        rows += '<tr style="border-top:3pt solid black; background-color: lightblue;"> <td colspan="6"><br><strong>' + startDate + '</strong><br><br></td></tr>';
+    }
+
+
+
+
+    rows += '<tr>';
+    rows += '   <td>';
+    rows += '       <strong>';
+    rows += employeeName + '<br>';
+    rows += '       </strong>';
+    rows += employeeRole;
+    rows += '   </td>';
+    rows += '   <td>';
+    rows += '       <strong>' + (balance.title) + '</strong>';
+    rows += '       <p>' + (startDate) + (endDate != '' ? ' - ' + endDate : '') + '</p>';
+    rows += '   </td>';
+    rows += ' <td class="' + (balance.is_added == 0 ? 'text-danger' : 'text-success') + '"><i class="fa fa-arrow-' + (balance.is_added == 0 ? 'down ' : 'up') + '"></i>&nbsp;' + (balance.timeoff_breakdown.text) + '</td>';
+    rows += '   <td>';
+    rows += (balance.note != '' ? balance.note : '-');
+    rows += '   </td>';
+    rows += '   <td>';
+    rows += moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime);
+    rows += '   </td>';
+    rows += '   <td>';
+    rows += '       <strong class="text-' + (balance.is_manual == 1 ? "success" : "danger") + '">' + (balance.is_manual == 1 ? "Yes" : "No") + '</strong>';
+    rows += '   </td>';
+    rows += '</tr>';
+    rows += '<tr>';
+    rows += '   <td colspan="6">';
+    if (balance.is_manual == 0 && balance.is_allowed == 1) {
+        rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
+    } else {
+        rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
+    }
+    rows += '   </td>';
+    rows += '</tr>';
+});
+
+console.log(cycleYearArray);
+
+
+//
+$('.jsCreateTimeOffNumber').text(totalTOs);
+$('.jsCreateTimeOffTimeTaken').text(getText(totalTimeTaken));
+$('.jsCreateTimeOffManualAllowedTime').text(getText(totalManualTime));
+$('#jsBalanceHistoryTable').html(rows);
+});
 </script>
 
 <style>

@@ -288,7 +288,7 @@ class Time_off extends Public_Controller
      *
      */
     function policies($page = 'view', $id = NULL, $filter = NULL)
-    {        
+    {
         $data = array();
         $this->check_login($data);
         $employer_detail = $data['session']['employer_detail'];
@@ -1205,7 +1205,6 @@ class Time_off extends Public_Controller
                         } else {
                             $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
                         }
-
                     }
                 }
             }
@@ -2924,7 +2923,7 @@ class Time_off extends Public_Controller
                 ], true);
                 //
                 $this->resp();
-                break;       
+                break;
 
             case "get_policy_request":
                 //
@@ -2958,7 +2957,6 @@ class Time_off extends Public_Controller
                                 } else {
                                     $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
                                 }
-
                             }
                         }
                     }
@@ -2971,7 +2969,7 @@ class Time_off extends Public_Controller
                     'company_policies' => $policies
                 ], true);
                 $this->resp();
-                break;   
+                break;
 
             case "migrate_employee_requests_policy":
                 //
@@ -3000,13 +2998,13 @@ class Time_off extends Public_Controller
                     //
                     $in['note'] = json_encode($note);
                     //
-                    $this->timeoff_model->insertPolicyHistory($in);               
+                    $this->timeoff_model->insertPolicyHistory($in);
                 }
                 //
                 $this->res['Code'] = 'SUCCESS';
                 $this->res['Status'] = true;
                 $this->resp();
-                break;      
+                break;
 
                 // Fetch company types
             case 'get_types_by_company':
@@ -3758,9 +3756,11 @@ class Time_off extends Public_Controller
                 // Get employee balance history
             case "get_employee_balance_history":
                 //
-                $history = $this->timeoff_model->getEmployeeBalanceHistory(
+                $history = $this->timeoff_model->getEmployeeBalanceHistoryNew(
                     $post['companyId'],
-                    $post['employeeId']
+                    $post['employeeId'],
+                    $post['anniversaryCycles'],
+                    $post['policyId']
                 );
                 //
                 $this->res['Status'] = true;
@@ -3793,6 +3793,23 @@ class Time_off extends Public_Controller
                 break;
                 // Get requests
                 // TODO
+
+
+            case "get_employee_anniversary_cycles":
+                //
+               $joiningDate = $this->timeoff_model->getEmployeeJoiningDate(
+                    $post['employeeId']
+                );
+                //
+                $anniversaryCycle = getEmployeeAnniversaryStartDate($joiningDate['joined_at'], $post['employeeId']);
+
+                $this->res['Status'] = true;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Response'] = 'Proceed...';
+                $this->res['Data'] = $anniversaryCycle['breakDown'];
+                $this->resp();
+                break;
+
             case "get_employee_requests_by_status":
                 //
                 $data = $this->timeoff_model->getRequestsByStatus($post);
@@ -4861,7 +4878,7 @@ class Time_off extends Public_Controller
                     'selectedPolicyId' => $post['policyId']
                 ], true);
                 $this->resp();
-                break;   
+                break;
 
                 // Create employee time off
             case 'create_employee_timeoff':
@@ -6179,8 +6196,8 @@ class Time_off extends Public_Controller
                 //
                 $data = $this->timeoff_model->getDataForExport($post);
 
-              //  print_r($data);
-              //  die();
+                //  print_r($data);
+                //  die();
 
                 //$data = $this->timeoff_model->getDataForExport($formpost);
                 $this->res['Status'] = true;

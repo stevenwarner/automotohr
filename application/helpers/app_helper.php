@@ -461,3 +461,71 @@ if (!function_exists('getEmployeeAnniversary')) {
         return $returnArray;
     }
 }
+
+
+//
+if (!function_exists('getEmployeeAnniversaryStartDate')) {
+    /**
+     * Get Employee Joining data 
+     * 
+     * @return string
+     */
+    function getEmployeeAnniversaryStartDate(
+        string $joiningDate,
+        int $sid
+    ) {
+        // set default effective date to joining date
+        $effectiveDate = $joiningDate;
+        // get CI instance
+        $CI = &get_instance();
+        // get first request date
+        $CI->db->select('request_from_date');
+        $CI->db->where('employee_sid', $sid);
+        $CI->db->order_by('request_from_date', 'ASC');
+        $CI->db->limit(1);
+        $result = $CI->db->get('timeoff_requests')->row_array();
+        //
+        if (!empty($result)) {;
+            $effectiveDate = $result['request_from_date'];
+        }
+        // get first date from manual
+        $CI->db->select('effective_at');
+        $CI->db->where('user_sid', $sid);
+        $CI->db->order_by('effective_at', 'ASC');
+        $CI->db->limit(1);
+        $balanceResult = $CI->db->get('timeoff_balances')->row_array();
+        //
+        if (!empty($balanceResult) && $balanceResult['effective_at'] < $effectiveDate) {
+            $effectiveDate = $balanceResult['effective_at'];
+        }
+        //
+        $employeeAnniversary = getEmployeeAnniversary($joiningDate);
+        $employeeAnniversary['effectiveDate'] = $effectiveDate;
+        $employeeAnniversary['breakDown'] = [];
+        //
+        $currentDate = getSystemDate('Y-m-d');
+        //
+        $cDate = date_create($currentDate);
+        $breakDate = date_create($effectiveDate);
+        $diff = date_diff($cDate, $breakDate);
+        $yearDiff = $diff->format("%y");
+        //
+        if ($yearDiff == 0) {
+            $yearDiff = 1;
+        }
+        //
+        for ($i = 1; $i <= $yearDiff; $i++) {
+
+            $upcomingAnniversaryDate = preg_replace('/[0-9]{4}/', date('Y', strtotime($effectiveDate . " + $i years")), $effectiveDate);
+            $lastAnniversaryDate =  preg_replace('/[0-9]{4}/', date('Y', strtotime($upcomingAnniversaryDate . " - 1 years")), $effectiveDate);
+
+            $employeeAnniversary['breakDown'][] = [
+
+                'lastAnniversaryDate' => $lastAnniversaryDate,
+                'upcomingAnniversaryDate' => $upcomingAnniversaryDate,
+            ];
+        }
+        //
+        return $employeeAnniversary;
+    }
+}
