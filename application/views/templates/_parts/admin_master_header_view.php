@@ -22,7 +22,7 @@
     <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery.datetimepicker.js"></script>
     <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/jquery-ui.js'); ?>"></script>
     <script src="<?php echo site_url('assets/manage_admin/js/bootstrap.min.js'); ?>"></script>
-    <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/functions.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/functions.js?v=2.0'); ?>"></script>
     <script src="<?= base_url() ?>assets/alertifyjs/alertify.min.js"></script>
     <!-- include the style -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/alertify.min.css" />
