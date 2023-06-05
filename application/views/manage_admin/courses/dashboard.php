@@ -15,13 +15,13 @@
 
                             <div class="row">
                                 <div class="heading-title page-title">
-                                    <div class="col-lg-10 col-md-10 col-xs-10 col-sm-10">
+                                    <div class="col-lg-10 col-md-10 col-xs-6 col-sm-6 text-left">
                                         <h1 class="page-title">
                                             <i class="fa fa-book"></i>
                                             LMS Courses
                                         </h1>
                                     </div>
-                                    <div class="col-xs-2 text-right">
+                                    <div class="col-lg-2 col-md-2 col-xs-6 col-sm-6 text-right">
                                         <button class="btn btn-secondary jsExpandAdminView" title="Expand view" placement="top">
                                             <i class="fa fa-expand" aria-hidden="true"></i> Expand View
                                         </button>
