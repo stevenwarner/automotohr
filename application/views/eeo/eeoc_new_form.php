@@ -27,6 +27,26 @@
     </div>
 </div>
 <!--  -->
+<?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
+    <hr />
+    <div class="row">
+        <div class="col-sm-3">
+            <a class="btn btn-warning btn-block" href="javascript:;">Save EEOC</a>
+        </div>
+        <div class="col-sm-9">
+            <p>By clicking the "Save EEOC" button will solely update the EEOC data.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <a class="btn btn-success btn-block" href="javascript:;">Consent EEOC</a>
+        </div>
+        <div class="col-sm-9">
+            <p>By clicking the "Consent EEOC" button, you can save the EEOC form on behalf of the employee.</p>
+        </div>
+    </div>
+<?php } ?>
+<!--  -->
 <div class="row">
     <br>
     <div class="col-sm-12">
@@ -229,8 +249,11 @@
 <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
     <hr />
     <div class="row">
-        <div class="col-sm-12">
-            <button class="btn btn-success form-control jsSaveEEOC">Save EEOC</button>
+        <div class="col-sm-6">
+            <button class="btn btn-warning form-control jsSaveEEOC">Save EEOC</button>
+        </div>
+        <div class="col-sm-6">
+            <button class="btn btn-success form-control jsConsentEEOC">Consent EEOC</button>
         </div>
     </div>
 <?php } ?>

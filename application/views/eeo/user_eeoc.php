@@ -227,7 +227,8 @@ if ($user_type == 'applicant') {
                 veteran: $('input[name="veteran"]:checked').val(),
                 disability: $('input[name="disability"]:checked').val(),
                 gender: $('input[name="gender"]:checked').val(),
-                location: "<?= $location; ?>"
+                location: "<?= $location; ?>",
+                eeoc_action: "update"
             };
 
             //
@@ -236,21 +237,73 @@ if ($user_type == 'applicant') {
                 return;
             }
 
-
-            $.post(
-                "<?= base_url("eeoc_form_submit"); ?>",
-                obj
-            ).done(function(resp) {
-                //
-                if (resp === 'success') {
-                    alertify.alert('Success!', 'The EEOC form successfully saved.', function() {
-                        window.location.reload();
+            alertify.confirm(
+                'Are you sure?',
+                'Are you certain about updating this document?',
+                function() {
+                    $.post(
+                        "<?= base_url("eeoc_form_submit"); ?>",
+                        obj
+                    ).done(function(resp) {
+                        //
+                        if (resp === 'success') {
+                            alertify.alert('Success!', 'The EEOC form successfully saved.', function() {
+                                window.location.reload();
+                            });
+                            return;
+                        }
+                        //
+                        alertify.alert('Success!', 'You have successfully submitted the EEOC form.');
                     });
-                    return;
-                }
-                //
-                alertify.alert('Success!', 'You have successfully submitted the EEOC form.');
-            });
+                },
+                function() {
+                    alertify.alert("Warning", 'Cancelled!');
+                });
+        });
+
+        $('.jsConsentEEOC').click(function() {
+            //
+            var citizenFlag = <?php echo $dl_citizen; ?>
+            //
+            var obj = {
+                id: <?= $id; ?>,
+                citizen: $('input[name="citizen"]:checked').val(),
+                group: $('input[name="group"]:checked').val(),
+                veteran: $('input[name="veteran"]:checked').val(),
+                disability: $('input[name="disability"]:checked').val(),
+                gender: $('input[name="gender"]:checked').val(),
+                location: "<?= $location; ?>",
+                eeoc_action: "consent"
+            };
+
+            //
+            if (citizenFlag == 1 && obj.citizen === undefined) {
+                alertify.alert('Please, select a citizen.');
+                return;
+            }
+
+            alertify.confirm(
+                'Are you sure?',
+                'Are you certain about providing consent for this document?',
+                function() {
+                    $.post(
+                        "<?= base_url("eeoc_form_submit"); ?>",
+                        obj
+                    ).done(function(resp) {
+                        //
+                        if (resp === 'success') {
+                            alertify.alert('Success!', 'The EEOC form successfully concent EEOC.', function() {
+                                window.location.reload();
+                            });
+                            return;
+                        }
+                        //
+                        alertify.alert('Success!', 'You have successfully consent the EEOC form.');
+                    });
+                },
+                function() {
+                    alertify.alert("Warning", 'Cancelled!');
+                });
         });
     });
 </script>
