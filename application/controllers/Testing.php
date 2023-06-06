@@ -32,4 +32,27 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
+
+    public function test()
+    {
+        //
+        $this->load->library('scorm/parser', [], 'scorm_parser');
+
+        $file = ROOTPATH . 'm12.xml'; // Single SCO 1.2
+        $file = ROOTPATH . 'm2004_3.xml'; // Single SCO 2004 3rd edition
+        $file = ROOTPATH . 'm12_multiple_sco.xml'; // Multiple SCO 1.2
+        $file = ROOTPATH . 'm2004_3_multiple_sco.xml'; // Multiple SCO 2004 3rd edition
+        $file = ROOTPATH . 'm12_runtime_calls_multiple_sco.xml'; // Runtime calls Multiple SCO 12
+        $file = ROOTPATH . 'm2004_3_runtime_calls_multiple_sco.xml'; // Runtime calls Multiple SCO 12
+        $file = ROOTPATH . 'm2004_3_advanced_calls_multiple_sco.xml'; // Advanced Runtime calls Multiple SCO 12
+        $file = ROOTPATH . 'm2004_3_sequence.xml'; // Sequence
+        $handler = fopen($file, 'r');
+        $fileContents = fread($handler, filesize($file));
+        fclose($handler);
+
+        $this
+            ->scorm_parser
+            ->setContent($fileContents)
+            ->parse();
+    }
 }
