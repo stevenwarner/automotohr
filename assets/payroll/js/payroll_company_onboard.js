@@ -143,7 +143,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = $.ajax({
             method: "GET",
-            url: GetURL('get_payroll_page/welcome'),
+            url: GetURL('get_gusto_onboarding_page/welcome'),
         })
             .done(function (resp) {
                 //
@@ -177,7 +177,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = $.ajax({
             method: "GET",
-            url: GetURL('get_payroll_page/employees/' + companyId),
+            url: GetURL('get_payroll_employees/' + companyId + '/payroll_onboarding'),
         })
             .done(function (resp) {
                 //
@@ -216,9 +216,10 @@ $(function PayrollCompanyOnboard() {
             //
             var ids = [];
             //
-            if ($('.jsPayrollEmployees:checked').length) {
-                $('.jsPayrollEmployees:checked').map(function () { ids.push($(this).val()); });
+            if ($('.jsEmployeesList:checked').length) {
+                $('.jsEmployeesList:checked').map(function () { ids.push($(this).val()); });
             }
+            console.log(ids);
             //
             SaveItem('PayrollEmployees' + companyId, ids);
         }
@@ -231,7 +232,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = $.ajax({
             method: "GET",
-            url: GetURL('get_payroll_page/onboard/' + companyId),
+            url: GetURL('get_gusto_onboarding_page/onboard/' + companyId),
         })
             .done(function (resp) {
                 //
@@ -272,7 +273,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = $.ajax({
             method: "GET",
-            url: GetURL('get_payroll_page/admin/' + companyId),
+            url: GetURL('get_gusto_onboarding_page/admin/' + companyId),
         })
             .done(function (resp) {
                 //
@@ -355,7 +356,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = $.ajax({
             method: "GET",
-            url: GetURL('get_payroll_page/admin_view/' + companyId),
+            url: GetURL('get_gusto_onboarding_page/admin_view/' + companyId),
         })
             .done(function (resp) {
                 //
@@ -407,7 +408,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = $.ajax({
             method: "post",
-            url: GetURL('payroll/onboard_company/' + companyId),
+            url: GetURL('gusto/onboard_company/' + companyId),
             data: { companyId: companyId }
         })
             .done(function (resp) {
@@ -455,7 +456,7 @@ $(function PayrollCompanyOnboard() {
         //
         xhr = $.ajax({
             method: "POST",
-            url: GetURL('payroll/onboard_employee/' + companyId),
+            url: GetURL('gusto/onboard_employee/' + companyId),
             data: { employee_id: preSelected[CURRENT_EMPLOYEE] }
         })
             .done(function () {
@@ -476,20 +477,19 @@ $(function PayrollCompanyOnboard() {
         });
     }
 
-
     function ShowCompleteProcessPage() {
         //
         ml(true, modalLoader);
         //
         xhr = $.ajax({
             method: "GET",
-            url: GetURL('get_payroll_page/get_prosess_complete_page/' + companyId),
+            url: GetURL('get_gusto_onboarding_page/get_prosess_complete_page/' + companyId),
         })
             .done(function (resp) {
                 //
                 xhr = null;
                 //
-                LoadContent(resp.html, function () {
+                LoadContent(resp, function () {
                     //
                     ml(false, modalLoader);
                     //
