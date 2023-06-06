@@ -1,4 +1,7 @@
 <?php
+
+use Twilio\Rest\Api\V2010\Account\Usage\Record\TodayList;
+
 class Timeoff_model extends CI_Model
 {
     private $ids;
@@ -2704,7 +2707,7 @@ class Timeoff_model extends CI_Model
      * 
      * @return Array
      */
-    function getEmployeeAllowedBalanceHistory($employeeId, $fromDate = '', $toDate = '',$policyId=0)
+    function getEmployeeAllowedBalanceHistory($employeeId, $fromDate = '', $toDate = '', $policyId = 0)
 
 
     {
@@ -2738,7 +2741,11 @@ class Timeoff_model extends CI_Model
             $this->db->where('timeoff_allowed_balances.effective_at <=', $toDate);
         }
 
-        if ($policyId != '0') {
+
+
+        if (is_array($policyId)) {
+            $this->db->where_in('timeoff_allowed_balances.policy_sid', $policyId);
+        } else if ($policyId != '0') {
             $this->db->where('timeoff_allowed_balances.policy_sid', $policyId);
         }
 
@@ -6695,7 +6702,6 @@ class Timeoff_model extends CI_Model
      * @param  Integer $companyId
      * @param  Integer $employeeId
      * @param  String $anniversaryCycles
-     * @param  Integer $policyId
 
      * 
      * @return Array
@@ -6705,13 +6711,34 @@ class Timeoff_model extends CI_Model
         $employeeId,
         $anniversaryCycles,
         $policyId
-        
+
     ) {
 
 
 
         $fromDate = '';
         $toDate = '';
+
+        /*
+        
+        if (!empty($policyId)) {
+            print_r($policyId);
+
+
+        } else {
+            
+            print_r($policyId);
+            die('f');
+        }
+
+        die('dd');
+
+        */
+
+        //  _e($policyId,true);
+        //die();
+
+
 
         if ($anniversaryCycles != 'all') {
             $anniversaryCyclesDate = explode('#', $anniversaryCycles);
@@ -6769,14 +6796,13 @@ class Timeoff_model extends CI_Model
         $this->db->where('timeoff_balances.user_sid', $employeeId);
         $this->db->where('timeoff_policies.is_archived', 0);
 
-        if ($fromDate != '' && $toDate !='') {
+        if ($fromDate != '' && $toDate != '') {
             $this->db->where('timeoff_balances.effective_at >= ', $fromDate);
             $this->db->where('timeoff_balances.effective_at <= ', $toDate);
         }
 
-        if ($policyId != '0') {
-            $this->db->where('timeoff_balances.policy_sid', $policyId);
-
+        if (!empty($policyId) && $policyId[0] != '0') {
+            $this->db->where_in('timeoff_balances.policy_sid', $policyId);
         }
 
         $this->db->order_by('timeoff_balances.sid', 'DESC');
@@ -6784,6 +6810,7 @@ class Timeoff_model extends CI_Model
         //
         $b = $a->result_array();
         $a = $a->free_result();
+      //  echo $this->db->last_query();
 
         // Get employees taken time off
         $this->db
@@ -6815,13 +6842,13 @@ class Timeoff_model extends CI_Model
         $this->db->where('timeoff_policies.is_archived', 0);
         $this->db->where('timeoff_requests.employee_sid', $employeeId);
 
-        if ($fromDate != '' && $toDate !='') {
+        if ($fromDate != '' && $toDate != '') {
             $this->db->where('timeoff_requests.request_from_date >= ', $fromDate);
             $this->db->where('timeoff_requests.request_to_date <= ', $toDate);
         }
 
-        if ($policyId != '0') {
-            $this->db->where('timeoff_requests.timeoff_policy_sid', $policyId);
+        if (!empty($policyId) && $policyId[0] != '0') {
+            $this->db->where_in('timeoff_requests.timeoff_policy_sid', $policyId, false);
         }
 
         $this->db->order_by('timeoff_requests.created_at', 'desc');
@@ -6873,7 +6900,7 @@ class Timeoff_model extends CI_Model
             $b = array_merge($b, $c);
         }
         //
-        $allowedBalance = $this->getEmployeeAllowedBalanceHistory($employeeId, $fromDate, $toDate,$policyId);
+        $allowedBalance = $this->getEmployeeAllowedBalanceHistory($employeeId, $fromDate, $toDate, $policyId);
         //
         if (sizeof($allowedBalance)) {
             $b = array_merge($b, $allowedBalance);
@@ -6895,6 +6922,100 @@ class Timeoff_model extends CI_Model
             }
         }
         //
-        return $b;
+
+        // slug array
+        $arraySlugs = [];
+        // 
+        $anniversaryCyclesData = [];
+        //
+        if ($anniversaryCycles != 'all') {
+            $tmp = explode('#', $anniversaryCycles);
+            $fromDate = $tmp[0];
+            $toDate = $tmp[1];
+            //
+            $anniversaryCyclesData[] = [
+                'lastAnniversaryDate' => $fromDate,
+                'upcomingAnniversaryDate' => $toDate
+            ];
+            //
+            $arraySlugs[$fromDate . '#' . $toDate] = [];
+        } else {
+            //
+            $employeeJoiningDate = $this->getEmployeeJoiningDate($employeeId);
+            $anniversaryCyclesData = getEmployeeAnniversaryStartDate($employeeJoiningDate['joined_at'], $employeeId);
+
+            foreach ($anniversaryCyclesData['breakDown'] as $val) {
+                //
+                $arraySlugs[$val['lastAnniversaryDate'] . '#' . $val['upcomingAnniversaryDate']] = [];
+            }
+            //
+            $anniversaryCyclesData = $anniversaryCyclesData['breakDown'];
+        }
+
+
+        foreach ($b as $record) {
+
+            foreach ($anniversaryCyclesData as $index => $value) {
+
+                //
+                $checkDate = $record['is_manual'] == 1 ? $record['effective_at'] : $record['request_from_date'];
+
+                if ($checkDate >= $value['lastAnniversaryDate'] && $checkDate < $value['upcomingAnniversaryDate']) {
+                    $arraySlugs[$value['lastAnniversaryDate'] . '#' . $value['upcomingAnniversaryDate']][] = $record;
+                }
+            }
+        }
+
+        // _e($arraySlugs, true, true);
+
+        return $arraySlugs;
     }
 }
+
+
+
+
+
+/*
+
+
+
+$anniversaryCycles = [];
+// if all
+// get anniversary cycles
+    // slugs = anniversary cycles // 2021-05-09 - 2022-05-09
+    // slugs = array_flip(slugs)
+// else
+// use start and end
+    // slug[start-end]
+//
+
+// 2021-05-09 - 2022-05-09 >= <
+// 2022-05-09 - 2023-05-09 >= <
+
+$slugs = [];
+
+
+
+//add Data In Slug 
+ 
+
+foreach ($data as $row){
+
+
+    foreach($anniversatydates as $index => $value) {
+        if(){
+
+        }
+        // match
+        // $slugs[$index][] = $row; 
+    }
+
+    if($row['effective_date']){ // 2022-05-09
+    $slugs[$va][]= $row;
+    }
+
+}
+
+return $slugs;
+*/

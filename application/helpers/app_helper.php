@@ -472,7 +472,7 @@ if (!function_exists('getEmployeeAnniversaryStartDate')) {
      */
     function getEmployeeAnniversaryStartDate(
         string $joiningDate,
-        int $sid
+        $sid
     ) {
         // set default effective date to joining date
         $effectiveDate = $joiningDate;

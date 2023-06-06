@@ -108,7 +108,7 @@
                            <div class="col-sm-6">
                            <label>Policy </label>
                               <div>
-                              <select id="jsBalancePolicyDetail"></select>
+                              <select id="jsBalancePolicyDetail" multiple ></select>
                                 </div>
                              </div>
 
@@ -120,38 +120,25 @@
                             </div>
                             <div class="col-sm-3">
 
-                            <button type="button" class="btn btn-success btn-theme  jsFetchBtn">Featch</button>
-                            <button type="button" class="btn btn-black jsCleareBtn" >Cleare</button>
+                            <button type="button" class="btn btn-success btn-theme  jsFetchBtn">Fetch</button>
+                            <button type="button" class="btn btn-black jsCleareBtn" >Clear</button>
  
                             </div>
                             </div><br><br>
                         
 
                             <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                        <th scope="col" class="col-sm-2">Approved / Added By</th>
-                                        <th scope="col" class="col-sm-2">Policy / Time off start & end date</th>
-                                        <th scope="col" class="col-sm-2">Balance</th>
-                                        <th scope="col" class="col-sm-2">Note</th>
-                                        <th scope="col" class="col-sm-2">Action Taken  <br> (When the time off was requested / balance was added)</th>
-                                        <th scope="col" class="col-sm-2">Manual Balance (The balance was added manually or not)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="jsBalanceHistoryTable">
-                                        <tr>
-                                            <td colspan="6"><p class="text-center alert alert-info">Please wait, while we are fetching balances.</p></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+
+
+                            <div id='jsBalanceHistoryTable'></div>
+                          
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-black" data-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-success btn-theme  jsBalanceSaveBtn">Save</button>
-                        <button type="button" class="btn btn-success btn-theme jsBalanceHistoryBtn pull-left">Balance History</button>
+                        <button type="button" class="btn btn-success btn-theme  jsFetchBtn pull-left">Balance History</button>
                         <button type="button" class="btn btn-success btn-theme jsBalanceAddBtn pull-left">Add Balance</button>
                     </div>
                 </div>
@@ -203,6 +190,7 @@
         policyList = sortObjectByKey(policyList);
         //
         let policyOptions = '<option value="0">[Select Policy]</option>';
+        let policyOptionsSearch = '<option value="0">All</option>';
         //
         Object.keys(policyList).map((p) => {
             //
@@ -213,16 +201,20 @@
             policy.map((pi) => {
                 //
                 policyOptions += `<option ${pi.Reason != '' ? `data-reason="${pi.Reason}"` : ''}" value="${pi.PolicyId}">${pi.Title}  ${(pi.CategoryType==1)?' (Paid)' : ' (Unpaid) '} (${ pi.RemainingTime.text})</option>`;
+                policyOptionsSearch += `<option ${pi.Reason != '' ? `data-reason="${pi.Reason}"` : ''}" value="${pi.PolicyId}">${pi.Title}  ${(pi.CategoryType==1)?' (Paid)' : ' (Unpaid) '} (${ pi.RemainingTime.text})</option>`;
+
             });
             //
             policyOptions += '</optgroup>';
+            policyOptionsSearch += '</optgroup>';
+
         });
         //
         $('#jsBalancePolicy').html(policyOptions);
 
 
         //
-        $('#jsBalancePolicyDetail').html(policyOptions);
+        $('#jsBalancePolicyDetail').html(policyOptionsSearch);
         $('#jsBalancePolicyDetail').select2();
 
 
@@ -516,7 +508,7 @@
     }
 
     //
-    $(document).on('click', '.jsBalanceHistoryBtn', async () => {
+    $(document).on('click', '.jsBalanceHistoryBtn_old', async () => {
         $('.jsBalanceSaveBtn').hide(0);
         $('.jsBalanceAddBtn').show(0);
         $('.jsBalanceHistoryBtn').hide(0);
@@ -673,7 +665,7 @@
             let anniversaryCycles = $("#jsAnniversaryCycles").val();
             let policy = $("#jsBalancePolicyDetail").val();
 
-
+//console.log(policy);
 
 
             $.post("<?= base_url('timeoff/handler'); ?>", {
@@ -697,162 +689,155 @@
     });
 
     //
+
+    $(document).on('click', '.jsFetchBtn', async () => {
+
+
+        
+        $('.jsBalancePage').fadeOut(0);
+        $('.jsBalancePage[data-step="2"]').fadeIn(200);
+        //
+        let balanceHistory = await fetchBalanceHistory();
+
+        var collapsepanel = '';
  
-$(document).on('click', '.jsFetchBtn', async () => {
-
-$('.jsBalancePage').fadeOut(0);
-$('.jsBalancePage[data-step="2"]').fadeIn(200);
-//
-let balanceHistory = await fetchBalanceHistory();
-//
-if (balanceHistory.Status === false || balanceHistory.Data.length === 0) {
-    $('#jsBalanceHistoryTable').html(`
-        <tr>
-            <td colspan="6"><p class="text-center alert alert-info">No records found.</p></td>
-        </tr>
-    `);
-    //
-    return;
-}
-//
-$('#jsBalanceModal .modal-dialog').addClass('modal-lg');
-//
-$('#jsBalanceHistoryTable').html('');
-var
-    rows = '',
-    totalTOs = 0,
-    totalTimeTaken = {},
-    totalManualTime = {};
-//
-if (balanceHistory.Data[0].timeoff_breakdown.active.hour !== undefined) {
-    totalTimeTaken['hour'] = 0;
-    totalManualTime['hour'] = 0;
-}
-
-//
-if (balanceHistory.Data[0].timeoff_breakdown.active.minutes !== undefined) {
-    totalTimeTaken['minutes'] = 0;
-    totalManualTime['minutes'] = 0;
-}
-//
-
-
-var cycleYearArray = [];
-
-balanceHistory.Data.map(function(balance) {
-    //
-    var
-        startDate = '',
-        endDate = '',
-        employeeName = '',
-        employeeRole = '';
-    //
-    if (balance.is_manual == 0 && balance.is_allowed == 1) {
-        startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
-        endDate = '';
-        employeeName = '-';
-        employeeRole = '';
-    } else if (balance.is_manual == 1) {
-        startDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
-        endDate = moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
-        employeeName = balance.first_name + ' ' + balance.last_name;
-        employeeRole = remakeEmployeeName(balance, false);
         //
-        if (balance.timeoff_breakdown.active.hours !== undefined) {
-            //
-            if (totalManualTime['hours'] === undefined) {
-                totalManualTime['hours'] = 0;
-            }
-            totalManualTime['hours'] += balance.timeoff_breakdown.active.hours;
-        }
+        $('#jsBalanceModal .modal-dialog').addClass('modal-lg');
         //
-        if (balance.timeoff_breakdown.active.minutes !== undefined) {
-            //
-            if (totalManualTime['minutes'] === undefined) {
-                totalManualTime['minutes'] = 0;
-            }
-            totalManualTime['minutes'] += balance.timeoff_breakdown.active.minutes;
-        }
-    } else {
-        totalTOs++;
-        startDate = moment(balance.request_from_date, 'YYYY-MM-DD').format(timeoffDateFormat);
-        endDate = moment(balance.request_to_date, 'YYYY-MM-DD').format(timeoffDateFormat);
-        employeeName = balance.approverName;
-        employeeRole = balance.approverRole;
+
+        $('#jsBalanceHistoryTable').html('');
+
+        var
+            rows = '',
+            totalTOs = 0,
+            totalTimeTaken = {},
+            totalManualTime = {};
+
+        var collapsepanel = '';
         //
-        if (balance.timeoff_breakdown.active.hours !== undefined) {
-            //
-            if (totalTimeTaken['hours'] === undefined) {
-                totalTimeTaken['hours'] = 0;
-            }
-            totalTimeTaken['hours'] += balance.timeoff_breakdown.active.hours;
-        }
-        //
-        if (balance.timeoff_breakdown.active.minutes !== undefined) {
-            //
-            if (totalTimeTaken['minutes'] === undefined) {
-                totalTimeTaken['minutes'] = 0;
-            }
-            totalTimeTaken['minutes'] += balance.timeoff_breakdown.active.minutes;
-        }
+        $.each(balanceHistory.Data, function(i, val) {
 
-    }
-    //
-
-    cycleYear = startDate.match(/(\d{4}-\d{4}|\d{4})/g);
-
-    var idx = cycleYearArray.indexOf(cycleYear[0]);
-    console.log(cycleYear[0]);
-    if (idx == -1) {
-        cycleYearArray.push(cycleYear[0]);
-        rows += '<tr style="border-top:3pt solid black; background-color: lightblue;"> <td colspan="6"><br><strong>' + startDate + '</strong><br><br></td></tr>';
-    }
+            var panelDates = i.split("#");
+            var panelFormDate = moment(panelDates[0], 'YYYY-MM-DD').format(timeoffDateFormat);
+            var panelToDate = moment(panelDates[1], 'YYYY-MM-DD').format(timeoffDateFormat);
 
 
+            collapsepanel += '<div class="panel panel-default">';
+            collapsepanel += '<div class="panel-heading"><strong>' + panelFormDate + '   ->   ' + panelToDate + '</strong></div>';
+            collapsepanel += '<div class="panel-body">';
+            // table
+            collapsepanel += '<table class="table">';
+            collapsepanel += '<thead>';
+            collapsepanel += '<tr>';
+            collapsepanel += '<th>Approved / Added By</th>';
+            collapsepanel += '<th>Policy / Time off start & end date</th>';
+            collapsepanel += '<th>Balance</th>';
+            collapsepanel += '<th>Note</th>';
+            collapsepanel += '<th>Action Taken (When the time off was requested / balance was added)</th>';
+            collapsepanel += '<th>Manual Balance (The balance was added manually or not)</th>';
+            collapsepanel += '</tr>';
+            collapsepanel += '</thead>';
+            collapsepanel += '<tbody>';
+
+            $.each(val, function(ival, valDetail) {
+
+                var
+                    startDate = '',
+                    endDate = '',
+                    employeeName = '',
+                    employeeRole = '';
+
+                if (valDetail.is_manual == 0 && valDetail.is_allowed == 1) {
+                    employeeName = '-';
+                    startDate = moment(valDetail.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                    endDate = '';
+
+                } else if (valDetail.is_manual == 1) {
+                    employeeName = valDetail.first_name + ' ' + valDetail.last_name;
+
+                    startDate = moment(valDetail.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                    endDate = moment(valDetail.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat);
+                    if (valDetail.timeoff_breakdown.active.hours !== undefined) {
+                    //
+                    if (totalManualTime['hours'] === undefined) {
+                        totalManualTime['hours'] = 0;
+                    }
+                    totalManualTime['hours'] += valDetail.timeoff_breakdown.active.hours;
+                }
+                //
+                if (valDetail.timeoff_breakdown.active.minutes !== undefined) {
+                    //
+                    if (totalManualTime['minutes'] === undefined) {
+                        totalManualTime['minutes'] = 0;
+                    }
+                    totalManualTime['minutes'] += valDetail.timeoff_breakdown.active.minutes;
+                }
 
 
-    rows += '<tr>';
-    rows += '   <td>';
-    rows += '       <strong>';
-    rows += employeeName + '<br>';
-    rows += '       </strong>';
-    rows += employeeRole;
-    rows += '   </td>';
-    rows += '   <td>';
-    rows += '       <strong>' + (balance.title) + '</strong>';
-    rows += '       <p>' + (startDate) + (endDate != '' ? ' - ' + endDate : '') + '</p>';
-    rows += '   </td>';
-    rows += ' <td class="' + (balance.is_added == 0 ? 'text-danger' : 'text-success') + '"><i class="fa fa-arrow-' + (balance.is_added == 0 ? 'down ' : 'up') + '"></i>&nbsp;' + (balance.timeoff_breakdown.text) + '</td>';
-    rows += '   <td>';
-    rows += (balance.note != '' ? balance.note : '-');
-    rows += '   </td>';
-    rows += '   <td>';
-    rows += moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime);
-    rows += '   </td>';
-    rows += '   <td>';
-    rows += '       <strong class="text-' + (balance.is_manual == 1 ? "success" : "danger") + '">' + (balance.is_manual == 1 ? "Yes" : "No") + '</strong>';
-    rows += '   </td>';
-    rows += '</tr>';
-    rows += '<tr>';
-    rows += '   <td colspan="6">';
-    if (balance.is_manual == 0 && balance.is_allowed == 1) {
-        rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
-    } else {
-        rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
-    }
-    rows += '   </td>';
-    rows += '</tr>';
-});
-
-console.log(cycleYearArray);
 
 
-//
-$('.jsCreateTimeOffNumber').text(totalTOs);
-$('.jsCreateTimeOffTimeTaken').text(getText(totalTimeTaken));
-$('.jsCreateTimeOffManualAllowedTime').text(getText(totalManualTime));
-$('#jsBalanceHistoryTable').html(rows);
-});
+                } else {
+                    totalTOs++;
+                    employeeName = valDetail.approverName;
+                    startDate = moment(valDetail.request_from_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+                    endDate = moment(valDetail.request_to_date, 'YYYY-MM-DD').format(timeoffDateFormat);
+                }
+
+
+                console.log(valDetail);
+
+                collapsepanel += '<tr>';
+
+                collapsepanel += '<td>' + employeeName + '</td>';
+                collapsepanel += '   <td>';
+                collapsepanel += '       <strong>' + (valDetail.title) + '</strong>';
+                collapsepanel += '       <p>' + (startDate) + (endDate != '' ? ' - ' + endDate : '') + '</p>';
+                collapsepanel += '   </td>';
+
+
+                collapsepanel += ' <td class="' + (valDetail.is_added == 0 ? 'text-danger' : 'text-success') + '"><i class="fa fa-arrow-' + (valDetail.is_added == 0 ? 'down ' : 'up') + '"></i>&nbsp;' + (valDetail.timeoff_breakdown.text) + '</td>';
+                collapsepanel += '   <td>';
+                collapsepanel += (valDetail.note != '' ? valDetail.note : '-');
+                collapsepanel += '   </td>';
+
+                collapsepanel += '   <td>';
+                collapsepanel += moment(valDetail.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime);
+                collapsepanel += '   </td>';
+                collapsepanel += '   <td>';
+                collapsepanel += '       <strong class="text-' + (valDetail.is_manual == 1 ? "success" : "danger") + '">' + (valDetail.is_manual == 1 ? "Yes" : "No") + '</strong>';
+                collapsepanel += '   </td>';
+
+
+
+                collapsepanel += '</tr>';
+
+            });
+
+
+            collapsepanel += '</tbody>';
+            collapsepanel += '</table>';
+
+            collapsepanel += '</div>';
+            collapsepanel += '</div>';
+
+        });
+
+        $('.jsCreateTimeOffNumber').text(totalTOs);
+        $('.jsCreateTimeOffTimeTaken').text(getText(totalTimeTaken));
+        $('.jsCreateTimeOffManualAllowedTime').text(getText(totalManualTime));
+        $('#jsBalanceHistoryTable').html(collapsepanel);
+
+
+
+    });
+
+
+
+
+
+
+
+    
 </script>
 
 <style>
