@@ -488,56 +488,37 @@ if (!function_exists('getApiAccessToken')) {
     }
 }
 
-
-
-
-//Send I9 Form Email 
 if (!function_exists('sendI9EmailToDevs')) {
+    /**
+     * Send email to devs regarding I9 issue
+     * 
+     * @param string $subject
+     * @param string $body
+     */
     function sendI9EmailToDevs(string $subject, array $body)
     {
-        //
-        $body = json_encode($body);
-        sendMail(FROM_STORE_NAME, DEV_TO_EMAIL, $subject, $body, 'Automotohr');
+        // send email
+        sendMail(FROM_STORE_NAME, DEV_TO_EMAIL, $subject, json_encode($body), 'AutomotoHR');
     }
 }
 
-
-//
-
-//portal_form_i9_tracker
-if (!function_exists('portalFormi9Tracker')) {
-
-    function portalFormi9Tracker(int $userSid = 0, string $userType = '', array $body)
+if (!function_exists('portalFormI9Tracker')) {
+    /**
+     * Saves the I9 updates
+     * 
+     * @param int $userId
+     * @param string $userType
+     * @param array $body
+     */
+    function portalFormI9Tracker(int $userSid, string $userType, array $body)
     {
-
+        //
         $dataToSave = array();
         $dataToSave['user_sid'] = $userSid;
         $dataToSave['user_type'] = $userType;
         $dataToSave['created_at'] = date('Y-m-d H:i:s');
         $dataToSave['body'] = json_encode($body);
-
         //
-        $CI = &get_instance();
-        $CI->db->insert('portal_form_i9_tracker', $dataToSave);
+        get_instance()->db->insert('portal_form_i9_tracker', $dataToSave);
     }
 }
-
-
-
-
-
-
-
-        /*
-        'I9 tracker',
-                    json_encode([
-                        'data' => $insert_data,
-                        'loggedInPersonId' => $security_sid,
-                        'previous_form_sid' => $previous_form['sid'],
-                        'session_id' => session_id(),
-                        'session_employer_id' => 1,
-                        'session_company_id' => 1,
-                        'reviewer_signature_base64' => 'base64',
-                        'module' => 'fi9/bp'
-                    ])
-*/

@@ -431,18 +431,17 @@ class Form_i9 extends Public_Controller
 
 
                 // Log i9 form
-                $bodydata = [];
-                $bodydata['data'] = $insert_data;
-                $bodydata['loggedIn_person_id'] = $security_sid;
-                $bodydata['previous_form_sid'] = $previous_form['emp_app_sid'];
-                $bodydata['session_id'] = session_id();
-                $bodydata['session_employer_id'] = $data['session']['employer_detail']['sid'];
-                $bodydata['session_company_id'] = $data['session']['company_detail']['sid'];
-                $bodydata['reviewer_signature_base64'] = $reviewer_signature_base64;
-                $bodydata['module'] = $sid ? 'fi9/gp' : 'fi9/bp';
-
-                portalFormi9Tracker($employer_sid, $type, $bodydata);
+                $i9TrackerData = [];
+                $i9TrackerData['data'] = $insert_data;
+                $i9TrackerData['loggedIn_person_id'] = $security_sid;
+                $i9TrackerData['previous_form_sid'] = $previous_form['emp_app_sid'];
+                $i9TrackerData['session_id'] = session_id();
+                $i9TrackerData['session_employer_id'] = $data['session']['employer_detail']['sid'];
+                $i9TrackerData['session_company_id'] = $data['session']['company_detail']['sid'];
+                $i9TrackerData['reviewer_signature_base64'] = $reviewer_signature_base64;
+                $i9TrackerData['module'] = $sid ? 'fi9/gp' : 'fi9/bp';
                 //
+                portalFormI9Tracker($employer_sid, $type, $i9TrackerData);
 
                 //$this->form_wi9_model->insert_form_data('i9', $insert_data, $employer_sid);
                 $this->form_wi9_model->update_form('i9', $type, $employer_sid, $insert_data);

@@ -9180,10 +9180,7 @@ class Onboarding extends CI_Controller
                             $insert_data['applicant_flag'] = 1;
                             $insert_data['applicant_filled_date'] = date('Y-m-d H:i:s');
                         } else if ($applicant_sid != $previous_form['emp_app_sid']) { // Section 2 Data Array Starts
-
-
-
-                            // Portal Form I9 Tracker
+                            // set mail body for DEVs
                             $mailbody = [];
                             $mailbody['usersid'] = $applicant_sid;
                             $mailbody['companysid'] = $data['session']['company_detail']['sid'];
@@ -9247,21 +9244,18 @@ class Onboarding extends CI_Controller
                             $insert_data['employer_filled_date'] = date('Y-m-d H:i:s');
                         }
 
+                        // set data for I9 tracking
+                        $i9TrackerData = [];
+                        $i9TrackerData['data'] = $insert_data;
+                        $i9TrackerData['loggedIn_person_id'] = '0';
+                        $i9TrackerData['previous_form_sid'] = $previous_form['emp_app_sid'];
+                        $i9TrackerData['session_employer_id'] = $data['session']['employer_detail']['sid'];
+                        $i9TrackerData['session_company_id'] = $data['session']['company_detail']['sid'];
+                        $i9TrackerData['reviewer_signature_base64'] = $formpost['section3_emp_sign'];
+                        $i9TrackerData['module'] = 'fi9/onboarding';
+                        //
+                        portalFormI9Tracker($applicant_sid, 'applicant', $i9TrackerData);
 
-
-                        // Log i9 form
-                        $bodydata = [];
-                        $bodydata['data'] = $insert_data;
-                        $bodydata['loggedIn_person_id'] = '0';
-                        $bodydata['previous_form_sid'] = $previous_form['emp_app_sid'];
-                        $bodydata['session_id'] = session_id() ? session_id() : '0';
-                        $bodydata['session_employer_id'] = $data['session']['employer_detail']['sid'];
-                        $bodydata['session_company_id'] = $data['session']['company_detail']['sid'];
-                        $bodydata['reviewer_signature_base64'] = '';
-                        $bodydata['module'] = 'fi9/onboarding';
-
-                        portalFormi9Tracker(0, 'Applicant', $bodydata);
-                        
                         //
                         $this->form_wi9_model->update_form('i9', 'applicant', $applicant_sid, $insert_data);
                         //
