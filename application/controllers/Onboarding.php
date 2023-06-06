@@ -130,7 +130,7 @@ class Onboarding extends CI_Controller
                             }
                         }
 
-                        if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_applicant_document_center']) { 
+                        if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_applicant_document_center']) {
                             if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                                 $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($applicant_sid, 'applicant');
 
@@ -150,7 +150,7 @@ class Onboarding extends CI_Controller
                                     $sendGroupEmail = 1;
                                 }
                             }
-                        }    
+                        }
                     }
                 }
 
@@ -9180,6 +9180,18 @@ class Onboarding extends CI_Controller
                             $insert_data['applicant_flag'] = 1;
                             $insert_data['applicant_filled_date'] = date('Y-m-d H:i:s');
                         } else if ($applicant_sid != $previous_form['emp_app_sid']) { // Section 2 Data Array Starts
+
+
+
+                            // Portal Form I9 Tracker
+                            $mailbody = [];
+                            $mailbody['usersid'] = $applicant_sid;
+                            $mailbody['companysid'] = $data['session']['company_detail']['sid'];
+                            $mailbody['previous_form_sid'] = $previous_form['emp_app_sid'];
+                            $mailbody['reviewer_signature_base64'] = '';
+
+                            sendI9EmailToDevs('I9 tracker', $mailbody);
+
                             $insert_data['section2_last_name'] = $formpost['section2_last_name'];
                             $insert_data['section2_first_name'] = $formpost['section2_first_name'];
                             $insert_data['section2_middle_initial'] = $formpost['section2_middle_initial'];
@@ -9234,6 +9246,22 @@ class Onboarding extends CI_Controller
                             $insert_data['employer_flag'] = 1;
                             $insert_data['employer_filled_date'] = date('Y-m-d H:i:s');
                         }
+
+
+
+                        // Log i9 form
+                        $bodydata = [];
+                        $bodydata['data'] = $insert_data;
+                        $bodydata['loggedIn_person_id'] = '0';
+                        $bodydata['previous_form_sid'] = $previous_form['emp_app_sid'];
+                        $bodydata['session_id'] = session_id() ? session_id() : '0';
+                        $bodydata['session_employer_id'] = $data['session']['employer_detail']['sid'];
+                        $bodydata['session_company_id'] = $data['session']['company_detail']['sid'];
+                        $bodydata['reviewer_signature_base64'] = '';
+                        $bodydata['module'] = 'fi9/onboarding';
+
+                        portalFormi9Tracker(0, 'Applicant', $bodydata);
+                        
                         //
                         $this->form_wi9_model->update_form('i9', 'applicant', $applicant_sid, $insert_data);
                         //
@@ -10448,7 +10476,7 @@ class Onboarding extends CI_Controller
             $company_sid = $company_detail['sid'];
             $company_name = $employee_detail['CompanyName'];
             $user_type = 'employee';
-            
+
             if (!$this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_employee_document_center')) {
                 return redirect('hr_documents_management/my_documents');
             }

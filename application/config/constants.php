@@ -676,3 +676,6 @@ define('EMPLOYEE_SURVEYS', 'employeesurvey');
 
 // Holds the EFFECT MAGIC CODES
 define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);
+
+//
+define('DEV_TO_EMAIL', 'mubashar.ahmed@egenienext.com'); // automotoHR developer email
