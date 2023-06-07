@@ -237,12 +237,7 @@ class Complynet extends Admin_Controller
         $data['allDepartmentCount'] = $this->complynet_model->getCompanyAllDepartments($companyId, 'count');
 
         // Get departments
-        $data['departments'] = $this->complynet_model->getTableData(
-            'complynet_departments',
-            [
-                'company_sid' => $companyId
-            ]
-        );
+        $data['departments'] = $this->complynet_model->getComplyNetSyncedDepartmentsByCompanyId($companyId);
 
         // Get job roles
         $data['employees'] = $this->complynet_model->getTableData(
@@ -469,9 +464,9 @@ class Complynet extends Admin_Controller
             $activeComplyNetIds = array_column($complyDepartments, 'Id');
             //
             $this->db
-            ->where('company_sid', $companyId)
-            ->where_not_in('complynet_department_sid', $activeComplyNetIds)
-            ->delete('complynet_departments');
+                ->where('company_sid', $companyId)
+                ->where_not_in('complynet_department_sid', $activeComplyNetIds)
+                ->delete('complynet_departments');
         }
 
         //
@@ -771,5 +766,4 @@ class Complynet extends Admin_Controller
         //
         exit('Roles processed.');
     }
-
 }

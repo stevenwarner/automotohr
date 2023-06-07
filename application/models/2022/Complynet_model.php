@@ -1874,4 +1874,35 @@ class Complynet_model extends CI_Model
         //
         return $newEmployee;
     }
+
+    /**
+     * Get ComplyNet synced departments
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getComplyNetSyncedDepartmentsByCompanyId(int $companyId)
+    {
+        // get departments
+        return $this->db
+            ->select(
+                'complynet_departments.department_sid',
+                'complynet_departments.department_name',
+                'complynet_departments.complynet_department_sid',
+                'complynet_departments.complynet_department_name',
+                'complynet_departments.created_at'
+            )
+            ->join(
+                'departments_management',
+                'departments_management.sid = complynet_departments.department_sid',
+                'inner'
+            )
+            ->where([
+                'complynet_departments.company_sid' => $companyId,
+                'departments_management.is_deleted' => 0,
+            ])
+            ->order_by('complynet_departments.sid', 'DESC')
+            ->get('complynet_departments')
+            ->result_array();
+    }
 }
