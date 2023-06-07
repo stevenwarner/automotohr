@@ -2,9 +2,8 @@
 
 /**
  * SCORM reader
- * 
+ *
  * SCORM parser supports 1.2, 2004 3ed edition, and 2004 4th edition
- * 
  * Single SCO
  * Multiple SCO
  * Minimum Run-Time calls
@@ -13,7 +12,7 @@
  * Forced Sequential Order
  * Post Test Rollup
  * Post Test Rollup
- * 
+ *
  * @version 1.0
  * @author  AutomotoHR <www.automotohr.com>
  */
@@ -96,7 +95,7 @@ class parser
 
     /**
      * set the XML content
-     * 
+     *
      * @param string $xmlContent
      * @return
      */
@@ -117,7 +116,7 @@ class parser
 
     /**
      * convert XML to array
-     * 
+     *
      * @return
      */
     private function xmlToArray()
@@ -130,7 +129,7 @@ class parser
 
     /**
      * set version and type
-     * 
+     *
      * @return
      */
     private function setVersionAndType()
@@ -145,7 +144,7 @@ class parser
 
     /**
      * set organizations
-     * 
+     *
      * @return
      */
     private function setOrganizations()
@@ -179,7 +178,7 @@ class parser
 
     /**
      * set single organization
-     * 
+     *
      * @param array $organization
      * @return
      */
@@ -225,7 +224,7 @@ class parser
 
     /**
      * set organization items
-     * 
+     *
      * @param array     $itemArray
      * @param reference $attachArray
      * @return
@@ -297,7 +296,7 @@ class parser
 
     /**
      * set items of item
-     * 
+     *
      * @param array     $itemArray
      * @param reference $attachArray
      * @return
@@ -335,7 +334,7 @@ class parser
 
     /**
      * set resources
-     * 
+     *
      * @return
      */
     private function setResources()
@@ -363,7 +362,7 @@ class parser
 
     /**
      * set single resource
-     * 
+     *
      * @param array $resource
      * @return
      */
@@ -406,7 +405,7 @@ class parser
 
     /**
      * set resource files
-     * 
+     *
      * @param array     $fileArray
      * @param reference $attachArray
      * @return
@@ -431,7 +430,7 @@ class parser
 
     /**
      * set resource dependencies
-     * 
+     *
      * @param array     $fileArray
      * @return
      */
@@ -451,7 +450,7 @@ class parser
 
     /**
      * set course type
-     * 
+     *
      * @param array     $sequency
      * @param reference $attachArray
      * @return
@@ -518,26 +517,34 @@ class parser
 
         // set the rules
         if ($sequency['imsss_sequencingRules']) {
-            // set the pre condition rule
-            if ($sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleConditions']) {
-                //
-                $loopData = $this->checkAndGetArray($sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleConditions']['imsss_ruleCondition']);
-                //
-                $conditionArray = $sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleConditions']['@attributes'] ?? [];
-                $conditionArray['conditions'] = [];
-                // loop through the data
-                foreach ($loopData as $condition) {
+            // check for preConditionRules
+            if ($sequency['imsss_sequencingRules']['imsss_preConditionRule']) {
+                $conditionArray['preConditions'] = [];
+                // set the pre condition rule
+                if ($sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleConditions']) {
                     //
-                    $conditionArray['conditions'][] = $condition['@attributes'];
+                    $loopData =
+                        $this->checkAndGetArray(
+                            $sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleConditions']['imsss_ruleCondition']
+                        );
+                    //
+                    $conditionArray =
+                        $sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleConditions']['@attributes']
+                        ?? [];
+                    // loop through the data
+                    foreach ($loopData as $condition) {
+                        //
+                        $conditionArray['conditions'][] = $condition['@attributes'];
+                    }
+                    //
+                    $attachArray['preConditions'] = $conditionArray;
                 }
-                //
-                $attachArray['conditions'] = $conditionArray;
-            }
-
-            // set the rule action
-            if ($sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleAction']) {
-                //
-                $attachArray['conditions']['ruleAction'] = $sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleAction']['@attributes'];
+                // set the rule action
+                if ($sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleAction']) {
+                    //
+                    $attachArray['preConditions']['ruleAction'] =
+                        $sequency['imsss_sequencingRules']['imsss_preConditionRule']['imsss_ruleAction']['@attributes'];
+                }
             }
         }
         //
@@ -547,7 +554,7 @@ class parser
 
     /**
      * set course type
-     * 
+     *
      * @return
      */
     private function setCourseType()
@@ -556,9 +563,12 @@ class parser
         if ($this->parsedArray['type'] == 'multiple_sco' && $this->parsedArray['callsLMS']) {
             $this->parsedArray['type'] = 'run_time_multiple_sco';
             $this->parsedArray['about'] = [];
-            $this->parsedArray['about'][] = 'All of the resources are marked as SCOs instead of Assets because they communicate with the LMS.';
-            $this->parsedArray['about'][] = 'Each SCO will locate the SCORM API using the ADL-provided API discovery algorithm.';
-            $this->parsedArray['about'][] = 'The SCOs simply call Initialize when they load and Terminate when they unload.';
+            $this->parsedArray['about'][] =
+                'All of the resources are marked as SCOs instead of Assets because they communicate with the LMS.';
+            $this->parsedArray['about'][] =
+                'Each SCO will locate the SCORM API using the ADL-provided API discovery algorithm.';
+            $this->parsedArray['about'][] =
+                'The SCOs simply call Initialize when they load and Terminate when they unload.';
         }
         //
         return $this;
@@ -566,7 +576,7 @@ class parser
 
     /**
      * check and send multiple array
-     * 
+     *
      * @param array $dataArray
      * @return
      */
