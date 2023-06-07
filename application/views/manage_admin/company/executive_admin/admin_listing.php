@@ -26,7 +26,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
                                                     <?php $name = $this->uri->segment(4) == 'all' ? '' : $this->uri->segment(4); ?>
                                                     <label>Contact Name</label>
-                                                    <input type="text" name="name" id="name" value="<?php echo urldecode($name); ?>" class="invoice-fields">
+                                                    <input type="text" name="name" id="name" value="<?php echo urldecode(str_replace('_',' ',$name)); ?>" class="invoice-fields">
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
                                                     <?php $email = $this->uri->segment(5) == 'all' ? '' : $this->uri->segment(5); ?>
