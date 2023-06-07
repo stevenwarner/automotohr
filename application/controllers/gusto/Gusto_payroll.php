@@ -402,7 +402,8 @@ class Gusto_payroll extends CI_Controller
     /**
      * 
      */
-    public function getActiveCompanyEmployeesForPayroll(int $companyId, string $location) {
+    public function getActiveCompanyEmployeesForPayroll(int $companyId, string $location)
+    {
         // Fetch employees
         $employees = $this->gusto_payroll_model->getCompanyEmployees($companyId, [
             "users.sid",
@@ -527,7 +528,7 @@ class Gusto_payroll extends CI_Controller
         exit(0);
     }
 
-     /**
+    /**
      * Start the initial company onboard
      * 
      * @param number $companyId
@@ -606,7 +607,7 @@ class Gusto_payroll extends CI_Controller
         return $response['company_uuid'];
     }
 
-     /**
+    /**
      * Add company location
      * 
      * @param number $companyId
@@ -666,4 +667,74 @@ class Gusto_payroll extends CI_Controller
         return true;
     }
 
+
+    //
+    public function managePayment(int $companyId)
+    {
+
+        //
+        $payroll_settings = $this->gusto_payroll_model->GetPayrollColumn(
+            'payroll_settings',
+            [
+                'company_sid' => $companyId
+            ],
+            'sid, fast_payment_limit, payment_speed',
+            false
+        );
+
+
+        if (!$payroll_settings) {
+            //
+            $this->GetAndSetPaymentConfig($companyId);
+            //
+            $payroll_settings = $this->gusto_payroll_model->GetPayrollColumn(
+                'payroll_settings',
+                [
+                    'company_sid' => $companyId
+                ],
+                'sid, fast_payment_limit, payment_speed',
+                false
+            );
+        }
+
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('gusto/managepayment', ['payroll_settings' => $payroll_settings, 'companySid' => $companyId], true)
+            ]
+        );
+    }
+
+
+
+    //
+    private function GetAndSetPaymentConfig($companyId)
+    {
+        // Get company
+        $company = $this->gusto_payroll_model->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = GetPaymentConfig($company);
+        //
+        if (isset($response['name'])) {
+            return;
+        }
+        //
+        $ai = [];
+        $ai['company_sid'] = $companyId;
+        $ai['last_updated_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        $ai['created_at'] = $ai['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ai['fast_payment_limit'] = $response['fast_payment_limit'];
+        $ai['payment_speed'] = $response['payment_speed'];
+        $ai['partner_uid'] = $response['partner_uuid'];
+        //
+        $this->gusto_payroll_model->InsertPayroll(
+            'payroll_settings',
+            $ai
+        );
+    }
 }

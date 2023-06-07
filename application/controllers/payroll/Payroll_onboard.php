@@ -153,9 +153,9 @@ class Payroll_onboard extends CI_Controller
         $post = $this->input->post(null, true);
         //
         $request = [];
-        // $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
-        $request['fast_payment_limit'] = FAST_PAYMENT_LIMIT;
+        $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
         $request['payment_speed'] = $post['payment_speed'];
+        
         //
         $response = $this->UpdatePaymentConfig($companyId, $request);
         if ($response['errors']) {
@@ -1916,7 +1916,8 @@ class Payroll_onboard extends CI_Controller
         // Get company details
         $company_details = $this->pm->GetPayrollCompany($companyId);
         //
-        $response = UpdatePaymentConfig($request, $company_details);
+
+         $response = UpdatePaymentConfig($request, $company_details);
         //
         if (isset($response['errors'])) {
             // Error took place
@@ -1928,7 +1929,7 @@ class Payroll_onboard extends CI_Controller
         $ia['payment_speed'] = $request['payment_speed'];
         $ia['partner_uid'] = $request['partner_uuid'];
         $ia['updated_at'] = getSystemDate();
-        //
+        
         $this->pm->UpdatePayroll('payroll_settings', $ia, ['company_sid' => $companyId]);
         //
         return true;

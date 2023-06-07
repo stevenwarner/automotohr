@@ -16,12 +16,12 @@ class Gusto_payroll_model extends CI_Model
         //
         $this->load->helper('payroll_helper');
         //
-        $this->tables = []; 
-        $this->tables['PayrollCompanyAdmin'] = 'payroll_company_admin'; 
-        $this->tables['U'] = 'users'; 
-        $this->tables['P'] = 'payrolls'; 
-        $this->tables['PH'] = 'payroll_history'; 
-        $this->tables['PC'] = 'payroll_companies'; 
+        $this->tables = [];
+        $this->tables['PayrollCompanyAdmin'] = 'payroll_company_admin';
+        $this->tables['U'] = 'users';
+        $this->tables['P'] = 'payrolls';
+        $this->tables['PH'] = 'payroll_history';
+        $this->tables['PC'] = 'payroll_companies';
     }
 
     /**
@@ -3135,20 +3135,20 @@ class Gusto_payroll_model extends CI_Model
         return $doReturn ? $errors : sendResponse(200, $errors);
     }
 
-     /**
+    /**
      * 
      */
     function getCompanyEmployees(
-        $companyId, 
+        $companyId,
         $columns = '*',
         $whereArray = []
-    ){
+    ) {
         //
         $whereArray = !empty($whereArray) ? $whereArray : ["users.active" => 1, "users.terminated_status" => 0];
         //
         $redo = false;
         //
-        if($columns === true){
+        if ($columns === true) {
             //
             $redo = true;
             //
@@ -3176,34 +3176,34 @@ class Gusto_payroll_model extends CI_Model
             $columns[] = "payroll_employees.onboard_completed";
         }
         //
-        $query = 
-        $this->db
-        ->select($columns)
-        ->join("users as company", "users.parent_sid = company.sid", 'inner')
-        ->join("payroll_employees", "payroll_employees.employee_sid = users.sid", 'left')
-        ->where("users.parent_sid", $companyId)
-        ->where($whereArray)
-        ->order_by("users.first_name", 'asc')
-        ->get('users');
+        $query =
+            $this->db
+            ->select($columns)
+            ->join("users as company", "users.parent_sid = company.sid", 'inner')
+            ->join("payroll_employees", "payroll_employees.employee_sid = users.sid", 'left')
+            ->where("users.parent_sid", $companyId)
+            ->where($whereArray)
+            ->order_by("users.first_name", 'asc')
+            ->get('users');
         //
         $records = $query->result_array();
         //
         $query = $query->free_result();
         //
-        if($redo && !empty($records)){
+        if ($redo && !empty($records)) {
             //
             $newRecords = [];
             //
             $updateArray = [];
             //
-            foreach($records as $record){
+            foreach ($records as $record) {
                 //
                 $newRecords[$record['sid']] = [
                     'sid' => $record['sid'],
                     'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
                     'first_name' => ucwords($record['first_name']),
                     'last_name' => ucwords($record['last_name']),
-                    'name' => ucwords($record['first_name'].' '.$record['last_name']),
+                    'name' => ucwords($record['first_name'] . ' ' . $record['last_name']),
                     'role' => remakeEmployeeName($record, false),
                     'plus' => $record['access_level_plus'],
                     'email' => $record['email'],
@@ -3217,24 +3217,24 @@ class Gusto_payroll_model extends CI_Model
                     'onboard_completed' => $record['onboard_completed'],
                 ];
                 //
-                if(!empty($record['timezone'])){
+                if (!empty($record['timezone'])) {
                     $newRecords[$record['sid']]['timezone'] = $record['timezone'];
-                } else if(!empty($record['company_timezone'])){
+                } else if (!empty($record['company_timezone'])) {
                     $newRecords[$record['sid']]['timezone'] = $record['company_timezone'];
                 }
                 //
-                if(!empty($record['full_employment_application'])){
+                if (!empty($record['full_employment_application'])) {
                     //
                     $fef = unserialize($record['full_employment_application']);
                     //
-                    if(empty($newRecords[$record['sid']]['ssn']) && isset($fef['TextBoxSSN'])){
+                    if (empty($newRecords[$record['sid']]['ssn']) && isset($fef['TextBoxSSN'])) {
                         $newRecords[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
                         //
                         $updateArray[$record['sid']]['sid'] = $record['sid'];
                         $updateArray[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
                     }
                     //
-                    if(empty($newRecords[$record['sid']]['dob']) && isset($fef['TextBoxDOB'])){
+                    if (empty($newRecords[$record['sid']]['dob']) && isset($fef['TextBoxDOB'])) {
                         $newRecords[$record['sid']]['dob'] = DateTime::createfromformat('m-d-Y', $fef['TextBoxDOB'])->format('Y-m-d');
                         $updateArray[$record['sid']]['sid'] = $record['sid'];
                         $updateArray[$record['sid']]['dob'] = $newRecords[$record['sid']]['dob'];
@@ -3242,7 +3242,7 @@ class Gusto_payroll_model extends CI_Model
                 }
             }
             //
-            if(!empty($updateArray)){
+            if (!empty($updateArray)) {
                 $this->db->update_batch($this->U, $updateArray, 'sid');
             }
             //
@@ -3255,39 +3255,42 @@ class Gusto_payroll_model extends CI_Model
     }
 
     /**
-	 * Check if company has a primary admin
-	 * to handle payroll
-	 * 
-	 * @param integer $companyId
-	 * @return
-	 */
-	function HasPrimaryAdmin($companyId){
-		//
-		return $this->db
-		->where('company_sid', $companyId)
-		->count_all_results($this->tables['PayrollCompanyAdmin']);
-	}
+     * Check if company has a primary admin
+     * to handle payroll
+     * 
+     * @param integer $companyId
+     * @return
+     */
+    function HasPrimaryAdmin($companyId)
+    {
+        //
+        return $this->db
+            ->where('company_sid', $companyId)
+            ->count_all_results($this->tables['PayrollCompanyAdmin']);
+    }
 
     /**
-	 * Check if company has a primary admin
-	 * to handle payroll
-	 * 
-	 * @param integer $companyId
-	 * @return
-	 */
-	function GetPrimaryAdmin($companyId){
-		//
-		return $this->db
-		->where('company_sid', $companyId)
-		->get($this->tables['PayrollCompanyAdmin'])
-		->row_array();
-	}
+     * Check if company has a primary admin
+     * to handle payroll
+     * 
+     * @param integer $companyId
+     * @return
+     */
+    function GetPrimaryAdmin($companyId)
+    {
+        //
+        return $this->db
+            ->where('company_sid', $companyId)
+            ->get($this->tables['PayrollCompanyAdmin'])
+            ->row_array();
+    }
 
-    public function GetCompanyOnboardDetails($companyId){
-		//
-		return
-		$this->db
-		->select('
+    public function GetCompanyOnboardDetails($companyId)
+    {
+        //
+        return
+            $this->db
+            ->select('
 			users.on_payroll,
 			users.Location_City,
 			users.Location_Address,
@@ -3298,25 +3301,25 @@ class Gusto_payroll_model extends CI_Model
 			users.PhoneNumber,
 			payroll_companies.gusto_company_uid
 		')
-		->join('payroll_companies', 'payroll_companies.company_sid = users.sid', 'left')
-		->where('users.sid', $companyId)
-		->get('users')
-		->row_array();
-	}
+            ->join('payroll_companies', 'payroll_companies.company_sid = users.sid', 'left')
+            ->where('users.sid', $companyId)
+            ->get('users')
+            ->row_array();
+    }
 
     /**
      * 
      */
     function GetCompanyDetails(
-        $companyId, 
+        $companyId,
         $columns = '*'
-    ){
+    ) {
         //
-        $query = 
-        $this->db
-        ->select($columns)
-        ->where('sid', $companyId)
-        ->get($this->tables['U']);
+        $query =
+            $this->db
+            ->select($columns)
+            ->where('sid', $companyId)
+            ->get($this->tables['U']);
         //
         $record = $query->row_array();
         //
@@ -3326,134 +3329,175 @@ class Gusto_payroll_model extends CI_Model
     }
 
     /**
-	 * 
-	 */
-	function CheckAndInsertPayroll(
-		$companyId,
-		$employerId,
-		$payrollUid,
-		$payroll
-	){
-		//
-		$isNew = false;
-		$doAdd = true;
-		//
-		$date = date('Y-m-d H:i:s', strtotime('now'));
-		// Check if the payroll already
-		// been added
-		if(
-			!$this->db
-			->where('payroll_uid', $payrollUid)
-			->count_all_results($this->tables['P'])
-		){
-			// Let's insert the payroll
-			$this->db
-			->insert(
-				$this->tables['P'], [
-					'company_sid' => $companyId,
-					'payroll_uid' => $payrollUid,
-					'version' => $payroll['version'],
-					'payroll_id' => $payroll['payroll_id'],
-					'start_date' => $payroll['pay_period']['start_date'],
-					'end_date' => $payroll['pay_period']['end_date'],
-					'check_date' => $payroll['check_date'],
-					'deadline_date' => $payroll['payroll_deadline'],
-					'payroll_json' => json_encode($payroll),
-					'is_processed' => 0,
-					'created_by' => $employerId,
-					'created_at' => $date,
-					'updated_at' => $date
-				]
-			);
-			//
-			$isNew = true;
-		} else{
-			if(!empty($payroll)){
-				$this->db
-				->where('payroll_uid', $payrollUid)
-				->update(
-					$this->tables['P'], [
-						'payroll_json' => json_encode($payroll)
-					]
-				);
-			}
-		}
-		//
-		if(!$isNew){
-			// Get the last history
-			$historyVersion = $this->GetPayrollHistory($payroll['payroll_id'], ['version'])['version'];
-			//
-			if($historyVersion == $payroll['version']){
-				$doAdd = false;
-			}
-		}
-		//
-		if(!$doAdd){
-			return false;
-		}
-		// Let's add a history
-		$this->db
-		->insert(
-			$this->tables['PH'], [
-				'payroll_id' => $payroll['payroll_id'],
-				'version' => $payroll['version'],
-				'created_by' => $employerId,
-				'content' => json_encode($payroll),
-				'created_at' => $date
-			]
-		);
-	}
+     * 
+     */
+    function CheckAndInsertPayroll(
+        $companyId,
+        $employerId,
+        $payrollUid,
+        $payroll
+    ) {
+        //
+        $isNew = false;
+        $doAdd = true;
+        //
+        $date = date('Y-m-d H:i:s', strtotime('now'));
+        // Check if the payroll already
+        // been added
+        if (
+            !$this->db
+                ->where('payroll_uid', $payrollUid)
+                ->count_all_results($this->tables['P'])
+        ) {
+            // Let's insert the payroll
+            $this->db
+                ->insert(
+                    $this->tables['P'],
+                    [
+                        'company_sid' => $companyId,
+                        'payroll_uid' => $payrollUid,
+                        'version' => $payroll['version'],
+                        'payroll_id' => $payroll['payroll_id'],
+                        'start_date' => $payroll['pay_period']['start_date'],
+                        'end_date' => $payroll['pay_period']['end_date'],
+                        'check_date' => $payroll['check_date'],
+                        'deadline_date' => $payroll['payroll_deadline'],
+                        'payroll_json' => json_encode($payroll),
+                        'is_processed' => 0,
+                        'created_by' => $employerId,
+                        'created_at' => $date,
+                        'updated_at' => $date
+                    ]
+                );
+            //
+            $isNew = true;
+        } else {
+            if (!empty($payroll)) {
+                $this->db
+                    ->where('payroll_uid', $payrollUid)
+                    ->update(
+                        $this->tables['P'],
+                        [
+                            'payroll_json' => json_encode($payroll)
+                        ]
+                    );
+            }
+        }
+        //
+        if (!$isNew) {
+            // Get the last history
+            $historyVersion = $this->GetPayrollHistory($payroll['payroll_id'], ['version'])['version'];
+            //
+            if ($historyVersion == $payroll['version']) {
+                $doAdd = false;
+            }
+        }
+        //
+        if (!$doAdd) {
+            return false;
+        }
+        // Let's add a history
+        $this->db
+            ->insert(
+                $this->tables['PH'],
+                [
+                    'payroll_id' => $payroll['payroll_id'],
+                    'version' => $payroll['version'],
+                    'created_by' => $employerId,
+                    'content' => json_encode($payroll),
+                    'created_at' => $date
+                ]
+            );
+    }
 
     /**
-	 * 
-	 */
-	function GetPayrollHistory(
-		$payrollId, 
-		$columns = '*'
-	){
-		//
-		$query =
-		$this->db
-		->select($columns)
-		->where('payroll_id', $payrollId)
-		->order_by('sid', 'desc')
-		->get($this->tables['PH']);
-		//
-		$record = $query->row_array();
-		$query = $query->free_result();
-		//
-		return $record;
-	}
+     * 
+     */
+    function GetPayrollHistory(
+        $payrollId,
+        $columns = '*'
+    ) {
+        //
+        $query =
+            $this->db
+            ->select($columns)
+            ->where('payroll_id', $payrollId)
+            ->order_by('sid', 'desc')
+            ->get($this->tables['PH']);
+        //
+        $record = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $record;
+    }
 
-    
-	/**
-	 * 
-	 */
-	function UpdateCompany($companyId, $array){
-		//
-		$this->db
-		->where('sid', $companyId)
-		->update($this->tables['U'], $array);
-	}
 
     /**
-	 * Get company payroll details
-	 * @param integer $companyId
-	 * @return
-	 */
-	function GetPayrollCompany($companyId){
-		//
-		return $this->db
-		->select('refresh_token, access_token, gusto_company_uid, onbording_level, onboarding_status')
-		->where('company_sid', $companyId)
-		->get($this->tables['PC'])
-		->row_array();
-	}
+     * 
+     */
+    function UpdateCompany($companyId, $array)
+    {
+        //
+        $this->db
+            ->where('sid', $companyId)
+            ->update($this->tables['U'], $array);
+    }
+
+    /**
+     * Get company payroll details
+     * @param integer $companyId
+     * @return
+     */
+    function GetPayrollCompany($companyId)
+    {
+        //
+        return $this->db
+            ->select('refresh_token, access_token, gusto_company_uid, onbording_level, onboarding_status')
+            ->where('company_sid', $companyId)
+            ->get($this->tables['PC'])
+            ->row_array();
+    }
 
     //
-	public function InsertPayroll($table, $dataArray){
-		//
-		$this->db->insert($table, $dataArray);
-		return $this->db->insert_id();
-	}
+    public function InsertPayroll($table, $dataArray)
+    {
+        //
+        $this->db->insert($table, $dataArray);
+        return $this->db->insert_id();
+    }
+
+    //
+    public function GetPayrollColumn($table, $where, $col = 'sid', $single = true)
+    {
+        //
+        $query =
+            $this->db
+            ->select($col)
+            ->where($where)
+            ->get($table)
+            ->row_array();
+        //
+        if (!$single) {
+            return $query;
+        }
+        return $query ? $query[$col] : '';
+    }
+
+//
+function GetCompany($companyId, $columns){
+    //
+    $query = 
+    $this->db
+    ->where('company_sid', $companyId)
+    ->select($columns)
+    ->get($this->tables['PC']);
+    //
+    $record = $query->row_array();
+    //
+    $query = $query->free_result();
+    //
+    return $record;
+}
+
+
 }

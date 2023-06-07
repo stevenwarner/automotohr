@@ -1764,3 +1764,6 @@ $route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';
  * CRON Jobs
  */
 $route['cron/remove_employee_duplicate_teams'] = 'Cron_common/removeEmployeeFromDuplicateGroups';
+
+//
+$route['payroll/gusto/managepayment/(:num)'] = 'gusto/Gusto_payroll/managePayment/$1';

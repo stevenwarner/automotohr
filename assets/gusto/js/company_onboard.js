@@ -490,4 +490,48 @@ $(function companyOnboard() {
 
 
 
+//
+    $('.jsManagePayments').click(function (event) {
+        //
+        event.preventDefault();
+        //
+        companyId = $(this).data('cid');
+        //
+        Modal({
+            Id: 'jsManagePaymentsModal',
+            Loader: 'jsManageGustoSignatoriesModalLoader',
+            Body: '<div id="jsManagePaymentsBody"></div>',
+            Title: 'Manage Payment'
+        }, fetchPayments);
+    });
+
+
+//
+
+function fetchPayments() {
+    //
+    if (xhr !== null) {
+        xhr.abort();
+    }
+    //
+    xhr = $.get(
+        baseURI + 'payroll/gusto/managepayment/' + companyId
+    )
+        .success(function (response) {
+            //
+            xhr = null;
+            //
+            $('#jsManagePaymentsBody').html(response.view);
+            //
+            ml(false, 'jsManageGustoSignatoriesModalLoader');
+        })
+        .fail(function () {
+            xhr = null;
+            $('#jsManagePaymentsBody').html('<strong class="alert alert-danger text-center">Something went wrong. Please try again in few seconds.</strong>')
+            ml(false, 'jsManageGustoSignatoriesModalLoader');
+        });
+}
+
+
+
 });

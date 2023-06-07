@@ -1814,9 +1814,9 @@ if (!function_exists('GetPaymentConfig')) {
     function GetPaymentConfig($company)
     {
         //
-        $company['gusto_company_uid'] = 'de7afa2e-9a5f-4f6c-b063-1b4803ac9d1c';
-        $company['access_token'] = 'QbliCE6If1NIgcaTgU82-BHxLDhDKhe5AgIckc8YJ6s';
-        $company['refresh_token'] = 'xW_xWBT55T92HKXwQeDc8AP9NQcBbRVyESmZzIQSKL0';
+        // $company['gusto_company_uid'] = 'de7afa2e-9a5f-4f6c-b063-1b4803ac9d1c';
+        // $company['access_token'] = 'QbliCE6If1NIgcaTgU82-BHxLDhDKhe5AgIckc8YJ6s';
+        // $company['refresh_token'] = 'xW_xWBT55T92HKXwQeDc8AP9NQcBbRVyESmZzIQSKL0';
         //
         $response =  MakeCall(
             PayrollURL('GetPaymentConfig', $company['gusto_company_uid']),
