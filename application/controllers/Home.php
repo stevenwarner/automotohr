@@ -2085,8 +2085,16 @@ class Home extends CI_Controller
         $employee_sid = $document['application_sid'];
         //
         if ($employeeId && $employeeId != $document['application_sid']) {
+            $eeocAction = $post['eeoc_action'];
+            //
+            if ($eeocAction == "consent") {
+                $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
+                $upd['is_expired'] = 1;
+            } else if ($eeocAction == "update") {
+                $action = 'updated';
+            }
             $employee_sid = $employeeId;
-            $action = 'updated';
+
         } else {
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;

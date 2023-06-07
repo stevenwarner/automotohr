@@ -923,6 +923,7 @@ class Eeo extends Public_Controller
             $data['verification_documents_history'] = $history_array;
             $data['track_history'] = $eeoc_track;
             $data['dl_citizen']         = getEEOCCitizenShipFlag($company_sid);
+            $data['location']         = "Green Panel";
             //
             $this->load->view('main/header', $data);
             $this->load->view('eeo/user_eeoc');
