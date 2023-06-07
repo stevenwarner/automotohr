@@ -1886,11 +1886,13 @@ class Complynet_model extends CI_Model
         // get departments
         return $this->db
             ->select(
-                'complynet_departments.department_sid',
-                'complynet_departments.department_name',
-                'complynet_departments.complynet_department_sid',
-                'complynet_departments.complynet_department_name',
-                'complynet_departments.created_at'
+                [
+                    'complynet_departments.department_sid',
+                    'complynet_departments.department_name',
+                    'complynet_departments.complynet_department_sid',
+                    'complynet_departments.complynet_department_name',
+                    'complynet_departments.created_at'
+                ]
             )
             ->join(
                 'departments_management',
