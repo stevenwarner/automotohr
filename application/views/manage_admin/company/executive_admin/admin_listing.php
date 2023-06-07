@@ -26,7 +26,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
                                                     <?php $name = $this->uri->segment(4) == 'all' ? '' : $this->uri->segment(4); ?>
                                                     <label>Contact Name</label>
-                                                    <input type="text" name="name" id="name" value="<?php echo urldecode(str_replace('_',' ',$name)); ?>" class="invoice-fields">
+                                                    <input type="text" name="name" id="name" value="<?php echo urldecode(str_replace('_', ' ', $name)); ?>" class="invoice-fields">
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
                                                     <?php $email = $this->uri->segment(5) == 'all' ? '' : $this->uri->segment(5); ?>
@@ -89,8 +89,8 @@
                                                             <?php foreach ($administrators as $admin) { ?>
                                                                 <tr id='<?php echo $admin->sid; ?>'>
 
-                                                                        <td><input type="checkbox" name="checkit[]" value="<?php echo $admin->sid; ?>" class="my_checkbox"></td>
-                                                                    
+                                                                    <td><input type="checkbox" name="checkit[]" value="<?php echo $admin->sid; ?>" class="my_checkbox"></td>
+
                                                                     <td>
                                                                         <div class="employee-profile-info">
                                                                             <figure>
@@ -203,7 +203,7 @@
 
     function update_url() {
         var url = '<?php echo base_url('manage_admin/companies/executive_administrators/'); ?>';
-        var name = $('#name').val().replace(/\s+/, '_');
+        var name = $('#name').val().trim().replace(/\s+/ig, '_');
         var email = $('#email').val();
         name = name == '' ? 'all' : name;
         email = email == '' ? 'all' : email;
@@ -351,12 +351,12 @@
 
             var action = $('#top_select_box').val();
             var popup_msg = 'Are you sure?';
-                           console.log(action);
-            if (action == '1' ) {
+            console.log(action);
+            if (action == '1') {
                 popup_msg = 'Are you sure ? <br><br>Warning: It will mark all selected employees as Admin Plus';
             }
 
-            if (action == '0' ) {
+            if (action == '0') {
                 popup_msg = 'Are you sure ? <br><br>Warning: It will unmark  all selected employees as Admin Plus';
             }
 
