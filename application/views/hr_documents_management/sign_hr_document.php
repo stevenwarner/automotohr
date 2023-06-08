@@ -26,7 +26,11 @@
                 <div class="page-header">
                     <h1 class="section-ttile">Review & Sign <?php echo $doc == 'o' ? 'Offer Letter' : 'Assigned Document'; ?>
                         <span class="pull-right">
-                            <?= $pdBtn['pw'] . $pdBtn['dw']; ?>
+                            <?php if ($document['document_type'] == 'hybrid_document') {
+                                echo $pdBtn['pwnew'] . $pdBtn['dwnew'];
+                            } else {
+                                echo $pdBtn['pw'] . $pdBtn['dw'];
+                            } ?>
                         </span>
                     </h1>
                     <strong>Information:</strong> If you are unable to view the document, kindly reload the page.

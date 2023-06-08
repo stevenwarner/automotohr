@@ -7462,7 +7462,6 @@ class Hr_documents_management extends Public_Controller
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
-            //check_access_permissions($security_details, 'appearance', 'customize_appearance'); // no need to check in this Module as Dashboard will be available to all
             $company_sid = $data["session"]["company_detail"]["sid"];
             $employer_sid = $data["session"]["employer_detail"]["sid"];
             $data['title'] = 'Documents Assignment';
@@ -15552,5 +15551,172 @@ class Hr_documents_management extends Public_Controller
         flush();
         readfile($fileWithPath);
         exit;
+    }
+
+
+
+    //
+
+    function perform_action_on_document_content_new($document_sid, $request_type, $request_from, $perform_action, $letter_request = NULL)
+    {
+        $form_input_data = "NULL";
+        $is_iframe_preview = 1;
+
+        $document = $this->hr_documents_management_model->get_requested_generated_document_content($document_sid, $request_from);
+        $requested_content = $this->hr_documents_management_model->get_requested_generated_document_content_body($document_sid, $request_type, $request_from, 'P&D');
+        $file_name = $this->hr_documents_management_model->get_document_title($document_sid, $request_type, $request_from);
+
+        if ($letter_request == 1) {
+            $requested_content = $document['submitted_description'];
+        } else if (!empty($document['form_input_data']) && $request_type == 'submitted') {
+            if (!empty(unserialize($document['form_input_data']))) {
+                $is_iframe_preview = 0;
+            }
+
+            if (!empty($document['authorized_signature'])) {
+                $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
+            } else {
+                $authorized_signature_image = '------------------------------(Authorized Signature Required)';
+            }
+            if (!empty($document['authorized_signature_date'])) {
+                $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
+            } else {
+                $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            }
+
+            $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
+            $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
+            $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
+
+            $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+
+            $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
+            $requested_content = $document_content;
+
+            $form_input_data = unserialize($document['form_input_data']);
+            $form_input_data = json_encode(json_decode($form_input_data, true));
+        } else {
+            if ($request_type == 'assigned') {
+                // if (empty($document['submitted_description']) && empty($document['form_input_data'])) {    
+                $is_iframe_preview = 0;
+            }
+
+            $form_input_data = json_encode(json_decode('assigned'));
+            //
+            $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            $authorized_signature_image = '------------------------------(Authorized Signature Required)';
+            $signature_bas64_image = '------------------------------(Signature Required)';
+            $init_signature_bas64_image = '------------------------------(Signature Initial Required)';
+            $sign_date = '------------------------------(Sign Date Required)';
+            //
+            $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            //
+            $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
+            $requested_content = $document_content;
+        }
+
+        $data = array();
+        $data['file_name'] = $file_name;
+        $data['document'] = $document;
+        $data['request_type'] = $request_type;
+        $data['document_contant'] = $requested_content;
+        $data['perform_action'] = $perform_action;
+        $data['form_input_data'] = $form_input_data;
+        $data['is_iframe_preview'] = $is_iframe_preview;
+        $data['is_hybrid'] = "no";
+
+        if ($document["document_type"] == "hybrid_document") {
+            $document_path = "";
+            if ($request_type == 'submitted') {
+                $document_path = $document["uploaded_file"];
+            } else {
+                $document_path = $request_from == "company_document" ? $document["uploaded_document_s3_name"] : $document["document_s3_name"];
+            }
+
+            //
+            $temp_path = FCPATH . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'temp_files' . DIRECTORY_SEPARATOR;
+
+            if (!file_exists("$temp_path/$file_name")) {
+                mkdir("$temp_path/$file_name", 0777, true);
+            }
+
+            //
+            $content = $data['document']['document_description'];
+            $fp = fopen($temp_path . "/" . $file_name . "/" . $file_name . ".doc", "wb");
+            fwrite($fp, $content);
+            fclose($fp);
+
+            //
+            $this->download_upload_document_new($document_path, $file_name);
+
+            // $data['document_path'] = base_url("hr_documents_management/download_upload_document_new") . '/' . $document_path . '/' . $file_name;
+            $data['is_hybrid'] = "yes";
+        } else {
+
+            $this->load->view('hr_documents_management/new_generated_document_action_page', $data);
+        }
+    }
+
+
+    //
+    public function download_upload_document_new($document_path, $folderName)
+    {
+
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            $company_sid = $data["session"]["company_detail"]["sid"];
+            $employer_sid = $data["session"]["employer_detail"]["sid"];
+            $data['title'] = 'Documents Assignment';
+            $data['company_sid'] = $company_sid;
+            $data['employer_sid'] = $employer_sid;
+
+
+            $document_path = '0057-test_latest_uploaded_document-58-Yo2.pdf';
+
+            if ($this->form_validation->run() == false) {
+                //
+                $document_path = urldecode($document_path);
+                $temp_path = FCPATH . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'temp_files' . DIRECTORY_SEPARATOR;
+                $file_name = $document_path;
+
+                //$empFolderName
+                if (!file_exists("$temp_path/$folderName")) {
+                    mkdir("$temp_path/$folderName", 0777, true);
+                }
+
+                $temp_file_path = $temp_path . '/' . $folderName . '/' . $file_name;
+
+                if (file_exists($temp_file_path)) {
+                    unlink($temp_file_path);
+                }
+
+                $this->load->library('aws_lib');
+                $this->aws_lib->get_object(AWS_S3_BUCKET_NAME, $document_path, $temp_file_path);
+
+
+                //
+                $this->load->library('zip');
+                $path = $temp_path . '/' . $folderName;
+                $this->zip->read_dir($path, FALSE);
+                $this->zip->download($folderName . 'zip');
+
+
+            } else {
+                //nothing
+            }
+        } else {
+            redirect('login', 'refresh');
+        }
     }
 }
