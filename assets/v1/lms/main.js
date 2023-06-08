@@ -9,10 +9,12 @@ $(function LMSCourses() {
 	};
 
 	// attach select2 to status filter
-	$(".jsCourseStatusDefaultCourse").select2({
-		minimumResultsForSearch: -1
-	}).select2('val', filterObj.status);
-	
+	$(".jsCourseStatusDefaultCourse")
+		.select2({
+			minimumResultsForSearch: -1,
+		})
+		.select2("val", filterObj.status);
+
 	/**
 	 * Apply filter
 	 */
@@ -21,7 +23,7 @@ $(function LMSCourses() {
 		event.preventDefault();
 		//
 		filterObj.title = $(".jsCourseTitleDefaultCourse").val() || "";
-		filterObj.status = $(".jsCourseStatusDefaultCourse").select2('val');
+		filterObj.status = $(".jsCourseStatusDefaultCourse").select2("val");
 		filterObj.jobTitleIds = $(".jsCourseJobTitleDefaultCourse").select2(
 			"val"
 		);
@@ -245,7 +247,7 @@ $(function LMSCourses() {
 		Modal(
 			{
 				Id: "jsLMSPreviewCourseModal",
-				Title: 'Preview Course',
+				Title: "Preview Course",
 				Loader: "jsLMSPreviewCourseModalLoader",
 				Cl: "container",
 				Body: '<div id="jsLMSPreviewCourseModalBody"></div>',
@@ -254,26 +256,23 @@ $(function LMSCourses() {
 				// show the loader
 				ml(true, "jsLMSPreviewCourseModalLoader");
 
-				setInterval(function(){
-					// make the call
-					XHR = $.ajax({
-						url: apiURL + "lms/course/" + courseId + "/preview/",
-						method: "GET",
+				// make the call
+				XHR = $.ajax({
+					url: apiURL + "lms/course/" + courseId + "/preview/",
+					method: "GET",
+				})
+					.success(function (response) {
+						// empty the call
+						XHR = null;
+						$("#jsLMSPreviewCourseModalBody").html(response);
 					})
-						.success(function (response) {
-							// empty the call
-							XHR = null;
-							$("#jsLMSPreviewCourseModalBody").html(response);
-						})
-						.fail(handleErrorResponse)
-						.done(function () {
-							// empty the call
-							XHR = null;
-							// hide the loader
-							ml(false, "jsLMSPreviewCourseModalLoader");
-						});
-
-				}, 2000)
+					.fail(handleErrorResponse)
+					.done(function () {
+						// empty the call
+						XHR = null;
+						// hide the loader
+						ml(false, "jsLMSPreviewCourseModalLoader");
+					});
 			}
 		);
 	}
