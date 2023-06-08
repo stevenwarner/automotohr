@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-xs-12 col-md-12">
                     <label><strong>Status</strong></label>
-                    <select class="jsCourseStatusDefaultCourse form-control">
+                    <select class="jsCourseStatusDefaultCourse" style="width: 100%">
                         <option value="all">All</option>
                         <option value="active">Active</option>
                         <option value="inactive">InActive</option>

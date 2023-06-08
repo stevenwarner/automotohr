@@ -4,10 +4,15 @@ $(function LMSCourses() {
 	// set the default filter
 	let filterObj = {
 		title: "",
-		status: "all",
+		status: "active",
 		jobTitleIds: "all",
 	};
 
+	// attach select2 to status filter
+	$(".jsCourseStatusDefaultCourse").select2({
+		minimumResultsForSearch: -1
+	}).select2('val', filterObj.status);
+	
 	/**
 	 * Apply filter
 	 */
@@ -16,7 +21,7 @@ $(function LMSCourses() {
 		event.preventDefault();
 		//
 		filterObj.title = $(".jsCourseTitleDefaultCourse").val() || "";
-		filterObj.status = $(".jsCourseStatusDefaultCourse").val();
+		filterObj.status = $(".jsCourseStatusDefaultCourse").select2('val');
 		filterObj.jobTitleIds = $(".jsCourseJobTitleDefaultCourse").select2(
 			"val"
 		);
