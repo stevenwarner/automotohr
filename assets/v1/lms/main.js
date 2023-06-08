@@ -107,6 +107,16 @@ $(function LMSCourses() {
 	});
 
 	/**
+	 * Preview course
+	 */
+	$(document).on("click", ".jsPreviewCourse", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+		previewCourse($(this).closest("tr").data("id"));
+	});
+
+	/**
 	 * convert filter object to string
 	 * @returns
 	 */
@@ -224,9 +234,49 @@ $(function LMSCourses() {
 				ml(false, "jsPageLoader");
 			});
 	}
+
+	function previewCourse(courseId) {
+		// create modal
+		Modal(
+			{
+				Id: "jsLMSPreviewCourseModal",
+				Title: 'Preview Course',
+				Loader: "jsLMSPreviewCourseModalLoader",
+				Cl: "container",
+				Body: '<div id="jsLMSPreviewCourseModalBody"></div>',
+			},
+			function () {
+				// show the loader
+				ml(true, "jsLMSPreviewCourseModalLoader");
+
+				setInterval(function(){
+					// make the call
+					XHR = $.ajax({
+						url: apiURL + "lms/course/" + courseId + "/preview/",
+						method: "GET",
+					})
+						.success(function (response) {
+							// empty the call
+							XHR = null;
+							$("#jsLMSPreviewCourseModalBody").html(response);
+						})
+						.fail(handleErrorResponse)
+						.done(function () {
+							// empty the call
+							XHR = null;
+							// hide the loader
+							ml(false, "jsLMSPreviewCourseModalLoader");
+						});
+
+				}, 2000)
+			}
+		);
+	}
 	// make it available to window
 	window.getLMSDefaultCourses = getLMSDefaultCourses;
 	//
 	getDefaultJobTitles();
 	getLMSDefaultCourses();
+	//
+	previewCourse(1);
 });
