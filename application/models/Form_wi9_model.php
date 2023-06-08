@@ -27,6 +27,7 @@ class Form_wi9_model extends CI_Model
                 $this->db->where('sid', $result[0]['sid']);
                 $this->db->update('applicant_i9form', $data);
             } else {
+                $data['emp_app_sid'] = $data['user_sid'];
                 $this->db->insert('applicant_i9form', $data);
             }
         }
@@ -239,6 +240,7 @@ class Form_wi9_model extends CI_Model
     }
 
     function insert_i9_form_record($data_to_insert) {
+        $data_to_insert['emp_app_sid'] = $data_to_insert['user_sid'];
         $this->db->insert('applicant_i9form', $data_to_insert);
     }
 

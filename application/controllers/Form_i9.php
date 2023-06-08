@@ -168,6 +168,7 @@ class Form_i9 extends Public_Controller
             $data['section2_flag'] = false;
 
             $previous_form = $this->form_wi9_model->fetch_form('i9', $type, $employer_sid);
+
             if (empty($previous_form)) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong> Form information not found!');
                 redirect($form_back_url, 'refresh');
@@ -239,7 +240,6 @@ class Form_i9 extends Public_Controller
                 $insert_data = array();
 
                 if (sizeof($previous_form) == 0 || !$previous_form['applicant_flag'] || $security_sid == $previous_form['emp_app_sid']) {
-
                     // Section 1 Data Array Starts
                     $insert_data['section1_last_name'] = $formpost['section1_last_name'];
                     $insert_data['section1_first_name'] = $formpost['section1_first_name'];

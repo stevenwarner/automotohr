@@ -994,6 +994,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             unset($forms[0]['sid']);
             $forms[0]['user_sid'] = $hired_sid;
             $forms[0]['user_type'] = 'employee';
+            $forms[0]['emp_app_sid'] = $hired_sid;
             $this->db->insert('applicant_i9form', $forms[0]);
         }
 
@@ -1092,6 +1093,7 @@ class Hire_onboarding_applicant_model extends CI_Model
                 unset($forms[0]['sid']);
                 $forms[0]['user_sid'] = $hired_sid;
                 $forms[0]['user_type'] = 'employee';
+                $forms[0]['emp_app_sid'] = $hired_sid;
                 $this->db->insert('applicant_i9form', $forms[0]);
                 //
                 $return_array['I9'] = $forms[0];

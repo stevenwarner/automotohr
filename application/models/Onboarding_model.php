@@ -2151,11 +2151,13 @@ class Onboarding_model extends CI_Model
 
     function insert_i9_form_record($data_to_insert)
     {
+        $data_to_insert['emp_app_sid'] = $data_to_insert['user_sid'];
         $this->db->insert('applicant_i9form', $data_to_insert);
     }
 
     function insert_w9_form_record($data_to_insert)
     {
+        $data_to_insert['emp_app_sid'] = $data_to_insert['user_sid'];
         $this->db->insert('applicant_i9form', $data_to_insert);
     }
 

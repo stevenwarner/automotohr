@@ -417,6 +417,7 @@ class Merge_company_employee_model extends CI_Model
             if(!empty($secondary_employee_i9)){
                 unset($secondary_employee_i9['sid']);
                 $secondary_employee_i9['user_sid'] = $primary_employee_sid;
+                $secondary_employee_i9['emp_app_sid'] = $primary_employee_sid;
                 $this->db->insert('applicant_i9form', $secondary_employee_i9);
             }
         }

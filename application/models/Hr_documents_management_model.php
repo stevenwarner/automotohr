@@ -1747,6 +1747,7 @@ class Hr_documents_management_model extends CI_Model
 
     function insert_i9_form_record($data_to_insert)
     {
+        $data_to_insert['emp_app_sid'] = $data_to_insert['user_sid'];
         $this->db->insert('applicant_i9form', $data_to_insert);
     }
 
@@ -9174,6 +9175,7 @@ class Hr_documents_management_model extends CI_Model
             $ins['company_sid'] = $companyId;
             $ins['status'] = $ins['sent_status'] = 1;
             $ins['sent_date'] = $dateTime;
+            $ins['emp_app_sid'] = $userId;
             //
             $this->db->insert('applicant_i9form', $ins);
             //
