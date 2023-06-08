@@ -334,8 +334,13 @@ class Form_i9 extends Public_Controller
                     $mailbody['companysid'] = $data['session']['company_detail']['sid'];
                     $mailbody['previous_form_sid'] = $previous_form['emp_app_sid'];
                     $mailbody['reviewer_signature_base64'] = $reviewer_signature_base64;
+                    $mailbody['get_signature_query'] = $this->db->last_query();
 
                     sendI9EmailToDevs('I9 tracker', $mailbody);
+
+                    if (empty($formpost['section2_firstday_of_emp_date']) || $formpost['section2_firstday_of_emp_date'] == 'N/A') {
+                        $reviewer_signature_base64 = '';
+                    }
 
 
                     $insert_data['section2_last_name'] = $formpost['section2_last_name'];
