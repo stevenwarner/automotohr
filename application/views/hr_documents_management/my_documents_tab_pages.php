@@ -103,7 +103,13 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                         </div>
                                                     </td>
                                                     <td class="text-center hidden-xs">
-                                                        <?= $pdBtn['pw'] . $pdBtn['dw']; ?>
+
+                                                        <?php if ($document['document_type'] == 'hybrid_document') {
+                                                            echo $pdBtn['pwnew'] . $pdBtn['dwnew'];
+                                                        } else {
+                                                            echo $pdBtn['pw'] . $pdBtn['dw'];
+                                                        } ?>
+
                                                         <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
                                                         <?php if ($document['isdoctolibrary'] == 1) { ?>
                                                             <a href="javascript:void(0);" class="btn btn-danger jsRevokeDocumentLibrary" title="Revoke Library Document" data-asid="<?= $document['sid']; ?>">Revoke</a>
@@ -651,7 +657,13 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                                                 </td>
                                                                                 </td>
                                                                                 <td class=" text-center hidden-xs">
-                                                                                    <?= $pdBtn['pw'] . $pdBtn['dw']; ?>
+
+                                                                                    <?php if ($document['document_type'] == 'hybrid_document') {
+                                                                                            echo $pdBtn['pwnew'] . $pdBtn['dwnew'];
+                                                                                        } else {
+                                                                                            echo $pdBtn['pw'] . $pdBtn['dw'];
+                                                                                        } ?>
+                                                                                    
                                                                                     <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
                                                                                     <?php if ($document['isdoctolibrary'] == 1) { ?>
                                                                                         <a href="javascript:void(0);" class="btn btn-danger jsRevokeDocumentLibrary" title="Revoke Library Document" data-asid="<?= $document['sid']; ?>">Revoke</a>
@@ -1131,9 +1143,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                                                             <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
                                                                                         </div>
                                                                                     </td>
-                                                                                    <td class="text-center hidden-xs"><?php //echo $document['document_type']; 
-                                                                                                                        ?>
-                                                                                        <? ?>
+                                                                                    <td class="text-center hidden-xs">
 
                                                                                         <?php if ($document['document_type'] == 'hybrid_document') {
                                                                                             echo $pdBtn['pwnew'] . $pdBtn['dwnew'];
