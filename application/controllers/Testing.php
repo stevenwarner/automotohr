@@ -55,4 +55,41 @@ class Testing extends CI_Controller
             ->setContent($fileContents)
             ->parse();
     }
+
+    /**
+     * scorm parse
+     */
+    public function parseScorm($courseId)
+    {
+        _e($this->input->post('scorm_file'),true);
+        $filePath = $this->input->post('scorm_file');
+        //
+        if (!file_exists(ROOTPATH.'uploads/'.$filePath)) {
+            // todo upload file to AWS
+            // downloadFileFromAWS(ROOTPATH.'uploads/', AWS_S3_BUCKET_URL.$filePath);
+        }
+        //
+        //
+        $zip = new ZipArchive;
+        $res = $zip->open(ROOTPATH.'uploads/'.$filePath);
+        if ($res !== TRUE) {
+            echo 'woot!';
+        }
+        //
+        $zip->close();
+        //
+        $newFolder = ROOTPATH.'uploads/'.str_replace(".zip","",$filePath);
+        $files1 = preg_grep('~\.(xml)$~', scandir($newFolder));
+        //
+        $files = glob($newFolder.".xml");
+        echo 'jhoot woot!';
+        echo $newFolder;
+        _e($files,true);
+        _e($files1,true);
+        
+        //
+        $this->load->library('scorm/parser', [], 'scorm_parser');
+        //
+        return SendResponse(200, ['status' => true, 'response' => '<p>Employee\'s state taxes are successfully updated.']);
+    }
 }
