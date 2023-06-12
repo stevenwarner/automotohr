@@ -440,14 +440,14 @@
 			if(f.Type == 'iframe') loadIframe( f.URL, '.js-uploaded-document iframe', true);
 
 			if (from == "company") {
-				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_document/print";
-				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_document/download";
+				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/company_document/print";
+				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/company_document/download";
 			} else if (from == "company") {
-				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/print";
-				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/download";	
+				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/print";
+				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/download";	
 			} else {
-				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/print";
-				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content');?>/"+( d.sid )+"/"+( status )+"/assigned_document/download";
+				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/assigned_document/print";
+				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/assigned_document/download";
 			}
 			
 			$("#hybrid_print_doc").attr("href",print_url)

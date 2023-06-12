@@ -12058,6 +12058,9 @@ if (!function_exists('')) {
             'dw' => '',
             'pm' => '',
             'dm' => '',
+            'pwnew' => '',
+            'dwnew' => '',
+
         ];
         //
         $replace = [
@@ -12068,6 +12071,11 @@ if (!function_exists('')) {
         //
         $printURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/print');
         $downloadURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/download');
+      
+        $printURLNew = base_url('hr_documents_management/perform_action_on_document_content_new/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/print');
+        $downloadURLNew = base_url('hr_documents_management/perform_action_on_document_content_new/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/download');
+
+      
         // For Generated
         if ($document['offer_letter_type'] == 'generated' || $document['document_type'] == 'generated') {
             //
@@ -12079,6 +12087,13 @@ if (!function_exists('')) {
             //
             $printURL = str_replace(array_keys($replace), $replace, $printURL);
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
+
+            //
+            $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
+            $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
+
+
+
         } else if ($document['offer_letter_type'] == 'uploaded' || $document['document_type'] == 'uploaded') {
             //
             if ($type == '') {
@@ -12090,6 +12105,12 @@ if (!function_exists('')) {
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
             $downloadURL = base_url("hr_documents_management/download_upload_document/" . $document['document_s3_name']);
+        
+            //
+            $printURLNew = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
+            $downloadURLNew = base_url("hr_documents_management/download_upload_document_new/" . $document['document_s3_name']);
+
+
         } else if ($document['offer_letter_type'] == 'hybrid_document' || $document['document_type'] == 'hybrid_document') {
             //
             if ($type == '') {
@@ -12101,6 +12122,12 @@ if (!function_exists('')) {
             // $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
             $printURL = str_replace(array_keys($replace), $replace, $printURL);
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
+
+            //
+            $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
+            $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
+
+
         }
         //_e($document, true);
         //
@@ -12109,6 +12136,12 @@ if (!function_exists('')) {
         //
         $r['dw'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
         $r['dm'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black"  target="_blank">Download</a>';
+        
+        //
+        $r['pwnew'] = '<a href="' . ($printURLNew) . '" class="btn ' . ($cls) . ' btn-orange" style="margin-right: 5px" target="_blank">Print</a>';
+        $r['dwnew'] = '<a href="' . ($downloadURLNew) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
+
+
         //_e($r, true);
         //
         return $r;
