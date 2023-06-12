@@ -15631,7 +15631,14 @@ class Hr_documents_management extends Public_Controller
         $data['perform_action'] = $perform_action;
         $data['form_input_data'] = $form_input_data;
         $data['is_iframe_preview'] = $is_iframe_preview;
-        $data['is_hybrid'] = "no";
+        $data['is_hybrid'] = "yes";
+
+        $data = [];
+        $data['document_body'] = $document_content;
+        $data['file_name'] = $file_name;
+        $data['form_input_data'] = $form_input_data;
+        $data['document'] = $document;
+        $data['perform_action'] = $perform_action;
 
         if ($document["document_type"] == "hybrid_document") {
             $document_path = "";
@@ -15640,31 +15647,56 @@ class Hr_documents_management extends Public_Controller
             } else {
                 $document_path = $request_from == "company_document" ? $document["uploaded_document_s3_name"] : $document["document_s3_name"];
             }
-
             //
-            $temp_path = FCPATH . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'temp_files' . DIRECTORY_SEPARATOR;
-
-            if (!file_exists("$temp_path/$file_name")) {
-                mkdir("$temp_path/$file_name", 0777, true);
-            }
-
+            $data['hybridArray'] = [];
+            $data['hybridArray']['s3_file'] = $document_path;
+            $data['hybridArray']['file_name'] = $file_name;
             //
-            $content = $data['document']['document_description'];
-            $fp = fopen($temp_path . "/" . $file_name . "/" . $file_name . ".doc", "wb");
-            fwrite($fp, $content);
-            fclose($fp);
+            $this->load->view('hr_documents_management/new_generated_document_action_page_hybrid', $data);
 
-            //
-            $this->download_upload_document_new($document_path, $file_name);
-
-            // $data['document_path'] = base_url("hr_documents_management/download_upload_document_new") . '/' . $document_path . '/' . $file_name;
-            $data['is_hybrid'] = "yes";
         } else {
 
             $this->load->view('hr_documents_management/new_generated_document_action_page', $data);
         }
     }
 
+    public function generateHybridDocument()
+    {
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return redirect('/login');
+        }
+        // get the post
+        $post = $this->input->post(null, true);
+        // set the s3 file
+        $s3_file = urldecode($post['s3_file']);
+        // set the path
+        $path = ROOTPATH . '/temp_files/'.$post['file_name'].'/';
+        // check and create path
+        if (!file_exists($path)) {
+            //
+            mkdir($path, 0777, true);
+        }
+        //
+        $this->load->library('aws_lib');
+        $this->aws_lib->get_object(AWS_S3_BUCKET_NAME, $s3_file, $path);
+        // // 
+        $handler = fopen($path.'section_2.pdf', 'w');
+        fwrite($handler, str_replace('data:application/pdf;base64,', '', $post['pdf']));
+        fclose($handler);
+
+        return sendResponse(200, ['success' => $post['file_name'] . '.zip']);
+    }
+
+    public function downloadHybridDocument($id)
+    {
+        // set the path
+        $path = ROOTPATH . '/temp_files/'.(str_replace('.zip', '', $id));
+     
+        $this->load->library('zip');
+        $this->zip->read_dir($path, FALSE);
+        $this->zip->download( $id);
+    }
 
     //
     public function download_upload_document_new($document_path, $folderName)
