@@ -1472,7 +1472,7 @@ if (!function_exists('get_print_document_url')) {
             } else if ($document_type == 'hybrid_document') {
                 //
                 $urls['print_url'] = base_url('hr_documents_management/perform_action_on_document_content_new/'.$document_sid.'/'.$document_type.'/'.$request_type.'/print');
-                $urls['download_url'] = base_url('hr_documents_management/perform_action_on_document_content_new/'.$document_sid.'/'.$document_type.'/'.$request_type.'download');
+                $urls['download_url'] = base_url('hr_documents_management/perform_action_on_document_content_new/'.$document_sid.'/'.$document_type.'/'.$request_type.'/download');
             }
             // End of Original Documents
         } else if ($request_type == 'assigned') {
