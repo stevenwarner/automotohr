@@ -283,9 +283,11 @@ class Gusto_payroll_model extends CI_Model
             return '';
         }
         //
+
         $response = updateSignatoryToGusto($signatoryArray, $signatoryUUID, $companyDetails, [
             'X-Gusto-API-Version: 2023-03-01'
         ]);
+
         //
         if (isset($response['errors'])) {
             //

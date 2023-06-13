@@ -16504,7 +16504,7 @@ if (!function_exists('getActiveEmployees')) {
             sid, first_name, last_name, middle_name, nick_name,
             email, PhoneNumber, dob, job_title, access_level, access_level_plus,
             Location_Address, Location_Address_2, Location_City, Location_State,
-            Location_City, Location_ZipCode, Location_Country
+            Location_City, Location_ZipCode, Location_Country,ssn
         ');
         $where = array(
             'parent_sid' => $company_sid,

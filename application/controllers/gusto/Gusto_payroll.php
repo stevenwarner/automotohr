@@ -10,6 +10,7 @@ class Gusto_payroll extends CI_Controller
         parent::__construct();
         // Call the model
         $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
+        $this->datetime = date('Y-m-d H:i:s', strtotime('now'));
     }
 
     /**
@@ -137,6 +138,7 @@ class Gusto_payroll extends CI_Controller
      */
     public function getSignatories(int $companyId)
     {
+        
         // fetch all signatories
         $this->gusto_payroll_model->fetchAllSignatories($companyId);
         // get all signatories
@@ -230,6 +232,9 @@ class Gusto_payroll extends CI_Controller
     {
         //
         $post = $this->input->put(null, true);
+
+//_e($post,true,true);
+
         // fetch signatory
         $signatory = $this->db
             ->select('version, ssn, birthday, gusto_uuid')
@@ -256,7 +261,10 @@ class Gusto_payroll extends CI_Controller
         ], $companyId, $post['id'], $signatory['gusto_uuid']);
 
         //
+
+        
         if (is_array($response)) {
+
             return SendResponse(200, ['errors' => $response]);
         }
         //

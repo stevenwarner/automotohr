@@ -7,64 +7,60 @@ $isGustoAdmin = isGustoAdmin($employerEmail, $companySid);
 //
 $navpills = [];
 //
+$companyTermsAccpeted = isCompanyTermsAccpeted();
+
 if (isPayrollOrPlus()) {
     //
 
     if ($isGustoAdmin > 0) {
 
-        $navpills[] = [
-            'title' => 'Company',
-            'url' => '/company',
-            'slug' => '',
-            'icon' => 'building',
-            'segment' => 'company'
-        ];
-        if (!isCompanyOnBoard()) {
+        if ($companyTermsAccpeted) {
             $navpills[] = [
-                'title' => 'Create Partner Company On Gusto',
+                'title' => 'Company',
+                'url' => '/company',
+                'slug' => '',
+                'icon' => 'building',
+                'segment' => 'company'
+            ];
+
+
+
+            // Dashboard
+            $navpills[] = [
+                'title' => 'Employees',
+                'url' => '/employees/payroll',
+                'slug' => '',
+                'icon' => 'users',
+                'segment' => 'employees'
+            ];
+            $navpills[] = [
+                'title' => 'Run payroll',
+                'url' => '/run',
+                'slug' => '',
+                'icon' => 'bank',
+                'segment' => 'run'
+            ];
+            $navpills[] = [
+                'title' => 'Manage Admins',
+                // 'url' => '/manage-admin',
+                'url' => 'avascript:void(0)',
+                'slug' => '',
+                'icon' => 'users',
+                'segment' => 'manage',
+                'class' => 'jsManageGustoAdmins',
+                'data-cid' => $companySid
+            ];
+
+            $navpills[] = [
+                'title' => 'Manage Signatories',
                 'url' => 'javascript:void(0)',
                 'slug' => '',
-                'icon' => 'handshake-o',
-                'segment' => 'company',
-                'class' => 'jsAddCompanyToGusto',
+                'icon' => '',
+                'segment' => 'manage',
+                'class' => 'jsManageGustoSignatories',
                 'data-cid' => $companySid
             ];
         }
-        // Dashboard
-        $navpills[] = [
-            'title' => 'Employees',
-            'url' => '/employees/payroll',
-            'slug' => '',
-            'icon' => 'users',
-            'segment' => 'employees'
-        ];
-        $navpills[] = [
-            'title' => 'Run payroll',
-            'url' => '/run',
-            'slug' => '',
-            'icon' => 'bank',
-            'segment' => 'run'
-        ];
-        $navpills[] = [
-            'title' => 'Manage Admins',
-            // 'url' => '/manage-admin',
-            'url' => 'avascript:void(0)',
-            'slug' => '',
-            'icon' => 'users',
-            'segment' => 'manage',
-            'class' => 'jsManageGustoAdmins',
-            'data-cid' => $companySid
-        ];
-
-        $navpills[] = [
-            'title' => 'Manage Signatories',
-            'url' => 'javascript:void(0)',
-            'slug' => '',
-            'icon' => '',
-            'segment' => 'manage',
-            'class' => 'jsManageGustoSignatories',
-            'data-cid' => $companySid
-        ];
 
 
         $navpills[] = [
@@ -75,23 +71,30 @@ if (isPayrollOrPlus()) {
             'segment' => 'service'
         ];
 
-        $navpills[] = [
-            'title' => 'Settings',
-            'url' => '/settings',
-            'slug' => '',
-            'icon' => 'cogs',
-            'segment' => 'settings'
-        ];
+        if ($companyTermsAccpeted) {
+
+            $navpills[] = [
+                'title' => 'Settings',
+                'url' => '/settings',
+                'slug' => '',
+                'icon' => 'cogs',
+                'segment' => 'settings'
+            ];
+        }
     }
 }
 
-$navpills[] = [
-    'title' => 'My Pay Stubs',
-    'url' => '/my',
-    'slug' => '',
-    'icon' => 'pie-chart',
-    'segment' => 'payroll/my'
-];
+
+if ($companyTermsAccpeted) {
+
+    $navpills[] = [
+        'title' => 'My Pay Stubs',
+        'url' => '/my',
+        'slug' => '',
+        'icon' => 'pie-chart',
+        'segment' => 'payroll/my'
+    ];
+}
 
 //
 if (isEmployeeOnPayroll($this->session->userdata('logged_in')['employer_detail']['sid'])) {

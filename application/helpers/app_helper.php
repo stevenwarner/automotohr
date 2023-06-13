@@ -456,3 +456,33 @@ if (!function_exists('isCompanyOnBoard')) {
         return false;
     }
 }
+
+
+if (!function_exists('isCompanyTermsAccpeted')) {
+    /**
+     * Check company already onboard
+     *
+     * @return
+     */
+    function isCompanyTermsAccpeted()
+    {
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        //
+        $has = $CI->db
+        ->where([
+            'company_sid' => $ses['company_detail']['sid'],
+            'terms_accepted' => 1
+
+        ])
+        ->count_all_results('payroll_companies');
+        //
+        if ($has) {
+            return true;
+        }
+        // Don't created yet
+        return false;
+    }
+}

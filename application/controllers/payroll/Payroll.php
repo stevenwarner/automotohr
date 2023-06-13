@@ -39,10 +39,20 @@ class Payroll extends CI_Controller
         $this->pages['footer'] = 'main/footer';
         //
         $this->version = 'v=' . (MINIFIED ? '1.0' : time());
+
+
         //
-        if (!$this->session->userdata('logged_in')['company_detail']['on_payroll']) {
+
+        if (!isCompanyOnBoard()) {
             return redirect('/dashboard');
         }
+
+
+        //
+        if (!isCompanyTermsAccpeted() &&  $this->uri->segment(1) != 'payroll' && $this->uri->segment(2) != 'service-terms') {
+            return redirect('/payroll/service-terms');
+        }
+        
     }
 
     /**
@@ -500,7 +510,7 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         $this->data['hide_employer_section'] = 1;
         // Get processed payrolls
-        
+
         //
         $this->data['payrollHistory'] = $this->pm->GetPayrollColumns(
             'payroll_company_processed_history',
@@ -1895,7 +1905,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            return([
+            return ([
                 'Status' => false,
                 'Errors' => $errors
             ]);

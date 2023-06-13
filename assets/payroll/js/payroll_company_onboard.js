@@ -473,7 +473,9 @@ $(function PayrollCompanyOnboard() {
     function FinishCompanyOnboarding() {
         $('#' + modalId).hide();
         alertify.alert('Success!', 'Payroll is activated against this store.', function () {
-            location.reload();
+           
+            window.location = GetURL('payroll/service-terms');
+        
         });
     }
 
