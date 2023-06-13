@@ -413,7 +413,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                     <?php if ($document['archive'] != 1) { ?>
                                                         <?php $pdBtn = getPDBTN($document, 'btn-info');  ?>
                                                         <tr>
-                                                            <td class="abc">
+                                                            <td class="">
                                                                 <?php
                                                                 echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';
                                                                 echo $document['status'] ? '' : '<b>(revoked)</b>';
@@ -439,13 +439,23 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                     <?php if ($document['archive'] != 1) { ?>
                                                         <?php $pdBtn = getPDBTN($document, 'btn-info', '', true);  ?>
                                                         <tr>
-                                                            <td class="def">
+                                                            <td class="">
                                                                 <?php
                                                                 echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';
                                                                 ?>
                                                             </td>
                                                             <td class="text-center hidden-xs">
-                                                                <?= $pdBtn['pw'] . $pdBtn['dw']; ?>
+                                                                <?php if ($document['document_type'] == 'generated' ) { ?>
+                                                                    <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/print"); ?>" class="btn btn-orange" target="_blank">Print</a>
+                                                                <?php }?>
+                                                                <?php if ($document['document_type'] == 'uploaded' ) { ?>
+                                                                    <a href="<?= base_url("hr_documents_management/download_upload_document/" . ($document['uploaded_document_s3_name'])); ?>" class="btn btn-black" target="_blank">Download</a>
+                                                                <?php }else if($document['document_type'] == 'hybrid_document'){
+
+                                                                } 
+                                                                else { ?>
+                                                                    <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/download"); ?>" class="btn btn-black" target="_blank">Download</a>
+                                                                <?php } ?>
 
                                                                 <a onclick="func_get_generated_document_preview(<?= $document['sid']; ?>,'<?= $document['document_type']; ?>', 'Employee');" class="btn btn-info">View Sign</a>
                                                             </td>
@@ -1543,7 +1553,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
         my_request.done(function(response) {
             $.ajax({
-                'url': '<?php echo base_url('hr_documents_management/get_print_and_download_urls'); ?>',
+                'url': '<?php echo base_url('hr_documents_management/get_print_url'); ?>',
                 'type': 'POST',
                 'data': {
                     'request_type': 'original',
@@ -1551,15 +1561,11 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                     'document_sid': document_sid
                 },
                 success: function(urls) {
-                   
                     var obj = jQuery.parseJSON(urls);
-                    console.log(obj.pwnew)
                     var print_url = obj.print_url;
                     var download_url = obj.download_url;
-                    // footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
-                    footer_content = obj.dwnew;
-                    // footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
-                    footer_print_btn = obj.pwnew;
+                    footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
+                    footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
                     $('#document_modal_body').html(response);
                     $('#document_modal_footer').html(footer_content);
                     $('#document_modal_footer').append(footer_print_btn);

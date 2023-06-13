@@ -7572,7 +7572,12 @@ class Hr_documents_management extends Public_Controller
             $request_type = $this->input->post('request_type');
             $document_type = $this->input->post('document_type');
             $document_sid = $this->input->post('document_sid');
-            $url = get_print_document_url($request_type, $document_type, $document_sid);
+            //
+            if ($document_type == 'uploaded'){
+                $document_type = 'MS';
+            }
+            //
+            $url = get_print_document_url($request_type, $document_type , $document_sid);
             echo json_encode($url);
         }
     }
