@@ -27,7 +27,7 @@ $(function createCourse() {
 	/**
 	 * Create course save event
 	 */
-	$(document).on("click", ".jsAddCourseCreateBtn", function (event) {
+	$(document).on("click", ".jsAddCourseCreateBtn", function (event) {alert("pdpdpp");
 		// stop the default event
 		event.preventDefault();
 		// create the course object

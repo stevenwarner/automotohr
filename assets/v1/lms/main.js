@@ -258,7 +258,7 @@ $(function LMSCourses() {
 
 				// make the call
 				XHR = $.ajax({
-					url: apiURL + "lms/course/" + courseId + "/preview/",
+					url: apiURL + "lms/course/" + courseId + "/preview",
 					method: "GET",
 				})
 					.success(function (response) {

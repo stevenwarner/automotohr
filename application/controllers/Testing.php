@@ -61,35 +61,55 @@ class Testing extends CI_Controller
      */
     public function parseScorm($courseId)
     {
-        _e($this->input->post('scorm_file'),true);
         $filePath = $this->input->post('scorm_file');
         //
         if (!file_exists(ROOTPATH.'uploads/'.$filePath)) {
             // todo upload file to AWS
-            // downloadFileFromAWS(ROOTPATH.'uploads/', AWS_S3_BUCKET_URL.$filePath);
+            $this->load->library('aws_lib');
+            $this->aws_lib->get_object(AWS_S3_BUCKET_NAME, $filePath , ROOTPATH.'uploads/');
         }
         //
         //
         $zip = new ZipArchive;
         $res = $zip->open(ROOTPATH.'uploads/'.$filePath);
+        //
         if ($res !== TRUE) {
-            echo 'woot!';
+            return SendResponse(404, ['status' => false, 'errors' => ['Unable to unzip file.']]);
         }
         //
         $zip->close();
         //
-        $newFolder = ROOTPATH.'uploads/'.str_replace(".zip","",$filePath);
-        $files1 = preg_grep('~\.(xml)$~', scandir($newFolder));
+        $newFolder = ROOTPATH.'uploads/'.str_replace(".zip", "", $filePath);
         //
-        $files = glob($newFolder.".xml");
-        echo 'jhoot woot!';
-        echo $newFolder;
-        _e($files,true);
-        _e($files1,true);
-        
+        $file = $newFolder . '/imsmanifest.xml';
+        //
+        if (!file_exists($file)) {
+            return SendResponse(404, ['status' => false, 'errors' => ['"imsmanifest.xml" file is missing.']]);
+        }
+        //
+        $handler = fopen($file, 'r');
+        $fileContents = fread($handler, filesize($file));
+        fclose($handler);
         //
         $this->load->library('scorm/parser', [], 'scorm_parser');
         //
-        return SendResponse(200, ['status' => true, 'response' => '<p>Employee\'s state taxes are successfully updated.']);
+        $scormInfo = $this
+            ->scorm_parser
+            ->setContent($fileContents)
+            ->parse();
+        //
+        if (!$scormInfo) {
+            return SendResponse(404, ['status' => false, 'errors' => ['Unable to read XML file.']]);
+        }   
+        //
+        if (isset($scormInfo['errors'])) {
+            // Todo delete AWS file and also local one if version not matched
+            return SendResponse(404, ['status' => false, 'errors' => $scormInfo['errors']]);
+        }
+        //
+        $this->db->where("sid", $courseId);
+        $this->db->update("lms_default_courses", ["Imsmanifist_json" => $scormInfo]);
+        //
+        return SendResponse(200, ['status' => true, 'success' => ['Scorm file read successfully.']]);
     }
 }

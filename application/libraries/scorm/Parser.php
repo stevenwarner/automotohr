@@ -90,7 +90,7 @@ class parser
         // set proper type
         $this->setCourseType();
 
-        echo json_encode($this->parsedArray);
+        return json_encode($this->parsedArray);
     }
 
     /**
