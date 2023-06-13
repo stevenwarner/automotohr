@@ -7578,6 +7578,7 @@ class Hr_documents_management extends Public_Controller
             }
             //
             $url = get_print_document_url($request_type, $document_type , $document_sid);
+            // _e($url,true);
             echo json_encode($url);
         }
     }

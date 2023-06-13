@@ -1396,7 +1396,7 @@ if (!function_exists('getreferralusername')) {
 if (!function_exists('get_print_document_url')) {
     function get_print_document_url($request_type, $document_type, $document_sid)
     {
-        $urls = '';
+        $urls = [];
         if ($request_type == 'original') {
             if ($document_type == 'MS') {
                 $CI = &get_instance();
@@ -1428,6 +1428,7 @@ if (!function_exists('get_print_document_url')) {
                 } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
                     $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid);
                 }
+
                 $document_path = $result[0]['uploaded_document_s3_name'];
                 $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
             } else if ($document_type == 'DS') {
@@ -1466,6 +1467,9 @@ if (!function_exists('get_print_document_url')) {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid . '/download');
             } else if ($document_type == 'offer') {
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid . '/download');
+            } else if ($document_type == 'generated') {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid . '/download');
             }
