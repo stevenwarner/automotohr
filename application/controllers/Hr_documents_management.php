@@ -1864,6 +1864,29 @@ class Hr_documents_management extends Public_Controller
                             return;
                         }
 
+                        if ($source == 'hybrid_document') {
+                            if ($fetch_data == 'original') {
+                                $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+                            } else if ($fetch_data == 'modified') {
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_record($user_type, $user_sid, $document_sid);
+                            } else {
+                                $history_sid = $this->input->post('history_sid');
+                                $document_info = $this->hr_documents_management_model->get_assigned_document_history_record($user_type, $user_sid, $document_sid, $history_sid);
+                            }
+                            //
+                            if (!empty($document_info)) {
+                                $document_content = $document_info['document_description'];
+                                $document_info['document_body'] = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_content, $document_sid);
+                            }
+                            //
+                            echo $this->load->view(
+                                'hr_documents_management/hybird_document_preview_partial',
+                                $document_info,
+                                true
+                            );
+                            return;
+                        }
+
                         if ($source == 'offer') {
                             $document_info = $this->hr_documents_management_model->get_offer_letter_details($company_sid, $document_sid);
                         }
@@ -7552,6 +7575,23 @@ class Hr_documents_management extends Public_Controller
             $url = get_print_document_url($request_type, $document_type, $document_sid);
             echo json_encode($url);
         }
+    }
+
+    public function get_print_and_download_urls () {
+        $data['session'] = $this->session->userdata('logged_in');
+        $company_sid = $data["session"]["company_detail"]["sid"];
+        //
+        $request_type = $this->input->post('request_type');
+        $document_type = $this->input->post('document_type');
+        $document_sid = $this->input->post('document_sid');
+        //
+        if ($document_type == 'offer') {
+            $document = $this->hr_documents_management_model->get_offer_letter_details($company_sid, $document_sid);
+        } else {
+            $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+        }
+        //
+        echo json_encode(getPDBTN($document));
     }
 
     public function check_active_auth_signature($document_sid, $company_sid)
@@ -15699,7 +15739,7 @@ class Hr_documents_management extends Public_Controller
     }
 
     //
-    public function download_upload_document_new($document_path, $folderName)
+    public function download_upload_document_new($document_path, $folderName = ROOTPATH . 'downloaded_documents')
     {
 
         if ($this->session->userdata('logged_in')) {
@@ -15712,9 +15752,6 @@ class Hr_documents_management extends Public_Controller
             $data['title'] = 'Documents Assignment';
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
-
-
-            $document_path = '0057-test_latest_uploaded_document-58-Yo2.pdf';
 
             if ($this->form_validation->run() == false) {
                 //
