@@ -1470,9 +1470,6 @@ if (!function_exists('get_print_document_url')) {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid . '/download');
             } else if ($document_type == 'hybrid_document') {
-                //
-                // $urls['print_url'] = base_url('hr_documents_management/perform_action_on_document_content_new/'.$document_sid.'/'.$document_type.'/company_document/print');
-                // $urls['download_url'] = base_url('hr_documents_management/perform_action_on_document_content_new/'.$document_sid.'/'.$document_type.'/'.$request_type.'company_document/download');
                 $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document_sid);
             }
@@ -1525,6 +1522,9 @@ if (!function_exists('get_print_document_url')) {
             } else if ($document_type == 'offer') {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/' . $document_sid . '/download');
+            } else if ($document_type == 'hybrid_document') {
+                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
             }
         } else if ($request_type == 'submitted') {
             if ($document_type == 'MS') {
@@ -1563,6 +1563,9 @@ if (!function_exists('get_print_document_url')) {
             } else if ($document_type == 'generated') {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid . '/download');
+            } else if ($document_type == 'hybrid_document') {
+                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
             }
         } else if ($request_type == 'offer_letter') {
             $CI = &get_instance();

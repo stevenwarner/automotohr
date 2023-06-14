@@ -12125,8 +12125,23 @@ if (!function_exists('')) {
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
 
             //
-            $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
-            $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
+            // $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
+            // $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
+            if (isset($document['uploaded_document_extension'])) {
+                $printURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document['sid']);
+                $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document['sid']);
+            } else {
+                if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
+                } else {
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
+                }
+            }
+            
+            
+            
 
 
         }
