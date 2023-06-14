@@ -1921,7 +1921,7 @@ class Hr_documents_management extends Public_Controller
                         //
                         downloadFileFromAWS(
                             getFileName(
-                                $path . 'section_1.pdf',
+                                $path . 'section_1',
                                 AWS_S3_BUCKET_URL . $s3_path
                             ),
                             AWS_S3_BUCKET_URL . $s3_path
