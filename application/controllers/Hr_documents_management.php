@@ -15770,12 +15770,19 @@ class Hr_documents_management extends Public_Controller
 
     public function downloadHybridDocument($id)
     {
-        // set the path
-        $path = ROOTPATH . '/temp_files/hybird_document/'.$id;
-    //  _e($path,true,true);
-        $this->load->library('zip');
-        $this->zip->read_dir($path, FALSE);
-        $this->zip->download($id);
+        //
+        $fileWithPath = ROOTPATH . 'temp_files/hybird_document/' . $id;
+        // Download file
+        header('Content-type: application/zip');
+        header('Content-Disposition: attachment; filename="' . basename($id) . '"');
+        header("Content-length: " . filesize($fileWithPath));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        ob_clean();
+        flush();
+        readfile($fileWithPath);
+        exit;
     }
 
     //
