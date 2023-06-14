@@ -400,7 +400,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             <div class="panel panel-default">
                                 <div class="panel-body">
                                     <table class="table table-plane cs-w4-table">
-                                        <?php if ($is_handbook_category_exist && !empty($handbook_documents['original'])) { ?>
+                                        <?php if (!empty($handbook_documents['original'])) { ?>
                                             <thead>
                                                 <tr>
                                                     <th class="col-lg-8 hidden-xs">Document Name</th>

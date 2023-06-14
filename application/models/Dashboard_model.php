@@ -3360,7 +3360,7 @@ class Dashboard_model extends CI_Model
         $this->db->where('username !=', '');
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where('access_level!=','Employee');
+        $this->db->where('access_level!=', 'Employee');
         $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $result = $this->db->get('users')->result_array();
 
@@ -3369,5 +3369,26 @@ class Dashboard_model extends CI_Model
         } else {
             return array();
         }
+    }
+
+
+    //
+    function get_employee_handbook_documents_new($company_id)
+    {
+        //
+        $documents = [
+            'assigned' => [],
+            'original' => []
+        ];
+
+        $documents = $this->db
+            ->where('company_sid', $company_id)
+            ->where('isdoctohandbook', 1)
+            ->get('documents_management')
+            ->result_array();
+
+        $documents['original'] = $documents;
+
+        return $documents;
     }
 }

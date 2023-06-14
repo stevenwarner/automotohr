@@ -559,6 +559,8 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['signature_required'] = $this->input->post('signature_required');
                         $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_insert['visible_to_document_center'] = 0;
+                        $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+
 
 
                         $data_to_insert['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
@@ -841,6 +843,9 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['automatic_assign_in'] = !empty($this->input->post('assign-in-months')) ? $this->input->post('assign-in-months') : 0;
                         }
                         $video_required = $this->input->post('video_source');
+
+                        //
+                        $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
                         if ($video_required != 'not_required') {
                             $video_source = $this->input->post('video_source');
@@ -1369,7 +1374,6 @@ class Hr_documents_management extends Public_Controller
                         $data_to_update = array();
                         $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_update['visible_to_document_center'] = 0;
-
                         if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                             $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
                             $original_name = $_FILES['document']['name'];
@@ -1386,6 +1390,8 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['uploaded_document_extension'] = $file_info['extension'];
                             }
                         }
+                        //
+                        $data_to_update['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
                         if ($video_required != 'not_required') {
                             $video_source = $this->input->post('video_source');
@@ -7573,17 +7579,18 @@ class Hr_documents_management extends Public_Controller
             $document_type = $this->input->post('document_type');
             $document_sid = $this->input->post('document_sid');
             //
-            if ($document_type == 'uploaded'){
+            if ($document_type == 'uploaded') {
                 $document_type = 'MS';
             }
             //
-            $url = get_print_document_url($request_type, $document_type , $document_sid);
+            $url = get_print_document_url($request_type, $document_type, $document_sid);
             // _e($url,true);
             echo json_encode($url);
         }
     }
 
-    public function get_print_and_download_urls () {
+    public function get_print_and_download_urls()
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         //
@@ -9520,8 +9527,11 @@ class Hr_documents_management extends Public_Controller
                 $new_history_data['uploaded_document_original_name'] = $uploaded_document_original_name;
                 $new_history_data['uploaded_document_s3_name'] = $uploaded_document_s3_name;
             }
+
             //
-            // $data_to_insert = array();
+            $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+
+             // $data_to_insert = array();
             $new_history_data = array();
             $data_to_insert['company_sid'] = $company_sid;
             $data_to_insert['employer_sid'] = $employer_sid;
@@ -9752,6 +9762,9 @@ class Hr_documents_management extends Public_Controller
                     $data_to_update['uploaded_document_extension'] = $file_info['extension'];
                 }
             }
+
+            //
+            $data_to_update['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
             if ($video_required != 'not_required') {
                 $video_source = $this->input->post('video_source');
@@ -15699,7 +15712,6 @@ class Hr_documents_management extends Public_Controller
             $data['hybridArray']['file_name'] = $file_name;
             //
             $this->load->view('hr_documents_management/new_generated_document_action_page_hybrid', $data);
-
         } else {
 
             $this->load->view('hr_documents_management/new_generated_document_action_page', $data);
@@ -15717,7 +15729,7 @@ class Hr_documents_management extends Public_Controller
         // set the s3 file
         $s3_file = urldecode($post['s3_file']);
         // set the path
-        $path = ROOTPATH . '/temp_files/'.$post['file_name'].'/';
+        $path = ROOTPATH . '/temp_files/' . $post['file_name'] . '/';
         // check and create path
         if (!file_exists($path)) {
             //
@@ -15727,7 +15739,7 @@ class Hr_documents_management extends Public_Controller
         $this->load->library('aws_lib');
         $this->aws_lib->get_object(AWS_S3_BUCKET_NAME, $s3_file, $path);
         // // 
-        $handler = fopen($path.'section_2.pdf', 'w');
+        $handler = fopen($path . 'section_2.pdf', 'w');
         fwrite($handler, str_replace('data:application/pdf;base64,', '', $post['pdf']));
         fclose($handler);
 
@@ -15737,11 +15749,11 @@ class Hr_documents_management extends Public_Controller
     public function downloadHybridDocument($id)
     {
         // set the path
-        $path = ROOTPATH . '/temp_files/'.(str_replace('.zip', '', $id));
-     
+        $path = ROOTPATH . '/temp_files/' . (str_replace('.zip', '', $id));
+
         $this->load->library('zip');
         $this->zip->read_dir($path, FALSE);
-        $this->zip->download( $id);
+        $this->zip->download($id);
     }
 
     //
@@ -15785,8 +15797,6 @@ class Hr_documents_management extends Public_Controller
                 $path = $temp_path . '/' . $folderName;
                 $this->zip->read_dir($path, FALSE);
                 $this->zip->download($folderName . 'zip');
-
-
             } else {
                 //nothing
             }
