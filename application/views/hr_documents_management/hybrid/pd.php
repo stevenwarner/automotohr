@@ -206,7 +206,11 @@
                 dataURI: pdf,
                 fileName: '<?= $document['document_title'].'-'.date("m-d-Y").'.pdf'; ?>',
             });
+
+            setTimeout(() => {
             window.close();
+            }, 2000);
+            
         });
     }
 </script>

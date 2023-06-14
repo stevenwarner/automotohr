@@ -1900,6 +1900,40 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         break;
+
+                    case 'download_hybird_document':
+                        $pdf_content = $this->input->post('base64');
+                        $file_name = $this->input->post('file_name');
+                        $s3_path = $this->input->post('s3_path');
+                        //
+                        // $pdf_decoded = base64_decode ($pdf_content);
+                        $path = ROOTPATH . '/temp_files/hybird_document/'.time().'/';
+                        $zipath = ROOTPATH . '/temp_files/hybird_document/';
+                        //
+                        if (!file_exists($path)) {
+                            //
+                            mkdir($path, 0777, true);
+                        }
+                        //
+                        $handler = fopen($path . 'section_2.pdf', 'w');
+                        fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $pdf_content), true));
+                        fclose($handler);
+                        //
+                        downloadFileFromAWS(
+                            getFileName(
+                                $path . 'section_1.pdf',
+                                AWS_S3_BUCKET_URL . $s3_path
+                            ),
+                            AWS_S3_BUCKET_URL . $s3_path
+                        );
+                        //
+                        $zipFileName = time() . '.zip';
+                        $this->load->library('zip');
+                        $this->zip->read_dir($path, FALSE);
+                        $this->zip->archive($zipath.$zipFileName);
+                        echo base_url('hr_documents_management/downloadHybridDocument/').$zipFileName;
+                        return;
+                        break;    
                 }
             }
         }
@@ -15737,11 +15771,11 @@ class Hr_documents_management extends Public_Controller
     public function downloadHybridDocument($id)
     {
         // set the path
-        $path = ROOTPATH . '/temp_files/'.(str_replace('.zip', '', $id));
-     
+        $path = ROOTPATH . '/temp_files/hybird_document/'.$id;
+    //  _e($path,true,true);
         $this->load->library('zip');
         $this->zip->read_dir($path, FALSE);
-        $this->zip->download( $id);
+        $this->zip->download($id);
     }
 
     //
@@ -15793,5 +15827,132 @@ class Hr_documents_management extends Public_Controller
         } else {
             redirect('login', 'refresh');
         }
+    }
+
+    function print_download_hybird_document(
+        $t, // Type 
+        $a, // Action
+        $s, // Section
+        $i,  // ID
+        $tt = 'document'
+    ) {
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        //
+        $data["s3_path"] = ''; 
+        $data["document_body"] = ''; 
+        //
+        switch ($t) {
+            case 'assigned_history':
+                $d = $this->hr_documents_management_model->getDocumentHistoryById($i);
+                $data["s3_path"] = $d['document_s3_name']; 
+                $document_body = $this->convertMagicCodeToHTML($d);
+                $data["document_body"] = $document_body;    
+                //
+                break;
+            case 'original':
+                if ($tt == 'document'){
+                    $d = $this->hr_documents_management_model->getDocumentById($i);
+                    $d['user_type'] = null;
+                    $d['user_sid'] = null;
+                    $d['document_sid'] = null;
+                    $data["s3_path"] = $d['uploaded_document_s3_name']; 
+                    $document_body = $this->convertMagicCodeToHTML($d);
+                    $data["document_body"] = $document_body;  
+                } else {
+                    $d = $this->hr_documents_management_model->getOfferLetterById($i);
+                    $d['user_type'] = null;
+                    $d['user_sid'] = null;
+                    $d['document_sid'] = null;
+                    $data["s3_path"] = $d['uploaded_document_s3_name']; 
+                    $document_body = $this->convertMagicCodeToHTML($d);
+                    $data["document_body"] = $document_body;  
+                }
+                //     
+                break;
+            case 'assigned':
+            case 'submitted':
+                $d = $this->hr_documents_management_model->getAssignedDocumentById($i);
+                $data["s3_path"] = $d['document_s3_name']; 
+                $document_body = $this->convertMagicCodeToHTML($d, 'submitted');
+                $data["document_body"] = $document_body;  
+                break;
+        }
+
+        if (!isset($d['user_type'])) $d['user_type'] = 'employee';
+
+        $data['type'] = $t;
+        $data['action'] = $a;
+        $data['section'] = $s;
+        $data['id'] = $i;
+        $data['document'] = $d;
+        $urls = get_required_url($data['s3_path']);
+        $data['print_url'] = $urls['print_url'];
+        $data['download_url'] = $urls['download_url'];
+        $data['company_sid'] = $data['session']['company_detail']['sid'];
+        $data['employer_sid'] = $data['session']['employer_detail']['sid'];
+        $data['title'] = $d['document_title'];
+        //
+        $this->load->view('hr_documents_management/hybrid/print_download_hybird_document', $data);
+    }
+
+    function convertMagicCodeToHTML ($document, $request_type = 'original') {
+        $requested_content = '';
+        //
+        if ($request_type == 'submitted') {
+            if (!empty(unserialize($document['form_input_data']))) {
+                $is_iframe_preview = 0;
+            }
+
+            if (!empty($document['authorized_signature'])) {
+                $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
+            } else {
+                $authorized_signature_image = '------------------------------(Authorized Signature Required)';
+            }
+            if (!empty($document['authorized_signature_date'])) {
+                $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
+            } else {
+                $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            }
+
+            $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
+            $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
+            $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
+
+            $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+
+            $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
+            $requested_content = $document_content;
+        } else {
+            if ($request_type == 'assigned') {
+                // if (empty($document['submitted_description']) && empty($document['form_input_data'])) {    
+                $is_iframe_preview = 0;
+            }
+
+            $form_input_data = json_encode(json_decode('assigned'));
+            //
+            $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            $authorized_signature_image = '------------------------------(Authorized Signature Required)';
+            $signature_bas64_image = '------------------------------(Signature Required)';
+            $init_signature_bas64_image = '------------------------------(Signature Initial Required)';
+            $sign_date = '------------------------------(Sign Date Required)';
+            //
+            $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            //
+            $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
+            $requested_content = $document_content;
+        }
+        //
+        return $requested_content;
     }
 }

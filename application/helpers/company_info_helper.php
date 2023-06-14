@@ -1473,8 +1473,8 @@ if (!function_exists('get_print_document_url')) {
                 //
                 // $urls['print_url'] = base_url('hr_documents_management/perform_action_on_document_content_new/'.$document_sid.'/'.$document_type.'/company_document/print');
                 // $urls['download_url'] = base_url('hr_documents_management/perform_action_on_document_content_new/'.$document_sid.'/'.$document_type.'/'.$request_type.'company_document/download');
-                $urls['print_url'] = base_url('hr_documents_management/print_download/original/print/both/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_download/original/download/both/'.$document_sid);
+                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document_sid);
             }
             // End of Original Documents
         } else if ($request_type == 'assigned') {
