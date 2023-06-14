@@ -2,8 +2,8 @@
     font-family: 'Conv_SCRIPTIN';
     src: url('../fonts/SCRIPTIN.eot');
     src: local('?'), url('../fonts/SCRIPTIN.woff') format('woff'),
-    url('../fonts/SCRIPTIN.ttf') format('truetype'),
-    url('../fonts/SCRIPTIN.svg') format('svg');
+        url('../fonts/SCRIPTIN.ttf') format('truetype'),
+        url('../fonts/SCRIPTIN.svg') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -38,7 +38,8 @@ body.A3.landscape .sheet {
 }
 
 body.A4 .sheet {
-    width: 210mm; /*height: 296mm;*/
+    width: 210mm;
+    /*height: 296mm;*/
     margin: 5mm;
 }
 
@@ -93,11 +94,13 @@ body.A5.landscape .sheet {
         width: 420mm
     }
 
-    body.A3, body.A4.landscape {
+    body.A3,
+    body.A4.landscape {
         width: 297mm
     }
 
-    body.A4, body.A5.landscape {
+    body.A4,
+    body.A5.landscape {
         width: 210mm
     }
 
@@ -154,12 +157,12 @@ body.A5.landscape .sheet {
     border-collapse: collapse;
 }
 
-.i9-table thead > tr > th,
-.i9-table tbody > tr > th,
-.i9-table tfoot > tr > th,
-.i9-table thead > tr > td,
-.i9-table tbody > tr > td,
-.i9-table tfoot > tr > td {
+.i9-table thead>tr>th,
+.i9-table tbody>tr>th,
+.i9-table tfoot>tr>th,
+.i9-table thead>tr>td,
+.i9-table tbody>tr>td,
+.i9-table tfoot>tr>td {
     padding: 4px;
     border: 1px solid #000;
     vertical-align: top;
@@ -224,8 +227,8 @@ body.A5.landscape .sheet {
     margin: 0 15px 0 0;
 }
 
-.i9-table.border-less-head thead > tr > th,
-.i9-table.border-less-head thead > tr > td {
+.i9-table.border-less-head thead>tr>th,
+.i9-table.border-less-head thead>tr>td {
     border: none !important;
     padding: 4px !important;
 }
@@ -246,12 +249,12 @@ body.A5.landscape .sheet {
     border-bottom: 4px solid #000;
 }
 
-.i9-table.border-less-head thead > tr > th,
-.i9-table.border-less-head tbody > tr > th,
-.i9-table.border-less-head tfoot > tr > th,
-.i9-table.border-less-head thead > tr > td,
-.i9-table.border-less-head tbody > tr > td,
-.i9-table.border-less-head tfoot > tr > td {
+.i9-table.border-less-head thead>tr>th,
+.i9-table.border-less-head tbody>tr>th,
+.i9-table.border-less-head tfoot>tr>th,
+.i9-table.border-less-head thead>tr>td,
+.i9-table.border-less-head tbody>tr>td,
+.i9-table.border-less-head tfoot>tr>td {
     padding: 0;
     border: 1px solid #000;
     border-collapse: collapse;
@@ -262,23 +265,23 @@ body.A5.landscape .sheet {
     border-collapse: collapse;
 }
 
-.i9-table .nested-table thead > tr > th,
-.i9-table .nested-table tbody > tr > th,
-.i9-table .nested-table tfoot > tr > th,
-.i9-table .nested-table thead > tr > td,
-.i9-table .nested-table tbody > tr > td,
-.i9-table .nested-table tfoot > tr > td {
+.i9-table .nested-table thead>tr>th,
+.i9-table .nested-table tbody>tr>th,
+.i9-table .nested-table tfoot>tr>th,
+.i9-table .nested-table thead>tr>td,
+.i9-table .nested-table tbody>tr>td,
+.i9-table .nested-table tfoot>tr>td {
     padding: 4px;
     border: 1px solid #000;
     border-collapse: collapse;
 }
 
-.i9-table.border-less-head .nested-table.no-border thead > tr > th,
-.i9-table.border-less-head .nested-table.no-border tbody > tr > th,
-.i9-table.border-less-head .nested-table.no-border tfoot > tr > th,
-.i9-table.border-less-head .nested-table.no-border thead > tr > td,
-.i9-table.border-less-head .nested-table.no-border tbody > tr > td,
-.i9-table.border-less-head .nested-table.no-border tfoot > tr > td {
+.i9-table.border-less-head .nested-table.no-border thead>tr>th,
+.i9-table.border-less-head .nested-table.no-border tbody>tr>th,
+.i9-table.border-less-head .nested-table.no-border tfoot>tr>th,
+.i9-table.border-less-head .nested-table.no-border thead>tr>td,
+.i9-table.border-less-head .nested-table.no-border tbody>tr>td,
+.i9-table.border-less-head .nested-table.no-border tfoot>tr>td {
     border: none;
 }
 
@@ -323,4 +326,9 @@ body.A5.landscape .sheet {
     font-family: 'Conv_SCRIPTIN';
     word-spacing: 15px;
     line-height: 56px;
+}
+
+.esignaturesize {
+    width: 150px !important;
+    height: 50px !important;
 }
