@@ -163,7 +163,6 @@ class Hr_documents_management extends Public_Controller
                         $select_employees = $this->input->post('employees');
                         $user_type = 'employee';
 
-
                         $authorized_signature_required = $this->input->post('auth_sign_sid');
 
                         if ($authorized_signature_required > 0) {
@@ -263,6 +262,10 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['download_required'] = $document['download_required'];
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+
+                                //
+                                $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
+
                                 //
                                 addColumnsForDocumentAssigned($data_to_insert, $document);
 
@@ -9005,7 +9008,10 @@ class Hr_documents_management extends Public_Controller
         $j = $document;
         $j['company_sid'] = $company_sid;
         $j['employer_sid'] = $employer_sid;
+
         //
+        $j['confidential_employees'] = $j['confidential_employees'] == null ? '' : $j['confidential_employees'];
+
         unset(
             $j['DocumentAssigmentId'],
             $j['DocumentAssignedId']
@@ -9531,7 +9537,7 @@ class Hr_documents_management extends Public_Controller
             //
             $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
-             // $data_to_insert = array();
+            // $data_to_insert = array();
             $new_history_data = array();
             $data_to_insert['company_sid'] = $company_sid;
             $data_to_insert['employer_sid'] = $employer_sid;
@@ -10101,6 +10107,9 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
                         $data_to_insert['document_title'] = $document['document_title'];
                         $data_to_insert['document_description'] = htmlentities($this->input->post('description'));
+
+                        //
+                        $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
 
                         $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                     }
@@ -11069,6 +11078,7 @@ class Hr_documents_management extends Public_Controller
             //
             $post = $this->input->post(NULL, TRUE);
             //
+
             $document_title = $this->input->post('document_title');
             $document_description = htmlentities($this->input->post('document_description', false));
             $document_guidence = htmlentities($this->input->post('document_guidence', false));
@@ -11096,6 +11106,10 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['uploaded_document_s3_name'] = $post['uploaded_file'];
                 $data_to_insert['uploaded_document_extension'] = $post['uploaded_file_ext'];
             }
+
+            //
+            $data_to_insert['isdoctohandbook'] = isset($post['isdoctohandbook']) ? $post['isdoctohandbook'] : 0;
+
             //
             if ($do_descpt) $data_to_insert['document_description'] = $document_description;
             //
@@ -11324,7 +11338,9 @@ class Hr_documents_management extends Public_Controller
                     $a['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
                 }
 
-                // print_r($a['confidential_employees']);
+
+                //
+                $a['isdoctohandbook'] = isset($post['isdoctohandbook']) ? $post['isdoctohandbook'] : 0;
 
                 // When approval employees are selected
                 $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
@@ -11676,6 +11692,7 @@ class Hr_documents_management extends Public_Controller
             $a = array_merge($a, $document);
         } else {
             //
+
             $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
             $a['is_required'] = $post['isRequired'];
             $a['is_signature_required'] = $post['isSignatureRequired'];

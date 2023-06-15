@@ -3373,7 +3373,7 @@ class Dashboard_model extends CI_Model
 
 
     //
-    function get_employee_handbook_documents_new($company_id)
+    function get_employee_handbook_documents_new($company_id, $employee_sid)
     {
         //
         $documents = [
@@ -3381,14 +3381,31 @@ class Dashboard_model extends CI_Model
             'original' => []
         ];
 
-        $documents = $this->db
+       //
+        $document = $this->db
             ->where('company_sid', $company_id)
+            ->where('user_sid', $employee_sid)
             ->where('isdoctohandbook', 1)
-            ->get('documents_management')
+            ->get('documents_assigned')
             ->result_array();
 
-        $documents['original'] = $documents;
+        $documents['assigned'] = $document;
 
+
+        $assignedDocumentSids = [];
+        if (!empty($documents['assigned'])) {
+            $assignedDocumentSids = array_column($documents['assigned'], 'document_sid');
+        }
+
+        //
+        $this->db->where('company_sid', $company_id);
+        $this->db->where('isdoctohandbook', 1);
+        if (!empty($assignedDocumentSids)) {
+            $this->db->where_not_in('sid', $assignedDocumentSids);
+        }
+        $document = $this->db->get('documents_management')->result_array();
+
+        $documents['original'] = $document;
         return $documents;
     }
 }

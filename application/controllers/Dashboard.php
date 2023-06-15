@@ -557,8 +557,8 @@ class Dashboard extends Public_Controller
             $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
             //
             if ($data['employee_handbook_enable']) {
-
-                    $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents_new($company_id);
+                //
+               $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents_new($company_id,$employer_id);
             }
             //
             $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
