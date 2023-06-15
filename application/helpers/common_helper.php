@@ -12132,11 +12132,11 @@ if (!function_exists('')) {
                 $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document['sid']);
             } else {
                 if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
-                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
-                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document['sid']);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document['sid']);
                 } else {
-                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
-                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document['sid']);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document['sid']);
                 }
             }
             
@@ -13375,7 +13375,12 @@ if (!function_exists('getDocumentBody')) {
 
         for ($stb = 0; $stb < $short_textboxes; $stb++) {
             $short_textbox_name = 'short_textbox_' . $stb;
-            $short_textbox_value = !empty($form_input_data[$short_textbox_name]) ? $form_input_data[$short_textbox_name] : '';
+            //
+            $short_textbox_value = '';
+            if ($document_type == 'completed') {
+                $short_textbox_value = !empty($form_input_data[$short_textbox_name]) ? $form_input_data[$short_textbox_name] : '';
+            }
+            //
             $short_textbox_id = 'short_textbox_' . $stb . '_id';
             $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
             $my_return = preg_replace('/{{short_text}}/', $short_textbox, $my_return, 1);
@@ -13383,7 +13388,12 @@ if (!function_exists('getDocumentBody')) {
 
         for ($ltb = 0; $ltb < $long_textboxes; $ltb++) {
             $long_textbox_name = 'long_textbox_' . $ltb;
-            $long_textbox_value = !empty($form_input_data[$long_textbox_name]) ? $form_input_data[$long_textbox_name] : '';
+            //
+            $long_textbox_value = '';
+            if ($document_type == 'completed') {
+                $long_textbox_value = !empty($form_input_data[$long_textbox_name]) ? $form_input_data[$long_textbox_name] : '';
+            }
+            //
             $long_textbox_id = 'long_textbox_' . $ltb . '_id';
             $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
             $my_return = preg_replace('/{{text}}/', $long_textbox, $my_return, 1);
@@ -13391,7 +13401,12 @@ if (!function_exists('getDocumentBody')) {
 
         for ($cb = 0; $cb < $checkboxes; $cb++) {
             $checkbox_name = 'checkbox_' . $cb;
-            $checkbox_value = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' ? 'checked="checked"' : '';
+            //
+            $checkbox_value = '';
+            if ($document_type == 'completed') {
+                $checkbox_value = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' ? 'checked="checked"' : '';
+            }
+            //
             $checkbox_id = 'checkbox_' . $cb . '_id';
             $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="' . $checkbox_name . '" id="' . $checkbox_id . '" ' . $checkbox_value . '/>';
             $my_return = preg_replace('/{{checkbox}}/', $checkbox, $my_return, 1);
@@ -13399,7 +13414,12 @@ if (!function_exists('getDocumentBody')) {
 
         for ($ta = 0; $ta < $textareas; $ta++) {
             $textarea_name = 'textarea_' . $ta;
-            $textarea_value = !empty($form_input_data[$textarea_name]) ? $form_input_data[$textarea_name] : '';
+            //
+            $textarea_value = '';
+            if ($document_type == 'completed') {
+                $textarea_value = !empty($form_input_data[$textarea_name]) ? $form_input_data[$textarea_name] : '';
+            }
+            //
             $textarea_id = 'textarea_' . $ta . '_id';
             $div_id = 'textarea_' . $ta . '_id_sec';
             $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
@@ -13433,7 +13453,7 @@ if (!function_exists('getDocumentBody')) {
         $authorized_signature_date = '';
         //
         if ($isAuthorized == 1) {
-            if ($document['authorized_signature_by'] != 0) {
+            if ($document['authorized_signature_by'] != 0 && $document_type == 'completed') {
                 $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
 
                 $CI->db->select('assigned_to_signature');

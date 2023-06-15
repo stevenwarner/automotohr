@@ -33,7 +33,18 @@
 	if(sizeof($all_documents)) foreach ($all_documents as $k => $v) $all_documents[$k]['document_description'] = html_entity_decode($v['document_description']); 
 	if(sizeof($offer_letters)) foreach ($offer_letters as $k => $v) $offer_letters[$k]['letter_body'] = html_entity_decode($v['letter_body']); 
 	// Assigned/Submitted Data
-	if(sizeof($assigned_documents)) foreach ($assigned_documents as $k => $v) $assigned_documents[$k]['document_description'] = html_entity_decode($v['document_description']); 
+	if(sizeof($assigned_documents)) {
+		foreach ($assigned_documents as $k => $v) {
+			$body = $v['document_description'];
+			$isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+			$assigned_documents[$k]['document_description'] =  html_entity_decode(getGeneratedDocumentURL($v, "uncompleted", $isAuthorized)['html_body']);
+			if ($v['user_consent'] == 1) {
+				$assigned_documents[$k]['submitted_document_description'] =  html_entity_decode(getGeneratedDocumentURL($v, "completed", $isAuthorized)['html_body']);
+			}
+			
+		}
+	}
+	// if(sizeof($assigned_documents)) foreach ($assigned_documents as $k => $v) $assigned_documents[$k]['document_description'] = html_entity_decode($v['document_description']); 
 	if(sizeof($assigned_documents_history)) foreach ($assigned_documents_history as $k => $v) $assigned_documents_history[$k]['document_description'] = html_entity_decode($v['document_description']); 
 	if(sizeof($assigned_offer_letters)) foreach ($assigned_offer_letters as $k => $v) $assigned_offer_letters[$k]['document_description'] = html_entity_decode($v['document_description']); 
 	if(sizeof($assigned_offer_letter_history)) foreach ($assigned_offer_letter_history as $k => $v) $assigned_offer_letter_history[$k]['document_description'] = html_entity_decode($v['document_description']); 
@@ -380,7 +391,7 @@
 				type,
 				status
 			);
-			console.log(d);
+			//
 			// Set 
 			var s3_file = d.uploaded_file !== undefined && d.uploaded_file !== null ? d.uploaded_file : ( d.uploaded_document_s3_name !== undefined && d.uploaded_document_s3_name !== null ? d.uploaded_document_s3_name : d.document_s3_name );
 			//
@@ -399,6 +410,7 @@
 				status,
 				type
 			);
+
 			//
 			var buttons = '';
 			buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/print/'+( d.sid )+'" target="_blank" class="btn btn-success">Print</a>';
@@ -410,26 +422,25 @@
 			// $('.js-uploaded-document .js-button').html( f.getButtonHTML() );
 			$('.js-uploaded-document .panel-body').html( f.getHTML() );
 			// Content section
-			if(status == 'submitted'){
-				//
-				var g = getUploadedFileAPIUrl(
-					d.submitted_description,
-					status
-				);
-				g = '<iframe src="'+( d.submitted_description )+'" frameborder="0" style="width: 100%; height: 500px;"></iframe>';
-				//
-				buttons = '';
-				// buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/print/description/'+( d.sid )+'" target="_blank" class="btn btn-success btn-sm">Print</a>&nbsp;';
-				// buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/download/description/'+( d.sid )+'" target="_blank"  class="btn btn-success btn-sm">Download</a>';
-				//
-				// $('.js-generated-document .panel-body').html( g );
-				// $('.js-generated-document .js-button').html( buttons );
-
-				
-			} else{
-				$('.js-generated-document .panel-body').html( g.getHTML() );
-				// $('.js-generated-document .js-button').html( g.getButtonHTML() );
-			}
+			// if(status == 'submitted'){
+			// 	//
+			// 	// var g = getUploadedFileAPIUrl(
+			// 	// 	d.submitted_description,
+			// 	// 	status
+			// 	// );
+			// 	// g = '<iframe src="'+( d.submitted_description )+'" frameborder="0" style="width: 100%; height: 500px;"></iframe>';
+			// 	//
+			// 	buttons = '';
+			// 	// buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/print/description/'+( d.sid )+'" target="_blank" class="btn btn-success btn-sm">Print</a>&nbsp;';
+			// 	// buttons += '<a href="<?=base_url('hr_documents_management/pd');?>/'+( status )+'/download/description/'+( d.sid )+'" target="_blank"  class="btn btn-success btn-sm">Download</a>';
+			// 	//
+			// 	// $('.js-generated-document .panel-body').html( g );
+			// 	// $('.js-generated-document .js-button').html( buttons );
+			// } else{ 
+			// 	// $('.js-generated-document .panel-body').html( g.getHTML() );
+			// 	// $('.js-generated-document .js-button').html( g.getButtonHTML() );
+			// }
+			$('.js-generated-document .panel-body').html( g.getHTML() );
 			//
 			$('.js-generated-document .js-text').html('<strong>Section 2: </strong> Description');
 			// Full Download
@@ -446,8 +457,14 @@
 				print_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/print";
 				download_url = "<?=base_url('hr_documents_management/perform_action_on_document_content_new');?>/"+( d.sid )+"/"+( status )+"/company_offer_letter/download";	
 			} else {
-				print_url = "<?=base_url('hr_documents_management/print_download_hybird_document/assigned/print/both');?>/"+( d.sid );
-				download_url = "<?=base_url('hr_documents_management/print_download_hybird_document/assigned/print/both');?>/"+( d.sid );
+				if(status == 'submitted'){
+					print_url = "<?=base_url('hr_documents_management/print_download_hybird_document/submitted/print/both');?>/"+( d.sid );
+					download_url = "<?=base_url('hr_documents_management/print_download_hybird_document/submitted/print/both');?>/"+( d.sid );
+				} else {
+					print_url = "<?=base_url('hr_documents_management/print_download_hybird_document/assigned/print/both');?>/"+( d.sid );
+					download_url = "<?=base_url('hr_documents_management/print_download_hybird_document/assigned/print/both');?>/"+( d.sid );
+				}
+					
 			}
 			
 			$("#hybrid_print_doc").attr("href",print_url)
@@ -559,6 +576,7 @@
 			s,
 			t
 		){
+			//
 			var r = {};
 			//
 			r.PrintURL = '<?=base_url('hr_documents_management/pd');?>/'+( s )+'/print/description/' + d.sid+'/'+t;
@@ -568,12 +586,16 @@
 			r.getDownloadHTML = () => '<a href="'+( r.DownloadURL )+'" target="_blank" class="btn btn-success btn-sm">Download</a>';
 			r.getButtonHTML = () => r.getPrintHTML() +' &nbsp; '+ r.getDownloadHTML();
 			//
+			var documentBody = d.document_description;
+			if (s == 'submitted') {
+				documentBody = d.submitted_document_description;
+			}
 			r.getHTML = () => `
 			<div class="row">
 				<div class="col-sm-12">
 					<div style="padding: 30px 50px; background-color: lightgrey; height: 600px; overflow-x: hidden; overflow-y: scroll;">
 						<div style="padding: 20px; background-color: white; min-height: 900px;">
-							${d.document_description == undefined ? d.letter_body : d.document_description}
+							${documentBody == undefined ? d.letter_body : documentBody}
 						</div>
 					</div>
 				</div>

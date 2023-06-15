@@ -33,8 +33,8 @@
 
                             <div class="row">
                                 <div class="col-xs-12 text-right" style="margin-bottom: 12px;">
-                                    <a target="_blank" class="btn btn-success" href="<?php echo base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/'.'submitted/assigned_document/print'; ?>">Print</a>
-                                    <a target="_blank" class="btn btn-success" href="<?php echo base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/'.'submitted/assigned_document/download'; ?>">Download</a>
+                                    <a target="_blank" class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_download_hybird_document/submitted/print/both').'/'.$document['sid']; ?>">Print</a>
+                                    <a target="_blank" class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_download_hybird_document/submitted/print/both').'/'.$document['sid']; ?>">Download</a>
                                 </div>
                             </div> 
                                    
