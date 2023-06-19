@@ -52,7 +52,6 @@ class Payroll extends CI_Controller
         if (!isCompanyTermsAccpeted() &&  $this->uri->segment(1) != 'payroll' && $this->uri->segment(2) != 'service-terms') {
             return redirect('/payroll/service-terms');
         }
-        
     }
 
     /**
@@ -604,6 +603,11 @@ class Payroll extends CI_Controller
         });
         //
         $payrollInfo = array();
+        //
+
+        //
+        $this->data['payRollBlockersResponse'] = $this->payRollBlockers($this->data['companyId']);
+
         //
         if ($payPeriods) {
             foreach ($payPeriods as $period) {
@@ -2342,6 +2346,42 @@ class Payroll extends CI_Controller
             $returnData['Form'] = $response;
             //
             return $returnData;
+        }
+    }
+
+    //
+    private function payRollBlockers($companyId)
+    {
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        $response = payRollBlockers($company);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0];
+            }
+            // Error took place
+            return ([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+            // res([
+            //     'Status' => false,
+            //     'Errors' => $errors
+            // ]);
+        } else {
+            //
+            return [
+                'Status' => true,
+                'Response' => $response
+            ];
         }
     }
 }

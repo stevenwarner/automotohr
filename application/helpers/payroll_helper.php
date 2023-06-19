@@ -1965,7 +1965,10 @@ if (!function_exists('PayrollURL')) {
         $urls['getCompanyOnboardStatusFromGusto'] = 'v1/companies/' . ($key) . '/onboarding_status';
         $urls['finishCompanyOnboardOnGusto'] = 'v1/companies/' . ($key) . '/finish_onboarding';
         $urls['approveCompanyOnboardOnGusto'] = 'v1/companies/' . ($key) . '/approve';
+
         //
+        $urls['getPayrollBlockers'] = 'v1/companies/' . ($key) . '/payrolls/blockers';
+
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
 }
@@ -4567,5 +4570,50 @@ if (!function_exists('finishEmployeeOnboardOnGusto')) {
         }
         //
         return $response;
+    }
+}
+
+//
+if (!function_exists('payRollBlockers')) {
+    function payRollBlockers($company)
+    {
+        //
+
+        $url = PayrollURL('getPayrollBlockers', $company['gusto_company_uid']);
+        //
+        $response =  MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json'
+                )
+            ],
+            false
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return payRollBlockers($company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            CacheHolder($url, $response);
+            return $response;
+        }
     }
 }
