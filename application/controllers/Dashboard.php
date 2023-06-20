@@ -558,13 +558,7 @@ class Dashboard extends Public_Controller
             //
             if ($data['employee_handbook_enable']) {
                 //
-                $category_sid = $this->dashboard_model->check_company_employee_handbook_category($company_id);
-                //
-                $data['is_handbook_category_exist'] = $category_sid;
-                //
-                if ($category_sid != 0) {
-                    $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents($category_sid, $employer_id);
-                }
+               $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents_new($company_id,$employer_id);
             }
             //
             $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
@@ -983,13 +977,7 @@ class Dashboard extends Public_Controller
             //
             if ($data['employee_handbook_enable']) {
                 //
-                $category_sid = $this->dashboard_model->check_company_employee_handbook_category($company_id);
-                //
-                $data['is_handbook_category_exist'] = $category_sid;
-                //
-                if ($category_sid != 0) {
-                    $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents($category_sid, $employer_id);
-                }
+                $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents_new($company_id, $employer_id);
             }
             //
 

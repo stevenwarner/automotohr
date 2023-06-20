@@ -53,11 +53,12 @@
                                             <label>Instructions / Guidance </label>
                                             <div style="margin-bottom:5px;"><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
                                             <textarea class="invoice-fields autoheight ckeditor" name="document_description" onkeyup="check_length()" id="document_description" cols="54" rows="6">
-                                                <?php 
-                                                    if (isset($document_info['document_description'])) {
-                                                        $desc = strip_tags(html_entity_decode($document_info['document_description']));   
-                                                        echo set_value('document_description', $desc);
-                                                    } else {                                                                                                                  echo set_value('document_description');
+                                                <?php
+                                                if (isset($document_info['document_description'])) {
+                                                    $desc = strip_tags(html_entity_decode($document_info['document_description']));
+                                                    echo set_value('document_description', $desc);
+                                                } else {
+                                                    echo set_value('document_description');
                                                 } ?>
                                             </textarea>
                                         </div>
@@ -365,7 +366,7 @@
                                             <?php $this->load->view('hr_documents_management/partials/settings', [
                                                 'is_confidential' =>  $document_info['is_confidential']
                                             ]); ?>
-                                        </div>    
+                                        </div>
                                     </div>
 
                                     <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
@@ -447,11 +448,53 @@
 
                                     <div class="row">
                                         <div class="col-xs-12">
+                                            <div class="hr-box">
+                                                <div class="hr-box-header">
+                                                    <strong>Employee Handbook and Policies?</strong>
+                                                </div>
+                                                <div class="hr-innerpadding">
+                                                    <?php
+                                                    if ($document_info['isdoctohandbook'] == 1) {
+                                                        $isdoctohandbook1 = 'checked="true"';
+                                                    } else {
+                                                        $isdoctohandbook0 = 'checked="true"';
+                                                    } ?>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <p class="text-danger"><strong><em><?= $this->lang->line('dm_handbook_text'); ?></em></strong></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <p><?= $this->lang->line('dm_handbook_label'); ?></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <label class="control control--radio font-normal">
+                                                                <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="0" <?php echo $isdoctohandbook0; ?> />
+                                                                No &nbsp;
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                            <label class="control control--radio font-normal">
+                                                                <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="1" <?php echo $isdoctohandbook1; ?> />
+                                                                Yes &nbsp;
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-xs-12">
                                             <button type="submit" onclick="validate_form();" class="btn btn-success"><?php echo isset($document_info['sid']) ? 'Update' : 'Upload'; ?></button>
                                             <a href="<?php echo base_url('hr_documents_management'); ?>" class="btn black-btn">Cancel</a>
                                         </div>
                                     </div>
-                                       
+
                                 </form>
                             </div>
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
@@ -527,7 +570,7 @@
             if (l.has_approval_flow == 1) {
                 approverPrefill.isChecked = true;
                 approverPrefill.approverNote = l.document_approval_note;
-                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                approverPrefill.approversList = l.document_approval_employees.split(',');
                 //
                 approverSection.prefill = approverPrefill;
             }

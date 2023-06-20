@@ -551,6 +551,44 @@
                                                     </div>
                                                 <?php } ?>
 
+
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <div class="hr-box">
+                                                                <div class="hr-box-header">
+                                                                    <strong>Employee Handbook and Policies?</strong>
+                                                                </div>
+                                                                <div class="hr-innerpadding">
+                                                                    <div class="row">
+                                                                        <div class="col-xs-12">
+                                                                            <p class="text-danger"><strong><em>If marked "Yes", this document will appear in the Employee Handbook and Policies.</em></strong></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-xs-12">
+                                                                            <p>Add this document to the Employee Handbook and Policies?</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-xs-12">
+                                                                            <label class="control control--radio font-normal">
+                                                                                <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="0" checked="true" />
+                                                                                No &nbsp;
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                            <label class="control control--radio font-normal">
+                                                                                <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="1" />
+                                                                                Yes &nbsp;
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
                                                 <!-- Send email -->
                                                 <div class="row hidden">
                                                     <div class="col-xs-12">

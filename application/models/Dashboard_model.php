@@ -3240,7 +3240,10 @@ class Dashboard_model extends CI_Model
             return 0;
         }
     }
-
+    /**
+     * deprecated as of 2023-06-20
+     * verify and remove
+     */
     function get_employee_handbook_documents($category_sid, $employee_sid)
     {
         $this->db->select('document_sid, document_type');
@@ -3360,7 +3363,7 @@ class Dashboard_model extends CI_Model
         $this->db->where('username !=', '');
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where('access_level!=','Employee');
+        $this->db->where('access_level!=', 'Employee');
         $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $result = $this->db->get('users')->result_array();
 
@@ -3369,5 +3372,39 @@ class Dashboard_model extends CI_Model
         } else {
             return array();
         }
+    }
+
+    /**
+     * get all handbook documents
+     *
+     * @param int $company_id
+     * @param int $employee_sid
+     * @return array
+     */
+    function get_employee_handbook_documents_new($company_id, $employee_sid)
+    {
+        // set default return array
+        $documents = [
+            'assigned' => [],
+            'original' => []
+        ];
+        // get assigned documents
+        $documents['assigned'] = $this->db
+            ->where('company_sid', $company_id)
+            ->where('user_sid', $employee_sid)
+            ->where('isdoctohandbook', 1)
+            ->get('documents_assigned')
+            ->result_array();
+        // set the query
+        $this->db->where('company_sid', $company_id);
+        $this->db->where('isdoctohandbook', 1);
+        // check for non empty array
+        if ($documents['assigned']) {
+            $this->db->where_not_in('sid', array_column($documents['assigned'], 'document_sid'));
+        }
+        // get the company documents
+        $documents['original'] = $this->db->get('documents_management')->result_array();
+        // return the array
+        return $documents;
     }
 }

@@ -163,7 +163,6 @@ class Hr_documents_management extends Public_Controller
                         $select_employees = $this->input->post('employees');
                         $user_type = 'employee';
 
-
                         $authorized_signature_required = $this->input->post('auth_sign_sid');
 
                         if ($authorized_signature_required > 0) {
@@ -263,6 +262,10 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['download_required'] = $document['download_required'];
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+
+                                //
+                                $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
+
                                 //
                                 addColumnsForDocumentAssigned($data_to_insert, $document);
 
@@ -559,6 +562,8 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['signature_required'] = $this->input->post('signature_required');
                         $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_insert['visible_to_document_center'] = 0;
+                        $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+
 
 
                         $data_to_insert['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
@@ -841,6 +846,9 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['automatic_assign_in'] = !empty($this->input->post('assign-in-months')) ? $this->input->post('assign-in-months') : 0;
                         }
                         $video_required = $this->input->post('video_source');
+
+                        //
+                        $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
                         if ($video_required != 'not_required') {
                             $video_source = $this->input->post('video_source');
@@ -1369,7 +1377,6 @@ class Hr_documents_management extends Public_Controller
                         $data_to_update = array();
                         $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_update['visible_to_document_center'] = 0;
-
                         if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                             $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
                             $original_name = $_FILES['document']['name'];
@@ -1386,6 +1393,8 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['uploaded_document_extension'] = $file_info['extension'];
                             }
                         }
+                        //
+                        $data_to_update['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
                         if ($video_required != 'not_required') {
                             $video_source = $this->input->post('video_source');
@@ -7607,17 +7616,18 @@ class Hr_documents_management extends Public_Controller
             $document_type = $this->input->post('document_type');
             $document_sid = $this->input->post('document_sid');
             //
-            if ($document_type == 'uploaded'){
+            if ($document_type == 'uploaded') {
                 $document_type = 'MS';
             }
             //
-            $url = get_print_document_url($request_type, $document_type , $document_sid);
+            $url = get_print_document_url($request_type, $document_type, $document_sid);
             // _e($url,true);
             echo json_encode($url);
         }
     }
 
-    public function get_print_and_download_urls () {
+    public function get_print_and_download_urls()
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         //
@@ -9032,7 +9042,10 @@ class Hr_documents_management extends Public_Controller
         $j = $document;
         $j['company_sid'] = $company_sid;
         $j['employer_sid'] = $employer_sid;
+
         //
+        $j['confidential_employees'] = $j['confidential_employees'] == null ? '' : $j['confidential_employees'];
+
         unset(
             $j['DocumentAssigmentId'],
             $j['DocumentAssignedId']
@@ -9554,7 +9567,10 @@ class Hr_documents_management extends Public_Controller
                 $new_history_data['uploaded_document_original_name'] = $uploaded_document_original_name;
                 $new_history_data['uploaded_document_s3_name'] = $uploaded_document_s3_name;
             }
+
             //
+            $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+
             // $data_to_insert = array();
             $new_history_data = array();
             $data_to_insert['company_sid'] = $company_sid;
@@ -9786,6 +9802,9 @@ class Hr_documents_management extends Public_Controller
                     $data_to_update['uploaded_document_extension'] = $file_info['extension'];
                 }
             }
+
+            //
+            $data_to_update['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
             if ($video_required != 'not_required') {
                 $video_source = $this->input->post('video_source');
@@ -10122,6 +10141,9 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
                         $data_to_insert['document_title'] = $document['document_title'];
                         $data_to_insert['document_description'] = htmlentities($this->input->post('description'));
+
+                        //
+                        $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
 
                         $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                     }
@@ -11090,6 +11112,7 @@ class Hr_documents_management extends Public_Controller
             //
             $post = $this->input->post(NULL, TRUE);
             //
+
             $document_title = $this->input->post('document_title');
             $document_description = htmlentities($this->input->post('document_description', false));
             $document_guidence = htmlentities($this->input->post('document_guidence', false));
@@ -11117,6 +11140,10 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['uploaded_document_s3_name'] = $post['uploaded_file'];
                 $data_to_insert['uploaded_document_extension'] = $post['uploaded_file_ext'];
             }
+
+            //
+            $data_to_insert['isdoctohandbook'] = isset($post['isdoctohandbook']) ? $post['isdoctohandbook'] : 0;
+
             //
             if ($do_descpt) $data_to_insert['document_description'] = $document_description;
             //
@@ -11345,7 +11372,9 @@ class Hr_documents_management extends Public_Controller
                     $a['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
                 }
 
-                // print_r($a['confidential_employees']);
+
+                //
+                $a['isdoctohandbook'] = isset($post['isdoctohandbook']) ? $post['isdoctohandbook'] : 0;
 
                 // When approval employees are selected
                 $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
@@ -11697,6 +11726,7 @@ class Hr_documents_management extends Public_Controller
             $a = array_merge($a, $document);
         } else {
             //
+
             $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
             $a['is_required'] = $post['isRequired'];
             $a['is_signature_required'] = $post['isSignatureRequired'];
@@ -15733,7 +15763,6 @@ class Hr_documents_management extends Public_Controller
             $data['hybridArray']['file_name'] = $file_name;
             //
             $this->load->view('hr_documents_management/new_generated_document_action_page_hybrid', $data);
-
         } else {
 
             $this->load->view('hr_documents_management/new_generated_document_action_page', $data);
@@ -15751,7 +15780,7 @@ class Hr_documents_management extends Public_Controller
         // set the s3 file
         $s3_file = urldecode($post['s3_file']);
         // set the path
-        $path = ROOTPATH . '/temp_files/'.$post['file_name'].'/';
+        $path = ROOTPATH . '/temp_files/' . $post['file_name'] . '/';
         // check and create path
         if (!file_exists($path)) {
             //
@@ -15761,7 +15790,7 @@ class Hr_documents_management extends Public_Controller
         $this->load->library('aws_lib');
         $this->aws_lib->get_object(AWS_S3_BUCKET_NAME, $s3_file, $path);
         // // 
-        $handler = fopen($path.'section_2.pdf', 'w');
+        $handler = fopen($path . 'section_2.pdf', 'w');
         fwrite($handler, str_replace('data:application/pdf;base64,', '', $post['pdf']));
         fclose($handler);
 
@@ -15826,8 +15855,6 @@ class Hr_documents_management extends Public_Controller
                 $path = $temp_path . '/' . $folderName;
                 $this->zip->read_dir($path, FALSE);
                 $this->zip->download($folderName . 'zip');
-
-
             } else {
                 //nothing
             }
