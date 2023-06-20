@@ -31,8 +31,6 @@
             return this.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g) === null ? false : true;
         }
     </script>
-    <script src="<?= base_url(_m("assets/gusto/js/company_onboard", 'js', '1.0.1')); ?>"></script>
-
 
 <?php endif; ?>
 <?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) : ?>

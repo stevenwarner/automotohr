@@ -18,7 +18,7 @@
                     <!--  -->
                     <div class="row">
                         <div class="col-xs-12">
-                            <iframe src="<?=$onboarding_link;?>" style="width: 100%; height: 600px;" frameborder="0" title="Onboarding"></iframe>
+                            <iframe src="<?=$onboarding_link;?>" style="width: 100%; height: 630px;" frameborder="0" title="Onboarding"></iframe>
                         </div>
                     </div>
                 </div>

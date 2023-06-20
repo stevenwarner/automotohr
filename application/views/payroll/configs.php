@@ -24,14 +24,14 @@
                         </div>
                     </div>
                     <!--  -->
-                    <div class="row">
+                    <!-- <div class="row">
                         <br>
                         <div class="col-xs-12">
                             <label class="csF16">Fast Payment Limit <span class="csRequired jsRequiredLimit <?=$payroll_settings['payment_speed'] == '2-day' ? '' : 'dn';?>"></span></label>
                             <p>Payment limit only applicable for 2-day payroll</p>
                             <input type="text" class="form-control" placeholder="5000" id="jsPayrollSettingsLimit" value="<?=$payroll_settings['fast_payment_limit'];?>"/>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!--  -->
                     <div class="row">
@@ -47,3 +47,7 @@
         </div>
     </div>
 </div>
+
+<!-- Add System Model -->
+<link rel="stylesheet" href="<?= base_url(_m("assets/css/SystemModel", 'css')); ?>">
+<script src="<?= base_url(_m("assets/js/SystemModal")); ?>"></script>

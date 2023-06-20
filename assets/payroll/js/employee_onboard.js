@@ -347,12 +347,61 @@ $(function EmployeeOnboard() {
 	 */
 	function getEmployeesForOnboard() {
 		//
-		xhr = $.get(baseURI + "payroll/get/" + companyId + "/employees")
-			.done(function (response) {
-				//
-				LoadEmployeesForPayroll(response);
-			})
-			.error(ErrorHandler);
+		// url: GetURL('get_payroll_page/employees/' + companyId)
+		// xhr = $.get(baseURI + "payroll/get/" + companyId + "/employees")
+		// 	.done(function (response) {
+		// 		//
+		// 		LoadEmployeesForPayroll(response);
+		// 	})
+		// 	.error(ErrorHandler);
+			//
+		//
+        //
+        // Hold until the old AJAX is completed
+        if (xhr !== null) {
+            return;
+        }
+        //
+        ml(true, modalLoader);
+        //
+        xhr = $.ajax({
+            method: "GET",
+            url: GetURL('get_payroll_employees/' + companyId + '/employee_onboarding')
+        })
+            .done(function (resp) {
+                //
+                xhr = null;
+                //
+                LoadContent(resp, function () {
+                    //
+                    $('.jsMoveEmployeesToPayroll').click(StartEmployeesMove); 
+                    //  
+					ml(false, modalLoader);
+                });
+            })
+            .error(ErrorHandler);
+	}
+
+	function StartEmployeesMove (event) {
+		//
+		event.preventDefault();
+		//
+		selectedIds = [];
+		//
+		if (!$('input[name="jsEmployeesList[]"]:checked').length) {
+			return alertify.alert(
+				"Error!",
+				"Please select at least one employee.",
+				function () {}
+			);
+		}
+		//
+		$('input[name="jsEmployeesList[]"]:checked').map(function () {
+			//
+			selectedIds.push($(this).val());
+		});
+		//
+		MoveEmployeesToPayroll();
 	}
 
 	/**
@@ -462,7 +511,7 @@ $(function EmployeeOnboard() {
 	 */
 	function MoveEmployeeToPayroll() {
 		//
-		if (current_employee > total_employees) {
+		if (current_employee > total_employees && selectedIds[current_employee - 1] === undefined) {
 			//
 			ml(false, modalLoader);
 			// Show success message
@@ -494,7 +543,7 @@ $(function EmployeeOnboard() {
 							""
 					).remove();
 					//
-					selectedIds.splice(current_employee - 1, 1);
+					// selectedIds.splice(current_employee - 1, 1);
 				}
 				//
 				current_employee++;
@@ -1631,7 +1680,7 @@ $(function EmployeeOnboard() {
 	 */
 	function LoadContent(content, cb) {
 		//
-		$("#jsEmployeeOnboardModelBody").html(content);
+		$('#' + (modalId) + 'Body').html(content);
 		//
 		!cb ? ml(false, modalLoader) : cb();
 	}

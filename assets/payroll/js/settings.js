@@ -12,18 +12,19 @@ $(function Settings() {
 	 */
 	var xhr = null;
 
-	$("#jsPayrollSettingsSpeed").change(function () {
-		//
-		$("#jsPayrollSettingsLimit").closest("div").show(0);
-		//
-		if ($(this).val() == "4-day") {
-			$("#jsPayrollSettingsLimit").closest("div").hide(0);
-		}
-	});
-	//
-	if ($("#jsPayrollSettingsSpeed").val() == "4-day") {
-		$("#jsPayrollSettingsLimit").closest("div").hide(0);
-	}
+	$("#jsPayrollSettingsLimit").closest("div").hide(0);
+	// $("#jsPayrollSettingsSpeed").change(function () {
+	// 	//
+	// 	// $("#jsPayrollSettingsLimit").closest("div").show(0);
+	// 	//
+	// 	if ($(this).val() == "4-day") {
+	// 		$("#jsPayrollSettingsLimit").closest("div").hide(0);
+	// 	}
+	// });
+	// //
+	// if ($("#jsPayrollSettingsSpeed").val() == "4-day") {
+	// 	$("#jsPayrollSettingsLimit").closest("div").hide(0);
+	// }
 
 	$(".jsPayrollSettingsSaveBtn").click(function (event) {
 		//
@@ -35,20 +36,20 @@ $(function Settings() {
 		//
 		var obj = {
 			payment_speed: $("#jsPayrollSettingsSpeed").val(),
-			fast_speed_limit: $("#jsPayrollSettingsLimit")
-				.val()
-				.replace(/[^0-9]/g, "")
+			// fast_speed_limit: $("#jsPayrollSettingsLimit")
+			// 	.val()
+			// 	.replace(/[^0-9]/g, "")
 		};
 		//
 		var _this = $(this);
 		//
-		if (obj.payment_speed == "2-day" && !obj.fast_speed_limit) {
-			return alertify.alert(
-				"Warning!",
-				"Fast payment limit is required.",
-				ECB
-			);
-		}
+		// if (obj.payment_speed == "2-day" && !obj.fast_speed_limit) {
+		// 	return alertify.alert(
+		// 		"Warning!",
+		// 		"Fast payment limit is required.",
+		// 		ECB
+		// 	);
+		// }
 		//
 		$(this).text("Please wait, while we are updating.");
 		//

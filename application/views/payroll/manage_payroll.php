@@ -38,6 +38,9 @@
                                                 <button class="btn btn-success jsManageGustoSignatories" data-cid="<?php echo $company_info['sid'] ?>">
                                                     Manage Signatories
                                                 </button>
+                                                <button class="btn btn-success jsManagePayments" data-cid="<?php echo $company_info['sid'] ?>">
+                                                    Manage Payment
+                                                </button>
                                             <?php } else { ?>
                                                 <button class="btn btn-success jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
                                                     Create Partner Company On Gusto
