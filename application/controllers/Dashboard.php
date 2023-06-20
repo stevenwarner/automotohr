@@ -586,6 +586,14 @@ class Dashboard extends Public_Controller
                 'week' => $this->em->getEmployeeInformationChange($company_id, 'week'),
                 'month' => $this->em->getEmployeeInformationChange($company_id, 'month')
             ];
+            // set default js
+            $data['PageScripts'] = [];
+            // check and add payroll scripts
+            if (checkIfAppIsEnabled('payroll')) {
+                $data['PageScripts'][] = [
+                    '1.0.1', 'assets/gusto/js/company_onboard'
+                ];
+            }
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
