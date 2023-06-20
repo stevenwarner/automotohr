@@ -93,7 +93,7 @@ if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'www.applyb
 define('STORE_FULL_URL', STORE_PROTOCOL . 'www.' . STORE_DOMAIN);
 define('AWS_S3_BUCKET_NAME', 'automotohrattachments');
 define('AWS_S3_BUCKET_URL', STORE_PROTOCOL_SSL . AWS_S3_BUCKET_NAME . '.s3.amazonaws.com/');
-define('SERVER_DNS_PRIMARY', 'NS1.AUTOMOTOHR.COM'); 
+define('SERVER_DNS_PRIMARY', 'NS1.AUTOMOTOHR.COM');
 define('SERVER_DNS_SECONDARY', 'NS2.AUTOMOTOHR.COM');
 define('STORE_FULL_URL_SSL', STORE_PROTOCOL_SSL . 'www.' . STORE_DOMAIN . '/');
 define('STAGING_SERVER_URL', 'http://localhost/ahr/');
@@ -679,3 +679,12 @@ define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);
 
 //
 define('DEV_TO_EMAIL', 'mubashar.ahmed@egenienext.com'); // automotoHR developer email
+// Interview email confirmation
+define('INTERVIEW_EMAIL_CONFIRMATION', 426);
+define('CREATE_INTERVIEW_EMAIL', 427);
+define('CALENDAR_CREATE_EMAIL_CALL', 428);
+define('CALENDAR_CREATE_EMAIL_EMAIL', 429);
+define('CALENDAR_CREATE_EMAIL_TRAINING', 430);
+define('CALENDAR_CREATE_EMAIL_MEETING', 431);
+define('CALENDAR_EVENT_UPDATE', 432);
+define('CALENDAR_EVENT_REMINDER', 433);
