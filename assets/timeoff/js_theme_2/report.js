@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     //
     let selectedEmployees = [];
     //
@@ -13,7 +13,7 @@ $(function() {
         format: 'm/d/y',
         changeMonth: true,
         changeYear: true,
-        onSelect: function(e) {
+        onSelect: function (e) {
             $('#jsReportEndDate').datepicker('option', 'minDate', e);
         }
     });
@@ -26,7 +26,7 @@ $(function() {
     //
     $('#jsIndividualEmployees, #jsDepartments, #jsTeams, #jsJobTitles, #jsEmploymentTypes, #jsNewHires').change(setReportView);
     //
-    $('#jsReportClearFilter').click(function(event) {
+    $('#jsReportClearFilter').click(function (event) {
         //
         event.preventDefault();
         //
@@ -40,27 +40,42 @@ $(function() {
         $('.jsReportEmployeeRow').show();
     });
     //
-    $('.jsReportLink').click(function(event) {
+    $('.jsReportLink').click(function (event) {
         //
         event.preventDefault();
         //
         let
             startDate = $('#jsReportStartDate').val() || 'all',
             endDate = $('#jsReportEndDate').val() || 'all';
+
+            isChecked = $('#includeStartandEndDate').is(':checked');
+            if (isChecked == false) {
+              startDate = '';
+              endDate = '';
+            }
+
         //
         window.open($(this).prop('href') + '?start=' + (startDate) + '&end=' + (endDate) + '');
     });
     //
-    $('.jsReportLinkBulk').click(function(event) {
+    $('.jsReportLinkBulk').click(function (event) {
         //
         event.preventDefault();
         //
+
         let
             startDate = $('#jsReportStartDate').val() || 'all',
             endDate = $('#jsReportEndDate').val() || 'all';
             sToken = $('#session_key').val();
+          //
+          isChecked = $('#includeStartandEndDate').is(':checked');
+          if (isChecked == false) {
+            startDate = '';
+            endDate = '';
+          }
+
         //
-        window.open($(this).prop('href') + '/' + (selectedEmployees.length == 0 || selectedEmployees.length == employeeList.length ? 'all' : selectedEmployees.join(',')) + '?start=' + (startDate) + '&end=' + (endDate)+'&token='+sToken);
+        window.open($(this).prop('href') + '/' + (selectedEmployees.length == 0 || selectedEmployees.length == employeeList.length ? 'all' : selectedEmployees.join(',')) + '?start=' + (startDate) + '&end=' + (endDate) + '&token=' + sToken);
     });
     //
     function setReportView() {
@@ -81,7 +96,7 @@ $(function() {
         //
         finalEmployeeList = _.concat(finalEmployeeList, individualEmployees);
         //
-        employeeList.map(function(emp) {
+        employeeList.map(function (emp) {
             // Find employee with matching departments
             if (_.intersection(emp.DepartmentIds, departments).length > 0) {
                 finalEmployeeList.push(emp.sid);
@@ -125,7 +140,7 @@ $(function() {
             //
             $('.jsReportEmployeeRow').hide();
             //
-            finalEmployeeList.map(function(id) {
+            finalEmployeeList.map(function (id) {
                 $('.jsReportEmployeeRow[data-id="' + (id) + '"]').show();
             });
         } else {
