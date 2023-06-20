@@ -288,7 +288,7 @@ class Time_off extends Public_Controller
      *
      */
     function policies($page = 'view', $id = NULL, $filter = NULL)
-    {        
+    {
         $data = array();
         $this->check_login($data);
         $employer_detail = $data['session']['employer_detail'];
@@ -1154,7 +1154,20 @@ class Time_off extends Public_Controller
             $filter_teams = "all";
             $filter_policy = "all";
         }
+
+       
         //
+        $data['start_date'] = $start_date;
+        $data['end_date'] = $end_date;
+      
+
+         if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate']) ) {
+            $start_date = '';
+            $end_date  = '';
+         }
+
+
+         //
         $data['page'] = 'view';
         $data['title'] = 'Report::time-off';
         //
@@ -1205,7 +1218,6 @@ class Time_off extends Public_Controller
                         } else {
                             $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
                         }
-
                     }
                 }
             }
@@ -1215,8 +1227,7 @@ class Time_off extends Public_Controller
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
-        $data['start_date'] = $start_date;
-        $data['end_date'] = $end_date;
+        
         $data['filter_employees'] = $filter_employees;
         $data['filter_departments'] = $filter_departments;
         $data['filter_teams'] = $filter_teams;
@@ -2924,7 +2935,7 @@ class Time_off extends Public_Controller
                 ], true);
                 //
                 $this->resp();
-                break;       
+                break;
 
             case "get_policy_request":
                 //
@@ -2958,7 +2969,6 @@ class Time_off extends Public_Controller
                                 } else {
                                     $company_employees[$ekey]['timeoffs'][] = $processRequest['requestData'];
                                 }
-
                             }
                         }
                     }
@@ -2971,7 +2981,7 @@ class Time_off extends Public_Controller
                     'company_policies' => $policies
                 ], true);
                 $this->resp();
-                break;   
+                break;
 
             case "migrate_employee_requests_policy":
                 //
@@ -3000,13 +3010,13 @@ class Time_off extends Public_Controller
                     //
                     $in['note'] = json_encode($note);
                     //
-                    $this->timeoff_model->insertPolicyHistory($in);               
+                    $this->timeoff_model->insertPolicyHistory($in);
                 }
                 //
                 $this->res['Code'] = 'SUCCESS';
                 $this->res['Status'] = true;
                 $this->resp();
-                break;      
+                break;
 
                 // Fetch company types
             case 'get_types_by_company':
@@ -4861,7 +4871,7 @@ class Time_off extends Public_Controller
                     'selectedPolicyId' => $post['policyId']
                 ], true);
                 $this->resp();
-                break;   
+                break;
 
                 // Create employee time off
             case 'create_employee_timeoff':
@@ -6179,8 +6189,8 @@ class Time_off extends Public_Controller
                 //
                 $data = $this->timeoff_model->getDataForExport($post);
 
-              //  print_r($data);
-              //  die();
+                //  print_r($data);
+                //  die();
 
                 //$data = $this->timeoff_model->getDataForExport($formpost);
                 $this->res['Status'] = true;

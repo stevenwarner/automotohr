@@ -204,6 +204,6 @@ let
     <?php endif; ?>
     <?php if(in_array('report', $this->uri->segment_array())): ?>
         <!-- For ems employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/report'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.5"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/report'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.6"></script>
     <?php endif; ?>
 <?php } ?>

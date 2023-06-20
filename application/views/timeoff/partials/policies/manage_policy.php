@@ -20,10 +20,20 @@ if (!empty($policyRequests)) {
 ?>
 
 <div class="row">
-    <div class="col-sm-10">
+    <div class="col-sm-12">
+        <div class="alert alert-danger">
+
+            <p class="text-danger" style="font-size:16px;">
+                <strong>
+                    <em>Note: The time-off balances and requests of the employees mentioned will be transferred to the appropriate policy.</em>
+                </strong>
+            </p>
+        </div>
     </div>
-    <div class="col-sm-2">
-        <button class="btn btn-success jsTransferPolicyBTN">Change Policy For Selected Employees</button>
+</div>
+<div class="row">
+    <div class="col-sm-12 text-right">
+        <button class="btn btn-success jsTransferPolicyBTN">Change Policy For Employees</button>
     </div>
 </div>
 <div class="row">
@@ -33,7 +43,7 @@ if (!empty($policyRequests)) {
         <div>
             <select name="NewPolicy" id="jsAssigPolicyToAll">
                 <?php foreach ($policies as $key => $policy) { ?>
-                    <option value="<?php echo $policy['sid']; ?>"><?php echo $policy['title']; ?> (<?= $policy['policy_category_type'] ? 'PAID' : 'UNPAID'; ?>)- <?=$policy['is_archived'] ? 'INACTIVE' : 'ACTIVE'; ?></option>
+                    <option value="<?php echo $policy['sid']; ?>"><?php echo $policy['title']; ?> (<?= $policy['policy_category_type'] ? 'PAID' : 'UNPAID'; ?>)- <?= $policy['is_archived'] ? 'INACTIVE' : 'ACTIVE'; ?></option>
                 <?php } ?>
             </select>
         </div>
@@ -55,9 +65,9 @@ if (!empty($policyRequests)) {
     </table>
 </div>
 <div class="row">
-    <div class="col-sm-10">
+    <div class="col-sm-9">
     </div>
-    <div class="col-sm-2">
-        <button class="btn btn-success jsTransferPolicyBTN">Change Policy For Selected Employees</button>
+    <div class="col-sm-3 text-right">
+        <button class="btn btn-success jsTransferPolicyBTN">Change Policy For Employees</button>
     </div>
 </div>

@@ -5846,8 +5846,12 @@ class Timeoff_model extends CI_Model
         }
         //
         $this->db->where('company_sid', $company_sid);
-        $this->db->where('request_from_date >=', date('Y-m-d', strtotime($start_date)));
-        $this->db->where('request_from_date <=', date('Y-m-d', strtotime($end_date)));
+
+        if ($start_date != '' && $end_date != '') {
+            $this->db->where('request_from_date >=', date('Y-m-d', strtotime($start_date)));
+            $this->db->where('request_from_date <=', date('Y-m-d', strtotime($end_date)));
+        }
+
         $this->db->where('archive', 0);
         $this->db->where('is_draft', 0);
         if ($get_employees) {
@@ -5888,6 +5892,7 @@ class Timeoff_model extends CI_Model
         $filter_policy
     ) {
 
+        
         $this->db->select('
         tp.title,
         tr.request_from_date,
@@ -5928,13 +5933,14 @@ class Timeoff_model extends CI_Model
         }
 
         //
-        if ($startDate && $startDate != 'all') {
+        if ($startDate && $startDate != 'all' && $startDate !='') {
             $this->db->where('tr.request_from_date >= ', DateTime::createfromformat('m/d/Y', $startDate)->format('Y-m-d'));
         }
         //
-        if ($endDate && $endDate != 'all') {
+        if ($endDate && $endDate != 'all' && $endDate != '') {
             $this->db->where('tr.request_from_date <= ', DateTime::createfromformat('m/d/Y', $endDate)->format('Y-m-d'));
         }
+
         //
         $a = $this->db->get();
         //
@@ -6235,6 +6241,9 @@ class Timeoff_model extends CI_Model
         $this->db->update('timeoff_requests', [
             'timeoff_policy_sid' => $newPolicyId
         ]);
+
+        // Move timeoff balances to new policy
+        $this->updateEmployeeTimeoffBalance($employeeID, $oldPolicyId, $newPolicyId);
     }
 
     /**
@@ -6657,5 +6666,29 @@ class Timeoff_model extends CI_Model
         //
         return $this->db->get('timeoff_policies')
             ->result_array();
+    }
+
+
+
+
+    /**
+     * update employee tomeoffs balances
+     * 
+     * @Author  Nisar Ahmad
+     * @date      20/06/2023
+     * 
+     * @param Integer $employeeID
+     * @param Integer $oldPolicyId
+     * @param Integer $newPolicyId
+     * 
+     * @return Array
+     */
+    function updateEmployeeTimeoffBalance($employeeID, $oldPolicyId, $newPolicyId)
+    {
+        $this->db->where('user_sid', $employeeID);
+        $this->db->where('policy_sid', $oldPolicyId);
+        $this->db->update('timeoff_balances', [
+            'policy_sid' => $newPolicyId
+        ]);
     }
 }
