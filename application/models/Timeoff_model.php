@@ -6235,6 +6235,10 @@ class Timeoff_model extends CI_Model
         $this->db->update('timeoff_requests', [
             'timeoff_policy_sid' => $newPolicyId
         ]);
+
+    // Move timeoff balances to new policy
+    $this->updateEmployeeTimeoffBalance($employeeID, $oldPolicyId, $newPolicyId);
+
     }
 
     /**
@@ -6658,4 +6662,30 @@ class Timeoff_model extends CI_Model
         return $this->db->get('timeoff_policies')
             ->result_array();
     }
+
+
+
+
+/**
+     * update employee tomeoffs balances
+     * 
+     * @Author  Nisar Ahmad
+     * @date      20/06/2023
+     * 
+     * @param Integer $employeeID
+     * @param Integer $oldPolicyId
+     * @param Integer $newPolicyId
+     * 
+     * @return Array
+     */
+    function updateEmployeeTimeoffBalance($employeeID, $oldPolicyId, $newPolicyId)
+    {
+        $this->db->where('user_sid', $employeeID);
+        $this->db->where('policy_sid', $oldPolicyId);
+        $this->db->update('timeoff_balances', [
+            'policy_sid' => $newPolicyId
+        ]);
+    }
+    
+
 }
