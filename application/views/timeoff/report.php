@@ -205,7 +205,7 @@ if (!empty($DT['Teams'])) {
 
                                                 <div class="form-group">
                                                     <label class="control control--checkbox">
-                                                        Include Start Date and End Date.
+                                                        Include start & end date
                                                         <?php
                                                         if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate']) ) {
                                                             $includeStartandEndDateChecked = '';
