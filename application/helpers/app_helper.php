@@ -440,25 +440,29 @@ if (!function_exists('getEmployeeAnniversary')) {
      * @return array
      */
     function getEmployeeAnniversary(
-        string $effectiveDate
+        string $effectiveDate,
+        string $currentDate
     ) {
+        $currentYear = date('Y', strtotime($currentDate));
         // set default array
         $returnArray = [];
         // effective date
         $returnArray['ad'] = $effectiveDate;
+        $returnArray['year'] = $currentYear;
         // get current date
-        $currentDate = getSystemDate('Y-m-d');
+        
         // get effective date for current year
-        $joiningDateWithCurrentYear = preg_replace('/[0-9]{4}/', getSystemDate('Y'), $effectiveDate);
+        $joiningDateWithCurrentYear = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         // check if month and day is in future
         if ($currentDate < $joiningDateWithCurrentYear) {
             // 
-            $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y', '-1 year'), $effectiveDate);
-            $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y'), $effectiveDate);
+            $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear -1, $effectiveDate);
+            $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         } else {
             // 
-            $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y'), $effectiveDate);
-            $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', getSystemDate('Y', '+1 year'), $effectiveDate);
+            $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
+            $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear +1, $effectiveDate);
+            
         }
         //
         return $returnArray;
