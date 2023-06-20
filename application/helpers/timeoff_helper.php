@@ -396,7 +396,8 @@ if (!function_exists('getEmployeeAccrual')) {
             formatDateToDB($effectedDate, 'm-d-Y', DB_DATE) :
             $effectedDate;
         //
-        $employeeAnniversaryDate = getEmployeeAnniversary($effectedDate);
+        $employeeAnniversaryDate = getEmployeeAnniversary($effectedDate, $todayDate);
+        //
         // get employee manual balance for current cycle
         // against policy id
         $balanceInMinutes = getEmployeeManualBalance(
@@ -407,15 +408,19 @@ if (!function_exists('getEmployeeAccrual')) {
             $balanceInMinutes
         );
         // get consumed time in current cycle
+        //
         if (
-            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
+            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate'] ||
+            $currentDate <= $todayDate
         ) {
+            //
             $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
                 $policyId,
                 $employeeId,
                 $employeeAnniversaryDate['lastAnniversaryDate'],
                 $employeeAnniversaryDate['upcomingAnniversaryDate']
             );
+            
         } else {
             $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
                 $policyId,
