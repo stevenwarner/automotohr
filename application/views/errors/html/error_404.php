@@ -7,22 +7,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<title><?php echo STORE_NAME; ?> | 404 Page Not Found</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<link rel="shortcut icon" href="<?php echo config_item('base_url');?>assets/images/favi-icon.png" type="image/x-icon"/>
-	<link rel="stylesheet" type="text/css" href="<?php echo config_item('base_url');?>assets/css/style-404.css">
-	<script type="text/javascript" src="<?php echo config_item('base_url');?>assets/js/jquery-1.11.3.min.js"></script>
+	<link rel="shortcut icon" href="<?php echo config_item('base_url');?>/assets/images/favi-icon.png" type="image/x-icon"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo config_item('base_url');?>/assets/css/style-404.css">
+	<script type="text/javascript" src="<?php echo config_item('base_url');?>/assets/js/jquery-1.11.3.min.js"></script>
 </head>
 <body>
 	<div class="wrap">
 		<header class="header-404">
-			<a href="javascript:;"><img src="<?php echo config_item('base_url');?>assets/images/ahr_logo_138X80_wt.png"></a>
+			<a href="javascript:;"><img src="<?php echo config_item('base_url');?>/assets/images/ahr_logo_138X80_wt.png"></a>
 		</header>
 		<!--start-content-->
 		<div class="content">
 			<!--start-logo-->
 			<div class="logo-404">
 
-				<!-- <figure><img src="<?php echo config_item('base_url');?>assets/images/logo-404.png"></figure> -->
-				<span><img src="<?php echo config_item('base_url');?>assets/images/exclamation-mark-sign.png">Page Not Found!</span>
+				<span><img src="<?php echo config_item('base_url');?>/assets/images/exclamation-mark-sign.png">Page Not Found!</span>
 				<div>
 					<br/>
 					<h6>We couldn't find the page you requested. </h6>
