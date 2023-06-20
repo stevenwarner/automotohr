@@ -462,16 +462,16 @@
                                                                     $isdoctohandbook0 = 'checked="true"';
                                                                 }
                                                             ?>
-                                                            <div class="row">
-                                                                <div class="col-xs-12">
-                                                                    <p class="text-danger"><strong><em>If marked "Yes", this document will appear in the Employee Handbook and Policies.</em></strong></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-xs-12">
-                                                                    <p>Add this document to the Employee Handbook and Policies?</p>
-                                                                </div>
-                                                            </div>
+                                                             <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <p class="text-danger"><strong><em><?= $this->lang->line('dm_handbook_text'); ?></em></strong></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <p><?= $this->lang->line('dm_handbook_label'); ?></p>
+                                                        </div>
+                                                    </div>
                                                             <div class="row">
                                                                 <div class="col-xs-12">
                                                                     <label class="control control--radio font-normal">

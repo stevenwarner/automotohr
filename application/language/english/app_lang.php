@@ -1,0 +1,11 @@
+<?php defined('BASEPATH') || exit('No direct script access allowed');
+/**
+ * @package AutomotoHR
+ * @author  AutomotoHR Dev Team
+ * @link    www.automotohr.com
+ */
+
+// Documents
+// Employee Handbook and Policies?
+$lang['dm_handbook_text'] = 'If selected as "Yes", this document will be prominently featured in the Employee Handbook and Policies, ensuring its visibility and importance to all employees.';
+$lang['dm_handbook_label'] = 'Would you like to include this document in the Employee Handbook and Policies?';
