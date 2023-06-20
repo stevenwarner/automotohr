@@ -1,4 +1,7 @@
 <?php
+
+use Aws\HashingStream;
+
 if (!function_exists('PayrollAuth')) {
     function PayrollAuth($company)
     {
@@ -41,8 +44,8 @@ if (!function_exists('RefreshToken')) {
 }
 
 //
-if (!function_exists('CreatePartnerCompany')) {
-    function CreatePartnerCompany($request)
+if (!function_exists('createPartnerCompany')) {
+    function createPartnerCompany($request)
     {
         //
         return MakeCall(
@@ -2671,7 +2674,8 @@ if (!function_exists('getCompanyLocations')) {
         //
         $callHeaders = [
             'Authorization: Bearer ' . ($company['access_token']) . '',
-            'Content-Type: application/json'
+            'Content-Type: application/json',
+            'X-Gusto-API-Version: 2023-04-01'
         ];
         $callHeaders = array_merge($callHeaders, $headers);
         //
@@ -3650,12 +3654,12 @@ if (!function_exists('parseGustoErrors')) {
 if (!function_exists('hasGustoErrors')) {
     /**
      * Parse Gusto errors
-     * 
+     *
      * Convert Gusto errors to AutomotoHR errors
      * for handling errors
-     * 
+     *
      * @version 1.0
-     * 
+     *
      * @param mixed $response
      * @return array
      */
@@ -3668,12 +3672,20 @@ if (!function_exists('hasGustoErrors')) {
         // if it's a single error
         if (isset($response['message'])) {
             $errors['errors'][] = $response['message'];
-        } else if (isset($response['errors']['invalid_grant'])) {
+        } elseif (isset($response['errors']['invalid_grant'])) {
             $errors['errors'] = array_merge($errors['errors'], $response['errors']['invalid_grant']);
-        } else if (isset($response['errors'])) {
+        } elseif (isset($response['errors'])) {
             foreach ($response['errors'] as $err) {
                 //
-                $errors['errors'][] = $err['message'];
+                if (isset($err[0])) {
+                   foreach($err as $err0) {
+                    $errors['errors'][] = $err0['message'];
+                   }
+                } else{
+
+                    //
+                    $errors['errors'][] = $err['message'];
+                }
             }
         }
 

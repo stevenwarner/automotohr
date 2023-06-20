@@ -3,6 +3,21 @@
 class Gusto_payroll extends CI_Controller
 {
     /**
+     * holds the default AutomotoHR admin
+     */
+    private $ahrAdmin = [];
+
+    /**
+     * holds the date and time
+     */
+    private $datetime;
+
+    /**
+     * holds the logged in person id
+     */
+    private $userId;
+
+    /**
      * Main entry point to controller
      */
     public function __construct()
@@ -11,6 +26,15 @@ class Gusto_payroll extends CI_Controller
         // Call the model
         $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
         $this->datetime = date('Y-m-d H:i:s', strtotime('now'));
+        // set the AutomotoHR admin
+        $this->ahrAdmin = [
+            'first_name' => 'Mubashar',
+            'last_name' => 'Ahmed',
+            'email_address' => 'mubashar@automotohr.com',
+            'phone_number' => '3331234569',
+        ];
+        // set the logged in user id
+        $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
     }
 
     /**
@@ -138,7 +162,7 @@ class Gusto_payroll extends CI_Controller
      */
     public function getSignatories(int $companyId)
     {
-        
+
         // fetch all signatories
         $this->gusto_payroll_model->fetchAllSignatories($companyId);
         // get all signatories
@@ -233,7 +257,7 @@ class Gusto_payroll extends CI_Controller
         //
         $post = $this->input->put(null, true);
 
-//_e($post,true,true);
+        //_e($post,true,true);
 
         // fetch signatory
         $signatory = $this->db
@@ -262,7 +286,7 @@ class Gusto_payroll extends CI_Controller
 
         //
 
-        
+
         if (is_array($response)) {
 
             return SendResponse(200, ['errors' => $response]);
@@ -317,12 +341,12 @@ class Gusto_payroll extends CI_Controller
 
     /**
      * Handle employee onboard
-     * 
-     * Handles employee onboard process from the 
+     *
+     * Handles employee onboard process from the
      * UI of super admin and employer panel
-     * 
+     *
      * @method handleEmployeeProfileForOnboarding
-     * 
+     *
      * @param string $type
      * profile|job|home_address|federal_tax|state_tax|payment_method|documents
      * @return json
@@ -351,7 +375,7 @@ class Gusto_payroll extends CI_Controller
         $gustoCompany =
             $this->db
             ->select('
-                gusto_company_sid, 
+                gusto_company_sid,
                 gusto_company_uid,
                 access_token,
                 refresh_token
@@ -380,7 +404,7 @@ class Gusto_payroll extends CI_Controller
     }
 
     /**
-     * 
+     *
      */
     public function checkAndFinishCompanyOnboard(int $companyId)
     {
@@ -394,7 +418,7 @@ class Gusto_payroll extends CI_Controller
     }
 
     /**
-     * 
+     *
      */
     public function checkAndFinishEmployeeOnboard(int $employeeId)
     {
@@ -408,7 +432,7 @@ class Gusto_payroll extends CI_Controller
     }
 
     /**
-     * 
+     *
      */
     public function getActiveCompanyEmployeesForPayroll(int $companyId, string $location)
     {
@@ -493,7 +517,7 @@ class Gusto_payroll extends CI_Controller
 
     /**
      * Start the initial employee onboard
-     * 
+     *
      * @param number $companyId
      * @return
      */
@@ -510,171 +534,6 @@ class Gusto_payroll extends CI_Controller
         //
         return sendResponse(200, ['status' => true]);
     }
-
-    /**
-     * Get the page html
-     */
-    function GetPage($page, $companyId = 0)
-    {
-        //
-        $data = [];
-        //
-        $page = stringToSlug(strtolower($page));
-        //
-        if ($page === 'onboard') {
-            //
-            $data['hasPrimaryAdmin'] = $this->gusto_payroll_model->HasPrimaryAdmin($companyId);
-        }
-        //
-        if ($page === 'admin-view') {
-            //
-            $data['primaryAdmin'] = $this->gusto_payroll_model->GetPrimaryAdmin($companyId);
-        }
-        //
-        header("content-type: text/html");
-        echo $this->load->view('2022/gusto/pages/' . $page, $data, true);
-        exit(0);
-    }
-
-    /**
-     * Start the initial company onboard
-     * 
-     * @param number $companyId
-     * @return
-     */
-    public function OnboardCompany($companyId)
-    {
-        // Check if company is already onboard
-        $cd = $this->gusto_payroll_model->GetCompanyOnboardDetails($companyId);
-        //
-        if (!$cd['on_payroll']) {
-            $this->CreatePartnerCompany($companyId);
-        }
-        // Company address
-        $this->AddCompanyLocation($companyId, $cd);
-        //
-        return SendResponse(200, ['status' => true]);
-    }
-
-    /**
-     * Create partner company
-     * 
-     * @param number $companyId
-     * @return
-     */
-    private function CreatePartnerCompany($companyId)
-    {
-        //
-        // Get primary admin
-        $primaryAdmin = $this->gusto_payroll_model->GetPrimaryAdmin($companyId);
-        // Get company details
-        $companyDetails = $this->gusto_payroll_model->GetCompanyDetails($companyId, 'CompanyName, ssn as ein, on_payroll');
-        //
-        // Check if ENI is already used
-        if ($this->db->where('gusto_company_uid', $companyDetails['ein'])->count_all_results('payroll_companies')) {
-            // return if EIN already in used
-            return SendResponse(200, ['errors' => ['EIN already in used.']]);
-        }
-
-        // Make request array
-        $request = [
-            'user' => [],
-            'company' => []
-        ];
-        //
-        $request['user']['first_name'] = $primaryAdmin['first_name'];
-        $request['user']['last_name'] = $primaryAdmin['last_name'];
-        $request['user']['email'] = $primaryAdmin['email_address'];
-        $request['user']['phone'] = $primaryAdmin['phone_number'];
-        $request['company']['name'] = $companyDetails['CompanyName'];
-        $request['company']['ein'] = $companyDetails['ein'];
-        //
-        $response = CreatePartnerCompany($request);
-        //
-        if (isset($response['errors'])) {
-            //
-            $errors = MakeErrorArray($response['errors']);
-            // Error took place
-            return SendResponse(200, [
-                'errors' => $errors
-            ]);
-        }
-        //
-        $insertArray = [];
-        $insertArray['company_sid'] = $companyId;
-        $insertArray['gusto_company_sid'] = $request['company']['ein'];
-        $insertArray['gusto_company_uid'] = $response['company_uuid'];
-        $insertArray['refresh_token'] = $response['refresh_token'];
-        $insertArray['access_token'] = $response['access_token'];
-        $insertArray['created_at'] = $this->datetime;
-        $insertArray['updated_at'] = $this->datetime;
-        //
-        $this->gusto_payroll_model->InsertPayroll('payroll_companies', $insertArray);
-        $this->gusto_payroll_model->UpdateCompany($companyId, ['on_payroll' => 1]);
-        //
-        return $response['company_uuid'];
-    }
-
-    /**
-     * Add company location
-     * 
-     * @param number $companyId
-     * @param array  $cd
-     * @return
-     */
-    private function AddCompanyLocation($companyId, $cd)
-    {
-        //
-        LoadModel('scm', $this);
-        // Get company details
-        $details = $this->gusto_payroll_model->GetPayrollCompany($companyId);
-        //
-        $request = [];
-        $request['street_1'] = $cd['Location_Address'];
-        $request['street_2'] = $cd['Location_Address_2'];
-        $request['country'] = db_get_country_name($cd['Location_Country'])["country_code"];
-        $request['city'] = $cd['Location_City'];
-        $request['zip'] = $cd['Location_ZipCode'];
-        $request['state'] = db_get_state_code_only($cd['Location_State']);
-        $request['phone_number'] = $cd['PhoneNumber'];
-        $request['mailing_address'] = false;
-        $request['filing_address'] = false;
-        //
-        $response = AddCompanyLocation($request, $details);
-        //
-        if (isset($response['errors'])) {
-            return false;
-        }
-        //
-        $insertArray = [];
-        $insertArray['company_sid'] = $companyId;
-        $insertArray['gusto_location_id'] = $response['id'];
-        $insertArray['country'] = $response['country'];
-        $insertArray['state'] = $response['state'];
-        $insertArray['city'] = $response['city'];
-        $insertArray['street_1'] = $response['street_1'];
-        $insertArray['street_2'] = $response['street_2'];
-        $insertArray['zip'] = $response['zip'];
-        $insertArray['phone_number'] = $response['phone_number'];
-        $insertArray['mailing_address'] = $response['mailing_address'];
-        $insertArray['filing_address'] = $response['filing_address'];
-        $insertArray['last_updated_by'] = $this->userId;
-        $insertArray['created_at'] = $this->datetime;
-        $insertArray['updated_at'] = $this->datetime;
-        //
-        $this->gusto_payroll_model->InsertPayroll('payroll_company_locations', $insertArray);
-        //
-        $insertArray = [];
-        $insertArray['payroll_company_location_sid'] = $companyId;
-        $insertArray['payroll_json'] = json_encode($response);
-        $insertArray['last_updated_by'] = $this->userId;
-        $insertArray['created_at'] = $this->datetime;
-        //
-        $this->gusto_payroll_model->InsertPayroll('payroll_company_locations_versions', $insertArray);
-        //
-        return true;
-    }
-
 
     //
     public function managePayment(int $companyId)
@@ -714,8 +573,6 @@ class Gusto_payroll extends CI_Controller
         );
     }
 
-
-
     //
     private function GetAndSetPaymentConfig($companyId)
     {
@@ -744,5 +601,113 @@ class Gusto_payroll extends CI_Controller
             'payroll_settings',
             $ai
         );
+    }
+
+
+    // Create Partner Company
+
+    /**
+     * Get the page html
+     */
+    function GetPage($page, $companyId = 0)
+    {
+        //
+        $data = [];
+        //
+        $page = stringToSlug(strtolower($page));
+        //
+        if ($page === 'onboard') {
+            //
+            $data['hasPrimaryAdmin'] = $this->gusto_payroll_model->HasPrimaryAdmin($companyId);
+        }
+        //
+        if ($page === 'admin-view') {
+            //
+            $data['primaryAdmin'] = $this->gusto_payroll_model->GetPrimaryAdmin($companyId);
+        }
+        //
+        header("content-type: text/html");
+        echo $this->load->view('2022/gusto/pages/' . $page, $data, true);
+        exit(0);
+    }
+
+    /**
+     * Start the initial company onboard
+     *
+     * @param int $companyId
+     * @return json
+     */
+    public function createPartnerCompanyOnGusto($companyId)
+    {
+        // check if company is already onboard
+        $cd = $this->gusto_payroll_model->GetCompanyOnboardDetails($companyId);
+        //
+        if (!$cd['gusto_company_uid']) {
+            $this->createPartnerCompany($companyId);
+        }
+        // add the AutomotoHR admin
+        $this->gusto_payroll_model->checkAndSetStoreAdminForGusto($companyId, $this->ahrAdmin);
+        // sync AutomotoHR to Gusto
+        $this->gusto_payroll_model->pushCompanyDataToGusto($companyId);
+        // make a quick sync
+        $this->gusto_payroll_model->syncCompanyDataWithGusto($companyId);
+        //
+        return SendResponse(200, ['status' => true]);
+    }
+
+    /**
+     * Create partner company
+     *
+     * @param number $companyId
+     * @return
+     */
+    private function createPartnerCompany($companyId)
+    {
+        // Get company details
+        $companyDetails = $this->gusto_payroll_model->GetCompanyDetails(
+            $companyId,
+            'CompanyName, ssn as ein, on_payroll'
+        );
+        // Check if ENI is already used
+        if ($this->db->where('gusto_company_uid', $companyDetails['ein'])->count_all_results('payroll_companies')) {
+            // return if EIN already in used
+            return SendResponse(200, ['errors' => ['EIN already in used by an another company.']]);
+        }
+
+        // Make request array
+        $request = [
+            'user' => [],
+            'company' => []
+        ];
+        //
+        $request['user']['first_name'] = $this->ahrAdmin['first_name'];
+        $request['user']['last_name'] = $this->ahrAdmin['last_name'];
+        $request['user']['email'] = $this->ahrAdmin['email_address'];
+        $request['user']['phone'] = $this->ahrAdmin['phone_number'];
+        $request['company']['name'] = $companyDetails['CompanyName'];
+        $request['company']['ein'] = $companyDetails['ein'];
+        //
+        $response = createPartnerCompany($request);
+        // set errors
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            // Error took place
+            return SendResponse(200, $errors);
+        }
+        //
+        $insertArray = [];
+        $insertArray['company_sid'] = $companyId;
+        $insertArray['gusto_company_sid'] = $request['company']['ein'];
+        $insertArray['gusto_company_uid'] = $response['company_uuid'];
+        $insertArray['refresh_token'] = $response['refresh_token'];
+        $insertArray['access_token'] = $response['access_token'];
+        $insertArray['created_at'] = $this->datetime;
+        $insertArray['updated_at'] = $this->datetime;
+        //
+        $this->gusto_payroll_model->InsertPayroll('payroll_companies', $insertArray);
+        $this->gusto_payroll_model->UpdateCompany($companyId, ['on_payroll' => 1]);
+        //
+        return $response['company_uuid'];
     }
 }

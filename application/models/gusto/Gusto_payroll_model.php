@@ -362,8 +362,7 @@ class Gusto_payroll_model extends CI_Model
     public function getCompanyDetailsForGusto(
         int $companyId
     ) {
-        $record =
-            $this->db
+        return $this->db
             ->select('
                 gusto_company_uid,
                 refresh_token,
@@ -372,8 +371,6 @@ class Gusto_payroll_model extends CI_Model
             ->where('company_sid', $companyId)
             ->get('payroll_companies')
             ->row_array();
-        //
-        return $record;
     }
 
     /**
@@ -513,6 +510,11 @@ class Gusto_payroll_model extends CI_Model
                             'company_sid' => $companyId
                         ]
                     );
+                } else {
+                    $this->db->where([
+                        'company_sid' => $companyId,
+                        'email_address' => $admin['email']
+                    ])->update('payroll_company_admin', ['gusto_uuid' => $admin['uuid']]);
                 }
             }
             //
@@ -3294,13 +3296,6 @@ class Gusto_payroll_model extends CI_Model
             $this->db
             ->select('
 			users.on_payroll,
-			users.Location_City,
-			users.Location_Address,
-			users.Location_Address_2,
-			users.Location_State,
-			users.Location_Country,
-			users.Location_ZipCode,
-			users.PhoneNumber,
 			payroll_companies.gusto_company_uid
 		')
             ->join('payroll_companies', 'payroll_companies.company_sid = users.sid', 'left')
@@ -3485,21 +3480,310 @@ class Gusto_payroll_model extends CI_Model
         return $query ? $query[$col] : '';
     }
 
-//
-function GetCompany($companyId, $columns){
     //
-    $query = 
-    $this->db
-    ->where('company_sid', $companyId)
-    ->select($columns)
-    ->get($this->tables['PC']);
-    //
-    $record = $query->row_array();
-    //
-    $query = $query->free_result();
-    //
-    return $record;
-}
+    function GetCompany($companyId, $columns)
+    {
+        //
+        $query =
+            $this->db
+            ->where('company_sid', $companyId)
+            ->select($columns)
+            ->get($this->tables['PC']);
+        //
+        $record = $query->row_array();
+        //
+        $query = $query->free_result();
+        //
+        return $record;
+    }
 
 
+    /**
+     * Sync company data from Gusto to system
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    public function pushCompanyDataToGusto(int $companyId)
+    {
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+
+        // push company locations
+        // $this->pushCompanyLocationToGusto($companyId, $companyDetails);
+
+        // // lets push the company admins
+        $this->pushCompanyAdmins($companyId, $companyDetails);
+
+        // // lets push the company signatory
+        // $this->pushCompanySignatory($companyId, $companyDetails);
+
+        // // lets push the company federal tax
+        // $this->pushCompanyFederalTax($companyId, $companyDetails);
+
+        // // lets push the company industry
+        // $this->pushCompanyIndustry($companyId, $companyDetails);
+
+        // // lets push the company tax liabilities
+        // $this->pushCompanyTaxLiabilities($companyId, $companyDetails);
+
+        // // lets push the company payment config
+        // $this->pushCompanyPaymentConfig($companyId, $companyDetails);
+        // $post = $this->input->post(null, true);
+        // //
+        // $admin = $this->db
+        //     ->select('sid, gusto_uuid')
+        //     ->where('company_sid', $companyId)
+        //     ->where('email_address', $post['emailAddress'])
+        //     ->get('payroll_company_admin')
+        //     ->row_array();
+        // // already exists
+        // if ($admin) {
+        //     //
+        //     if ($admin['gusto_uuid']) {
+        //         return SendResponse(200, ['error' => 'Admin already exists.']);
+        //     }
+        //     // fetch all admins
+        //     $gustoAdmins = $this->gusto_payroll_model->fetchAllAdmins($companyId);
+        //     //
+        //     $this->db
+        //         ->where('sid', $admin['sid'])
+        //         ->update('payroll_company_admin', [
+        //             'gusto_uuid' => $gustoAdmins[$admin['email_address']]
+        //         ]);
+        //     //
+        //     return SendResponse(200, ['error' => 'Admin already exists.']);
+        // }
+        // // add a new one
+        // $response = $this->gusto_payroll_model->moveAdminToGusto([
+        //     'first_name' => $post['firstName'],
+        //     'last_name' => $post['lastName'],
+        //     'email' => $post['emailAddress']
+        // ], $companyId);
+
+        // if ($response['errors']) {
+        //     //
+        //     return SendResponse(
+        //         200,
+        //         [
+        //             'errors' => $response['errors']
+        //         ]
+        //     );
+        // }
+        // //
+        // return SendResponse(
+        //     200,
+        //     [
+        //         'success' => 'You have successfully added an admin.'
+        //     ]
+        // );
+        // // lets push the company payment config
+        // $this->pushCompanyPayrollHistory($companyId, $companyDetails);
+    }
+
+    /**
+     * add company location to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param bool $doReturn
+     * @return array
+     */
+    private function pushCompanyLocationToGusto(int $companyId, array $companyDetails, bool $doReturn = false)
+    {
+        // get company current location
+        $companyLocation = $this->getUserLocation($companyId);
+        //
+        $request = [];
+        $request['street_1'] = $companyLocation['street_1'];
+        $request['street_2'] = $companyLocation['street_2'];
+        $request['country'] = $companyLocation['country'];
+        $request['city'] = $companyLocation['city'];
+        $request['zip'] = $companyLocation['zip'];
+        $request['state'] = $companyLocation['state_code'];
+        $request['phone_number'] = $companyLocation['phone'];
+        $request['mailing_address'] = $companyLocation['mailing_address'];
+        $request['filing_address'] = $companyLocation['filing_address'];
+        //
+        $response = AddCompanyLocation($request, $companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        $insertArray = [];
+        $insertArray['company_sid'] = $companyId;
+        $insertArray['gusto_uuid'] = $response['uuid'];
+        $insertArray['country'] = $response['country'];
+        $insertArray['state'] = $response['state'];
+        $insertArray['city'] = $response['city'];
+        $insertArray['street_1'] = $response['street_1'];
+        $insertArray['street_2'] = $response['street_2'];
+        $insertArray['zip'] = $response['zip'];
+        $insertArray['phone_number'] = $response['phone_number'];
+        $insertArray['mailing_address'] = $response['mailing_address'];
+        $insertArray['filing_address'] = $response['filing_address'];
+        $insertArray['version'] = $response['version'];
+        $insertArray['active'] = $response['active'];
+        $insertArray['last_updated_by'] = 0;
+        $insertArray['created_at'] =
+            $insertArray['updated_at'] = getSystemDate();
+        //
+        $this->InsertPayroll('payroll_company_locations', $insertArray);
+        //
+        return $doReturn ? $response : sendResponse(200, $response);;
+    }
+
+    /**
+     * push company admins to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param bool $doReturn
+     * @return array
+     */
+    private function pushCompanyAdmins(int $companyId, array $companyDetails, bool $doReturn = false)
+    {
+        // get company current location
+        $companyAdmins = $this->getCompanyAdmins($companyId);
+        // check for empty
+        if (!$companyAdmins) {
+            return $doReturn ? $companyAdmins : sendResponse(200, $companyAdmins);
+        }
+        // loop through the data
+        foreach ($companyAdmins as $ca) {
+            $this->pushCompanyAdmin($companyId, $ca);
+        }
+    }
+
+    private function pushCompanyAdmin($companyId, $ca)
+    {
+        //
+        if ($ca['gusto_uuid']) {
+            return ['errors' => 'Admin already exists.'];
+        }
+        // fetch all admins
+        $gustoAdmins = $this->gusto_payroll_model->fetchAllAdmins($companyId);
+        //
+        if ($gustoAdmins[$ca['email_address']]) {
+            //
+            $this->db
+                ->where('sid', $admin['sid'])
+                ->update('payroll_company_admin', [
+                    'gusto_uuid' => $gustoAdmins[$ca['email_address']]['uuid']
+                ]);
+            return ['errors' => 'Admin already exists.'];
+        }
+        // add a new one
+        $this->gusto_payroll_model->moveAdminToGusto([
+            'first_name' => $ca['first_name'],
+            'last_name' => $ca['last_name'],
+            'email' => $ca['email_address']
+        ], $companyId);
+    }
+
+    /**
+     * get the user location
+     *
+     * @param int $userId
+     * @return array
+     */
+    public function getUserLocation(int $userId)
+    {
+        // set default array
+        $locationArray = [
+            'street_1' => '',
+            'street_2' => '',
+            'country' => 'USA',
+            'state_code' => '',
+            'city' => '',
+            'zip' => '',
+            'phone' => '',
+            'filing_address' => true,
+            'mailing_address' => true
+        ];
+        // get location
+        $record = $this->db
+            ->select('
+                users.Location_City,
+                users.Location_Address,
+                users.Location_Address_2,
+                users.Location_State,
+                users.Location_ZipCode,
+                users.PhoneNumber
+            ')
+            ->where('users.sid', $userId)
+            ->get('users')
+            ->row_array();
+        // check if record found
+        if ($record) {
+            $locationArray['street_1'] = trim($record['Location_Address']);
+            $locationArray['street_2'] = trim($record['Location_Address_2']);
+            $locationArray['state_code'] = db_get_state_code_only(trim($record['Location_State']));
+            $locationArray['city'] = trim($record['Location_City']);
+            $locationArray['zip'] = trim($record['Location_ZipCode']);
+            $locationArray['phone'] = str_replace('+1', '', trim($record['PhoneNumber']));
+        }
+        // return location array
+        return $locationArray;
+    }
+
+    /**
+     * check and save store admin for Gusto
+     *
+     * @param int $companyId
+     * @param array $adminDetails
+     */
+    public function checkAndSetStoreAdminForGusto(int $companyId, array $adminDetails)
+    {
+        // set where array
+        $whereArray = [
+            'company_sid' => $companyId,
+            'email_address' => $adminDetails['email_address'],
+            'is_store_admin' => 1
+        ];
+        // check if admin already exists
+        if (!$this->db->where($whereArray)->count_all_results('payroll_company_admin')) {
+            $this->db->insert(
+                'payroll_company_admin',
+                [
+                    'company_sid' => $companyId,
+                    'gusto_uuid' => '',
+                    'first_name' => $adminDetails['first_name'],
+                    'last_name' => $adminDetails['last_name'],
+                    'email_address' => $adminDetails['email_address'],
+                    'phone_number' => $adminDetails['phone_number'],
+                    'is_store_admin' => 1,
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate(),
+                ]
+            );
+        }
+    }
+
+    /**
+     * get the company admins
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyAdmins(int $companyId)
+    {
+        // get records
+        return $this->db
+            ->select('
+                sid,
+                gusto_uuid,
+                first_name,
+                last_name,
+                email_address,
+                phone_number
+            ')
+            ->where('company_sid', $companyId)
+            ->where('is_store_admin', 0)
+            ->get('payroll_company_admin')
+            ->result_array();
+    }
 }
