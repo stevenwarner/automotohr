@@ -7023,7 +7023,6 @@ if (!function_exists('send_calendar_email')) {
         $to_content = '';
         // For reminder and cron
         if ($action == 'send_reminder_emails' || $action == 'send_cron_reminder_emails') {
-            $heading_greet = '';
             $to_content .= '<tr><td>';
             $emailTemplateData = get_email_template(CALENDAR_EVENT_REMINDER);
             $emailTemplateBody = $emailTemplateData['text'];
@@ -7031,7 +7030,6 @@ if (!function_exists('send_calendar_email')) {
             $to_content .= $emailTemplateBody;
             $to_content .= '</td></tr>';
         } else if ($action == 'update_event' || $action == 'drop_update_event' || $action == 'drag_update_event') {
-            $heading_greet = '';
             $to_content .= '<tr><td>';
             $emailTemplateData = get_email_template(CALENDAR_EVENT_UPDATE);
             $emailTemplateBody = $emailTemplateData['text'];
@@ -7039,7 +7037,6 @@ if (!function_exists('send_calendar_email')) {
             $to_content .= '</td></tr>';
         } else if ($action == 'confirm') {
             //
-            $heading_greet = '';
             $to_content .= '<tr><td>';
             $emailTemplateData = get_email_template(INTERVIEW_EMAIL_CONFIRMATION);
             $emailTemplateBody = $emailTemplateData['text'];
@@ -7051,7 +7048,6 @@ if (!function_exists('send_calendar_email')) {
             // Set subject for 'Personal' type
             // and categories 'Call, Email'
             if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'call') {
-                $heading_greet = '';
                 $to_content .= '<tr><td>';
                 $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_CALL);
                 $emailTemplateBody = $emailTemplateData['text'];
@@ -7060,7 +7056,6 @@ if (!function_exists('send_calendar_email')) {
                 $to_content .= $emailTemplateBody;
                 $to_content .= '</td></tr>';
             } else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'email') {
-                $heading_greet = '';
                 $to_content .= '<tr><td>';
                 $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_EMAIL);
                 $emailTemplateBody = $emailTemplateData['text'];
@@ -7069,7 +7064,6 @@ if (!function_exists('send_calendar_email')) {
                 $to_content .= $emailTemplateBody;
                 $to_content .= '</td></tr>';
             } else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'training-session') {
-                $heading_greet = '';
                 $to_content .= '<tr><td>';
                 $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_TRAINING);
                 $emailTemplateBody = $emailTemplateData['text'];
@@ -7079,7 +7073,6 @@ if (!function_exists('send_calendar_email')) {
                 $to_content .= '</td></tr>';
                 $to_content .= $interviewers_rows;
             } else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'Appointment') {
-                $heading_greet = '';
                 $to_content .= '<tr><td>';
                 $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_TRAINING);
                 $emailTemplateBody = $emailTemplateData['text'];
@@ -7088,7 +7081,6 @@ if (!function_exists('send_calendar_email')) {
                 $to_content .= $interviewers_rows;
             } else {
 
-                $heading_greet = '';
                 $to_content .= '<tr><td>';
                 $emailTemplateData = get_email_template(CREATE_INTERVIEW_EMAIL);
                 $emailTemplateBody = $emailTemplateData['text'];
