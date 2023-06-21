@@ -27,6 +27,7 @@ $(function createCourse() {
 	/**
 	 * Create course save event
 	 */
+	//
 	$(document).on("click", ".jsAddCourseCreateBtn", function (event) {
 		// stop the default event
 		event.preventDefault();
@@ -219,6 +220,8 @@ $(function createCourse() {
 	 * @param {*} courseObj
 	 */
 	async function handleCourseCreation(courseObj) {
+		
+		
 		//
 		const errorArray = [];
 		// validate
@@ -279,7 +282,7 @@ $(function createCourse() {
 			const createCourseResponse = await createCourseCall(courseObj);
 			//
 			if (courseObj.course_type === "scorm") {
-				await updateScormCourseCall(createCourseResponse.courseId);
+				await updateScormCourseCall(createCourseResponse.courseId, courseObj.course_file);
 			}
 			//
 			return alertify.alert(
@@ -331,16 +334,16 @@ $(function createCourse() {
 	 * @param {*} courseId
 	 * @returns
 	 */
-	function updateScormCourseCall(courseId) {
+	function updateScormCourseCall(courseId, filePath) {
 		return new Promise(function (resolve, reject) {
+			const courseObj = {
+				scorm_file: filePath,
+			};
 			//
 			$.ajax({
-				url: apiURL + "lms/course",
+				url: baseURI + "lms/course/scorm/parse/"+courseId,
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				data: JSON.stringify(courseObj),
+				data: courseObj,
 			})
 				.success(resolve)
 				.fail(function (response) {

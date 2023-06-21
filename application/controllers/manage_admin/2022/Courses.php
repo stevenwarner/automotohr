@@ -69,5 +69,6 @@ class Courses extends Admin_Controller
         );
         // render the view
         $this->render('manage_admin/courses/dashboard', 'admin_master');
-    }
+    } 
+
 }

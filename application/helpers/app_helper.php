@@ -487,3 +487,19 @@ if (!function_exists('getApiAccessToken')) {
             ->row_array()['access_token'];
     }
 }
+
+if (!function_exists('copyAWSFile')) {
+    function copyAWSFile (string $key) {
+        //
+        if (!file_exists(ROOTPATH.'uploads/'.$key)) {
+            // get CI instance
+            $CI = &get_instance();
+            //
+            $CI->load->library('aws_lib');
+            $CI->aws_lib->get_object(AWS_S3_BUCKET_NAME, $key , ROOTPATH.'uploads/'.$key);
+            //
+        }
+        //
+        return ROOTPATH.'uploads/'.$key;
+    }    
+}
