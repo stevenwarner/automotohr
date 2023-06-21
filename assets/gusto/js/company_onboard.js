@@ -4,6 +4,10 @@ $(function companyOnboard() {
     //
     let xhr = null;
 
+    if (typeof Modal === 'undefined') {
+        Modal = Model;
+    }
+
     /**
      * 
      */
