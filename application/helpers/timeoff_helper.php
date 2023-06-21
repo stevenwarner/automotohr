@@ -244,8 +244,8 @@ if (!function_exists('getEmployeeAccrual')) {
             'EmployeeJoinedAt' => $employeeJoiningDate,
             'RemainingTimeWithNegative' => $balanceInMinutes,
             'Reason' => '',
-            'lastanniversary' => '',
-            'upcominganniversary' => ''
+            'lastAnniversaryDate' => '',
+            'upcomingAnniversaryDate' => ''
 
 
         ];
@@ -516,9 +516,8 @@ if (!function_exists('getEmployeeAccrual')) {
         $r['Balance'] = $balanceInMinutes;
         $r['EmployementStatus'] = $employementStatus;
 
-        $r['lastanniversary'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
-        $r['upcominganniversary'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
-
+        $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
+        $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
        
         //
         if ($accruals['frequency'] == 'none') {
