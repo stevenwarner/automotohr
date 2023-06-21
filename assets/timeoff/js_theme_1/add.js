@@ -635,8 +635,14 @@ $(function () {
                         <span>${policy.IsUnlimited ? 'Unlimited' : policy.ConsumedTime.text} scheduled</span>
                         <br />
                         <span>Employment status: ${ucwords(policy.EmployementStatus)}</span>  
+                      <br>
+                        <span><strong>Policy Cycle</strong> <br>
+                        Last Anniversary: ${moment(policy.lastanniversary, 'YYYY/MM/DD').format(timeoffDateFormat)} <br>
+                        Upcoming Anniversary: ${moment(policy.upcominganniversary, 'YYYY/MM/DD').format(timeoffDateFormat)}
+                        </span> 
                         </div>
                         <hr />
+                       
                         `;
                     });
                     //
@@ -872,8 +878,12 @@ $(function () {
             beforeShowDay: unavailable,
             onSelect: (date) => {
                 $('#jsEndDate').datepicker('option', 'minDate', date);
+                
                 //
+                $('#asoffdate').text('AS Of  ' + moment($('#jsStartDate').val(), 'MM/DD/YYYY').format(timeoffDateFormat));
+
                 getSideBarPolicies();
+
                 //
                 remakeRangeRows(
                     '#jsStartDate',

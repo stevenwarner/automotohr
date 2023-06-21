@@ -25,7 +25,7 @@
                             <div class="jsTimeOffUpComing p10"></div>
                         </div>
                         <div class="csSidebarApproverSection">
-                            <h4>AS Of Today</h4>
+                            <h4 id="asoffdate">AS Of Today</h4>
                             <div id="jsAsOfTodayPolicies"></div>
                         </div>
                         <div class="csSidebarApproverSection">

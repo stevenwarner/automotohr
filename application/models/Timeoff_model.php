@@ -2900,6 +2900,9 @@ class Timeoff_model extends CI_Model
             $balance['EmployementStatus'] = $t['EmployementStatus'];
             $balance['RemainingTimeWithNegative'] = get_array_from_minutes($t['RemainingTimeWithNegative'], $durationInHours, $slug);
             $balance['Reason'] = $t['Reason'];
+
+            $balance['lastanniversary'] = $t['lastanniversary'];
+            $balance['upcominganniversary'] = $t['upcominganniversary'];
             //
             $r[] = $balance;
         }

@@ -188,7 +188,7 @@
                         </div>
                     </div>
                     <div class="panel panel-success panel-black">
-                        <div class="panel-heading"><strong>As Of Today</strong></div>
+                        <div class="panel-heading"><strong id="asoffdate">As Of Today</strong></div>
                         <div class="panel-body jsAsOfTodayPolicies">
                         </div>
                     </div>

@@ -334,7 +334,7 @@ $(function () {
                     rows += '<tr>';
                     rows += '   <td colspan="6">';
                     if (balance.is_manual == 0 && balance.is_allowed == 1) {
-                        rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                        rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
                     } else {
                         rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
                     }
@@ -514,7 +514,7 @@ $(function () {
                     rows += '<tr>';
                     rows += '   <td colspan="6">';
                     if (balance.is_manual == 0 && balance.is_allowed == 1) {
-                        rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                        rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
                     } else {
                         rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
                     }
@@ -618,6 +618,7 @@ $(function () {
                         if (policy.Reason != '') return;
                         //
                         newPolicies.push(policy);
+
                         rows += `
                         <div class="p10">
                         <strong>${policy.Title} (<strong class="text-${policy.categoryType == 1 ? 'success' : 'danger'}">${policy.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</strong>
@@ -628,11 +629,20 @@ $(function () {
                         <br />
                         <span>${policy.IsUnlimited ? 'Unlimited' : policy.ConsumedTime.text} scheduled</span>
                         <br />
-                        <span>Employment status: ${ucwords(policy.EmployementStatus)}</span>  
+                        <span>Employment status: ${ucwords(policy.EmployementStatus)}</span><br>
+                        <span><strong>Policy Cycle</strong> <br>
+                        Last Anniversary: ${moment(policy.lastanniversary, 'YYYY/MM/DD').format(timeoffDateFormat)} <br>
+                        Upcoming Anniversary: ${moment(policy.upcominganniversary, 'YYYY/MM/DD').format(timeoffDateFormat)}
+                        </span> 
                         </div>
                         <hr />
                         `;
                     });
+
+
+                    
+
+
                     //
                     window.timeoff.cPolicies = newPolicies;
                     //
@@ -871,8 +881,11 @@ $(function () {
             beforeShowDay: unavailable,
             onSelect: (date) => {
                 $('#jsEndDate').datepicker('option', 'minDate', date);
+
                 //
+                $('#asoffdate').text('AS Of  ' + moment($('#jsStartDate').val(), 'MM/DD/YYYY').format(timeoffDateFormat));
                 getSideBarPolicies();
+
                 //
                 remakeRangeRows(
                     '#jsStartDate',

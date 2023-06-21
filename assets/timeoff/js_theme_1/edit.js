@@ -300,7 +300,9 @@ $(function () {
                 beforeShowDay: unavailable,
                 onSelect: () => {
                     //
-                    getSideBarPolicies();
+                    
+                 $('#asoffdate').text('AS Of  ' + moment($('#jsStartDateEdit').val(), 'MM/DD/YYYY').format(timeoffDateFormat));
+                 getSideBarPolicies();
                     //
                     remakeRangeRows(
                         '#jsStartDateEdit',
@@ -690,7 +692,11 @@ $(function () {
                         <br />
                         <span>Scheduled Time: ${policy.AllowedTime.M.minutes == 0 && policy.Reason == '' ? 'Unlimited' : policy.ConsumedTime.text}</span>
                         <br />
-                        <span>Employment Status: ${ucwords(policy.EmployementStatus)}</span>  
+                        <span>Employment Status: ${ucwords(policy.EmployementStatus)}</span><br>
+                        <span><strong>Policy Cycle</strong> <br>
+                        Last Anniversary: ${moment(policy.lastanniversary, 'YYYY/MM/DD').format(timeoffDateFormat)} <br>
+                        Upcoming Anniversary: ${moment(policy.upcominganniversary, 'YYYY/MM/DD').format(timeoffDateFormat)}
+                        </span> 
                         </div>
                         <hr />
                         `;
