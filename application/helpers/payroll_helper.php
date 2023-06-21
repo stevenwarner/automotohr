@@ -3129,8 +3129,8 @@ if (!function_exists('createAnEmployeeOnGusto')) {
         //
         $callHeaders = [
             'Authorization: Bearer ' . ($company['access_token']) . '',
-            'accept: application/json',
-            'content-type: application/json'
+            'Accept: application/json',
+            'Content-Type: application/json'
         ];
         //
         $callHeaders = array_merge($callHeaders, $headers);

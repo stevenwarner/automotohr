@@ -850,13 +850,15 @@ class Gusto_payroll_model extends CI_Model
         //
         if ($response['status']) {
             //
-            $megaResponse = [];
-            //
             $employeeInfo = $response['data'];
             $companyDetails = $this->getCompanyDetailsForGusto($employeeInfo['parent_sid']);
             //
+            if (empty($companyDetails)) {
+                return ['errors' => ['Failed to verify company.']];
+            }
+            //
             $whereArray = [
-                'employee_sid ' => $employeeInfo['sid'],
+                'employee_sid' => $employeeInfo['sid'],
                 'company_sid' => $employeeInfo['parent_sid']
             ];
             //
@@ -865,19 +867,18 @@ class Gusto_payroll_model extends CI_Model
                 ->select('
                     payroll_employee_uuid,
                     version
-                ')
+                    ')
                 ->where($whereArray)
                 ->get('payroll_employees')
                 ->row_array();
             //
-            // Add or Update employee profile info
-            $response = $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            //
-            if (is_array($response)) {
-                return $response;
-            }
-            //
             if (!$gustoEmployeeInfo) {
+                // Add or Update employee profile info
+                $response = $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+                //
+                if (is_array($response)) {
+                    return $response;
+                }
                 $gustoEmployeeInfo =
                     $this->db
                     ->select('
@@ -890,20 +891,15 @@ class Gusto_payroll_model extends CI_Model
             }
             // Update employee address info
             $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            //
             // Create employee job
             $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            //
-            // Create employee bank detail 
+            // Create employee bank detail
             $this->syncCompanyEmployeeBankDetail($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // 
-            // // Update employee payment Method 
+            // // Update employee payment Method
             $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // //
-            // // Create employee federal Tax 
+            // Create employee federal Tax
             // $this->syncCompanyEmployeeFederalTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // //
-            // // Create employee State Tax 
+            // // Create employee State Tax
             // $this->syncCompanyEmployeeStateTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
             //
             // Update employee status
@@ -3508,77 +3504,12 @@ class Gusto_payroll_model extends CI_Model
     {
         // get company details
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
-
         // push company locations
-        // $this->pushCompanyLocationToGusto($companyId, $companyDetails);
-
-        // // lets push the company admins
+        $this->pushCompanyLocationToGusto($companyId, $companyDetails);
+        // lets push the company admins
         $this->pushCompanyAdmins($companyId, $companyDetails);
-
-        // // lets push the company signatory
-        // $this->pushCompanySignatory($companyId, $companyDetails);
-
-        // // lets push the company federal tax
-        // $this->pushCompanyFederalTax($companyId, $companyDetails);
-
-        // // lets push the company industry
-        // $this->pushCompanyIndustry($companyId, $companyDetails);
-
-        // // lets push the company tax liabilities
-        // $this->pushCompanyTaxLiabilities($companyId, $companyDetails);
-
-        // // lets push the company payment config
-        // $this->pushCompanyPaymentConfig($companyId, $companyDetails);
-        // $post = $this->input->post(null, true);
-        // //
-        // $admin = $this->db
-        //     ->select('sid, gusto_uuid')
-        //     ->where('company_sid', $companyId)
-        //     ->where('email_address', $post['emailAddress'])
-        //     ->get('payroll_company_admin')
-        //     ->row_array();
-        // // already exists
-        // if ($admin) {
-        //     //
-        //     if ($admin['gusto_uuid']) {
-        //         return SendResponse(200, ['error' => 'Admin already exists.']);
-        //     }
-        //     // fetch all admins
-        //     $gustoAdmins = $this->gusto_payroll_model->fetchAllAdmins($companyId);
-        //     //
-        //     $this->db
-        //         ->where('sid', $admin['sid'])
-        //         ->update('payroll_company_admin', [
-        //             'gusto_uuid' => $gustoAdmins[$admin['email_address']]
-        //         ]);
-        //     //
-        //     return SendResponse(200, ['error' => 'Admin already exists.']);
-        // }
-        // // add a new one
-        // $response = $this->gusto_payroll_model->moveAdminToGusto([
-        //     'first_name' => $post['firstName'],
-        //     'last_name' => $post['lastName'],
-        //     'email' => $post['emailAddress']
-        // ], $companyId);
-
-        // if ($response['errors']) {
-        //     //
-        //     return SendResponse(
-        //         200,
-        //         [
-        //             'errors' => $response['errors']
-        //         ]
-        //     );
-        // }
-        // //
-        // return SendResponse(
-        //     200,
-        //     [
-        //         'success' => 'You have successfully added an admin.'
-        //     ]
-        // );
-        // // lets push the company payment config
-        // $this->pushCompanyPayrollHistory($companyId, $companyDetails);
+        // lets push the company payment config
+        $this->pushCompanyPaymentConfig($companyId, $companyDetails);
     }
 
     /**
@@ -3589,7 +3520,7 @@ class Gusto_payroll_model extends CI_Model
      * @param bool $doReturn
      * @return array
      */
-    private function pushCompanyLocationToGusto(int $companyId, array $companyDetails, bool $doReturn = false)
+    private function pushCompanyLocationToGusto(int $companyId, array $companyDetails, bool $doReturn = true)
     {
         // get company current location
         $companyLocation = $this->getUserLocation($companyId);
@@ -3644,7 +3575,7 @@ class Gusto_payroll_model extends CI_Model
      * @param bool $doReturn
      * @return array
      */
-    private function pushCompanyAdmins(int $companyId, array $companyDetails, bool $doReturn = false)
+    private function pushCompanyAdmins(int $companyId, array $companyDetails, bool $doReturn = true)
     {
         // get company current location
         $companyAdmins = $this->getCompanyAdmins($companyId);
@@ -3658,6 +3589,9 @@ class Gusto_payroll_model extends CI_Model
         }
     }
 
+    /**
+     * Push admin to Gusto
+     */
     private function pushCompanyAdmin($companyId, $ca)
     {
         //
@@ -3670,7 +3604,7 @@ class Gusto_payroll_model extends CI_Model
         if ($gustoAdmins[$ca['email_address']]) {
             //
             $this->db
-                ->where('sid', $admin['sid'])
+                ->where('sid', $ca['sid'])
                 ->update('payroll_company_admin', [
                     'gusto_uuid' => $gustoAdmins[$ca['email_address']]['uuid']
                 ]);
@@ -3682,6 +3616,45 @@ class Gusto_payroll_model extends CI_Model
             'last_name' => $ca['last_name'],
             'email' => $ca['email_address']
         ], $companyId);
+    }
+
+
+    /**
+     * push company payment config to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param bool $doReturn
+     * @return array
+     */
+    private function pushCompanyPaymentConfig(
+        int $companyId,
+        array $companyDetails,
+        bool $doReturn = true
+    ) {
+        //
+        $response = UpdatePaymentConfig([
+            'fast_payment_limit' => 500,
+            'payment_speed' => '4-day'
+        ], $companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        $this->db->insert('payroll_settings', [
+            'company_sid' => $companyId,
+            'partner_uid' => $response['partner_uuid'],
+            'partner_uuid' => $response['partner_uuid'],
+            'payment_speed' => $response['payment_speed'],
+            'fast_payment_limit' => $response['fast_payment_limit'],
+            'created_at' => getSystemDate(),
+            'updated_at' => getSystemDate()
+        ]);
+        //
+        return $doReturn ? $response : sendResponse(200, $response);
     }
 
     /**
