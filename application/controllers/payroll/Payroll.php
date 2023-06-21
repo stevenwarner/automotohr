@@ -558,7 +558,6 @@ class Payroll extends CI_Controller
 
         $payroll = json_decode($this->data['payrollHistory']['payroll_json'], true);
         $payrollReceipt = $this->getProcessedPayrollsReceipt($this->data['companyId'], $this->data['payrollHistory']['payroll_id'])['Response'];
-        //
         $employee_compensations = array();
         //
         foreach ($payrollReceipt['employee_compensations'] as $ekey => $employee) {
@@ -734,15 +733,8 @@ class Payroll extends CI_Controller
                     }
                 }
                 //
-                if (!empty($payroll['paid_time_off'])) {
-                    foreach ($payroll['paid_time_off'] as $v) {
-                        $paid_time_off[stringToSlug($v['name'])] = $v;
-                    }
-                }
-                //
                 $this->data['Payroll']['employee_compensations'][$index]['fixed_compensations'] = $fixed_compensations;
                 $this->data['Payroll']['employee_compensations'][$index]['hourly_compensations'] = $hourly_compensations;
-                $this->data['Payroll']['employee_compensations'][$index]['paid_time_off'] = $paid_time_off;
                 $this->data['Payroll']['employee_compensations'][$index]['job_id'] = $this->data['PayrollEmployees'][$payroll['employee_id']]['jobs'][0]['compensations'][0]['job_id'];
             }
         }
@@ -1443,6 +1435,8 @@ class Payroll extends CI_Controller
         $post = $this->input->post(NULL, TRUE);
         // Make request array
         $employeeArray = [];
+
+        
         //
         foreach ($post['payroll'] as $payroll) {
             //
@@ -1671,7 +1665,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1712,7 +1706,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1751,7 +1745,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1786,7 +1780,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1844,7 +1838,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
