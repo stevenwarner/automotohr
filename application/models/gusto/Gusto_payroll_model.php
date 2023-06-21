@@ -3571,6 +3571,8 @@ class Gusto_payroll_model extends CI_Model
         $this->pushCompanyAdmins($companyId, $companyDetails);
         // lets push the company payment config
         $this->pushCompanyPaymentConfig($companyId, $companyDetails);
+        //
+        $this->createCustomEarningTypeOnGusto($companyId, $companyDetails, 'Paid Time Off');
     }
 
     /**
@@ -3711,6 +3713,41 @@ class Gusto_payroll_model extends CI_Model
             'partner_uuid' => $response['partner_uuid'],
             'payment_speed' => $response['payment_speed'],
             'fast_payment_limit' => $response['fast_payment_limit'],
+            'created_at' => getSystemDate(),
+            'updated_at' => getSystemDate()
+        ]);
+        //
+        return $doReturn ? $response : sendResponse(200, $response);
+    }
+
+    /**
+     * push company payment config to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param string $type
+     * @param bool $doReturn
+     * @return array
+     */
+    private function createCustomEarningTypeOnGusto(
+        int $companyId,
+        array $companyDetails,
+        string $type,
+        bool $doReturn = true
+    ) {
+        //
+        $response = createCustomEarningTypeOnGusto($type, $companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        $this->db->insert('payroll_company_earning_types', [
+            'company_sid' => $companyId,
+            'gusto_uuid' => $response['uuid'],
+            'earning_name' => $response['name'],
             'created_at' => getSystemDate(),
             'updated_at' => getSystemDate()
         ]);

@@ -1972,6 +1972,7 @@ if (!function_exists('PayrollURL')) {
         $urls['approveCompanyOnGusto'] = 'v1/companies/' . ($key) . '/approve';
         //
         $urls['getPayrollBlockers'] = 'v1/companies/' . ($key) . '/payrolls/blockers';
+        $urls['createCustomEarningTypeOnGusto'] = 'v1/companies/' . ($key) . '/earning_types';
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -4754,6 +4755,51 @@ if (!function_exists('approveCompanyOnGusto')) {
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
                 return approveCompanyOnGusto($company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            return $response;
+        }
+    }
+}
+
+
+//
+if (!function_exists('createCustomEarningTypeOnGusto')) {
+    function createCustomEarningTypeOnGusto($customEarningType, $company)
+    {
+        //
+        $url = PayrollURL('createCustomEarningTypeOnGusto', $company['gusto_company_uid']);
+        //
+        $response = MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode(['name' => $customEarningType]),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json'
+                )
+            ],
+            false
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return createCustomEarningTypeOnGusto($customEarningType, $company);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
