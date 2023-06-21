@@ -4,6 +4,10 @@ $(function companyOnboard() {
     //
     let xhr = null;
 
+    if (typeof Modal === 'undefined') {
+        Modal = Model;
+    }
+
     /**
      * 
      */
@@ -346,7 +350,7 @@ $(function companyOnboard() {
             return alertify.alert('Success!', response.success, function () {
                 //
                 $('#jsManageGustoSignatoriesModal .jsModalCancel').trigger('click');
-                $('.jsManageGustoSignatories').trigger('click')
+                $('.jsManageGustoSignatories').trigger('click');
             });
         })
             .fail(function () {
@@ -473,20 +477,64 @@ $(function companyOnboard() {
 
             $('#jsSignatoryAddFirstName').val(employeeDataArray[0]);
             $('#jsSignatoryAddLastName').val(employeeDataArray[1]);
-            $('#jsSignatoryAddEmail').val(employeeDataArray[3]);
-            $('#jsSignatoryAddMiddleInitial').val(employeeDataArray[4]);
-            $('#jsSignatoryAddSsn').val(employeeDataArray[5]);
-            $('#jsSignatoryAddTitle').val(employeeDataArray[6]);
-            $('#jsSignatoryAddPhone').val(employeeDataArray[8]);
-            $('#jsSignatoryAddBirthDay').val(employeeDataArray[7]);
-            $('#jsSignatoryAddStreet1').val(employeeDataArray[9]);
-            $('#jsSignatoryAddStreet2').val(employeeDataArray[10]);
+            $('#jsSignatoryAddEmail').val(employeeDataArray[2]);
+            $('#jsSignatoryAddMiddleInitial').val(employeeDataArray[3]);
+            $('#jsSignatoryAddSsn').val(employeeDataArray[4]);
+            $('#jsSignatoryAddTitle').val(employeeDataArray[5]);
+            $('#jsSignatoryAddPhone').val(employeeDataArray[7]);
+            $('#jsSignatoryAddBirthDay').val(employeeDataArray[6]);
+            $('#jsSignatoryAddStreet1').val(employeeDataArray[8]);
+            $('#jsSignatoryAddStreet2').val(employeeDataArray[9]);
             $('#jsSignatoryAddState').val(employeeDataArray[12]);
-            $('#jsSignatoryAddCity').val(employeeDataArray[12]);
-            $('#jsSignatoryAddZip').val(employeeDataArray[11]);
+            $('#jsSignatoryAddCity').val(employeeDataArray[11]);
+            $('#jsSignatoryAddZip').val(employeeDataArray[10]);
         }
 
     });
+
+
+
+    //
+    $('.jsManagePayments').click(function (event) {
+        //
+        event.preventDefault();
+        //
+        companyId = $(this).data('cid');
+        //
+        Modal({
+            Id: 'jsManagePaymentsModal',
+            Loader: 'jsManageGustoSignatoriesModalLoader',
+            Body: '<div id="jsManagePaymentsBody"></div>',
+            Title: 'Manage Payment'
+        }, fetchPayments);
+    });
+
+
+    //
+
+    function fetchPayments() {
+        //
+        if (xhr !== null) {
+            xhr.abort();
+        }
+        //
+        xhr = $.get(
+            baseURI + 'payroll/gusto/managepayment/' + companyId
+        )
+            .success(function (response) {
+                //
+                xhr = null;
+                //
+                $('#jsManagePaymentsBody').html(response.view);
+                //
+                ml(false, 'jsManageGustoSignatoriesModalLoader');
+            })
+            .fail(function () {
+                xhr = null;
+                $('#jsManagePaymentsBody').html('<strong class="alert alert-danger text-center">Something went wrong. Please try again in few seconds.</strong>')
+                ml(false, 'jsManageGustoSignatoriesModalLoader');
+            });
+    }
 
 
 

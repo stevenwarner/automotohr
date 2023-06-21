@@ -3,49 +3,47 @@
 $companySid = $session["company_detail"]["sid"];
 $employerEmail = $session['employer_detail']['email'];
 $isGustoAdmin = isGustoAdmin($employerEmail, $companySid);
-
 //
-$navpills = [];
+$navPills = [];
 //
-if (isPayrollOrPlus()) {
-    //
+$termsAcceptedByCompany = isCompanyTermsAccpeted();
 
-    if ($isGustoAdmin > 0) {
+if ($isGustoAdmin > 0) {
 
-        $navpills[] = [
+    if ($termsAcceptedByCompany) {
+        $navPills[] = [
             'title' => 'Company',
             'url' => '/company',
             'slug' => '',
             'icon' => 'building',
             'segment' => 'company'
         ];
+
         // Dashboard
-        $navpills[] = [
+        $navPills[] = [
             'title' => 'Employees',
             'url' => '/employees/payroll',
             'slug' => '',
             'icon' => 'users',
             'segment' => 'employees'
         ];
-        $navpills[] = [
+        $navPills[] = [
             'title' => 'Run payroll',
             'url' => '/run',
             'slug' => '',
             'icon' => 'bank',
             'segment' => 'run'
         ];
-        $navpills[] = [
+        $navPills[] = [
             'title' => 'Manage Admins',
-            // 'url' => '/manage-admin',
-            'url' => 'avascript:void(0)',
+            'url' => 'javascript:void(0)',
             'slug' => '',
             'icon' => 'users',
             'segment' => 'manage',
             'class' => 'jsManageGustoAdmins',
             'data-cid' => $companySid
         ];
-
-        $navpills[] = [
+        $navPills[] = [
             'title' => 'Manage Signatories',
             'url' => 'javascript:void(0)',
             'slug' => '',
@@ -54,27 +52,19 @@ if (isPayrollOrPlus()) {
             'class' => 'jsManageGustoSignatories',
             'data-cid' => $companySid
         ];
-
-
-        $navpills[] = [
-            'title' => 'Service Terms',
-            'url' => '/service-terms',
-            'slug' => '',
-            'icon' => 'file-pdf-o',
-            'segment' => 'service'
-        ];
-
-        $navpills[] = [
-            'title' => 'Settings',
-            'url' => '/settings',
-            'slug' => '',
-            'icon' => 'cogs',
-            'segment' => 'settings'
-        ];
     }
+
+
+    $navPills[] = [
+        'title' => 'Service Terms',
+        'url' => '/service-terms',
+        'slug' => '',
+        'icon' => 'file-pdf-o',
+        'segment' => 'service'
+    ];
 }
 
-$navpills[] = [
+$navPills[] = [
     'title' => 'My Pay Stubs',
     'url' => '/my',
     'slug' => '',
@@ -84,7 +74,7 @@ $navpills[] = [
 
 //
 if (isEmployeeOnPayroll($this->session->userdata('logged_in')['employer_detail']['sid'])) {
-    $navpills[] = [
+    $navPills[] = [
         'title' => 'My Payroll Documents',
         'url' => 'my_payroll_documents',
         'slug' => '',
@@ -98,7 +88,7 @@ $lis = '';
 //
 $baseURL = base_url('payroll/');
 //
-foreach ($navpills as $tab) {
+foreach ($navPills as $tab) {
     //
     if (isset($tab['submenu'])) {
         $tmp = '';
@@ -115,7 +105,7 @@ foreach ($navpills as $tab) {
     } else {
 
         //
-        $lis .= '<li><a ' . (isset($tab['props']) ? $tab['props'] : "") . ' class="csF16 ' . (isset($tab['class']) ? $tab['class'] : '') . ' ' . ($tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '') . '" href="' . ($tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL . $tab['url']) . '"  data-cid="' . ($tab['data-cid']  ? $tab['data-cid'] : '') . '" ><i class="fa fa-' . ($tab['icon']) . '"></i> ' . ($tab['title']) . '</a></li>';
+        $lis .= '<li><a ' . (isset($tab['props']) ? $tab['props'] : "") . ' class="csF16 ' . (isset($tab['class']) ? $tab['class'] : '') . ' ' . ($tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '') . '" href="' . ($tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL . $tab['url']) . '"  data-cid="' . ($tab['data-cid']  ? $tab['data-cid'] : '') . '"  data-company_sid="' . ($tab['data-cid']  ? $tab['data-cid'] : '') . '" ><i class="fa fa-' . ($tab['icon']) . '"></i> ' . ($tab['title']) . '</a></li>';
     }
 }
 ?>

@@ -44,3 +44,7 @@
         <br>
     </div>
 </div>
+
+<!-- Add System Model -->
+<link rel="stylesheet" href="<?= base_url(_m("assets/css/SystemModel", 'css')); ?>">
+<script src="<?= base_url(_m("assets/js/SystemModal")); ?>"></script>

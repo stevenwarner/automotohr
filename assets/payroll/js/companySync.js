@@ -1,7 +1,9 @@
 $(function companySync() {
 	//
-	var xhr = null;
-	var xhr2 = null;
+	let xhr = null;
+	let xhr2 = null;
+	let xhr3 = null;
+	let xhr4 = null;
 	//
 	$(".jsSyncCompany").click(function (event) {
 		//
@@ -15,6 +17,20 @@ $(function companySync() {
 		event.preventDefault();
 		//
 		finishCompanyOnboard();
+	});
+	//
+	$(".jsApproveCompany").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		approveCompany();
+	});
+	//
+	$(".jsSendTestDeposits").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		sendTestDeposits();
 	});
 
 	function startCompanySyncProcess() {
@@ -95,6 +111,89 @@ $(function companySync() {
 					"fa-spinner fa-spin"
 				);
 				$(".jsFinishCompanyOnboard").removeClass("disabled");
+			});
+	}
+
+	function sendTestDeposits() {
+		//
+		if (xhr3 !== null) {
+			return;
+		}
+		//
+		$(".jsSendTestDeposits i").toggleClass("fa-spinner fa-spin");
+		$(".jsSendTestDeposits").addClass("disabled");
+		//
+		xhr3 = $.get(
+			window.location.origin +
+				"/gusto/company/" +
+				companyId +
+				"/send_test_deposits"
+		)
+			.success(function (resp) {
+				xhr3 = null;
+				//
+				$(".jsSendTestDeposits i").removeClass("fa-spinner fa-spin");
+				$(".jsSendTestDeposits").removeClass("disabled");
+				//
+				if (resp.errors) {
+					return alertify.alert("Error", resp.errors.join("<br />"));
+				}
+				//
+				return alertify.alert(
+					"Success!",
+					`
+						<p>Please use the following deposits to verify bank account</p>
+						<br />
+						<p><strong>Deposit 1:</strong> ${resp.deposit_1}
+						<p><strong>Deposit 2:</strong> ${resp.deposit_2}
+					`
+				);
+			})
+			.fail(function () {
+				xhr3 = null;
+				//
+				$(".jsSendTestDeposits i").removeClass("fa-spinner fa-spin");
+				$(".jsSendTestDeposits").removeClass("disabled");
+			});
+	}
+
+	function approveCompany() {
+		//
+		if (xhr4 !== null) {
+			return;
+		}
+		//
+		$(".jsApproveCompany i").toggleClass("fa-spinner fa-spin");
+		$(".jsApproveCompany").addClass("disabled");
+		//
+		xhr4 = $.get(
+			window.location.origin + "/gusto/company/" + companyId + "/approve"
+		)
+			.success(function (resp) {
+				xhr4 = null;
+				//
+				$(".jsApproveCompany i").removeClass("fa-spinner fa-spin");
+				$(".jsApproveCompany").removeClass("disabled");
+				//
+				if (resp.errors) {
+					return alertify.alert("Error", resp.errors.join("<br />"));
+				}
+				//
+				if (resp.success) {
+					return alertify.alert(
+						"success",
+						"Company approved successfully.",
+						function () {
+							window.location.reload();
+						}
+					);
+				}
+			})
+			.fail(function () {
+				xhr4 = null;
+				//
+				$(".jsApproveCompany i").removeClass("fa-spinner fa-spin");
+				$(".jsApproveCompany").removeClass("disabled");
 			});
 	}
 });

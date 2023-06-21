@@ -1,4 +1,7 @@
 <?php
+
+use Aws\HashingStream;
+
 if (!function_exists('PayrollAuth')) {
     function PayrollAuth($company)
     {
@@ -41,8 +44,8 @@ if (!function_exists('RefreshToken')) {
 }
 
 //
-if (!function_exists('CreatePartnerCompany')) {
-    function CreatePartnerCompany($request)
+if (!function_exists('createPartnerCompany')) {
+    function createPartnerCompany($request)
     {
         //
         return MakeCall(
@@ -1451,14 +1454,14 @@ if (!function_exists('GetCompanyStatus')) {
 }
 
 if (!function_exists('CreateCompanyFlowLink')) {
-    function CreateCompanyFlowLink($company, $force = false)
+    function CreateCompanyFlowLink($company, $isSignatory = false)
     {
         //
         $url = PayrollURL('GetCompanyFlows', $company['gusto_company_uid']);
         //
         $request = array();
         //
-        $request['flow_type'] = "company_onboarding";
+        $request['flow_type'] = "select_industry,payroll_schedule,federal_tax_setup,state_setup,add_bank_info,verify_bank_info" . ($isSignatory ? ',sign_all_forms' : '');
         $request['entity_type'] = "Company";
         $request['entity_uuid'] = $company['gusto_company_uid'];
         //
@@ -1814,9 +1817,9 @@ if (!function_exists('GetPaymentConfig')) {
     function GetPaymentConfig($company)
     {
         //
-        $company['gusto_company_uid'] = 'de7afa2e-9a5f-4f6c-b063-1b4803ac9d1c';
-        $company['access_token'] = 'QbliCE6If1NIgcaTgU82-BHxLDhDKhe5AgIckc8YJ6s';
-        $company['refresh_token'] = 'xW_xWBT55T92HKXwQeDc8AP9NQcBbRVyESmZzIQSKL0';
+        // $company['gusto_company_uid'] = 'de7afa2e-9a5f-4f6c-b063-1b4803ac9d1c';
+        // $company['access_token'] = 'QbliCE6If1NIgcaTgU82-BHxLDhDKhe5AgIckc8YJ6s';
+        // $company['refresh_token'] = 'xW_xWBT55T92HKXwQeDc8AP9NQcBbRVyESmZzIQSKL0';
         //
         $response =  MakeCall(
             PayrollURL('GetPaymentConfig', $company['gusto_company_uid']),
@@ -1960,12 +1963,17 @@ if (!function_exists('PayrollURL')) {
         $urls['getEmployeeBankAccountToGusto'] = 'v1/employees/' . ($key) . '/bank_accounts';
         $urls['getEmployeeOnboardStatusFromGusto'] = 'v1/employees/' . ($key) . '/onboarding_status';
         $urls['finishEmployeeOnboardOnGusto'] = 'v1/employees/' . ($key) . '/onboarding_status';
-
         // Company URLs
         $urls['getCompanyOnboardStatusFromGusto'] = 'v1/companies/' . ($key) . '/onboarding_status';
         $urls['finishCompanyOnboardOnGusto'] = 'v1/companies/' . ($key) . '/finish_onboarding';
         $urls['approveCompanyOnboardOnGusto'] = 'v1/companies/' . ($key) . '/approve';
+        $urls['getCompanyBankAccountsFromGusto'] = 'v1/companies/' . ($key) . '/bank_accounts';
+        $urls['getTestDeposits'] = 'v1/companies/' . ($key) . '/bank_accounts/' . ($key1) . '/send_test_deposits';
+        $urls['approveCompanyOnGusto'] = 'v1/companies/' . ($key) . '/approve';
         //
+        $urls['getPayrollBlockers'] = 'v1/companies/' . ($key) . '/payrolls/blockers';
+        $urls['createCustomEarningTypeOnGusto'] = 'v1/companies/' . ($key) . '/earning_types';
+
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
 }
@@ -2668,7 +2676,8 @@ if (!function_exists('getCompanyLocations')) {
         //
         $callHeaders = [
             'Authorization: Bearer ' . ($company['access_token']) . '',
-            'Content-Type: application/json'
+            'Content-Type: application/json',
+            'X-Gusto-API-Version: 2023-04-01'
         ];
         $callHeaders = array_merge($callHeaders, $headers);
         //
@@ -3122,8 +3131,8 @@ if (!function_exists('createAnEmployeeOnGusto')) {
         //
         $callHeaders = [
             'Authorization: Bearer ' . ($company['access_token']) . '',
-            'accept: application/json',
-            'content-type: application/json'
+            'Accept: application/json',
+            'Content-Type: application/json'
         ];
         //
         $callHeaders = array_merge($callHeaders, $headers);
@@ -3647,12 +3656,12 @@ if (!function_exists('parseGustoErrors')) {
 if (!function_exists('hasGustoErrors')) {
     /**
      * Parse Gusto errors
-     * 
+     *
      * Convert Gusto errors to AutomotoHR errors
      * for handling errors
-     * 
+     *
      * @version 1.0
-     * 
+     *
      * @param mixed $response
      * @return array
      */
@@ -3665,12 +3674,20 @@ if (!function_exists('hasGustoErrors')) {
         // if it's a single error
         if (isset($response['message'])) {
             $errors['errors'][] = $response['message'];
-        } else if (isset($response['errors']['invalid_grant'])) {
+        } elseif (isset($response['errors']['invalid_grant'])) {
             $errors['errors'] = array_merge($errors['errors'], $response['errors']['invalid_grant']);
-        } else if (isset($response['errors'])) {
+        } elseif (isset($response['errors'])) {
             foreach ($response['errors'] as $err) {
                 //
-                $errors['errors'][] = $err['message'];
+                if (isset($err[0])) {
+                    foreach ($err as $err0) {
+                        $errors['errors'][] = $err0['message'];
+                    }
+                } else {
+
+                    //
+                    $errors['errors'][] = $err['message'];
+                }
             }
         }
 
@@ -4567,5 +4584,227 @@ if (!function_exists('finishEmployeeOnboardOnGusto')) {
         }
         //
         return $response;
+    }
+}
+
+//
+if (!function_exists('payRollBlockers')) {
+    function payRollBlockers($company)
+    {
+        //
+
+        $url = PayrollURL('getPayrollBlockers', $company['gusto_company_uid']);
+        //
+        $response =  MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json'
+                )
+            ],
+            false
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return payRollBlockers($company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            CacheHolder($url, $response);
+            return $response;
+        }
+    }
+}
+
+//
+if (!function_exists('getTestDeposits')) {
+    function getTestDeposits(string $bankAccountUid, $company)
+    {
+        //
+        $url = PayrollURL('getTestDeposits', $company['gusto_company_uid'], $bankAccountUid);
+        //
+        $response = MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json'
+                )
+            ],
+            false
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getTestDeposits($bankAccountUid, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            return $response;
+        }
+    }
+}
+
+
+
+//
+if (!function_exists('getCompanyBankAccountsFromGusto')) {
+    function getCompanyBankAccountsFromGusto($company)
+    {
+        //
+        $url = PayrollURL('getCompanyBankAccountsFromGusto', $company['gusto_company_uid']);
+        //
+        $response = MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json'
+                )
+            ],
+            false
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getCompanyBankAccountsFromGusto($company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            return $response;
+        }
+    }
+}
+
+
+//
+if (!function_exists('approveCompanyOnGusto')) {
+    function approveCompanyOnGusto($company)
+    {
+        //
+        $url = PayrollURL('approveCompanyOnGusto', $company['gusto_company_uid']);
+        //
+        $response = MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json'
+                )
+            ],
+            false
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return approveCompanyOnGusto($company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            return $response;
+        }
+    }
+}
+
+
+//
+if (!function_exists('createCustomEarningTypeOnGusto')) {
+    function createCustomEarningTypeOnGusto($customEarningType, $company)
+    {
+        //
+        $url = PayrollURL('createCustomEarningTypeOnGusto', $company['gusto_company_uid']);
+        //
+        $response = MakeCall(
+            $url,
+            [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode(['name' => $customEarningType]),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . ($company['access_token']) . '',
+                    'Content-Type: application/json'
+                )
+            ],
+            false
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return createCustomEarningTypeOnGusto($customEarningType, $company);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            return $response;
+        }
     }
 }

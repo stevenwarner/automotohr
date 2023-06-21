@@ -27,7 +27,7 @@ class Payroll_ajax extends CI_Controller
         // Call helper
         $this->load->helper("payroll_helper");
         //
-        $this->path = 'payroll/pages/';
+        $this->path = '2022/gusto/pages/';
         //
         $this->session = $this->session->userdata('logged_in');
     }
@@ -119,7 +119,7 @@ class Payroll_ajax extends CI_Controller
         //
         if ($page === 'employees') {
             // Fetch employees
-            $data['employees'] = $this->sem->GetCompanyEmployees($companyId, [
+            $employees = $this->sem->GetCompanyEmployees($companyId, [
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
@@ -132,12 +132,64 @@ class Payroll_ajax extends CI_Controller
                 "users.email",
                 "users.middle_name",
                 "users.pay_plan_flag",
-                "users.on_payroll"
+                "users.on_payroll",
+                'users.PhoneNumber',
+                'payroll_employees.payroll_employee_uuid',
             ], [
                 'users.active' => 1,
                 'users.is_executive_admin' => 0,
                 'users.terminated_status' => 0
             ]);
+            //
+            if ($employees) {
+                //
+                $tmp = [];
+                //
+                foreach ($employees as $employee) {
+                    //
+                    if ($employee['payroll_employee_uuid']) {
+                        continue;
+                    }
+                    //
+                    $missing_fields = [];
+                    //
+                    if (!$employee['first_name']) {
+                        $missing_fields[] = 'First Name';
+                    }
+                    //
+                    if (!$employee['last_name']) {
+                        $missing_fields[] = 'Last Name';
+                    }
+                    //
+                    $employee['ssn'] = preg_replace('/[^0-9]/', '', $employee['ssn']);
+                    //
+                    if (!preg_match('/[0-9]{9}/', $employee['ssn'])) {
+                        $missing_fields[] = 'Social Security Number';
+                    }
+                    //
+                    if (!$employee['dob']) {
+                        $missing_fields[] = 'Date Of Birth';
+                    }
+                    //
+                    if (!$employee['email']) {
+                        $missing_fields[] = 'Email';
+                    }
+                    //
+                    $tmp[] = [
+                        'sid' => $employee['sid'],
+                        'full_name_with_role' => remakeEmployeeName($employee),
+                        'first_name' => $employee['first_name'],
+                        'last_name' => $employee['last_name'],
+                        'email' => $employee['email'],
+                        'phone_number' => $employee['PhoneNumber'],
+                        'missing_fields' => $missing_fields
+                    ];
+                }
+                //
+                $employees = $tmp;
+            }
+            //
+            $data['employees'] = $employees;
         }
         //
         if ($page === 'onboard') {

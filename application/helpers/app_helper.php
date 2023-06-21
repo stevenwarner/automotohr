@@ -430,8 +430,6 @@ if (!function_exists('getUserColumnByWhere')) {
     }
 }
 
-
-//
 if (!function_exists('getEmployeeAnniversary')) {
     /**
      * Get Employee Joining data 
@@ -524,5 +522,85 @@ if (!function_exists('portalFormI9Tracker')) {
         $dataToSave['body'] = json_encode($body);
         //
         get_instance()->db->insert('portal_form_i9_tracker', $dataToSave);
+    }
+}
+
+if (!function_exists('isCompanyOnBoard')) {
+    /**
+     * Check company already onboard
+     *
+     * @return
+     */
+    function isCompanyOnBoard()
+    {
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        //
+        $has = $CI->db
+        ->where([
+            'company_sid' => $ses['company_detail']['sid']
+        ])
+        ->count_all_results('payroll_companies');
+        //
+        if ($has) {
+            return true;
+        }
+        // Don't created yet
+        return false;
+    }
+}
+
+if (!function_exists('isCompanyTermsAccpeted')) {
+    /**
+     * Check company already onboard
+     *
+     * @return
+     */
+    function isCompanyTermsAccpeted()
+    {
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        //
+        $has = $CI->db
+        ->where([
+            'company_sid' => $ses['company_detail']['sid'],
+            'terms_accepted' => 1
+
+        ])
+        ->count_all_results('payroll_companies');
+        //
+        if ($has) {
+            return true;
+        }
+        // Don't created yet
+        return false;
+    }
+}
+
+
+if (!function_exists('isLoggedInPersonIsSignatory')) {
+    /**
+     * check if logged in person is signatory
+     *
+     * @return bool
+     */
+    function isLoggedInPersonIsSignatory()
+    {
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        //
+        return (bool) $CI->db
+        ->where([
+            'company_sid' => $ses['company_detail']['sid'],
+            'email' => $ses['employer_detail']['email']
+
+        ])
+        ->count_all_results('payroll_signatories');
     }
 }

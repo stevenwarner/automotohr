@@ -1512,6 +1512,12 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
 // Company Onboard
 $route['company_payroll']['get'] = 'company/Company/CompanyOnboard';
 
+// New Gusto routes
+$route['get_gusto_onboarding_page/(:any)'] = 'gusto/Gusto_payroll/GetPage/$1';
+$route['get_gusto_onboarding_page/(:any)/(:num)'] = 'gusto/Gusto_payroll/GetPage/$1/$2';
+$route['gusto/onboard_employee/(:num)']['post'] = "gusto/Gusto_payroll/AddEmployeeOnGusto/$1";
+$route['gusto/onboard_company/(:num)']['post'] = "gusto/Gusto_payroll/createPartnerCompanyOnGusto/$1";
+$route['get_payroll_employees/(:num)/(:any)'] = 'gusto/Gusto_payroll/getActiveCompanyEmployeesForPayroll/$1/$2';
 
 /**
  * 
@@ -1521,15 +1527,16 @@ $route['get_payroll_page/(:any)/(:num)'] = 'payroll/Payroll_ajax/GetPage/$1/$2';
 //
 $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
 
+
 /**
  * 
  */
 $route['payroll/(:num)/admin']['post'] = "payroll/Payroll_onboard/AddAdmin/$1";
 $route['payroll/(:num)/service']['post'] = "payroll/Payroll_onboard/AcceptServiceTerms/$1";
 $route['payroll/(:num)/settings']['post'] = "payroll/Payroll_onboard/Settings/$1";
-
-$route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/OnboardCompany/$1";
+$route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/createPartnerCompanyOnGusto/$1";
 $route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";
+
 $route['payroll/onboard_employee/(:num)/(:num)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeFromPayroll/$1/$2";
 $route['payroll/onboard_employee/(:any)/(:num)']['post'] = "payroll/Payroll_onboard/EmployeeOnboardPiece/$1/$2";
 $route['payroll/onboard_employee/(:any)/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/GetEmployeeOnboardSection/$1/$2/$3";
@@ -1710,6 +1717,8 @@ $route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory
 // Sync
 $route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
 $route['gusto/company/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishCompanyOnboard/$1';
+$route['gusto/company/(:num)/send_test_deposits']['get'] = 'gusto/Gusto_payroll/sendTestDeposits/$1';
+$route['gusto/company/(:num)/approve']['get'] = 'gusto/Gusto_payroll/approveCompany/$1';
 $route['gusto/employee/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishEmployeeOnboard/$1';
 
 //Job Title Templates
@@ -1765,3 +1774,5 @@ $route['sa/lms/courses'] = 'manage_admin/2022/Courses';
 
 $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridDocument';
 $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/downloadHybridDocument/$1';
+//
+$route['payroll/gusto/managepayment/(:num)'] = 'gusto/Gusto_payroll/managePayment/$1';

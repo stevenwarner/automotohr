@@ -15,6 +15,13 @@ class Gusto_payroll_model extends CI_Model
         parent::__construct();
         //
         $this->load->helper('payroll_helper');
+        //
+        $this->tables = [];
+        $this->tables['PayrollCompanyAdmin'] = 'payroll_company_admin';
+        $this->tables['U'] = 'users';
+        $this->tables['P'] = 'payrolls';
+        $this->tables['PH'] = 'payroll_history';
+        $this->tables['PC'] = 'payroll_companies';
     }
 
     /**
@@ -276,9 +283,11 @@ class Gusto_payroll_model extends CI_Model
             return '';
         }
         //
+
         $response = updateSignatoryToGusto($signatoryArray, $signatoryUUID, $companyDetails, [
             'X-Gusto-API-Version: 2023-03-01'
         ]);
+
         //
         if (isset($response['errors'])) {
             //
@@ -353,8 +362,7 @@ class Gusto_payroll_model extends CI_Model
     public function getCompanyDetailsForGusto(
         int $companyId
     ) {
-        $record =
-            $this->db
+        return $this->db
             ->select('
                 gusto_company_uid,
                 refresh_token,
@@ -363,8 +371,6 @@ class Gusto_payroll_model extends CI_Model
             ->where('company_sid', $companyId)
             ->get('payroll_companies')
             ->row_array();
-        //
-        return $record;
     }
 
     /**
@@ -401,6 +407,9 @@ class Gusto_payroll_model extends CI_Model
 
         // lets sync the company payment config
         $this->syncCompanyPayrollHistory($companyId, $companyDetails);
+
+        // lets sync the company bank accounts
+        $this->syncCompanyBankAccounts($companyId, $companyDetails);
     }
 
     /**
@@ -504,6 +513,11 @@ class Gusto_payroll_model extends CI_Model
                             'company_sid' => $companyId
                         ]
                     );
+                } else {
+                    $this->db->where([
+                        'company_sid' => $companyId,
+                        'email_address' => $admin['email']
+                    ])->update('payroll_company_admin', ['gusto_uuid' => $admin['uuid']]);
                 }
             }
             //
@@ -828,6 +842,61 @@ class Gusto_payroll_model extends CI_Model
     }
 
     /**
+     * Sync company bank accounts with Gusto
+     *
+     * @param int   $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyBankAccounts(int $companyId, array $companyDetails)
+    {
+        //
+        $response = getCompanyBankAccountsFromGusto($companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if (!$errors && $response) {
+            //
+            $mainTable = 'payroll_company_bank_accounts';
+
+            //
+            foreach ($response as $bankAccount) {
+                //
+                $dataArray = [];
+                $dataArray['payroll_uuid'] = $bankAccount['uuid'];
+                $dataArray['routing_number'] = $bankAccount['routing_number'];
+                $dataArray['account_number'] = $bankAccount['hidden_account_number'];
+                $dataArray['account_type'] = $bankAccount['account_type'];
+                $dataArray['status'] = $bankAccount['verification_status'];
+                //
+                $whereArray = [
+                    'company_sid' => $companyId,
+                    'payroll_uuid' => $bankAccount['uuid'],
+                ];
+                //
+                if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+                    //
+                    $dataArray['company_sid'] = $companyId;
+                    $dataArray['created_at'] = $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                } else {
+                    //
+                    $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->where($whereArray)->update($mainTable, $dataArray);
+                }
+            }
+            //
+            return true;
+        }
+        //
+        return false;
+    }
+
+    /**
      * Sync company employee information
      *
      * @param int   $employeeId
@@ -839,13 +908,15 @@ class Gusto_payroll_model extends CI_Model
         //
         if ($response['status']) {
             //
-            $megaResponse = [];
-            //
             $employeeInfo = $response['data'];
             $companyDetails = $this->getCompanyDetailsForGusto($employeeInfo['parent_sid']);
             //
+            if (empty($companyDetails)) {
+                return ['errors' => ['Failed to verify company.']];
+            }
+            //
             $whereArray = [
-                'employee_sid ' => $employeeInfo['sid'],
+                'employee_sid' => $employeeInfo['sid'],
                 'company_sid' => $employeeInfo['parent_sid']
             ];
             //
@@ -854,11 +925,10 @@ class Gusto_payroll_model extends CI_Model
                 ->select('
                     payroll_employee_uuid,
                     version
-                ')
+                    ')
                 ->where($whereArray)
                 ->get('payroll_employees')
                 ->row_array();
-            //
             // Add or Update employee profile info
             $response = $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
             //
@@ -879,20 +949,15 @@ class Gusto_payroll_model extends CI_Model
             }
             // Update employee address info
             $this->syncCompanyEmployeeAddress($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            //
             // Create employee job
             $this->syncCompanyEmployeeJobInfo($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            //
-            // Create employee bank detail 
+            // Create employee bank detail
             $this->syncCompanyEmployeeBankDetail($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // 
-            // // Update employee payment Method 
+            // // Update employee payment Method
             $this->syncCompanyEmployeePaymentMethod($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // //
-            // // Create employee federal Tax 
+            // Create employee federal Tax
             // $this->syncCompanyEmployeeFederalTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-            // //
-            // // Create employee State Tax 
+            // // Create employee State Tax
             // $this->syncCompanyEmployeeStateTax($employeeInfo, $gustoEmployeeInfo, $companyDetails);
             //
             // Update employee status
@@ -1724,10 +1789,10 @@ class Gusto_payroll_model extends CI_Model
 
     /**
      * Handle employee onboard profile
-     * 
-     * Handles employee onboard profile process from the 
+     *
+     * Handles employee onboard profile process from the
      * UI of super admin and employer panel
-     * 
+     *
      * @param array $post
      * @param array $gustoEmployeeDetails
      * @param array $gustoCompany
@@ -1831,7 +1896,7 @@ class Gusto_payroll_model extends CI_Model
                 $newPost = [];
                 $newPost['title'] = $employeeDetails['job_title'];
                 $newPost['rate'] = $employeeDetails['hourly_rate'];
-                $newPost['flsa_status'] = "Exempt";
+                $newPost['flsa_status'] = "Nonexempt";
                 $newPost['payment_unit'] = "Hour";
                 $newPost['employeeId'] = $post['employeeId'];
                 $newPost['companyId'] = $post['companyId'];
@@ -1840,7 +1905,7 @@ class Gusto_payroll_model extends CI_Model
                     $newPost,
                     $gustoEmployeeDetails,
                     $gustoCompany,
-                    true
+                    false
                 );
             }
         }
@@ -1852,10 +1917,10 @@ class Gusto_payroll_model extends CI_Model
 
     /**
      * Handle employee onboard job and compensation
-     * 
-     * Handles employee onboard job & compensation process from the 
+     *
+     * Handles employee onboard job & compensation process from the
      * UI of super admin and employer panel
-     * 
+     *
      * @param array $post
      * @param array $gustoEmployeeDetails
      * @param array $gustoCompany
@@ -1915,7 +1980,7 @@ class Gusto_payroll_model extends CI_Model
                     ->select('payroll_company_locations.gusto_uuid')
                     ->join(
                         'payroll_company_locations',
-                        'payroll_company_locations.gusto_location_id = payroll_employees.work_address_sid',
+                        'payroll_company_locations.gusto_uuid = payroll_employees.work_address_sid',
                         'inner'
                     )
                     ->where('payroll_employees.employee_sid', $post['employeeId'])
@@ -1987,7 +2052,7 @@ class Gusto_payroll_model extends CI_Model
                 ->select('payroll_company_locations.gusto_uuid')
                 ->join(
                     'payroll_company_locations',
-                    'payroll_company_locations.gusto_location_id = payroll_employees.work_address_sid',
+                    'payroll_company_locations.gusto_uuid = payroll_employees.work_address_sid',
                     'inner'
                 )
                 ->where('payroll_employees.employee_sid', $post['employeeId'])
@@ -2064,7 +2129,10 @@ class Gusto_payroll_model extends CI_Model
         $payrollEmployeeArray['updated_at'] = getSystemDate();
         // update the table
         $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
-
+        // update the users table
+        updateUserById([
+            'hourly_rate' => $post['rate']
+        ], $post['employeeId']);
         // send response
         return $doReturn ? $errors : sendResponse(200, ['success' => 'Employee\'s job is successfully updated.']);
     }
@@ -3126,5 +3194,686 @@ class Gusto_payroll_model extends CI_Model
         }
         //
         return $doReturn ? $errors : sendResponse(200, $errors);
+    }
+
+    /**
+     * 
+     */
+    function getCompanyEmployees(
+        $companyId,
+        $columns = '*',
+        $whereArray = []
+    ) {
+        //
+        $whereArray = !empty($whereArray) ? $whereArray : ["users.active" => 1, "users.terminated_status" => 0];
+        //
+        $redo = false;
+        //
+        if ($columns === true) {
+            //
+            $redo = true;
+            //
+            $columns = [];
+            $columns[] = "users.sid";
+            $columns[] = "users.first_name";
+            $columns[] = "users.last_name";
+            $columns[] = "users.email";
+            $columns[] = "users.joined_at";
+            $columns[] = "users.registration_date";
+            $columns[] = "users.ssn";
+            $columns[] = "users.timezone";
+            $columns[] = "company.timezone as company_timezone";
+            $columns[] = "users.dob";
+            $columns[] = "users.profile_picture";
+            $columns[] = "users.access_level";
+            $columns[] = "users.access_level_plus";
+            $columns[] = "users.user_shift_hours";
+            $columns[] = "users.user_shift_minutes";
+            $columns[] = "users.is_executive_admin";
+            $columns[] = "users.job_title";
+            $columns[] = "users.pay_plan_flag";
+            $columns[] = "users.full_employment_application";
+            $columns[] = "users.on_payroll";
+            $columns[] = "payroll_employees.onboard_completed";
+        }
+        //
+        $query =
+            $this->db
+            ->select($columns)
+            ->join("users as company", "users.parent_sid = company.sid", 'inner')
+            ->join("payroll_employees", "payroll_employees.employee_sid = users.sid", 'left')
+            ->where("users.parent_sid", $companyId)
+            ->where($whereArray)
+            ->order_by("users.first_name", 'asc')
+            ->get('users');
+        //
+        $records = $query->result_array();
+        //
+        $query = $query->free_result();
+        //
+        if ($redo && !empty($records)) {
+            //
+            $newRecords = [];
+            //
+            $updateArray = [];
+            //
+            foreach ($records as $record) {
+                //
+                $newRecords[$record['sid']] = [
+                    'sid' => $record['sid'],
+                    'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                    'first_name' => ucwords($record['first_name']),
+                    'last_name' => ucwords($record['last_name']),
+                    'name' => ucwords($record['first_name'] . ' ' . $record['last_name']),
+                    'role' => remakeEmployeeName($record, false),
+                    'plus' => $record['access_level_plus'],
+                    'email' => $record['email'],
+                    'image' => getImageURL($record['profile_picture']),
+                    'joined_on' => $record['joined_at'],
+                    'ssn' => $record['ssn'],
+                    'dob' => $record['dob'],
+                    'shift_hours' => $record['user_shift_hours'],
+                    'shift_minutes' => $record['user_shift_minutes'],
+                    'on_payroll' => $record['on_payroll'],
+                    'onboard_completed' => $record['onboard_completed'],
+                ];
+                //
+                if (!empty($record['timezone'])) {
+                    $newRecords[$record['sid']]['timezone'] = $record['timezone'];
+                } else if (!empty($record['company_timezone'])) {
+                    $newRecords[$record['sid']]['timezone'] = $record['company_timezone'];
+                }
+                //
+                if (!empty($record['full_employment_application'])) {
+                    //
+                    $fef = unserialize($record['full_employment_application']);
+                    //
+                    if (empty($newRecords[$record['sid']]['ssn']) && isset($fef['TextBoxSSN'])) {
+                        $newRecords[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
+                        //
+                        $updateArray[$record['sid']]['sid'] = $record['sid'];
+                        $updateArray[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
+                    }
+                    //
+                    if (empty($newRecords[$record['sid']]['dob']) && isset($fef['TextBoxDOB'])) {
+                        $newRecords[$record['sid']]['dob'] = DateTime::createfromformat('m-d-Y', $fef['TextBoxDOB'])->format('Y-m-d');
+                        $updateArray[$record['sid']]['sid'] = $record['sid'];
+                        $updateArray[$record['sid']]['dob'] = $newRecords[$record['sid']]['dob'];
+                    }
+                }
+            }
+            //
+            if (!empty($updateArray)) {
+                $this->db->update_batch($this->U, $updateArray, 'sid');
+            }
+            //
+            $records = $newRecords;
+            //
+            unset($newRecords);
+        }
+        //
+        return $records;
+    }
+
+    /**
+     * Check if company has a primary admin
+     * to handle payroll
+     * 
+     * @param integer $companyId
+     * @return
+     */
+    function HasPrimaryAdmin($companyId)
+    {
+        //
+        return $this->db
+            ->where('company_sid', $companyId)
+            ->count_all_results($this->tables['PayrollCompanyAdmin']);
+    }
+
+    /**
+     * Check if company has a primary admin
+     * to handle payroll
+     * 
+     * @param integer $companyId
+     * @return
+     */
+    function GetPrimaryAdmin($companyId)
+    {
+        //
+        return $this->db
+            ->where('company_sid', $companyId)
+            ->get($this->tables['PayrollCompanyAdmin'])
+            ->row_array();
+    }
+
+    public function GetCompanyOnboardDetails($companyId)
+    {
+        //
+        return
+            $this->db
+            ->select('
+			users.on_payroll,
+			payroll_companies.gusto_company_uid
+		')
+            ->join('payroll_companies', 'payroll_companies.company_sid = users.sid', 'left')
+            ->where('users.sid', $companyId)
+            ->get('users')
+            ->row_array();
+    }
+
+    /**
+     * 
+     */
+    function GetCompanyDetails(
+        $companyId,
+        $columns = '*'
+    ) {
+        //
+        $query =
+            $this->db
+            ->select($columns)
+            ->where('sid', $companyId)
+            ->get($this->tables['U']);
+        //
+        $record = $query->row_array();
+        //
+        $query = $query->free_result();
+        //
+        return $record;
+    }
+
+    /**
+     * 
+     */
+    function CheckAndInsertPayroll(
+        $companyId,
+        $employerId,
+        $payrollUid,
+        $payroll
+    ) {
+        //
+        $isNew = false;
+        $doAdd = true;
+        //
+        $date = date('Y-m-d H:i:s', strtotime('now'));
+        // Check if the payroll already
+        // been added
+        if (
+            !$this->db
+                ->where('payroll_uid', $payrollUid)
+                ->count_all_results($this->tables['P'])
+        ) {
+            // Let's insert the payroll
+            $this->db
+                ->insert(
+                    $this->tables['P'],
+                    [
+                        'company_sid' => $companyId,
+                        'payroll_uid' => $payrollUid,
+                        'version' => $payroll['version'],
+                        'payroll_id' => $payroll['payroll_id'],
+                        'start_date' => $payroll['pay_period']['start_date'],
+                        'end_date' => $payroll['pay_period']['end_date'],
+                        'check_date' => $payroll['check_date'],
+                        'deadline_date' => $payroll['payroll_deadline'],
+                        'payroll_json' => json_encode($payroll),
+                        'is_processed' => 0,
+                        'created_by' => $employerId,
+                        'created_at' => $date,
+                        'updated_at' => $date
+                    ]
+                );
+            //
+            $isNew = true;
+        } else {
+            if (!empty($payroll)) {
+                $this->db
+                    ->where('payroll_uid', $payrollUid)
+                    ->update(
+                        $this->tables['P'],
+                        [
+                            'payroll_json' => json_encode($payroll)
+                        ]
+                    );
+            }
+        }
+        //
+        if (!$isNew) {
+            // Get the last history
+            $historyVersion = $this->GetPayrollHistory($payroll['payroll_id'], ['version'])['version'];
+            //
+            if ($historyVersion == $payroll['version']) {
+                $doAdd = false;
+            }
+        }
+        //
+        if (!$doAdd) {
+            return false;
+        }
+        // Let's add a history
+        $this->db
+            ->insert(
+                $this->tables['PH'],
+                [
+                    'payroll_id' => $payroll['payroll_id'],
+                    'version' => $payroll['version'],
+                    'created_by' => $employerId,
+                    'content' => json_encode($payroll),
+                    'created_at' => $date
+                ]
+            );
+    }
+
+    /**
+     * 
+     */
+    function GetPayrollHistory(
+        $payrollId,
+        $columns = '*'
+    ) {
+        //
+        $query =
+            $this->db
+            ->select($columns)
+            ->where('payroll_id', $payrollId)
+            ->order_by('sid', 'desc')
+            ->get($this->tables['PH']);
+        //
+        $record = $query->row_array();
+        $query = $query->free_result();
+        //
+        return $record;
+    }
+
+
+    /**
+     * 
+     */
+    function UpdateCompany($companyId, $array)
+    {
+        //
+        $this->db
+            ->where('sid', $companyId)
+            ->update($this->tables['U'], $array);
+    }
+
+    /**
+     * Get company payroll details
+     * @param integer $companyId
+     * @return
+     */
+    function GetPayrollCompany($companyId)
+    {
+        //
+        return $this->db
+            ->select('refresh_token, access_token, gusto_company_uid, onbording_level, onboarding_status')
+            ->where('company_sid', $companyId)
+            ->get($this->tables['PC'])
+            ->row_array();
+    }
+
+    //
+    public function InsertPayroll($table, $dataArray)
+    {
+        //
+        $this->db->insert($table, $dataArray);
+        return $this->db->insert_id();
+    }
+
+    //
+    public function GetPayrollColumn($table, $where, $col = 'sid', $single = true)
+    {
+        //
+        $query =
+            $this->db
+            ->select($col)
+            ->where($where)
+            ->get($table)
+            ->row_array();
+        //
+        if (!$single) {
+            return $query;
+        }
+        return $query ? $query[$col] : '';
+    }
+
+    //
+    function GetCompany($companyId, $columns)
+    {
+        //
+        $query =
+            $this->db
+            ->where('company_sid', $companyId)
+            ->select($columns)
+            ->get($this->tables['PC']);
+        //
+        $record = $query->row_array();
+        //
+        $query = $query->free_result();
+        //
+        return $record;
+    }
+
+
+    /**
+     * Sync company data from Gusto to system
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    public function pushCompanyDataToGusto(int $companyId)
+    {
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // push company locations
+        $this->pushCompanyLocationToGusto($companyId, $companyDetails);
+        // lets push the company admins
+        $this->pushCompanyAdmins($companyId, $companyDetails);
+        // lets push the company payment config
+        $this->pushCompanyPaymentConfig($companyId, $companyDetails);
+        //
+        $this->createCustomEarningTypeOnGusto($companyId, $companyDetails, 'Paid Time Off');
+    }
+
+    /**
+     * add company location to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param bool $doReturn
+     * @return array
+     */
+    private function pushCompanyLocationToGusto(int $companyId, array $companyDetails, bool $doReturn = true)
+    {
+        // get company current location
+        $companyLocation = $this->getUserLocation($companyId);
+        //
+        $request = [];
+        $request['street_1'] = $companyLocation['street_1'];
+        $request['street_2'] = $companyLocation['street_2'];
+        $request['country'] = $companyLocation['country'];
+        $request['city'] = $companyLocation['city'];
+        $request['zip'] = $companyLocation['zip'];
+        $request['state'] = $companyLocation['state_code'];
+        $request['phone_number'] = $companyLocation['phone'];
+        $request['mailing_address'] = $companyLocation['mailing_address'];
+        $request['filing_address'] = $companyLocation['filing_address'];
+        //
+        $response = AddCompanyLocation($request, $companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        $insertArray = [];
+        $insertArray['company_sid'] = $companyId;
+        $insertArray['gusto_uuid'] = $response['uuid'];
+        $insertArray['country'] = $response['country'];
+        $insertArray['state'] = $response['state'];
+        $insertArray['city'] = $response['city'];
+        $insertArray['street_1'] = $response['street_1'];
+        $insertArray['street_2'] = $response['street_2'];
+        $insertArray['zip'] = $response['zip'];
+        $insertArray['phone_number'] = $response['phone_number'];
+        $insertArray['mailing_address'] = $response['mailing_address'];
+        $insertArray['filing_address'] = $response['filing_address'];
+        $insertArray['version'] = $response['version'];
+        $insertArray['active'] = $response['active'];
+        $insertArray['last_updated_by'] = 0;
+        $insertArray['created_at'] =
+            $insertArray['updated_at'] = getSystemDate();
+        //
+        $this->InsertPayroll('payroll_company_locations', $insertArray);
+        //
+        return $doReturn ? $response : sendResponse(200, $response);;
+    }
+
+    /**
+     * push company admins to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param bool $doReturn
+     * @return array
+     */
+    private function pushCompanyAdmins(int $companyId, array $companyDetails, bool $doReturn = true)
+    {
+        // get company current location
+        $companyAdmins = $this->getCompanyAdmins($companyId);
+        // check for empty
+        if (!$companyAdmins) {
+            return $doReturn ? $companyAdmins : sendResponse(200, $companyAdmins);
+        }
+        // loop through the data
+        foreach ($companyAdmins as $ca) {
+            $this->pushCompanyAdmin($companyId, $ca);
+        }
+    }
+
+    /**
+     * Push admin to Gusto
+     */
+    private function pushCompanyAdmin($companyId, $ca)
+    {
+        //
+        if ($ca['gusto_uuid']) {
+            return ['errors' => 'Admin already exists.'];
+        }
+        // fetch all admins
+        $gustoAdmins = $this->gusto_payroll_model->fetchAllAdmins($companyId);
+        //
+        if ($gustoAdmins[$ca['email_address']]) {
+            //
+            $this->db
+                ->where('sid', $ca['sid'])
+                ->update('payroll_company_admin', [
+                    'gusto_uuid' => $gustoAdmins[$ca['email_address']]['uuid']
+                ]);
+            return ['errors' => 'Admin already exists.'];
+        }
+        // add a new one
+        $this->gusto_payroll_model->moveAdminToGusto([
+            'first_name' => $ca['first_name'],
+            'last_name' => $ca['last_name'],
+            'email' => $ca['email_address']
+        ], $companyId);
+    }
+
+
+    /**
+     * push company payment config to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param bool $doReturn
+     * @return array
+     */
+    private function pushCompanyPaymentConfig(
+        int $companyId,
+        array $companyDetails,
+        bool $doReturn = true
+    ) {
+        //
+        $response = UpdatePaymentConfig([
+            'fast_payment_limit' => 500,
+            'payment_speed' => '4-day'
+        ], $companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        $this->db->insert('payroll_settings', [
+            'company_sid' => $companyId,
+            'partner_uid' => $response['partner_uuid'],
+            'partner_uuid' => $response['partner_uuid'],
+            'payment_speed' => $response['payment_speed'],
+            'fast_payment_limit' => $response['fast_payment_limit'],
+            'created_at' => getSystemDate(),
+            'updated_at' => getSystemDate()
+        ]);
+        //
+        return $doReturn ? $response : sendResponse(200, $response);
+    }
+
+    /**
+     * push company payment config to Gusto
+     *
+     * @param int $companyId
+     * @param int $companyDetails
+     * @param string $type
+     * @param bool $doReturn
+     * @return array
+     */
+    private function createCustomEarningTypeOnGusto(
+        int $companyId,
+        array $companyDetails,
+        string $type,
+        bool $doReturn = true
+    ) {
+        //
+        $response = createCustomEarningTypeOnGusto($type, $companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $doReturn ? $errors : sendResponse(200, $errors);
+        }
+        //
+        $this->db->insert('payroll_company_earning_types', [
+            'company_sid' => $companyId,
+            'gusto_uuid' => $response['uuid'],
+            'earning_name' => $response['name'],
+            'created_at' => getSystemDate(),
+            'updated_at' => getSystemDate()
+        ]);
+        //
+        return $doReturn ? $response : sendResponse(200, $response);
+    }
+
+    /**
+     * get the user location
+     *
+     * @param int $userId
+     * @return array
+     */
+    public function getUserLocation(int $userId)
+    {
+        // set default array
+        $locationArray = [
+            'street_1' => '',
+            'street_2' => '',
+            'country' => 'USA',
+            'state_code' => '',
+            'city' => '',
+            'zip' => '',
+            'phone' => '',
+            'filing_address' => true,
+            'mailing_address' => true
+        ];
+        // get location
+        $record = $this->db
+            ->select('
+                users.Location_City,
+                users.Location_Address,
+                users.Location_Address_2,
+                users.Location_State,
+                users.Location_ZipCode,
+                users.PhoneNumber
+            ')
+            ->where('users.sid', $userId)
+            ->get('users')
+            ->row_array();
+        // check if record found
+        if ($record) {
+            $locationArray['street_1'] = trim($record['Location_Address']);
+            $locationArray['street_2'] = trim($record['Location_Address_2']);
+            $locationArray['state_code'] = db_get_state_code_only(trim($record['Location_State']));
+            $locationArray['city'] = trim($record['Location_City']);
+            $locationArray['zip'] = trim($record['Location_ZipCode']);
+            $locationArray['phone'] = str_replace('+1', '', trim($record['PhoneNumber']));
+        }
+        // return location array
+        return $locationArray;
+    }
+
+    /**
+     * check and save store admin for Gusto
+     *
+     * @param int $companyId
+     * @param array $adminDetails
+     */
+    public function checkAndSetStoreAdminForGusto(int $companyId, array $adminDetails)
+    {
+        // set where array
+        $whereArray = [
+            'company_sid' => $companyId,
+            'email_address' => $adminDetails['email_address'],
+            'is_store_admin' => 1
+        ];
+        // check if admin already exists
+        if (!$this->db->where($whereArray)->count_all_results('payroll_company_admin')) {
+            $this->db->insert(
+                'payroll_company_admin',
+                [
+                    'company_sid' => $companyId,
+                    'gusto_uuid' => '',
+                    'first_name' => $adminDetails['first_name'],
+                    'last_name' => $adminDetails['last_name'],
+                    'email_address' => $adminDetails['email_address'],
+                    'phone_number' => $adminDetails['phone_number'],
+                    'is_store_admin' => 1,
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate(),
+                ]
+            );
+        }
+    }
+
+    /**
+     * get the company admins
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyAdmins(int $companyId)
+    {
+        // get records
+        return $this->db
+            ->select('
+                sid,
+                gusto_uuid,
+                first_name,
+                last_name,
+                email_address,
+                phone_number
+            ')
+            ->where('company_sid', $companyId)
+            ->where('is_store_admin', 0)
+            ->get('payroll_company_admin')
+            ->result_array();
+    }
+    
+    /**
+     * get the company bank account
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyBankAccount(int $companyId)
+    {
+        // get records
+        return $this->db
+            ->select('
+                payroll_uuid
+            ')
+            ->where('company_sid', $companyId)
+            ->where('status', 'awaiting_deposits')
+            ->get('payroll_company_bank_accounts')
+            ->row_array();
     }
 }

@@ -461,6 +461,7 @@ class Payroll_model extends CI_Model{
 			mailing_address,
 			filing_address,
 			phone_number,
+			gusto_uuid,
 			gusto_location_id
 		')
 		->where('company_sid', $companyId)

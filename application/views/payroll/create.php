@@ -13,9 +13,9 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h1 class="m0 p0 csB7">
-                            Run Payroll 
+                            Run Payroll
                             <span class="pull-right">
-                                <a href="<?=base_url('payroll/history');?>" class="btn btn-orange">
+                                <a href="<?= base_url('payroll/history'); ?>" class="btn btn-orange">
                                     <i class="fa fa-history" aria-hidden="true"></i>&nbsp;Payroll History
                                 </a>
                             </span>
@@ -24,8 +24,9 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <?php if(!empty($period)) : ?>
-                    <?php if (count($period) > 1) { ?> 
+
+                <?php if (!empty($period)) : ?>
+                    <?php if (count($period) > 1) { ?>
                         <div class="row">
                             <div class="col-md-12 col-xs-12">
                                 <label class="csF16 csB7">
@@ -34,8 +35,8 @@
                                 <select class="form-control" id="jsRunSelectedPayroll">
                                     <?php foreach ($period as $payroll) { ?>
                                         <option value="<?php echo $payroll['payroll_id']; ?>">
-                                            <?=formatDateToDB($payroll['start_date'], DB_DATE, DATE);?> - <?=formatDateToDB($payroll['end_date'], DB_DATE, DATE);?>
-                                        </option>    
+                                            <?= formatDateToDB($payroll['start_date'], DB_DATE, DATE); ?> - <?= formatDateToDB($payroll['end_date'], DB_DATE, DATE); ?>
+                                        </option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -47,24 +48,24 @@
                                     Run Payroll
                                 </button>
                             </div>
-                        </div>       
-                    <?php } else { ?>  
+                        </div>
+                    <?php } else { ?>
                         <div class="row">
                             <div class="col-sm-12 text-center">
                                 <p style="font-size: 70px;" class="mb0"><i class="fa fa-money" aria-hidden="true"></i></p>
-                                <p class="csF26 csB7">Regular Payroll (<?=formatDateToDB($period[0]['start_date'], DB_DATE, DATE);?> - <?=formatDateToDB($period[0]['end_date'], DB_DATE, DATE);?>)</p>
-                                <p class="csF18">Please run payroll by <strong><?=GUSTO_PAYROLL_TIME;?></strong> on <strong><?=formatDateToDB($period[0]['payroll_deadline'], DB_DATE, DATE);?></strong> to pay your employees for their hard work. They’ll receive their funds on <strong><?=formatDateToDB($period[0]['check_date'], DB_DATE, DATE);?></strong>. If you miss this deadline, your employees’ direct deposit will be delayed.</p>
-                                <?php if(!empty($period[0]['payroll_id'])){ ?>
-                                <a href="<?=base_url('payroll/run/'.($period[0]['payroll_id']).'');?>" class="btn btn-orange">Run Regular Payroll</a>
+                                <p class="csF26 csB7">Regular Payroll (<?= formatDateToDB($period[0]['start_date'], DB_DATE, DATE); ?> - <?= formatDateToDB($period[0]['end_date'], DB_DATE, DATE); ?>)</p>
+                                <p class="csF18">Please run payroll by <strong><?= GUSTO_PAYROLL_TIME; ?></strong> on <strong><?= formatDateToDB($period[0]['payroll_deadline'], DB_DATE, DATE); ?></strong> to pay your employees for their hard work. They’ll receive their funds on <strong><?= formatDateToDB($period[0]['check_date'], DB_DATE, DATE); ?></strong>. If you miss this deadline, your employees’ direct deposit will be delayed.</p>
+                                <?php if (!empty($period[0]['payroll_id'])) { ?>
+                                    <a href="<?= base_url('payroll/run/' . ($period[0]['payroll_id']) . ''); ?>" class="btn btn-orange">Run Regular Payroll</a>
                                 <?php } else { ?>
                                     <a href="javascript:void(0)" disabled class="btn btn-black disabled">Run Regular Payroll</a>
                                     <br>
-                                    <?=ShowInfo('Payroll UUID is missing.', ['icon' => 'fa-times-circle']);?>
-                                <?php }?>
+                                    <?= ShowInfo('Payroll UUID is missing.', ['icon' => 'fa-times-circle']); ?>
+                                <?php } ?>
                             </div>
                         </div>
-                    <?php } ?>  
-                <?php else: ?>
+                    <?php } ?>
+                <?php else : ?>
                     <!--  -->
                     <div class="row">
                         <div class="col-sm-12 text-center">
@@ -79,31 +80,36 @@
     </div>
 </div>
 
+<!-- Add System Model -->
+<link rel="stylesheet" href="<?= base_url(_m("assets/css/SystemModel", 'css')); ?>">
+<script src="<?= base_url(_m("assets/js/SystemModal")); ?>"></script>
 
 <script>
-    $(function(){
+    $(function() {
         //
-        $('#jsPayrollSelect').select2({ minimumResultsForSearch: -1});
+        $('#jsPayrollSelect').select2({
+            minimumResultsForSearch: -1
+        });
         //
-        $('.jsPayrollSubmit').click(function(event){
+        $('.jsPayrollSubmit').click(function(event) {
             //
             event.preventDefault();
             //
-            if($('#jsPayrollSelect').val() == 0){
+            if ($('#jsPayrollSelect').val() == 0) {
                 alertify.alert('WARNING!', 'Please, select a payroll to proceed.');
                 return;
             }
             //
-            window.location = window.location.origin + '/payroll/create/'+$('#jsPayrollSelect').val()+'/'+$('#jsPayrollSelect option[value="'+($('#jsPayrollSelect').val())+'"]').data('version')+'?step=1';
+            window.location = window.location.origin + '/payroll/create/' + $('#jsPayrollSelect').val() + '/' + $('#jsPayrollSelect option[value="' + ($('#jsPayrollSelect').val()) + '"]').data('version') + '?step=1';
         });
         //
-        $('#jsRunPayroll').click(function(event){
-            if($('#jsRunSelectedPayroll').val() == 0){
+        $('#jsRunPayroll').click(function(event) {
+            if ($('#jsRunSelectedPayroll').val() == 0) {
                 alertify.alert('WARNING!', 'Please, select a payroll to proceed.');
                 return;
             }
             //
-            window.location = window.location.origin + '/payroll/run//'+$('#jsRunSelectedPayroll').val();
+            window.location = window.location.origin + '/payroll/run//' + $('#jsRunSelectedPayroll').val();
         });
     });
 </script>

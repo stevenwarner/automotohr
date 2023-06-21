@@ -99,7 +99,15 @@ $fields = [
                     <button class="btn btn-success jsAddSignatory">Add Signatory</button>
                 </div>
             </div>
-        <?php } ?>
+        <?php }else{ ?>
+
+            <div class="row">
+                <div class="col-sm-12 text-right">
+                    <button class="btn btn-success jsEditSignatory">Edit Signatory</button>
+                </div>
+            </div>
+
+            <?php } ?>
         <!--  -->
         <div class="row">
             <div class="col-sm-12">
@@ -219,7 +227,6 @@ $fields = [
                 <hr>
                 <div class="row">
                     <div class="col-sm-12">
-
                         <select name='activeemployees' id="adminesignatories">
                             <option value="">Please select an employee to fill the form</option>
                             <?php
@@ -234,7 +241,7 @@ $fields = [
                                     $dob = date('m/d/Y', strtotime($rowData['dob']));
                                 }
                             ?>
-                                <option value="<?php echo $rowData['first_name']; ?>#<?php echo $rowData['last_name']; ?>#<?php echo $rowData['email']; ?>#<?php echo $rowData['middle_name']; ?>#<?php echo $rowData['ssn']; ?>#<?php echo $rowData['job_title']; ?>#<?php echo $dob; ?>#<?php echo $rowData['PhoneNumber']; ?>#<?php echo $rowData['Location_Address']; ?>#<?php echo $rowData['Location_Address2']; ?>#<?php echo $rowData['Location_ZipCode']; ?>#<?php echo $rowData['Location_City']; ?>#<?php echo $stateCode; ?>"><?php echo remakeEmployeeName($rowData); ?></option>
+                                <option value="<?php echo $rowData['first_name']; ?>#<?php echo $rowData['last_name']; ?>#<?php echo $rowData['email']; ?>#<?php echo $rowData['middle_name']; ?>#<?php echo $rowData['ssn']; ?>#<?php echo $rowData['job_title']; ?>#<?php echo $dob; ?>#<?php echo $rowData['PhoneNumber']; ?>#<?php echo $rowData['Location_Address']; ?>#<?php echo $rowData['Location_Address_2']; ?>#<?php echo $rowData['Location_ZipCode']; ?>#<?php echo $rowData['Location_City']; ?>#<?php echo $stateCode; ?>"><?php echo remakeEmployeeName($rowData); ?></option>
 
                             <?php } ?>
                         </select>

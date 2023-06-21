@@ -40,8 +40,13 @@ class Payroll extends CI_Controller
         //
         $this->version = 'v=' . (MINIFIED ? '1.0' : time());
         //
-        if (!$this->session->userdata('logged_in')['company_detail']['on_payroll']) {
+
+        if (!isCompanyOnBoard()) {
             return redirect('/dashboard');
+        }
+        //
+        if (!isCompanyTermsAccpeted() &&  $this->uri->segment(1) != 'payroll' && $this->uri->segment(2) != 'service-terms') {
+            return redirect('/payroll/service-terms');
         }
     }
 
@@ -55,6 +60,9 @@ class Payroll extends CI_Controller
         //
         $this->data['title'] = 'Payroll | Dashboard';
         $this->data['load_view'] = 0;
+        $this->data['PageScripts'] = [
+            '1.0.2' => 'gusto/js/company_onboard'
+        ];
         //
         $this->load
             ->view('main/header', $this->data)
@@ -83,7 +91,7 @@ class Payroll extends CI_Controller
         //
         if (!checkTermsAccepted($company_sid)) {
             $reload_location = 'payroll/service-terms';
-            redirect($reload_location, 'refresh');
+            return redirect($reload_location, 'refresh');
         }
         //
         $this->data['company_sid'] = $company_sid;
@@ -101,13 +109,15 @@ class Payroll extends CI_Controller
             //
             $company_status = GetCompanyStatus($this->data['company_info']);
             //
-            $flow_info = CreateCompanyFlowLink($this->data['company_info']);
+            $flow_info = CreateCompanyFlowLink($this->data['company_info'], isLoggedInPersonIsSignatory());
             //
             $onboarding_link = isset($flow_info['url']) ? $flow_info['url'] : '';
         }
         //
         $this->data['company_status'] = $company_status;
         $this->data['onboarding_link'] = $onboarding_link;
+        $this->data['PageScripts'][] =
+            ['1.0.2', 'gusto/js/company_onboard'];
         //
         $this->load
             ->view('main/header', $this->data)
@@ -138,6 +148,7 @@ class Payroll extends CI_Controller
         }
         //
         $this->data['company_sid'] = $company_sid;
+        $this->data['PageScripts'] = [['1.0.2', 'gusto/js/company_onboard']];
         //
         $this->load
             ->view('main/header', $this->data)
@@ -220,6 +231,7 @@ class Payroll extends CI_Controller
         );
         //
         $this->data['PageScripts'] = !$termsAccepted['terms_accepted'] ? ['payroll/js/service'] : [];
+        $this->data['PageScripts'][] = ['1.0.2', 'gusto/js/company_onboard'];
         //
         $this->data['acceptedData'] = $termsAccepted;
         //
@@ -326,6 +338,7 @@ class Payroll extends CI_Controller
             ],
             'sid, payroll_uuid, s3_file_name, check_date'
         );
+        $this->data['PageScripts'] = [['1.0.2', 'gusto/js/company_onboard']];
         //
         $this->load
             ->view('main/header', $this->data)
@@ -347,6 +360,7 @@ class Payroll extends CI_Controller
         $this->data['title'] = 'Payroll | Documents';
         //
         $this->data['PageScripts'] = [];
+        $this->data['PageScripts'] = [['1.0.2', 'gusto/js/company_onboard']];
         //
         $session = $this->session->userdata('logged_in');
         //
@@ -400,6 +414,7 @@ class Payroll extends CI_Controller
         $this->data['title'] = 'Payroll | Documents';
         //
         $this->data['PageScripts'] = [];
+        $this->data['PageScripts'] = [['1.0.2', 'gusto/js/company_onboard']];
         //
         $session = $this->session->userdata('logged_in');
         //
@@ -543,7 +558,6 @@ class Payroll extends CI_Controller
 
         $payroll = json_decode($this->data['payrollHistory']['payroll_json'], true);
         $payrollReceipt = $this->getProcessedPayrollsReceipt($this->data['companyId'], $this->data['payrollHistory']['payroll_id'])['Response'];
-        //
         $employee_compensations = array();
         //
         foreach ($payrollReceipt['employee_compensations'] as $ekey => $employee) {
@@ -585,6 +599,19 @@ class Payroll extends CI_Controller
             $reload_location = 'payroll/service-terms';
             redirect($reload_location, 'refresh');
         }
+        // check and get payroll blockers
+        $payrollBlockers = $this->payRollBlockers($this->data['companyId']);
+        $this->data['payrollBlockers'] = $payrollBlockers;
+        //
+        if ($payrollBlockers) {
+            //
+            $this->data['PageScripts'] = [['1.0.2', 'gusto/js/company_onboard']];
+            //
+            return $this->load
+                ->view('main/header', $this->data)
+                ->view('payroll/payroll_blocker')
+                ->view('main/footer');
+        }
         // Get processed payrolls
         // Get the company pay periods
         $response = $this->PayPeriods($this->data['companyId']);
@@ -617,8 +644,9 @@ class Payroll extends CI_Controller
                 }
             }
         }
-        //
         $this->data['period'] = $payrollInfo;
+        //
+        $this->data['PageScripts'] = [['1.0.2', 'gusto/js/company_onboard']];
         //
         $this->load
             ->view('main/header', $this->data)
@@ -705,21 +733,15 @@ class Payroll extends CI_Controller
                     }
                 }
                 //
-                if (!empty($payroll['paid_time_off'])) {
-                    foreach ($payroll['paid_time_off'] as $v) {
-                        $paid_time_off[stringToSlug($v['name'])] = $v;
-                    }
-                }
-                //
                 $this->data['Payroll']['employee_compensations'][$index]['fixed_compensations'] = $fixed_compensations;
                 $this->data['Payroll']['employee_compensations'][$index]['hourly_compensations'] = $hourly_compensations;
-                $this->data['Payroll']['employee_compensations'][$index]['paid_time_off'] = $paid_time_off;
                 $this->data['Payroll']['employee_compensations'][$index]['job_id'] = $this->data['PayrollEmployees'][$payroll['employee_id']]['jobs'][0]['compensations'][0]['job_id'];
             }
         }
         //
         $this->data['payrollId'] = $payrolId;
         $this->data['payrollVersion'] = $this->data['Payroll']['version'];
+        $this->data['PageScripts'] = [['1.0.2', 'gusto/js/company_onboard']];
         // Get Gusto Company Details
         $this->load
             ->view('main/header', $this->data)
@@ -1413,6 +1435,8 @@ class Payroll extends CI_Controller
         $post = $this->input->post(NULL, TRUE);
         // Make request array
         $employeeArray = [];
+
+        
         //
         foreach ($post['payroll'] as $payroll) {
             //
@@ -1641,7 +1665,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1682,7 +1706,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1721,7 +1745,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1756,7 +1780,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1814,7 +1838,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1895,10 +1919,14 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            res([
+            return ([
                 'Status' => false,
                 'Errors' => $errors
             ]);
+            // res([
+            //     'Status' => false,
+            //     'Errors' => $errors
+            // ]);
         } else {
             //
             return [
@@ -2329,5 +2357,31 @@ class Payroll extends CI_Controller
             //
             return $returnData;
         }
+    }
+
+    /**
+     * get the payroll blockers
+     *
+     * @param int $companyId
+     * @return array
+     */
+    private function payRollBlockers(int $companyId)
+    {
+        // get company information
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        // get blockers
+        $response = payRollBlockers($company);
+        // check and set errors
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        return $response;
     }
 }
