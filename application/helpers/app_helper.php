@@ -576,3 +576,27 @@ if (!function_exists('isCompanyTermsAccpeted')) {
         return false;
     }
 }
+
+
+if (!function_exists('isLoggedInPersonIsSignatory')) {
+    /**
+     * check if logged in person is signatory
+     *
+     * @return bool
+     */
+    function isLoggedInPersonIsSignatory()
+    {
+        // Get instance
+        $CI = &get_instance();
+        // Get the session
+        $ses = $CI->session->userdata('logged_in');
+        //
+        return (bool) $CI->db
+        ->where([
+            'company_sid' => $ses['company_detail']['sid'],
+            'email' => $ses['employer_detail']['email']
+
+        ])
+        ->count_all_results('payroll_signatories');
+    }
+}

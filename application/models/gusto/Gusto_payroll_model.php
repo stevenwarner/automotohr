@@ -407,6 +407,9 @@ class Gusto_payroll_model extends CI_Model
 
         // lets sync the company payment config
         $this->syncCompanyPayrollHistory($companyId, $companyDetails);
+
+        // lets sync the company bank accounts
+        $this->syncCompanyBankAccounts($companyId, $companyDetails);
     }
 
     /**
@@ -839,6 +842,61 @@ class Gusto_payroll_model extends CI_Model
     }
 
     /**
+     * Sync company bank accounts with Gusto
+     *
+     * @param int   $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    public function syncCompanyBankAccounts(int $companyId, array $companyDetails)
+    {
+        //
+        $response = getCompanyBankAccountsFromGusto($companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if (!$errors && $response) {
+            //
+            $mainTable = 'payroll_company_bank_accounts';
+
+            //
+            foreach ($response as $bankAccount) {
+                //
+                $dataArray = [];
+                $dataArray['payroll_uuid'] = $bankAccount['uuid'];
+                $dataArray['routing_number'] = $bankAccount['routing_number'];
+                $dataArray['account_number'] = $bankAccount['hidden_account_number'];
+                $dataArray['account_type'] = $bankAccount['account_type'];
+                $dataArray['status'] = $bankAccount['verification_status'];
+                //
+                $whereArray = [
+                    'company_sid' => $companyId,
+                    'payroll_uuid' => $bankAccount['uuid'],
+                ];
+                //
+                if (!$this->db->where($whereArray)->count_all_results($mainTable)) {
+                    //
+                    $dataArray['company_sid'] = $companyId;
+                    $dataArray['created_at'] = $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert($mainTable, $dataArray);
+                } else {
+                    //
+                    $dataArray['updated_at'] = getSystemDate();
+                    //
+                    $this->db->where($whereArray)->update($mainTable, $dataArray);
+                }
+            }
+            //
+            return true;
+        }
+        //
+        return false;
+    }
+
+    /**
      * Sync company employee information
      *
      * @param int   $employeeId
@@ -871,14 +929,14 @@ class Gusto_payroll_model extends CI_Model
                 ->where($whereArray)
                 ->get('payroll_employees')
                 ->row_array();
+            // Add or Update employee profile info
+            $response = $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
+            //
+            if (is_array($response)) {
+                return $response;
+            }
             //
             if (!$gustoEmployeeInfo) {
-                // Add or Update employee profile info
-                $response = $this->syncCompanyEmployeeProfile($employeeInfo, $gustoEmployeeInfo, $companyDetails);
-                //
-                if (is_array($response)) {
-                    return $response;
-                }
                 $gustoEmployeeInfo =
                     $this->db
                     ->select('
@@ -1731,10 +1789,10 @@ class Gusto_payroll_model extends CI_Model
 
     /**
      * Handle employee onboard profile
-     * 
-     * Handles employee onboard profile process from the 
+     *
+     * Handles employee onboard profile process from the
      * UI of super admin and employer panel
-     * 
+     *
      * @param array $post
      * @param array $gustoEmployeeDetails
      * @param array $gustoCompany
@@ -1838,7 +1896,7 @@ class Gusto_payroll_model extends CI_Model
                 $newPost = [];
                 $newPost['title'] = $employeeDetails['job_title'];
                 $newPost['rate'] = $employeeDetails['hourly_rate'];
-                $newPost['flsa_status'] = "Exempt";
+                $newPost['flsa_status'] = "Nonexempt";
                 $newPost['payment_unit'] = "Hour";
                 $newPost['employeeId'] = $post['employeeId'];
                 $newPost['companyId'] = $post['companyId'];
@@ -1847,7 +1905,7 @@ class Gusto_payroll_model extends CI_Model
                     $newPost,
                     $gustoEmployeeDetails,
                     $gustoCompany,
-                    true
+                    false
                 );
             }
         }
@@ -1859,10 +1917,10 @@ class Gusto_payroll_model extends CI_Model
 
     /**
      * Handle employee onboard job and compensation
-     * 
-     * Handles employee onboard job & compensation process from the 
+     *
+     * Handles employee onboard job & compensation process from the
      * UI of super admin and employer panel
-     * 
+     *
      * @param array $post
      * @param array $gustoEmployeeDetails
      * @param array $gustoCompany
@@ -1922,7 +1980,7 @@ class Gusto_payroll_model extends CI_Model
                     ->select('payroll_company_locations.gusto_uuid')
                     ->join(
                         'payroll_company_locations',
-                        'payroll_company_locations.gusto_location_id = payroll_employees.work_address_sid',
+                        'payroll_company_locations.gusto_uuid = payroll_employees.work_address_sid',
                         'inner'
                     )
                     ->where('payroll_employees.employee_sid', $post['employeeId'])
@@ -1994,7 +2052,7 @@ class Gusto_payroll_model extends CI_Model
                 ->select('payroll_company_locations.gusto_uuid')
                 ->join(
                     'payroll_company_locations',
-                    'payroll_company_locations.gusto_location_id = payroll_employees.work_address_sid',
+                    'payroll_company_locations.gusto_uuid = payroll_employees.work_address_sid',
                     'inner'
                 )
                 ->where('payroll_employees.employee_sid', $post['employeeId'])
@@ -2071,7 +2129,10 @@ class Gusto_payroll_model extends CI_Model
         $payrollEmployeeArray['updated_at'] = getSystemDate();
         // update the table
         $this->db->where(['employee_sid' => $post['employeeId']])->update('payroll_employees', $payrollEmployeeArray);
-
+        // update the users table
+        updateUserById([
+            'hourly_rate' => $post['rate']
+        ], $post['employeeId']);
         // send response
         return $doReturn ? $errors : sendResponse(200, ['success' => 'Employee\'s job is successfully updated.']);
     }
@@ -3758,5 +3819,24 @@ class Gusto_payroll_model extends CI_Model
             ->where('is_store_admin', 0)
             ->get('payroll_company_admin')
             ->result_array();
+    }
+    
+    /**
+     * get the company bank account
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyBankAccount(int $companyId)
+    {
+        // get records
+        return $this->db
+            ->select('
+                payroll_uuid
+            ')
+            ->where('company_sid', $companyId)
+            ->where('status', 'awaiting_deposits')
+            ->get('payroll_company_bank_accounts')
+            ->row_array();
     }
 }

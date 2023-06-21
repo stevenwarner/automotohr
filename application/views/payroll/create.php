@@ -25,21 +25,6 @@
                     <div class="clearfix"></div>
                 </div>
 
-                <?php if (count($payRollBlockersResponse['Response']) > 0) { ?>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <p class="csF26 csB7">Reasons that prevent the company from running payrolls</p>
-                            <div class="alert alert-danger ">
-                                <?php foreach ($payRollBlockersResponse['Response'] as $message) { ?>
-                                    <p class="csF18"><span class="glyphicon glyphicon-chevron-right"></span> <?php echo $message['message'] ?><hr></p>
-                                <?php   }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                <?php } ?>
-
                 <?php if (!empty($period)) : ?>
                     <?php if (count($period) > 1) { ?>
                         <div class="row">

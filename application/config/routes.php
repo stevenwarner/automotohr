@@ -1717,6 +1717,8 @@ $route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory
 // Sync
 $route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
 $route['gusto/company/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishCompanyOnboard/$1';
+$route['gusto/company/(:num)/send_test_deposits']['get'] = 'gusto/Gusto_payroll/sendTestDeposits/$1';
+$route['gusto/company/(:num)/approve']['get'] = 'gusto/Gusto_payroll/approveCompany/$1';
 $route['gusto/employee/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishEmployeeOnboard/$1';
 
 //Job Title Templates

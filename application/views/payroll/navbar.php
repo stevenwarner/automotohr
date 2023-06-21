@@ -3,102 +3,78 @@
 $companySid = $session["company_detail"]["sid"];
 $employerEmail = $session['employer_detail']['email'];
 $isGustoAdmin = isGustoAdmin($employerEmail, $companySid);
-
 //
-$navpills = [];
+$navPills = [];
 //
-$companyTermsAccpeted = isCompanyTermsAccpeted();
+$termsAcceptedByCompany = isCompanyTermsAccpeted();
 
-if (isPayrollOrPlus()) {
-    //
+if ($isGustoAdmin > 0) {
 
-    if ($isGustoAdmin > 0) {
-
-        if ($companyTermsAccpeted) {
-            $navpills[] = [
-                'title' => 'Company',
-                'url' => '/company',
-                'slug' => '',
-                'icon' => 'building',
-                'segment' => 'company'
-            ];
-
-
-
-            // Dashboard
-            $navpills[] = [
-                'title' => 'Employees',
-                'url' => '/employees/payroll',
-                'slug' => '',
-                'icon' => 'users',
-                'segment' => 'employees'
-            ];
-            $navpills[] = [
-                'title' => 'Run payroll',
-                'url' => '/run',
-                'slug' => '',
-                'icon' => 'bank',
-                'segment' => 'run'
-            ];
-            $navpills[] = [
-                'title' => 'Manage Admins',
-                // 'url' => '/manage-admin',
-                'url' => 'avascript:void(0)',
-                'slug' => '',
-                'icon' => 'users',
-                'segment' => 'manage',
-                'class' => 'jsManageGustoAdmins',
-                'data-cid' => $companySid
-            ];
-
-            $navpills[] = [
-                'title' => 'Manage Signatories',
-                'url' => 'javascript:void(0)',
-                'slug' => '',
-                'icon' => '',
-                'segment' => 'manage',
-                'class' => 'jsManageGustoSignatories',
-                'data-cid' => $companySid
-            ];
-        }
-
-
-        $navpills[] = [
-            'title' => 'Service Terms',
-            'url' => '/service-terms',
+    if ($termsAcceptedByCompany) {
+        $navPills[] = [
+            'title' => 'Company',
+            'url' => '/company',
             'slug' => '',
-            'icon' => 'file-pdf-o',
-            'segment' => 'service'
+            'icon' => 'building',
+            'segment' => 'company'
         ];
 
-        if ($companyTermsAccpeted) {
-
-            $navpills[] = [
-                'title' => 'Settings',
-                'url' => '/settings',
-                'slug' => '',
-                'icon' => 'cogs',
-                'segment' => 'settings'
-            ];
-        }
+        // Dashboard
+        $navPills[] = [
+            'title' => 'Employees',
+            'url' => '/employees/payroll',
+            'slug' => '',
+            'icon' => 'users',
+            'segment' => 'employees'
+        ];
+        $navPills[] = [
+            'title' => 'Run payroll',
+            'url' => '/run',
+            'slug' => '',
+            'icon' => 'bank',
+            'segment' => 'run'
+        ];
+        $navPills[] = [
+            'title' => 'Manage Admins',
+            'url' => 'javascript:void(0)',
+            'slug' => '',
+            'icon' => 'users',
+            'segment' => 'manage',
+            'class' => 'jsManageGustoAdmins',
+            'data-cid' => $companySid
+        ];
+        $navPills[] = [
+            'title' => 'Manage Signatories',
+            'url' => 'javascript:void(0)',
+            'slug' => '',
+            'icon' => '',
+            'segment' => 'manage',
+            'class' => 'jsManageGustoSignatories',
+            'data-cid' => $companySid
+        ];
     }
-}
 
 
-if ($companyTermsAccpeted) {
-
-    $navpills[] = [
-        'title' => 'My Pay Stubs',
-        'url' => '/my',
+    $navPills[] = [
+        'title' => 'Service Terms',
+        'url' => '/service-terms',
         'slug' => '',
-        'icon' => 'pie-chart',
-        'segment' => 'payroll/my'
+        'icon' => 'file-pdf-o',
+        'segment' => 'service'
     ];
 }
 
+$navPills[] = [
+    'title' => 'My Pay Stubs',
+    'url' => '/my',
+    'slug' => '',
+    'icon' => 'pie-chart',
+    'segment' => 'payroll/my'
+];
+
 //
 if (isEmployeeOnPayroll($this->session->userdata('logged_in')['employer_detail']['sid'])) {
-    $navpills[] = [
+    $navPills[] = [
         'title' => 'My Payroll Documents',
         'url' => 'my_payroll_documents',
         'slug' => '',
@@ -112,7 +88,7 @@ $lis = '';
 //
 $baseURL = base_url('payroll/');
 //
-foreach ($navpills as $tab) {
+foreach ($navPills as $tab) {
     //
     if (isset($tab['submenu'])) {
         $tmp = '';

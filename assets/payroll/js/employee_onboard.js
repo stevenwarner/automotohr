@@ -596,7 +596,7 @@ $(function EmployeeOnboard() {
 	 */
 	function StartOnboardProcess() {
 		//
-		var modalId = "jsEmployeeOnboardModel";
+		// var modalId = "jsEmployeeOnboardModel";
 		//
 		Model(
 			{
@@ -604,7 +604,7 @@ $(function EmployeeOnboard() {
 				Title:
 					'<span class="' + modalId + 'Title">Onboard Process</span>',
 				Body: '<div id="' + modalId + 'Body"></div>',
-				Loader: modalId + "Loader",
+				Loader: modalLoader,
 				Container: "container",
 				CancelClass: "btn-cancel csW",
 			},
@@ -674,7 +674,7 @@ $(function EmployeeOnboard() {
 						yearRange: "-100:+50",
 					});
 					//
-					ml(false, "jsEmployeeOnboardModelLoader");
+					ml(false, modalLoader);
 				});
 			})
 			.error(ErrorHandler);
@@ -741,7 +741,7 @@ $(function EmployeeOnboard() {
 		o.employeeId = selectedEmployeeId;
 		o.companyId = companyId;
 
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 
 		xhr = $.ajax({
 			method: "POST",
@@ -752,7 +752,7 @@ $(function EmployeeOnboard() {
 				//
 				xhr = null;
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 				//
 				if (resp.errors) {
 					return alertify.alert(
@@ -813,7 +813,7 @@ $(function EmployeeOnboard() {
 			return alertify.alert("Warning!", "Salary type is mandatory.", ECB);
 		}
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "POST",
@@ -824,7 +824,7 @@ $(function EmployeeOnboard() {
 				//
 				xhr = null;
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 				//
 				if (resp.errors) {
 					return alertify.alert(
@@ -894,7 +894,7 @@ $(function EmployeeOnboard() {
 			);
 		}
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "POST",
@@ -905,7 +905,7 @@ $(function EmployeeOnboard() {
 				//
 				xhr = null;
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 				//
 				if (resp.errors) {
 					return alertify.alert(
@@ -967,7 +967,7 @@ $(function EmployeeOnboard() {
 			? parseFloat(o.dependentTotal).toFixed(2)
 			: 0.0;
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "POST",
@@ -978,7 +978,7 @@ $(function EmployeeOnboard() {
 				//
 				xhr = null;
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 				//
 				if (resp.errors) {
 					return alertify.alert(
@@ -1042,7 +1042,7 @@ $(function EmployeeOnboard() {
 			}
 		}
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "POST",
@@ -1053,7 +1053,7 @@ $(function EmployeeOnboard() {
 				//
 				xhr = null;
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 				//
 				if (!resp.status) {
 					return alertify.alert(
@@ -1132,7 +1132,7 @@ $(function EmployeeOnboard() {
 			);
 		}
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "POST",
@@ -1143,7 +1143,7 @@ $(function EmployeeOnboard() {
 				//
 				xhr = null;
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 				//
 				if (resp.errors) {
 					return alertify.alert(
@@ -1187,7 +1187,7 @@ $(function EmployeeOnboard() {
 			);
 		}
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "POST",
@@ -1198,7 +1198,7 @@ $(function EmployeeOnboard() {
 				//
 				xhr = null;
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 				//
 				if (resp.errors) {
 					return alertify.alert(
@@ -1237,7 +1237,7 @@ $(function EmployeeOnboard() {
 			"Confirm!",
 			message.join("<br/>"),
 			function () {
-				ml(true, "jsEmployeeOnboardModelLoader");
+				ml(true, modalLoader);
 				//
 				xhr = $.ajax({
 					method: "DELETE",
@@ -1254,7 +1254,7 @@ $(function EmployeeOnboard() {
 						//
 						xhr = null;
 						//
-						ml(false, "jsEmployeeOnboardModelLoader");
+						ml(false, modalLoader);
 						//
 						if (!resp.status) {
 							return alertify.alert(
@@ -1283,7 +1283,7 @@ $(function EmployeeOnboard() {
 	 */
 	function UpdateCompanyEmployeeCompensation() {
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "GET",
@@ -1308,7 +1308,7 @@ $(function EmployeeOnboard() {
 						SaveCompanyEmployeeJob
 					);
 					//
-					ml(false, "jsEmployeeOnboardModelLoader");
+					ml(false, modalLoader);
 				});
 			})
 			.error(ErrorHandler);
@@ -1319,7 +1319,7 @@ $(function EmployeeOnboard() {
 	 */
 	function UpdateCompanyEmployeeAddress() {
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		xhr = $.ajax({
 			method: "GET",
 			url: GetURL(
@@ -1347,7 +1347,7 @@ $(function EmployeeOnboard() {
 						yearRange: "-100:+50",
 					});
 					//
-					ml(false, "jsEmployeeOnboardModelLoader");
+					ml(false, modalLoader);
 				});
 			})
 			.error(ErrorHandler);
@@ -1358,7 +1358,7 @@ $(function EmployeeOnboard() {
 	 */
 	function UpdateEmployeeFederalTax() {
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "GET",
@@ -1380,7 +1380,7 @@ $(function EmployeeOnboard() {
 						SaveCompanyEmployeeFederalTax
 					);
 					//
-					ml(false, "jsEmployeeOnboardModelLoader");
+					ml(false, modalLoader);
 				});
 			})
 			.error(ErrorHandler);
@@ -1391,7 +1391,7 @@ $(function EmployeeOnboard() {
 	 */
 	function UpdateEmployeeStateTax() {
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "GET",
@@ -1416,7 +1416,7 @@ $(function EmployeeOnboard() {
 							SaveCompanyEmployeeStateTax
 						);
 					} else {
-						ml(false, "jsEmployeeOnboardModelLoader");
+						ml(false, modalLoader);
 					}
 				});
 			})
@@ -1428,7 +1428,7 @@ $(function EmployeeOnboard() {
 	 */
 	function UpdateEmployeePaymentMethod() {
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.ajax({
 			method: "GET",
@@ -1457,7 +1457,7 @@ $(function EmployeeOnboard() {
 						DeleteEmployeeBankAccount
 					);
 					//
-					ml(false, "jsEmployeeOnboardModelLoader");
+					ml(false, modalLoader);
 				});
 			})
 			.error(ErrorHandler);
@@ -1468,7 +1468,7 @@ $(function EmployeeOnboard() {
 	 */
 	function LoadEmployeeStateTax() {
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		xhr = $.get(
 			baseURI +
@@ -1542,7 +1542,7 @@ $(function EmployeeOnboard() {
 				//
 				$("#JSQusetionSection").html(html);
 				//
-				ml(false, "jsEmployeeOnboardModelLoader");
+				ml(false, modalLoader);
 			})
 			.error(ErrorHandler);
 	}
@@ -1552,7 +1552,7 @@ $(function EmployeeOnboard() {
 	 */
 	function AddEmployeeBankAccount() {
 		//
-		ml(true, "jsEmployeeOnboardModelLoader");
+		ml(true, modalLoader);
 		//
 		selectedBankId = $(this).data("account_id");
 		//
@@ -1574,7 +1574,7 @@ $(function EmployeeOnboard() {
 					);
 					$(".jsSaveEmployeeBankInfo").click(SaveEmployeeBankDetail);
 					//
-					ml(false, "jsEmployeeOnboardModelLoader");
+					ml(false, modalLoader);
 				});
 			})
 			.error(ErrorHandler);

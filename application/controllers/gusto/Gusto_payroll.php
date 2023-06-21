@@ -142,10 +142,6 @@ class Gusto_payroll extends CI_Controller
             }
         }
         //
-        //$data['session'] = $this->session->userdata('logged_in');
-        //  $company_sid = $data['session']['company_detail']['sid'];
-
-
         return SendResponse(
             200,
             [
@@ -256,8 +252,6 @@ class Gusto_payroll extends CI_Controller
     {
         //
         $post = $this->input->put(null, true);
-
-        //_e($post,true,true);
 
         // fetch signatory
         $signatory = $this->db
@@ -709,5 +703,61 @@ class Gusto_payroll extends CI_Controller
         $this->gusto_payroll_model->UpdateCompany($companyId, ['on_payroll' => 1]);
         //
         return $response['company_uuid'];
+    }
+
+
+    /**
+     * send test deposits
+     *
+     * @param int $companyId
+     * @return json
+     */
+    public function sendTestDeposits(int $companyId)
+    {
+        // get company details
+        $companyDetails = $this
+            ->gusto_payroll_model
+            ->getCompanyDetailsForGusto($companyId);
+        // get bank account
+        $bankDetails = $this
+            ->gusto_payroll_model
+            ->getCompanyBankAccount($companyId);
+        //
+        if (!$bankDetails) {
+            return SendResponse(200, ['errors' => ['Please, add company\'s bank account first or sync the bank account.']]);
+        }
+        // get the deposits
+        $response = getTestDeposits($bankDetails['payroll_uuid'], $companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return SendResponse(200, $errors);
+        }
+        return SendResponse(200, $response);
+    }
+    
+    /**
+     * send test deposits
+     *
+     * @param int $companyId
+     * @return json
+     */
+    public function approveCompany(int $companyId)
+    {
+        // get company details
+        $companyDetails = $this
+            ->gusto_payroll_model
+            ->getCompanyDetailsForGusto($companyId);
+       
+        // get the deposits
+        $response = approveCompanyOnGusto($companyDetails);
+        //
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            return SendResponse(200, $errors);
+        }
+        return SendResponse(200, ['success' => true]);
     }
 }
