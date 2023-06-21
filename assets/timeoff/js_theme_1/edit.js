@@ -300,7 +300,9 @@ $(function () {
                 beforeShowDay: unavailable,
                 onSelect: () => {
                     //
-                    getSideBarPolicies();
+                    
+                 $('#asoffdate').text('AS Of  ' + moment($('#jsStartDateEdit').val(), 'MM/DD/YYYY').format(timeoffDateFormat));
+                 getSideBarPolicies();
                     //
                     remakeRangeRows(
                         '#jsStartDateEdit',
@@ -684,13 +686,38 @@ $(function () {
                         newPolicies.push(policy);
                         rows += `
                         <div>
-                        <strong>${policy.Title} (<strong class="text-${policy.categoryType == 1 ? "success" : "danger"}">${policy.categoryType == 1 ? "Paid" : "Unpaid"}</strong>)</strong>
+                        <strong>${policy.Title} (<strong class="text-${
+							policy.categoryType == 1 ? "success" : "danger"
+						}">${
+							policy.categoryType == 1 ? "Paid" : "Unpaid"
+						}</strong>)</strong>
                         <br />
-                        <span>Remaining Time: ${policy.AllowedTime.M.minutes == 0 && policy.Reason == '' ? 'Unlimited' : policy.RemainingTime.text}</span>
+                        <span>Remaining Time: ${
+							policy.AllowedTime.M.minutes == 0 &&
+							policy.Reason == ""
+								? "Unlimited"
+								: policy.RemainingTime.text
+						}</span>
                         <br />
-                        <span>Scheduled Time: ${policy.AllowedTime.M.minutes == 0 && policy.Reason == '' ? 'Unlimited' : policy.ConsumedTime.text}</span>
+                        <span>Scheduled Time: ${
+							policy.AllowedTime.M.minutes == 0 &&
+							policy.Reason == ""
+								? "Unlimited"
+								: policy.ConsumedTime.text
+						}</span>
                         <br />
-                        <span>Employment Status: ${ucwords(policy.EmployementStatus)}</span>  
+                        <span>Employment Status: ${ucwords(
+							policy.EmployementStatus
+						)}</span><br>
+                        <span>Policy Cycle: ${moment(
+							policy.lastAnniversaryDate,
+							"YYYY/MM/DD"
+						).format(timeoffDateFormat)} -
+                        ${moment(
+							policy.upcomingAnniversaryDate,
+							"YYYY/MM/DD"
+						).format(timeoffDateFormat)}
+                        </span> 
                         </div>
                         <hr />
                         `;

@@ -243,7 +243,11 @@ if (!function_exists('getEmployeeAccrual')) {
             'EmployementStatus' => 'probation',
             'EmployeeJoinedAt' => $employeeJoiningDate,
             'RemainingTimeWithNegative' => $balanceInMinutes,
-            'Reason' => ''
+            'Reason' => '',
+            'lastAnniversaryDate' => '',
+            'upcomingAnniversaryDate' => ''
+
+
         ];
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
@@ -511,6 +515,10 @@ if (!function_exists('getEmployeeAccrual')) {
         $r['MaxNegativeTime'] = $negativeTimeInMinutes;
         $r['Balance'] = $balanceInMinutes;
         $r['EmployementStatus'] = $employementStatus;
+
+        $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
+        $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
+       
         //
         if ($accruals['frequency'] == 'none') {
             $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;

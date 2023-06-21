@@ -626,17 +626,42 @@ $(function () {
                         newPolicies.push(policy);
                         rows += `
                         <div>
-                        <strong>${policy.Title} (<strong class="text-${policy.categoryType == 1 ? "success" : "danger"}">${policy.categoryType == 1 ? "Paid" : "Unpaid"}</strong>)</strong> 
+                        <strong>${policy.Title} (<strong class="text-${
+							policy.categoryType == 1 ? "success" : "danger"
+						}">${
+							policy.categoryType == 1 ? "Paid" : "Unpaid"
+						}</strong>)</strong> 
                         <br />
                         <span>(${policy.Category})</span>  
                         <br />
-                        <span>${policy.IsUnlimited ? 'Unlimited' : policy.RemainingTime.text} remaining</span>
+                        <span>${
+							policy.IsUnlimited
+								? "Unlimited"
+								: policy.RemainingTime.text
+						} remaining</span>
                         <br />
-                        <span>${policy.IsUnlimited ? 'Unlimited' : policy.ConsumedTime.text} scheduled</span>
+                        <span>${
+							policy.IsUnlimited
+								? "Unlimited"
+								: policy.ConsumedTime.text
+						} scheduled</span>
                         <br />
-                        <span>Employment status: ${ucwords(policy.EmployementStatus)}</span>  
+                        <span>Employment status: ${ucwords(
+							policy.EmployementStatus
+						)}</span>  
+                      <br>
+                         <span>Policy Cycle: ${moment(
+								policy.lastAnniversaryDate,
+								"YYYY/MM/DD"
+							).format(timeoffDateFormat)} -
+                        ${moment(
+							policy.upcomingAnniversaryDate,
+							"YYYY/MM/DD"
+						).format(timeoffDateFormat)}
+                        </span> 
                         </div>
                         <hr />
+                       
                         `;
                     });
                     //
@@ -872,8 +897,12 @@ $(function () {
             beforeShowDay: unavailable,
             onSelect: (date) => {
                 $('#jsEndDate').datepicker('option', 'minDate', date);
+                
                 //
+                $('#asoffdate').text('AS Of  ' + moment($('#jsStartDate').val(), 'MM/DD/YYYY').format(timeoffDateFormat));
+
                 getSideBarPolicies();
+
                 //
                 remakeRangeRows(
                     '#jsStartDate',
