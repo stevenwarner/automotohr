@@ -287,7 +287,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                     </div>
                                                 </div>
 
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                     <div class="checkbox cs_full_width">
                                                         <label class="control control--checkbox">Workers Compensation Code<input type="checkbox" name="workers_compensation_code" class="check_it" value="workers_compensation_code">
                                                             <div class="control__indicator"></div>
@@ -325,6 +325,13 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
                                                     <label class="control control--checkbox">Drivers License<input type="checkbox" name="drivers_license" class="check_it" value="drivers_license">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Gender<input type="checkbox" name="gender" class="check_it" value="gender">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
