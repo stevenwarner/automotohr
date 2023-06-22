@@ -14670,6 +14670,13 @@ if (!function_exists('_m')) {
      */
     function _m($string, $type = 'js', $version = '1.0.0')
     {
+        // get extension
+        $d = getStaticFileVersion($string);
+        //
+        if ($d) {
+            return
+            $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
+        }
         //
         return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
     }

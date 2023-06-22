@@ -581,7 +581,6 @@ if (!function_exists('isCompanyTermsAccpeted')) {
     }
 }
 
-
 if (!function_exists('isLoggedInPersonIsSignatory')) {
     /**
      * check if logged in person is signatory
@@ -602,5 +601,28 @@ if (!function_exists('isLoggedInPersonIsSignatory')) {
 
         ])
         ->count_all_results('payroll_signatories');
+    }
+}
+
+if (!function_exists('getStaticFileVersion')) {
+    /**
+     * set and get the version of the minified file
+     *
+     * @param string $file The URI of the asset
+     * @returns string
+     */
+    function getStaticFileVersion(
+        string $file
+    )
+    {
+        // set files
+        $files = [];
+        // plugins
+        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        // set the main CSS file
+        $files['2022/css/main'] = ['css' => '2.0.0'];
+        // check and return data
+        return $files[$file] ?? [];
     }
 }
