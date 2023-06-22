@@ -2511,6 +2511,10 @@ class Reports_model extends CI_Model
         foreach ($holderArray as $k => $v) :
             $holderArray[$k]['assigneddocuments'] = $this->getAssignedDocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedgeneraldocuments'] = $this->getAssignedGeneralDocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedi9document'] = $this->getAssignedi9DocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid']);
+             $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid']);
         endforeach;
 
         //
@@ -2607,11 +2611,72 @@ class Reports_model extends CI_Model
         return $result ? $result->result_array() : [];
     }
 
+    //
+    function getAssignedi9DocumentForReport($employeeId, $companyId)
+    {
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('user_sid', $employeeId);
+        $this->db->where('status', 1);
+        $this->db->where('sent_status', 1);
+        $status = $this->db->count_all_results('applicant_i9form');
+
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    //
+    function getAssignedw9DocumentForReport($employeeId, $companyId)
+    {
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('user_sid', $employeeId);
+        $this->db->where('status', 1);
+        $this->db->where('sent_status', 1);
+        $status = $this->db->count_all_results('applicant_w9form');
+
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    //
+    function getAssignedw4DocumentForReport($employeeId, $companyId)
+    {
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('employer_sid', $employeeId);
+        $this->db->where('status', 1);
+        $this->db->where('sent_status', 1);
+        $this->db->where('user_consent', 0);
+        $status = $this->db->count_all_results('form_w4_original');
+
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
 
-
-
-
+        //
+        function getAssignedeeocDocumentForReport($employeeId)
+        {
+            $this->db->where('users_type', 'employee');
+            $this->db->where('application_sid', $employeeId);
+            $this->db->where('is_latest', 1);
+            $this->db->where('status', 1);
+            $this->db->where('is_expired', 0);
+            $status = $this->db->count_all_results('portal_eeo_form');
+    
+            if ($status > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
 
 
 
