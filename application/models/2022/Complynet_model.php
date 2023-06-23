@@ -932,7 +932,7 @@ class Complynet_model extends CI_Model
         }
 
         // Check employee by email
-        $employeeObj = $this->clib->getEmployeeByEmail($email);
+        $orginalEmployeeObject = $employeeObj = $this->clib->getEmployeeByEmail($email);
         //
         if (isset($employeeObj['error'])) {
             //
@@ -1085,12 +1085,22 @@ class Complynet_model extends CI_Model
             $message = 'Employee not created on ComplyNet for company <strong>' . getCompanyNameBySid($companyId) . '</strong>';
             //
             $this->sendEmailToDeveloper($message, $reportError);
+
+            //
+            $employeeAlreadyExistMSG = '';
+            if (!empty($orginalEmployeeObject)) {
+                
+                foreach ($orginalEmployeeObject as $messageRow) {
+                    $employeeAlreadyExistMSG .= "<br><br>" . " Company: " . $messageRow['Company'] . "<br> Location: " . $messageRow['Location'];
+                }
+            }
+
             //
             if ($doReturn) {
-                return $response;
+                return $response . $employeeAlreadyExistMSG;
             }
             return SendResponse(200, ['errors' => [
-                $response
+                $response . $employeeAlreadyExistMSG
             ]]);
         }
 
