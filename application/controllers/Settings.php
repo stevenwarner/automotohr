@@ -43,7 +43,6 @@ class Settings extends Public_Controller
     {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
-            // loadCachedFile('my_settings', $data['session']);
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
@@ -63,9 +62,6 @@ class Settings extends Public_Controller
             $sess_array['cart'] = $data['cart'];
             $sess_array['portal_detail'] = $result['portal'];
             $sess_array['clocked_status'] = $result['clocked_status'];
-            //Update Default Timezone
-            $company_timezone = $result['portal']['company_timezone'];
-            // date_default_timezone_set('America/Los_Angeles');
 
             if (isset($previous_session['is_super']) && intval($previous_session['is_super']) == 1) {
                 $sess_array['is_super'] = 1;
@@ -86,12 +82,20 @@ class Settings extends Public_Controller
             //Fetch Contact Info for logged in company
             $this->load->model('manage_admin/company_model');
             $data['company_info'] = $this->company_model->get_contact_info($company_id);
-            // ob_flush();
-            // ob_start();
+            // set CSS
+            $data['PageCSS'] = [];
+            $data['PageCSS'][] = 'v1/plugins/ms_modal/main';
+            // set default js
+            $data['PageScripts'] = [];
+            $data['PageScripts'][] = 'v1/plugins/ms_modal/main';
+            $data['PageScripts'][] = 'js/app_helper';
+            // check and add payroll scripts
+            if (checkIfAppIsEnabled('payroll')) {
+                $data['PageScripts'][] = 'v1/payroll/js/company_onboard';
+            }
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_settings_new');
             $this->load->view('main/footer');
-            // loadCachedFile('my_settings', $data['session'], true);
         } else {
             redirect(base_url('login'), "refresh");
         }

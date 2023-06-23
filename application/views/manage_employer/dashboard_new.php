@@ -856,8 +856,16 @@
                                     <?php } ?>
 
                                     <?php if (
-                                        isEmployeeOnPayroll($this->session->userdata('logged_in')['employer_detail']['sid']) ||
-                                        isPayrollAuthorizePerson($this->session->userdata('logged_in')['employer_detail']['email'])
+                                        checkIfAppIsEnabled('payroll')
+                                        && !isCompanyOnBoard()
+                                        && (
+                                            isEmployeeOnPayroll(
+                                                $this->session->userdata('logged_in')['employer_detail']['sid']
+                                            )
+                                            || isPayrollAuthorizePerson(
+                                                $this->session->userdata('logged_in')['employer_detail']['email']
+                                            )
+                                        )
                                     ) { ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
@@ -870,26 +878,7 @@
                                                         <small style="font-size: 12px"></small>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?= base_url('payroll/employees/normal'); ?>" class="site-btn">Payroll Dashboard</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-
-                                    <?php if (checkIfAppIsEnabled('payroll') && !isCompanyOnBoard()) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?= base_url('payroll/run'); ?>">Payroll</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <small style="font-size: 12px"></small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <button class="site-btn jsAddCompanyToGusto" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</button>
+                                                        <a href="<?= base_url('payroll/my/pay_stubs'); ?>" class="site-btn">Payroll Dashboard</a>
                                                     </div>
                                                 </div>
                                             </div>

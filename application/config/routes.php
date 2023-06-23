@@ -1529,24 +1529,6 @@ $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
 
 
 /**
- * 
- */
-$route['payroll/(:num)/admin']['post'] = "payroll/Payroll_onboard/AddAdmin/$1";
-$route['payroll/(:num)/service']['post'] = "payroll/Payroll_onboard/AcceptServiceTerms/$1";
-$route['payroll/(:num)/settings']['post'] = "payroll/Payroll_onboard/Settings/$1";
-$route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/createPartnerCompanyOnGusto/$1";
-$route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";
-
-$route['payroll/onboard_employee/(:num)/(:num)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeFromPayroll/$1/$2";
-$route['payroll/onboard_employee/(:any)/(:num)']['post'] = "payroll/Payroll_onboard/EmployeeOnboardPiece/$1/$2";
-$route['payroll/onboard_employee/(:any)/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/GetEmployeeOnboardSection/$1/$2/$3";
-$route['payroll/onboard_employee/(:any)/(:num)/(:num)/(:any)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeOnboardSection/$1/$2/$3/$4";
-$route['payroll/onboard_status/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/OnboardStatus/$1/$2";
-//
-$route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";
-
-
-/**
  * Attendance routes
  * 
  * @author  AutomotoHR <www.automotohr.com>
@@ -1776,3 +1758,10 @@ $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridD
 $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/downloadHybridDocument/$1';
 //
 $route['payroll/gusto/managepayment/(:num)'] = 'gusto/Gusto_payroll/managePayment/$1';
+
+
+
+/**
+ * Payroll routes
+ */
+$route['payroll/cpc/(:num)'] = 'gusto/Gusto_payroll/getCreatePartnerCompanyPage/$1';

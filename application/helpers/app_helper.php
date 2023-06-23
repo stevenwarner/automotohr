@@ -620,6 +620,10 @@ if (!function_exists('getStaticFileVersion')) {
         // plugins
         $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
         $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        //
+        $files['js/app_helper'] = ['js' => '1.0.0'];
+        // Gusto
+        $files['v1/payroll/js/company_onboard'] = ['js' => '1.0.0'];
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.0.0'];
         // check and return data

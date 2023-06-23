@@ -221,11 +221,9 @@ if (typeof handleErrorResponse === "undefined") {
 				CB
 			);
 		}
+		//
+		let json = response.responseJSON || JSON.parse(response.responseText);
 		// when error object came in
-		return alertify.alert(
-			"Errors!",
-			response.responseJSON.errors.join("<br />"),
-			CB
-		);
+		return alertify.alert("Errors!", json.errors.join("<br />"), CB);
 	}
 }

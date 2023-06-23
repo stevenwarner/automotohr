@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="row">
                 <!--  -->
-                <?php $this->load->view('loader', ['props'=>'id="jsPayrollLoader"']); ?>
+                <?php $this->load->view('loader', ['props' => 'id="jsPayrollLoader"']); ?>
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
                     <?php $this->load->view('main/employer_column_left_view'); ?>
                 </div>
@@ -209,13 +209,6 @@
                                         <?php if (check_access_permissions_for_view($security_details, 'applicant_status_bar')) { ?>
                                             <li><a href="<?php echo base_url(); ?>application_status">Applicant Status Bar Module</a></li>
                                         <?php } ?>
-                                        <!--                                    --><?php //if (check_blue_panel_status_for_view()) { //TODO Remove This Check After Completion  
-                                                                                    ?>
-                                        <!--                                            <li><a href="--><?php //echo base_url('onboarding/configuration'); 
-                                                                                                        ?>
-                                        <!--">Onboarding Configuration</a></li>-->
-                                        <!--                                    --><?php //} 
-                                                                                    ?>
                                         <?php if ($reassign_flag && in_array('full_access', $security_details) && check_access_permissions_for_view($security_details, 're_assign_applicant')) { ?>
                                             <li><a href="<?php echo base_url(); ?>re_assign_candidate">Re Assign Applicant</a></li>
                                         <?php } ?>
@@ -246,6 +239,9 @@
                                             <li><a href="<?php echo base_url('performance-management/goals'); ?>">Goals</a></li>
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
+                                        <?php if (checkIfAppIsEnabled('payroll') && !isCompanyOnBoard()) { ?>
+                                            <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</a></li>
+                                        <?php } ?>
                                     </ul>
                                 </article>
                             <?php } ?>
