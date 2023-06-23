@@ -274,6 +274,9 @@ class Export_csv_model extends CI_Model
         $this->db->select('portal_job_applications.cover_letter');
         $this->db->select('portal_job_applications.linkedin_profile_url');
         $this->db->select('portal_job_listings.Title');
+        $this->db->select('portal_job_applications.union_member');
+        $this->db->select('portal_job_applications.union_name');
+
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
         //        switch ($applicant_type){

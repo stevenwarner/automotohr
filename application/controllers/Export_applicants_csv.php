@@ -174,11 +174,20 @@ class Export_applicants_csv extends Public_Controller {
                             $export_data[$i]['status'] = 'Archived Applicant';
                         }
 
-                        $rows .= $export_data[$i]['date_applied'].','.$export_data[$i]['first_name'].','.$export_data[$i]['last_name'].','.$export_data[$i]['email'].','.$export_data[$i]['phone_number'].','.$export_data[$i]['address'].','.$export_data[$i]['city'].','.$export_data[$i]['zipcode'].','.$export_data[$i]['state'].','.$export_data[$i]['country'].','.$export_data[$i]['pictures'].','.$export_data[$i]['resume'].','.$export_data[$i]['cover_letter'].','.$export_data[$i]['applicant_type'].','.$export_data[$i]['job_title'].','.$export_data[$i]['status'].','.$export_data[$i]['applicant_status'].','.$applicant_notes. PHP_EOL;
+                        if ($applicant['union_member'] == 1) {
+                            $export_data[$i]['union_member'] = 'Yes';
+                        } else {
+                            $export_data[$i]['union_member'] = 'No';
+                        }
+
+                         $export_data[$i]['union_name'] = $applicant['union_name'];
+
+
+                        $rows .= $export_data[$i]['date_applied'].','.$export_data[$i]['first_name'].','.$export_data[$i]['last_name'].','.$export_data[$i]['email'].','.$export_data[$i]['phone_number'].','.$export_data[$i]['address'].','.$export_data[$i]['city'].','.$export_data[$i]['zipcode'].','.$export_data[$i]['state'].','.$export_data[$i]['country'].','.$export_data[$i]['pictures'].','.$export_data[$i]['resume'].','.$export_data[$i]['cover_letter'].','.$export_data[$i]['applicant_type'].','.$export_data[$i]['job_title'].','.$export_data[$i]['status'].','.$export_data[$i]['applicant_status'].','.$applicant_notes.','.$export_data[$i]['union_member'].','.$export_data[$i]['union_name']. PHP_EOL;
                         $i++;
                     }
 
-                    $header_row = 'Date Applied,First Name,Last Name,E-Mail,Primary Number,Street Address,City,Zipcode,State,Country,Profile Picture,Resume,Cover Letter,Applicant Type,Job Title,Status,Applicant Status,Notes';
+                    $header_row = 'Date Applied,First Name,Last Name,E-Mail,Primary Number,Street Address,City,Zipcode,State,Country,Profile Picture,Resume,Cover Letter,Applicant Type,Job Title,Status,Applicant Status,Notes,Union Member,Union Name';
                     $file_content = '';
                     $file_content .= $header_row . ',' . PHP_EOL;
                     $file_content .= $rows;
