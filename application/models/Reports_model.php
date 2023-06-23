@@ -2514,7 +2514,7 @@ class Reports_model extends CI_Model
             $holderArray[$k]['assignedi9document'] = $this->getAssignedi9DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid']);
-             $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid']);
+            $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid']);
         endforeach;
 
         //
@@ -2574,6 +2574,7 @@ class Reports_model extends CI_Model
         documents_assigned.user_sid,
         documents_assigned.document_title,
         documents_assigned.sid,
+        documents_assigned.confidential_employees
     ');
 
         $this->db
@@ -2581,8 +2582,7 @@ class Reports_model extends CI_Model
             ->where('documents_assigned.user_type', 'employee')
             ->where('documents_assigned.company_sid', $companyId)
             ->where('documents_assigned.user_sid', $employeeId)
-            ->where('documents_assigned.status', 1)
-            ->where('documents_assigned.archive', 0);
+            ->where('documents_assigned.status', 1);
         //
         $result = $this->db->get();
         //
@@ -2603,8 +2603,7 @@ class Reports_model extends CI_Model
             ->from('documents_assigned_general')
             ->where('documents_assigned_general.company_sid', $companyId)
             ->where('documents_assigned_general.user_sid', $employeeId)
-            ->where('documents_assigned_general.status', 1)
-            ->where('documents_assigned_general.is_completed', 0);
+            ->where('documents_assigned_general.status', 1);
         //
         $result = $this->db->get();
         //
@@ -2617,7 +2616,6 @@ class Reports_model extends CI_Model
         $this->db->where('company_sid', $companyId);
         $this->db->where('user_sid', $employeeId);
         $this->db->where('status', 1);
-        $this->db->where('sent_status', 1);
         $status = $this->db->count_all_results('applicant_i9form');
 
         if ($status > 0) {
@@ -2633,7 +2631,6 @@ class Reports_model extends CI_Model
         $this->db->where('company_sid', $companyId);
         $this->db->where('user_sid', $employeeId);
         $this->db->where('status', 1);
-        $this->db->where('sent_status', 1);
         $status = $this->db->count_all_results('applicant_w9form');
 
         if ($status > 0) {
@@ -2649,8 +2646,6 @@ class Reports_model extends CI_Model
         $this->db->where('company_sid', $companyId);
         $this->db->where('employer_sid', $employeeId);
         $this->db->where('status', 1);
-        $this->db->where('sent_status', 1);
-        $this->db->where('user_consent', 0);
         $status = $this->db->count_all_results('form_w4_original');
 
         if ($status > 0) {
@@ -2661,106 +2656,41 @@ class Reports_model extends CI_Model
     }
 
 
-        //
-        function getAssignedeeocDocumentForReport($employeeId)
-        {
-            $this->db->where('users_type', 'employee');
-            $this->db->where('application_sid', $employeeId);
-            $this->db->where('is_latest', 1);
-            $this->db->where('status', 1);
-            $this->db->where('is_expired', 0);
-            $status = $this->db->count_all_results('portal_eeo_form');
-    
-            if ($status > 0) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
+    //
+    function getAssignedeeocDocumentForReport($employeeId)
+    {
+        $this->db->where('users_type', 'employee');
+        $this->db->where('application_sid', $employeeId);
+        $this->db->where('is_latest', 1);
+        $this->db->where('status', 1);
+        $status = $this->db->count_all_results('portal_eeo_form');
 
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
 
     //
-    private function getAssignedDocumentForReport_oldd(
-        $companyId,
-        $employeeArray = [],
-        $doCount = false,
-        $limit = []
-    ) {
-        //
-        if (!$doCount) :
-            //
-            $this->db->select('
-            documents_assigned.user_sid,
-            documents_assigned.user_type,
-            documents_assigned.document_title,
-            documents_assigned.is_confidential,
-            documents_assigned.confidential_employees,
-            documents_assigned.managersList as authorize_signers,
-            documents_assigned.visible_to_payroll,
-            documents_assigned.allowed_roles,
-            documents_assigned.allowed_employees,
-            documents_assigned.allowed_departments,
-            documents_assigned.allowed_teams,
-            documents_assigned.document_approval_employees
-        ');
-        endif;
-        // Common
-        $this->db
-            ->from('documents_assigned')
-            ->join('users', 'users.sid = documents_assigned.user_sid')
-            ->where('documents_assigned.user_type', 'employee')
+    function getActiveEmployeesByCompanyIdAll($companySid)
+    {
+        $a = $this->db
+            ->select("
+        sid as employeeId,
+        CONCAT(first_name,' ', last_name) as full_name,
+        " . (getUserFields()) . "
+    ")
+            ->where('parent_sid', $companySid)
             ->where('users.terminated_status', 0)
             ->where('users.active', 1)
-            ->where('documents_assigned.company_sid', $companyId);
-
-        // Filter
-
-        // Employee filter
-        if ($employeeArray) :
-            $this->db->where_in('documents_assigned.user_sid', $employeeArray);
-        endif;
-
-        // Status filter
-        /*
-    if ($documentStatus[0] !== 'all') :
-        $this->db->group_start();
+            ->order_by('full_name', 'ASC')
+            ->get('users');
         //
-        if (in_array("confidential", $documentStatus)) {
-            $this->db->or_where('documents_assigned.is_confidential', 1);
-            $this->db->or_where('documents_assigned.confidential_employees <>', '');
-        }
+        $b = $a->result_array();
+        $a->free_result();
         //
-        if (in_array("authorizedsigners", $documentStatus)) {
-            $this->db->or_where('documents_assigned.managersList <>', '');
-        }
-        //
-        if (in_array("approvalflow", $documentStatus)) {
-            $this->db->or_where('documents_assigned.approval_process', 1);
-            $this->db->or_where('documents_assigned.has_approval_flow', 1);
-        }
-        //
-        $this->db->group_end();
-    endif;
-
-    */
-
-
-        //
-        if ($doCount) :
-            return $this->db->count_all_results();
-        endif;
-        //
-        if (isset($limit[0])) :
-            $this->db->limit($limit[0], $limit[1]);
-        endif;
-        //
-        $this->db->group_by('users.sid');
-
-        $this->db->order_by('users.first_name', 'ASC');
-        //
-        $result = $this->db->get();
-        //
-        return $result ? $result->result_array() : [];
+        return $b;
     }
 }

@@ -50,21 +50,22 @@
                                             <div class="hr-innerpadding">
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <form action="<?= base_url('reports/employee_document'); ?>" method="POST">
+                                                        <form action="<?= base_url('reports/employeeAssignedDocuments'); ?>" method="POST">
                                                             <input type="hidden" id="perform_action" name="perform_action" value="export_csv" />
                                                             <!-- Filter first row -->
                                                             <div class="row">
-                                                                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                                                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-7">
                                                                     <div class="field-row">
-                                                                        <label>Employee</label>
+                                                                        <label>Employees</label>
                                                                         <select id="js-employee" name="dd-employee[]" multiple="true"></select>
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-5">
                                                                     <div class="pull-right" style="margin-top: 30px;">
                                                                         <a id="js-apply-filter" class="btn btn-success " href="javascript:void()">Apply Filters</a> &nbsp;&nbsp;
                                                                         <a id="js-reset-filter" class="btn btn-success " href="javascript:void()">Reset Filters</a> &nbsp;&nbsp;
+                                                                        <button type="submit" id="js-export" class="btn btn-success ">Export CSV</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -80,7 +81,7 @@
                                     <div class="col-xs-12">
                                         <div class="hr-box">
                                             <div class="hr-box-header bg-header-green">
-                                                <strong>Employee Assigned Documents Report</strong>
+                                                <strong>Employees Assigned Documents Report</strong>
                                             </div>
                                             <div class="hr-innerpadding">
                                                 <!-- Pagination -->
@@ -92,8 +93,8 @@
                                                             <table class="table table-bordered table-striped table-hover table-condensed" id="example">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>Employee</th>
-                                                                        <th>Documents</th>
+                                                                        <th>Employees</th>
+                                                                        <th># of Documents</th>
                                                                         <th>Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -166,6 +167,8 @@
         fetchFilter();
         loader(false);
 
+        dataTarget.html('<tr><td colspan="' + ($('thead tr th').length) + '"><p class="alert alert-info text-center">Please apply filter to generate report</p></td></tr>');
+
         // Capture enter
         $(document).keypress(function(e) {
             if (e.which == 13) {
@@ -219,7 +222,7 @@
         //
         function fetchFilter() {
             $.post(baseHandlerURI, {
-                action: 'get_employee_status_filter'
+                action: 'get_active_employee_status_filter'
             }, function(resp) {
                 //
                 if (resp.Status === false) {
@@ -352,48 +355,51 @@
                 if (record.assignedeeocdocument == 1) {
                     totalDocs = totalDocs + 1;
                 }
-             
 
                 //
-                if (record.assigneddocuments.length > 0) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; background-color: #81b431;color: #fff; padding-top:5px; padding-bottom:5px;" <span><strong> All Document(s) </strong></span></div>';
+
+                if (record.assignedi9document == 1) {
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>I9 Fillable </span></div>';
                 }
-
-                $.each(record.assigneddocuments, function(i, val) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span> ' + val.document_title + '</span></div>';
-                });
-
-
-                //
-                if (record.assignedgeneraldocuments.length > 0) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; background-color: #81b431;color: #fff; padding-top:5px; padding-bottom:5px;" <span><strong> General Document(s) </strong></span></div>';
+                if (record.assignedw9document == 1) {
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W9 Fillable </span></div>';
+                }
+                if (record.assignedw4document == 1) {
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W4 Fillable </span></div>';
+                }
+                if (record.assignedeeocdocument == 1) {
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>EEOC Form </span></div>';
                 }
 
                 $.each(record.assignedgeneraldocuments, function(i, val) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="border-bottom: 1px solid #ddd; text-transform:capitalize padding-top:2px; padding-bottom:2px;" <span>' + val.document_type.replace("_", " ") + '</span></div>';
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; text-transform:capitalize; padding-top:2px; padding-bottom:2px;" <span>' + val.document_type.replace("_", " ") + '</span></div>';
+                });
+
+                //
+                $.each(record.assigneddocuments, function(i, val) {
+                    //
+                    if (val.confidential_employees != null) {
+                        var ConfidentialEmployees = val.confidential_employees.split(",");
+
+                        if (ConfidentialEmployees.includes('<?php echo $employerSid; ?>')) {
+                            assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span> ' + val.document_title + '</span></div>';
+                        } else {
+                            totalDocs = totalDocs - 1;
+                        }
+
+                    } else {
+                        assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span> ' + val.document_title + '</span></div>';
+                    }
+
                 });
 
 
-                //
-                if (record.assignedi9document == 1 || record.assignedw9document == 1 || record.assignedw4document == 1 || record.assignedeeocdocument == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; background-color: #81b431;color: #fff; padding-top:5px; padding-bottom:5px;" <span><strong> Employment Eligibility Verification Document </strong></span></div>';
+                var bgColor = '';
+                if (totalDocs == 0) {
+                    bgColor = 'style="background-color: #f2dede;"';
                 }
 
-                if (record.assignedi9document == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>I9 Fillable </span></div>';
-                }
-                if (record.assignedw9document == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W9 Fillable </span></div>';
-                }
-                if (record.assignedw4document == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W4 Fillable </span></div>';
-                }
-                if (record.assignedeeocdocument == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>EEOC Form </span></div>';
-                }
-
-
-                rows += '<tr>';
+                rows += '<tr ' + bgColor + '>';
                 rows += '   <td class="vam">';
                 rows += '       <strong>' + (localEmployeeONJ[record.sid]) + '</strong>';
                 rows += '   </td>';
@@ -401,9 +407,11 @@
                 rows += '       <span><strong>' + totalDocs + '</strong> Docs</span>';
                 rows += '   </td>';
                 rows += '   <td class="vam">';
-                rows += '       <a  class="btn btn-success jsviewdoc" href="javascript:void()">View</a>';
-                rows += '   </td>';
+                if (totalDocs > 0) {
+                    rows += '       <a  class="btn btn-success jsviewdoc" href="javascript:void()">View</a>';
+                }
 
+                rows += '   </td>';
                 rows += '</tr>';
 
                 rows += '<tr style="display: none">';
@@ -415,7 +423,6 @@
             dataTarget.html(rows);
             loader(false);
         }
-
 
 
         // Pagination
@@ -569,7 +576,6 @@
     })
 
 
-
     //
     $(document).on('click', '.jsviewdoc', function(e) {
         e.preventDefault();
@@ -577,7 +583,6 @@
 
     });
 </script>
-
 
 <style>
     .select2-container .select2-selection--single .select2-selection__rendered {
