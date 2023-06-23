@@ -43,6 +43,7 @@ class Export_employees_csv extends Public_Controller
 
                 switch ($perform_action) {
                     case 'export_employees':
+
                         $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
                         $pay_plan_flag = $data['session']['employer_detail']['pay_plan_flag'];
                         if (($access_level_plus || $pay_plan_flag == 1)) {
@@ -50,12 +51,13 @@ class Export_employees_csv extends Public_Controller
                             $checked_boxes = explode(',', $checked_values);
                         }
 
+
                         $access_level = $this->input->post('access_level');
                         $company_sid = $this->input->post('company_sid');
                         $status = $this->input->post('status');
                         $to_date = $this->input->post('to_date');
                         $from_date = $this->input->post('from_date');
-                                            
+
 
                         $start_time = '';
                         $end_time = '';
@@ -199,6 +201,8 @@ class Export_employees_csv extends Public_Controller
                                             } else {
                                                 $export_data[$i]['pictures'] = '';
                                             }
+                                        } elseif ($value == 'union_member') {
+                                            $export_data[$i][$value] = $employee['union_member'] == 1 ? 'Yes' : 'No';
                                         } else {
                                             $export_data[$i][$value] = str_replace(',', ' ', strip_tags(trim(preg_replace('/\s+/', ' ', $employee[$value]))));
                                         }

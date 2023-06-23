@@ -337,6 +337,22 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                 </div>
                                             </div>
 
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Union Member<input type="checkbox" name="union_member" class="check_it" value="union_member">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Union Name<input type="checkbox" name="union_name" class="check_it" value="union_name">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
 
                                         </div>
                                     </div>
