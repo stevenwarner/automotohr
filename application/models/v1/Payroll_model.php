@@ -1,0 +1,513 @@
+<?php defined('BASEPATH') || exit('No direct script access allowed');
+
+class Payroll_model extends CI_Model
+{
+    // set AutomotoHR admin
+    private $adminArray;
+
+    /**
+     * Inherit the parent class methods on call
+     */
+    public function __construct()
+    {
+        // call the parent constructor
+        parent::__construct();
+        // load the payroll helper
+        $this->load->helper('v1/payroll_helper');
+        // set the admin
+        $this->adminArray = [
+            'first_name' => 'Steven',
+            'last_name' => 'Warner',
+            'email_address' => 'steven@automotohr.com',
+            'phone_number' => '3331234569',
+        ];
+    }
+
+    /**
+     * get company employees
+     *
+     * @param int $companyId
+     * @param array $columns
+     * @param array $whereArray
+     * @return array
+     */
+    public function getCompanyEmployees(int $companyId, array $columns = ['*'], array $whereArray = []): array
+    {
+        //
+        $whereArray = !empty($whereArray) ? $whereArray : ["users.active" => 1, "users.terminated_status" => 0];
+        //
+        $redo = false;
+        //
+        if ($columns === true) {
+            //
+            $redo = true;
+            //
+            $columns = [];
+            $columns[] = "users.sid";
+            $columns[] = "users.first_name";
+            $columns[] = "users.last_name";
+            $columns[] = "users.email";
+            $columns[] = "users.joined_at";
+            $columns[] = "users.registration_date";
+            $columns[] = "users.ssn";
+            $columns[] = "users.timezone";
+            $columns[] = "company.timezone as company_timezone";
+            $columns[] = "users.dob";
+            $columns[] = "users.profile_picture";
+            $columns[] = "users.access_level";
+            $columns[] = "users.access_level_plus";
+            $columns[] = "users.user_shift_hours";
+            $columns[] = "users.user_shift_minutes";
+            $columns[] = "users.is_executive_admin";
+            $columns[] = "users.job_title";
+            $columns[] = "users.pay_plan_flag";
+            $columns[] = "users.full_employment_application";
+            $columns[] = "users.on_payroll";
+            $columns[] = "payroll_employees.onboard_completed";
+        }
+        //
+        $query =
+            $this->db
+            ->select($columns)
+            ->join("users as company", "users.parent_sid = company.sid", 'inner')
+            ->join("payroll_employees", "payroll_employees.employee_sid = users.sid", 'left')
+            ->where("users.parent_sid", $companyId)
+            ->where($whereArray)
+            ->order_by("users.first_name", 'asc')
+            ->get('users');
+        //
+        $records = $query->result_array();
+        //
+        $query = $query->free_result();
+        //
+        if ($redo && !empty($records)) {
+            //
+            $newRecords = [];
+            //
+            $updateArray = [];
+            //
+            foreach ($records as $record) {
+                //
+                $newRecords[$record['sid']] = [
+                    'sid' => $record['sid'],
+                    'timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+                    'first_name' => ucwords($record['first_name']),
+                    'last_name' => ucwords($record['last_name']),
+                    'name' => ucwords($record['first_name'] . ' ' . $record['last_name']),
+                    'role' => remakeEmployeeName($record, false),
+                    'plus' => $record['access_level_plus'],
+                    'email' => $record['email'],
+                    'image' => getImageURL($record['profile_picture']),
+                    'joined_on' => $record['joined_at'],
+                    'ssn' => $record['ssn'],
+                    'dob' => $record['dob'],
+                    'shift_hours' => $record['user_shift_hours'],
+                    'shift_minutes' => $record['user_shift_minutes'],
+                    'on_payroll' => $record['on_payroll'],
+                    'onboard_completed' => $record['onboard_completed'],
+                ];
+                //
+                if (!empty($record['timezone'])) {
+                    $newRecords[$record['sid']]['timezone'] = $record['timezone'];
+                } else if (!empty($record['company_timezone'])) {
+                    $newRecords[$record['sid']]['timezone'] = $record['company_timezone'];
+                }
+                //
+                if (!empty($record['full_employment_application'])) {
+                    //
+                    $fef = unserialize($record['full_employment_application']);
+                    //
+                    if (empty($newRecords[$record['sid']]['ssn']) && isset($fef['TextBoxSSN'])) {
+                        $newRecords[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
+                        //
+                        $updateArray[$record['sid']]['sid'] = $record['sid'];
+                        $updateArray[$record['sid']]['ssn'] = $fef['TextBoxSSN'];
+                    }
+                    //
+                    if (empty($newRecords[$record['sid']]['dob']) && isset($fef['TextBoxDOB'])) {
+                        $newRecords[$record['sid']]['dob'] = DateTime::createfromformat('m-d-Y', $fef['TextBoxDOB'])->format('Y-m-d');
+                        $updateArray[$record['sid']]['sid'] = $record['sid'];
+                        $updateArray[$record['sid']]['dob'] = $newRecords[$record['sid']]['dob'];
+                    }
+                }
+            }
+            //
+            if (!empty($updateArray)) {
+                $this->db->update_batch($this->U, $updateArray, 'sid');
+            }
+            //
+            $records = $newRecords;
+            //
+            unset($newRecords);
+        }
+        //
+        return $records;
+    }
+
+    /**
+     * get company employees for payroll
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getEmployeesForPayroll(int $companyId): array
+    {
+        // Fetch employees
+        $employees = $this->getCompanyEmployees($companyId, [
+            "users.sid",
+            "users.first_name",
+            "users.last_name",
+            "users.access_level",
+            "users.access_level_plus",
+            "users.is_executive_admin",
+            "users.job_title",
+            "users.ssn",
+            "users.dob",
+            "users.email",
+            "users.middle_name",
+            "users.pay_plan_flag",
+            "users.on_payroll",
+            'users.PhoneNumber',
+            'payroll_employees.payroll_employee_uuid',
+        ], [
+            'users.active' => 1,
+            'users.is_executive_admin' => 0,
+            'users.terminated_status' => 0
+        ]);
+        //
+        $tmp = [];
+        //
+        if ($employees) {
+            //
+            foreach ($employees as $employee) {
+                //
+                if ($employee['payroll_employee_uuid']) {
+                    continue;
+                }
+                //
+                $missingFields = [];
+                //
+                if (!$employee['first_name']) {
+                    $missingFields[] = 'First Name';
+                }
+                //
+                if (!$employee['last_name']) {
+                    $missingFields[] = 'Last Name';
+                }
+                //
+                $employee['ssn'] = preg_replace('/[^0-9]/', '', $employee['ssn']);
+                //
+                if (!preg_match('/[0-9]{9}/', $employee['ssn'])) {
+                    $missingFields[] = 'Social Security Number';
+                }
+                //
+                if (!$employee['dob']) {
+                    $missingFields[] = 'Date Of Birth';
+                }
+                //
+                if (!$employee['email']) {
+                    $missingFields[] = 'Email';
+                }
+                //
+                $tmp[] = [
+                    'sid' => $employee['sid'],
+                    'full_name_with_role' => remakeEmployeeName($employee),
+                    'first_name' => $employee['first_name'],
+                    'last_name' => $employee['last_name'],
+                    'email' => $employee['email'],
+                    'phone_number' => $employee['PhoneNumber'],
+                    'missing_fields' => $missingFields
+                ];
+            }
+        }
+        return $tmp;
+    }
+
+    /**
+     * check payroll admin of a company
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    public function checkAdminForPayroll(int $companyId): bool
+    {
+        //
+        return (bool) $this->db
+            ->where([
+                'company_sid' => $companyId,
+                'is_store_admin' => 0
+            ])
+            ->count_all_results('gusto_companies_admin');
+    }
+
+    /**
+     * get payroll admin of a company
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    public function getAdminForPayroll(int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('first_name, email_address, last_name')
+            ->where([
+                'company_sid' => $companyId,
+                'is_store_admin' => 0
+            ])
+            ->get('gusto_companies_admin')
+            ->row_array();
+    }
+
+    /**
+     * check and add admin
+     *
+     * @param array $post
+     * @param int   $companyId
+     * @return int
+     */
+    public function checkAndSaveAdmin(array $post, int $companyId): int
+    {
+        // check if already exists
+        if ($this->db->where([
+            'company_sid' => $companyId,
+            'is_store_admin' => 0,
+            'email_address' => $post['email']
+        ])->count_all_results('gusto_companies_admin')) {
+            return 0;
+        }
+        // add the admin
+        $this->db->insert(
+            'gusto_companies_admin',
+            [
+                'company_sid' => $companyId,
+                'gusto_uuid' => null,
+                'first_name' => $post['firstName'],
+                'last_name' => $post['lastName'],
+                'email_address' => $post['email'],
+                'is_store_admin' => 0,
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate()
+            ]
+        );
+        // retrieve the last id
+        return $this->db->insert_id();
+    }
+
+    /**
+     * create partner company on Gusto
+     *
+     * @param int $companyId
+     * @param array $employees
+     * @return array
+     */
+    public function startCreatePartnerCompany(int $companyId, array $employees): array
+    {
+        // set default return array
+        $returnArray = ['success' => true];
+        // check if company is already onboard
+        if (!$this->checkIfCompanyAlreadyPartnered($companyId)) {
+            // company needs to be created first
+            $response = $this->createPartnerCompany($companyId);
+            //
+            if ($response['errors']) {
+                return $response;
+            }
+        }
+        // push the admins to Gusto
+        $this->checkAndSetPayrollStoreAdmin($companyId);
+        // return
+        return $returnArray;
+    }
+
+    /**
+     * Get gusto company details for gusto
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyDetailsForGusto(int $companyId): array
+    {
+        return $this->db
+            ->select('
+                gusto_uuid,
+                refresh_token,
+                access_token
+            ')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies')
+            ->row_array();
+    }
+
+    /**
+     * sync payroll admins
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function syncPayrollAdmins(int $companyId): array
+    {
+        // get the company
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // get the admins
+        $admins = $this->db
+            ->select('
+                first_name,
+                user_sid,
+                user_sid,
+            ')
+            ->where('company_sid', $companyId)
+            ->row_array();
+        _e($companyDetails, true);
+
+        return [];
+    }
+
+    /**
+     * check if company already partnered with Gusto
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    private function checkIfCompanyAlreadyPartnered(int $companyId): bool
+    {
+        return $this->db
+            ->where('company_sid', $companyId)
+            ->count_all_results('gusto_companies');
+    }
+
+    /**
+     * create partner company on Gusto
+     *
+     * @param int $companyId
+     * @return
+     */
+    private function createPartnerCompany(int $companyId): array
+    {
+        // set default return array
+        $returnArray = [];
+        $returnArray['errors'] = [];
+        // check and get company
+        $companyDetails = $this->db
+            ->select('
+            users.CompanyName,
+            users.ssn,
+            users.Location_Address,
+            users.Location_City,
+            users.Location_State,
+            users.Location_ZipCode
+        ')
+            ->where('users.sid', $companyId)
+            ->get('users')
+            ->row_array();
+        // check for SSN
+        if (!$companyDetails['ssn']) {
+            // set error
+            $returnArray['errors'][] = '"EIN" is missing.';
+        }
+        // Check if EIN is already used
+        if ($this->db->where('ein', $companyDetails['ssn'])->count_all_results('gusto_companies')) {
+            // set error
+            $returnArray['errors'][] = '"EIN" already in used.';
+        }
+        // check for company location
+        if (!$companyDetails['Location_Address']) {
+            // set error
+            $returnArray['errors'][] = '"Location Address" is missing.';
+        }
+        if (!$companyDetails['Location_State']) {
+            // set error
+            $returnArray['errors'][] = '"Location State" is missing.';
+        }
+        if (!$companyDetails['Location_City']) {
+            // set error
+            $returnArray['errors'][] = '"Location City" is missing.';
+        }
+        if (!$companyDetails['Location_ZipCode']) {
+            // set error
+            $returnArray['errors'][] = '"Location Zip" is missing.';
+        }
+        // check and return errors
+        if ($returnArray['errors']) {
+            //
+            return $returnArray;
+        }
+        // set request array
+        $request = [
+            'user' => [],
+            'company' => []
+        ];
+        // add primary admin
+        $request['user']['first_name'] = $this->ahrAdmin['first_name'];
+        $request['user']['last_name'] = $this->ahrAdmin['last_name'];
+        $request['user']['email'] = $this->ahrAdmin['email_address'];
+        $request['user']['phone'] = $this->ahrAdmin['phone_number'];
+        // add company details
+        $request['company']['name'] = $companyDetails['CompanyName'];
+        $request['company']['ein'] = $companyDetails['ssn'];
+        //
+        $response = createPartnerCompany($request);
+        // // set errors
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            // Error took place
+            return $errors;
+        }
+        // set the insert array
+        $ia = [];
+        $ia['company_sid'] = $companyId;
+        $ia['ein'] = $request['company']['ein'];
+        $ia['parent_company_sid'] = 0;
+        $ia['gusto_uuid'] = $response['company_uuid'];
+        $ia['refresh_token'] = $response['refresh_token'];
+        $ia['access_token'] = $response['access_token'];
+        $ia['is_ts_accepted'] = 0;
+        $ia['ts_email'] = null;
+        $ia['ts_ip'] = null;
+        $ia['ts_user_sid'] = null;
+        $ia['created_at'] = $ia['updated_at'] = getSystemDate();
+        // insert the array
+        $this->db->insert('gusto_companies', $ia);
+        // set the success array
+        return [
+            'success' => true
+        ];
+    }
+
+    /**
+     * set the store admin against company
+     *
+     * @param int $companyId
+     * @return int
+     */
+    private function checkAndSetPayrollStoreAdmin(int $companyId): int
+    {
+        // set where array
+        $whereArray = [
+            'company_sid' => $companyId,
+            'is_store_admin' => 1,
+            'email_address' => $this->adminArray['email_address']
+        ];
+        // check if already pushed
+        if ($this->db->where($whereArray)->count_all_results('gusto_companies_admin')) {
+            return 0;
+        }
+        // insert the admin
+        $this->db->insert(
+            'gusto_companies_admin',
+            [
+                'company_sid' => $companyId,
+                'is_store_admin' => 1,
+                'first_name' => $this->adminArray['first_name'],
+                'last_name' => $this->adminArray['last_name'],
+                'email_address' => $this->adminArray['email_address'],
+                'gusto_uuid' => null,
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate()
+            ]
+        );
+        // inserted id
+        return $this->db->insert_id();
+    }
+}
