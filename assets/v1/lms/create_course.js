@@ -220,8 +220,6 @@ $(function createCourse() {
 	 * @param {*} courseObj
 	 */
 	async function handleCourseCreation(courseObj) {
-		
-		
 		//
 		const errorArray = [];
 		// validate

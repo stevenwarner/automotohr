@@ -20,17 +20,18 @@ class App extends CI_Controller
         //
         $uploadPath = copyAWSFile($filePath);
         //
-        $zip = new ZipArchive;
-        $res = $zip->open($uploadPath);
-        $zip->close();
-        //
-        if ($res !== TRUE) {
-            return SendResponse(404, ['status' => false, 'errors' => ['Unable to unzip file.']]);
-        }
+        // $zip = new ZipArchive;
+        // $res = $zip->open($uploadPath);
+        // $zip->close();
+        // //
+        // if ($res !== TRUE) {
+        //     return SendResponse(404, ['status' => false, 'errors' => ['Unable to unzip file.']]);
+        // }
         //
         $newFolder = ROOTPATH.'uploads/'.str_replace(".zip", "", $filePath);
         //
         $file = $newFolder . '/imsmanifest.xml';
+        echo $file;
         //
         if (!file_exists($file)) {
             return SendResponse(404, ['status' => false, 'errors' => ['"imsmanifest.xml" file is missing.']]);
