@@ -21,15 +21,18 @@ class App extends CI_Controller
         // SCORM file name
         $filePath = $this->input->post('scorm_file');
         // get the file to local
-        $uploadPath = copyAWSFile($filePath);
+        $uploadPath = str_replace('.zip', '', copyAWSFile($filePath));
         // extract the file
         $zip = new ZipArchive;
         $res = $zip->open($uploadPath);
-        $zip->close();
-        // unable to extract the file
+        //
         if ($res !== true) {
+            // unable to extract the file
             return SendResponse(404, ['status' => false, 'errors' => ['Unable to unzip file.']]);
         }
+        // extract the file
+        $zip->extractTo($uploadPath);
+        $zip->close();
         // set the "IMSmanifest" file
         $file = $uploadPath . '/imsmanifest.xml';
         // check if the file exists
