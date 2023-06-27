@@ -126,39 +126,38 @@ pre {
 	color: #fff;
 }
 
-
 /* TRS */
-.csTrOdd td{
+.csTrOdd td {
 	vertical-align: middle;
 	background-color: #fff;
 }
-.csTrEven td{
+.csTrEven td {
 	vertical-align: middle;
 	background-color: #eee;
 }
 
 .csTrOdd td.bg-danger,
-.csTrEven td.bg-danger{
+.csTrEven td.bg-danger {
 	background-color: #f2dede;
 }
 .csTrOdd td.bg-success,
-.csTrEven td.bg-success{
+.csTrEven td.bg-success {
 	background-color: #dff0d8;
 }
 
-.csQuestionBox{
+.csQuestionBox {
 	/* margin: 0px 5px; */
 	display: inline-block;
-	padding: 20px 10px; 
+	padding: 20px 10px;
 }
 .csQuestionBox:nth-child(odd) {
-	background-color:#eee !important;
+	background-color: #eee !important;
 }
-	
+
 .csQuestionBox:nth-child(even) {
-	background-color:#fff;
+	background-color: #fff;
 }
 /* remove Padding */
-.csRP{
+.csRP {
 	padding: 0px;
 }

@@ -280,7 +280,10 @@ $(function createCourse() {
 			const createCourseResponse = await createCourseCall(courseObj);
 			//
 			if (courseObj.course_type === "scorm") {
-				await updateScormCourseCall(createCourseResponse.courseId, courseObj.course_file);
+				await updateScormCourseCall(
+					createCourseResponse.courseId,
+					courseObj.course_file
+				);
 			}
 			//
 			return alertify.alert(
@@ -327,7 +330,7 @@ $(function createCourse() {
 	}
 
 	/**
-	 * Read Scorm manifest file and update Course 
+	 * Read Scorm manifest file and update Course
 	 *
 	 * @param {*} courseId
 	 * @returns
@@ -339,7 +342,7 @@ $(function createCourse() {
 			};
 			//
 			$.ajax({
-				url: baseURI + "lms/course/scorm/parse/"+courseId,
+				url: baseURI + "lms/course/scorm/parse/" + courseId,
 				method: "POST",
 				data: courseObj,
 			})
@@ -386,7 +389,10 @@ $(function createCourse() {
 			//
 			tr += '<tr data-key="' + questionObj.question_id + '">';
 			tr += '	<td class="vam">' + questionObj.question_title + "</td>";
-			tr += '	<td class="vam text-center">' + questionObj.question_type.replace(/_/ig, ' ').toUpperCase() + "</td>";
+			tr +=
+				'	<td class="vam text-center">' +
+				questionObj.question_type.replace(/_/gi, " ").toUpperCase() +
+				"</td>";
 			tr += '	<td class="vam text-center">';
 			// Edit button
 			tr +=
