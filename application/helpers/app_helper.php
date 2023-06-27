@@ -626,3 +626,15 @@ if (!function_exists('getStaticFileVersion')) {
         return $files[$file] ?? [];
     }
 }
+
+
+//
+if (!function_exists('getEmergencyContactsOptionsStatus')) {
+    function getEmergencyContactsOptionsStatus($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('emergency_contact_phone_number_status,emergency_contact_email_status');
+        $CI->db->where('user_sid', $company_sid);
+        return $CI->db->get('portal_employer')->row_array();
+    }
+}

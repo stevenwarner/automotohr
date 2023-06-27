@@ -311,13 +311,13 @@ class Emergency_contacts extends Public_Controller
 //            $data['employee']                                                   = $employer_details;
             $this->form_validation->set_rules('first_name', 'First Name', 'trim|xss_clean|required');
             $this->form_validation->set_rules('last_name', 'Last Name', 'trim|xss_clean|required');
-            // $this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email');
+            if($data['contactOptionsStatus']['emergency_contact_email_status']==1){  $this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email'); }
             $this->form_validation->set_rules('Location_Country', 'Country', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_State', 'State', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-            // $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required');
+            if($data['contactOptionsStatus']['emergency_contact_phone_number_status']==1){ $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required'); }
             $this->form_validation->set_rules('Relationship', 'Relationship', 'trim|xss_clean|required');
             $this->form_validation->set_rules('priority', 'Priority', 'trim|xss_clean|required');
             $this->form_validation->set_message('is_unique', '%s is already registered!');
@@ -335,6 +335,8 @@ class Emergency_contacts extends Public_Controller
                     $data,
                     $this
                 );
+
+                $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_id);
                 
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/edit_emergency_contacts');
@@ -519,13 +521,13 @@ class Emergency_contacts extends Public_Controller
 
             $this->form_validation->set_rules('first_name', 'First Name', 'trim|xss_clean|required');
             $this->form_validation->set_rules('last_name', 'Last Name', 'trim|xss_clean|required');
-            // $this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email');
+            $data['contactOptionsStatus']['emergency_contact_email_status']==1?$this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email'):'';
             $this->form_validation->set_rules('Location_Country', 'Country', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_State', 'State', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-            // $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required');
+            $data['contactOptionsStatus']['emergency_contact_phone_number_status']==1? $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required'):'';
             $this->form_validation->set_rules('Relationship', 'Relationship', 'trim|xss_clean|required');
             $this->form_validation->set_rules('priority', 'Priority', 'trim|xss_clean|required');
             $this->form_validation->set_message('is_unique', '%s is already registered!');
@@ -543,6 +545,8 @@ class Emergency_contacts extends Public_Controller
                     $data,
                     $this
                 );
+
+                $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_id);
 
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/add_emergency_contacts');

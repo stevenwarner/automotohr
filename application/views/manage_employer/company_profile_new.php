@@ -189,6 +189,30 @@
                             </div>
                         </div>
 
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Make Phone Number Mandatory On Emergency Contacts <small class="help_text">Make Phone Number Mandatory On Emergency Contacts</small>
+                                    <input class="" type="checkbox" id="emergency_contact_phone_number_status" name="emergency_contact_phone_number_status" value="1" <?php echo (isset($portal['emergency_contact_phone_number_status']) && $portal['emergency_contact_phone_number_status'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Make E-Mail Mandatory On Emergency Contacts <small class="help_text">Make E-Mail Mandatory On Emergency Contacts</small>
+                                    <input class="" type="checkbox" id="emergency_contact_email_status" name="emergency_contact_email_status" value="1" <?php echo (isset($portal['emergency_contact_email_status']) && $portal['emergency_contact_email_status'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+
+
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <h3>Full Employment Application <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>

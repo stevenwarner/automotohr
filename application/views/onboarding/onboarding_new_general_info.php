@@ -1,5 +1,5 @@
 <?php
-if($this->uri->segment(1) == 'general_information') $sideBar = '';
+if ($this->uri->segment(1) == 'general_information') $sideBar = '';
 else $sideBar = onboardingHelpWidget($company_info['sid']);
 
 $company_sid = 0;
@@ -26,19 +26,19 @@ $driv_license['license_file'] = isset($drivers_license_details['license_file']) 
 $occu_license['license_file'] = isset($occupational_license_details['license_file']) ? $occupational_license_details['license_file'] : '';
 $save_post_url = current_url();
 //Field Names
-if($enable_learbing_center && $company_eeoc_form_status == 1) {
+if ($enable_learbing_center && $company_eeoc_form_status == 1) {
     $next_btn_function = 'eeoc_form';
-} else if(!$enable_learbing_center && $company_eeoc_form_status == 0) {
+} else if (!$enable_learbing_center && $company_eeoc_form_status == 0) {
     $next_btn_function = 'my_credentials';
-} else if($enable_learbing_center && $company_eeoc_form_status == 0) {
+} else if ($enable_learbing_center && $company_eeoc_form_status == 0) {
     $next_btn_function = 'learning_center';
-} else if(!$enable_learbing_center && $company_eeoc_form_status == 1) {
+} else if (!$enable_learbing_center && $company_eeoc_form_status == 1) {
     $next_btn_function = 'eeoc_form';
 }
 
 $back_url = base_url('onboarding/my_profile/' . $unique_sid);
-$proceed_btn = '<a href="'.base_url('onboarding/'. $next_btn_function . '/' . $unique_sid).'"class="btn btn-success btn-block jsCheckDoc" id="go_next"> Proceed To Next <i class="fa fa-angle-right"></i></a>';
-$skip_btn = '<a href="'.base_url('onboarding/'. $next_btn_function . '/' . $unique_sid).'" class="btn btn-warning btn-block jsCheckDoc"> Bypass This Step <i class="fa fa-angle-right"></i></a>';
+$proceed_btn = '<a href="' . base_url('onboarding/' . $next_btn_function . '/' . $unique_sid) . '"class="btn btn-success btn-block jsCheckDoc" id="go_next"> Proceed To Next <i class="fa fa-angle-right"></i></a>';
+$skip_btn = '<a href="' . base_url('onboarding/' . $next_btn_function . '/' . $unique_sid) . '" class="btn btn-warning btn-block jsCheckDoc"> Bypass This Step <i class="fa fa-angle-right"></i></a>';
 $field_sid = 'applicant_sid';
 $back_btn   = 'Review Previous Step';
 
@@ -46,50 +46,55 @@ $back_btn   = 'Review Previous Step';
 $dob = isset($onboarding_details['applicant_info']['dob']) && !empty($onboarding_details['applicant_info']['dob']) ? date('m/d/Y', strtotime(str_replace('-', '/', $onboarding_details['applicant_info']['dob']))) : '';
 
 //
-if($_ssv){
+if ($_ssv) {
     $driv_license['license_number'] = ssvReplace($driv_license['license_number']);
     //
-    if(isset($driv_license['license_issue_date']) && $driv_license['license_issue_date'] != '') {
+    if (isset($driv_license['license_issue_date']) && $driv_license['license_issue_date'] != '') {
         $driv_license['license_issue_date'] = ssvReplace($driv_license['license_issue_date'], true);
     }
     //
-    if(isset($driv_license['license_expiration_date']) && $driv_license['license_expiration_date'] != '') {
+    if (isset($driv_license['license_expiration_date']) && $driv_license['license_expiration_date'] != '') {
         $driv_license['license_expiration_date'] = ssvReplace($driv_license['license_expiration_date'], true);
     }
     //
-    if($dob != '') {
+    if ($dob != '') {
         $dob = ssvReplace($dob, true);
     }
 }
 
 ?>
-<style>.csbgbl{-webkit-filter: blur(5px); filter: blur(5px)}</style>
+<style>
+    .csbgbl {
+        -webkit-filter: blur(5px);
+        filter: blur(5px)
+    }
+</style>
 
 <div class="main jsmaincontent">
     <div class="container-fluid">
-      
+
 
         <div class="row">
-            <?php if($this->uri->segment(1) != 'general_information'){ ?>
-            <div class="col-sm-12">
-                <p style="color: #cc0000;"><b><i>We suggest that you only use Google Chrome to access your account
-                            and use its Features. Internet Explorer is not supported and may cause certain feature
-                            glitches and security issues.</i></b></p>
-                             <?=$sideBar;?>
-            </div>
+            <?php if ($this->uri->segment(1) != 'general_information') { ?>
+                <div class="col-sm-12">
+                    <p style="color: #cc0000;"><b><i>We suggest that you only use Google Chrome to access your account
+                                and use its Features. Internet Explorer is not supported and may cause certain feature
+                                glitches and security issues.</i></b></p>
+                    <?= $sideBar; ?>
+                </div>
             <?php } ?>
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="btn-panel">
                     <div class="row">
                         <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                            <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i> <?= $back_btn;?></a>
+                            <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i> <?= $back_btn; ?></a>
                         </div>
                         <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                            <?= $skip_btn;?>
+                            <?= $skip_btn; ?>
                         </div>
                         <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                            <?= $proceed_btn;?>
+                            <?= $proceed_btn; ?>
                         </div>
                     </div>
                 </div>
@@ -127,10 +132,10 @@ if($_ssv){
                                                         <div class="hr-select-dropdown">
                                                             <select class="form-control" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
                                                                 <option value="" selected="">Please Select</option>
-                                                                <?php if(!empty($license_types)) { ?>
-                                                                    <?php foreach($license_types as $key => $license_type) { ?>
+                                                                <?php if (!empty($license_types)) { ?>
+                                                                    <?php foreach ($license_types as $key => $license_type) { ?>
                                                                         <?php $default_selected = $key == $temp ? true : false; ?>
-                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_type?></option>
+                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_type ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
@@ -155,10 +160,10 @@ if($_ssv){
                                                         <div class="hr-select-dropdown">
                                                             <select class="form-control" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
                                                                 <option value="" selected="">Please Select</option>
-                                                                <?php if(!empty($license_classes)) { ?>
-                                                                    <?php foreach($license_classes as $key => $license_class) { ?>
+                                                                <?php if (!empty($license_classes)) { ?>
+                                                                    <?php foreach ($license_classes as $key => $license_class) { ?>
                                                                         <?php $default_selected = $key == $temp ? true : false; ?>
-                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_class?></option>
+                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_class ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
@@ -184,17 +189,17 @@ if($_ssv){
                                                         <?php echo form_error($field_name); ?>
                                                     </div>
                                                 </div>
-                                                
-                                                <?php if(isset($onboarding_details['applicant_info']['applicant_type']) && ($onboarding_details['applicant_info']['applicant_type'] == 'Applicant' || $onboarding_details['applicant_info']['applicant_type'] == 'Applicant')){ ?>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <?php $field_name = 'dob' ?>
-                                                        <?php $temp = $dob; ?>
-                                                        <?php echo form_label('Date Of Birth', $field_name); ?>
-                                                        <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control" id="'. $field_name .'" readonly=""'); ?>
-                                                        <?php echo form_error($field_name); ?>
+
+                                                <?php if (isset($onboarding_details['applicant_info']['applicant_type']) && ($onboarding_details['applicant_info']['applicant_type'] == 'Applicant' || $onboarding_details['applicant_info']['applicant_type'] == 'Applicant')) { ?>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <?php $field_name = 'dob' ?>
+                                                            <?php $temp = $dob; ?>
+                                                            <?php echo form_label('Date Of Birth', $field_name); ?>
+                                                            <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control" id="' . $field_name . '" readonly=""'); ?>
+                                                            <?php echo form_error($field_name); ?>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <?php } ?>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
@@ -212,7 +217,7 @@ if($_ssv){
                                                         <?php $default_selected = 'on' == $temp ? true : false; ?>
                                                         <label class="control control--checkbox">
                                                             Indefinite
-                                                            <input <?php echo $default_selected == true ? 'checked="checked"': ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
+                                                            <input <?php echo $default_selected == true ? 'checked="checked"' : ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </div>
@@ -244,10 +249,10 @@ if($_ssv){
                                                     <div class="row">
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center">
                                                             <div class="img-thumbnail">
-                                                                <?php if(empty($temp)) { ?>
+                                                                <?php if (empty($temp)) { ?>
                                                                     <span class="text-center text-success" style="font-size: 200px; display: inline-block; color: #3598dc;"><i class="fa fa-picture-o"></i></span>
                                                                 <?php } else { ?>
-                                                                    <img class="img-responsive <?=$_ssv ? 'csbgbl' : '';?>" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>" />
+                                                                    <img class="img-responsive <?= $_ssv ? 'csbgbl' : ''; ?>" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>" />
                                                                 <?php } ?>
                                                             </div>
                                                         </div>
@@ -255,7 +260,8 @@ if($_ssv){
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <div class="btn-wrp full-width text-right">
-                                                        <!--<a class="btn btn-black margin-right" href="<?php //echo $back_url; ?>">cancel</a>-->
+                                                        <!--<a class="btn btn-black margin-right" href="<?php //echo $back_url; 
+                                                                                                        ?>">cancel</a>-->
                                                         <input class="btn btn-info" value="Update Driver License Info" type="submit">
                                                     </div>
                                                 </div>
@@ -272,10 +278,10 @@ if($_ssv){
                                     <a class="collapsed" data-toggle="collapse" aria-expanded="false" data-parent="#accordion" href="#occupational_license"><span class="glyphicon glyphicon-plus"></span>occupational license <strong data-id="occupational_license" class="jsGeneralAssignDocument"></strong></a>
                                 </h4>
                             </div>
-                            
+
                             <div id="occupational_license" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
+                                    <div class="jsNoteArea"></div>
                                     <div class="form-wrp">
                                         <form id="form_occ_license" method="POST" enctype="multipart/form-data" autocomplete="off">
                                             <input type="hidden" id="perform_action" name="perform_action" value="update_occupational_license_information" />
@@ -332,16 +338,16 @@ if($_ssv){
                                                         <?php echo form_error($field_name); ?>
                                                     </div>
                                                 </div>
-                                                <?php if(isset($onboarding_details['applicant_info']['applicant_type']) && ($onboarding_details['applicant_info']['applicant_type'] == 'Applicant' || $onboarding_details['applicant_info']['applicant_type'] == 'Applicant')){ ?>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <?php $field_name = 'dob' ?>
-                                                        <?php $temp = isset($onboarding_details['applicant_info']['dob']) && !empty($onboarding_details['applicant_info']['dob']) ? date('m/d/Y', strtotime(str_replace('-', '/', $onboarding_details['applicant_info']['dob']))) : ''; ?>
-                                                        <?php echo form_label('Date Of Birth', $field_name); ?>
-                                                        <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control" id="dr_' . $field_name . '" readonly=""'); ?>
-                                                        <?php echo form_error($field_name); ?>
+                                                <?php if (isset($onboarding_details['applicant_info']['applicant_type']) && ($onboarding_details['applicant_info']['applicant_type'] == 'Applicant' || $onboarding_details['applicant_info']['applicant_type'] == 'Applicant')) { ?>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <?php $field_name = 'dob' ?>
+                                                            <?php $temp = isset($onboarding_details['applicant_info']['dob']) && !empty($onboarding_details['applicant_info']['dob']) ? date('m/d/Y', strtotime(str_replace('-', '/', $onboarding_details['applicant_info']['dob']))) : ''; ?>
+                                                            <?php echo form_label('Date Of Birth', $field_name); ?>
+                                                            <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control" id="dr_' . $field_name . '" readonly=""'); ?>
+                                                            <?php echo form_error($field_name); ?>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <?php } ?>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
@@ -359,7 +365,7 @@ if($_ssv){
                                                         <?php $default_selected = 'on' == $temp ? true : false; ?>
                                                         <label class="control control--checkbox">
                                                             Indefinite
-                                                            <input <?php echo $default_selected == true ? 'checked="checked"': ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
+                                                            <input <?php echo $default_selected == true ? 'checked="checked"' : ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </div>
@@ -379,17 +385,17 @@ if($_ssv){
                                                     <?php $temp = isset($occu_license[$field_name]) && !empty($occu_license[$field_name]) ? $occu_license[$field_name] : ''; ?>
 
                                                     <div class="img-thumbnail">
-                                                        <?php if(empty($temp)) { ?>
+                                                        <?php if (empty($temp)) { ?>
                                                             <span class="text-center text-success" style="font-size: 200px; display: inline-block; color: #3598dc;"><i class="fa fa-picture-o"></i></span>
                                                         <?php } else { ?>
                                                             <?php $license_file = pathinfo($temp); ?>
                                                             <?php $license_extension = $license_file['extension']; ?>
-                                                            <?php if(in_array($license_extension, ['pdf'])){ ?>
-                                                                <iframe src="<?php echo 'https://docs.google.com/gview?url=' . urlencode(AWS_S3_BUCKET_URL . $temp) . '&embedded=true'; ?>" id="preview_iframe" class="uploaded-file-preview"  style="width:100% !important; height:500px;" frameborder="0"></iframe>
-                                                            <?php } else if(in_array($license_extension, [ 'jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])){ ?>
-                                                                <img  class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>" />
-                                                            <?php } else if(in_array($license_extension, ['doc', 'docx'])){ ?>
-                                                                <iframe src="<?php echo 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $temp); ?>" id="preview_iframe" class="uploaded-file-preview"  style="width:100% !important; height:500px;" frameborder="0"></iframe>
+                                                            <?php if (in_array($license_extension, ['pdf'])) { ?>
+                                                                <iframe src="<?php echo 'https://docs.google.com/gview?url=' . urlencode(AWS_S3_BUCKET_URL . $temp) . '&embedded=true'; ?>" id="preview_iframe" class="uploaded-file-preview" style="width:100% !important; height:500px;" frameborder="0"></iframe>
+                                                            <?php } else if (in_array($license_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
+                                                                <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>" />
+                                                            <?php } else if (in_array($license_extension, ['doc', 'docx'])) { ?>
+                                                                <iframe src="<?php echo 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $temp); ?>" id="preview_iframe" class="uploaded-file-preview" style="width:100% !important; height:500px;" frameborder="0"></iframe>
                                                             <?php } ?>
                                                         <?php } ?>
                                                     </div>
@@ -400,7 +406,8 @@ if($_ssv){
 
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <div class="btn-wrp full-width text-right">
-                                                        <!--<a class="btn btn-black margin-right" href="<?php //echo $back_url; ?>">cancel</a>-->
+                                                        <!--<a class="btn btn-black margin-right" href="<?php //echo $back_url; 
+                                                                                                        ?>">cancel</a>-->
                                                         <input class="btn btn-info" value="Update Occupational License Info" type="submit">
                                                     </div>
                                                 </div>
@@ -420,46 +427,46 @@ if($_ssv){
 
                             <div id="dependents" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
+                                    <div class="jsNoteArea"></div>
                                     <div class="table-responsive table-outer">
                                         <table class="table table-bordered">
                                             <thead>
-                                            <tr>
-                                                <td class="col-lg-2">Name</td>
-                                                <td class="col-lg-2">Phone No.</td>
-                                                <td class="col-lg-4">Address</td>
-                                                <td class="col-lg-2">Relationship</td>
-                                                <td class="text-center col-lg-2" colspan="2">Actions</td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="col-lg-2">Name</td>
+                                                    <td class="col-lg-2">Phone No.</td>
+                                                    <td class="col-lg-4">Address</td>
+                                                    <td class="col-lg-2">Relationship</td>
+                                                    <td class="text-center col-lg-2" colspan="2">Actions</td>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                            <?php if(!empty($dependents_arr)) { ?>
-                                                <?php foreach($dependents_arr as $dependent) { ?>
+                                                <?php if (!empty($dependents_arr)) { ?>
+                                                    <?php foreach ($dependents_arr as $dependent) { ?>
+                                                        <tr>
+                                                            <td><?php echo $dependent['first_name'] . ' ' . $dependent['last_name']; ?></td>
+                                                            <td><?php echo $dependent['phone']; ?></td>
+                                                            <td><?php echo $dependent['address']; ?></td>
+                                                            <td><?php echo $dependent['relationship']; ?></td>
+                                                            <td class="text-center">
+                                                                <a href="<?php echo base_url('onboarding/edit_dependant_information/' . $unique_sid . '/' . $dependent['sid']) ?>" class="btn btn-info btn-block">Edit</a>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <form autocomplete="off" id="form_delete_dependent_<?php echo $dependent['sid']; ?>" method="post" action="<?php echo current_url(); ?>" enctype="multipart/form-data">
+                                                                    <input type="hidden" id="perform_action" name="perform_action" value="delete_dependent" />
+                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                                                    <input type="hidden" id="users_type" name="users_type" value="<?php echo $users_type; ?>" />
+                                                                    <input type="hidden" id="users_sid" name="users_sid" value="<?php echo $users_sid; ?>" />
+                                                                    <input type="hidden" id="dependent_sid" name="dependent_sid" value="<?php echo $dependent['sid']; ?>" />
+                                                                    <button type="button" class="btn btn-danger btn-block" onclick="func_delete_dependent(<?php echo $dependent['sid']; ?>);">Delete</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                <?php } else { ?>
                                                     <tr>
-                                                        <td><?php echo $dependent['first_name'] . ' ' . $dependent['last_name']; ?></td>
-                                                        <td><?php echo $dependent['phone']; ?></td>
-                                                        <td><?php echo $dependent['address']; ?></td>
-                                                        <td><?php echo $dependent['relationship']; ?></td>
-                                                        <td class="text-center">
-                                                            <a href="<?php echo base_url('onboarding/edit_dependant_information/'.$unique_sid . '/' .$dependent['sid'])?>" class="btn btn-info btn-block">Edit</a>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <form autocomplete="off" id="form_delete_dependent_<?php echo $dependent['sid']; ?>" method="post" action="<?php echo current_url(); ?>" enctype="multipart/form-data">
-                                                                <input type="hidden" id="perform_action" name="perform_action" value="delete_dependent" />
-                                                                <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
-                                                                <input type="hidden" id="users_type" name="users_type" value="<?php echo $users_type; ?>" />
-                                                                <input type="hidden" id="users_sid" name="users_sid" value="<?php echo $users_sid; ?>" />
-                                                                <input type="hidden" id="dependent_sid" name="dependent_sid" value="<?php echo $dependent['sid']; ?>" />
-                                                                <button type="button" class="btn btn-danger btn-block" onclick="func_delete_dependent(<?php echo $dependent['sid']; ?>);">Delete</button>
-                                                            </form>
-                                                        </td>
+                                                        <td colspan="5" class="text-center">No dependent information found!</td>
                                                     </tr>
                                                 <?php } ?>
-                                            <?php } else { ?>
-                                                <tr>
-                                                    <td colspan="5" class="text-center">No dependent information found!</td>
-                                                </tr>
-                                            <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -511,7 +518,7 @@ if($_ssv){
                                                             <option value="">Please Select</option>
                                                             <?php foreach ($active_countries as $active_country) { ?>
                                                                 <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
-                                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
+                                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>"> <?= $active_country["country_name"]; ?></option>
                                                             <?php } ?>
                                                         </select>
                                                         <?php echo form_error($field_id); ?>
@@ -522,13 +529,13 @@ if($_ssv){
                                                         <?php $field_id = 'Location_State'; ?>
                                                         <?php $state_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); ?>
                                                         <?php echo form_label('State:', $field_id); ?>
-                                                        <select class="form-control" name="<?php echo $field_id?>" id="<?php echo $field_id?>">
+                                                        <select class="form-control" name="<?php echo $field_id ?>" id="<?php echo $field_id ?>">
                                                             <?php if (empty($state_id)) { ?>
                                                                 <option value="">Select State</option> <?php
-                                                            } else {
-                                                                foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                                                    } else {
+                                                                                                        foreach ($active_states[$country_id] as $active_state) { ?>
                                                                     <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
-                                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>"><?= $active_state["state_name"] ?></option>
                                                                 <?php } ?>
                                                             <?php } ?>
                                                         </select>
@@ -600,15 +607,14 @@ if($_ssv){
                                                     <?php $field_name = 'family_member'; ?>
                                                     <label for="<?php echo $field_name; ?>" class="control control--checkbox">
                                                         Add Family Members
-                                                        <input name="<?php echo $field_name; ?>"
-                                                               id="<?php echo $field_name; ?>"
-                                                               type="checkbox">
+                                                        <input name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>" type="checkbox">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <div class="btn-wrp full-width text-right">
-                                                        <!-- <a class="btn btn-black margin-right" href="--><?php //echo $back_url; ?><!--">cancel</a>-->
+                                                        <!-- <a class="btn btn-black margin-right" href="--><?php //echo $back_url; 
+                                                                                                            ?><!--">cancel</a>-->
                                                         <input class="btn btn-info" value="Add Dependent" type="submit">
                                                     </div>
                                                 </div>
@@ -628,47 +634,47 @@ if($_ssv){
 
                             <div id="contacts" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
+                                    <div class="jsNoteArea"></div>
                                     <div class="table-responsive table-outer">
                                         <table class="table table-bordered">
                                             <thead>
-                                            <tr>
-                                                <td class="col-lg-2">Name</td>
-                                                <td class="col-lg-2">Relationship</td>
-                                                <td class="col-lg-2">Phone No.</td>
-                                                <td class="col-lg-3">Address</td>
-                                                <td class="text-center col-lg-1">Priority</td>
-                                                <td class="text-center col-lg-2" colspan="2">Actions</td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="col-lg-2">Name</td>
+                                                    <td class="col-lg-2">Relationship</td>
+                                                    <td class="col-lg-2">Phone No.</td>
+                                                    <td class="col-lg-3">Address</td>
+                                                    <td class="text-center col-lg-1">Priority</td>
+                                                    <td class="text-center col-lg-2" colspan="2">Actions</td>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                            <?php if(!empty($emergency_contacts)) { ?>
-                                                <?php foreach($emergency_contacts as $contact) { ?>
-                                                    <tr>
-                                                        <td><?php echo $contact['first_name'] . ' ' . $contact['last_name']; ?></td>
-                                                        <td><?php echo $contact['Relationship']; ?></td>
-                                                        <td><?php echo $contact['PhoneNumber']; ?></td>
-                                                        <td><?php echo $contact['Location_Address']; ?></td>
-                                                        <td class="text-center"><?php echo $contact['priority']; ?></td>
-                                                        <td>
-                                                            <a href="<?php echo base_url('onboarding/edit_emergency_contacts/'.$unique_sid . '/' .$contact['sid'])?>" class="btn btn-info btn-block">Edit</a>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <form  autocomplete="off" id="form_delete_emergency_contact_<?php echo $contact['sid']?>" enctype="multipart/form-data" method="post" action="<?php echo $delete_post_url; ?>">
-                                                                <input type="hidden" id="perform_action" name="perform_action" value="delete_emergency_contact" />
-                                                                <input type="hidden" id="users_type" name="users_type" value="<?php echo $users_type; ?>" />
-                                                                <input type="hidden" id="users_sid" name="users_sid" value="<?php echo $users_sid; ?>" />
-                                                                <input type="hidden" id="contact_sid" name="contact_sid" value="<?php echo $contact['sid']; ?>" />
-                                                                <button type="button" onclick="func_delete_emergency_contact(<?php echo $contact['sid']?>);" class="btn btn-danger btn-block">Delete</button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-                                            <?php } else { ?>
+                                                <?php if (!empty($emergency_contacts)) { ?>
+                                                    <?php foreach ($emergency_contacts as $contact) { ?>
+                                                        <tr>
+                                                            <td><?php echo $contact['first_name'] . ' ' . $contact['last_name']; ?></td>
+                                                            <td><?php echo $contact['Relationship']; ?></td>
+                                                            <td><?php echo $contact['PhoneNumber']; ?></td>
+                                                            <td><?php echo $contact['Location_Address']; ?></td>
+                                                            <td class="text-center"><?php echo $contact['priority']; ?></td>
+                                                            <td>
+                                                                <a href="<?php echo base_url('onboarding/edit_emergency_contacts/' . $unique_sid . '/' . $contact['sid']) ?>" class="btn btn-info btn-block">Edit</a>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <form autocomplete="off" id="form_delete_emergency_contact_<?php echo $contact['sid'] ?>" enctype="multipart/form-data" method="post" action="<?php echo $delete_post_url; ?>">
+                                                                    <input type="hidden" id="perform_action" name="perform_action" value="delete_emergency_contact" />
+                                                                    <input type="hidden" id="users_type" name="users_type" value="<?php echo $users_type; ?>" />
+                                                                    <input type="hidden" id="users_sid" name="users_sid" value="<?php echo $users_sid; ?>" />
+                                                                    <input type="hidden" id="contact_sid" name="contact_sid" value="<?php echo $contact['sid']; ?>" />
+                                                                    <button type="button" onclick="func_delete_emergency_contact(<?php echo $contact['sid'] ?>);" class="btn btn-danger btn-block">Delete</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                <?php } else { ?>
                                                     <tr>
                                                         <td class="text-center" colspan="6">No Emergency Contacts found!</td>
                                                     </tr>
-                                            <?php } ?>
+                                                <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -698,31 +704,46 @@ if($_ssv){
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
-                                                        <?php $field_id = 'email'; ?>
-                                                        <?php echo form_label('Email:', $field_id); ?>
-                                                        <input type="email" class="form-control" data-rule-email="true" name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
+                                                        <?php $field_id = 'email'; 
+                                                        $emailRequired = '';
+                                                        if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
+                                                            $emailRequired = ' <span class="required">*</span>';
+                                                        }
+                                                        ?>
+                                                        <?php echo form_label('Email:'.$emailRequired, $field_id); ?>
+                                                        <input type="email" class="form-control" data-rule-email="true" <?php echo $contactOptionsStatus['emergency_contact_email_status'] == 1 ? 'data-rule-required="true"':''  ?> name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
                                                         <?php echo form_error($field_id); ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
-                                                        <?php $field_id = 'PhoneNumber'; ?>
-                                                        <?php echo form_label('Phone Number:', $field_id); ?>
-                                                        <?php echo form_input($field_id, '', 'class="form-control" id="' . $field_id . ' "'); ?>
+                                                        <?php $field_id = 'PhoneNumber';
+                                                        $phoneNumberRequired = '';
+                                                        $phoneNumberRequiredRule = '';
+                                                        if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
+                                                            $phoneNumberRequired = ' <span class="required">*</span>';
+                                                            $phoneNumberRequiredRule=' data-rule-required="true"';
+                                                        }
+                                                        ?>
+                                                        <?php echo form_label('Phone Number:' . $phoneNumberRequired, $field_id); ?>
+                                                        <?php echo form_input($field_id, '', 'class="form-control"  id="' . $field_id . ' "'. $phoneNumberRequiredRule); ?>
                                                         <?php echo form_error($field_id); ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <?php $field_id = 'contact_country'; ?>
-                                                        <?php //$country_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); ?>
+                                                        <?php //$country_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); 
+                                                        ?>
                                                         <?php echo form_label('Country:', $field_id); ?>
                                                         <div class="hr-select-dropdown">
                                                             <select class="form-control" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, '<?php echo $field_state; ?>')">
                                                                 <option value="">Please Select</option>
                                                                 <?php foreach ($active_countries as $active_country) { ?>
-                                                                    <?php //$default_selected = $country_id == $active_country['sid'] ? true : false; ?>
-                                                                    <option <?php //echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
+                                                                    <?php //$default_selected = $country_id == $active_country['sid'] ? true : false; 
+                                                                    ?>
+                                                                    <option <?php //echo set_select($field_id, $active_country['sid'], $default_selected); 
+                                                                            ?> value="<?= $active_country["sid"]; ?>"> <?= $active_country["country_name"]; ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -732,16 +753,19 @@ if($_ssv){
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <?php $field_id = 'contact_state'; ?>
-                                                        <?php //$state_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); ?>
+                                                        <?php //$state_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); 
+                                                        ?>
                                                         <?php echo form_label('State:', $field_id); ?>
                                                         <div class="hr-select-dropdown">
-                                                            <select class="form-control" name="<?php echo $field_id?>" id="<?php echo $field_id?>">
+                                                            <select class="form-control" name="<?php echo $field_id ?>" id="<?php echo $field_id ?>">
                                                                 <?php if (empty($state_id)) { ?>
                                                                     <option value="">Select State</option> <?php
-                                                                } else {
-                                                                    foreach ($active_states[$country_id] as $active_state) { ?>
-                                                                        <?php //$default_selected = $state_id == $active_state['sid'] ? true : false; ?>
-                                                                        <option <?php //echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                                                                        } else {
+                                                                                                            foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                        <?php //$default_selected = $state_id == $active_state['sid'] ? true : false; 
+                                                                        ?>
+                                                                        <option <?php //echo set_select($field_id, $active_state['sid'], $default_selected); 
+                                                                                ?> value="<?= $active_state["sid"] ?>"><?= $active_state["state_name"] ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
@@ -797,7 +821,8 @@ if($_ssv){
                                                 </div>
                                             </div>
                                             <div class="btn-wrp full-width mrg-top-20 text-right">
-                                                <!-- <a class="btn btn-black margin-right" href="--><?php //echo $back_url; ?><!--">cancel</a>-->
+                                                <!-- <a class="btn btn-black margin-right" href="--><?php //echo $back_url; 
+                                                                                                    ?><!--">cancel</a>-->
                                                 <button type="submit" class="btn btn-info">Add Emergency Contact</button>
                                             </div>
                                         </form>
@@ -815,8 +840,8 @@ if($_ssv){
 
                             <div id="direct_deposit" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
-                                    <?php  $this->load->view('direct_deposit/form'); ?>
+                                    <div class="jsNoteArea"></div>
+                                    <?php $this->load->view('direct_deposit/form'); ?>
                                     <!-- <div class="form-wrp">
                                         <form id="form_update_bank_details" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                             <input type="hidden" id="perform_action" name="perform_action" value="update_bank_details" />
@@ -861,10 +886,10 @@ if($_ssv){
                                                     </div>
                                                 </div>
 
-                                                <?php if(!empty($bank_details['voided_cheque']) && $bank_details['voided_cheque'] != NULL) { ?>
+                                                <?php if (!empty($bank_details['voided_cheque']) && $bank_details['voided_cheque'] != NULL) { ?>
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <div class="well well-sm">
-                                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL.$bank_details['voided_cheque']?>" alt="">
+                                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $bank_details['voided_cheque'] ?>" alt="">
                                                         </div>
                                                     </div>
                                                 <?php } ?>
@@ -886,7 +911,7 @@ if($_ssv){
                                                             <label>Account Type</label>
                                                         </div>
                                                         <div class="col-lg-2 col-md-2 col-xs-6 col-sm-2">
-                                                            <?php $default_checked = $temp == 'checking'? true : false; ?>
+                                                            <?php $default_checked = $temp == 'checking' ? true : false; ?>
                                                             <div class="checkbox-radio-row">
                                                                 <label class="control control--radio">
                                                                     Checking
@@ -896,7 +921,7 @@ if($_ssv){
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-2 col-md-2 col-xs-6 col-sm-2">
-                                                            <?php $default_checked = $temp == 'savings'? true : false; ?>
+                                                            <?php $default_checked = $temp == 'savings' ? true : false; ?>
                                                             <div class="checkbox-radio-row">
                                                                 <label class="control control--radio">
                                                                     Savings
@@ -908,11 +933,11 @@ if($_ssv){
                                                     </div>
                                                 </div>
                                             </div>
-                                            <input type="hidden" value="<?= isset($enable_learbing_center) ? $enable_learbing_center : ''?>" name="enable_learbing_center_flag">
+                                            <input type="hidden" value="<?= isset($enable_learbing_center) ? $enable_learbing_center : '' ?>" name="enable_learbing_center_flag">
                                             <div class="btn-wrp full-width text-right">
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                        <input class="btn btn-info" id="add_edit_submit" value="<?= empty($next_btn) ? 'Save' : 'Save And Proceed Next';?>" type="submit">
+                                                        <input class="btn btn-info" id="add_edit_submit" value="<?= empty($next_btn) ? 'Save' : 'Save And Proceed Next'; ?>" type="submit">
                                                     </div>
                                                 </div>
                                             </div>
@@ -931,62 +956,79 @@ if($_ssv){
 
                             <div id="equipment" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
+                                    <div class="jsNoteArea"></div>
 
                                     <div class="form-wrp">
                                         <div class="row">
 
-                                            <?php if(sizeof($equipments)>0) {
+                                            <?php if (sizeof($equipments) > 0) {
                                                 foreach ($equipments as $equipment) {
                                                     if (empty($equipment['equipment_details']) || $equipment['equipment_details'] == NULL) {
-                                                        ?>
+                                            ?>
                                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 grid-mb">
                                                             <article class="listing-article no-image">
-                                                            <div class="text">
-                                                                <h3>
-                                                                    <?php echo ucwords($equipment['equipment_type']); ?>
-                                                                </h3>
+                                                                <div class="text">
+                                                                    <h3>
+                                                                        <?php echo ucwords($equipment['equipment_type']); ?>
+                                                                    </h3>
 
-                                                                <div class="post-options">
-                                                                    <ul>
-                                                                        <li><strong>Brand Name:</strong> <?php
-                                                                            echo ucwords($equipment['brand_name']); ?>
-                                                                        </li>
-                                                                        <?php if($equipment['issue_date'] != NULL && !empty($equipment['issue_date']) && $equipment['issue_date'] != '0000-00-00 00:00:00'){?>
-                                                                            <br><li><strong>Date Assigned:</strong> <?php echo date_with_time($equipment['issue_date']); ?></li>
-                                                                        <?php } if($equipment['model'] != NULL && !empty($equipment['model'])){?>
-                                                                            <br><li><strong>Model:</strong> <?php echo $equipment['model']; ?></li>
-                                                                        <?php } if($equipment['imei_no'] != NULL && !empty($equipment['imei_no'])){?>
-                                                                            <br><li><strong>IMEI:</strong> <?php echo $equipment['imei_no']; ?></li>
-                                                                        <?php } if($equipment['product_id'] != NULL && !empty($equipment['product_id'])){?>
-                                                                            <br><li><strong>Product Id:</strong> <?php echo $equipment['product_id']; ?></li>
-                                                                        <?php } if($equipment['specification'] != NULL && !empty($equipment['specification'])){?>
-                                                                            <br><li><strong>Specification:</strong> <?php echo $equipment['specification']; ?></li>
-                                                                        <?php } if($equipment['vin_number'] != NULL && !empty($equipment['vin_number'])){?>
-                                                                            <br><li><strong>Engine Number:</strong> <?php echo $equipment['vin_number']; ?></li>
-                                                                        <?php } if($equipment['transmission_type'] != NULL && !empty($equipment['transmission_type'])){?>
-                                                                            <br><li><strong>Transmission Type:</strong> <?php echo $equipment['transmission_type']; ?></li>
-                                                                        <?php } if($equipment['fuel_type'] != NULL && !empty($equipment['fuel_type'])){?>
-                                                                            <br><li><strong>Fuel Type:</strong> <?php echo $equipment['fuel_type']; ?></li>
-                                                                        <?php } if($equipment['serial_number'] != NULL && !empty($equipment['serial_number'])){?>
-                                                                            <br><li><strong>Serial Number:</strong> <?php echo $equipment['serial_number']; ?></li>
-                                                                        <?php }?>
-                                                                    </ul>
+                                                                    <div class="post-options">
+                                                                        <ul>
+                                                                            <li><strong>Brand Name:</strong> <?php
+                                                                                                                echo ucwords($equipment['brand_name']); ?>
+                                                                            </li>
+                                                                            <?php if ($equipment['issue_date'] != NULL && !empty($equipment['issue_date']) && $equipment['issue_date'] != '0000-00-00 00:00:00') { ?>
+                                                                                <br>
+                                                                                <li><strong>Date Assigned:</strong> <?php echo date_with_time($equipment['issue_date']); ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['model'] != NULL && !empty($equipment['model'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Model:</strong> <?php echo $equipment['model']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['imei_no'] != NULL && !empty($equipment['imei_no'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>IMEI:</strong> <?php echo $equipment['imei_no']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['product_id'] != NULL && !empty($equipment['product_id'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Product Id:</strong> <?php echo $equipment['product_id']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['specification'] != NULL && !empty($equipment['specification'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Specification:</strong> <?php echo $equipment['specification']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['vin_number'] != NULL && !empty($equipment['vin_number'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Engine Number:</strong> <?php echo $equipment['vin_number']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['transmission_type'] != NULL && !empty($equipment['transmission_type'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Transmission Type:</strong> <?php echo $equipment['transmission_type']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['fuel_type'] != NULL && !empty($equipment['fuel_type'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Fuel Type:</strong> <?php echo $equipment['fuel_type']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['serial_number'] != NULL && !empty($equipment['serial_number'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Serial Number:</strong> <?php echo $equipment['serial_number']; ?></li>
+                                                                            <?php } ?>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <?php if ($equipment['notes'] != NULL && !empty($equipment['notes'])) { ?>
+                                                                        <div class="full-width announcement-des"><!--style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"-->
+                                                                            <strong>Notes:</strong> <?php echo !empty($equipment['notes']) ? $equipment['notes'] : 'N/A'; ?>
+                                                                        </div>
+                                                                    <?php } ?>
                                                                 </div>
-                                                            <?php if($equipment['notes'] != NULL && !empty($equipment['notes'])){?>
-                                                                <div class="full-width announcement-des"><!--style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"-->
-                                                                    <strong>Notes:</strong> <?php echo !empty($equipment['notes']) ? $equipment['notes'] : 'N/A'; ?>
-                                                                </div>
-                                                            <?php }?>
-                                                            </div>
                                                         </div>
-                                                    <?php }
+                                                <?php }
                                                 }
-                                            }else{?>
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                No Equipment Assigned
-                                            </div>
-                                            <?php }?>
+                                            } else { ?>
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    No Equipment Assigned
+                                                </div>
+                                            <?php } ?>
                                         </div>
                                         <br />
                                     </div>
@@ -998,39 +1040,43 @@ if($_ssv){
             </div>
         </div>
     </div>
-    
-            <?php if($sideBar != ''){ ?>
+
+    <?php if ($sideBar != '') { ?>
 </div>
 <?php } ?>
 </div>
 <style>
-.start_animation {
-    animation-name: icon_alert;
-    animation-duration: 0.8s;
-    animation-iteration-count: infinite;
-}
-
-.jsGeneralAssignDocument{ margin-left: 10px;}
-
-@keyframes icon_alert {
-    75% {
-        color: #dc3545;
+    .start_animation {
+        animation-name: icon_alert;
+        animation-duration: 0.8s;
+        animation-iteration-count: infinite;
     }
-}
+
+    .jsGeneralAssignDocument {
+        margin-left: 10px;
+    }
+
+    @keyframes icon_alert {
+        75% {
+            color: #dc3545;
+        }
+    }
 </style>
 <script type="text/javascript">
     // Disable clicks
-    $('.csbgbl').bind('contextmenu', function(e) { return false; }); 
-    $(document).ready(function () {
+    $('.csbgbl').bind('contextmenu', function(e) {
+        return false;
+    });
+    $(document).ready(function() {
         $('#add_emergency_contacts').validate();
-        
+
         $('#form_license_info').validate({
             rules: {
                 license_file: {
                     accept: 'image/png,image/bmp,image/gif,image/jpeg,image/tiff,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 }
             },
-            messages:{
+            messages: {
                 license_file: {
                     accept: 'Please select an image or pdf file.'
                 }
@@ -1042,7 +1088,7 @@ if($_ssv){
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+50",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#oc_license_expiration_date').datepicker('option', 'minDate', selectedDate);
             }
         });
@@ -1052,7 +1098,7 @@ if($_ssv){
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+50",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#oc_license_issue_date').datepicker('option', 'maxDate', selectedDate);
             }
         });
@@ -1062,7 +1108,7 @@ if($_ssv){
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+50",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dr_license_expiration_date').datepicker('option', 'minDate', selectedDate);
             }
         });
@@ -1072,7 +1118,7 @@ if($_ssv){
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+50",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dr_license_issue_date').datepicker('option', 'maxDate', selectedDate);
             }
         });
@@ -1082,41 +1128,41 @@ if($_ssv){
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dob').datepicker('option', 'minDate', selectedDate);
             }
-        }); 
+        });
 
         $('#dr_dob').datepicker({
             dateFormat: 'mm/dd/yy',
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dr_dob').datepicker('option', 'minDate', selectedDate);
             }
-        });  
+        });
 
         $('#birth_date').datepicker({
             dateFormat: 'mm/dd/yy',
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#birth_date').datepicker('option', 'minDate', selectedDate);
             }
-        }); 
+        });
 
-        $('input[type=file]').on('change', function () {
+        $('input[type=file]').on('change', function() {
             var selected_file = $(this).val();
             var selected_file = selected_file.substring(selected_file.lastIndexOf('\\') + 1, selected_file.length);
             var id = $(this).attr('id');
             $('#name_' + id).html(selected_file);
         });
 
-        $('.collapse').on('shown.bs.collapse', function () {
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
     });
@@ -1125,10 +1171,10 @@ if($_ssv){
         alertify.confirm(
             'Are you Sure?',
             'Are you sure you sure you want to delete this dependent?',
-            function () {
+            function() {
                 $('#form_delete_dependent_' + dependent_sid).submit();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled!');
             });
     }
@@ -1137,15 +1183,15 @@ if($_ssv){
         alertify.confirm(
             'Are you Sure?',
             'Are you sure you want to delete this contact?',
-            function () {
+            function() {
                 $('#form_delete_emergency_contact_' + contact_id).submit();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled!');
             });
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#dependantForm').validate({
             rules: {
                 first_name: {
@@ -1161,7 +1207,7 @@ if($_ssv){
                     required: true
                 }
             },
-            messages:{
+            messages: {
                 first_name: {
                     message: 'First Name is required'
                 },
@@ -1176,15 +1222,15 @@ if($_ssv){
                 }
             }
         });
-        
-        $('.collapse').on('shown.bs.collapse', function () {
+
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
     });
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.datepicker').datepicker({
             dateFormat: 'mm/dd/yy',
             changeMonth: true,
@@ -1195,25 +1241,25 @@ if($_ssv){
 
     function getStates(val, states, select_id) {
         var html = '';
-        
+
         if (val == '') {
             $('#state').html('<option value="">Select State</option><option value="">Please Select your country</option>');
         } else {
             allstates = states[val];
             html += '<option value="">Select State</option>';
-            
+
             for (var i = 0; i < allstates.length; i++) {
                 var id = allstates[i].sid;
                 var name = allstates[i].state_name;
                 html += '<option value="' + id + '">' + name + '</option>';
             }
-            
+
             $('#' + select_id).html(html);
             $('#' + select_id).trigger('change');
         }
     }
 
-    <?php if($keyIndex != null) { ?>
+    <?php if ($keyIndex != null) { ?>
         $(document).ready(() => {
             let obj = {
                 'drivers_license': 'driver_license',
@@ -1223,28 +1269,28 @@ if($_ssv){
                 'dependents': 'dependents'
             };
             //
-            let k = obj["<?=$keyIndex;?>"];
+            let k = obj["<?= $keyIndex; ?>"];
             $(`a[href="#${k}"]`).trigger('click');
         });
     <?php } ?>
 
     // 
-    let generalDocuments = <?=json_encode($generalAssignments);?>;
+    let generalDocuments = <?= json_encode($generalAssignments); ?>;
     console.log(generalDocuments);
     //
-    if(Object.keys(generalDocuments).length > 0){
-        $('.jsGeneralAssignDocument').map(function(){
+    if (Object.keys(generalDocuments).length > 0) {
+        $('.jsGeneralAssignDocument').map(function() {
             //
             let slug = $(this).data('id');
             console.log(slug);
             console.log(generalDocuments[slug]);
             //
-            if(generalDocuments[slug] !== undefined){
+            if (generalDocuments[slug] !== undefined) {
                 $(this)
-                .prop('title', 'Assigned Document')
-                .html(`<i class="fa fa-clipboard start_animation"></a>`);
+                    .prop('title', 'Assigned Document')
+                    .html(`<i class="fa fa-clipboard start_animation"></a>`);
                 //
-                if(generalDocuments[slug].note != '' && generalDocuments[slug].note != null){
+                if (generalDocuments[slug].note != '' && generalDocuments[slug].note != null) {
                     //
                     let row = `
                     <div class="panel panel-info">
@@ -1276,15 +1322,15 @@ if($_ssv){
             processData: false,
             type: 'post',
             data: form_data,
-            success: function (resp) {
+            success: function(resp) {
                 if (resp.Response.length > 0) {
                     var applicant_id = '<?php echo $this->uri->segment(3); ?>';
                     alertify.alert(
-                        'WARNING!', 
+                        'WARNING!',
                         `The following general documents are required. Please, complete them in order to proceed. <br /> <strong>${resp.Response.join(',<br />')}</strong>`,
                         () => {}
                     );
-                    
+
                     return;
                 }
                 window.location.href = $(e.target).prop('href');

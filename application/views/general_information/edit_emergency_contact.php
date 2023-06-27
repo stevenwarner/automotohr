@@ -10,17 +10,17 @@ $field_city = '';
 $field_zipcode = '';
 $field_address = '';
 
-    if (isset($employee)) {
-        $company_sid = $employee['parent_sid'];
-        $users_type = 'employee';
-        $users_sid = $employee['sid'];
-        $emergency_contacts_arr = $emergency_contacts;
-        $field_country = 'Location_Country';
-        $field_state = 'Location_State';
-        $field_city = 'Location_City';
-        $field_zipcode = 'Location_ZipCode';
-        $field_address = 'Location_Address';
-    } 
+if (isset($employee)) {
+    $company_sid = $employee['parent_sid'];
+    $users_type = 'employee';
+    $users_sid = $employee['sid'];
+    $emergency_contacts_arr = $emergency_contacts;
+    $field_country = 'Location_Country';
+    $field_state = 'Location_State';
+    $field_city = 'Location_City';
+    $field_zipcode = 'Location_ZipCode';
+    $field_address = 'Location_Address';
+}
 ?>
 
 <div class="main">
@@ -70,17 +70,31 @@ $field_address = '';
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                 <div class="form-group">
-                                    <?php $field_id = 'email'; ?>
-                                    <?php echo form_label('Email:', $field_id); ?>
-                                    <input type="email" value="<?php echo $emergency_contacts['email']; ?>" class="form-control" data-rule-email="true" name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
+                                    <?php
+                                    $field_id = 'email';
+                                    $emailRequired = '';
+                                    if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
+                                        $emailRequired = ' <span class="required">*</span>';
+                                    }
+                                    ?>
+                                    <?php echo form_label('Email:' . $emailRequired, $field_id); ?>
+                                    <input type="email" value="<?php echo $emergency_contacts['email']; ?>" class="form-control" data-rule-email="true" <?php echo $contactOptionsStatus['emergency_contact_email_status'] == 1 ? 'data-rule-required="true"' : ''  ?> name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                 <div class="form-group">
-                                    <?php $field_id = 'PhoneNumber'; ?>
-                                    <?php echo form_label('Phone Number:', $field_id); ?>
-                                    <?php echo form_input($field_id, $emergency_contacts['PhoneNumber'], 'class="form-control" id="' . $field_id . ' "'); ?>
+                                    <?php
+                                    $field_id = 'PhoneNumber';
+                                    $phoneNumberRequired = '';
+                                    $phoneNumberRequiredRule = '';
+                                    if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
+                                        $phoneNumberRequired = ' <span class="required">*</span>';
+                                        $phoneNumberRequiredRule = ' data-rule-required="true"';
+                                    }
+                                    ?>
+                                    <?php echo form_label('Phone Number:' . $phoneNumberRequired, $field_id); ?>
+                                    <?php echo form_input($field_id, $emergency_contacts['PhoneNumber'], 'class="form-control" id="' . $field_id . ' "' . $phoneNumberRequiredRule); ?>
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -88,13 +102,13 @@ $field_address = '';
                                 <div class="form-group">
                                     <?php $field_id = $field_country; ?>
                                     <?php $country_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); ?>
-                                    <?php echo form_label('Country:', $field_id);?>
+                                    <?php echo form_label('Country:', $field_id); ?>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, '<?php echo $field_state; ?>', <?php echo $emergency_contacts['Location_State'];?>)">
+                                        <select class="form-control" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, '<?php echo $field_state; ?>', <?php echo $emergency_contacts['Location_State']; ?>)">
                                             <option value="">Please Select</option>
                                             <?php foreach ($active_countries as $active_country) { ?>
                                                 <?php $default_selected = $emergency_contacts['Location_Country'] == $active_country['sid'] ? true : false; ?>
-                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
+                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>"> <?= $active_country["country_name"]; ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -107,13 +121,13 @@ $field_address = '';
                                     <?php $state_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); ?>
                                     <?php echo form_label('State:', $field_id); ?>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" name="<?php echo $field_id?>" id="<?php echo $field_id?>">
+                                        <select class="form-control" name="<?php echo $field_id ?>" id="<?php echo $field_id ?>">
                                             <?php if (empty($state_id)) { ?>
                                                 <option value="">Select State</option> <?php
-                                            } else {
-                                                foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                                    } else {
+                                                                                        foreach ($active_states[$country_id] as $active_state) { ?>
                                                     <?php $default_selected = $emergency_contacts['Location_State'] == $active_state['sid'] ? true : false; ?>
-                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>"><?= $active_state["state_name"] ?></option>
                                                 <?php } ?>
                                             <?php } ?>
                                         </select>
@@ -158,30 +172,30 @@ $field_address = '';
                                     <?php $field_id = 'priority'; ?>
                                     <?php echo form_label('Set Priority:<span class="required">*</span>', $field_id); ?>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control"  name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>">
+                                        <select class="form-control" name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>">
                                             <option value="">Select Priority</option>
                                             <option value="1" <?php
-                                            if ($emergency_contacts['priority'] == '1') {
-                                                echo 'selected';
-                                            }
-                                            ?>>1</option>
+                                                                if ($emergency_contacts['priority'] == '1') {
+                                                                    echo 'selected';
+                                                                }
+                                                                ?>>1</option>
                                             <option value="2" <?php
-                                            if ($emergency_contacts['priority'] == '2') {
-                                                echo 'selected';
-                                            }
-                                            ?>>2</option>
+                                                                if ($emergency_contacts['priority'] == '2') {
+                                                                    echo 'selected';
+                                                                }
+                                                                ?>>2</option>
                                             <option value="3" <?php
-                                            if ($emergency_contacts['priority'] == '3') {
-                                                echo 'selected';
-                                            }
-                                            ?>>3</option>
+                                                                if ($emergency_contacts['priority'] == '3') {
+                                                                    echo 'selected';
+                                                                }
+                                                                ?>>3</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                         <div class="btn-wrp full-width mrg-top-20 text-right">
-                            <a class="btn btn-black margin-right" href="<?php echo $back_url?>">Cancel</a>
+                            <a class="btn btn-black margin-right" href="<?php echo $back_url ?>">Cancel</a>
                             <button type="submit" class="btn btn-info">Update</button>
                         </div>
                     </form>
@@ -191,7 +205,7 @@ $field_address = '';
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('#add_emergency_contacts').validate();
         $('#Location_Country').trigger('change');
     });
@@ -200,10 +214,10 @@ $field_address = '';
         alertify.confirm(
             'Are you Sure?',
             'Are you sure you want to delete this contact?',
-            function () {
+            function() {
                 $('#form_delete_emergency_contact_' + contact_id).submit();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled!');
             });
     }
@@ -220,10 +234,10 @@ $field_address = '';
                 select = '';
                 var id = allstates[i].sid;
                 var name = allstates[i].state_name;
-                if(select_val == id){
+                if (select_val == id) {
                     select = 'selected="selected"';
                 }
-                html += '<option value="' + id + '"'+ select +'>' + name + '</option>';
+                html += '<option value="' + id + '"' + select + '>' + name + '</option>';
             }
             $('#' + select_id).html(html);
             $('#' + select_id).trigger('change');

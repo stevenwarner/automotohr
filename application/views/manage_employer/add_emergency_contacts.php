@@ -51,7 +51,7 @@
                                                    <?php echo form_error('last_name'); ?>
                                         </li>
                                         <li class="form-col-50-left">
-                                            <label>E-Mail:</label>
+                                            <label>E-Mail:<?php if($contactOptionsStatus['emergency_contact_email_status']==1){ ?><span class="staric">*</span><?php }?></label>
                                             <input type="email" class="invoice-fields" name="email" id="email" value="<?php
                                             if (isset($formpost['email'])) {
                                                 echo $formpost['email'];
@@ -60,7 +60,7 @@
                                                    <?php echo form_error('email'); ?>
                                         </li>
                                         <li class="form-col-50-right">
-                                            <label>Phone Number:</label>
+                                            <label>Phone Number:<?php if($contactOptionsStatus['emergency_contact_phone_number_status']==1){ ?><span class="staric">*</span><?php } ?></label>
                                             <?=$input_group_start;?>
                                             <input id="PhoneNumber" class="invoice-fields startdate js-phone" name="PhoneNumber" type="text" value="<?php echo set_value('PhoneNumber'); ?>">
                                             <?=$input_group_end;?>
@@ -191,11 +191,11 @@ function validate_form() {
                 pattern: /^[a-zA-Z0-9\- ]+$/
             },
             email: {
-                // required: true,
+                <?php if($contactOptionsStatus['emergency_contact_email_status']==1){ ?> required: true, <?php } ?>
                 email: true
             },
             PhoneNumber: {
-                // required: true,
+                <?php if($contactOptionsStatus['emergency_contact_phone_number_status']==1){ ?> required: true, <?php } ?>
                 <?php if($is_regex === 1){ ?>
                 pattern: /(\(\d{3}\))\s(\d{3})-(\d{4})$/ // (555) 123-4567
                 <?php } else{ ?>

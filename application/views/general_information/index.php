@@ -22,19 +22,21 @@ $save_post_url = current_url();
 $field_sid = 'employee_sid';
 ?>
 <style>
-.start_animation {
-    animation-name: icon_alert;
-    animation-duration: 0.8s;
-    animation-iteration-count: infinite;
-}
-
-.jsGeneralAssignDocument{ margin-left: 10px;}
-
-@keyframes icon_alert {
-    75% {
-        color: #dc3545;
+    .start_animation {
+        animation-name: icon_alert;
+        animation-duration: 0.8s;
+        animation-iteration-count: infinite;
     }
-}
+
+    .jsGeneralAssignDocument {
+        margin-left: 10px;
+    }
+
+    @keyframes icon_alert {
+        75% {
+            color: #dc3545;
+        }
+    }
 </style>
 <div class="main jsmaincontent">
     <div class="container">
@@ -68,7 +70,7 @@ $field_sid = 'employee_sid';
                             </div>
                             <div id="driver_license" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
+                                    <div class="jsNoteArea"></div>
                                     <div class="form-wrp">
                                         <form method="POST" enctype="multipart/form-data" autocomplete="off">
                                             <input type="hidden" id="perform_action" name="perform_action" value="update_drivers_license_information" />
@@ -83,10 +85,10 @@ $field_sid = 'employee_sid';
                                                         <div class="hr-select-dropdown">
                                                             <select class="form-control" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
                                                                 <option value="" selected="">Please Select</option>
-                                                                <?php if(!empty($license_types)) { ?>
-                                                                    <?php foreach($license_types as $key => $license_type) { ?>
+                                                                <?php if (!empty($license_types)) { ?>
+                                                                    <?php foreach ($license_types as $key => $license_type) { ?>
                                                                         <?php $default_selected = $key == $temp ? true : false; ?>
-                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_type?></option>
+                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_type ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
@@ -111,11 +113,11 @@ $field_sid = 'employee_sid';
                                                         <div class="hr-select-dropdown">
                                                             <select class="form-control" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
                                                                 <option value="" selected="">Please Select</option>
-                                                                
-                                                                <?php if(!empty($license_classes)) { ?>
-                                                                    <?php foreach($license_classes as $key => $license_class) { ?>
+
+                                                                <?php if (!empty($license_classes)) { ?>
+                                                                    <?php foreach ($license_classes as $key => $license_class) { ?>
                                                                         <?php $default_selected = $key == $temp ? true : false; ?>
-                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_class?></option>
+                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_class ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
@@ -165,7 +167,7 @@ $field_sid = 'employee_sid';
                                                         <?php $default_selected = 'on' == $temp ? true : false; ?>
                                                         <label class="control control--checkbox">
                                                             Indefinite
-                                                            <input <?php echo $default_selected == true ? 'checked="checked"': ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
+                                                            <input <?php echo $default_selected == true ? 'checked="checked"' : ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </div>
@@ -200,7 +202,7 @@ $field_sid = 'employee_sid';
                                                                 'style="width: 50%"'
                                                             ]); ?>
                                                             <div class="img-thumbnail">
-                                                                <?php if(empty($temp)) { ?>
+                                                                <?php if (empty($temp)) { ?>
                                                                     <span class="text-center text-success" style="font-size: 200px; display: inline-block; color: #3598dc;"><i class="fa fa-picture-o"></i></span>
                                                                 <?php } else { ?>
                                                                     <!-- <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>" /> -->
@@ -227,10 +229,10 @@ $field_sid = 'employee_sid';
                                     <a class="collapsed" data-toggle="collapse" aria-expanded="false" data-parent="#accordion" href="#occupational_license"><span class="glyphicon glyphicon-plus"></span>occupational license<strong data-id="occupational_license" class="jsGeneralAssignDocument"></strong></a>
                                 </h4>
                             </div>
-                            
+
                             <div id="occupational_license" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
+                                    <div class="jsNoteArea"></div>
                                     <div class="form-wrp">
                                         <form id="form_occ_license" method="POST" enctype="multipart/form-data" autocomplete="off">
                                             <input type="hidden" id="perform_action" name="perform_action" value="update_occupational_license_information" />
@@ -311,7 +313,7 @@ $field_sid = 'employee_sid';
                                                         <?php $default_selected = 'on' == $temp ? true : false; ?>
                                                         <label class="control control--checkbox">
                                                             Indefinite
-                                                            <input <?php echo $default_selected == true ? 'checked="checked"': ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
+                                                            <input <?php echo $default_selected == true ? 'checked="checked"' : ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </div>
@@ -330,13 +332,13 @@ $field_sid = 'employee_sid';
                                                     <?php $field_name = 'license_file' ?>
                                                     <?php $temp = isset($occu_license[$field_name]) && !empty($occu_license[$field_name]) ? $occu_license[$field_name] : ''; ?>
                                                     <?= getFilePathForIframe($temp, true, [
-                                                            'style="width: 50%"'
-                                                        ]); ?>
+                                                        'style="width: 50%"'
+                                                    ]); ?>
                                                     <div class="img-thumbnail">
-                                                        <?php if(empty($temp)) { ?>
+                                                        <?php if (empty($temp)) { ?>
                                                             <span class="text-center text-success" style="font-size: 200px; display: inline-block; color: #3598dc;"><i class="fa fa-picture-o"></i></span>
                                                         <?php } else { ?>
-                                                           
+
                                                         <?php } ?>
                                                     </div>
 
@@ -369,39 +371,39 @@ $field_sid = 'employee_sid';
                                     <div class="table-responsive table-outer">
                                         <table class="table table-bordered">
                                             <thead>
-                                            <tr>
-                                                <td class="col-lg-2">Name</td>
-                                                <td class="col-lg-2">Phone No.</td>
-                                                <td class="col-lg-4">Address</td>
-                                                <td class="col-lg-2">Relationship</td>
-                                                <td class="text-center col-lg-2" colspan="2">Actions</td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="col-lg-2">Name</td>
+                                                    <td class="col-lg-2">Phone No.</td>
+                                                    <td class="col-lg-4">Address</td>
+                                                    <td class="col-lg-2">Relationship</td>
+                                                    <td class="text-center col-lg-2" colspan="2">Actions</td>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                            <?php if(!empty($dependents_arr)) { ?>
-                                                <?php foreach($dependents_arr as $dependent) { ?>
+                                                <?php if (!empty($dependents_arr)) { ?>
+                                                    <?php foreach ($dependents_arr as $dependent) { ?>
+                                                        <tr>
+                                                            <td><?php echo $dependent['first_name'] . ' ' . $dependent['last_name']; ?></td>
+                                                            <td><?php echo $dependent['phone']; ?></td>
+                                                            <td><?php echo $dependent['address']; ?></td>
+                                                            <td><?php echo $dependent['relationship']; ?></td>
+                                                            <td class="text-center">
+                                                                <a href="<?php echo base_url('general_info/edit_dependant_information/' . $dependent['sid']) ?>" class="btn btn-info btn-block">Edit</a>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <form autocomplete="off" id="form_delete_dependent_<?php echo $dependent['sid']; ?>" method="post" action="<?php echo current_url(); ?>" enctype="multipart/form-data">
+                                                                    <input type="hidden" id="perform_action" name="perform_action" value="delete_dependent" />
+                                                                    <input type="hidden" id="dependent_sid" name="dependent_sid" value="<?php echo $dependent['sid']; ?>" />
+                                                                    <button type="button" class="btn btn-danger btn-block" onclick="func_delete_dependent(<?php echo $dependent['sid']; ?>);">Delete</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                <?php } else { ?>
                                                     <tr>
-                                                        <td><?php echo $dependent['first_name'] . ' ' . $dependent['last_name']; ?></td>
-                                                        <td><?php echo $dependent['phone']; ?></td>
-                                                        <td><?php echo $dependent['address']; ?></td>
-                                                        <td><?php echo $dependent['relationship']; ?></td>
-                                                        <td class="text-center">
-                                                            <a href="<?php echo base_url('general_info/edit_dependant_information/'.$dependent['sid'])?>" class="btn btn-info btn-block">Edit</a>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <form autocomplete="off" id="form_delete_dependent_<?php echo $dependent['sid']; ?>" method="post" action="<?php echo current_url(); ?>" enctype="multipart/form-data">
-                                                                <input type="hidden" id="perform_action" name="perform_action" value="delete_dependent" />
-                                                                <input type="hidden" id="dependent_sid" name="dependent_sid" value="<?php echo $dependent['sid']; ?>" />
-                                                                <button type="button" class="btn btn-danger btn-block" onclick="func_delete_dependent(<?php echo $dependent['sid']; ?>);">Delete</button>
-                                                            </form>
-                                                        </td>
+                                                        <td colspan="5" class="text-center">No dependent information found!</td>
                                                     </tr>
                                                 <?php } ?>
-                                            <?php } else { ?>
-                                                <tr>
-                                                    <td colspan="5" class="text-center">No dependent information found!</td>
-                                                </tr>
-                                            <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -453,7 +455,7 @@ $field_sid = 'employee_sid';
                                                             <option value="">Please Select</option>
                                                             <?php foreach ($active_countries as $active_country) { ?>
                                                                 <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
-                                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
+                                                                <option <?php echo set_select($field_id, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>"> <?= $active_country["country_name"]; ?></option>
                                                             <?php } ?>
                                                         </select>
                                                         <?php echo form_error($field_id); ?>
@@ -464,13 +466,13 @@ $field_sid = 'employee_sid';
                                                         <?php $field_id = 'Location_State'; ?>
                                                         <?php $state_id = ((isset($applicant_information[$field_id]) && !empty($applicant_information[$field_id])) ? $applicant_information[$field_id] : ''); ?>
                                                         <?php echo form_label('State:', $field_id); ?>
-                                                        <select class="form-control" name="<?php echo $field_id?>" id="<?php echo $field_id?>">
+                                                        <select class="form-control" name="<?php echo $field_id ?>" id="<?php echo $field_id ?>">
                                                             <?php if (empty($state_id)) { ?>
                                                                 <option value="">Select State</option> <?php
-                                                            } else {
-                                                                foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                                                    } else {
+                                                                                                        foreach ($active_states[$country_id] as $active_state) { ?>
                                                                     <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
-                                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                                    <option <?php echo set_select($field_id, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>"><?= $active_state["state_name"] ?></option>
                                                                 <?php } ?>
                                                             <?php } ?>
                                                         </select>
@@ -542,9 +544,7 @@ $field_sid = 'employee_sid';
                                                     <?php $field_name = 'family_member'; ?>
                                                     <label for="<?php echo $field_name; ?>" class="control control--checkbox">
                                                         Add Family Members
-                                                        <input name="<?php echo $field_name; ?>"
-                                                               id="<?php echo $field_name; ?>"
-                                                               type="checkbox">
+                                                        <input name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>" type="checkbox">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -573,41 +573,41 @@ $field_sid = 'employee_sid';
                                     <div class="table-responsive table-outer">
                                         <table class="table table-bordered">
                                             <thead>
-                                            <tr>
-                                                <td class="col-lg-2">Name</td>
-                                                <td class="col-lg-2">Relationship</td>
-                                                <td class="col-lg-2">Phone No.</td>
-                                                <td class="col-lg-3">Address</td>
-                                                <td class="text-center col-lg-1">Priority</td>
-                                                <td class="text-center col-lg-2" colspan="2">Actions</td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="col-lg-2">Name</td>
+                                                    <td class="col-lg-2">Relationship</td>
+                                                    <td class="col-lg-2">Phone No.</td>
+                                                    <td class="col-lg-3">Address</td>
+                                                    <td class="text-center col-lg-1">Priority</td>
+                                                    <td class="text-center col-lg-2" colspan="2">Actions</td>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                            <?php if(!empty($emergency_contacts)) { ?>
-                                                <?php foreach($emergency_contacts as $contact) { ?>
-                                                    <tr>
-                                                        <td><?php echo $contact['first_name'] . ' ' . $contact['last_name']; ?></td>
-                                                        <td><?php echo $contact['Relationship']; ?></td>
-                                                        <td><?php echo $contact['PhoneNumber']; ?></td>
-                                                        <td><?php echo $contact['Location_Address']; ?></td>
-                                                        <td class="text-center"><?php echo $contact['priority']; ?></td>
-                                                        <td>
-                                                            <a href="<?php echo base_url('general_info/edit_emergency_contacts/'.$contact['sid'])?>" class="btn btn-info btn-block">Edit</a>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <form  autocomplete="off" id="form_delete_emergency_contact_<?php echo $contact['sid']?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                <input type="hidden" id="perform_action" name="perform_action" value="delete_emergency_contact" />
-                                                                <input type="hidden" id="contact_sid" name="contact_sid" value="<?php echo $contact['sid']; ?>" />
-                                                                <button type="button" onclick="func_delete_emergency_contact(<?php echo $contact['sid']?>);" class="btn btn-danger btn-block">Delete</button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-                                            <?php } else { ?>
+                                                <?php if (!empty($emergency_contacts)) { ?>
+                                                    <?php foreach ($emergency_contacts as $contact) { ?>
+                                                        <tr>
+                                                            <td><?php echo $contact['first_name'] . ' ' . $contact['last_name']; ?></td>
+                                                            <td><?php echo $contact['Relationship']; ?></td>
+                                                            <td><?php echo $contact['PhoneNumber']; ?></td>
+                                                            <td><?php echo $contact['Location_Address']; ?></td>
+                                                            <td class="text-center"><?php echo $contact['priority']; ?></td>
+                                                            <td>
+                                                                <a href="<?php echo base_url('general_info/edit_emergency_contacts/' . $contact['sid']) ?>" class="btn btn-info btn-block">Edit</a>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <form autocomplete="off" id="form_delete_emergency_contact_<?php echo $contact['sid'] ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                    <input type="hidden" id="perform_action" name="perform_action" value="delete_emergency_contact" />
+                                                                    <input type="hidden" id="contact_sid" name="contact_sid" value="<?php echo $contact['sid']; ?>" />
+                                                                    <button type="button" onclick="func_delete_emergency_contact(<?php echo $contact['sid'] ?>);" class="btn btn-danger btn-block">Delete</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                <?php } else { ?>
                                                     <tr>
                                                         <td class="text-center" colspan="6">No Emergency Contacts found!</td>
                                                     </tr>
-                                            <?php } ?>
+                                                <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -637,17 +637,30 @@ $field_sid = 'employee_sid';
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
-                                                        <?php $field_id = 'email'; ?>
-                                                        <?php echo form_label('Email:', $field_id); ?>
-                                                        <input type="email" class="form-control" data-rule-email="true" name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
+                                                        <?php $field_id = 'email';
+                                                        $emailRequired = '';
+                                                        if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
+                                                            $emailRequired = ' <span class="required">*</span>';
+                                                        }
+                                                        ?>
+                                                        <?php echo form_label('Email:' . $emailRequired, $field_id); ?>
+                                                        <input type="email" class="form-control" data-rule-email="true" <?php echo $contactOptionsStatus['emergency_contact_email_status'] == 1 ? 'data-rule-required="true"' : ''  ?> name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
                                                         <?php echo form_error($field_id); ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
-                                                        <?php $field_id = 'PhoneNumber'; ?>
-                                                        <?php echo form_label('Primary Number:', $field_id); ?>
-                                                        <?php echo form_input($field_id, '', 'class="form-control" id="' . $field_id . ' "'); ?>
+                                                        <?php
+                                                        $field_id = 'PhoneNumber';
+                                                        $phoneNumberRequired = '';
+                                                        $phoneNumberRequiredRule = '';
+                                                        if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
+                                                            $phoneNumberRequired = ' <span class="required">*</span>';
+                                                            $phoneNumberRequiredRule = ' data-rule-required="true"';
+                                                        }
+                                                        ?>
+                                                        <?php echo form_label('Primary Number:' . $phoneNumberRequired, $field_id); ?>
+                                                        <?php echo form_input($field_id, '', 'class="form-control" id="' . $field_id . ' "' . $phoneNumberRequiredRule); ?>
                                                         <?php echo form_error($field_id); ?>
                                                     </div>
                                                 </div>
@@ -659,7 +672,7 @@ $field_sid = 'employee_sid';
                                                             <select class="form-control" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" onchange="getStates(this.value, <?php echo $states; ?>, '<?php echo $field_state; ?>')">
                                                                 <option value="">Please Select</option>
                                                                 <?php foreach ($active_countries as $active_country) { ?>
-                                                                    <option  value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
+                                                                    <option value="<?= $active_country["sid"]; ?>"> <?= $active_country["country_name"]; ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -671,12 +684,12 @@ $field_sid = 'employee_sid';
                                                         <?php $field_id = 'contact_state'; ?>
                                                         <?php echo form_label('State:', $field_id); ?>
                                                         <div class="hr-select-dropdown">
-                                                            <select class="form-control" name="<?php echo $field_id?>" id="<?php echo $field_id?>">
+                                                            <select class="form-control" name="<?php echo $field_id ?>" id="<?php echo $field_id ?>">
                                                                 <?php if (empty($state_id)) { ?>
                                                                     <option value="">Select State</option> <?php
-                                                                } else {
-                                                                    foreach ($active_states[$country_id] as $active_state) { ?>
-                                                                        <option value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                                                                        } else {
+                                                                                                            foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                        <option value="<?= $active_state["sid"] ?>"><?= $active_state["state_name"] ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
@@ -749,9 +762,10 @@ $field_sid = 'employee_sid';
 
                             <div id="direct_deposit" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                <div class="jsNoteArea"></div>
-                                    <?php  $this->load->view('direct_deposit/form'); ?>
-                                    <?php //$this->load->view('direct_deposit/new_form'); ?>
+                                    <div class="jsNoteArea"></div>
+                                    <?php $this->load->view('direct_deposit/form'); ?>
+                                    <?php //$this->load->view('direct_deposit/new_form'); 
+                                    ?>
                                     <!-- <div class="form-wrp">
                                         <form id="form_update_bank_details" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                             <input type="hidden" id="perform_action" name="perform_action" value="update_bank_details" />
@@ -796,10 +810,10 @@ $field_sid = 'employee_sid';
                                                     </div>
                                                 </div>
 
-                                                <?php if(!empty($bank_details['voided_cheque']) && $bank_details['voided_cheque'] != NULL) { ?>
+                                                <?php if (!empty($bank_details['voided_cheque']) && $bank_details['voided_cheque'] != NULL) { ?>
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <div class="well well-sm">
-                                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL.$bank_details['voided_cheque']?>" alt="">
+                                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $bank_details['voided_cheque'] ?>" alt="">
                                                         </div>
                                                     </div>
                                                 <?php } ?>
@@ -821,7 +835,7 @@ $field_sid = 'employee_sid';
                                                             <label>Account Type</label>
                                                         </div>
                                                         <div class="col-lg-2 col-md-2 col-xs-6 col-sm-2">
-                                                            <?php $default_checked = $temp == 'checking'? true : false; ?>
+                                                            <?php $default_checked = $temp == 'checking' ? true : false; ?>
                                                             <div class="checkbox-radio-row">
                                                                 <label class="control control--radio">
                                                                     Checking
@@ -831,7 +845,7 @@ $field_sid = 'employee_sid';
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-2 col-md-2 col-xs-6 col-sm-2">
-                                                            <?php $default_checked = $temp == 'savings'? true : false; ?>
+                                                            <?php $default_checked = $temp == 'savings' ? true : false; ?>
                                                             <div class="checkbox-radio-row">
                                                                 <label class="control control--radio">
                                                                     Savings
@@ -843,11 +857,11 @@ $field_sid = 'employee_sid';
                                                     </div>
                                                 </div>
                                             </div>
-                                            <input type="hidden" value="<?= isset($enable_learbing_center) ? $enable_learbing_center : ''?>" name="enable_learbing_center_flag">
+                                            <input type="hidden" value="<?= isset($enable_learbing_center) ? $enable_learbing_center : '' ?>" name="enable_learbing_center_flag">
                                             <div class="btn-wrp full-width text-right">
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                        <input class="btn btn-info" id="add_edit_submit" value="<?= empty($next_btn) ? 'Save' : 'Save And Proceed Next';?>" type="submit">
+                                                        <input class="btn btn-info" id="add_edit_submit" value="<?= empty($next_btn) ? 'Save' : 'Save And Proceed Next'; ?>" type="submit">
                                                     </div>
                                                 </div>
                                             </div>
@@ -865,73 +879,89 @@ $field_sid = 'employee_sid';
                             </div>
 
                             <div id="equipment" class="panel-collapse collapse">
-                                <div class="panel-body">                                    
+                                <div class="panel-body">
                                     <div class="row row-flex">
-                                        <?php 
-                                            if(sizeof($equipments)>0) {
-                                                foreach ($equipments as $equipment) {
-                                                    if (empty($equipment['equipment_details']) || $equipment['equipment_details'] == NULL) { 
-                                                        if(!empty($equipment['equipment_type'])) {
-                                        ?>
-                                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                                <article class="listing-article no-image">
-                                                                    <div class="text">
-                                                                        <h3>
-                                                                            <?php echo ucwords($equipment['equipment_type']); ?>
-                                                                        </h3>
-
-                                                                        <div class="post-options">
-                                                                            <ul>
-                                                                                <li><strong>Brand Name:</strong> <?php
-                                                                                    echo ucwords($equipment['brand_name']); ?>
-                                                                                </li>
-                                                                                <?php if($equipment['issue_date'] != NULL && !empty($equipment['issue_date']) && $equipment['issue_date'] != '0000-00-00 00:00:00'){?>
-                                                                                    <br><li><strong>Date Assigned:</strong> <?php echo date_with_time($equipment['issue_date']); ?></li>
-                                                                                <?php } if($equipment['model'] != NULL && !empty($equipment['model'])){?>
-                                                                                    <br><li><strong>Model:</strong> <?php echo $equipment['model']; ?></li>
-                                                                                <?php } if($equipment['imei_no'] != NULL && !empty($equipment['imei_no'])){?>
-                                                                                    <br><li><strong>IMEI:</strong> <?php echo $equipment['imei_no']; ?></li>
-                                                                                <?php } if($equipment['product_id'] != NULL && !empty($equipment['product_id'])){?>
-                                                                                    <br><li><strong>Product Id:</strong> <?php echo $equipment['product_id']; ?></li>
-                                                                                <?php } if($equipment['specification'] != NULL && !empty($equipment['specification'])){?>
-                                                                                    <br><li><strong>Specification:</strong> <?php echo $equipment['specification']; ?></li>
-                                                                                <?php } if($equipment['vin_number'] != NULL && !empty($equipment['vin_number'])){?>
-                                                                                    <br><li><strong>Engine Number:</strong> <?php echo $equipment['vin_number']; ?></li>
-                                                                                <?php } if($equipment['transmission_type'] != NULL && !empty($equipment['transmission_type'])){?>
-                                                                                    <br><li><strong>Transmission Type:</strong> <?php echo $equipment['transmission_type']; ?></li>
-                                                                                <?php } if($equipment['fuel_type'] != NULL && !empty($equipment['fuel_type'])){?>
-                                                                                    <br><li><strong>Fuel Type:</strong> <?php echo $equipment['fuel_type']; ?></li>
-                                                                                <?php } if($equipment['serial_number'] != NULL && !empty($equipment['serial_number'])){?>
-                                                                                    <br><li><strong>Serial Number:</strong> <?php echo $equipment['serial_number']; ?></li>
-                                                                                <?php }?>
-                                                                            </ul>
-                                                                        </div>
-                                                                        <?php if($equipment['notes'] != NULL && !empty($equipment['notes'])){?>
-                                                                            <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                                                                                <strong>Notes:</strong>
-                                                                                <?php echo !empty($equipment['notes']) ? $equipment['notes'] : 'N/A'; ?>
-                                                                            </div>
-                                                                        <?php }?>
-                                                                        <div class="post-options">
-                                                                            <a href="<?php echo base_url('general_info/view_equipment_information/'.$equipment['sid'])?>" class="btn btn-info btn-block">View Detail</a>
-                                                                        </div>
-                                                                    </div>
-                                                                </article>    
-                                                            </div>
                                         <?php
-                                                        }
+                                        if (sizeof($equipments) > 0) {
+                                            foreach ($equipments as $equipment) {
+                                                if (empty($equipment['equipment_details']) || $equipment['equipment_details'] == NULL) {
+                                                    if (!empty($equipment['equipment_type'])) {
+                                        ?>
+                                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                            <article class="listing-article no-image">
+                                                                <div class="text">
+                                                                    <h3>
+                                                                        <?php echo ucwords($equipment['equipment_type']); ?>
+                                                                    </h3>
+
+                                                                    <div class="post-options">
+                                                                        <ul>
+                                                                            <li><strong>Brand Name:</strong> <?php
+                                                                                                                echo ucwords($equipment['brand_name']); ?>
+                                                                            </li>
+                                                                            <?php if ($equipment['issue_date'] != NULL && !empty($equipment['issue_date']) && $equipment['issue_date'] != '0000-00-00 00:00:00') { ?>
+                                                                                <br>
+                                                                                <li><strong>Date Assigned:</strong> <?php echo date_with_time($equipment['issue_date']); ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['model'] != NULL && !empty($equipment['model'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Model:</strong> <?php echo $equipment['model']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['imei_no'] != NULL && !empty($equipment['imei_no'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>IMEI:</strong> <?php echo $equipment['imei_no']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['product_id'] != NULL && !empty($equipment['product_id'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Product Id:</strong> <?php echo $equipment['product_id']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['specification'] != NULL && !empty($equipment['specification'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Specification:</strong> <?php echo $equipment['specification']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['vin_number'] != NULL && !empty($equipment['vin_number'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Engine Number:</strong> <?php echo $equipment['vin_number']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['transmission_type'] != NULL && !empty($equipment['transmission_type'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Transmission Type:</strong> <?php echo $equipment['transmission_type']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['fuel_type'] != NULL && !empty($equipment['fuel_type'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Fuel Type:</strong> <?php echo $equipment['fuel_type']; ?></li>
+                                                                            <?php }
+                                                                            if ($equipment['serial_number'] != NULL && !empty($equipment['serial_number'])) { ?>
+                                                                                <br>
+                                                                                <li><strong>Serial Number:</strong> <?php echo $equipment['serial_number']; ?></li>
+                                                                            <?php } ?>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <?php if ($equipment['notes'] != NULL && !empty($equipment['notes'])) { ?>
+                                                                        <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                                                            <strong>Notes:</strong>
+                                                                            <?php echo !empty($equipment['notes']) ? $equipment['notes'] : 'N/A'; ?>
+                                                                        </div>
+                                                                    <?php } ?>
+                                                                    <div class="post-options">
+                                                                        <a href="<?php echo base_url('general_info/view_equipment_information/' . $equipment['sid']) ?>" class="btn btn-info btn-block">View Detail</a>
+                                                                    </div>
+                                                                </div>
+                                                            </article>
+                                                        </div>
+                                            <?php
                                                     }
-                                                }    
+                                                }
                                             }
-                                            else {
+                                        } else {
+                                            ?>
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                No Equipment Assigned
+                                            </div>
+                                        <?php
+                                        }
                                         ?>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    No Equipment Assigned
-                                                </div>
-                                        <?php 
-                                            }
-                                        ?>
-                                    </div>                                    
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -942,16 +972,16 @@ $field_sid = 'employee_sid';
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#add_emergency_contacts').validate();
-        
+
         $('#form_license_info').validate({
             rules: {
                 license_file: {
                     accept: 'image/png,image/bmp,image/gif,image/jpeg,image/tiff,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 }
             },
-            messages:{
+            messages: {
                 license_file: {
                     accept: 'Please select an image or pdf file.'
                 }
@@ -963,7 +993,7 @@ $field_sid = 'employee_sid';
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+50",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#oc_license_expiration_date').datepicker('option', 'minDate', selectedDate);
             }
         });
@@ -973,7 +1003,7 @@ $field_sid = 'employee_sid';
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+100",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#oc_license_issue_date').datepicker('option', 'maxDate', selectedDate);
             }
         });
@@ -983,7 +1013,7 @@ $field_sid = 'employee_sid';
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#ocdob').datepicker('option', 'maxDate', selectedDate);
             }
         });
@@ -993,7 +1023,7 @@ $field_sid = 'employee_sid';
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+50",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dr_license_expiration_date').datepicker('option', 'minDate', selectedDate);
             }
         });
@@ -1003,7 +1033,7 @@ $field_sid = 'employee_sid';
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+100",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dr_license_issue_date').datepicker('option', 'maxDate', selectedDate);
             }
         });
@@ -1013,7 +1043,7 @@ $field_sid = 'employee_sid';
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dob').datepicker('option', 'maxDate', selectedDate);
             }
         });
@@ -1023,21 +1053,21 @@ $field_sid = 'employee_sid';
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (selectedDate) {
+            onSelect: function(selectedDate) {
                 $('#dependent_dob').datepicker('option', 'maxDate', selectedDate);
             }
         });
-        
-        $('input[type=file]').on('change', function () {
+
+        $('input[type=file]').on('change', function() {
             var selected_file = $(this).val();
             var selected_file = selected_file.substring(selected_file.lastIndexOf('\\') + 1, selected_file.length);
             var id = $(this).attr('id');
             $('#name_' + id).html(selected_file);
         });
 
-        $('.collapse').on('shown.bs.collapse', function () {
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
     });
@@ -1046,10 +1076,10 @@ $field_sid = 'employee_sid';
         alertify.confirm(
             'Are you Sure?',
             'Are you sure you sure you want to delete this dependent?',
-            function () {
+            function() {
                 $('#form_delete_dependent_' + dependent_sid).submit();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled!');
             });
     }
@@ -1058,15 +1088,15 @@ $field_sid = 'employee_sid';
         alertify.confirm(
             'Are you Sure?',
             'Are you sure you want to delete this contact?',
-            function () {
+            function() {
                 $('#form_delete_emergency_contact_' + contact_id).submit();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled!');
             });
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#dependantForm').validate({
             rules: {
                 first_name: {
@@ -1082,7 +1112,7 @@ $field_sid = 'employee_sid';
                     required: true
                 }
             },
-            messages:{
+            messages: {
                 first_name: {
                     message: 'First Name is required'
                 },
@@ -1097,15 +1127,15 @@ $field_sid = 'employee_sid';
                 }
             }
         });
-        
-        $('.collapse').on('shown.bs.collapse', function () {
+
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
     });
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.datepicker').datepicker({
             dateFormat: 'mm/dd/yy',
             changeMonth: true,
@@ -1116,19 +1146,19 @@ $field_sid = 'employee_sid';
 
     function getStates(val, states, select_id) {
         var html = '';
-        
+
         if (val == '') {
             $('#state').html('<option value="">Select State</option><option value="">Please Select your country</option>');
         } else {
             allstates = states[val];
             html += '<option value="">Select State</option>';
-            
+
             for (var i = 0; i < allstates.length; i++) {
                 var id = allstates[i].sid;
                 var name = allstates[i].state_name;
                 html += '<option value="' + id + '">' + name + '</option>';
             }
-            
+
             $('#' + select_id).html(html);
             $('#' + select_id).trigger('change');
         }
@@ -1136,13 +1166,13 @@ $field_sid = 'employee_sid';
 </script>
 
 <style type="text/css">
-    .identi{
+    .identi {
         margin-top: 30px;
     }
 </style>
 
 <script>
-    <?php if($keyIndex != null) { ?>
+    <?php if ($keyIndex != null) { ?>
         $(document).ready(() => {
             let obj = {
                 'drivers_license': 'driver_license',
@@ -1152,24 +1182,24 @@ $field_sid = 'employee_sid';
                 'dependents': 'dependents'
             };
             //
-            let k = obj["<?=$keyIndex;?>"];
+            let k = obj["<?= $keyIndex; ?>"];
             $(`a[href="#${k}"]`).trigger('click');
         });
     <?php } ?>
     // 
-    let generalDocuments = <?=json_encode($generalAssignments);?>;
+    let generalDocuments = <?= json_encode($generalAssignments); ?>;
     //
-    if(Object.keys(generalDocuments).length > 0){
-        $('.jsGeneralAssignDocument').map(function(){
+    if (Object.keys(generalDocuments).length > 0) {
+        $('.jsGeneralAssignDocument').map(function() {
             //
             let slug = $(this).data('id');
             //
-            if(generalDocuments[slug] !== undefined){
+            if (generalDocuments[slug] !== undefined) {
                 $(this)
-                .prop('title', 'Assigned Document')
-                .html(`<i class="fa fa-clipboard start_animation"></a>`);
+                    .prop('title', 'Assigned Document')
+                    .html(`<i class="fa fa-clipboard start_animation"></a>`);
                 //
-                if(generalDocuments[slug].note != '' && generalDocuments[slug].note != null){
+                if (generalDocuments[slug].note != '' && generalDocuments[slug].note != null) {
                     //
                     let row = `
                     <div class="panel panel-info">
@@ -1185,4 +1215,3 @@ $field_sid = 'employee_sid';
         });
     }
 </script>
-
