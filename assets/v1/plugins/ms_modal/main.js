@@ -110,7 +110,9 @@
 		// when modal is set
 		if (modelId !== undefined) {
 			// always scroll to top when loader appear
-			document.getElementsByClassName("csModalBody")[0].scrollTop = 0;
+			if (document.getElementsByClassName("csModalBody").length){
+				document.getElementsByClassName("csModalBody")[0].scrollTop = 0;
+			}
 		}
 		// only appears when loader is shown
 		if (modelId !== undefined && doShow) {
