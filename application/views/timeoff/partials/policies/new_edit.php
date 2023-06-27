@@ -404,6 +404,20 @@
                                 </div>
                             </div>
 
+                            <div class="row mb10">
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="">
+                                        <label class="control control--checkbox">
+                                            <input type="checkbox" id="js-accrual-default-flow-edit" />
+                                            <?php echo $get_policy_item_info['allowed_accrual_default_flow_label']; ?>
+                                            <span class="control__indicator"></span>
+                                        </label>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="default-flow"></i>
+                                        <div class="js-hint js-hint-default-flow"><?php echo $get_policy_item_info['allowed_accrual_default_flow_info']; ?></div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!--  -->
                             <div class="row mb10 csRow">
                                 <div class="col-lg-6">

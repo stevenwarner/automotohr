@@ -562,7 +562,8 @@ $(function () {
         policy.plans = accruals.plans;
         policy.policy_category_type = resp.Data.policy_category_type;
         policy.approverList = resp.Data.allowed_approvers;
-
+        //
+        policy.accuralDefaultFlow = accruals.defaultFlow;
         //
         if (policy.carryOverCheck != 'no' && policy.carryOverCheck != 'yes') {
             policy.carryOverCheck = 'no';
@@ -639,7 +640,8 @@ $(function () {
         $('#js-custom-reset-date-edit').val(policy.resetDate);
         //
         $('#js-step-bar-edit').show();
-
+        //
+        $('#js-accrual-default-flow-edit').prop('checked',  policy.accuralDefaultFlow == 1 ? true : false);
         //
         if (resp.Data.is_entitled_employee == 1) {
             $('#EntitledEmployees').prop('checked', true);
@@ -827,12 +829,16 @@ $(function () {
             policyOBJ.rate = getField('#js-accrual-rate-edit');
             // Set policy rate type
             policyOBJ.rateType = getField('#js-accrual-rate-type-edit option:selected');
+            
             // Set policy minimum aplicable type
             policyOBJ.applicableTimeType = getField('.js-minimum-applicable-time-edit:checked');
             // Set policy minimum aplicable time
             policyOBJ.applicableTime = getField('#js-minimum-applicable-hours-edit');
             //
             policyOBJ.plans = getAccrualPlans('edit');
+            //
+            // // Set default accural flow check
+            policyOBJ.accuralDefaultFlow = $('#js-accrual-default-flow-edit').prop('checked') === true ? 1 : 0;
             //
             if (policyOBJ.plans === true) {
                 alertify.alert('WARNING!', 'Please, add the proper plans.', () => { });

@@ -56,4 +56,27 @@ class Testing extends CI_Controller
         _e($advanceBalances,true,true);  
     }
 
+    public function getAccural() {
+        $this->load->helper('timeoff');
+        $this->load->model("timeoff_model", "tom");
+        $policy = $this->tom->getSinglePolicyById(20);
+        
+        $result = getEmployeeAccrual(
+            20,
+            15753,
+            "fulltime",
+            "2022-10-12",
+            480,
+            json_decode($policy['accruals'], true),
+            0,
+            "06/28/2023",
+            "H",
+            $policy['category_type']
+        );
+        
+        
+        _e($result, true, true);
+        echo "we are doing accurals";       
+    }
+
 }

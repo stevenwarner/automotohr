@@ -208,6 +208,71 @@ if (!function_exists('getAwardedRate')) {
  * @param Intger      $balanceInMinutes
  * @param String      $asOfToday (Optional)
  * @param String      $slug (Optional)
+ * @param Array       $employeeDefaultAccrual
+ * 
+ * @return Array
+ */
+if (!function_exists('getEmployeeAccrualNew')) {
+    function getEmployeeAccrualNew(
+        $policyId,
+        $employeeId,
+        $employementStatus,
+        $employeeJoiningDate,
+        $durationInMinutes,
+        $accruals,
+        $balanceInMinutes,
+        $asOfToday,
+        $slug,
+        $categoryType,
+        $employeeDefaultAccrual
+    ) {
+        //
+        $policyPlansDates = [];
+        $plans = $employeeDefaultAccrual['Plans'];
+        //
+        if ($plans) {
+            //
+            $plansApplicableDates = array_column($plans, 'date');
+            //
+            usort($plansApplicableDates, function ($a, $b) {
+                return strtotime($a) - strtotime($b);
+            });
+            //
+            echo date('Y-m-d', strtotime('-1 day', strtotime($plansApplicableDates[0])));
+            $policyPlansDates[] = [
+                'startDate' => $employeeJoiningDate,
+                'endDate' => date('Y-m-d', strtotime('-1 day', strtotime($plansApplicableDates[0])))
+            ];
+            //
+            foreach ($plansApplicableDates as $dkey =>$date) {
+                $policyPlansDates[] = [
+                    'startDate' => $date,
+                    'endDate' => date('Y-m-d', strtotime('-1 day', strtotime($plansApplicableDates[$dkey + 1])))
+                ];
+            }
+        } else {
+
+        }
+        _e($policyPlansDates,true);
+        _e($plansApplicableDates, true);
+        _e($employeeDefaultAccrual,true);
+        return "jee bha jaan";
+
+    }
+}    
+
+/**
+ * Manage Accruals
+ * 
+ * @param Integer     $policyId
+ * @param Integer     $employeeId
+ * @param String      $employementStatus
+ * @param String      $employeeJoiningDate
+ * @param String      $durationInMinutes
+ * @param Array       $accruals
+ * @param Intger      $balanceInMinutes
+ * @param String      $asOfToday (Optional)
+ * @param String      $slug (Optional)
  * 
  * @return Array
  */
@@ -380,6 +445,22 @@ if (!function_exists('getEmployeeAccrual')) {
         // For days
         if ($accruals['rateType'] == 'days') $originalAloowedTime = $accrualRateInMinutes = $accrualRate * $durationInMinutes;
         else $originalAloowedTime = $accrualRateInMinutes = $accrualRate * 60; // For hours
+        //
+        if (isset($accruals['defaultFlow']) && $accruals['defaultFlow'] == 0) {
+            return getEmployeeAccrualNew(
+                $policyId,
+                $employeeId,
+                $employementStatus,
+                $employeeJoiningDate,
+                $durationInMinutes,
+                $accruals,
+                $balanceInMinutes,
+                $asOfToday,
+                $slug,
+                $categoryType,
+                $r
+            );  
+        }
         // Get award time for permanent employee
         if ($employementStatus != 'probation') {
             // Get awarded rate
