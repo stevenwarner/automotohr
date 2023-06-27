@@ -290,9 +290,9 @@ $(function createCourse() {
 				"SUCCESS!",
 				createCourseResponse.data,
 				function () {
-					$("#" + modalId).remove();
 					//
 					getLMSDefaultCourses();
+					$("#" + modalId).remove();
 				}
 			);
 		} catch (err) {

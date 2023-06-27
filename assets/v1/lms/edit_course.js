@@ -335,9 +335,9 @@ $(function editCourse() {
 				"SUCCESS!",
 				updateCourseResponse.data,
 				function () {
-					$("#" + modalId).remove();
 					//
 					getLMSDefaultCourses();
+					$("#" + modalId).remove();
 				}
 			);
 		} catch (err) {

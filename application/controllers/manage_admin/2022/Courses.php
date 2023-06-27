@@ -58,8 +58,8 @@ class Courses extends Admin_Controller
             ['1.0.0', 'v1/common'],
             ['1.0', 'v1/lms/add_question'],
             ['1.0', 'v1/lms/edit_question'],
-            ['1.0.1', 'v1/lms/create_course'],
-            ['1.0.1', 'v1/lms/edit_course'],
+            ['1.0.2', 'v1/lms/create_course'],
+            ['1.0.2', 'v1/lms/edit_course'],
             ['1.0.1', 'v1/lms/main'],
         ];
         // get access token
@@ -69,6 +69,6 @@ class Courses extends Admin_Controller
         );
         // render the view
         $this->render('manage_admin/courses/dashboard', 'admin_master');
-    } 
+    }
 
 }
