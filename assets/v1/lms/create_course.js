@@ -27,6 +27,7 @@ $(function createCourse() {
 	/**
 	 * Create course save event
 	 */
+	//
 	$(document).on("click", ".jsAddCourseCreateBtn", function (event) {
 		// stop the default event
 		event.preventDefault();
@@ -278,6 +279,13 @@ $(function createCourse() {
 			//
 			const createCourseResponse = await createCourseCall(courseObj);
 			//
+			if (courseObj.course_type === "scorm") {
+				await updateScormCourseCall(
+					createCourseResponse.courseId,
+					courseObj.course_file
+				);
+			}
+			//
 			return alertify.alert(
 				"SUCCESS!",
 				createCourseResponse.data,
@@ -322,6 +330,30 @@ $(function createCourse() {
 	}
 
 	/**
+	 * Read Scorm manifest file and update Course
+	 *
+	 * @param {*} courseId
+	 * @returns
+	 */
+	function updateScormCourseCall(courseId, filePath) {
+		return new Promise(function (resolve, reject) {
+			const courseObj = {
+				scorm_file: filePath,
+			};
+			//
+			$.ajax({
+				url: baseURI + "lms/course/scorm/parse/" + courseId,
+				method: "POST",
+				data: courseObj,
+			})
+				.success(resolve)
+				.fail(function (response) {
+					reject(response.responseJSON);
+				});
+		});
+	}
+
+	/**
 	 * Callback for add question
 	 *
 	 * @param {*} questionObj
@@ -357,7 +389,10 @@ $(function createCourse() {
 			//
 			tr += '<tr data-key="' + questionObj.question_id + '">';
 			tr += '	<td class="vam">' + questionObj.question_title + "</td>";
-			tr += '	<td class="vam text-center">' + questionObj.question_type.replace(/_/ig, ' ').toUpperCase() + "</td>";
+			tr +=
+				'	<td class="vam text-center">' +
+				questionObj.question_type.replace(/_/gi, " ").toUpperCase() +
+				"</td>";
 			tr += '	<td class="vam text-center">';
 			// Edit button
 			tr +=

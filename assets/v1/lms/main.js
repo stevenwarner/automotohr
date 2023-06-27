@@ -4,9 +4,16 @@ $(function LMSCourses() {
 	// set the default filter
 	let filterObj = {
 		title: "",
-		status: "all",
+		status: "active",
 		jobTitleIds: "all",
 	};
+
+	// attach select2 to status filter
+	$(".jsCourseStatusDefaultCourse")
+		.select2({
+			minimumResultsForSearch: -1,
+		})
+		.select2("val", filterObj.status);
 
 	/**
 	 * Apply filter
@@ -16,7 +23,7 @@ $(function LMSCourses() {
 		event.preventDefault();
 		//
 		filterObj.title = $(".jsCourseTitleDefaultCourse").val() || "";
-		filterObj.status = $(".jsCourseStatusDefaultCourse").val();
+		filterObj.status = $(".jsCourseStatusDefaultCourse").select2("val");
 		filterObj.jobTitleIds = $(".jsCourseJobTitleDefaultCourse").select2(
 			"val"
 		);
@@ -104,6 +111,16 @@ $(function LMSCourses() {
 		event.preventDefault();
 		// call the function
 		startEditCourseProcess(0, $(this).closest("tr").data("id"));
+	});
+
+	/**
+	 * Preview course
+	 */
+	$(document).on("click", ".jsPreviewCourse", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+		previewCourse($(this).closest("tr").data("id"));
 	});
 
 	/**
@@ -223,6 +240,42 @@ $(function LMSCourses() {
 				// hide the loader
 				ml(false, "jsPageLoader");
 			});
+	}
+
+	function previewCourse(courseId) {
+		// create modal
+		Modal(
+			{
+				Id: "jsLMSPreviewCourseModal",
+				Title: "Preview Course",
+				Loader: "jsLMSPreviewCourseModalLoader",
+				Cl: "container",
+				Body: '<div id="jsLMSPreviewCourseModalBody"></div>',
+			},
+			function () {
+				// show the loader
+				ml(true, "jsLMSPreviewCourseModalLoader");
+				// setInterval(() => {
+				XHR = $.ajax({
+					url: apiURL + "lms/course/" + courseId + "/preview",
+					method: "GET",
+				})
+					.success(function (response) {
+						// empty the call
+						XHR = null;
+						$("#jsLMSPreviewCourseModalBody").html(response);
+					})
+					.fail(handleErrorResponse)
+					.done(function () {
+						// empty the call
+						XHR = null;
+						// hide the loader
+						ml(false, "jsLMSPreviewCourseModalLoader");
+					});
+				// }, 225000);
+				// make the call
+			}
+		);
 	}
 	// make it available to window
 	window.getLMSDefaultCourses = getLMSDefaultCourses;

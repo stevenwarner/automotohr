@@ -32,28 +32,4 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
-    /**
-     * 
-     */
-    public function getAllFutureRecord(int $executeProcess = 0)
-    {
-        $advanceBalances = $this->db
-            ->select(
-                "*"
-            )
-            ->where("effective_at > ", date('Y-m-d'))
-            ->limit(500)
-            ->get('timeoff_allowed_balances')
-            ->result_array();
-        //
-        if ($executeProcess == 1) {
-            //
-            // $this->db
-            // ->where("effective_at > ", date('Y-m-d'))
-            // ->delete('timeoff_allowed_balances');
-        }
-        //
-        _e($advanceBalances,true,true);  
-    }
-
 }

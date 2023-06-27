@@ -330,7 +330,7 @@ $(function editCourse() {
 		try {
 			//
 			const updateCourseResponse = await updateCourseCall(courseObj);
-			//
+			//z
 			return alertify.alert(
 				"SUCCESS!",
 				updateCourseResponse.data,

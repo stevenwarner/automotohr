@@ -1771,6 +1771,7 @@ $route['cron/remove_employee_duplicate_teams'] = 'Cron_common/removeEmployeeFrom
  * LMS Courses routes
  */
 $route['sa/lms/courses'] = 'manage_admin/2022/Courses';
+$route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 
 $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridDocument';
 $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/downloadHybridDocument/$1';

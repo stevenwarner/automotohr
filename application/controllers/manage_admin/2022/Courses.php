@@ -47,7 +47,7 @@ class Courses extends Admin_Controller
         $this->data['PageCSS'] = [
             ['1.2.0', 'v1/plugins/ms_uploader/main'],
             ['1.2.0', 'v1/plugins/ms_modal/main'],
-            ['1.0', '2022/css/main']
+            ['1.0.0', '2022/css/main']
         ];
         // load JS
         $this->data['PageScripts'] = [
@@ -58,9 +58,9 @@ class Courses extends Admin_Controller
             ['1.0.0', 'v1/common'],
             ['1.0', 'v1/lms/add_question'],
             ['1.0', 'v1/lms/edit_question'],
-            ['1.0.0', 'v1/lms/create_course'],
-            ['1.0.0', 'v1/lms/edit_course'],
-            ['1.0', 'v1/lms/main'],
+            ['1.0.1', 'v1/lms/create_course'],
+            ['1.0.1', 'v1/lms/edit_course'],
+            ['1.0.0', 'v1/lms/main'],
         ];
         // get access token
         $this->data['apiAccessToken'] = getApiAccessToken(
@@ -69,5 +69,6 @@ class Courses extends Admin_Controller
         );
         // render the view
         $this->render('manage_admin/courses/dashboard', 'admin_master');
-    }
+    } 
+
 }
