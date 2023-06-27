@@ -146,15 +146,13 @@ pre {
 }
 
 .csQuestionBox {
-	/* margin: 0px 5px; */
-	display: inline-block;
+	display: block;
 	padding: 20px 10px;
 }
-.csQuestionBox:nth-child(odd) {
-	background-color: #eee !important;
-}
-
 .csQuestionBox:nth-child(even) {
+	background-color: #f1f1f1 !important;
+}
+.csQuestionBox:nth-child(odd) {
 	background-color: #fff;
 }
 /* remove Padding */
