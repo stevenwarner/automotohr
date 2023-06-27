@@ -21,10 +21,11 @@ class App extends CI_Controller
         // SCORM file name
         $filePath = $this->input->post('scorm_file');
         // get the file to local
-        $uploadPath = str_replace('.zip', '', copyAWSFile($filePath));
+        $zipFilePath = copyAWSFile($filePath);
+        $uploadPath = str_replace('.zip', '', $zipFilePath);
         // extract the file
         $zip = new ZipArchive;
-        $res = $zip->open($uploadPath);
+        $res = $zip->open($zipFilePath);
         //
         if ($res !== true) {
             // unable to extract the file
