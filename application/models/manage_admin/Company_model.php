@@ -3092,4 +3092,119 @@ class Company_model extends CI_Model
             $this->db->update('users', $data);
         }
     }
+
+
+
+    function getEmployesTransferLog($limit, $offset, $keyword = null, $status = 2, $count_only = false, $company = null, $contact_name = null)
+    {
+        $this->db->select('table_one.sid');
+        $this->db->select('table_one.first_name');
+        $this->db->select('table_one.last_name');
+        $this->db->select('table_one.middle_name');
+        $this->db->select('table_one.nick_name');
+        $this->db->select('table_one.username');
+        $this->db->select('table_one.password');
+        $this->db->select('table_one.email');
+        $this->db->select('table_one.job_title');
+        $this->db->select('table_one.registration_date');
+        $this->db->select('table_one.joined_at');
+        $this->db->select('table_one.rehire_date');
+        $this->db->select('table_one.access_level');
+        $this->db->select('table_one.access_level_plus');
+        $this->db->select('table_one.pay_plan_flag');
+        $this->db->select('table_one.profile_picture');
+        $this->db->select('table_one.active');
+        $this->db->select('table_one.archived');
+        $this->db->select('table_one.system_user_date');
+        $this->db->select('table_one.general_status');
+        $this->db->select('table_two.CompanyName as company_name');
+        $this->db->select('table_one.complynet_onboard');
+        $this->db->select('table_one.parent_sid');
+        $this->db->select('table_one.transfer_date');
+        $this->db->select('table_one.languages_speak');
+
+        $this->db->select('table_one.complynet_job_title');
+
+
+        $this->db->where('table_one.is_executive_admin <', 1);
+        $this->db->where('table_one.parent_sid > ', 0);
+
+        /*
+        if ($status != 2) {
+            $this->db->where('table_one.active', $status);
+        }
+      */
+
+        if ($status == 'active') {
+            $this->db->where('table_one.active', 1);
+            $this->db->where('table_one.terminated_status', 0);
+        }
+
+        if ($status == 'terminated') {
+            $this->db->where('table_one.terminated_status', 1);
+        }
+
+        if ($status != 'all' && $status != 'active' && $status != 'terminated') {
+            $this->db->where('LCASE(table_one.general_status) ', $status);
+        }
+
+
+
+        $this->db->order_by('table_one.sid', 'desc');
+
+        if ($company != null && $company != 'all') {
+            $this->db->group_start();
+            $this->db->like('REPLACE(table_two.CompanyName, " ", "") ', str_replace(' ', '', $company));
+            $this->db->group_end();
+        }
+
+        if (($keyword != null && $keyword != 'all')) {
+            $multiple_keywords = explode(',', $keyword);
+            $this->db->group_start();
+
+            for ($i = 0; $i < count($multiple_keywords); $i++) {
+                $phoneRegex = strpos($multiple_keywords[$i], '@') !== false ? '' : preg_replace('/[^0-9]/', '', $multiple_keywords[$i]);
+                $this->db->or_like('table_one.email', $multiple_keywords[$i]);
+                $this->db->or_like('table_one.username', $multiple_keywords[$i]);
+                if ($phoneRegex) {
+                    $this->db->or_like('REGEXP_REPLACE(table_one.PhoneNumber, "[^0-9]", "")', preg_replace('/[^0-9]/', '', $multiple_keywords[$i]), false);
+                }
+                $this->db->or_like('table_one.job_title', $multiple_keywords[$i]);
+                $this->db->or_like('table_one.access_level', $multiple_keywords[$i]);
+                $this->db->or_like('table_one.registration_date', $multiple_keywords[$i]);
+            }
+
+            $this->db->group_end();
+        }
+
+
+        if ($contact_name != null && $contact_name != 'all') {
+            $this->db->group_start();
+            $this->db->where("(lower(concat(table_one.first_name,'',table_one.last_name)) LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%' or table_one.nick_name LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%')  ");
+            $this->db->group_end();
+        }
+
+
+        $this->db->join('users as table_two', 'table_one.parent_sid = table_two.sid', 'left');
+        $this->db->from('users as table_one');
+
+        if ($count_only == true) {
+            return $this->db->count_all_results();
+        } else {
+            $this->db->limit($limit, $offset);
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            $this->GetEmployeeStatus($records_arr);
+
+            $this->GetEmployeeDepartmentsTeams($records_arr);
+            //
+            return $records_arr;
+        }
+    }
+
+
+
+
 }

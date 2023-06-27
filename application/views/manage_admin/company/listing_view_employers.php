@@ -142,6 +142,9 @@
                                                                                 echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="' . $value['sid'] . '" data-name="' . $value['company_name'] . '">Send Login Email</a>';
                                                                             }
                                                                             ?>
+                                                                            <br>
+                                                                            <?php echo '<br><a href="'.base_url("manage_admin/employers/employer_transferlog/".$value['sid']).'" class="btn btn-success btn-sm " title="View Transfers Detail" data-attr="' . $value['sid'] . '" data-name="' . $value['company_name'] . '">View Transfers Detail</a>'; ?>
+
                                                                             <?php echo $doNotHireWarning['message']; ?>
 
                                                                         </td>

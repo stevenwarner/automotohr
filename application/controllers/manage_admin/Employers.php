@@ -371,7 +371,7 @@ class employers extends Admin_Controller
 
             $data['union_name'] = $this->input->post('union_name');
             $data['union_member'] = $this->input->post('union_member');
-            
+
             if ($data['union_member'] == 0) {
                 $data['union_name'] = '';
             }
@@ -380,7 +380,7 @@ class employers extends Admin_Controller
                 $data['languages_speak'] = implode(',', $languages_speak);
             }
 
-            
+
             if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
                 $templetJobTitleData = $this->input->post('temppate_job_title');
                 $templetJobTitleDataArray = explode('#', $templetJobTitleData);
@@ -519,7 +519,7 @@ class employers extends Admin_Controller
         }
     }
 
-    private function checkAndUpdateProfileInfo (
+    private function checkAndUpdateProfileInfo(
         $employeeId,
         $employeeDetail,
         $dataToInsert
@@ -640,10 +640,10 @@ class employers extends Admin_Controller
             $this->form_validation->set_rules('alternative_email', 'Alternative Email', 'trim|valid_email');
             $this->form_validation->set_rules('job_title', 'Job Title', 'trim');
             $this->form_validation->set_rules('direct_business_number', 'Direct Business Number', 'trim');
-            
-           if(get_company_module_status($company_sid, 'primary_number_required') == 1) {
-            $this->form_validation->set_rules('cell_number', 'Cell Number', 'trim');
-           }
+
+            if (get_company_module_status($company_sid, 'primary_number_required') == 1) {
+                $this->form_validation->set_rules('cell_number', 'Cell Number', 'trim');
+            }
 
             $this->form_validation->set_rules('security_access_level', 'Security Access Level', 'required|trim');
 
@@ -1829,5 +1829,33 @@ class employers extends Admin_Controller
         header('Content-Type: application/json');
         echo json_encode($array);
         exit(0);
+    }
+
+
+
+    public function employerTransferLog($employee_sid = null)
+    {
+        $redirect_url = 'manage_admin';
+        $function_name = 'edit_employers';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+        if ($employee_sid != null) {
+            $this->data['page_title'] = 'Employee Transfer History';
+            $security_access_levels = $this->company_model->get_security_access_levels();
+            $this->data['security_access_levels'] = $security_access_levels;
+
+            $employes = $this->company_model->get_all_employers_new($employee_sid);
+
+
+
+            
+            $this->render('manage_admin/company/employers_transfer_log', 'admin_master');
+
+        } else {
+            redirect('manage_admin/employers', 'refresh');
+        }
     }
 }

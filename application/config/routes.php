@@ -559,6 +559,11 @@ $route['manage_admin/employers/EmployeeDocuments/(:num)'] = 'manage_admin/employ
 $route['manage_admin/employers/EmployeeStatusDetail/(:num)'] = 'manage_admin/employers/employee_status_detail/$1';
 $route['manage_admin/employers/ChangeStatus/(:num)'] = 'manage_admin/employers/change_employee_status/$1';
 $route['manage_admin/employers/EditEmployeeStatus/(:num)/(:num)'] = 'manage_admin/employers/edit_employee_status/$1/$2';
+
+//
+$route['manage_admin/employers/employer_transferlog/(:num)'] = 'manage_admin/employers/employerTransferLog/$1';
+
+
 $route['manage_admin/employers/(:num)'] = 'manage_admin/employers/index/$1';
 $route['manage_admin/employers/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2';
 $route['manage_admin/employers/(:any)/(:num)/(:any)'] = 'manage_admin/employers/index/$1/$2/$3';
