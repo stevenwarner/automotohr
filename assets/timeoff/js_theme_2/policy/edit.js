@@ -641,7 +641,11 @@ $(function () {
         //
         $('#js-step-bar-edit').show();
         //
-        $('#js-accrual-default-flow-edit').prop('checked',  policy.accuralDefaultFlow == 1 ? true : false);
+        $("#js-accrual-default-flow-edit").prop(
+			"checked",
+			policy.accuralDefaultFlow == 1 || policy.accuralDefaultFlow == undefined ? true
+				: false
+		);
         //
         if (resp.Data.is_entitled_employee == 1) {
             $('#EntitledEmployees').prop('checked', true);
