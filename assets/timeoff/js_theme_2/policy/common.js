@@ -988,6 +988,8 @@ function loadAddPage() {
     $('#js-plan-box-add').find('ul').html('');
     $('#js-plan-area-add').html('');
     $('.jsPlanArea').html('');
+     // Set default accural check
+     $('#js-accrual-default-flow-add').prop('checked', true);
     // Show hionts
     $('.js-hint').hide(0);
     // Policy applicable date
@@ -1137,6 +1139,8 @@ function loadEditPage() {
     $('#js-plan-box-edit').find('ul').html('');
     $('#js-plan-area-edit').html('');
     $('.jsPlanArea').html('');
+    // Set default accural check
+    $('#js-accrual-default-flow-edit').prop('checked', true);
     // Show hionts
     $('.js-hint').hide(0);
     // Policy applicable date

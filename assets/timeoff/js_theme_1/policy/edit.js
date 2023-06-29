@@ -562,6 +562,7 @@ $(function () {
         policy.plans = accruals.plans;
         policy.policyCategory = resp.Data.policy_category_type;
         policy.approverList = resp.Data.allowed_approvers;
+        policy.accuralDefaultFlow = accruals.defaultFlow;
 
         //
         if (policy.approverList) {
@@ -635,7 +636,8 @@ $(function () {
         //
         $('#js-step-bar-edit').show();
         //
-
+        $('#js-accrual-default-flow-edit').prop('checked',  policy.accuralDefaultFlow == 1 ? true : false);
+        //
         if (resp.Data.is_entitled_employee == 1) {
             $('#EntitledEmployees').prop('checked', true);
             $('#NonEntitledEmployees').prop('checked', false);
@@ -829,6 +831,8 @@ $(function () {
             policyOBJ.applicableTime = getField('#js-minimum-applicable-hours-edit');
             //
             policyOBJ.plans = getAccrualPlans('edit');
+            // // Set default accural flow check
+            policyOBJ.accuralDefaultFlow = $('#js-accrual-default-flow-edit').prop('checked') === true ? 1 : 0;
             //
             if (policyOBJ.plans === true) {
                 alertify.alert('WARNING!', 'Please, add the proper plans.', () => { });

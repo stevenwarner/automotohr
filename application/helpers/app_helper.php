@@ -432,8 +432,8 @@ if (!function_exists('getUserColumnByWhere')) {
 
 if (!function_exists('getEmployeeAnniversary')) {
     /**
-     * Get Employee Joining data 
-     * 
+     * Get Employee Joining data
+     *
      * @param string $effectiveDate Y-m-d
      * @return array
      */
@@ -453,11 +453,11 @@ if (!function_exists('getEmployeeAnniversary')) {
         $joiningDateWithCurrentYear = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         // check if month and day is in future
         if ($currentDate < $joiningDateWithCurrentYear) {
-            // 
+            //
             $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear - 1, $effectiveDate);
             $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         } else {
-            // 
+            //
             $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
             $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear + 1, $effectiveDate);
         }

@@ -198,7 +198,204 @@ if (!function_exists('getAwardedRate')) {
 
 /**
  * Manage Accruals
- * 
+ *
+ * @param int     $policyId
+ * @param int     $employeeId
+ * @param string      $employementStatus
+ * @param string      $employeeJoiningDate
+ * @param string      $durationInMinutes
+ * @param array       $accruals
+ * @param int      $balanceInMinutes
+ * @param string      $asOfToday (Optional)
+ * @param string      $slug (Optional)
+ * @param array       $employeeDefaultAccrual
+ *
+ * @return array
+ */
+if (!function_exists('getEmployeeAccrualNew')) {
+    function getEmployeeAccrualNew(
+        $policyId,
+        $employeeId,
+        $employmentStatus,
+        $employeeJoiningDate,
+        $durationInMinutes,
+        $accruals,
+        $balanceInMinutes,
+        $asOfToday,
+        $slug,
+        $categoryType,
+        $employeeDefaultAccrual,
+        $accrualRateInMinutes
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        // set default plan array
+        $policyPlansDates = [
+            'lastAnniversaryDate' => $employeeJoiningDate,
+            'upcomingAnniversaryDate' => getSystemDate(DB_DATE),
+            'breakdown' => []
+        ];
+        // check on probation
+        if ($employmentStatus != 'probation') {
+            //
+            $accrualRateInMinutesWithoutAward = $accrualRateInMinutes;
+            // extract plans
+            $plans = $employeeDefaultAccrual['Plans'];
+            // if plans found
+            if ($plans) {
+                // extract the plan dates
+                $plansApplicableDates = array_column($plans, 'date');
+                // sort the dates amending order
+                usort($plansApplicableDates, function ($a, $b) {
+                    return strtotime($a) - strtotime($b);
+                });
+                // load the first plan
+                $policyPlansDates['upcomingAnniversaryDate'] =
+                    date('Y-m-d', strtotime('-1 day', strtotime($plansApplicableDates[0])));
+                // add to breakdown as well
+                $policyPlansDates['breakdown'][] = [
+                    'lastAnniversaryDate' => $policyPlansDates['lastAnniversaryDate'],
+                    'upcomingAnniversaryDate' => $policyPlansDates['upcomingAnniversaryDate']
+                ];
+                // loop through the plans
+                foreach ($plansApplicableDates as $index => $plan) {
+                    // set next index
+                    $nextIndex = $index + 1;
+                    //
+                    $newDate = getSystemDate(DB_DATE);
+                    //
+                    if (isset($plansApplicableDates[$nextIndex])) {
+                        $newDate = date('Y-m-d', strtotime('-1 day', strtotime($plansApplicableDates[$nextIndex])));
+                    } elseif ($newDate <= $plan) {
+                        $newDate = $plan;
+                    }
+                    // add to breakdown
+                    $policyPlansDates['breakdown'][] = [
+                        'lastAnniversaryDate' => $plan,
+                        'upcomingAnniversaryDate' => $newDate
+                    ];
+                    // check and set
+                    if ($asOfToday >= $plan && $asOfToday <= $newDate) {
+                        $policyPlansDates['lastAnniversaryDate'] = $plan;
+                        $policyPlansDates['upcomingAnniversaryDate'] = $newDate;
+                        //
+                        $accrualRateInMinutes = $employeeDefaultAccrual['Plans'][$plan]['minutes'];
+                    }
+                }
+                // check for last iteration
+                $lastPolicyRecord = $policyPlansDates['breakdown'][count($policyPlansDates['breakdown']) - 1];
+                // check and set to latest policy
+                if ($asOfToday >= $lastPolicyRecord['upcomingAnniversaryDate']) {
+                    $policyPlansDates['lastAnniversaryDate'] = $lastPolicyRecord['lastAnniversaryDate'];
+                    $policyPlansDates['upcomingAnniversaryDate'] = $lastPolicyRecord['upcomingAnniversaryDate'];
+                    //
+                    $accrualRateInMinutes = $employeeDefaultAccrual['Plans'][$lastPolicyRecord['lastAnniversaryDate']]['minutes'];
+                }
+            } else {
+                // add to breakdown as well
+                $policyPlansDates['breakdown'][] = [
+                    'lastAnniversaryDate' => $policyPlansDates['lastAnniversaryDate'],
+                    'upcomingAnniversaryDate' => $policyPlansDates['upcomingAnniversaryDate']
+                ];
+            }
+        }
+
+        // get consumed time
+        $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDate(
+            $policyId,
+            $employeeId,
+            $policyPlansDates['lastAnniversaryDate'],
+            $policyPlansDates['upcomingAnniversaryDate']
+        );
+        //
+        $compareDateOBJ = DateTime::createfromformat(DB_DATE, $policyPlansDates['upcomingAnniversaryDate']);
+        //
+        $difference = $compareDateOBJ->diff(DateTime::createFromFormat(DB_DATE, getSystemDate(DB_DATE)));
+        //
+        $monthsWorked = $difference->y * 12;
+        $monthsWorked += $difference->m;
+        // Only get pending time if carryover
+        // is enabled
+        // Set negative time
+        if ($accruals['negativeBalanceCheck'] == 'yes' && $accruals['negativeBalanceCheck'] != 'off') {
+            //
+            if ($accruals['negativeBalanceType'] == 'days') {
+                $negativeTimeInMinutes = $accruals['negativeBalanceVal'] * $durationInMinutes;
+            } else {
+                $negativeTimeInMinutes = $accruals['negativeBalanceVal'] * 60;
+            }
+        }
+        // // Total allowed time
+        if ($accrualRateInMinutes == 0) {
+            $actualTime = 0;
+            $allowedTime = 0;
+        } else {
+            $actualTime = $accrualRateInMinutes;
+            $allowedTime = 0 + $accrualRateInMinutes;
+        }
+        // Set the frequency
+        //
+        if ($accruals['frequency'] == 'none') $allowedTime = $allowedTime;
+        else if ($accruals['frequency'] == 'yearly') {
+            //
+            $currentYearMonthsWorked = $difference->m + 1;
+            $currentYearMonthsWorked = $currentYearMonthsWorked > 12 ? 12 : $currentYearMonthsWorked;
+            //
+            if ($accruals['rateType'] == 'total_hours') {
+                $allowedTime = ($allowedTime / 12) * $currentYearMonthsWorked;
+            } else {
+                $allowedTime = ($allowedTime * 12)  * $currentYearMonthsWorked;
+            }
+        } elseif ($accruals['frequency'] == 'custom') {
+            // Get slots
+            $slots = 12 / $accruals['frequencyVal'];
+            //
+            $workedSlots = ceil(($difference->m) / $slots);
+            //
+            $workedSlots = $workedSlots == 0 ? 1 : $workedSlots;
+            $newAllowedTime = ($allowedTime / $slots) * $workedSlots;
+            //
+            $allowedTime = $newAllowedTime > $allowedTime ? $allowedTime : $newAllowedTime;
+        }
+        //
+        $employeeDefaultAccrual['AllowedTime'] = $allowedTime + $balanceInMinutes;
+        $employeeDefaultAccrual['ConsumedTime'] = $consumedTimeInMinutes;
+        $employeeDefaultAccrual['CarryOverTime'] = 0;
+        $employeeDefaultAccrual['RemainingTime'] = $allowedTime - $consumedTimeInMinutes + $balanceInMinutes;
+        $employeeDefaultAccrual['MaxNegativeTime'] = $negativeTimeInMinutes;
+        $employeeDefaultAccrual['Balance'] = $balanceInMinutes;
+        $employeeDefaultAccrual['EmployementStatus'] = $employmentStatus;
+
+        $employeeDefaultAccrual['lastAnniversaryDate'] =  $policyPlansDates['lastAnniversaryDate'];
+        $employeeDefaultAccrual['upcomingAnniversaryDate'] = $policyPlansDates['upcomingAnniversaryDate'];
+
+        //
+        if ($accruals['frequency'] == 'none') {
+            $employeeDefaultAccrual['RemainingTimeWithNegative'] = $employeeDefaultAccrual['RemainingTime'] + $negativeTimeInMinutes;
+        } elseif ($accruals['frequency'] == 'monthly') {
+            $employeeDefaultAccrual['RemainingTimeWithNegative'] = $employeeDefaultAccrual['RemainingTime'] + $negativeTimeInMinutes;
+        } elseif ($accruals['frequency'] == 'yearly') {
+            $employeeDefaultAccrual['RemainingTimeWithNegative'] = $employeeDefaultAccrual['RemainingTime'] + $negativeTimeInMinutes;
+        } elseif ($accruals['frequency'] == 'custom') {
+            $employeeDefaultAccrual['RemainingTimeWithNegative'] = $employeeDefaultAccrual['RemainingTime'] + $negativeTimeInMinutes;
+        }
+        //
+        $employeeDefaultAccrual['IsUnlimited'] = $accrualRateInMinutes == 0 ? 1 : 0;
+
+        // for unpaid
+        if ($categoryType == '0') {
+            $tmp = $employeeDefaultAccrual['UnpaidConsumedTime'];
+            $employeeDefaultAccrual['UnpaidConsumedTime'] = $employeeDefaultAccrual['ConsumedTime'];
+            $employeeDefaultAccrual['ConsumedTime'] = $tmp;
+        }
+
+        return $employeeDefaultAccrual;
+    }
+}
+
+/**
+ * Manage Accruals
+ *
  * @param Integer     $policyId
  * @param Integer     $employeeId
  * @param String      $employementStatus
@@ -208,7 +405,7 @@ if (!function_exists('getAwardedRate')) {
  * @param Intger      $balanceInMinutes
  * @param String      $asOfToday (Optional)
  * @param String      $slug (Optional)
- * 
+ *
  * @return Array
  */
 if (!function_exists('getEmployeeAccrual')) {
@@ -246,8 +443,6 @@ if (!function_exists('getEmployeeAccrual')) {
             'Reason' => '',
             'lastAnniversaryDate' => '',
             'upcomingAnniversaryDate' => ''
-
-
         ];
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
@@ -282,9 +477,11 @@ if (!function_exists('getEmployeeAccrual')) {
                 $planTimeInTimestamp->add(new DateInterval('P' . ($plan['accrualType']) . '' . ($plan['accrualTypeM'] == 'years' ? 'Y' : 'M') . ''));
                 $planTimeInTimestamp = $planTimeInTimestamp->format('Y-m-d');
                 //
-                $r['Plans'][] =
+                $planTimeArray = get_array_from_minutes(($accruals['rate'] + $plan['accrualRate']) * 60, $durationInMinutes / 60, $slug);
+                $r['Plans'][$planTimeInTimestamp] =
                     [
-                        'time' => get_array_from_minutes(($accruals['rate'] + $plan['accrualRate']) * 60, $durationInMinutes / 60, $slug)['text'],
+                        'time' => $planTimeArray['text'],
+                        'minutes' => $planTimeArray['M']['minutes'],
                         'date' => $planTimeInTimestamp
                     ];
             }
@@ -380,6 +577,23 @@ if (!function_exists('getEmployeeAccrual')) {
         // For days
         if ($accruals['rateType'] == 'days') $originalAloowedTime = $accrualRateInMinutes = $accrualRate * $durationInMinutes;
         else $originalAloowedTime = $accrualRateInMinutes = $accrualRate * 60; // For hours
+        //
+        if (isset($accruals['defaultFlow']) && $accruals['defaultFlow'] == 0) {
+            return getEmployeeAccrualNew(
+                $policyId,
+                $employeeId,
+                $employementStatus,
+                $employeeJoiningDate,
+                $durationInMinutes,
+                $accruals,
+                $balanceInMinutes,
+                $asOfToday,
+                $slug,
+                $categoryType,
+                $r,
+                $accrualRateInMinutes
+            );
+        }
         // Get award time for permanent employee
         if ($employementStatus != 'probation') {
             // Get awarded rate
@@ -424,7 +638,6 @@ if (!function_exists('getEmployeeAccrual')) {
                 $employeeAnniversaryDate['lastAnniversaryDate'],
                 $employeeAnniversaryDate['upcomingAnniversaryDate']
             );
-            
         } else {
             $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
                 $policyId,
@@ -518,7 +731,7 @@ if (!function_exists('getEmployeeAccrual')) {
 
         $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
         $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
-       
+
         //
         if ($accruals['frequency'] == 'none') {
             $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;

@@ -2643,6 +2643,7 @@ class Time_off extends Public_Controller
                 $accruals['newHireRate'] = $post['newHireRate'];
                 $accruals['employeeTypes'] = $post['employeeTypes'];
                 $accruals['plans'] = isset($post['plans']) ? $post['plans'] : [];
+                $accruals['defaultFlow'] = $post['accuralDefaultFlow'];
                 // Set policy insert array
                 $in = [];
                 //
@@ -2743,6 +2744,7 @@ class Time_off extends Public_Controller
                 $accruals['newHireRate'] = $post['newHireRate'];
                 $accruals['employeeTypes'] = $post['employeeTypes'];
                 $accruals['plans'] = isset($post['plans']) ? $post['plans'] : [];
+                $accruals['defaultFlow'] = $post['accuralDefaultFlow'];
 
                 // Set policy insert array
                 $up = [];

@@ -325,6 +325,8 @@ $(function () {
             policyOBJ.applicableTime = getField('#js-minimum-applicable-hours-add');
             // Set plans 
             policyOBJ.plans = getAccrualPlans('add');
+            // // Set default accural flow check
+            policyOBJ.accuralDefaultFlow = $('#js-accrual-default-flow-add').prop('checked') === true ? 1 : 0;
             //
             if (policyOBJ.plans === true) {
                 alertify.alert('WARNING!', 'Please, add the proper plans.', () => { });
