@@ -2287,7 +2287,6 @@ class Onboarding_model extends CI_Model
         $records_obj = $this->db->get('onboarding_custom_assignment');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-
         return $records_arr;
     }
 
@@ -3172,7 +3171,8 @@ class Onboarding_model extends CI_Model
         return $this->db
             ->where('company_sid', $companySid)
             ->where('general_information_status', 1)
-            ->get('notifications_emails_configuration')->count_all_results();
+            ->from('notifications_emails_configuration')
+            ->count_all_results();
     }
 
 

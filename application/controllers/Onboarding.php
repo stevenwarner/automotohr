@@ -1144,10 +1144,15 @@ class Onboarding extends CI_Controller
                     $user_joining_date = '';
                 }
 
-                $items_data = $this->onboarding_model->get_assigned_custom_office_record_sids($company_sid, $applicant_info['sid'], 'applicant', 'item', 2); // fetch items from new table
+                $items_data = $this->onboarding_model->get_assigned_custom_office_record_sids($company_sid, $applicant_info['sid'], 'applicant', 'timing', 2); // fetch items from new table
                 //echo '<pre>'; print_r($locations_data); echo '</pre>'; exit;
+                
                 $locations = empty($locations_data) ? array() : $locations_data['items_details'];
-                $timings = empty($timings_data) ? array() : $timings_data['items_details'];
+               // $timings = empty($timings_data) ? array() : $timings_data['items_details'];
+               
+                $timings = empty($timings_data['items_details']) ? $items_data : $timings_data['items_details'];
+
+              // _e($timings,true,true);
                 $people = empty($people_data) ? array() : $people_data['items_details'];
                 // $items = empty($items_data) ? array() : $items_data['items_details'];
                 $videos = $this->learning_center_model->get_my_online_videos('applicant', $applicant_sid);
@@ -1204,9 +1209,8 @@ class Onboarding extends CI_Controller
 
                 //
                 $data['companyDefaultAddress'] = $this->onboarding_model->getPrimaryAddress($company_sid);
-
                 $this->load->view('onboarding/applicant_boarding_header', $data);
-                $this->load->view('onboarding/getting_started_applicant');
+                $this->load->view('onboarding/getting_started_applicant_new');
                 $this->load->view('onboarding/on_boarding_footer');
             } else { //Onboarding Complete or Expired
                 // $this->session->set_flashdata('message', '<strong>Error</strong> The Onboarding Url has now Expired Please Login or Contact Your HR for Help!');
@@ -4937,7 +4941,7 @@ class Onboarding extends CI_Controller
                 $data['onboarding_eeo_form_status'] = isset($companyExtraInfo['EEO']) ? $companyExtraInfo['EEO'] : 0;
                 //
                 $this->load->view('main/header', $data);
-                $this->load->view('onboarding/setup');
+                $this->load->view('onboarding/setup_new');
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
