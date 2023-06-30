@@ -217,7 +217,7 @@ class Complynet_lib
         );
     }
 
-     /**
+    /**
      * Get user hash
      *
      * @param string $email
@@ -340,7 +340,7 @@ class Complynet_lib
             ),
         ];
         //
-        if ($method == 'POST' || $method == 'PUT') {
+        if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE') {
             $lists[CURLOPT_POSTFIELDS] = json_encode($postFields);
             $lists[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
         }
@@ -426,5 +426,4 @@ class Complynet_lib
         //
         $this->CI->db->insert('complynet_calls', $ins);
     }
-    
 }
