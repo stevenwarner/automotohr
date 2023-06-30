@@ -3172,7 +3172,8 @@ class Onboarding_model extends CI_Model
         return $this->db
             ->where('company_sid', $companySid)
             ->where('general_information_status', 1)
-            ->get('notifications_emails_configuration')->count_all_results();
+            ->from('notifications_emails_configuration')
+            ->count_all_results();
     }
 
 

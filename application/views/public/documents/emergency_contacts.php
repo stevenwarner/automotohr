@@ -1,12 +1,11 @@
-<?php 
-    $states = [];
-    $eOBJ = [];
+<?php
+$states = [];
+$eOBJ = [];
 ?>
 <div class="row">
     <div class="col-sm-12">
         <span class="pull-right">
-            <a href="javascript:void(0)" class="btn btn-info js-add"><i class="fa fa-plus"
-                    style="font-size: 12px;"></i> Add New</a>
+            <a href="javascript:void(0)" class="btn btn-info js-add"><i class="fa fa-plus" style="font-size: 12px;"></i> Add New</a>
         </span>
     </div>
 </div>
@@ -26,24 +25,24 @@
                 </tr>
             </thead>
             <tbody>
-                <?php if(!empty($emergencyContacts)) { ?>
-                <?php   foreach($emergencyContacts as $v) {
-                    $eOBJ[$v['sid']] = $v; ?>
-                <tr data-id="<?=$v['sid'];?>">
-                    <td><?php echo $v['first_name'] . ' ' . $v['last_name']; ?></td>
-                    <td><?php echo $v['Relationship']; ?></td>
-                    <td><?php echo $v['PhoneNumber']; ?></td>
-                    <td><?php echo $v['Location_Address']; ?></td>
-                    <td><?php echo $v['priority']; ?></td>
-                    <td class="text-center">
-                        <a href="javascript:void(0)" class="btn btn-info btn-block js-edit">Edit</a>
-                    </td>
-                </tr>
-                <?php } ?>
+                <?php if (!empty($emergencyContacts)) { ?>
+                    <?php foreach ($emergencyContacts as $v) {
+                        $eOBJ[$v['sid']] = $v; ?>
+                        <tr data-id="<?= $v['sid']; ?>">
+                            <td><?php echo $v['first_name'] . ' ' . $v['last_name']; ?></td>
+                            <td><?php echo $v['Relationship']; ?></td>
+                            <td><?php echo $v['PhoneNumber']; ?></td>
+                            <td><?php echo $v['Location_Address']; ?></td>
+                            <td><?php echo $v['priority']; ?></td>
+                            <td class="text-center">
+                                <a href="javascript:void(0)" class="btn btn-info btn-block js-edit">Edit</a>
+                            </td>
+                        </tr>
+                    <?php } ?>
                 <?php } else { ?>
-                <tr>
-                    <td colspan="5" class="text-center">No emergency contacts information found!</td>
-                </tr>
+                    <tr>
+                        <td colspan="5" class="text-center">No emergency contacts information found!</td>
+                    </tr>
                 <?php } ?>
             </tbody>
         </table>
@@ -79,15 +78,29 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-sm-6 col-xs-12">
-                                <label>E-mail</label>
+                                <?php
+                                $emailRequired = '';
+                                if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
+                                    $emailRequired = ' <span class="cs-required">*</span>';
+                                } ?>
+                                <label>E-mail <?php echo $emailRequired; ?></label>
                                 <div>
-                                    <input type="text" class="form-control"  id="jsEmail" placeholder="john.doe@example.com" />
+                                    <input type="text" class="form-control" id="jsEmail" placeholder="john.doe@example.com" <?php echo $contactOptionsStatus['emergency_contact_email_status'] == 1 ? 'data-rule-required="true"' : ''  ?> />
                                 </div>
                             </div>
                             <div class="col-sm-6 col-xs-12">
-                                <label>Phone</label>
+
+                                <?php
+                                $phoneNumberRequired = '';
+                                $phoneNumberRequiredRule = '';
+                                if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
+                                    $phoneNumberRequired = ' <span class="cs-required">*</span>';
+                                    $phoneNumberRequiredRule = ' data-rule-required="true"';
+                                }
+                                ?>
+                                <label>Phone <?php echo $phoneNumberRequired; ?></label>
                                 <div>
-                                    <input type="text" class="form-control"  id="jsPhone"/>
+                                    <input type="text" class="form-control" id="jsPhone" <?php echo $phoneNumberRequiredRule; ?> />
                                 </div>
                             </div>
                         </div>
@@ -100,13 +113,13 @@
                                 <div>
                                     <select class="jsSelect" id="jsCountry">
                                         <option value="0">Select Country</option>
-                                        <?php 
-                                            if($countries && count($countries)) {
-                                                foreach($countries as $key => $value){ 
-                                                    $states[$key] = $value['States'];?>
-                                                <option value="<?=$key;?>"><?=$value['Name'];?></option>
+                                        <?php
+                                        if ($countries && count($countries)) {
+                                            foreach ($countries as $key => $value) {
+                                                $states[$key] = $value['States']; ?>
+                                                <option value="<?= $key; ?>"><?= $value['Name']; ?></option>
                                         <?php   }
-                                            }
+                                        }
                                         ?>
                                     </select>
                                 </div>
@@ -121,7 +134,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!--  -->
                     <div class="form-group">
                         <div class="row">
@@ -174,7 +187,7 @@
                         </div>
                     </div>
 
-                   
+
                 </form>
             </div>
             <div class="modal-footer">
@@ -197,7 +210,7 @@
             </div>
             <div class="modal-body">
                 <form action="">
-                <div class="form-group">
+                    <div class="form-group">
                         <div class="row">
                             <div class="col-sm-6 col-xs-12">
                                 <label>First Name <span class="cs-required">*</span></label>
@@ -217,15 +230,30 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-sm-6 col-xs-12">
-                                <label>E-mail</label>
+
+                                <?php
+                                $emailRequired = '';
+                                if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
+                                    $emailRequired = ' <span class="cs-required">*</span>';
+                                } ?>
+
+                                <label>E-mail <?php echo $emailRequired; ?></label>
                                 <div>
-                                    <input type="text" class="form-control"  id="jsEEmail" placeholder="john.doe@example.com" />
+                                    <input type="text" class="form-control" id="jsEEmail" placeholder="john.doe@example.com" <?php echo $contactOptionsStatus['emergency_contact_email_status'] == 1 ? 'data-rule-required="true"' : ''  ?> />
                                 </div>
                             </div>
                             <div class="col-sm-6 col-xs-12">
-                                <label>Phone</label>
+                                <?php
+                                $phoneNumberRequired = '';
+                                $phoneNumberRequiredRule = '';
+                                if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
+                                    $phoneNumberRequired = ' <span class="cs-required">*</span>';
+                                    $phoneNumberRequiredRule = ' data-rule-required="true"';
+                                }
+                                ?>
+                                <label>Phone <?php echo $phoneNumberRequired; ?></label>
                                 <div>
-                                    <input type="text" class="form-control" id="jsEPhone"/>
+                                    <input type="text" class="form-control" id="jsEPhone" <?php echo $phoneNumberRequiredRule; ?> />
                                 </div>
                             </div>
                         </div>
@@ -238,13 +266,13 @@
                                 <div>
                                     <select class="jsSelect" id="jsECountry">
                                         <option value="0">Select Country</option>
-                                        <?php 
-                                            if($countries && count($countries)) {
-                                                foreach($countries as $key => $value){ 
-                                                    $states[$key] = $value['States'];?>
-                                                <option value="<?=$key;?>"><?=$value['Name'];?></option>
+                                        <?php
+                                        if ($countries && count($countries)) {
+                                            foreach ($countries as $key => $value) {
+                                                $states[$key] = $value['States']; ?>
+                                                <option value="<?= $key; ?>"><?= $value['Name']; ?></option>
                                         <?php   }
-                                            }
+                                        }
                                         ?>
                                     </select>
                                 </div>
@@ -259,7 +287,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!--  -->
                     <div class="form-group">
                         <div class="row">
@@ -302,7 +330,7 @@
                             <div class="col-sm-6 col-xs-12">
                                 <label>Set Priority <span class="cs-required">*</span></label>
                                 <div>
-                                <select class="jsSelect" id="jsEPriority">
+                                    <select class="jsSelect" id="jsEPriority">
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -327,15 +355,15 @@
 
 <!--  -->
 <script>
-    $(function(){
+    $(function() {
         //
-        let 
-        userType = "<?=$users_type;?>",
-        userSid = "<?=$users_sid;?>",
-        companySid = "<?=$company_sid;?>",
-        states = <?=json_encode($states);?>,
-        eOBJ = <?=json_encode($eOBJ);?>,
-        ae = {};
+        let
+            userType = "<?= $users_type; ?>",
+            userSid = "<?= $users_sid; ?>",
+            companySid = "<?= $company_sid; ?>",
+            states = <?= json_encode($states); ?>,
+            eOBJ = <?= json_encode($eOBJ); ?>,
+            ae = {};
         //
         let activeSid = 0;
         //
@@ -345,34 +373,38 @@
             changeYear: true,
         });
         //
-        $(document).on('change', '#jsCountry', function(){
+        $(document).on('change', '#jsCountry', function() {
             let l = states[$(this).val()];
             //
-            if(l === undefined){
+            if (l === undefined) {
                 $('#jsState').html('<option value="0">Select Country First</option>');
                 return;
             }
             //
             let options = '';
             //
-            $.each(l, (i, v) => { options += `<option value="${i}">${v.Name}</option>`; });
+            $.each(l, (i, v) => {
+                options += `<option value="${i}">${v.Name}</option>`;
+            });
             $('#jsState').html(options);
         });
         //
-        $(document).on('change', '#jsECountry', function(){
+        $(document).on('change', '#jsECountry', function() {
             let l = states[$(this).val()];
             //
-            if(l === undefined){
+            if (l === undefined) {
                 $('#jsEState').html('<option value="0">Select Country First</option>');
                 return;
             }
             //
             let options = '';
             //
-            $.each(l, (i, v) => { options += `<option value="${i}">${v.Name}</option>`; });
+            $.each(l, (i, v) => {
+                options += `<option value="${i}">${v.Name}</option>`;
+            });
             $('#jsEState').html(options);
             //
-            if(ae.hasOwnProperty('Location_State') ) $('#jsEState').select2('val', ae['Location_State']);
+            if (ae.hasOwnProperty('Location_State')) $('#jsEState').select2('val', ae['Location_State']);
         });
 
         //
@@ -383,7 +415,7 @@
         });
 
         //
-        $('.js-edit').click(function(e){
+        $('.js-edit').click(function(e) {
             //
             e.preventDefault();
             //
@@ -407,7 +439,7 @@
         });
 
         //
-        $('.jsSaveBtn').click(function(e){
+        $('.jsSaveBtn').click(function(e) {
             //
             e.preventDefault();
             //
@@ -425,59 +457,71 @@
             obj.relationship = $('#jsRelationship').val();
             obj.priority = $('#jsPriority').val();
             //
-            let nr =  new RegExp('^[a-zA-Z0-9\- ]+$', 'g');
-            let pr =  new RegExp('^[0-9\-+ ]+$', 'g');
-            let rr =  new RegExp("^[a-zA-Z\-#,':;. ]+$", 'g');
-            let er =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            let nr = new RegExp('^[a-zA-Z0-9\- ]+$', 'g');
+            let pr = new RegExp('^[0-9\-+ ]+$', 'g');
+            let rr = new RegExp("^[a-zA-Z\-#,':;. ]+$", 'g');
+            let er = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             nr.lastIndex = 0;
             //
-            if(obj.firstName == ''){
+            if (obj.firstName == '') {
                 alertify.alert('WARNING!', 'First name is required.', () => {});
                 return;
             }
             //
-            if(nr.test(obj.firstName) === false ){
+            if (nr.test(obj.firstName) === false) {
                 alertify.alert('WARNING!', 'First name is not valid.', () => {});
                 return;
             }
             nr.lastIndex = 0;
             //
-            if(obj.lastName == ''){
+            if (obj.lastName == '') {
                 alertify.alert('WARNING!', 'Last name is required.', () => {});
                 return;
             }
             //
-            if(nr.test(obj.lastName) === false ){
+            if (nr.test(obj.lastName) === false) {
                 alertify.alert('WARNING!', 'Last name is not valid.', () => {});
                 return;
             }
             //
-            // if(obj.email == ''){
-            //     alertify.alert('WARNING!', 'Email is required.', () => {});
-            //     return;
-            // }
+
+            <?php
+            if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
+            ?>
+                if (obj.email == '') {
+                    alertify.alert('WARNING!', 'Email is required.', () => {});
+                    return;
+                }
+            <?php } ?>
+
             //
             // if(er.test(obj.email) === false ){
             //     alertify.alert('WARNING!', 'Email is not valid.', () => {});
             //     return;
             // }
             //
-            // if(obj.phone == ''){
-            //     alertify.alert('WARNING!', 'Phone is required.', () => {});
-            //     return;
-            // }
+
+            <?php if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
+            ?>
+                if (obj.phone == '') {
+                    alertify.alert('WARNING!', 'Phone is required.', () => {});
+                    return;
+                }
+            <?php } ?>
+
+
             //
             // if(pr.test(obj.phone) === false){
             //     alertify.alert('WARNING!', 'Phone is not valid.', () => {});
             //     return;
             // }
             //
-            if(obj.relationship == ''){
+            if (obj.relationship == '') {
                 alertify.alert('WARNING!', 'Relationship is required.', () => {});
                 return;
             }
             //
-            if(rr.test(obj.relationship) === false){
+            if (rr.test(obj.relationship) === false) {
                 alertify.alert('WARNING!', 'Relationship is not valid.', () => {});
                 return;
             }
@@ -488,16 +532,16 @@
             //
             $('.jsEmergencyLoader').show();
             //
-            $.post("<?=base_url('onboarding/emergency_contacts_add');?>", obj, (resp) => {
+            $.post("<?= base_url('onboarding/emergency_contacts_add'); ?>", obj, (resp) => {
                 $('#modelId').modal('hide');
                 alertify.alert('SUCCESS!', 'You have succesfully added emergency contact.', () => {
                     window.location.reload();
                 });
             });
         });
-        
+
         //
-        $('.jsUpdateBtn').click(function(e){
+        $('.jsUpdateBtn').click(function(e) {
             //
             e.preventDefault();
             //
@@ -515,60 +559,72 @@
             obj.relationship = $('#jsERelationship').val();
             obj.priority = $('#jsEPriority').val();
             //
-            let nr =  new RegExp('^[a-zA-Z0-9\- ]+$', 'g');
-            let pr =  new RegExp('^[0-9\-+ ]+$', 'g');
-            let rr =  new RegExp("^[a-zA-Z\-#,':;. ]+$", 'g');
+            let nr = new RegExp('^[a-zA-Z0-9\- ]+$', 'g');
+            let pr = new RegExp('^[0-9\-+ ]+$', 'g');
+            let rr = new RegExp("^[a-zA-Z\-#,':;. ]+$", 'g');
             let er = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             nr.lastIndex = 0;
             er.lastIndex = 0;
             //
-            if(obj.firstName == ''){
+            if (obj.firstName == '') {
                 alertify.alert('WARNING!', 'First name is required.', () => {});
                 return;
             }
             //
-            if(nr.test(obj.firstName) === false ){
+            if (nr.test(obj.firstName) === false) {
                 alertify.alert('WARNING!', 'First name is not valid.', () => {});
                 return;
             }
             nr.lastIndex = 0;
             //
-            if(obj.lastName == ''){
+            if (obj.lastName == '') {
                 alertify.alert('WARNING!', 'Last name is required.', () => {});
                 return;
             }
             //
-            if(nr.test(obj.lastName) === false ){
+            if (nr.test(obj.lastName) === false) {
                 alertify.alert('WARNING!', 'Last name is not valid.', () => {});
                 return;
             }
             //
-            // if(obj.email == ''){
-            //     alertify.alert('WARNING!', 'Email is required.', () => {});
-            //     return;
-            // }
+
+            <?php if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
+            ?>
+                if (obj.email == '') {
+                    alertify.alert('WARNING!', 'Email is required.', () => {});
+                    return;
+                }
+            <?php } ?>
+
             //
             // if(er.test(obj.email) === false ){
             //     alertify.alert('WARNING!', 'Email is not valid.', () => {});
             //     return;
             // }
             //
-            // if(obj.phone == ''){
-            //     alertify.alert('WARNING!', 'Phone is required.', () => {});
-            //     return;
-            // }
+
+            <?php
+            if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
+            ?>
+                if (obj.phone == '') {
+                    alertify.alert('WARNING!', 'Phone is required.', () => {});
+                    return;
+                }
+            <?php } ?>
+
+
             //
             // if(pr.test(obj.phone) === false){
             //     alertify.alert('WARNING!', 'Phone is not valid.', () => {});
             //     return;
             // }
             //
-            if(obj.relationship == ''){
+            if (obj.relationship == '') {
                 alertify.alert('WARNING!', 'Relationship is required.', () => {});
                 return;
             }
             //
-            if(rr.test(obj.relationship) === false){
+            if (rr.test(obj.relationship) === false) {
                 alertify.alert('WARNING!', 'Relationship is not valid.', () => {});
                 return;
             }
@@ -580,7 +636,7 @@
             //
             $('.jsEmergencyLoader').show();
             //
-            $.post("<?=base_url('onboarding/emergency_contacts_edit');?>", obj, (resp) => {
+            $.post("<?= base_url('onboarding/emergency_contacts_edit'); ?>", obj, (resp) => {
                 $('#modelEditId').modal('hide');
                 alertify.alert('SUCCESS!', 'You have succesfully edited emergency contact.', () => {
                     window.location.reload();
