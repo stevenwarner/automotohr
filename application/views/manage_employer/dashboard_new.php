@@ -918,7 +918,24 @@
                                         </div>
                                     <?php } ?>
 
-
+                                    <!-- Incident Reporting -->
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-exclamation-triangle <?= $incident_count > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                </figure>
+                                                <h2 class="post-title">
+                                                    <a href="<?= base_url('incident_reporting_system'); ?>">Incidents</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <span class="green"><?= $incident_count; ?> Pending</span><br>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?= base_url('incident_reporting_system'); ?>" class="site-btn">Report an Incident</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <!-- Account Activity -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

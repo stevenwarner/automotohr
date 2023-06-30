@@ -588,6 +588,9 @@ class Dashboard extends Public_Controller
                     '1.0.1', 'assets/gusto/js/company_onboard'
                 ];
             }
+            $data['incident_count'] = $this->dashboard_model->assigned_incidents_count
+            ($employer_id, $company_id);
+
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
