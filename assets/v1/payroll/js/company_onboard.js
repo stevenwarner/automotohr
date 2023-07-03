@@ -22,13 +22,14 @@ $(function CreatePartnerCompany() {
 	/**
 	 * set the process handler
 	 */
-	let processQueue = [
+	let processQueue = {
 		welcomeStep,
 		employeeListingStep,
 		adminStep,
 		createPartnerCompany,
+		gustoTerms,
 		pushCompanyAdmin,
-	];
+	};
 	/**
 	 * selected employees
 	 */
@@ -60,7 +61,8 @@ $(function CreatePartnerCompany() {
 				Loader: modalId + "Loader",
 				Body: `<div id="${modalId}Body"></div>`,
 			},
-			processQueue[0]
+			processQueue.gustoTerms
+			// processQueue.welcomeStep
 		);
 	});
 
@@ -93,7 +95,7 @@ $(function CreatePartnerCompany() {
 		//
 		_ml(true, modalId + "Loader");
 		// call the next
-		processQueue[2]();
+		processQueue.adminStep();
 	});
 
 	/**
@@ -112,7 +114,7 @@ $(function CreatePartnerCompany() {
 				"Please wait patiently while we set up the payroll system. This procedure may take a few minutes."
 			);
 			// call the next
-			processQueue[3]();
+			processQueue.createPartnerCompany();
 		}
 	);
 
@@ -144,7 +146,7 @@ $(function CreatePartnerCompany() {
 					// show the loader
 					_ml(true, modalId + "Loader");
 					// call the next
-					processQueue[1]();
+					processQueue.employeeListingStep();
 				});
 			})
 			.fail(failError);
@@ -184,7 +186,7 @@ $(function CreatePartnerCompany() {
 					event.preventDefault();
 					_ml(true, modalId + "Loader");
 					// call the next
-					processQueue[0]();
+					processQueue.welcomeStep();
 				});
 			})
 			.fail(failError);
@@ -225,7 +227,7 @@ $(function CreatePartnerCompany() {
 					//
 					_ml(true, modalId + "Loader");
 					// call the next
-					processQueue[1]();
+					processQueue.employeeListingStep();
 				});
 			})
 			.fail(failError);
@@ -268,17 +270,17 @@ $(function CreatePartnerCompany() {
 			selectedEmployees.push($(this).val());
 		});
 		// validate
-		// if (!selectedEmployees.length) {
-		// 	return alertify.alert(
-		// 		"ERROR",
-		// 		"Please select at least one employee.",
-		// 		CB
-		// 	);
-		// }
+		if (!selectedEmployees.length) {
+			return alertify.alert(
+				"ERROR",
+				"Please select at least one employee.",
+				CB
+			);
+		}
 		// show the loader
 		_ml(true, modalId + "Loader");
 		//
-		processQueue[2]();
+		processQueue.adminStep();
 	}
 
 	/**
@@ -332,7 +334,7 @@ $(function CreatePartnerCompany() {
 					"SUCCESS",
 					"Congratulations! You have successfully added a payroll admin for the company.",
 					function () {
-						processQueue[2]();
+						processQueue.adminStep();
 					}
 				);
 			})
@@ -380,7 +382,7 @@ $(function CreatePartnerCompany() {
 				// flush XHR
 				XHR = null;
 				//
-				processQueue[4]();
+				processQueue.pushCompanyAdmin();
 			})
 			.fail(saveErrorsList);
 	}
@@ -407,7 +409,30 @@ $(function CreatePartnerCompany() {
 			.success(function () {
 				// flush XHR
 				XHR = null;
-				// processQueue[5]();
+				processQueue.gustoTerms();
+			})
+			.fail(saveErrorsList);
+	}
+
+	/**
+	 * show gusto terms
+	 * step 9
+	 */
+	function gustoTerms() {
+		// change the loader text
+		_ml(true, modalId + "Loader");
+		//
+		XHR = $.ajax({
+			url: window.location.origin + "/payroll/cpc/9/" + companyId,
+			method: "GET",
+		})
+			.success(function (resp) {
+				// flush XHR
+				XHR = null;
+				//
+				$("#" + modalId + "Body").html(resp.view);
+				//
+				_ml(false, modalId + "Loader");
 			})
 			.fail(saveErrorsList);
 	}
@@ -437,6 +462,4 @@ $(function CreatePartnerCompany() {
 		// show error
 		return handleErrorResponse(err);
 	}
-	// companyId = 28684;
-	// processQueue[4]();
 });

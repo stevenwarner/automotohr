@@ -109,7 +109,7 @@ class Payroll_model extends CI_Model
                 //
                 if (!empty($record['timezone'])) {
                     $newRecords[$record['sid']]['timezone'] = $record['timezone'];
-                } else if (!empty($record['company_timezone'])) {
+                } elseif (!empty($record['company_timezone'])) {
                     $newRecords[$record['sid']]['timezone'] = $record['company_timezone'];
                 }
                 //
@@ -343,24 +343,169 @@ class Payroll_model extends CI_Model
      * sync payroll admins
      *
      * @param int $companyId
-     * @return array
+     * @return bool
      */
-    public function syncPayrollAdmins(int $companyId): array
+    public function syncPayrollAdmins(int $companyId): bool
     {
         // get the company
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // sync Gusto admins with store (only UUID)
+        $this->syncGustoToStore($companyId, $companyDetails);
+        // sync store admins with GUSTO
+        $this->syncStoreToGusto($companyId, $companyDetails);
+        //
+        return true;
+    }
+
+    /**
+     * check and set the company location
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function checkAndPushCompanyLocationToGusto(int $companyId): array
+    {
+        // get the company location
+        $location = $this->db
+            ->select('
+            users.Location_Address,
+            users.Location_City,
+            states.state_code,
+            users.Location_ZipCode,
+            users.Location_Address_2,
+        ')
+            ->join('states', 'states.sid = users.Location_State', 'inner')
+            ->where('users.sid', $companyId)
+            ->get('users')
+            ->row_array();
+        //
+        if (!$location) {
+            return ['errors' => ['Company address is missing.']];
+        }
+    }
+
+    /**
+     * get company terms from Gusto
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getGustoTerms(int $companyId): array
+    {
+        // get the company
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        $gustoResponse = getCompanyServiceAgreementFromGusto($companyDetails);
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        return $errors ?? $gustoResponse;
+    }
+
+    /**
+     * sync Gusto admins to store
+     *
+     * @param int $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    private function syncGustoToStore(int $companyId, array $companyDetails): bool
+    {
         // get the admins
         $admins = $this->db
             ->select('
+                sid,
                 first_name,
-                user_sid,
-                user_sid,
+                last_name,
+                email_address,
+                gusto_uuid
             ')
             ->where('company_sid', $companyId)
-            ->row_array();
-        _e($companyDetails, true);
+            ->get('gusto_companies_admin')
+            ->result_array();
+        // check if admins are found
+        if (!$admins) {
+            return false;
+        }
+        // fetch all admins from Gusto
+        $gustoAdmins = getAdminsFromGusto($companyDetails);
+        // check for errors
+        $errors = hasGustoErrors($gustoAdmins);
+        // error occurred
+        if ($errors) {
+            return $errors;
+        }
+        // remake
+        $gustoAdmins = covertArrayToObject($gustoAdmins, 'email');
+        // loop through
+        foreach ($admins as $admin) {
+            // check and set gusto uuids
+            if ($gustoAdmins[$admin['email_address']]) {
+                $this->db->where('sid', $admin['sid'])
+                    ->update('gusto_companies_admin', [
+                        'gusto_uuid' => $gustoAdmins[$admin['email_address']]['uuid']
+                    ]);
+            }
+        }
+        //
+        return true;
+    }
 
-        return [];
+    /**
+     * sync store admins to Gusto
+     *
+     * @param int $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    private function syncStoreToGusto(int $companyId, array $companyDetails): bool
+    {
+        // get the admins
+        $admins = $this->db
+            ->select('
+                sid,
+                first_name,
+                last_name,
+                email_address,
+                gusto_uuid
+            ')
+            ->where('company_sid', $companyId)
+            ->group_start()
+            ->where('gusto_uuid is null', null)
+            ->or_where('gusto_uuid', '')
+            ->group_end()
+            ->get('gusto_companies_admin')
+            ->result_array();
+        // check if admins are found
+        if (!$admins) {
+            return false;
+        }
+        // loop through
+        foreach ($admins as $admin) {
+            // set request
+            $request = [];
+            $request['first_name'] = $admin['first_name'];
+            $request['last_name'] = $admin['last_name'];
+            $request['email'] = $admin['email_address'];
+            // make call
+            $gustoResponse = createAdminOnGusto($request, $companyDetails);
+            // check for errors
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                // block the iteration
+                continue;
+            }
+            // update the UUID
+            $this->db
+                ->where('sid', $admin['sid'])
+                ->update('gusto_companies_admin', [
+                    'gusto_uuid' => $gustoResponse['uuid'],
+                    'updated_at' => getSystemDate()
+                ]);
+        }
+        //
+        return true;
     }
 
     /**

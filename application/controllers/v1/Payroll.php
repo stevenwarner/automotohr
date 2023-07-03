@@ -65,18 +65,10 @@ class Payroll extends CI_Controller
                 ]
             );
         elseif ($step === 4) : // set admin step
-            // get all employees
-            $employees = $this->payroll_model
-            ->getCompanyEmployees(
-                $companyId,
-                explode(',', getUserFields())
-            );
             return SendResponse(
                 200,
                 [
-                    'view' => $this->load->view('v1/payroll/create_partner_company/admin', [
-                        'employees' => $employees
-                    ], true)
+                    'view' => $this->load->view('v1/payroll/create_partner_company/admin', [], true)
                 ]
             );
         elseif ($step === 5) : // save admin step
@@ -140,10 +132,16 @@ class Payroll extends CI_Controller
                 $companyId
             );
             //
-            if (isset($response['errors'])) {
-                return SendResponse(400, $response);
-            }
-            return SendResponse(200, [$response]);
+            return SendResponse(200, ['success' => true]);
+        elseif ($step === 9) : // get and show Gusto terms
+           
+            //
+            return SendResponse(
+                200,
+                [
+                    'view' => $this->load->view('v1/payroll/create_partner_company/service_agreement', [], true)
+                ]
+            );
         endif;
         // send default response
         return SendResponse(400, ['errors' => ['Invalid call.']]);

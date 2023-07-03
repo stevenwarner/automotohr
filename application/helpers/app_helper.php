@@ -448,19 +448,18 @@ if (!function_exists('getEmployeeAnniversary')) {
         $returnArray['ad'] = $effectiveDate;
         $returnArray['year'] = $currentYear;
         // get current date
-        
+
         // get effective date for current year
         $joiningDateWithCurrentYear = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         // check if month and day is in future
         if ($currentDate < $joiningDateWithCurrentYear) {
             // 
-            $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear -1, $effectiveDate);
+            $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear - 1, $effectiveDate);
             $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         } else {
             // 
             $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
-            $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear +1, $effectiveDate);
-            
+            $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear + 1, $effectiveDate);
         }
         //
         return $returnArray;
@@ -539,10 +538,10 @@ if (!function_exists('isCompanyOnBoard')) {
         $ses = $CI->session->userdata('logged_in');
         //
         $has = $CI->db
-        ->where([
-            'company_sid' => $ses['company_detail']['sid']
-        ])
-        ->count_all_results('payroll_companies');
+            ->where([
+                'company_sid' => $ses['company_detail']['sid']
+            ])
+            ->count_all_results('payroll_companies');
         //
         if ($has) {
             return true;
@@ -566,12 +565,12 @@ if (!function_exists('isCompanyTermsAccpeted')) {
         $ses = $CI->session->userdata('logged_in');
         //
         $has = $CI->db
-        ->where([
-            'company_sid' => $ses['company_detail']['sid'],
-            'terms_accepted' => 1
+            ->where([
+                'company_sid' => $ses['company_detail']['sid'],
+                'terms_accepted' => 1
 
-        ])
-        ->count_all_results('payroll_companies');
+            ])
+            ->count_all_results('payroll_companies');
         //
         if ($has) {
             return true;
@@ -595,12 +594,12 @@ if (!function_exists('isLoggedInPersonIsSignatory')) {
         $ses = $CI->session->userdata('logged_in');
         //
         return (bool) $CI->db
-        ->where([
-            'company_sid' => $ses['company_detail']['sid'],
-            'email' => $ses['employer_detail']['email']
+            ->where([
+                'company_sid' => $ses['company_detail']['sid'],
+                'email' => $ses['employer_detail']['email']
 
-        ])
-        ->count_all_results('payroll_signatories');
+            ])
+            ->count_all_results('payroll_signatories');
     }
 }
 
@@ -613,8 +612,7 @@ if (!function_exists('getStaticFileVersion')) {
      */
     function getStaticFileVersion(
         string $file
-    )
-    {
+    ) {
         // set files
         $files = [];
         // plugins
@@ -628,5 +626,31 @@ if (!function_exists('getStaticFileVersion')) {
         $files['2022/css/main'] = ['css' => '2.0.0'];
         // check and return data
         return $files[$file] ?? [];
+    }
+}
+
+
+if (!function_exists('covertArrayToObject')) {
+    /**
+     * convert array to associate array
+     *
+     * @param array $data
+     * @param string $index
+     * @return array
+     */
+    function covertArrayToObject(array $data, string $index): array
+    {
+        // check fro empty
+        if (!$data) {
+            return $data;
+        }
+        // set temporary array
+        $tmp = [];
+        // loop through data
+        foreach ($data as $k => $v) {
+            $tmp[$v[$index]] = $v;
+        }
+        // return converted data
+        return $tmp;
     }
 }

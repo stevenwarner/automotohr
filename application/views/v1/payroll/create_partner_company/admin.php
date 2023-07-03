@@ -24,21 +24,6 @@
                 </p>
             </div>
         </div>
-        <br>
-        <div class="row">
-            <div class="col-md-6 col-xs-12">
-                <label class="csF16 csB7">
-                    Select Employee <?php _e($employees); ?>
-                </label>
-                <select>
-                    <?php if ($employees) { ?>
-                        <?php foreach ($employees as $employee) { ?>
-                            <option value=""></option>
-                        <?php } ?>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
         <hr>
         <form autocomplete="off">
             <div class="row">
