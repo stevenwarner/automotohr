@@ -3206,5 +3206,68 @@ class Company_model extends CI_Model
 
 
 
+    //
+    public function checkIsEmployeeTransferred($employeeId)
+    {
+        $this->db->select('employees_transfer_log.sid, employees_transfer_log.previous_employee_sid, employees_transfer_log.from_company_sid, employees_transfer_log.new_employee_sid, employees_transfer_log.to_company_sid,employees_transfer_log.employee_copy_date,users.CompanyName as fromcompany , tocompany.CompanyName as tocompany');
+        $this->db->join('users', 'employees_transfer_log.from_company_sid = users.sid');
+        $this->db->join('users as tocompany', 'employees_transfer_log.to_company_sid = tocompany.sid');
+        $this->db->where_in('new_employee_sid', $employeeId);
+        $this->db->order_by('sid', 'DESC');
+        $record_obj = $this->db->get('employees_transfer_log');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
 
+        if (!empty($record_arr)) {
+            //
+            $resultArray[$record_arr['sid']] = [
+                'newCompanyId' => $record_arr['to_company_sid'],
+                'newEmployeeId' => $record_arr['new_employee_sid'],
+                'oldEmployeeId' => $record_arr['previous_employee_sid'],
+                'oldCompanyId' => $record_arr['from_company_sid'],
+                'copyDate' => $record_arr['employee_copy_date'],
+                'fromCompany' => $record_arr['fromcompany'],
+                'toCompany' => $record_arr['tocompany']
+
+            ];
+
+            //
+            $secondaryResult = $this->isSecondaryEmployeeTransferred($record_arr['previous_employee_sid'], $record_arr['from_company_sid'], $resultArray);
+            return $secondaryResult;
+        } else {
+            return array();
+        }
+    }
+
+    public function isSecondaryEmployeeTransferred($employeeId, $companyId, $resultArray)
+    {
+
+        $this->db->select('employees_transfer_log.sid, employees_transfer_log.previous_employee_sid, employees_transfer_log.from_company_sid, employees_transfer_log.new_employee_sid, employees_transfer_log.to_company_sid,employees_transfer_log.employee_copy_date,users.CompanyName as fromcompany,tocompany.CompanyName as tocompany');
+        $this->db->join('users', 'employees_transfer_log.from_company_sid = users.sid');
+        $this->db->join('users as tocompany', 'employees_transfer_log.to_company_sid = tocompany.sid');
+        $this->db->where('new_employee_sid', $employeeId);
+        $this->db->where('to_company_sid', $companyId);
+        $record_obj = $this->db->get('employees_transfer_log');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            //
+            if (!array_key_exists($record_arr['sid'], $resultArray)) {
+
+                $resultArray[$record_arr['sid']] = [
+                    'newCompanyId' => $record_arr['to_company_sid'],
+                    'newEmployeeId' => $record_arr['new_employee_sid'],
+                    'oldEmployeeId' => $record_arr['previous_employee_sid'],
+                    'oldCompanyId' => $record_arr['from_company_sid'],
+                    'copyDate' => $record_arr['employee_copy_date'],
+                    'fromCompany' => $record_arr['fromcompany'],
+                    'toCompany' => $record_arr['tocompany']
+                ];
+                return $this->isSecondaryEmployeeTransferred($record_arr['previous_employee_sid'], $record_arr['from_company_sid'], $resultArray);
+            }
+        }
+
+        return $resultArray;
+    }
 }

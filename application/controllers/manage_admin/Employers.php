@@ -1847,13 +1847,14 @@ class employers extends Admin_Controller
             $security_access_levels = $this->company_model->get_security_access_levels();
             $this->data['security_access_levels'] = $security_access_levels;
 
-            $employes = $this->company_model->get_all_employers_new($employee_sid);
 
+            $copyTransferEmployee = $this->company_model->checkIsEmployeeTransferred($employee_sid);
+           // _e($copyTransferEmployee, true, true);
 
+         
+            $this->data['copyTransferEmployee'] = $copyTransferEmployee;
 
-            
             $this->render('manage_admin/company/employers_transfer_log', 'admin_master');
-
         } else {
             redirect('manage_admin/employers', 'refresh');
         }
