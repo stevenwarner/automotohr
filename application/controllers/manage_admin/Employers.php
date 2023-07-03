@@ -1849,8 +1849,7 @@ class employers extends Admin_Controller
 
 
             $copyTransferEmployee = $this->company_model->checkIsEmployeeTransferred($employee_sid);
-           // _e($copyTransferEmployee, true, true);
-
+          //  _e($copyTransferEmployee, true, true);
          
             $this->data['copyTransferEmployee'] = $copyTransferEmployee;
 

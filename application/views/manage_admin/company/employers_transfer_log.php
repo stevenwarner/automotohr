@@ -30,19 +30,46 @@
                                                         <tr>
                                                             <th>From Company</th>
                                                             <th>To Company</th>
-                                                            <th>Documents</th>
+                                                            <th># of Documents</th>
                                                             <th>Transfer Date</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php if (!empty($copyTransferEmployee)) {
+
                                                         ?>
                                                             <?php foreach ($copyTransferEmployee as $key => $value) {
+                                                                $totalDoc = 0;
+
+                                                                $totalDoc = $totalDoc + count($value['assignedDocuments']);
+                                                                //echo $totalDoc ;
+                                                                if ($value['docw4'] > 0) {
+                                                                    $totalDoc = $totalDoc + 1;
+                                                                }
+                                                                if ($value['docw9'] > 0) {
+                                                                    $totalDoc = $totalDoc + 1;
+                                                                }
+                                                                if ($value['doci9'] > 0) {
+                                                                    $totalDoc = $totalDoc + 1;
+                                                                }
+                                                                if ($value['emergencyContact'] > 0) {
+                                                                    $totalDoc = $totalDoc + 1;
+                                                                }
+                                                                if ($value['dependents'] > 0) {
+                                                                    $totalDoc = $totalDoc + 1;
+                                                                }
+                                                                if ($value['directDeposit'] > 0) {
+                                                                    $totalDoc = $totalDoc + 1;
+                                                                }
+                                                                if ($value['license'] > 0) {
+                                                                    $totalDoc = $totalDoc + 1;
+                                                                }
+
                                                             ?>
                                                                 <tr id="parent_<?= $value['sid'] ?>">
                                                                     <td> <?= $value['fromCompany']; ?></td>
                                                                     <td><?= $value['toCompany']; ?></td>
-                                                                    <td>fdf</td>
+                                                                    <td><?php echo $totalDoc; ?> Docs <a class="btn btn-success jsviewdoc" href="javascript:void()">View</a></td>
                                                                     <td>
                                                                         <?php
                                                                         if (isset($value["copyDate"]) && !empty($value["copyDate"])) {
@@ -52,6 +79,51 @@
                                                                     </td>
 
                                                                 </tr>
+
+                                                                <tr style="display: none">
+                                                                    <td colspan="4">
+                                                                        <? if ($value['docw4'] > 0) { ?>
+                                                                            <div class="row" style="margin-left:0px;">W4 Fillable<div>
+                                                                                <?php } ?>
+                                                                                <? if ($value['docw9'] > 0) { ?>
+                                                                                    <div class="row" style="margin-left:0px;">W9 Fillable<div>
+                                                                                        <?php } ?>
+
+                                                                                        <? if ($value['doci9'] > 0) { ?>
+                                                                                            <div class="row" style="margin-left:0px;">I9 Fillable<div>
+                                                                                                <?php } ?>
+
+                                                                                               
+                                                                                                <? if ($value['emergencyContact'] > 0) { ?>
+                                                                                            <div class="row" style="margin-left:0px;">Emergency Contacts<div>
+                                                                                                <?php } ?>
+
+                                                                                                <? if ($value['dependents'] > 0) { ?>
+                                                                                            <div class="row" style="margin-left:0px;">Dependents<div>
+                                                                                                <?php } ?>
+                                                                                                <? if ($value['directDeposit'] > 0) { ?>
+                                                                                            <div class="row" style="margin-left:0px;">Direct Deposit Information<div>
+                                                                                                <?php } ?>
+                                                                                                <? if ($value['license'] > 0) { ?>
+                                                                                            <div class="row" style="margin-left:0px;">Drivers License Information<div>
+                                                                                                <?php } ?>
+
+                                                                                                       
+
+                                                                                                <?php if (!empty($value['assignedDocuments'])) { 
+                                                                                                    foreach ($value['assignedDocuments'] as $row){?>
+                                                                                                    <div class="row" style="margin-left:0px;"><?php echo $row['document_title'];?><div>
+                                                                                                        <?php } } ?>
+
+
+
+
+
+
+                                                                    </td>
+                                                                </tr>
+
+
                                                             <?php } ?>
                                                         <?php } else {  ?>
                                                             <tr>
@@ -75,3 +147,10 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).on('click', '.jsviewdoc', function(e) {
+        e.preventDefault();
+        $(this).parent().parent().next('tr').toggle();
+
+    });
+</Script>
