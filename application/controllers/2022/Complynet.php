@@ -766,4 +766,18 @@ class Complynet extends Admin_Controller
         //
         exit('Roles processed.');
     }
+
+    /**
+     * remove connection
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function removeEmployee(int $employeeId): array
+    {
+        //
+        $this->db->where('employee_sid', $employeeId)->delete('complynet_employees');
+        //
+        return SendResponse(200, ['success' => true]);
+    }
 }
