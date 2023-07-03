@@ -104,6 +104,13 @@
                                             <i class="fa fa-clock-o"></i> <b><?php echo $timings[0]['title']; ?></b>, <?php echo DateTime::createFromFormat('H:i:s', $timings[0]['start_time'])->format('h:i a') . ' - ' . DateTime::createFromFormat('H:i:s', $timings[0]['end_time'])->format('h:i a'); ?>
                                         </div>
                                     <?php               } ?>
+                                    <?php if ($custom_office_timings): ?>
+                                        <?php foreach($custom_office_timings as $tim):?>
+                                         <div class="text">
+                                            <i class="fa fa-clock-o"></i> <b><?php echo $tim['hour_title']; ?></b>, <?php echo DateTime::createFromFormat('H:i:s', $tim['hour_start_time'])->format('h:i a') . ' - ' . DateTime::createFromFormat('H:i:s', $tim['hour_end_time'])->format('h:i a'); ?>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                     <?php if (!empty($locations)) { ?>
                                         <div class="text">
                                             <i class="fa fa-map-marker"></i>

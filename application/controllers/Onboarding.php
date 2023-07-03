@@ -1127,7 +1127,7 @@ class Onboarding extends CI_Controller
 
                 $welcome_video = $this->onboarding_model->get_onboarding_configuration_welcome_video($company_sid, $applicant_sid, 'applicant');
                 $locations_data = $this->get_single_record_from_array($configuration, 'section', 'locations');
-                $custom_office_locations = $this->onboarding_model->get_custom_office_records($company_sid, $applicant_sid, 'applicant', 'location');
+                $custom_office_locations = $this->onboarding_model->get_custom_office_records($company_sid, $applicant_sid, 'applicant', 'location', 1);
                 $data['custom_office_locations'] = $custom_office_locations;
                 //
                 $custom_useful_link = $this->onboarding_model->get_custom_office_records($company_sid, $applicant_sid, 'applicant', 'useful_link');
@@ -1157,6 +1157,9 @@ class Onboarding extends CI_Controller
                 if ($learning_center_status > 0) {
                     $data['enable_learbing_center'] = true;
                 }
+                // get custom timings
+                $data['custom_office_timings'] =$this->onboarding_model->get_assigned_custom_office_record_sids($company_sid, $applicant_info['sid'], 'applicant', 'timing', 2);
+                //
                 $assigned_sessions = $this->learning_center_model->get_assigned_training_sessions_new('applicant', $applicant_sid);
                 // $assigned_sessions                                          = $this->learning_center_model->get_assigned_training_sessions('applicant', $applicant_sid);
                 $learning_center_status = count($assigned_sessions);
