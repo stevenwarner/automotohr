@@ -204,9 +204,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
                                             <div class="col-xs-2 text-left" style="padding-right: 0px;">
                                                 <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
-                                                
+
                                             </div>
-                                            
+
                                             <?php if (get_company_module_status($session['company_detail']['sid'], 'bulk_email') == 1) { ?>
                                                 <div class="col-xs-3 text-left" style="padding-right: 0px; padding-left: 5px">
                                                     <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email_login"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Login Email</a>
@@ -358,6 +358,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 <br />
                                                                 <strong>I Speak:</strong> <?= showLanguages($employee['languages_speak']); ?>
                                                             </div>
+                                                            <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $employee['sid']; ?>" data-original-title="View Transfers Detail">
+                                                                View Transfers Detail
+                                                            </button>
                                                         </div>
                                                     </td>
                                                     <td width="25%" class="<?php echo $doNotHireWarning['row']; ?>">
@@ -1211,4 +1214,86 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         //
         window.location.href = url;
     });
+
+
+
+
+
+
+
+
+    $(document).on('click', '.jsEmployeeTransferLog', function(event) {
+
+        //
+        event.preventDefault();
+        //
+        var employeeId = $(this).data('id') || null;
+        //
+        Model({
+            Id: "jsEmployeeQuickProfileModal",
+            Loader: 'jsEmployeeQuickProfileModalLoader',
+            Title: 'Employee Transfer History',
+            Body: '<div class="container"><div id="jsEmployeeQuickProfileModalBody"></div></div>'
+        }, function() {
+
+            if (employeeId) {
+                var html = '<div id="jsEmployeeQuickProfileModalMainBody"></div>';
+                //
+                $('#jsEmployeeQuickProfileModalBody').html(html);
+                GetEmployeeTransferDetails(employeeId, 'jsEmployeeQuickProfileModal');
+            }
+        });
+    });
+
+
+
+    //
+
+    function GetEmployeeTransferDetails(
+        employeeId,
+        id
+    ) {
+        //
+        if (employeeId === 0) {
+            // flush view
+            $('#' + id + 'MainBody').html('');
+            return;
+        }
+        //
+        if (isXHRInProgress != null) {
+            isXHRInProgress.abort();
+        }
+        $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+        //
+        isXHRInProgress =
+            $.get(window.location.origin + '/manage_admin/employers/employer_transferlog/' + employeeId)
+            .done(function(resp) {
+                //
+                isXHRInProgress = null;
+                //
+                if (resp.Status === false) {
+                    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                    $('#' + id + 'MainBody').html(resp.Msg);
+                    return;
+                }
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                //
+                $('#' + id + 'MainBody').html(resp.Data);
+            })
+            .error(function(err) {
+                //
+                isXHRInProgress = null;
+                $('#' + id).html('Something went wrong while accessing the employee transfer.');
+            });
+        //
+        return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+    }
+
+
+
+    $(document).on('click', '.jsviewdoc', function(e) {
+        e.preventDefault();
+        $(this).parent().parent().next('tr').toggle();
+    });
+
 </script>

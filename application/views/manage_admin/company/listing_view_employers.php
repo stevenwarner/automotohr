@@ -143,7 +143,10 @@
                                                                             }
                                                                             ?>
                                                                             <br>
-                                                                            <?php echo '<br><a href="'.base_url("manage_admin/employers/employer_transferlog/".$value['sid']).'" class="btn btn-success btn-sm " title="View Transfers Detail" data-attr="' . $value['sid'] . '" data-name="' . $value['company_name'] . '">View Transfers Detail</a>'; ?>
+                                                                            <br>
+                                                                            <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfers Detail">
+                                                                                View Transfers Detail
+                                                                            </button>
 
                                                                             <?php echo $doNotHireWarning['message']; ?>
 
@@ -584,4 +587,83 @@
             }
         );
     }
+
+
+
+
+
+    var isXHRInProgress = null;
+
+    $(document).on('click', '.jsEmployeeTransferLog', function(event) {
+
+        //
+        event.preventDefault();
+        //
+        var employeeId = $(this).data('id') || null;
+        //
+        Modal({
+            Id: "jsEmployeeQuickProfileModal",
+            Loader: 'jsEmployeeQuickProfileModalLoader',
+            Title: 'Employee Transfer History',
+            Body: '<div class="container"><div id="jsEmployeeQuickProfileModalBody"></div></div>'
+        }, function() {
+
+            if (employeeId) {
+                var html = '<div id="jsEmployeeQuickProfileModalMainBody"></div>';
+                //
+                $('#jsEmployeeQuickProfileModalBody').html(html);
+                GetSpecificEmployeeDetails(employeeId, 'jsEmployeeQuickProfileModal');
+            }
+        });
+    });
+
+
+
+    //
+
+    function GetSpecificEmployeeDetails(
+        employeeId,
+        id
+    ) {
+        //
+        if (employeeId === 0) {
+            // flush view
+            $('#' + id + 'MainBody').html('');
+            return;
+        }
+        //
+        if (isXHRInProgress != null) {
+            isXHRInProgress.abort();
+        }
+        $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+        //
+        isXHRInProgress =
+            $.get(window.location.origin + '/manage_admin/employers/employer_transferlog/' + employeeId)
+            .done(function(resp) {
+                //
+                isXHRInProgress = null;
+                //
+                if (resp.Status === false) {
+                    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                    $('#' + id + 'MainBody').html(resp.Msg);
+                    return;
+                }
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                //
+                $('#' + id + 'MainBody').html(resp.Data);
+            })
+            .error(function(err) {
+                //
+                isXHRInProgress = null;
+                $('#' + id).html('Something went wrong while accessing the employee transfer.');
+            });
+        //
+        return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+    }
+
+
+    $(document).on('click', '.jsviewdoc', function(e) {
+        e.preventDefault();
+        $(this).parent().parent().next('tr').toggle();
+    });
 </script>
