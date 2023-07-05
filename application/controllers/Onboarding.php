@@ -1780,6 +1780,9 @@ class Onboarding extends CI_Controller
                     $extra_info = unserialize($extra_info);
                     $company_eeo_status = $extra_info['EEO'];
                 }
+                $company_id = $company_info['sid'];
+
+                $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_id);
 
                 $data['company_eeoc_form_status'] = $company_eeo_status; //$this->onboarding_model->check_company_eeoc_form_status($company_info['sid']);
                 $this->load->view('onboarding/applicant_boarding_header', $data);
@@ -2092,6 +2095,7 @@ class Onboarding extends CI_Controller
                 $data['generalAssignments'] = $this->direct_deposit_model->getGeneralAssignments($company_sid, $applicant_sid, 'applicant');
                 $data['keyIndex'] = $key;
 
+                $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_sid);
                 $this->load->view('onboarding/applicant_boarding_header', $data);
                 $this->load->view('onboarding/onboarding_new_general_info');
                 $this->load->view('onboarding/on_boarding_footer');
@@ -9926,6 +9930,9 @@ class Onboarding extends CI_Controller
                 'email' => $data['email']
             ];
         }
+
+        
+        $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($document['company_sid']);
 
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         //

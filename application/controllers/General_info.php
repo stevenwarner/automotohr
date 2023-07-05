@@ -1,10 +1,11 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class General_info extends Public_Controller {
-    public function __construct() {
+class General_info extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('general_info_model');
-        
     }
 
     //This function get all the below information against
@@ -19,7 +20,8 @@ class General_info extends Public_Controller {
     //in 'general_information/index.php' if user want to 
     //update its general information then this function 
     //update any above information which mention above.
-    public function index($key = null) {
+    public function index($key = null)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -37,14 +39,14 @@ class General_info extends Public_Controller {
             $data['employee'] = $data['session']['employer_detail'];
             $data['company_id'] = $company_sid;
             $company_name = $data['session']['company_detail']['CompanyName'];
-          
+
             if ($this->form_validation->run() == false) {
 
                 $occupational_license = $this->general_info_model->get_license_details('employee', $employee_sid, 'occupational');
                 if (!empty($occupational_license)) {
                     $occupational_license['license_details'] = unserialize($occupational_license['license_details']);
                 }
-                
+
                 $data['occupational_license_details'] = $occupational_license;
 
                 $drivers_license = $this->general_info_model->get_license_details('employee', $employee_sid, 'drivers');
@@ -87,7 +89,7 @@ class General_info extends Public_Controller {
                 $license_types['Training'] = 'Training';
                 $license_types['Other'] = 'Other';
                 $data['license_types'] = $license_types;
-                
+
                 $license_classes = array();
                 $license_classes['None'] = 'None';
                 $license_classes['Class A'] = 'Class A';
@@ -98,15 +100,15 @@ class General_info extends Public_Controller {
 
                 //
                 $this->load->model('direct_deposit_model');
-                
+
                 $employee_number = $this->direct_deposit_model->get_user_extra_info('employee', $employee_sid, $company_sid);
-            
+
                 $data['data'] = $this->direct_deposit_model->getDDI('employee', $employee_sid, $company_sid);
                 $data['dd_user_type'] = 'employee';
                 $data['dd_user_sid'] = $employee_sid;
                 $data['company_name'] = $company_name;
                 $data['employee_number'] = $employee_number;
-                $users_sign_info = get_e_signature($company_sid, $employee_sid, 'employee'); 
+                $users_sign_info = get_e_signature($company_sid, $employee_sid, 'employee');
                 $data['users_sign_info'] = $users_sign_info;
                 $data['cn'] = $this->direct_deposit_model->getUserData($employee_sid, 'employee');
                 $data['send_email_notification'] = 'yes';
@@ -114,6 +116,8 @@ class General_info extends Public_Controller {
                 $data['generalAssignments'] = $this->direct_deposit_model->getGeneralAssignments($company_sid, $employee_sid, 'employee');
                 //
                 $data['keyIndex'] = $key;
+
+                $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_sid);
 
                 $this->load->view('main/header', $data);
                 $this->load->view('general_information/index.php');
@@ -154,7 +158,7 @@ class General_info extends Public_Controller {
                             $employee_sid,
                             $this->session->userdata('logged_in')['employer_detail']['sid']
                         );
-                        
+
                         $data_to_save = array();
                         $data_to_save['users_sid'] = $employee_sid;
                         $data_to_save['users_type'] = 'employee';
@@ -167,17 +171,17 @@ class General_info extends Public_Controller {
 
                         $licenseCheck = $this->general_info_model->check_user_license($employee_sid, 'employee', 'drivers');
                         $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
-                        
+
                         if (!empty($licenseCheck)) {
                             $license_id = $licenseCheck['sid'];
-                            $this->general_info_model->update_license_info($license_id, $data_to_save,$dateOfBirth,$employee_sid);
+                            $this->general_info_model->update_license_info($license_id, $data_to_save, $dateOfBirth, $employee_sid);
                         } else {
-                            $this->general_info_model->save_license_info($data_to_save,$dateOfBirth,$employee_sid);
+                            $this->general_info_model->save_license_info($data_to_save, $dateOfBirth, $employee_sid);
                         }
 
                         $user_full_emp_app = $this->general_info_model->get_user_info($employee_sid);
                         $full_emp_form = array();
-                        if(sizeof($user_full_emp_app)){
+                        if (sizeof($user_full_emp_app)) {
                             $full_emp_form = !empty($user_full_emp_app[0]['full_employment_application']) && $user_full_emp_app[0]['full_employment_application'] != NULL ? unserialize($user_full_emp_app[0]['full_employment_application']) : array();
                         }
                         $full_emp_form['TextBoxDriversLicenseNumber'] = $license_number;
@@ -195,11 +199,11 @@ class General_info extends Public_Controller {
                         //
                         $doSend = false;
                         //
-                        if(array_key_exists('document_sent_on', $userData)){
+                        if (array_key_exists('document_sent_on', $userData)) {
                             //
                             $doSend = false;
                             //
-                            if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                            if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                                 $doSend = true;
                                 //
                                 $this->hr_documents_management_model->update_employee($employee_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -219,7 +223,7 @@ class General_info extends Public_Controller {
                         checkAndInsertCompletedDocument($cpArray);
 
                         // Only send if dosend is true
-                        if($doSend == true){
+                        if ($doSend == true) {
 
                             // Send document completion alert
                             broadcastAlert(
@@ -278,12 +282,12 @@ class General_info extends Public_Controller {
 
                         $licenseCheck = $this->general_info_model->check_user_license($employee_sid, 'employee', 'occupational');
                         $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
-                        
+
                         if (!empty($licenseCheck)) {
                             $license_id = $licenseCheck['sid'];
-                            $this->general_info_model->update_license_info($license_id, $data_to_save,$dateOfBirth,$employee_sid);
+                            $this->general_info_model->update_license_info($license_id, $data_to_save, $dateOfBirth, $employee_sid);
                         } else {
-                            $this->general_info_model->save_license_info($data_to_save,$dateOfBirth,$employee_sid);
+                            $this->general_info_model->save_license_info($data_to_save, $dateOfBirth, $employee_sid);
                         }
 
                         //
@@ -294,11 +298,11 @@ class General_info extends Public_Controller {
                         //
                         $doSend = false;
                         //
-                        if(array_key_exists('document_sent_on', $userData)){
+                        if (array_key_exists('document_sent_on', $userData)) {
                             //
                             $doSend = false;
                             //
-                            if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                            if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                                 $doSend = true;
                                 //
                                 $this->hr_documents_management_model->update_employee($employee_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -317,7 +321,7 @@ class General_info extends Public_Controller {
                         checkAndInsertCompletedDocument($cpArray);
 
                         // Only send if dosend is true
-                        if($doSend == true){
+                        if ($doSend == true) {
                             // Send document completion alert
                             broadcastAlert(
                                 DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -380,14 +384,14 @@ class General_info extends Public_Controller {
                         $userData = $this->direct_deposit_model->getUserData($employee_sid, 'employee');
                         //
                         $doSend = false;
-                        
-                        if(array_key_exists('document_sent_on', $userData)){
+
+                        if (array_key_exists('document_sent_on', $userData)) {
                             //
                             $doSend = false;
                             //
-                            if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                            if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                                 $doSend = true;
-                                
+
                                 //
                                 $this->hr_documents_management_model->update_employee($employee_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
                             }
@@ -405,7 +409,7 @@ class General_info extends Public_Controller {
                         checkAndInsertCompletedDocument($cpArray);
 
                         // Only send if dosend is true
-                        if($doSend == true){
+                        if ($doSend == true) {
                             // Send document completion alert
                             broadcastAlert(
                                 DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -424,18 +428,18 @@ class General_info extends Public_Controller {
                     case 'delete_dependent':
                         //
                         $this->em->saveDifference([
-                                'user_sid' => $employee_sid,
-                                'employer_sid' => ($employee_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
+                            'user_sid' => $employee_sid,
+                            'employer_sid' => ($employee_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
                                 ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
-                                'history_type' => 'dependent',
-                                'profile_data' => json_encode(['action' => 'delete']),
-                                'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                            'history_type' => 'dependent',
+                            'profile_data' => json_encode(['action' => 'delete']),
+                            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
                         ]);
                         $dependent_sid = $this->input->post('dependent_sid');
                         $this->general_info_model->delete_dependent_information($dependent_sid);
                         $this->session->set_flashdata('message', '<strong>Success</strong> Dependent Deleted!');
                         redirect(base_url('general_info'), "location");
-                        break; 
+                        break;
                     case 'add_emergency_contact':
                         $company_sid = $this->input->post('company_sid');
                         $employee_sid = $this->input->post('users_sid');
@@ -473,11 +477,11 @@ class General_info extends Public_Controller {
                         //
                         $doSend = true;
                         //
-                        if(array_key_exists('document_sent_on', $userData)){
+                        if (array_key_exists('document_sent_on', $userData)) {
                             //
                             $doSend = false;
                             //
-                            if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                            if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                                 $doSend = true;
                                 //
                                 $this->hr_documents_management_model->update_employee($employee_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -496,7 +500,7 @@ class General_info extends Public_Controller {
                         checkAndInsertCompletedDocument($cpArray);
 
                         // Only send if dosend is true
-                        if($doSend == true){
+                        if ($doSend == true) {
                             // Send document completion alert
                             broadcastAlert(
                                 DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -531,14 +535,14 @@ class General_info extends Public_Controller {
                         $this->em->saveDifference([
                             'user_sid' => $employee_sid,
                             'employer_sid' => ($employee_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
-                            ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
+                                ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
                             'history_type' => 'emergencyContact',
                             'profile_data' => json_encode(['action' => 'delete']),
                             'created_at' => date('Y-m-d H:i:s', strtotime('now'))
                         ]);
                         $this->session->set_flashdata('message', '<strong>Success</strong> Emergency Contact Successfully Deleted!');
                         redirect(base_url('general_info'), "location");
-                        break;       
+                        break;
                     case 'update_bank_details':
                         $company_sid = $this->input->post('company_sid');
                         $users_sid = $this->input->post('users_sid');
@@ -562,7 +566,7 @@ class General_info extends Public_Controller {
                         if (!empty($pictures) && $pictures != 'error') {
                             $data_to_save['voided_cheque'] = $pictures;
                         }
-                        
+
                         $this->general_info_model->save_bank_details('employee', $users_sid, $data_to_save);
 
                         //
@@ -573,11 +577,11 @@ class General_info extends Public_Controller {
                         //
                         $doSend = false;
                         //
-                        if(array_key_exists('document_sent_on', $userData)){
+                        if (array_key_exists('document_sent_on', $userData)) {
                             //
                             $doSend = false;
                             //
-                            if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                            if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                                 $doSend = true;
                                 //
                                 $this->hr_documents_management_model->update_employee($employee_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -596,7 +600,7 @@ class General_info extends Public_Controller {
                         checkAndInsertCompletedDocument($cpArray);
 
                         // Only send if dosend is true
-                        if($doSend == true){
+                        if ($doSend == true) {
                             // Send document completion alert
                             broadcastAlert(
                                 DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -616,7 +620,7 @@ class General_info extends Public_Controller {
             }
         } else {
             redirect('login', "refresh");
-        }  
+        }
     }
 
     //This function get dependant contact sid and collect
@@ -624,7 +628,8 @@ class General_info extends Public_Controller {
     //populate in 'edit_dependents_information' view and after
     //render dependant information by employee then update specific 
     //dependant contact information only.
-    public function edit_dependant_information($dependant_sid) {
+    public function edit_dependant_information($dependant_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -632,7 +637,7 @@ class General_info extends Public_Controller {
             $data['security_details'] = $security_details;
             $company_sid = $data['session']['company_detail']['sid'];
             $employee_sid = $data['session']['employer_detail']['sid'];
-            
+
             $load_view = check_blue_panel_status(false, 'self');
             $data['load_view'] = $load_view;
             $employer = $data['session']['employer_detail'];
@@ -642,7 +647,7 @@ class General_info extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['title'] = 'Edit Dependant Information';
 
-            
+
             $data['sid'] = $dependant_sid;
             $data_countries = db_get_active_countries();
 
@@ -654,7 +659,7 @@ class General_info extends Public_Controller {
 
             if (!empty($dependantData)) {
                 $dependant_details = $dependantData;
-            } else { 
+            } else {
                 if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
                     header('Location: ' . $_SERVER['HTTP_REFERER']);
                 } else {
@@ -672,14 +677,14 @@ class General_info extends Public_Controller {
             $data['active_states'] = $data_states;
             $data['states'] = $data_states_encode;
             $data['dependant_info'] = $dependant_data;
-            
+
             $this->form_validation->set_rules('first_name', 'First Name', 'trim|xss_clean|required');
             $this->form_validation->set_rules('last_name', 'Last Name', 'trim|xss_clean|required');
             $this->form_validation->set_rules('phone', 'Phone Number', 'trim|xss_clean|required');
             $this->form_validation->set_rules('relationship', 'Relationship', 'trim|xss_clean|required');
 
             if ($this->form_validation->run() === FALSE) {
-                
+
                 if (validation_errors() != false) {
                     $this->session->set_flashdata('message', '<b>Failed: </b>Please check the form for errors and try again!');
                 }
@@ -705,16 +710,16 @@ class General_info extends Public_Controller {
                 //
                 checkAndUpdateDD($employee_sid, 'employee', $company_sid, 'dependents');
                 $this->load->model('direct_deposit_model');
-                        $this->load->model('hr_documents_management_model');
+                $this->load->model('hr_documents_management_model');
                 $userData = $this->direct_deposit_model->getUserData($employee_sid, 'employee');
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                if (array_key_exists('document_sent_on', $userData)) {
                     //
                     $doSend = false;
                     //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                    if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                         $doSend = true;
                         //
                         $this->hr_documents_management_model->update_employee($employee_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -723,7 +728,7 @@ class General_info extends Public_Controller {
                 } else $doSend = true;
 
                 // Only send if dosend is true
-                if($doSend == true){
+                if ($doSend == true) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -739,7 +744,7 @@ class General_info extends Public_Controller {
                 $this->session->set_flashdata('message', '<b>Success:</b> Dependent info updated successfully');
                 redirect(base_url('general_info'), "location");
             }
-        } else { 
+        } else {
             redirect('login', 'refresh');
         }
     }
@@ -749,7 +754,8 @@ class General_info extends Public_Controller {
     //populate in 'edit_emergency_contact' view and after
     //render information by employee then update specific 
     //emergency contact only. 
-    public function edit_emergency_contacts($contact_sid) {
+    public function edit_emergency_contacts($contact_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -768,7 +774,7 @@ class General_info extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['title'] = 'Edit Emergency Contact';
 
-            
+
             $data['sid'] = $contact_sid;
             $data_countries = db_get_active_countries();
 
@@ -791,17 +797,19 @@ class General_info extends Public_Controller {
             // $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required');
             $this->form_validation->set_rules('Relationship', 'Relationship', 'trim|xss_clean|required');
             $this->form_validation->set_rules('priority', 'Priority', 'trim|xss_clean|required');
-        
+
             if ($this->form_validation->run() === FALSE) {
 
                 if (validation_errors() != false) {
                     $this->session->set_flashdata('message', '<b>Failed: </b>Please check the form for errors and try again!');
                 }
 
+                $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_sid);
+
+
                 $this->load->view('main/header', $data);
                 $this->load->view('general_information/edit_emergency_contact.php');
                 $this->load->view('main/footer');
-
             } else {
                 //
                 $this->load->model('2022/User_model', 'em');
@@ -844,16 +852,16 @@ class General_info extends Public_Controller {
                 //
                 checkAndUpdateDD($employee_sid, 'employee', $company_sid, 'emergency_contacts');
                 $this->load->model('direct_deposit_model');
-                        $this->load->model('hr_documents_management_model');
+                $this->load->model('hr_documents_management_model');
                 $userData = $this->direct_deposit_model->getUserData($employee_sid, 'employee');
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                if (array_key_exists('document_sent_on', $userData)) {
                     //
                     $doSend = false;
                     //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                    if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                         $doSend = true;
                         //
                         $this->hr_documents_management_model->update_employee($employee_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -862,7 +870,7 @@ class General_info extends Public_Controller {
                 } else $doSend = true;
 
                 // Only send if dosend is true
-                if($doSend == true){
+                if ($doSend == true) {
 
                     // Send document completion alert
                     broadcastAlert(
@@ -881,7 +889,7 @@ class General_info extends Public_Controller {
             }
         } else {
             redirect('login', "refresh");
-        }    
+        }
     }
 
     //This function get assign equipment sid and collect
@@ -889,7 +897,8 @@ class General_info extends Public_Controller {
     //in 'equipment_info_detail' view. If employee want to
     //acknowledge against that specific equipment then the
     //below function update acknowledgement status information. 
-    public function view_equipment_information($equipment_sid) {
+    public function view_equipment_information($equipment_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -908,16 +917,16 @@ class General_info extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['title'] = 'View Equipments Information';
 
-            
+
             $data['sid'] = $equipment_sid;
-           
+
             $equipment_info = $this->general_info_model->equipment_info_details($equipment_sid);
             $data['equipment_info'] = $equipment_info;
             $data['company_sid'] = $company_sid;
             $data['employee_sid'] = $employee_sid;
             $data['onboarding_flag'] = true;
 
-            
+
             if ($this->form_validation->run() === FALSE) {
 
                 if (validation_errors() != false) {
@@ -927,20 +936,20 @@ class General_info extends Public_Controller {
                 $equipment_type = isset($equipment_info["equipment_type"]) ? $equipment_info["equipment_type"] : '';
 
 
-                if($equipment_info['acknowledgement_flag'] == 1) {
-                    $acknowledgement_status = '<strong class="text-success">Equipment Status:</strong> You have successfully Acknowledged this '.ucwords($equipment_type) ;
+                if ($equipment_info['acknowledgement_flag'] == 1) {
+                    $acknowledgement_status = '<strong class="text-success">Equipment Status:</strong> You have successfully Acknowledged this ' . ucwords($equipment_type);
                     $acknowledgement_button_txt = 'Acknowledged';
                     $acknowledgement_button_css = 'btn-warning';
                     $perform_action = 'remove_document';
-                } else { 
-                    $acknowledgement_status = '<strong class="text-danger">Equipment Status:</strong> You have not yet acknowledged this '.ucwords($equipment_type);
+                } else {
+                    $acknowledgement_status = '<strong class="text-danger">Equipment Status:</strong> You have not yet acknowledged this ' . ucwords($equipment_type);
                     $acknowledgement_button_txt = 'I Acknowledge';
                     $acknowledgement_button_css = 'btn-success';
                     $perform_action = 'acknowledge_document';
                 }
-                
+
                 $acknowledgment_action_title = '<b>Equipment Action: Acknowledgement Required!</b>';
-                $acknowledgment_action_desc = '<b>Acknowledge the receipt of this '.ucwords($equipment_type).'</b>';
+                $acknowledgment_action_desc = '<b>Acknowledge the receipt of this ' . ucwords($equipment_type) . '</b>';
 
                 $data['acknowledgment_action_title'] = $acknowledgment_action_title;
                 $data['acknowledgment_action_desc'] = $acknowledgment_action_desc;
@@ -952,7 +961,6 @@ class General_info extends Public_Controller {
                 $this->load->view('main/header', $data);
                 $this->load->view('general_information/equipment_info_detail.php');
                 $this->load->view('main/footer');
-
             } else {
 
                 $perform_action = $this->input->post('perform_action');
@@ -987,9 +995,9 @@ class General_info extends Public_Controller {
                         //     $employee_sid
                         // );
 
-                        
+
                         $this->session->set_flashdata('message', '<strong>Success</strong> Occupational License Information Updated!');
-                        redirect(base_url('general_info/view_equipment_information/'.$equipment_sid), 'refresh');
+                        redirect(base_url('general_info/view_equipment_information/' . $equipment_sid), 'refresh');
                         break;
                     case 'remove_document':
                         $equipment_sid = $this->input->post('equipment_sid');
@@ -1001,10 +1009,10 @@ class General_info extends Public_Controller {
                         $this->session->set_flashdata('message', '<strong>Success</strong> Driving License Information Updated!');
                         redirect('general_info', 'refresh');
                         break;
-                }  
+                }
             }
         } else {
             redirect('login', "refresh");
-        }    
+        }
     }
 }

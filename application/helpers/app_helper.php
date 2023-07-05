@@ -648,3 +648,20 @@ if (!function_exists('copyAWSFile')) {
         return $path . $key;
     }
 }
+
+if (!function_exists('getEmergencyContactsOptionsStatus')) {
+    /**
+     * fetch company checks for phone and email on emergency contacts
+     *
+     * @param int $companyId
+     * @return array
+     */
+    function getEmergencyContactsOptionsStatus(int $companyId): array
+    {
+        return get_instance()->db
+            ->select('emergency_contact_phone_number_status,emergency_contact_email_status')
+            ->where('user_sid', $companyId)
+            ->get('portal_employer')
+            ->row_array();
+    }
+}
