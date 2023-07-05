@@ -221,7 +221,6 @@
                                                                             }
                                                                             if (!in_array(getComplyNetEmployeeCheck($value, 1, 1, false), ['Not on ComplyNet', ''])) {
                                                                                 echo '<b>ComplyNet Link: </b><br><a href="' . (base_url('cn/redirect/' . ($value['sid']) . '')) . '" class="btn btn-success">Show Page</a><br />';
-                                                                                echo '<br><a href="javascript:void(0)" data-id="' . ($value['sid']) . '" class="btn btn-danger jsRemoveEmployeeFromComplyNet">Remove From ComplyNet</a>';
                                                                             }
                                                                             ?>
                                                                         </td>
@@ -582,39 +581,4 @@
             }
         );
     }
-</script>
-
-<script>
-    $(function complyNet() {
-        /**
-         * capture the delete event
-         */
-        $('.jsRemoveEmployeeFromComplyNet').click(function(event) {
-            // stop the default behavior
-            event.preventDefault();
-            // ste the code
-            let employeeCode = $(this).data('id');
-            //
-            return alertify.confirm(
-                "<strong>This action cannot be reversed.</strong><br><p>By taking this action, the selected employee will be removed from ComplyNet within the AutomtoHR system.</p>",
-                function() {
-                    //
-                    removeEmployeeFromComplyNetWithinStore(employeeCode)
-                }
-            )
-        });
-
-        /**
-         * remove connection
-         */
-        function removeEmployeeFromComplyNetWithinStore(employeeCode) {
-            $.ajax({
-                    url: "<?= base_url('cn/remove/employee'); ?>/" + employeeCode,
-                    method: "DELETE",
-                })
-                .success(function() {
-                    window.location.reload()
-                });
-        }
-    });
 </script>
