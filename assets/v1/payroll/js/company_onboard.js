@@ -29,11 +29,13 @@ $(function CreatePartnerCompany() {
 		createPartnerCompany,
 		gustoTerms,
 		pushCompanyAdmin,
+		pushCompanyLocation,
+		pushSelectedEmployees,
 	};
 	/**
 	 * selected employees
 	 */
-	let selectedEmployees = [];
+	let selectedEmployees = [49248];
 	/**
 	 * capture the modal close event
 	 */
@@ -61,7 +63,7 @@ $(function CreatePartnerCompany() {
 				Loader: modalId + "Loader",
 				Body: `<div id="${modalId}Body"></div>`,
 			},
-			processQueue.gustoTerms
+			processQueue.pushSelectedEmployees
 			// processQueue.welcomeStep
 		);
 	});
@@ -433,6 +435,111 @@ $(function CreatePartnerCompany() {
 				$("#" + modalId + "Body").html(resp.view);
 				//
 				_ml(false, modalId + "Loader");
+
+				// add save trigger
+				$(".jsPayrollAgreeServiceTerms").on(
+					"click",
+					handleServiceAgreementConsent
+				);
+			})
+			.fail(saveErrorsList);
+	}
+
+	/**
+	 * handle Gusto service terms agreement
+	 * step 10
+	 */
+	function handleServiceAgreementConsent(event) {
+		event.preventDefault();
+		//
+		const obj = {
+			email: $("#jsTermsOfServiceEmail").val().trim(),
+			userCode: $("#jsTermsOfServiceReference").val().trim(),
+		};
+		// holds errors
+		const errorArray = [];
+		// validation
+		if (!obj.email) {
+			errorArray.push('"Email" is required.');
+		}
+		if (!obj.email.verifyEmail()) {
+			errorArray.push('"Email" is invalid.');
+		}
+		if (!obj.userCode) {
+			errorArray.push('"System User Reference" is required.');
+		}
+		// check and show errors
+		if (errorArray.length) {
+			return alertify.alert(
+				"Error!",
+				getErrorsStringFromArray(errorArray),
+				CB
+			);
+		}
+		// show loader
+		_ml(true, modalId + "Loader");
+		//
+		$.ajax({
+			url: window.location.origin + "/payroll/cpc/10/" + companyId,
+			method: "POST",
+			data: obj,
+		})
+			.success(function () {
+				// move to next part
+				_ml(false, modalId + "Loader");
+				// sync company location
+				processQueue.pushCompanyLocation();
+			})
+			.fail(saveErrorsList);
+	}
+
+	/**
+	 * sync gusto admins
+	 * step 11
+	 */
+	function pushCompanyLocation() {
+		// change the loader text
+		_ml(
+			true,
+			modalId + "Loader",
+			"Creating company location. This procedure may take a few minutes."
+		);
+		//
+		XHR = $.ajax({
+			url: window.location.origin + "/payroll/cpc/11/" + companyId,
+			method: "POST",
+			data: {},
+		})
+			.success(function () {
+				// flush XHR
+				XHR = null;
+				processQueue.pushSelectedEmployees();
+			})
+			.fail(saveErrorsList);
+	}
+	
+	/**
+	 * sync gusto admins
+	 * step 12
+	 */
+	function pushSelectedEmployees() {
+		// change the loader text
+		_ml(
+			true,
+			modalId + "Loader",
+			"Onboarding selected employees. This procedure may take a few minutes."
+		);
+		//
+		XHR = $.ajax({
+			url: window.location.origin + "/payroll/cpc/12/" + companyId,
+			method: "POST",
+			data: {
+				employees: selectedEmployees
+			},
+		})
+			.success(function () {
+				// flush XHR
+				XHR = null;
 			})
 			.fail(saveErrorsList);
 	}
@@ -462,4 +569,7 @@ $(function CreatePartnerCompany() {
 		// show error
 		return handleErrorResponse(err);
 	}
+
+	companyId = 28684;
+	$(".jsCreatePartnerCompanyBtn").trigger("click");
 });

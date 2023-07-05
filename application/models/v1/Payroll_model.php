@@ -323,17 +323,22 @@ class Payroll_model extends CI_Model
     /**
      * Get gusto company details for gusto
      *
-     * @param int $companyId
+     * @param int   $companyId
+     * @param array $extra Optional
+     * @param bool  $include Optional
      * @return array
      */
-    public function getCompanyDetailsForGusto(int $companyId): array
+    public function getCompanyDetailsForGusto(int $companyId, array $extra = [], bool $include = true): array
     {
+        //
+        $columns = $include ? array_merge([
+            'gusto_uuid',
+            'refresh_token',
+            'access_token'
+        ], $extra) : $extra;
+        //
         return $this->db
-            ->select('
-                gusto_uuid,
-                refresh_token,
-                access_token
-            ')
+            ->select($columns)
             ->where('company_sid', $companyId)
             ->get('gusto_companies')
             ->row_array();
@@ -365,6 +370,10 @@ class Payroll_model extends CI_Model
      */
     public function checkAndPushCompanyLocationToGusto(int $companyId): array
     {
+        //
+        if ($this->db->where('company_sid', $companyId)->count_all_results('gusto_companies_locations')) {
+            return ['errors' => ['"Company Address" is already created.']];
+        }
         // get the company location
         $location = $this->db
             ->select('
@@ -372,16 +381,79 @@ class Payroll_model extends CI_Model
             users.Location_City,
             states.state_code,
             users.Location_ZipCode,
+            users.PhoneNumber,
             users.Location_Address_2,
         ')
-            ->join('states', 'states.sid = users.Location_State', 'inner')
+            ->join('states', 'states.sid = users.Location_State', 'left')
             ->where('users.sid', $companyId)
             ->get('users')
             ->row_array();
         //
-        if (!$location) {
-            return ['errors' => ['Company address is missing.']];
+        $errorArray = [];
+        //
+        if (!$location['Location_Address']) {
+            $errorArray[] = '"Street 1" is required.';
         }
+        //
+        if (!$location['Location_City']) {
+            $errorArray[] = '"City" is required.';
+        }
+        //
+        if (!$location['state_code']) {
+            $errorArray[] = '"State" is required.';
+        }
+        //
+        if (!$location['Location_ZipCode']) {
+            $errorArray[] = '"Zip" is required.';
+        }
+        //
+        if (!$location['PhoneNumber']) {
+            $errorArray[] = '"Phone Number" is required.';
+        }
+        //
+        if ($errorArray) {
+            return ['errors' => $errorArray];
+        }
+        // make request
+        $request = [];
+        $request['street_1'] = $location['Location_Address'];
+        $request['street_2'] = $location['Location_Address_2'];
+        $request['city'] = $location['Location_City'];
+        $request['state'] = $location['state_code'];
+        $request['zip'] = $location['Location_ZipCode'];
+        $request['country'] = "USA";
+        $request['mailing_address'] = true;
+        $request['filing_address'] = true;
+        $request['phone_number'] = phonenumber_format($location['PhoneNumber'], true);
+        //
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        $gustoResponse = gustoCall(
+            'createCompanyLocationOnGusto',
+            $companyDetails,
+            $request,
+            "POST"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        // check for errors
+        if ($errors) {
+            return $errors;
+        }
+        // insert
+        $this->db
+            ->insert('gusto_companies_locations', [
+                'company_sid' => $companyId,
+                'gusto_uuid' => $gustoResponse['uuid'],
+                'gusto_version' => $gustoResponse['version'],
+                'is_active' => (int) $gustoResponse['active'],
+                'mailing_address' => (int) $gustoResponse['mailing_address'],
+                'filing_address' => (int) $gustoResponse['filing_address'],
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate()
+            ]);
+        //
+        return $gustoResponse;
     }
 
     /**
@@ -400,6 +472,163 @@ class Payroll_model extends CI_Model
         $errors = hasGustoErrors($gustoResponse);
         //
         return $errors ?? $gustoResponse;
+    }
+
+    /**
+     * get company terms from Gusto
+     *
+     * @param array $post
+     * @param int   $companyId
+     * @return array
+     */
+    public function agreeToGustoTerms(array $post, int $companyId): array
+    {
+        // get the company
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId, ['is_ts_accepted']);
+        //
+        if ($companyDetails['is_ts_accepted'] == 1) {
+            return ['errors' => ['"Payroll Service Agreement" is already consent.']];
+        }
+        // make request array
+        $request = [];
+        $request['email'] = $post['email'];
+        $request['external_user_id'] = $post['userCode'];
+        $request['ip_address'] = getUserIP();
+        //
+        $gustoResponse = agreeToServiceAgreementFromGusto($request, $companyDetails);
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // update
+        $this->db
+            ->where('company_sid', $companyId)
+            ->update('gusto_companies', [
+                'is_ts_accepted' => $gustoResponse['latest_terms_accepted'],
+                'ts_email' => $request['email'],
+                'ts_ip' => $request['ip_address'],
+                'ts_user_id' => $request['external_user_id'],
+            ]);
+        //
+        return $gustoResponse;
+    }
+
+    /**
+     * onboard an employee
+     *
+     * @param int $employeeId
+     * @param int $companyId
+     * @return array
+     */
+    public function onboardEmployee(int $employeeId, int $companyId): array
+    {
+        // let's check the employee
+        $gustoEmployee = $this->db
+            ->select('gusto_uuid, gusto_version')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
+        // check and create
+        if (!$gustoEmployee) {
+            $gustoEmployee = $this->createEmployeeOnGusto($employeeId, $companyId);
+            //
+            if ($gustoEmployee['errors']) {
+                return $gustoEmployee;
+            }
+        }
+        // set home address
+        $this->checkAndSetEmployeeHomeAddressOnGusto($employeeId, $companyId);
+
+        _e($gustoEmployee, true);
+    }
+
+    /**
+     * create an employee on Gusto
+     *
+     * @param int $employeeId
+     * @param int $companyId
+     * @return array
+     */
+    private function createEmployeeOnGusto(int $employeeId, int $companyId): array
+    {
+        // get employee profile data
+        $employeeDetails = $this->db
+            ->select('
+                first_name,
+                last_name,
+                middle_name,
+                dob,
+                email,
+                ssn
+            ')
+            ->where('sid', $employeeId)
+            ->where('parent_sid', $companyId)
+            ->get('users')
+            ->row_array();
+        //
+        $errorArray = [];
+        //
+        if (!$employeeDetails['first_name']) {
+            $errorArray[] = '"First Name" is required.';
+        }
+        if (!$employeeDetails['last_name']) {
+            $errorArray[] = '"Last Name" is required.';
+        }
+        if (!$employeeDetails['dob'] || $employeeDetails['dob'] == '0000-00-00') {
+            $errorArray[] = '"Date Of Birth" is required.';
+        }
+        if (!$employeeDetails['email']) {
+            $errorArray[] = '"Email" is required.';
+        }
+        if (!$employeeDetails['ssn']) {
+            $errorArray[] = '"Social Security Number (SSN)" is required.';
+        }
+        //
+        if ($errorArray) {
+            return ['errors' => $errorArray];
+        }
+        // make request
+        $request = [];
+        $request['first_name'] = $employeeDetails['first_name'];
+        $request['middle_name'] = substr($employeeDetails['middle_name'], 0, 1);
+        $request['last_name'] = $employeeDetails['last_name'];
+        $request['date_of_birth'] = $employeeDetails['dob'];
+        $request['email'] = $employeeDetails['email'];
+        $request['ssn'] = $employeeDetails['ssn'];
+        $request['self_onboarding'] = false;
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // make call
+        $gustoResponse = gustoCall(
+            "createEmployeeOnGusto",
+            $companyDetails,
+            $request,
+            "POST"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // insert
+        $this->db
+            ->insert('gusto_companies_employees', [
+                'company_sid' => $companyId,
+                'employee_sid' => $employeeId,
+                'gusto_uuid' => $gustoResponse['uuid'],
+                'gusto_version' => $gustoResponse['version'],
+                'is_onboarded' => 0,
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate(),
+            ]);
+        //
+        return [
+            'gusto_uuid' => $gustoResponse['uuid'],
+            'gusto_version' => $gustoResponse['version']
+        ];
     }
 
     /**
