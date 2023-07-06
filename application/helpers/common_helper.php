@@ -7653,16 +7653,16 @@ if (!function_exists('send_calendar_email')) {
                 $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<style>.dash-inner-block td, .dash-inner-block th{ border-bottom: none;}</style>';
                 // Replace calendar rows
@@ -7778,16 +7778,16 @@ if (!function_exists('send_calendar_email')) {
             $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
             $calendar_rows .= '</tr>';
             $calendar_rows .= '<tr>';
-            $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
+            $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
             $calendar_rows .= '</tr>';
             $calendar_rows .= '<tr>';
-            $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
+            $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
             $calendar_rows .= '</tr>';
             $calendar_rows .= '<tr>';
-            $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
+            $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
             $calendar_rows .= '</tr>';
             $calendar_rows .= '<tr>';
-            $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
+            $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
             $calendar_rows .= '</tr>';
             $calendar_rows .= '<style>.dash-inner-block td, .dash-inner-block th{ border-bottom: none;}</style>';
             // Replace calendar rows
@@ -7911,16 +7911,16 @@ if (!function_exists('send_calendar_email')) {
                 $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<style>.dash-inner-block td, .dash-inner-block th{ border-bottom: none;}</style>';
                 // Replace calendar rows
