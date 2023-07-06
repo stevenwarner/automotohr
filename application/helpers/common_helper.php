@@ -6523,7 +6523,7 @@ if (!function_exists('generate_interviewers_rows')) {
         // $interviewers_rows .= '<ul>';
 
         if ($event_details['users_type'] == 'employee') {
-            $interviewers_rows .= '<tr><td><p>&#9632; &nbsp;' . ucwords($user_info['first_name'] . ' ' . $user_info['last_name']) . ' ( <a href="mailto:' . $user_info['email'] . '">' . $user_info['email'] . '</a> ) (' . $user_info['timezone'] . ')</p></td></tr>';
+            $interviewers_rows .= '<tr><td><p style="font-size: 20px;">&#9632; &nbsp;' . ucwords($user_info['first_name'] . ' ' . $user_info['last_name']) . ' ( <a href="mailto:' . $user_info['email'] . '">' . $user_info['email'] . '</a> ) (' . $user_info['timezone'] . ')</p></td></tr>';
         }
         $company_timezone = $_this->calendar_model->get_timezone('company', $event_details['company_id']);
 
@@ -6532,7 +6532,7 @@ if (!function_exists('generate_interviewers_rows')) {
                 $employer['timezone'] = $company_timezone;
             $style = isset($difference_array['added_interviewers']) && sizeof($difference_array['added_interviewers']) && in_array($employer['sid'], $difference_array['added_interviewers']) ? 'style="background-color: #81b431;  font-weight: bold;"' : '';
             $email = in_array($employer['sid'], $show_emails) ? ' ( <a href="mailto:' . $employer['email'] . '">' . $employer['email'] . '</a> )' : '';
-            $interviewers_rows .= '<tr ' . $style . '><td><p>&#9632; &nbsp;' . ucwords($employer['first_name'] . ' ' . $employer['last_name']) . ' ' . $email . ' (' . $employer['timezone'] . ') ' . ($style != '' ? '<strong>&nbsp;&nbsp;[Added]</strong>' : '') . '</p></td></tr>';
+            $interviewers_rows .= '<tr ' . $style . '><td style="font-size: 20px;"><p>&#9632; &nbsp;' . ucwords($employer['first_name'] . ' ' . $employer['last_name']) . ' ' . $email . ' (' . $employer['timezone'] . ') ' . ($style != '' ? '<strong>&nbsp;&nbsp;[Added]</strong>' : '') . '</p></td></tr>';
         }
 
         // For removed participants
@@ -6638,7 +6638,7 @@ if (!function_exists('generate_event_status_rows')) {
         // Set button rows
         $button_rows = '<tr><td>';
         // $button_rows = '<div class="cs-email-button-row">';
-        $button_rows .= '   <p>Please select one of the options below to "Confirm", "Reschedule" or let us know that you "Cannot Attend".</p>';
+        $button_rows .= '   <p style="font-size: 20px;">Please select one of the options below to "Confirm", "Reschedule" or let us know that you "Cannot Attend".</p>';
         $button_rows .= '</td></tr>';
         $button_rows .= '<tr><td>';
         $max_width = '500px';
@@ -7015,8 +7015,8 @@ if (!function_exists('send_calendar_email')) {
 
         // Set greet heading
         $heading_greet = '<tr><td>';
-        if ($action == 'confirm') $heading_greet .= '<p>Dear <b>{{first_name}} {{last_name}},</b></p>';
-        else $heading_greet .= '<p>Dear <b>{{user_name}},</b></p>';
+        if ($action == 'confirm') $heading_greet .= '<p style="font-size: 20px;">Dear <b>{{first_name}} {{last_name}},</b></p>';
+        else $heading_greet .= '<p style="font-size: 20px;">Dear <b>{{user_name}},</b></p>';
         $heading_greet .= '</td></tr>';
 
         // Set content
@@ -8756,13 +8756,13 @@ if (!function_exists('send_admin_calendar_email_template')) {
             if (sizeof($external_participants)) {
                 foreach ($external_participants as $k0 => $v0) {
                     // $cls = (isset($diff_array['added_external_interviewers']) && in_array($v0['id'], $diff_array['added_external_interviewers'])) ? 'style="background-color:#81b431"' : '';
-                    $users_rows .= sft('<p>&#9632; &nbsp;' . (ucwords($v0['external_participant_name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['external_participant_email']) . '">(' . ($v0['external_participant_email']) . ')</a>' : '') . '</p>');
+                    $users_rows .= sft('<p style="font-size: 20px;">&#9632; &nbsp;' . (ucwords($v0['external_participant_name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['external_participant_email']) . '">(' . ($v0['external_participant_email']) . ')</a>' : '') . '</p>');
                 }
 
                 //
                 if (isset($diff_array['removed_external_interviewers'])) {
                     foreach ($diff_array['removed_external_interviewers'] as $k0 => $v0) {
-                        $users_rows .= '<tr style="background-color:#d9534f;"><td><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email']) . '">(' . ($v0['email']) . ')</a>' : '') . '</p></td></tr>';
+                        $users_rows .= '<tr style="background-color:#d9534f;"><td style="font-size: 20px;"><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email']) . '">(' . ($v0['email']) . ')</a>' : '') . '</p></td></tr>';
                     }
                 }
             }
@@ -8778,25 +8778,25 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 if (sizeof($users_array)) {
                     foreach ($users_array as $k0 => $v0) {
                         $cls = isset($diff_array['added_user_ids']) && sizeof($diff_array['added_user_ids']) && in_array($v0['id'], $diff_array['added_user_ids']) ? 'style="background-color: #81b431;"' : '';
-                        $users_rows .= '<tr ' . ($cls) . '><td><p>&#9632; &nbsp;' . (ucwords($v0['first_name'] . ' ' . $v0['last_name'])) . '</p></td></tr>';
+                        $users_rows .= '<tr ' . ($cls) . '><td style="font-size: 20px;"><p>&#9632; &nbsp;' . (ucwords($v0['first_name'] . ' ' . $v0['last_name'])) . '</p></td></tr>';
                     }
                 }
                 //
                 if (isset($diff_array['removed_user_ids']) && sizeof($diff_array['removed_user_ids'])) {
                     foreach ($diff_array['removed_user_ids'] as $k0 => $v0) {
-                        $users_rows .= '<tr style="background-color: #d9534f"><td><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . '</p></td></tr>';
+                        $users_rows .= '<tr style="background-color: #d9534f"><td style="font-size: 20px;"><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . '</p></td></tr>';
                     }
                 }
                 // External users
                 if (sizeof($external_users)) {
                     foreach ($external_users as $k0 => $v0) {
                         $cls = isset($diff_array['added_external_users']) && sizeof($diff_array['added_external_users']) && in_array($v0['email_address'], $diff_array['added_external_users']) ? 'style="background-color: #81b431"' : '';
-                        $users_rows .= '<tr ' . ($cls) . '><td><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
+                        $users_rows .= '<tr ' . ($cls) . '><td style="font-size: 20px;"><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
                     }
                 }
                 if (isset($diff_array['removed_external_users']) && sizeof($diff_array['removed_external_users'])) {
                     foreach ($diff_array['removed_external_users'] as $k0 => $v0) {
-                        $users_rows .= '<tr style="background-color: #d9534f"><td><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email']) . '">(' . ($v0['email']) . ')</a>' : '') . '</p></td></tr>';
+                        $users_rows .= '<tr style="background-color: #d9534f"><td style="font-size: 20px;"><p>&#9632; &nbsp;' . (ucwords($v0['name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email']) . '">(' . ($v0['email']) . ')</a>' : '') . '</p></td></tr>';
                     }
                 }
             }
@@ -9492,7 +9492,7 @@ if (!function_exists('generate_admin_status_rows')) {
 
         // Set button rows
         $button_rows = '';
-        $button_rows .= sft('<p>Please select one of the options below to "Confirm", "Reschedule" or let us know that you "Cannot Attend".</p>');
+        $button_rows .= sft('<p style="font-size: 20px;">Please select one of the options below to "Confirm", "Reschedule" or let us know that you "Cannot Attend".</p>');
         $button_rows .= '<tr><td>';
 
         $button_rows .= '   <a href="' . $enc_string_conf . '" target="_blank" style="background-color: #009966; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin: 5px;">Confirm</a>';
