@@ -358,9 +358,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 <br />
                                                                 <strong>I Speak:</strong> <?= showLanguages($employee['languages_speak']); ?>
                                                             </div>
-                                                            <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $employee['sid']; ?>" data-original-title="View Transfers Detail">
-                                                                View Transfers Detail
-                                                            </button>
+                                                            
                                                         </div>
                                                     </td>
                                                     <td width="25%" class="<?php echo $doNotHireWarning['row']; ?>">
@@ -548,6 +546,12 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             <?php } ?>
+
+                                                          <?php  if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1){?>
+                                                            <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $employee['sid']; ?>" data-original-title="View Transfer Detail">
+                                                                View Transfer Detail
+                                                            </button>
+                                                            <?php }?>
                                                         </td>
                                                     <?php } else {
                                                         echo '<td colspan="' . ($sizeof == 1 ? '1' : '3') . '"></td>';

@@ -2,9 +2,12 @@
     <h2>Personal Information </h2>
     <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) {  ?>
         <div class="form-btns">
-            <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?= $employer_id; ?>" data-original-title="View Transfers Detail">
-                View Transfers Detail
-            </button>
+            <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
+                <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?= $employer_id; ?>" data-original-title="View Transfers Detail">
+                    View Transfer Detail
+                </button>
+            <?php } ?>
+
             <?php if (!empty($MergeData)) { ?>
                 <input type="button" value="Merged Employee Information" id="jsSecondaryButton" style="width: 250px;" />
             <?php } ?>
@@ -16,7 +19,7 @@
         </div>
     <?php } ?>
 </div>
-<!--  -->
+
 <div>
     <!--  -->
     <div class="row">

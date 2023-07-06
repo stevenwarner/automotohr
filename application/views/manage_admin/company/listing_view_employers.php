@@ -143,11 +143,7 @@
                                                                             }
                                                                             ?>
                                                                             <br>
-                                                                            <br>
-                                                                            <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfers Detail">
-                                                                                View Transfers Detail
-                                                                            </button>
-
+                                                                          
                                                                             <?php echo $doNotHireWarning['message']; ?>
 
                                                                         </td>
@@ -261,7 +257,11 @@
                                                                         <?php   } ?>
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'employerlogin')) { ?>
-                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login"></td>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login">
+                                                                           <br> <br> <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
+                                                                                View Transfer Detail
+                                                                            </button>
+                                                                        </td>
                                                                         <?php   } ?>
                                                                     </tr>
                                                                 <?php } ?>
