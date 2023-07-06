@@ -6506,7 +6506,7 @@ if (!function_exists('generate_interviewers_rows')) {
         $show_emails = array();
         $interviewers_rows = '';
         $interviewers_rows .= '<tr>';
-        $interviewers_rows .= '     <td><br /><strong>' . (strtolower($event_details['users_type']) == 'applicant' ? 'Interviewer(s)' : 'Participant(s)') . '</strong><br /><br /></td>';
+        $interviewers_rows .= '     <td style="font-size: 20px;"><br /><strong>' . (strtolower($event_details['users_type']) == 'applicant' ? 'Interviewer(s)' : 'Participant(s)') . '</strong><br /><br /></td>';
         $interviewers_rows .= '</tr>';
         //
         if ($event_category == '') $event_details['category'];
@@ -6517,7 +6517,7 @@ if (!function_exists('generate_interviewers_rows')) {
         if ($event_details['users_type'] == 'personal' && ($event_details['category'] == 'other' || $event_details['category'] == 'training-session'))
             $interviewers_rows .= '';
         else {
-            $interviewers_rows .= '<tr><td><p>Your <b>' . $event_category . '</b> is <b>' . ucwords(isset($user_info['requested_event_status']) ? $user_info['requested_event_status'] : $event_details['event_status']) . '</b> with:</p></td></tr>';
+            $interviewers_rows .= '<tr><td style="font-size: 20px;"><p>Your <b>' . $event_category . '</b> is <b>' . ucwords(isset($user_info['requested_event_status']) ? $user_info['requested_event_status'] : $event_details['event_status']) . '</b> with:</p></td></tr>';
         }
 
         // $interviewers_rows .= '<ul>';
@@ -7093,23 +7093,23 @@ if (!function_exists('send_calendar_email')) {
 
         //
         // Set booking heading
-        $heading_booking  = '<tr><td><strong>Event details</strong><br /><br /></td></tr>';
+        $heading_booking  = '<tr><td style="font-size: 20px;"><strong>Event details</strong><br /><br /></td></tr>';
         // Set event type
-        $event_type_row  = '<tr><td><strong>Type</strong></td></tr>';
-        $event_type_row .= '<tr><td><p>' . ($event_update_category_row ? $event_update_category_row : $event_category) . '</p></td></tr>';
+        $event_type_row  = '<tr><td style="font-size: 20px;"><strong>Type</strong></td></tr>';
+        $event_type_row .= '<tr><td style="font-size: 20px;"><p>' . ($event_update_category_row ? $event_update_category_row : $event_category) . '</p></td></tr>';
 
         $event_date_time_row  = '';
         $event_date_time_row  .= '<tr>';
         $event_date_time_row  .= '<td>';
         $event_date_time_row  .= '    <table style="width: 100%; border: 0 !important;">';
         $event_date_time_row  .=      '<tr>';
-        $event_date_time_row  .=          '<td><br /><strong>Event Date</strong></td>';
+        $event_date_time_row  .=          '<td style="font-size: 20px;"><br /><strong>Event Date</strong></td>';
         if ($action == 'confirm')
             $event_date_time_row  .=       '{{NEW_DATE_HEADING}}';
         $event_date_time_row  .=      '</tr>';
         $event_date_time_row  .=      '<tr>';
 
-        $event_date_time_row  .=          '<td><p>' . ($event_update_date_row != '' ? $event_update_date_row : '{{EVENT_DATE}}') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
+        $event_date_time_row  .=          '<td style="font-size: 20px;"><p>' . ($event_update_date_row != '' ? $event_update_date_row : '{{EVENT_DATE}}') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
         if ($action == 'confirm')
             $event_date_time_row  .=      '{{NEW_EVENT_DATE}}';
         $event_date_time_row  .=      '</tr>';
@@ -7117,13 +7117,13 @@ if (!function_exists('send_calendar_email')) {
         $event_date_time_row  .=      '<tr><td style="width: 100%;"><hr /></td></tr>';
 
         $event_date_time_row  .=      '<tr>';
-        $event_date_time_row  .=          '<td><br /><strong>Event Time</strong></td>';
+        $event_date_time_row  .=          '<td style="font-size: 20px;"><br /><strong>Event Time</strong></td>';
         if ($action == 'confirm')
             $event_date_time_row  .=       '{{NEW_TIME_HEADING}}';
         $event_date_time_row  .=      '</tr>';
         $event_date_time_row  .=      '<tr>';
 
-        $event_date_time_row  .=          '<td><p>' . ($event_update_start_time_row != '' ? $event_update_start_time_row : '{{EVENT_START_TIME}} - {{EVENT_END_TIME}}') . ($event_update_end_time_row != '' ? '<br />' . $event_update_end_time_row : '') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
+        $event_date_time_row  .=          '<td style="font-size: 20px;"><p>' . ($event_update_start_time_row != '' ? $event_update_start_time_row : '{{EVENT_START_TIME}} - {{EVENT_END_TIME}}') . ($event_update_end_time_row != '' ? '<br />' . $event_update_end_time_row : '') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
 
         if ($action == 'confirm')
             $event_date_time_row  .=      '{{NEW_EVENT_TIME}}';
@@ -7131,7 +7131,7 @@ if (!function_exists('send_calendar_email')) {
         if ($action == 'confirm') {
             $event_date_time_row  .=      '<tr><td><hr /></td></tr>';
             // $event_date_time_row  .=      '<tr><td>Click on the below button to visit the event.</td></tr>';
-            $event_date_time_row  .=      '<tr><td>{{EVENT_LINK}}</td></tr>';
+            $event_date_time_row  .=      '<tr style="font-size: 20px;"><td>{{EVENT_LINK}}</td></tr>';
         }
         $event_date_time_row  .=      '</table>';
         $event_date_time_row  .= '</td>';
@@ -7140,36 +7140,36 @@ if (!function_exists('send_calendar_email')) {
         if ($action == 'confirm') $event_date_time_row .= '{{NEW_EVENT_DETAILS}}';
 
         // Set comment
-        $event_comment_row  = '<tr><td><br /><strong>Comment</strong></td></tr>';
-        $event_comment_row .= $event_update_comment_row != '' ? '<tr><td>' . $event_update_comment_row . '</td></tr>' : '';
-        $event_comment_row .= '<tr>' . ($event_update_comment_change_row != '' ? $event_update_comment_change_row : '<td><p>' . ($event_details['comment']) . '</p></td>') . '</tr>';
+        $event_comment_row  = '<tr><td style="font-size: 20px;"><br /><strong>Comment</strong></td></tr>';
+        $event_comment_row .= $event_update_comment_row != '' ? '<tr><td style="font-size: 20px;">' . $event_update_comment_row . '</td></tr>' : '';
+        $event_comment_row .= '<tr>' . ($event_update_comment_change_row != '' ? $event_update_comment_change_row : '<td style="font-size: 20px;"><p>' . ($event_details['comment']) . '</p></td>') . '</tr>';
 
         // Set message to applicant
-        $event_message_row  = '<tr><td><br /><strong>Message Details</strong><br /><br /></td></tr>';
-        $event_message_row .= $event_update_message_row != '' ? '<tr><td><p>' . $event_update_message_row . '</p><br /></td></tr>' : '';
-        $event_message_row .= '<tr><td><strong>Subject</strong></td></tr>';
-        $event_message_row .= '<tr>' . ($event_update_message_subject_row != '' ? $event_update_message_subject_row : '<td><p>' . ($event_details['subject']) . '</p><br /></td>') . '</tr>';
-        $event_message_row .= '<tr><td><strong>Message</strong></td></tr>';
-        $event_message_row .= '<tr>' . ($event_update_message_body_row != '' ? $event_update_message_body_row : '<td><p>' . ($event_details['message']) . '</p><br /></td>') . '</tr>';
+        $event_message_row  = '<tr><td style="font-size: 20px;"><br /><strong>Message Details</strong><br /><br /></td></tr>';
+        $event_message_row .= $event_update_message_row != '' ? '<tr><td style="font-size: 20px;"><p>' . $event_update_message_row . '</p><br /></td></tr>' : '';
+        $event_message_row .= '<tr><td style="font-size: 20px;"><strong>Subject</strong></td></tr>';
+        $event_message_row .= '<tr>' . ($event_update_message_subject_row != '' ? $event_update_message_subject_row : '<td style="font-size: 20px;"><p>' . ($event_details['subject']) . '</p><br /></td>') . '</tr>';
+        $event_message_row .= '<tr><td><strstyle="font-size: 20px;"ong>Message</strong></td></tr>';
+        $event_message_row .= '<tr>' . ($event_update_message_body_row != '' ? $event_update_message_body_row : '<td style="font-size: 20px;"><p>' . ($event_details['message']) . '</p><br /></td>') . '</tr>';
         //
         if ($event_details['message_file'] != '') {
-            $event_message_row .= '<tr><td><strong>Attachment</strong></td></tr>';
-            $event_message_row .= '<tr><td>' . ($event_update_message_file_row != '' ? $event_update_message_file_row : '<a href="' . AWS_S3_BUCKET_URL . '' . ($event_details['message_file']) . '" target="_blank">' . ($event_details['message_file']) . '</a>') . '</td></tr>';
+            $event_message_row .= '<tr><td style="font-size: 20px;"><strong>Attachment</strong></td></tr>';
+            $event_message_row .= '<tr><td style="font-size: 20px;">' . ($event_update_message_file_row != '' ? $event_update_message_file_row : '<a href="' . AWS_S3_BUCKET_URL . '' . ($event_details['message_file']) . '" target="_blank">' . ($event_details['message_file']) . '</a>') . '</td></tr>';
         }
 
         // Set meeting details
-        $event_meeting_row  = '<tr><td><br /><strong>Meeting Details</strong><br /><br /></td></tr>';
+        $event_meeting_row  = '<tr><td style="font-size: 20px;"><br /><strong>Meeting Details</strong><br /><br /></td></tr>';
         $event_meeting_row .= $event_update_meeting_row != '' ? '<tr><td><p>' . $event_update_meeting_row . '</p><br /></td></tr>' : '';
-        $event_meeting_row .= '<tr><td><strong>ID</strong></td></tr>';
-        $event_meeting_row .= '<tr>' . ($event_update_meeting_id_row != '' ? $event_update_meeting_id_row : '<td><p>' . ($event_details['meeting_id']) . '</p><br /></td>') . '</tr>';
-        $event_meeting_row .= '<tr><td><strong>Phone</strong></td></tr>';
+        $event_meeting_row .= '<tr><td style="font-size: 20px;"><strong>ID</strong></td></tr>';
+        $event_meeting_row .= '<tr>' . ($event_update_meeting_id_row != '' ? $event_update_meeting_id_row : '<td style="font-size: 20px;"><p>' . ($event_details['meeting_id']) . '</p><br /></td>') . '</tr>';
+        $event_meeting_row .= '<tr><td style="font-size: 20px;"><strong>Phone</strong></td></tr>';
         $event_meeting_row .= '<tr>' . ($event_update_meeting_call_number_row != '' ? $event_update_meeting_call_number_row : '<td><p>' . ($event_details['meeting_call_number']) . '</p><br /></td>') . '</tr>';
-        $event_meeting_row .= '<tr><td><strong>Link</strong></td></tr>';
-        $event_meeting_row .= '<tr>' . ($event_update_meeting_url_row ? $event_update_meeting_url_row : '<td><p>' . ($event_details['meeting_url']) . '</p><br /><br /></td>') . '</tr>';
+        $event_meeting_row .= '<tr><td style="font-size: 20px;"><strong>Link</strong></td></tr>';
+        $event_meeting_row .= '<tr>' . ($event_update_meeting_url_row ? $event_update_meeting_url_row : '<td style="font-size: 20px;"><p>' . ($event_details['meeting_url']) . '</p><br /><br /></td>') . '</tr>';
 
         // Set address
-        $event_address_row  = '<tr><td><br /><strong>Address</strong><br /><br /></td></tr>';
-        $event_address_row .= '<tr><td><p>' . ($event_update_address_row != '' ? $event_update_address_row : $event_details['address']) . '</p></td></tr>';
+        $event_address_row  = '<tr><td style="font-size: 20px;"><br /><strong>Address</strong><br /><br /></td></tr>';
+        $event_address_row .= '<tr><td style="font-size: 20px;"><p>' . ($event_update_address_row != '' ? $event_update_address_row : $event_details['address']) . '</p></td></tr>';
         $event_address_row .= '<tr>';
         $event_address_row .= '     <td>';
         $event_address_row .= '         <a href="https://maps.google.com/maps?z=12&t=m&q=' . (urlencode($event_details['address'])) . '">';
@@ -7207,18 +7207,18 @@ if (!function_exists('send_calendar_email')) {
         $with_info_box = '';
         if ($event_details['users_type'] == 'applicant') {
             // Set applicant info box
-            $with_info_box = '<tr><td><br /><p><strong>Applicant Details</strong></p><br /><br /></td></tr>';
-            $with_info_box .= '<tr><td><strong>Name: </strong></td></tr>';
+            $with_info_box = '<tr><td style="font-size: 20px;"><br /><p><strong>Applicant Details</strong></p><br /><br /></td></tr>';
+            $with_info_box .= '<tr><td style="font-size: 20px;"><strong>Name: </strong></td></tr>';
             $with_info_box .= '<tr>' . ($event_update_applicant_name_row != '' ? $event_update_applicant_name_row : '<td><p>' . (ucwords($user_info['first_name'] . ' ' . $user_info['last_name'])) . '</p><br /></td>') . '</tr>';
             //
             if (isset($user_info['phone']) && $user_info['phone'] != '') {
-                $with_info_box .= '<tr><td><strong>Phone: </strong></td></tr>';
+                $with_info_box .= '<tr><td style="font-size: 20px;"><strong>Phone: </strong></td></tr>';
                 $with_info_box .= '<tr>' . ($event_update_user_phone_row != '' ? $event_update_user_phone_row : '<td><p>' . ($user_info['phone']) . '</p><br /></td>') . '</tr>';
             }
             //
             if (isset($user_info['city']) && $user_info['city'] != '') {
-                $with_info_box .= '<tr><td><strong>City: </strong></td></tr>';
-                $with_info_box .= '<tr><td><p>' . ($user_info['city']) . '</p><br /></td></tr>';
+                $with_info_box .= '<tr><td style="font-size: 20px;"><strong>City: </strong></td></tr>';
+                $with_info_box .= '<tr><td style="font-size: 20px;"><p>' . ($user_info['city']) . '</p><br /></td></tr>';
             }
             //
             $applicant_job_list_sid = 0;
@@ -7231,7 +7231,7 @@ if (!function_exists('send_calendar_email')) {
                     $applicant_jobs_array = explode(',', $applicant_jobs_list);
                 }
 
-                $with_info_box .= '<tr><td><p><b>Job(s) Applied:</b></p></td></tr>';
+                $with_info_box .= '<tr><td style="font-size: 20px;"><p><b>Job(s) Applied:</b></p></td></tr>';
 
                 if (!empty($applicant_jobs_array)) {
                     foreach ($user_info['job_applications'] as $job_application) {
@@ -7246,7 +7246,7 @@ if (!function_exists('send_calendar_email')) {
                             if ($action == 'update_event' && isset($difference_array['added_jobs']) && sizeof($difference_array['added_jobs']) && in_array($job_application['sid'], $difference_array['added_jobs'])) {
                                 $with_info_box .= '<tr style="background-color: #81b431; font-weight: bolder;"><td><p>' . $job_title . ' <strong>[Added]</strong></p></td></tr>';
                             } else
-                                $with_info_box .= '<tr><td><p>' . $job_title . '</p></td></tr>';
+                                $with_info_box .= '<tr><td style="font-size: 20px;"><p>' . $job_title . '</p></td></tr>';
 
                             $applicant_job_list_sid = $job_application['sid'];
                         }
@@ -7283,12 +7283,12 @@ if (!function_exists('send_calendar_email')) {
             }
             $with_info_box .= $seperator;
         } else if ($event_details['users_type'] == 'employee') {
-            $with_info_box .= '<tr><td><strong>Host details</strong><br /><br /></td></tr>';
-            $with_info_box .= '<tr><td><strong>Name</strong></td></tr>';
-            $with_info_box .= '<tr>' . ($event_update_employee_name_row != '' ? $event_update_employee_name_row : '<td><p>' . ($event_details['employer_details']['value']) . '</p><br /></td>') . '</tr>';
+            $with_info_box .= '<tr><td style="font-size: 20px;"><strong>Host details</strong><br /><br /></td></tr>';
+            $with_info_box .= '<tr><td style="font-size: 20px;"><strong>Name</strong></td></tr>';
+            $with_info_box .= '<tr>' . ($event_update_employee_name_row != '' ? $event_update_employee_name_row : '<td style="font-size: 20px;"><p>' . ($event_details['employer_details']['value']) . '</p><br /></td>') . '</tr>';
             if (isset($event_details['employer_details']['phone_number']) && $event_details['employer_details']['phone_number'] != '') {
-                $with_info_box .= '<tr><td><strong>Phone</strong></td></tr>';
-                $with_info_box .= '<tr>' . ($event_update_user_phone_row != '' ? $event_update_user_phone_row : '<td><p>' . ($event_details['employer_details']['phone_number']) . '</p></td>') . '</tr>';
+                $with_info_box .= '<tr><td style="font-size: 20px;"><strong>Phone</strong></td></tr>';
+                $with_info_box .= '<tr>' . ($event_update_user_phone_row != '' ? $event_update_user_phone_row : '<td style="font-size: 20px;"><p>' . ($event_details['employer_details']['phone_number']) . '</p></td>') . '</tr>';
             }
             $with_info_box .= $seperator;
         }
@@ -7451,19 +7451,19 @@ if (!function_exists('send_calendar_email')) {
                 $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
                 $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
                 $calendar_rows  = '<tr>';
-                $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
-                $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><img src="' . (base_url('assets/calendar_icons/calendar.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Mobile & Other Calendar</a></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<style>.dash-inner-block td, .dash-inner-block th{ border-bottom: none;}</style>';
                 // Replace calendar rows
@@ -7650,7 +7650,7 @@ if (!function_exists('send_calendar_email')) {
                 $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
                 $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
                 $calendar_rows  = '<tr>';
-                $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
                 $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
@@ -7775,7 +7775,7 @@ if (!function_exists('send_calendar_email')) {
             $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
             $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
             $calendar_rows  = '<tr>';
-            $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
+            $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
             $calendar_rows .= '</tr>';
             $calendar_rows .= '<tr>';
             $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
@@ -7908,7 +7908,7 @@ if (!function_exists('send_calendar_email')) {
                 $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
                 $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
                 $calendar_rows  = '<tr>';
-                $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
+                $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
                 $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
@@ -8042,7 +8042,7 @@ if (!function_exists('send_calendar_email')) {
                     $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
                     $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
                     $calendar_rows  = '<tr>';
-                    $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
+                    $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                     $calendar_rows .= '</tr>';
                     $calendar_rows .= '<tr>';
                     $calendar_rows .= '     <td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td>';
@@ -8738,17 +8738,17 @@ if (!function_exists('send_admin_calendar_email_template')) {
         //
         if ($include_participants) {
             if (sizeof($participants) || sizeof($external_participants))
-                $users_rows .= sft('<strong>' . ($event_category == 'training-session' ? 'Assigned Attendee(s)' : 'Participant(s)') . '</strong> <br />');
+                $users_rows .= sft('<strong> <p style="font-size: 20px;">' . ($event_category == 'training-session' ? 'Assigned Attendee(s)' : 'Participant(s)') . '</p></strong> <br />');
             // Users
             if (sizeof($participants)) {
                 foreach ($participants as $k0 => $v0) {
                     $cls = (isset($diff_array['added_interviewers']) && in_array($v0['id'], $diff_array['added_interviewers'])) ? 'style="background-color:#81b431"' : '';
-                    $users_rows .= '<tr ' . $cls . '><td><p>&#9632; &nbsp;' . (ucwords($v0['first_name'] . ' ' . $v0['last_name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
+                    $users_rows .= '<tr ' . $cls . '><td style="font-size: 20px;"><p>&#9632; &nbsp;' . (ucwords($v0['first_name'] . ' ' . $v0['last_name'])) . ' ' . ($v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
                 }
                 //
                 if (isset($diff_array['removed_interviewers'])) {
                     foreach ($diff_array['removed_interviewers'] as $k0 => $v0) {
-                        $users_rows .= '<tr style="background-color:#d9534f;"><td><p>&#9632; &nbsp;' . (ucwords($v0['full_name'])) . ' ' . (isset($v0['show_email']) && $v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
+                        $users_rows .= '<tr style="background-color:#d9534f;"><td style="font-size: 20px;"><p>&#9632; &nbsp;' . (ucwords($v0['full_name'])) . ' ' . (isset($v0['show_email']) && $v0['show_email'] == 1 ? ' <a href="mailto:' . ($v0['email_address']) . '">(' . ($v0['email_address']) . ')</a>' : '') . '</p></td></tr>';
                     }
                 }
             }
