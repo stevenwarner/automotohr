@@ -603,11 +603,6 @@ class Complynet extends Admin_Controller
             ->row_array();
         //
         if ($record) {
-            $this->db
-                ->where('complynet_job_title', $record['job_title'])
-                ->update('users', [
-                    'complynet_job_title' => null
-                ]);
             //
             $this->db->query("UPDATE complynet_job_roles SET job_title_count = job_title_count -1 WHERE sid = " . ($record['complynet_job_tile_sid']) . ";");
         }
