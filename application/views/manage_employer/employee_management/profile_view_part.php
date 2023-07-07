@@ -3,8 +3,8 @@
     <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) {  ?>
         <div class="form-btns">
             <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
-                <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?= $employer_id; ?>" data-original-title="View Transfers Detail">
-                    View Transfer Detail
+                <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?= $employer_id; ?>" data-original-title="View Transfer Detail">
+                    <i class="fa fa-history" aria-hidden="true"></i>
                 </button>
             <?php } ?>
 
@@ -584,7 +584,7 @@
         $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
         //
         isXHRInProgress =
-            $.get(window.location.origin + '/manage_admin/employers/employer_transferlog/' + employeeId)
+            $.get(window.location.origin + '/employer_transfer_log/' + employeeId)
             .done(function(resp) {
                 //
                 isXHRInProgress = null;
@@ -607,10 +607,9 @@
         return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
     }
 
-
-
-    $(document).on('click', '.jsviewdoc', function(e) {
+    $(document).on('click', '.jsToggleRow', function(e) {
         e.preventDefault();
-        $(this).parent().parent().next('tr').toggle();
+        let id = $(this).closest('tr').data('id');
+        $('.jsToggleTable' + id).toggle();
     });
 </script>

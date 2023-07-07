@@ -3221,15 +3221,16 @@ class Company_model extends CI_Model
         if (!empty($record_arr)) {
 
             //
-            $assignedDocuments = $this->get_assigned_documents_history($record_arr['to_company_sid'], $record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
-            $docw4 = $this->get_w4_documents_history($record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
-            $doci9 = $this->get_i9_documents_history($record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
-            $docw9 = $this->get_w9_documents_history($record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
+            $assignedDocuments = $this->get_assigned_documents_history($record_arr['from_company_sid'], $record_arr['previous_employee_sid']);
+
+            $docw4 = $this->get_w4_documents_history($record_arr['previous_employee_sid']);
+            $doci9 = $this->get_i9_documents_history($record_arr['previous_employee_sid']);
+            $docw9 = $this->get_w9_documents_history($record_arr['previous_employee_sid']);
+
             $emergencyContact = $this->get_emergency_contacts_history($record_arr['previous_employee_sid']);
             $dependents = $this->get_dependents_history($record_arr['previous_employee_sid']);
             $directDeposit = $this->get_direct_deposit_history($record_arr['previous_employee_sid']);
             $license = $this->get_license_history($record_arr['previous_employee_sid']);
-
 
             $resultArray[$record_arr['sid']] = [
                 'newCompanyId' => $record_arr['to_company_sid'],
@@ -3274,16 +3275,14 @@ class Company_model extends CI_Model
             //
             if (!array_key_exists($record_arr['sid'], $resultArray)) {
 
-                $assignedDocuments = $this->get_assigned_documents_history($record_arr['to_company_sid'], $record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
-                $docw4 = $this->get_w4_documents_history($record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
-                $doci9 = $this->get_i9_documents_history($record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
-                $docw9 = $this->get_w9_documents_history($record_arr['new_employee_sid'], $record_arr['employee_copy_date']);
-
+                $assignedDocuments = $this->get_assigned_documents_history($record_arr['from_company_sid'], $record_arr['previous_employee_sid']);
+                $docw4 = $this->get_w4_documents_history($record_arr['previous_employee_sid']);
+                $doci9 = $this->get_i9_documents_history($record_arr['previous_employee_sid']);
+                $docw9 = $this->get_w9_documents_history($record_arr['previous_employee_sid']);
                 $emergencyContact = $this->get_emergency_contacts_history($record_arr['previous_employee_sid']);
                 $dependents = $this->get_dependents_history($record_arr['previous_employee_sid']);
                 $directDeposit = $this->get_direct_deposit_history($record_arr['previous_employee_sid']);
                 $license = $this->get_license_history($record_arr['previous_employee_sid']);
-
 
                 $resultArray[$record_arr['sid']] = [
                     'newCompanyId' => $record_arr['to_company_sid'],
@@ -3306,19 +3305,17 @@ class Company_model extends CI_Model
                 return $this->isSecondaryEmployeeTransferred($record_arr['previous_employee_sid'], $record_arr['from_company_sid'], $resultArray);
             }
         }
-        //_e($resultArray,true,true);
         return $resultArray;
     }
-    
 
-    function get_assigned_documents_history($company_sid, $employee_sid, $copy_date)
+
+    function get_assigned_documents_history($company_sid, $employee_sid)
     {
-        $assignedDate = explode(' ', $copy_date);
 
         $this->db->select('document_type,document_title');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_sid', $employee_sid);
-        $this->db->where('date(assigned_date)', $assignedDate[0]);
+        $this->db->where('user_type', 'employee');
 
         $records_obj = $this->db->get('documents_assigned');
         $records_arr = $records_obj->result_array();
@@ -3328,25 +3325,8 @@ class Company_model extends CI_Model
         return $records_arr;
     }
 
-
-    function get_assigned_general_documents_history($company_sid, $employee_sid, $copy_date)
-    {
-        $assignedDate = explode(' ', $copy_date);
-
-        $this->db->select('document_type');
-        $this->db->where('company_sid', $company_sid);
-        $this->db->where('user_sid', $employee_sid);
-        $this->db->where('date(assigned_at)', $assignedDate[0]);
-
-        $records_obj = $this->db->get('documents_assigned_general');
-        $records_arr = $records_obj->result_array();
-        $records_obj->free_result();
-        return $records_arr;
-    }
-
-
+ 
     //
-
     function get_emergency_contacts_history($employee_sid)
     {
         $this->db->select('sid');
@@ -3355,7 +3335,7 @@ class Company_model extends CI_Model
         return $this->db->count_all_results();
     }
 
-
+    //
     function get_license_history($employee_sid)
     {
         $this->db->select('sid');
@@ -3364,9 +3344,7 @@ class Company_model extends CI_Model
         return $this->db->count_all_results();
     }
 
-
-
-
+    //
     function get_dependents_history($employee_sid)
     {
         $this->db->select('sid');
@@ -3375,7 +3353,7 @@ class Company_model extends CI_Model
         return $this->db->count_all_results();
     }
 
-
+    //
     function get_direct_deposit_history($employee_sid)
     {
         $this->db->select('sid');
@@ -3383,39 +3361,31 @@ class Company_model extends CI_Model
         $this->db->from('bank_account_details');
         return $this->db->count_all_results();
     }
-
-
-
-    function get_w4_documents_history($employee_sid, $copy_date)
+    //
+    function get_w4_documents_history($employee_sid)
     {
-        $assignedDate = explode(' ', $copy_date);
         $this->db->select('sid');
         $this->db->where('employer_sid', $employee_sid);
-        $this->db->where('date(sent_date)', $assignedDate[0]);
         $this->db->from('form_w4_original');
         return $this->db->count_all_results();
     }
 
-
-    function get_w9_documents_history($employee_sid, $copy_date)
+    //
+    function get_w9_documents_history($employee_sid)
     {
-        $assignedDate = explode(' ', $copy_date);
         $this->db->select('sid');
         $this->db->where('user_sid', $employee_sid);
         $this->db->where('user_type', 'employee');
-        $this->db->where('date(sent_date)', $assignedDate[0]);
         $this->db->from('applicant_w9form');
         return $this->db->count_all_results();
     }
 
-
-    function get_i9_documents_history($employee_sid, $copy_date)
+    //
+    function get_i9_documents_history($employee_sid)
     {
-        $assignedDate = explode(' ', $copy_date);
         $this->db->select('sid');
         $this->db->where('user_sid', $employee_sid);
         $this->db->where('user_type', 'employee');
-        $this->db->where('date(sent_date)', $assignedDate[0]);
         $this->db->from('applicant_i9form');
         return $this->db->count_all_results();
     }
