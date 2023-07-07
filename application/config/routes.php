@@ -561,7 +561,7 @@ $route['manage_admin/employers/ChangeStatus/(:num)'] = 'manage_admin/employers/c
 $route['manage_admin/employers/EditEmployeeStatus/(:num)/(:num)'] = 'manage_admin/employers/edit_employee_status/$1/$2';
 
 //
-$route['manage_admin/employers/employer_transferlog/(:num)'] = 'manage_admin/employers/employerTransferLog/$1';
+$route['employer_transfer_log/(:num)'] = 'manage_admin/employers/employerTransferLog/$1';
 
 
 $route['manage_admin/employers/(:num)'] = 'manage_admin/employers/index/$1';

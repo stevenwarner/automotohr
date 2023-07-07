@@ -3352,7 +3352,6 @@ class Company_model extends CI_Model
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
         $this->db->from('emergency_contacts');
-        $this->db->count_all_results();
         return $this->db->count_all_results();
     }
 
@@ -3362,7 +3361,6 @@ class Company_model extends CI_Model
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
         $this->db->from('license_information');
-        $this->db->count_all_results();
         return $this->db->count_all_results();
     }
 
@@ -3374,7 +3372,6 @@ class Company_model extends CI_Model
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
         $this->db->from('dependant_information');
-        $this->db->count_all_results();
         return $this->db->count_all_results();
     }
 
@@ -3384,7 +3381,6 @@ class Company_model extends CI_Model
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
         $this->db->from('bank_account_details');
-        $this->db->count_all_results();
         return $this->db->count_all_results();
     }
 

@@ -143,7 +143,7 @@
                                                                             }
                                                                             ?>
                                                                             <br>
-                                                                          
+
                                                                             <?php echo $doNotHireWarning['message']; ?>
 
                                                                         </td>
@@ -235,6 +235,11 @@
                                                                                 <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-green.png') ?>">
                                                                             <?php   } ?>
                                                                         </td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                            <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
+                                                                                <i class="fa fa-history" aria-hidden="true"></i>
+                                                                            </button>
+                                                                        </td>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
                                                                             <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
                                                                         <?php   } ?>
@@ -258,11 +263,9 @@
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'employerlogin')) { ?>
                                                                             <td class="<?php echo $doNotHireWarning['row']; ?>"><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login">
-                                                                           <br> <br> <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
-                                                                                View Transfer Detail
-                                                                            </button>
-                                                                        </td>
-                                                                        <?php   } ?>
+                                                                            </td>
+                                                                        <?php } ?>
+
                                                                     </tr>
                                                                 <?php } ?>
                                                             <?php } else {  ?>
@@ -638,7 +641,7 @@
         $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
         //
         isXHRInProgress =
-            $.get(window.location.origin + '/manage_admin/employers/employer_transferlog/' + employeeId)
+            $.get(window.location.origin + '/employer_transfer_log/' + employeeId)
             .done(function(resp) {
                 //
                 isXHRInProgress = null;
@@ -662,8 +665,9 @@
     }
 
 
-    $(document).on('click', '.jsviewdoc', function(e) {
+    $(document).on('click', '.jsToggleRow', function(e) {
         e.preventDefault();
-        $(this).parent().parent().next('tr').toggle();
+        let id = $(this).closest('tr').data('id');
+        $('.jsToggleTable' + id).toggle();
     });
 </script>
