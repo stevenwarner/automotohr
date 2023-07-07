@@ -2470,4 +2470,227 @@ class Reports_model extends CI_Model
         }
         return $return_data;
     }
+
+
+    //
+    function getEmployeeAssignedDocument($post, $csv = false)
+    {
+        $offSet = $post['limit'];
+        $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
+        $r = array(
+            'Count' => 0,
+            'Data' => array()
+        );
+
+        //
+        $companyId = $post['companySid'];
+        $employeeArray = $post['employeeSid'];
+
+        //
+        if ($post['page'] == 1) {
+            //
+            $r['Count'] = $this->getEmployeeForReport(
+                $companyId,
+                (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+                true
+            );
+        }
+        //
+        $holderArray = $this->getEmployeeForReport(
+            $companyId,
+            (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+            false,
+            !$csv ? [$offSet, $inSet] : []
+        );
+        //
+        if (!$holderArray) {
+            return $r;
+        }
+
+        //
+        foreach ($holderArray as $k => $v) :
+            $holderArray[$k]['assigneddocuments'] = $this->getAssignedDocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedgeneraldocuments'] = $this->getAssignedGeneralDocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedi9document'] = $this->getAssignedi9DocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid']);
+        endforeach;
+
+        //
+        $r['Data'] = $holderArray;
+        return $r;
+    }
+
+
+    //
+    private function getEmployeeForReport(
+        $companyId,
+        $employeeArray = [],
+        $doCount = false,
+        $limit = []
+    ) {
+        //
+        if (!$doCount) :
+            $this->db->select('users.sid,users.parent_sid');
+        endif;
+
+        $this->db
+            ->from('users')
+            ->where('users.terminated_status', 0)
+            ->where('users.active', 1)
+            ->where('users.parent_sid', $companyId);
+
+        if ($employeeArray) :
+            $this->db->where_in('users.sid', $employeeArray);
+        endif;
+
+        //
+        if ($doCount) :
+            return $this->db->count_all_results();
+        endif;
+        //
+        if (isset($limit[0])) :
+            $this->db->limit($limit[0], $limit[1]);
+        endif;
+        //
+
+        $this->db->order_by('users.first_name', 'ASC');
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
+    }
+
+
+
+
+
+    //
+    private function getAssignedDocumentForReport($employeeId, $companyId)
+    {
+        //
+        $this->db->select('
+        documents_assigned.user_sid,
+        documents_assigned.document_title,
+        documents_assigned.sid,
+        documents_assigned.confidential_employees
+    ');
+
+        $this->db
+            ->from('documents_assigned')
+            ->where('documents_assigned.user_type', 'employee')
+            ->where('documents_assigned.company_sid', $companyId)
+            ->where('documents_assigned.user_sid', $employeeId)
+            ->where('documents_assigned.status', 1);
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
+    }
+
+
+    private function getAssignedGeneralDocumentForReport($employeeId, $companyId)
+    {
+        //
+        $this->db->select('
+        documents_assigned_general.user_sid,
+        documents_assigned_general.document_type,
+        documents_assigned_general.sid,
+    ');
+
+        $this->db
+            ->from('documents_assigned_general')
+            ->where('documents_assigned_general.company_sid', $companyId)
+            ->where('documents_assigned_general.user_sid', $employeeId)
+            ->where('documents_assigned_general.status', 1);
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
+    }
+
+    //
+    function getAssignedi9DocumentForReport($employeeId, $companyId)
+    {
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('user_sid', $employeeId);
+        $this->db->where('status', 1);
+        $status = $this->db->count_all_results('applicant_i9form');
+
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    //
+    function getAssignedw9DocumentForReport($employeeId, $companyId)
+    {
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('user_sid', $employeeId);
+        $this->db->where('status', 1);
+        $status = $this->db->count_all_results('applicant_w9form');
+
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    //
+    function getAssignedw4DocumentForReport($employeeId, $companyId)
+    {
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('employer_sid', $employeeId);
+        $this->db->where('status', 1);
+        $status = $this->db->count_all_results('form_w4_original');
+
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+
+    //
+    function getAssignedeeocDocumentForReport($employeeId)
+    {
+        $this->db->where('users_type', 'employee');
+        $this->db->where('application_sid', $employeeId);
+        $this->db->where('is_latest', 1);
+        $this->db->where('status', 1);
+        $status = $this->db->count_all_results('portal_eeo_form');
+
+        if ($status > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+
+    //
+    function getActiveEmployeesByCompanyIdAll($companySid)
+    {
+        $a = $this->db
+            ->select("
+        sid as employeeId,
+        CONCAT(first_name,' ', last_name) as full_name,
+        " . (getUserFields()) . "
+    ")
+            ->where('parent_sid', $companySid)
+            ->where('users.terminated_status', 0)
+            ->where('users.active', 1)
+            ->order_by('full_name', 'ASC')
+            ->get('users');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
 }
