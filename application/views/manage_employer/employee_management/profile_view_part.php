@@ -584,7 +584,7 @@
         $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
         //
         isXHRInProgress =
-            $.get(window.location.origin + '/employer_transfer_log/' + employeeId)
+            $.get(window.location.origin + '/employee_management/employer_transfer_log/' + employeeId)
             .done(function(resp) {
                 //
                 isXHRInProgress = null;

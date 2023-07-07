@@ -560,7 +560,10 @@ $route['manage_admin/employers/EmployeeStatusDetail/(:num)'] = 'manage_admin/emp
 $route['manage_admin/employers/ChangeStatus/(:num)'] = 'manage_admin/employers/change_employee_status/$1';
 $route['manage_admin/employers/EditEmployeeStatus/(:num)/(:num)'] = 'manage_admin/employers/edit_employee_status/$1/$2';
 
+
+
 //
+$route['employee_management/employer_transfer_log/(:num)'] = 'employee_management/employerTransferLog/$1';
 $route['employer_transfer_log/(:num)'] = 'manage_admin/employers/employerTransferLog/$1';
 
 
