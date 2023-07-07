@@ -3320,17 +3320,16 @@ class Company_model extends CI_Model
         $records_obj = $this->db->get('documents_assigned');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        //echo $this->db->last_query();
-        //echo "<br>";
         return $records_arr;
     }
 
- 
+
     //
     function get_emergency_contacts_history($employee_sid)
     {
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
+        $this->db->where('user_type', 'employee');
         $this->db->from('emergency_contacts');
         return $this->db->count_all_results();
     }
@@ -3340,6 +3339,7 @@ class Company_model extends CI_Model
     {
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
+        $this->db->where('user_type', 'employee');
         $this->db->from('license_information');
         return $this->db->count_all_results();
     }
@@ -3349,6 +3349,7 @@ class Company_model extends CI_Model
     {
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
+        $this->db->where('user_type', 'employee');
         $this->db->from('dependant_information');
         return $this->db->count_all_results();
     }
@@ -3358,6 +3359,7 @@ class Company_model extends CI_Model
     {
         $this->db->select('sid');
         $this->db->where('users_sid', $employee_sid);
+        $this->db->where('user_type', 'employee');
         $this->db->from('bank_account_details');
         return $this->db->count_all_results();
     }
@@ -3366,6 +3368,7 @@ class Company_model extends CI_Model
     {
         $this->db->select('sid');
         $this->db->where('employer_sid', $employee_sid);
+        $this->db->where('user_type', 'employee');
         $this->db->from('form_w4_original');
         return $this->db->count_all_results();
     }
