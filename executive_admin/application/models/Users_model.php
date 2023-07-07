@@ -523,10 +523,10 @@ class Users_model extends CI_Model
             ->like('users.first_name', $query)
             ->or_like('users.last_name', $query)
             ->or_like('users.email', $query);
-            if ($phoneQuery) {
-                $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false);
-            }
-            $this->db->group_end()
+        if ($phoneQuery) {
+            $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false);
+        }
+        $this->db->group_end()
             ->where_in('users.parent_sid', $executiveCompanyIds, false)
             ->count_all_results();
 
@@ -538,10 +538,10 @@ class Users_model extends CI_Model
             ->like('portal_job_applications.first_name', $query)
             ->or_like('portal_job_applications.last_name', $query)
             ->or_like('portal_job_applications.email', $query);
-            if ($phoneQuery) {
-                $this->db->or_like('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneQuery, false);
-            }
-            $this->db->group_end()
+        if ($phoneQuery) {
+            $this->db->or_like('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneQuery, false);
+        }
+        $this->db->group_end()
             ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
             ->where('portal_job_applications.hired_sid IS NULL', NULL)
             ->count_all_results();
@@ -593,8 +593,8 @@ class Users_model extends CI_Model
             ->or_like('users.email', $query);
         if ($phoneQuery) {
             $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', $phoneQuery, false);
-            $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '1'.$phoneQuery, false);
-            $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '+1'.$phoneQuery, false);
+            $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '1' . $phoneQuery, false);
+            $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber,"[^0-9]","")', '+1' . $phoneQuery, false);
         }
         $this->db->group_end()
             ->limit($offset, $inset)
@@ -672,5 +672,17 @@ class Users_model extends CI_Model
         $this->GetEmployeeStatus($all_employees, 1);
         return $all_employees;
         //return array_merge_recursive($applicants, $employees);
+    }
+
+    //
+    function assigned_incidents_count($employee_id,$company_id)
+    {
+        $this->db->select('sid');
+        $this->db->where('employer_sid', $employee_id);
+        $this->db->where('company_sid', $company_id);
+        $this->db->where('incident_status', 'pending');
+        $this->db->from('incident_assigned_emp');
+
+        return $this->db->count_all_results();
     }
 }
