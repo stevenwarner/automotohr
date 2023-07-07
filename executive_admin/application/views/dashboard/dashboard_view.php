@@ -140,6 +140,11 @@
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'dashboard/manage_admin_companies/' . $user_company['company_sid']; ?>">Manage</a>
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'dashboard/reports/' . $user_company['company_sid']; ?>">Reports</a>
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url('private_messages') . '/' . $user_company['company_sid']; ?>">Messages</a>
+                                                            <?php if ($user_company['incidentCount'] > 0) { ?>
+                                                                <span class="btn btn-sm" data-toggle="tooltip" data-placement="top" title="<?php echo $user_company['incidentCount']; ?> Incident Pending">
+                                                                    <figure><i class="fa fa-exclamation-triangle start_animation " aria-hidden="true"></i></figure>
+                                                                </span>
+                                                            <?php } ?>
 
                                                             <?php if ($user_company['message_total'] > 0) { ?>
                                                                 <img class="icon-msg-new" src="<?= base_url() ?>assets/images/new_msg.gif">
@@ -328,17 +333,17 @@
                 }
                 rows += '   <td>' + (v.user_type.toUpperCase()) + '</td>';
                 rows += '   <td>';
-            //    rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_archived == 1 ? 'checked="true"' : "") + '/>Archived</label></div>';
+                //    rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_archived == 1 ? 'checked="true"' : "") + '/>Archived</label></div>';
                 if (v.user_type == 'employee') {
-                   // rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 1 ? 'checked="true"' : "") + '/>Active</label></div>';
-                  //  rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 0 ? 'checked="true"' : "") + '/>In-Active</label></div>';
-                  //  rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_terminated == 1 ? 'checked="true"' : "") + '/>Terminated</label></div>';
-                 rows += '       <div class="checkbox-inline"><label>'+v.newstatus+'</label></div>';
+                    // rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 1 ? 'checked="true"' : "") + '/>Active</label></div>';
+                    //  rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 0 ? 'checked="true"' : "") + '/>In-Active</label></div>';
+                    //  rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_terminated == 1 ? 'checked="true"' : "") + '/>Terminated</label></div>';
+                    rows += '       <div class="checkbox-inline"><label>' + v.newstatus + '</label></div>';
 
                 }
 
                 if (v.user_type == 'applicant') {
-                   rows += '       <div class="checkbox-inline"><label>'+v.is_archived == 1? 'Archived':''+'</label></div>';
+                    rows += '       <div class="checkbox-inline"><label>' + v.is_archived == 1 ? 'Archived' : '' + '</label></div>';
                 }
 
                 rows += '   </td>';
@@ -508,6 +513,24 @@
 </script>
 
 <style>
+    figure i {
+        font-size: 30px !important;
+        color: #81b431;
+    }
+
+    .start_animation {
+        animation-name: icon_alert;
+        animation-duration: 0.8s;
+        animation-iteration-count: infinite;
+    }
+
+    @keyframes icon_alert {
+        75% {
+            color: #dc3545;
+        }
+    }
+
+
     .filter-form-wrp {
         float: left;
         width: 100%;
