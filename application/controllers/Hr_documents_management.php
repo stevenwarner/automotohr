@@ -1916,7 +1916,7 @@ class Hr_documents_management extends Public_Controller
                         $s3_path = $this->input->post('s3_path');
                         //
                         // $pdf_decoded = base64_decode ($pdf_content);
-                        $path = ROOTPATH . '/temp_files/hybird_document/'.time().'/';
+                        $path = ROOTPATH . '/temp_files/hybird_document/' . time() . '/';
                         $zipath = ROOTPATH . '/temp_files/hybird_document/';
                         //
                         if (!file_exists($path)) {
@@ -1939,10 +1939,10 @@ class Hr_documents_management extends Public_Controller
                         $zipFileName = time() . '.zip';
                         $this->load->library('zip');
                         $this->zip->read_dir($path, FALSE);
-                        $this->zip->archive($zipath.$zipFileName);
-                        echo base_url('hr_documents_management/downloadHybridDocument/').$zipFileName;
+                        $this->zip->archive($zipath . $zipFileName);
+                        echo base_url('hr_documents_management/downloadHybridDocument/') . $zipFileName;
                         return;
-                        break;    
+                        break;
                 }
             }
         }
@@ -15875,43 +15875,43 @@ class Hr_documents_management extends Public_Controller
         $data['session'] = $this->session->userdata('logged_in');
         $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
         //
-        $data["s3_path"] = ''; 
-        $data["document_body"] = ''; 
+        $data["s3_path"] = '';
+        $data["document_body"] = '';
         //
         switch ($t) {
             case 'assigned_history':
                 $d = $this->hr_documents_management_model->getDocumentHistoryById($i);
-                $data["s3_path"] = $d['document_s3_name']; 
+                $data["s3_path"] = $d['document_s3_name'];
                 $document_body = $this->convertMagicCodeToHTML($d);
-                $data["document_body"] = $document_body;    
+                $data["document_body"] = $document_body;
                 //
                 break;
             case 'original':
-                if ($tt == 'document'){
+                if ($tt == 'document') {
                     $d = $this->hr_documents_management_model->getDocumentById($i);
                     $d['user_type'] = null;
                     $d['user_sid'] = null;
                     $d['document_sid'] = null;
-                    $data["s3_path"] = $d['uploaded_document_s3_name']; 
+                    $data["s3_path"] = $d['uploaded_document_s3_name'];
                     $document_body = $this->convertMagicCodeToHTML($d);
-                    $data["document_body"] = $document_body;  
+                    $data["document_body"] = $document_body;
                 } else {
                     $d = $this->hr_documents_management_model->getOfferLetterById($i);
                     $d['user_type'] = null;
                     $d['user_sid'] = null;
                     $d['document_sid'] = null;
-                    $data["s3_path"] = $d['uploaded_document_s3_name']; 
+                    $data["s3_path"] = $d['uploaded_document_s3_name'];
                     $document_body = $this->convertMagicCodeToHTML($d);
-                    $data["document_body"] = $document_body;  
+                    $data["document_body"] = $document_body;
                 }
                 //     
                 break;
             case 'assigned':
             case 'submitted':
                 $d = $this->hr_documents_management_model->getAssignedDocumentById($i);
-                $data["s3_path"] = $d['document_s3_name']; 
+                $data["s3_path"] = $d['document_s3_name'];
                 $document_body = $this->convertMagicCodeToHTML($d, 'submitted');
-                $data["document_body"] = $document_body;  
+                $data["document_body"] = $document_body;
                 break;
         }
 
@@ -15932,7 +15932,8 @@ class Hr_documents_management extends Public_Controller
         $this->load->view('hr_documents_management/hybrid/print_download_hybird_document', $data);
     }
 
-    function convertMagicCodeToHTML ($document, $request_type = 'original') {
+    function convertMagicCodeToHTML($document, $request_type = 'original')
+    {
         $requested_content = '';
         //
         if ($request_type == 'submitted') {
@@ -15988,5 +15989,41 @@ class Hr_documents_management extends Public_Controller
         }
         //
         return $requested_content;
+    }
+
+    //
+
+    public function my_courses()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+
+            $data['company_sid'] = $company_sid;
+            $data['employer_sid'] = $employer_sid;
+            $data['top_view'] = true;
+            $data['employer'] = $data["session"]["employer_detail"];
+            $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_personal';
+            $data['watch_url'] = '';
+            $data['employee'] = $data['session']['employer_detail'];
+            $load_view = check_blue_panel_status(false, 'self');
+            $user_type = 'employee';
+
+
+            $data['user_type'] = $user_type;
+            $data['employer_sid'] = $employer_sid;
+            $data['title'] = 'Courses';
+            //                            
+            $data['load_view'] = $load_view;
+            $data['assigned_sessions'] = $assigned_sessions;
+            $data['pendingSessions'] = $pendingSessions;
+            $this->load->view('main/header', $data);
+            $this->load->view('learning_center/my_courses');
+            $this->load->view('main/footer');
+        }
     }
 }
