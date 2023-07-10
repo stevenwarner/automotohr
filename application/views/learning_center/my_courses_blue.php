@@ -23,7 +23,6 @@
                     <div class="heading-sec">
                         <div class="row">
                             <div class="col-md-6 col-xs-12">
-
                                 <h1>Employee Health Score: <br><span class="healthscore" alt="" title="">0</span>
                                     <div class="progress-meter-detail-button" alt="Show Score Details" title="Show Score Details" onclick="$('#heathpopup').modal('show');setTimeout(calculatechsdata, 500);" style="display: inline; position: absolute; "><img src="/assets/img/tooltip.svg" alt=""></div>
                                 </h1>
@@ -64,7 +63,7 @@
                         <div class="row" style="margin-top: 20px;"></div>
 
                         <div class="row">
-                            <div class="table-sec">
+                            <div class="table-sec" style="overflow-x: auto;">
                                 <h1>Discrimination for Employees</h1>
                                 <table id="example" class="table" style="width: 100%;">
                                     <tbody>

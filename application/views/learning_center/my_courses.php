@@ -166,6 +166,7 @@
                 border-radius: 10px;
                 padding: 28px 27px 13px;
                 margin-bottom: 10px;
+                overflow-x: auto;
         }
 
 
