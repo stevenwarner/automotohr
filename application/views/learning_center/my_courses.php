@@ -1,4 +1,8 @@
 <style>
+
+
+
+
         .completed {
                 background: #ffc107 !important;
         }
@@ -42,6 +46,7 @@
         }
 
         .heading-sec h1 {
+                font-family: "Poppins";
                 font-style: normal;
                 font-weight: 500;
                 font-size: 40px;
@@ -102,7 +107,7 @@
                 font-size: 16px;
                 font-weight: 500;
                 color: #012970;
-                font-family: "Poppins", sans-serif;
+                font-family: "Poppins";
         }
 
 
@@ -132,6 +137,7 @@
         }
 
         .divround strong {
+                font-family: "Poppins";
                 font-style: normal;
                 font-weight: 600;
                 font-size: 18px;
@@ -171,6 +177,7 @@
 
 
         table#example td {
+                font-family: "Poppins";
                 font-style: normal;
                 font-size: 12px;
                 line-height: 21px;
@@ -217,6 +224,8 @@
 
 
         .table-sec h1 {
+                font-family: "Poppins";
+
                 font-style: normal;
                 font-weight: 600;
                 font-size: 18px;

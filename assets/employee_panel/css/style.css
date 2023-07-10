@@ -27,6 +27,12 @@
   font-style: normal;
 }
 
+
+@font-face {
+  font-family: 'Poppins';
+  src: local('☺'), url('../fonts/Poppins-Medium.ttf');
+}
+
 * {
   margin: 0;
   padding: 0;
