@@ -140,7 +140,7 @@
                 font-family: "Poppins";
                 font-style: normal;
                 font-weight: 600;
-                font-size: 18px;
+                font-size: 16px;
                 line-height: 22px;
                 float: left;
                 width: 100%;

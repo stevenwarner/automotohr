@@ -920,6 +920,25 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
+
+
+
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <div class="widget-box">
+                                <a href="<?php echo base_url('hr_documents_management/my_courses'); ?>">
+                                    <div class="link-box bg-redish full-width">
+                                        <h2>Courses</h2>
+                                        <div><span>&nbsp;</span></div>
+                                        
+                                        <div class="status-panel">
+                                            <h3>View Courses</h3>
+                                            <span>Assigned to You</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
