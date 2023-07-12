@@ -13157,7 +13157,7 @@ if (!function_exists('isDocumentCompletedCheck')) {
             }
 
             // Check document Type
-            if ($type == 'generated') {
+            if ($type == 'generated' || $type == 'hybrid_document') {
                 // 
                 $magic_keys = document_description_tags('all');
                 //

@@ -469,49 +469,81 @@
                                             </div>
                                         <?php } ?>
 
-                                           <div class="row">
-                                                <div class="col-xs-12">
-                                                    <div class="hr-box">
-                                                        <div class="hr-box-header">
-                                                            <strong>Employee Handbook and Policies?</strong>
-                                                        </div>
-                                                        <div class="hr-innerpadding">
-                                                            <?php
-                                                            if ($document_info['isdoctohandbook'] == 1) {
-                                                                $isdoctohandbook1 = 'checked="true"';
-                                                            } else {
-                                                                $isdoctohandbook0 = 'checked="true"';
-                                                            }
-                                                            ?>
-                                                             <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <p class="text-danger"><strong><em><?= $this->lang->line('dm_handbook_text'); ?></em></strong></p>
-                                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="hr-box">
+                                                    <div class="hr-box-header">
+                                                        <strong>Employee Handbook and Policies?</strong>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <p><?= $this->lang->line('dm_handbook_label'); ?></p>
+                                                    <div class="hr-innerpadding">
+                                                        <?php
+                                                        if ($document_info['isdoctohandbook'] == 1) {
+                                                            $isdoctohandbook1 = 'checked="true"';
+                                                        } else {
+                                                            $isdoctohandbook0 = 'checked="true"';
+                                                        }
+                                                        ?>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <p class="text-danger"><strong><em><?= $this->lang->line('dm_handbook_text'); ?></em></strong></p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                            <div class="row">
-                                                                <div class="col-xs-12">
-                                                                    <label class="control control--radio font-normal">
-                                                                        <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="0" <?php echo $isdoctohandbook0; ?> />
-                                                                        No &nbsp;
-                                                                        <div class="control__indicator"></div>
-                                                                    </label>
-                                                                    <label class="control control--radio font-normal">
-                                                                        <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="1" <?php echo $isdoctohandbook1; ?> />
-                                                                        Yes &nbsp;
-                                                                        <div class="control__indicator"></div>
-                                                                    </label>
-                                                                </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <p><?= $this->lang->line('dm_handbook_label'); ?></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <label class="control control--radio font-normal">
+                                                                    <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="0" <?php echo $isdoctohandbook0; ?> />
+                                                                    No &nbsp;
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                                <label class="control control--radio font-normal">
+                                                                    <input class="disable_doc_checkbox" name="isdoctohandbook" type="radio" value="1" <?php echo $isdoctohandbook1; ?> />
+                                                                    Yes &nbsp;
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
 
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="hr-box">
+                                                    <div class="hr-box-header">
+                                                        <strong>Is this document required?</strong>
+                                                        <p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
+                                                    </div>
+                                                    <div class="hr-innerpadding">
+                                                        <div class="row">
+                                                            <?php
+                                                            if ($document_info['is_required'] == 1) {
+                                                                $isRequired1 = 'checked="true"';
+                                                            } else {
+                                                                $isRequired0 = 'checked="true"';
+                                                            } ?>
+                                                            <div class="col-xs-12">
+                                                                <label class="control control--radio font-normal">
+                                                                    <input class="disable_doc_checkbox" name="isRequired" type="radio" value="0" <?php echo $isRequired0 ?> />
+                                                                    No &nbsp;
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                                <label class="control control--radio font-normal">
+                                                                    <input class="disable_doc_checkbox" name="isRequired" type="radio" value="1" <?php echo $isRequired1 ?> />
+                                                                    Yes &nbsp;
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
 
                                         <div class="row">
@@ -527,7 +559,8 @@
                                                 }
                                                 ?>
                                                 <button type="submit" id="gen_boc_btn" class="btn btn-success" onclick="validate_form();"><?php echo $btn_text; ?></button>
-                                                <!-- <button type="button" id="auth_sign_btn" class="btn btn-success" onclick="check_authorized_signature();"><?php //echo $btn_text; ?></button> -->
+                                                <!-- <button type="button" id="auth_sign_btn" class="btn btn-success" onclick="check_authorized_signature();"><?php //echo $btn_text; 
+                                                                                                                                                                ?></button> -->
                                                 <a href="<?php echo base_url('hr_documents_management'); ?>" class="btn black-btn">Cancel</a>
                                             </div>
                                         </div>

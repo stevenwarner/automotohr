@@ -7177,6 +7177,7 @@ class Hr_documents_management_model extends CI_Model
     //
     function getUncompletedAssignedDocuments($companyId, $user_sid, $user_type)
     {
+
         //
         $r = [];
         //

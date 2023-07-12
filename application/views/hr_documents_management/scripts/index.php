@@ -282,6 +282,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			rows += '<hr />';
 			//
 			// Check if the document type
+			console.log(getUploadContent());
 			if (do_upload) rows += getUploadContent();
 			if (do_descpt) rows += getGeneratedContent('js-modify-assign-document-description');
 			<?php if (ASSIGNEDOCIMPL) { ?>
@@ -400,7 +401,12 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					if(d.confidential_employees){
 						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
-					//
+
+
+					$('#modify-assign-document-modal [name="js-modify-assign-document-required"][value=1]').prop('checked', d.is_required == '1' ? true : false);
+					$('#modify-assign-document-modal [name="js-modify-assign-document-required"][value=0]').prop('checked', d.is_required == '0' ? true : false);
+
+
 					// Approver  Flow
 					var approverPrefill = {};
 			        var approverSection = approverSection = {

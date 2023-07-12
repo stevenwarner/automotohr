@@ -564,6 +564,8 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['visible_to_document_center'] = 0;
                         $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
 
+                        $data_to_insert['is_required'] = $this->input->post('isRequired') ? $this->input->post('isRequired') : 0;
+
 
 
                         $data_to_insert['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
@@ -849,6 +851,8 @@ class Hr_documents_management extends Public_Controller
 
                         //
                         $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+                        $data_to_insert['is_required'] = $this->input->post('isRequired') ? $this->input->post('isRequired') : 0;
+
 
                         if ($video_required != 'not_required') {
                             $video_source = $this->input->post('video_source');
@@ -1395,6 +1399,10 @@ class Hr_documents_management extends Public_Controller
                         }
                         //
                         $data_to_update['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+                        
+                        $data_to_update['is_required'] = $this->input->post('isRequired') ? $this->input->post('isRequired') : 0;
+
+
 
                         if ($video_required != 'not_required') {
                             $video_source = $this->input->post('video_source');
@@ -9570,6 +9578,8 @@ class Hr_documents_management extends Public_Controller
 
             //
             $data_to_insert['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+            $data_to_insert['is_required'] = $this->input->post('isRequired') ? $this->input->post('isRequired') : 0;
+
 
             // $data_to_insert = array();
             $new_history_data = array();
@@ -9805,6 +9815,7 @@ class Hr_documents_management extends Public_Controller
 
             //
             $data_to_update['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
+            $data_to_update['is_required'] = $this->input->post('isRequired') ? $this->input->post('isRequired') : 0;
 
             if ($video_required != 'not_required') {
                 $video_source = $this->input->post('video_source');
@@ -10611,12 +10622,14 @@ class Hr_documents_management extends Public_Controller
                     $user_sid,
                     $user_type
                 );
+
                 //
                 $documents = $this->hr_documents_management_model->getUncompletedAssignedDocuments(
                     $company_sid,
                     $user_sid,
                     $user_type
                 );
+               
                 //
                 $this->res['Status'] = TRUE;
                 $this->res['Response'] = array_merge($generalDocuments, $documents);
