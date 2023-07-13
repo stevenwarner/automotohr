@@ -492,9 +492,20 @@
                                             <div class="hr-box">
                                                 <div class="hr-box-header">
                                                     <strong>Is this document required?</strong>
-                                                    <p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
                                                 </div>
                                                 <div class="hr-innerpadding">
+                                                     <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <p class="text-danger">
+                                                                <strong>
+                                                                    <em>
+                                                                        If marked yes, the applicant/employee is required to fill out this document once they have been assigned.
+                                                                    </em>
+                                                                </strong>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <br>
                                                     <div class="row">
                                                         <?php
                                                         if ($document_info['is_required'] == 1) {
