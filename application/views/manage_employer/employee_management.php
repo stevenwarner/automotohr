@@ -546,8 +546,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             <?php } ?>
-
-                                                            <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
+                                                            <?php if (($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) && (isTranferredEmployee($employee['sid']))) { ?>
                                                                 <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $employee['sid']; ?>" data-original-title="View Transfer Details">
                                                                     <i class="fa fa-history" aria-hidden="true"></i>
                                                                 </button>

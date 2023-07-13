@@ -236,9 +236,11 @@
                                                                             <?php   } ?>
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                                <?php if (isTranferredEmployee($value['sid'])) { ?>
                                                                             <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
                                                                                 <i class="fa fa-history" aria-hidden="true"></i>
                                                                             </button>
+                                                                            <?php } ?>
                                                                         </td>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
                                                                             <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>

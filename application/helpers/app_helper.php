@@ -673,15 +673,34 @@ if (!function_exists('getDataFromTable')) {
      * @param string $table
      * @param array  $where
      * @param array  $columns Optional
+     * @param array  $method Optional
+     * row_array, result_array
      * @return array
      */
-    function getDataFromTable(string $table, array $where, array $columns = ['*']): array
+    function getDataFromTable(string $table, array $where, array $columns = ['*'], string $method = 'row_array'): array
     {
         return get_instance()
             ->db
             ->select($columns)
             ->where($where)
             ->get($table)
-            ->row_array();
+            ->$method();
+    }
+}
+
+
+if (!function_exists('isTranferredEmployee')) {
+    /**
+     * fetch data from tables
+     *
+     * @param int $userId
+     * @return int
+     */
+    function isTranferredEmployee(int $userId): int
+    {
+        return get_instance()
+            ->db
+            ->where("new_employee_sid = $userId OR previous_employee_sid = $userId")
+            ->count_all_results('employees_transfer_log');
     }
 }
