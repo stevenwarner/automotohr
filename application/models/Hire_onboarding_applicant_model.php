@@ -93,18 +93,18 @@ class Hire_onboarding_applicant_model extends CI_Model
     {
         $this->db->insert('users', $employer_data);
         $user_id = $this->db->insert_id(); // check if insert was successful
-    
+
 
         //
-        if($employer_data['department_sid']!=0 && $employer_data['team_sid']!=0 ){
+        if ($employer_data['department_sid'] != 0 && $employer_data['team_sid'] != 0) {
             $team_information['department_sid'] = $employer_data['department_sid'];
             $team_information['team_sid'] = $employer_data['team_sid'];
             $team_information['employee_sid'] = $user_id;
             $team_information['created_at'] = date('Y-m-d H:i:s');
             $this->db->insert('departments_employee_2_team', $team_information);
         }
-        
-       
+
+
 
 
         if ($this->db->affected_rows() == '1') { // now update applications table
@@ -965,11 +965,45 @@ class Hire_onboarding_applicant_model extends CI_Model
         $forms = $records_obj->result_array();
         $records_obj->free_result();
         if (!empty($forms)) {
+            $w4OldSid = $forms[0]['sid'];
+
             unset($forms[0]['sid']);
             $forms[0]['employer_sid'] = $hired_sid;
             $forms[0]['user_type'] = 'employee';
             $this->db->insert('form_w4_original', $forms[0]);
+            $newW4Id = $this->db->insert_id();
+
+            //W4 History
+            $this->db->select('*');
+            $this->db->where('form_w4_ref_sid', $w4OldSid);
+            $records_obj = $this->db->get('form_w4_original_history');
+            $formsW4History = $records_obj->result_array();
+            if (!empty($formsW4History)) {
+                foreach ($formsW4History as $formsOldRow) {
+                    unset($formsOldRow['sid']);
+                    $formsOldRow['form_w4_ref_sid'] = $newW4Id;
+                    $formsOldRow['employer_sid'] = $hired_sid;
+                    $formsOldRow['user_type'] = 'employee';
+                    $this->db->insert('form_w4_original_history', $formsOldRow);
+                }
+            }
+
+            // W4 Trail
+            $this->db->select('*');
+            $this->db->where('document_sid', $w4OldSid);
+            $this->db->where('document_type', 'w4');
+            $records_obj = $this->db->get('verification_documents_track');
+            $formsW4Trail = $records_obj->result_array();
+
+            if (!empty($formsW4Trail)) {
+                foreach ($formsW4Trail as $formsOldTrailRow) {
+                    unset($formsOldTrailRow['sid']);
+                    $formsOldTrailRow['document_sid'] = $newW4Id;
+                    $this->db->insert('verification_documents_track', $formsOldTrailRow);
+                }
+            }
         }
+
         //W9
         $this->db->select('*');
         $this->db->where('user_sid', $sid);
@@ -978,11 +1012,47 @@ class Hire_onboarding_applicant_model extends CI_Model
         $forms = $records_obj->result_array();
         $records_obj->free_result();
         if (!empty($forms)) {
+
+            $w9OldSid = $forms[0]['sid'];
+
             unset($forms[0]['sid']);
             $forms[0]['user_sid'] = $hired_sid;
             $forms[0]['user_type'] = 'employee';
             $this->db->insert('applicant_w9form', $forms[0]);
+            $newW9Id = $this->db->insert_id();
+
+            //W9 Old History
+            $this->db->select('*');
+            $this->db->where('w9form_ref_sid', $w9OldSid);
+            $records_obj = $this->db->get('applicant_w9form_history');
+            $formsW9History = $records_obj->result_array();
+
+            if (!empty($formsW9History)) {
+                foreach ($formsW9History as $formsOldRow) {
+                    unset($formsOldRow['sid']);
+                    $formsOldRow['w9form_ref_sid'] = $newW9Id;
+                    $formsOldRow['user_sid'] = $hired_sid;
+                    $formsOldRow['user_type'] = 'employee';
+                    $this->db->insert('applicant_w9form_history', $formsOldRow);
+                }
+            }
+
+            // W9 Trail
+            $this->db->select('*');
+            $this->db->where('document_sid', $w9OldSid);
+            $this->db->where('document_type', 'w9');
+            $records_obj = $this->db->get('verification_documents_track');
+            $formsW9Trail = $records_obj->result_array();
+
+            if (!empty($formsW9Trail)) {
+                foreach ($formsW9Trail as $formsOldTrailRow) {
+                    unset($formsOldTrailRow['sid']);
+                    $formsOldTrailRow['document_sid'] = $newW9Id;
+                    $this->db->insert('verification_documents_track', $formsOldTrailRow);
+                }
+            }
         }
+
         //I9
         $this->db->select('*');
         $this->db->where('user_sid', $sid);
@@ -991,12 +1061,47 @@ class Hire_onboarding_applicant_model extends CI_Model
         $forms = $records_obj->result_array();
         $records_obj->free_result();
         if (!empty($forms)) {
+
+            $I9OldSid = $forms[0]['sid'];
+
             unset($forms[0]['sid']);
             $forms[0]['user_sid'] = $hired_sid;
             $forms[0]['user_type'] = 'employee';
             $forms[0]['emp_app_sid'] = $hired_sid;
             $this->db->insert('applicant_i9form', $forms[0]);
+
+            $newI9Id = $this->db->insert_id();
+
+            //I9 Old History
+            $this->db->select('*');
+            $this->db->where('i9form_ref_sid', $I9OldSid);
+            $records_obj = $this->db->get('applicant_i9form_history');
+            $formsI9History = $records_obj->result_array();
+            if (!empty($formsI9History)) {
+                foreach ($formsI9History as $formsOldRow) {
+                    unset($formsOldRow['sid']);
+                    $formsOldRow['i9form_ref_sid'] = $newI9Id;
+                    $formsOldRow['user_sid'] = $hired_sid;
+                    $formsOldRow['user_type'] = 'employee';
+                    $this->db->insert('applicant_i9form_history', $formsOldRow);
+                }
+            }
+
+            // I9 Trail
+            $this->db->select('*');
+            $this->db->where('document_sid', $I9OldSid);
+            $this->db->where('document_type', 'i9');
+            $records_obj = $this->db->get('verification_documents_track');
+            $formsI9Trail = $records_obj->result_array();
+            if (!empty($formsI9Trail)) {
+                foreach ($formsI9Trail as $formsOldTrailRow) {
+                    unset($formsOldTrailRow['sid']);
+                    $formsOldTrailRow['document_sid'] = $newI9Id;
+                    $this->db->insert('verification_documents_track', $formsOldTrailRow);
+                }
+            }
         }
+
 
         //General Documents
         $this->db->select('*');
@@ -1364,11 +1469,50 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('application_sid', $user_sid);
         $this->db->set('is_latest', 0);
         $this->db->update('portal_eeo_form');
-        unset($record_arr[0]['sid']);
-        $record_arr[0]['users_type'] = 'employee';
-        $record_arr[0]['application_sid'] = $new_employee_id;
-        $record_arr[0]['is_latest'] = 1;
-        $this->db->insert('portal_eeo_form', $record_arr[0]);
+
+        if (!empty($record_arr)) {
+            $eeocOldSid = $record_arr[0]['sid'];
+
+            unset($record_arr[0]['sid']);
+            $record_arr[0]['users_type'] = 'employee';
+            $record_arr[0]['application_sid'] = $new_employee_id;
+            $record_arr[0]['is_latest'] = 1;
+            $this->db->insert('portal_eeo_form', $record_arr[0]);
+
+            $neweeocId = $this->db->insert_id();
+
+            //Eeoc History
+            $this->db->select('*');
+            $this->db->where('eeo_form_sid', $eeocOldSid);
+            $records_obj = $this->db->get('portal_eeo_form_history');
+            $formsEeocHistory = $records_obj->result_array();
+            if (!empty($formsEeocHistory)) {
+                foreach ($formsEeocHistory as $formsOldRow) {
+                    unset($formsOldRow['sid']);
+                    $formsOldRow['eeo_form_sid'] = $neweeocId;
+                    $formsOldRow['application_sid'] = $new_employee_id;
+                    $formsOldRow['users_type'] = 'employee';
+                    $this->db->insert('portal_eeo_form_history', $formsOldRow);
+                }
+            }
+
+            // Eeoc Trail
+            $this->db->select('*');
+            $this->db->where('document_sid', $eeocOldSid);
+            $this->db->where('document_type', 'eeoc');
+            $records_obj = $this->db->get('verification_documents_track');
+            $formsEeocTrail = $records_obj->result_array();
+
+            if (!empty($formsEeocTrail)) {
+                foreach ($formsEeocTrail as $formsOldTrailRow) {
+                    unset($formsOldTrailRow['sid']);
+                    $formsOldTrailRow['document_sid'] = $neweeocId;
+                    $this->db->insert('verification_documents_track', $formsOldTrailRow);
+                }
+            }
+        }
+
+
 
         //Check applicant eeoc form status (mean filled or not)
         //        $form_status = 'No';
@@ -1502,8 +1646,8 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('sid', $employee_sid);
         $this->db->update('users', $employer_data);
 
-      //
-        if($employer_data['department_sid']!=0 && $employer_data['team_sid']!=0 ){
+        //
+        if ($employer_data['department_sid'] != 0 && $employer_data['team_sid'] != 0) {
             $team_information['department_sid'] = $employer_data['department_sid'];
             $team_information['team_sid'] = $employer_data['team_sid'];
             $team_information['employee_sid'] = $employee_sid;
@@ -1514,7 +1658,8 @@ class Hire_onboarding_applicant_model extends CI_Model
         //        }
     }
 
-    function save_merge_applicant_info ($applicant_data, $applicant_sid, $employee_sid) {
+    function save_merge_applicant_info($applicant_data, $applicant_sid, $employee_sid)
+    {
         // insert merge table record
         $merge_record = array(
             'portal_job_applications_sid' => $applicant_sid,
@@ -1627,7 +1772,7 @@ class Hire_onboarding_applicant_model extends CI_Model
 
 
 
-//
+    //
     function get_applicant_department_team($company_sid, $applicant_sid)
     {
         $this->db->select('department_sid,team_sid');
@@ -1635,9 +1780,5 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('applicant_sid', $applicant_sid);
         $result = $this->db->get('onboarding_applicants')->row_array();
         return $result;
-      
     }
-
-
-
 }

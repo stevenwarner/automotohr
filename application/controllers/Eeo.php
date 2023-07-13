@@ -986,7 +986,15 @@ class Eeo extends Public_Controller
         //
         $html = '';
         foreach ($eeoc_track as $track) {
-
+            //
+            $userDetails = getDataFromTable(
+                $track['user_type'] === 'employee' ? 'users' : 'portal_job_applications',
+                ['sid' => $track['user_sid']],
+                $track['user_type'] === 'employee' ? explode(',', getUserFields()) : [
+                    'first_name',
+                    'last_name'
+                ]
+            );
             $html .= '<tr>';
             $html .= '    <td class="col-lg-4">';
             if ($track['document_type'] == "eeoc") {
@@ -1000,7 +1008,11 @@ class Eeo extends Public_Controller
             }
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
-            $html .=        getUserNameBySID($track['user_sid']);
+            if ($track['user_type'] === 'applicant') {
+                $html .=        $userDetails['first_name'].' '.$userDetails['last_name'].' (Applicant)';
+            } else {
+                $html .=        remakeEmployeeName($userDetails);
+            }
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
             $html .=         reset_datetime(array('datetime' => $track['created_at'], '_this' => $this));
