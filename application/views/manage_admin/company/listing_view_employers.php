@@ -142,6 +142,8 @@
                                                                                 echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="' . $value['sid'] . '" data-name="' . $value['company_name'] . '">Send Login Email</a>';
                                                                             }
                                                                             ?>
+                                                                            <br>
+
                                                                             <?php echo $doNotHireWarning['message']; ?>
 
                                                                         </td>
@@ -233,6 +235,11 @@
                                                                                 <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-green.png') ?>">
                                                                             <?php   } ?>
                                                                         </td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                            <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
+                                                                                <i class="fa fa-history" aria-hidden="true"></i>
+                                                                            </button>
+                                                                        </td>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
                                                                             <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
                                                                         <?php   } ?>
@@ -255,8 +262,10 @@
                                                                         <?php   } ?>
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'employerlogin')) { ?>
-                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login"></td>
-                                                                        <?php   } ?>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login">
+                                                                            </td>
+                                                                        <?php } ?>
+
                                                                     </tr>
                                                                 <?php } ?>
                                                             <?php } else {  ?>
@@ -581,4 +590,84 @@
             }
         );
     }
+
+
+
+
+
+    var isXHRInProgress = null;
+
+    $(document).on('click', '.jsEmployeeTransferLog', function(event) {
+
+        //
+        event.preventDefault();
+        //
+        var employeeId = $(this).data('id') || null;
+        //
+        Modal({
+            Id: "jsEmployeeQuickProfileModal",
+            Loader: 'jsEmployeeQuickProfileModalLoader',
+            Title: 'Employee Transfer History',
+            Body: '<div class="container"><div id="jsEmployeeQuickProfileModalBody"></div></div>'
+        }, function() {
+
+            if (employeeId) {
+                var html = '<div id="jsEmployeeQuickProfileModalMainBody"></div>';
+                //
+                $('#jsEmployeeQuickProfileModalBody').html(html);
+                GetSpecificEmployeeDetails(employeeId, 'jsEmployeeQuickProfileModal');
+            }
+        });
+    });
+
+
+
+    //
+
+    function GetSpecificEmployeeDetails(
+        employeeId,
+        id
+    ) {
+        //
+        if (employeeId === 0) {
+            // flush view
+            $('#' + id + 'MainBody').html('');
+            return;
+        }
+        //
+        if (isXHRInProgress != null) {
+            isXHRInProgress.abort();
+        }
+        $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+        //
+        isXHRInProgress =
+            $.get(window.location.origin + '/employer_transfer_log/' + employeeId)
+            .done(function(resp) {
+                //
+                isXHRInProgress = null;
+                //
+                if (resp.Status === false) {
+                    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                    $('#' + id + 'MainBody').html(resp.Msg);
+                    return;
+                }
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                //
+                $('#' + id + 'MainBody').html(resp.Data);
+            })
+            .error(function(err) {
+                //
+                isXHRInProgress = null;
+                $('#' + id).html('Something went wrong while accessing the employee transfer.');
+            });
+        //
+        return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+    }
+
+
+    $(document).on('click', '.jsToggleRow', function(e) {
+        e.preventDefault();
+        let id = $(this).closest('tr').data('id');
+        $('.jsToggleTable' + id).toggle();
+    });
 </script>

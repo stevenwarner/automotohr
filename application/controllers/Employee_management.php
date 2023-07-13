@@ -3804,8 +3804,8 @@ class Employee_management extends Public_Controller
         }
         return false;
     }
- 
-    private function checkAndUpdateProfileInfo (
+
+    private function checkAndUpdateProfileInfo(
         $employeeId,
         $employeeDetail,
         $dataToInsert
@@ -4189,6 +4189,35 @@ class Employee_management extends Public_Controller
             redirect(base_url('employee_management') . '?employee_type=' . $employee_type . '&department=' . $department_sid . '&keyword=' . $keyword . '&order_by=' . $order_by . '&logincred=' . $logincred, "refresh");
         } else {
             redirect(base_url('login'), 'refresh');
+        }
+    }
+
+    //
+
+    public function employerTransferLog($employee_sid = null)
+    {
+
+        if ($this->session->userdata('logged_in')) {
+
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'dashboard', 'employee_management'); 
+            if ($employee_sid != null) {
+                $this->load->model('manage_admin/company_model');
+
+                $this->data['page_title'] = 'Employee Transfer History';
+                $copyTransferEmployee = $this->company_model->checkIsEmployeeTransferred($employee_sid);
+
+                $record["copyTransferEmployee"] = $copyTransferEmployee;
+                //
+                $resp['Status'] = true;
+                $resp['Msg'] = 'Proceed.';
+                $resp['Data'] = $this->load->view('manage_admin/company/employers_transfer_log', $record, true);
+
+                res($resp);
+            }
         }
     }
 }

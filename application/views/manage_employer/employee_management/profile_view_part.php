@@ -2,6 +2,12 @@
     <h2>Personal Information </h2>
     <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) {  ?>
         <div class="form-btns">
+            <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
+                <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?= $employer_id; ?>" data-original-title="View Transfer Detail">
+                    <i class="fa fa-history" aria-hidden="true"></i>
+                </button>
+            <?php } ?>
+
             <?php if (!empty($MergeData)) { ?>
                 <input type="button" value="Merged Employee Information" id="jsSecondaryButton" style="width: 250px;" />
             <?php } ?>
@@ -9,10 +15,11 @@
                 <input type="button" class="btn btn-warning" value="Profile History" id="jsProfileHistory" data-id="<?= $employer_id; ?>" data-name="<?= remakeEmployeeName($employer); ?>" style="width: 150px;" />
             <?php } ?>
             <input type="submit" value="edit" id="<?php echo $employer['is_executive_admin'] ? '' : 'edit_button'; ?>" <?php echo $employer['is_executive_admin'] ? 'class="disabled-btn" disabled' : ''; ?>>
+
         </div>
     <?php } ?>
 </div>
-<!--  -->
+
 <div>
     <!--  -->
     <div class="row">
@@ -334,99 +341,99 @@
     <div class="row">
         <div class="col-sm-6">
             <label class="csF16">Union Member</label>
-            <p class="dummy-invoice-fields" <?= $employer['union_member'] ? "style='height: 100px'":''?>><?= $employer['union_member'] ? 'Yes <br><br>'.$employer['union_name'] : 'No'; ?></p>
+            <p class="dummy-invoice-fields" <?= $employer['union_member'] ? "style='height: 100px'" : '' ?>><?= $employer['union_member'] ? 'Yes <br><br>' . $employer['union_name'] : 'No'; ?></p>
 
         </div>
     </div>
     <br />
-   
 
-<?php if ($timeOff == 'enable') { ?>
-    <div class="row">
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Shift Time</label>
-            <?php
-            $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
-            $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
-            ?>
-            <p class="dummy-invoice-fields" id="employee_shift_time">
 
-            </p>
+    <?php if ($timeOff == 'enable') { ?>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Shift Time</label>
+                <?php
+                $shift_start = isset($employer['shift_start_time']) && !empty($employer['shift_start_time']) ? $employer['shift_start_time'] : SHIFT_START;
+                $shift_end = isset($employer['shift_end_time']) && !empty($employer['shift_end_time']) ? $employer['shift_end_time'] : SHIFT_END;
+                ?>
+                <p class="dummy-invoice-fields" id="employee_shift_time">
+
+                </p>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Break Time</label>
+                <?php
+                $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
+                $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
+                ?>
+                <p class="dummy-invoice-fields" id="employee_break_timing">
+
+                </p>
+            </div>
         </div>
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Break Time</label>
-            <?php
-            $break_hours = isset($employer['break_hours']) ? $employer['break_hours'] : BREAK_HOURS;
-            $break_minutes = isset($employer['break_mins']) && !empty($employer['break_mins']) ? $employer['break_mins'] : BREAK_MINUTES;
-            ?>
-            <p class="dummy-invoice-fields" id="employee_break_timing">
-
-            </p>
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Week Days Off</label>
+                <p class="dummy-invoice-fields">
+                    <?php if (isset($employer["offdays"])) { ?>
+                        <?php echo str_replace(",", ", ", $employer["offdays"]); ?>
+                    <?php } else { ?>
+                        Not Specified
+                    <?php } ?>
+                </p>
+            </div>
+            <div class="col-md-6 col-xs-12" id="display_employee_shift_detaail">
+                <!-- Employee shift information come here -->
+            </div>
         </div>
-    </div>
+    <?php } ?>
+    <!--  -->
     <br>
-    <div class="row">
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Week Days Off</label>
-            <p class="dummy-invoice-fields">
-                <?php if (isset($employer["offdays"])) { ?>
-                    <?php echo str_replace(",", ", ", $employer["offdays"]); ?>
-                <?php } else { ?>
-                    Not Specified
-                <?php } ?>
-            </p>
-        </div>
-        <div class="col-md-6 col-xs-12" id="display_employee_shift_detaail">
-            <!-- Employee shift information come here -->
-        </div>
-    </div>
-<?php } ?>
-<!--  -->
-<br>
-<!--  -->
-<br>
-<div class="row">
-    <div class="col-md-12 col-xs-12">
-        <label class="csF16">Interests</label>
-        <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["interests"]) ? $extra_info["interests"] : ''); ?></p>
-    </div>
-</div>
-<!--  -->
-<br>
-<div class="row">
-    <div class="col-md-12 col-xs-12">
-        <label class="csF16">Short Bio</label>
-        <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''); ?></p>
-    </div>
-</div>
-<?php if (checkIfAppIsEnabled('timeoff')) { ?>
     <!--  -->
     <br>
     <div class="row">
         <div class="col-md-12 col-xs-12">
-            <label class="csF16">Policies</label>
-            <?php
-            if (!empty($policies)) {
-                foreach ($policies as $key => $policy) {
-                    if (!$policy['Implements']) {
-                        continue;
-                    }
-            ?>
-                    <p style="<?= $key % 2 === 0 ? "background-color: #eee;" : ""; ?> padding: 10px;">
-                        <strong>Policy Title:</strong> <?php echo $policy['Title']; ?>
-                        <br /><span><strong>Remaining Time:</strong>
-                            <?= $policy['RemainingTime']; ?></span>
-                        <br /><span><strong>Employment Status:</strong>
-                            <?= ucwords($policy['EmployementStatus']); ?></span>
-                        <br /><span><strong>Entitled:</strong>
-                            <?= $policy['Implements'] ? 'Yes' : 'No'; ?></span>
-                    </p>
-            <?php   }
-            }
-            ?>
+            <label class="csF16">Interests</label>
+            <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["interests"]) ? $extra_info["interests"] : ''); ?></p>
         </div>
     </div>
-<?php } ?>
+    <!--  -->
+    <br>
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <label class="csF16">Short Bio</label>
+            <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''); ?></p>
+        </div>
+    </div>
+    <?php if (checkIfAppIsEnabled('timeoff')) { ?>
+        <!--  -->
+        <br>
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <label class="csF16">Policies</label>
+                <?php
+                if (!empty($policies)) {
+                    foreach ($policies as $key => $policy) {
+                        if (!$policy['Implements']) {
+                            continue;
+                        }
+                ?>
+                        <p style="<?= $key % 2 === 0 ? "background-color: #eee;" : ""; ?> padding: 10px;">
+                            <strong>Policy Title:</strong> <?php echo $policy['Title']; ?>
+                            <br /><span><strong>Remaining Time:</strong>
+                                <?= $policy['RemainingTime']; ?></span>
+                            <br /><span><strong>Employment Status:</strong>
+                                <?= ucwords($policy['EmployementStatus']); ?></span>
+                            <br /><span><strong>Entitled:</strong>
+                                <?= $policy['Implements'] ? 'Yes' : 'No'; ?></span>
+                        </p>
+                <?php   }
+                }
+                ?>
+            </div>
+        </div>
+    <?php } ?>
 </div>
 
 <?php if (isset($employer["YouTubeVideo"]) && $employer["YouTubeVideo"] != "") {
@@ -528,5 +535,81 @@
         //
         $('#jsPrimaryEmployeeBox').hide();
         $('#jsSecondaryEmployeeBox').show();
+    });
+
+
+
+
+    //
+    $(document).on('click', '.jsEmployeeTransferLog', function(event) {
+
+        //
+        event.preventDefault();
+        //
+        var employeeId = $(this).data('id') || null;
+        //
+        Model({
+            Id: "jsEmployeeQuickProfileModal",
+            Loader: 'jsEmployeeQuickProfileModalLoader',
+            Title: 'Employee Transfer History',
+            Body: '<div class="container"><div id="jsEmployeeQuickProfileModalBody"></div></div>'
+        }, function() {
+
+            if (employeeId) {
+                var html = '<div id="jsEmployeeQuickProfileModalMainBody"></div>';
+                //
+                $('#jsEmployeeQuickProfileModalBody').html(html);
+                GetEmployeeTransferLog(employeeId, 'jsEmployeeQuickProfileModal');
+            }
+        });
+    });
+
+
+
+    //
+    function GetEmployeeTransferLog(
+        employeeId,
+        id
+    ) {
+        //
+        if (employeeId === 0) {
+            // flush view
+            $('#' + id + 'MainBody').html('');
+            return;
+        }
+        //
+        if (isXHRInProgress != null) {
+            isXHRInProgress.abort();
+        }
+        $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+        //
+        isXHRInProgress =
+            $.get(window.location.origin + '/employee_management/employer_transfer_log/' + employeeId)
+            .done(function(resp) {
+                //
+                isXHRInProgress = null;
+                //
+                if (resp.Status === false) {
+                    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                    $('#' + id + 'MainBody').html(resp.Msg);
+                    return;
+                }
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                //
+                $('#' + id + 'MainBody').html(resp.Data);
+            })
+            .error(function(err) {
+                //
+                isXHRInProgress = null;
+                $('#' + id).html('Something went wrong while accessing the employee transfer.');
+            });
+        //
+        return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+    }
+
+    $(document).on('click', '.jsToggleRow', function(e) {
+        e.preventDefault();
+        let id = $(this).closest('tr').data('id');
+        $('.jsToggleTable' + id).toggle();
     });
 </script>

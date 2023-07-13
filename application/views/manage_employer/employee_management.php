@@ -204,9 +204,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
                                             <div class="col-xs-2 text-left" style="padding-right: 0px;">
                                                 <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
-                                                
+
                                             </div>
-                                            
+
                                             <?php if (get_company_module_status($session['company_detail']['sid'], 'bulk_email') == 1) { ?>
                                                 <div class="col-xs-3 text-left" style="padding-right: 0px; padding-left: 5px">
                                                     <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email_login"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Login Email</a>
@@ -358,6 +358,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 <br />
                                                                 <strong>I Speak:</strong> <?= showLanguages($employee['languages_speak']); ?>
                                                             </div>
+
                                                         </div>
                                                     </td>
                                                     <td width="25%" class="<?php echo $doNotHireWarning['row']; ?>">
@@ -544,6 +545,12 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                         <?php } ?>
                                                                     <?php } ?>
                                                                 <?php } ?>
+                                                            <?php } ?>
+
+                                                            <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
+                                                                <button class="btn btn-success jsEmployeeTransferLog" title="" placement="top" data-id="<?php echo $employee['sid']; ?>" data-original-title="View Transfer Details">
+                                                                    <i class="fa fa-history" aria-hidden="true"></i>
+                                                                </button>
                                                             <?php } ?>
                                                         </td>
                                                     <?php } else {
@@ -1210,5 +1217,87 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         url += '&logincred=' + loginCred;
         //
         window.location.href = url;
+    });
+
+
+
+
+
+
+
+
+    $(document).on('click', '.jsEmployeeTransferLog', function(event) {
+
+        //
+        event.preventDefault();
+        //
+        var employeeId = $(this).data('id') || null;
+        //
+        Model({
+            Id: "jsEmployeeQuickProfileModal",
+            Loader: 'jsEmployeeQuickProfileModalLoader',
+            Title: 'Employee Transfer History',
+            Body: '<div class="container"><div id="jsEmployeeQuickProfileModalBody"></div></div>'
+        }, function() {
+
+            if (employeeId) {
+                var html = '<div id="jsEmployeeQuickProfileModalMainBody"></div>';
+                //
+                $('#jsEmployeeQuickProfileModalBody').html(html);
+                GetEmployeeTransferDetails(employeeId, 'jsEmployeeQuickProfileModal');
+            }
+        });
+    });
+
+
+
+    //
+
+    function GetEmployeeTransferDetails(
+        employeeId,
+        id
+    ) {
+        //
+        if (employeeId === 0) {
+            // flush view
+            $('#' + id + 'MainBody').html('');
+            return;
+        }
+        //
+        if (isXHRInProgress != null) {
+            isXHRInProgress.abort();
+        }
+        $('.jsIPLoader[data-page="' + (id) + 'Loader"]').show(0);
+        //
+        isXHRInProgress =
+            $.get(window.location.origin + '/employee_management/employer_transfer_log/' + employeeId)
+            .done(function(resp) {
+                //
+                isXHRInProgress = null;
+                //
+                if (resp.Status === false) {
+                    $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                    $('#' + id + 'MainBody').html(resp.Msg);
+                    return;
+                }
+                $('.jsIPLoader[data-page="' + (id) + 'Loader"]').hide(0);
+                //
+                $('#' + id + 'MainBody').html(resp.Data);
+            })
+            .error(function(err) {
+                //
+                isXHRInProgress = null;
+                $('#' + id).html('Something went wrong while accessing the employee transfer.');
+            });
+        //
+        return '<div id="' + (id) + '"><p class="text-center"><i class="fa fa-spinner fa-spin csF18 csB7" aria-hidden="true"></i></p></div>';
+    }
+
+
+
+    $(document).on('click', '.jsToggleRow', function(e) {
+        e.preventDefault();
+        let id = $(this).closest('tr').data('id');
+        $('.jsToggleTable' + id).toggle();
     });
 </script>
