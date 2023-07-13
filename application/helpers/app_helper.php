@@ -665,3 +665,63 @@ if (!function_exists('getEmergencyContactsOptionsStatus')) {
             ->row_array();
     }
 }
+
+
+//
+if (!function_exists('isDontHaveDependens')) {
+
+    function isDontHaveDependens($companySid,$usersSid,$usersType)
+    {
+        // Get instance
+        $CI = &get_instance();
+        //
+        $result = $CI->db
+            ->where('company_sid', $companySid)
+            ->where('users_sid', $usersSid)
+            ->where('users_type', $usersType)
+            ->where('have_dependents', '0')
+            ->count_all_results('dependant_information');
+
+        return $result;
+    }
+}
+
+//
+if (!function_exists('isDontHaveDependensDelete')) {
+
+    function isDontHaveDependensDelete($companySid,$usersSid,$usersType)
+    {
+        // Get instance
+        $CI = &get_instance();
+        //
+        $result = $CI->db
+            ->where('company_sid', $companySid)
+            ->where('users_sid', $usersSid)
+            ->where('users_type', $usersType)
+            ->where('have_dependents', '0')
+            ->delete('dependant_information');
+           
+        return $result;
+    }
+}
+
+//
+if (!function_exists('haveDependensDelete')) {
+
+    function haveDependensDelete($companySid,$usersSid,$usersType)
+    {
+        // Get instance
+        return false;
+
+        $CI = &get_instance();
+        //
+        $result = $CI->db
+            ->where('company_sid', $companySid)
+            ->where('users_sid', $usersSid)
+            ->where('users_type', $usersType)
+            ->where('have_dependents', '1')
+            ->update('dependant_information',['have_dependents'=>0]);
+           
+        return $result;
+    }
+}

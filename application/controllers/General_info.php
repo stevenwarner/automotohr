@@ -119,6 +119,10 @@ class General_info extends Public_Controller
 
                 $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_sid);
 
+                //
+                $data['dependents_yes_text'] = $this->lang->line('dependents_yes_text');
+                $data['dependents_no_text'] = $this->lang->line('dependents_no_text');
+
                 $this->load->view('main/header', $data);
                 $this->load->view('general_information/index.php');
                 $this->load->view('main/footer');
@@ -375,6 +379,11 @@ class General_info extends Public_Controller
                         $data_to_save['users_sid'] = $employee_sid;
                         $data_to_save['users_type'] = 'employee';
                         $data_to_save['dependant_details'] = serialize($data_to_serialize);
+
+                        if (isDontHaveDependens($company_sid, $employee_sid, 'employee') > 0) {
+                            isDontHaveDependensDelete($company_sid, $employee_sid, 'employee');
+                        }
+
                         $this->general_info_model->insert_dependent_information($data_to_save);
 
                         //
@@ -423,6 +432,34 @@ class General_info extends Public_Controller
                             );
                         }
                         $this->session->set_flashdata('message', '<strong>Success</strong> Dependent Added!');
+                        redirect(base_url('general_info'), "location");
+                        break;
+                    case 'add_dependent_dont_have':
+                        $company_sid = $this->input->post('company_sid');
+                        $employee_sid = $this->input->post('users_sid');
+                        $data_to_serialize = array();
+                        $data_to_save = array();
+                        $data_to_save['company_sid'] = $company_sid;
+                        $data_to_save['users_sid'] = $employee_sid;
+                        $data_to_save['users_type'] = 'employee';
+                        $data_to_save['have_dependents'] = '0';
+
+                        $data_to_save['dependant_details'] = serialize($data_to_serialize);
+
+                        haveDependensDelete($company_sid, $employee_sid, 'employee');
+
+                        if (isDontHaveDependens($company_sid, $employee_sid, 'employee') > 0) {
+                            $this->session->set_flashdata('message', '<strong>Success</strong> Saved!');
+                            redirect(base_url('general_info'), "location");
+                            break;
+                        }
+
+                        $this->general_info_model->insert_dependent_information($data_to_save);
+
+                        checkAndUpdateDD($employee_sid, 'employee', $company_sid, 'dependents');
+                      
+
+                        $this->session->set_flashdata('message', '<strong>Success</strong> Saved!');
                         redirect(base_url('general_info'), "location");
                         break;
                     case 'delete_dependent':

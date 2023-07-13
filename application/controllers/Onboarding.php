@@ -1158,7 +1158,7 @@ class Onboarding extends CI_Controller
                     $data['enable_learbing_center'] = true;
                 }
                 // get custom timings
-                $data['custom_office_timings'] =$this->onboarding_model->get_assigned_custom_office_record_sids($company_sid, $applicant_info['sid'], 'applicant', 'timing', 2);
+                $data['custom_office_timings'] = $this->onboarding_model->get_assigned_custom_office_record_sids($company_sid, $applicant_info['sid'], 'applicant', 'timing', 2);
                 //
                 $assigned_sessions = $this->learning_center_model->get_assigned_training_sessions_new('applicant', $applicant_sid);
                 // $assigned_sessions                                          = $this->learning_center_model->get_assigned_training_sessions('applicant', $applicant_sid);
@@ -2095,6 +2095,10 @@ class Onboarding extends CI_Controller
                 $data['generalAssignments'] = $this->direct_deposit_model->getGeneralAssignments($company_sid, $applicant_sid, 'applicant');
                 $data['keyIndex'] = $key;
 
+                //
+                $data['dependents_yes_text'] = $this->lang->line('dependents_yes_text');
+                $data['dependents_no_text'] = $this->lang->line('dependents_no_text');
+
                 $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_sid);
                 $this->load->view('onboarding/applicant_boarding_header', $data);
                 $this->load->view('onboarding/onboarding_new_general_info');
@@ -2278,13 +2282,48 @@ class Onboarding extends CI_Controller
                     $data_to_save['users_sid'] = $applicant_sid;
                     $data_to_save['users_type'] = 'applicant';
                     $data_to_save['dependant_details'] = serialize($data_to_serialize);
+
+                    if (isDontHaveDependens($company_sid, $applicant_sid, 'applicant') > 0) {
+                        isDontHaveDependensDelete($company_sid, $applicant_sid, 'applicant');
+                    }
+
                     $this->onboarding_model->insert_dependent_information($data_to_save);
+
                     $this->onboarding_model->increment_section_save_count($applicant_sid, 'applicant', 'dependents');
                     $this->session->set_flashdata('message', '<strong>Success</strong> Dependent Added!');
                     //
                     checkAndUpdateDD($applicant_sid, 'applicant', $company_sid, 'dependents');
                     redirect('onboarding/general_information/' . $unique_sid, 'refresh');
                     break;
+                case 'add_dependent_dont_have':
+                    $company_sid = $this->input->post('company_sid');
+                    $applicant_sid = $this->input->post('users_sid');
+                    $data_to_serialize = array();
+                    $data_to_save = array();
+                    $data_to_save['company_sid'] = $company_sid;
+                    $data_to_save['users_sid'] = $applicant_sid;
+                    $data_to_save['users_type'] = 'applicant';
+                    $data_to_save['have_dependents'] = '0';
+
+                    $data_to_save['dependant_details'] = serialize($data_to_serialize);
+
+                    haveDependensDelete($company_sid, $applicant_sid, 'applicant');
+
+                    if (isDontHaveDependens($company_sid, $applicant_sid, 'applicant') > 0) {
+                        $this->session->set_flashdata('message', '<strong>Success</strong> Saved!');
+                        redirect('onboarding/general_information/' . $unique_sid, 'refresh');
+                        break;
+                    }
+
+
+                    $this->onboarding_model->insert_dependent_information($data_to_save);
+
+                    $this->session->set_flashdata('message', '<strong>Success</strong> Saved!');
+                    //
+                    checkAndUpdateDD($applicant_sid, 'applicant', $company_sid, 'dependents');
+                    redirect('onboarding/general_information/' . $unique_sid, 'refresh');
+                    break;
+
                 case 'delete_dependent':
                     $applicant_sid = $this->input->post('applicant_sid');
                     $dependent_sid = $this->input->post('dependent_sid');
@@ -9931,8 +9970,12 @@ class Onboarding extends CI_Controller
             ];
         }
 
-        
+
         $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($document['company_sid']);
+
+        $data['dependents_yes_text'] = $this->lang->line('dependents_yes_text');
+        $data['dependents_no_text'] = $this->lang->line('dependents_no_text');
+
 
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         //
@@ -9946,6 +9989,7 @@ class Onboarding extends CI_Controller
                 $page = 'public/documents/general';
             }
         }
+
         if ($data['Signed']) $page = 'public/documents/signed_public';
         if ($data['Expired']) $page = 'public/documents/expired_public';
         //
@@ -10997,5 +11041,41 @@ class Onboarding extends CI_Controller
                     'is_primary' => 1
                 ]
             );
+    }
+
+    //
+    function dependent_add_blanck()
+    {
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        haveDependensDelete($post['companySid'], $post['userSid'], $post['userType']);
+
+        if (isDontHaveDependens($post['companySid'], $post['userSid'], $post['userType']) <= 0) {
+            $this->db->insert(
+                'dependant_information',
+                [
+                    'users_sid' => $post['userSid'],
+                    'users_type' => $post['userType'],
+                    'company_sid' => $post['companySid'],
+                    'have_dependents' => '0',
+                    'dependant_details' => serialize([])
+                ]
+            );
+            //
+            $this->db
+                ->where('user_sid', $post['userSid'])
+                ->where('user_type', $post['userType'])
+                ->where('document_type', 'dependents')
+                ->where('company_sid', $post['companySid'])
+                ->update(
+                    'documents_assigned_general',
+                    [
+                        'is_completed' => 1
+                    ]
+                );
+        }
+
+       
     }
 }

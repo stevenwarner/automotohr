@@ -428,49 +428,67 @@ if ($_ssv) {
                             <div id="dependents" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <div class="jsNoteArea"></div>
-                                    <div class="table-responsive table-outer">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <td class="col-lg-2">Name</td>
-                                                    <td class="col-lg-2">Phone No.</td>
-                                                    <td class="col-lg-4">Address</td>
-                                                    <td class="col-lg-2">Relationship</td>
-                                                    <td class="text-center col-lg-2" colspan="2">Actions</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php if (!empty($dependents_arr)) { ?>
-                                                    <?php foreach ($dependents_arr as $dependent) { ?>
+                                    <?php if (!empty($dependents_arr)) { ?>
+                                        <div class="table-responsive table-outer">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <td class="col-lg-2">Name</td>
+                                                        <td class="col-lg-2">Phone No.</td>
+                                                        <td class="col-lg-4">Address</td>
+                                                        <td class="col-lg-2">Relationship</td>
+                                                        <td class="text-center col-lg-2" colspan="2">Actions</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if (!empty($dependents_arr)) { ?>
+                                                        <?php foreach ($dependents_arr as $dependent) { ?>
+                                                            <tr>
+                                                                <td><?php echo $dependent['first_name'] . ' ' . $dependent['last_name']; ?></td>
+                                                                <td><?php echo $dependent['phone']; ?></td>
+                                                                <td><?php echo $dependent['address']; ?></td>
+                                                                <td><?php echo $dependent['relationship']; ?></td>
+                                                                <td class="text-center">
+                                                                    <a href="<?php echo base_url('onboarding/edit_dependant_information/' . $unique_sid . '/' . $dependent['sid']) ?>" class="btn btn-info btn-block">Edit</a>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <form autocomplete="off" id="form_delete_dependent_<?php echo $dependent['sid']; ?>" method="post" action="<?php echo current_url(); ?>" enctype="multipart/form-data">
+                                                                        <input type="hidden" id="perform_action" name="perform_action" value="delete_dependent" />
+                                                                        <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                                                        <input type="hidden" id="users_type" name="users_type" value="<?php echo $users_type; ?>" />
+                                                                        <input type="hidden" id="users_sid" name="users_sid" value="<?php echo $users_sid; ?>" />
+                                                                        <input type="hidden" id="dependent_sid" name="dependent_sid" value="<?php echo $dependent['sid']; ?>" />
+                                                                        <button type="button" class="btn btn-danger btn-block" onclick="func_delete_dependent(<?php echo $dependent['sid']; ?>);">Delete</button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    <?php } else { ?>
                                                         <tr>
-                                                            <td><?php echo $dependent['first_name'] . ' ' . $dependent['last_name']; ?></td>
-                                                            <td><?php echo $dependent['phone']; ?></td>
-                                                            <td><?php echo $dependent['address']; ?></td>
-                                                            <td><?php echo $dependent['relationship']; ?></td>
-                                                            <td class="text-center">
-                                                                <a href="<?php echo base_url('onboarding/edit_dependant_information/' . $unique_sid . '/' . $dependent['sid']) ?>" class="btn btn-info btn-block">Edit</a>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <form autocomplete="off" id="form_delete_dependent_<?php echo $dependent['sid']; ?>" method="post" action="<?php echo current_url(); ?>" enctype="multipart/form-data">
-                                                                    <input type="hidden" id="perform_action" name="perform_action" value="delete_dependent" />
-                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
-                                                                    <input type="hidden" id="users_type" name="users_type" value="<?php echo $users_type; ?>" />
-                                                                    <input type="hidden" id="users_sid" name="users_sid" value="<?php echo $users_sid; ?>" />
-                                                                    <input type="hidden" id="dependent_sid" name="dependent_sid" value="<?php echo $dependent['sid']; ?>" />
-                                                                    <button type="button" class="btn btn-danger btn-block" onclick="func_delete_dependent(<?php echo $dependent['sid']; ?>);">Delete</button>
-                                                                </form>
-                                                            </td>
+                                                            <td colspan="5" class="text-center">No dependent information found!</td>
                                                         </tr>
                                                     <?php } ?>
-                                                <?php } else { ?>
-                                                    <tr>
-                                                        <td colspan="5" class="text-center">No dependent information found!</td>
-                                                    </tr>
-                                                <?php } ?>
-                                            </tbody>
-                                        </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    <?php } ?>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                            <div class="form-group" style="margin-top: 20px;">
+                                                <label class="control control--radio">
+                                                    <input type="radio" class="havedependents" name="havedependents" value="1" checked="true">
+                                                    <?php echo $dependents_yes_text; ?> &nbsp; <div class="control__indicator"></div> </label><br>
+                                                <label class="control control--radio">
+                                                    <input type="radio" class="havedependents" name="havedependents" value="0">
+                                                    <?php echo $dependents_no_text ?> &nbsp; <div class="control__indicator"></div>
+                                                </label>
+
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-wrp">
+
+                                    <div class="form-wrp" id="havedependantFormRow">
                                         <form id="dependantForm" action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                                             <input type="hidden" id="perform_action" name="perform_action" value="add_dependent" />
                                             <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
@@ -621,6 +639,26 @@ if ($_ssv) {
                                             </div>
                                         </form>
                                     </div>
+
+                                    <div class="form-wrp" id="donthavedependantFormRow">
+                                        <form id="donthavedependantForm" action="" method="POST" enctype="multipart/form-data" autocomplete="off">
+                                            <input type="hidden" id="perform_action" name="perform_action" value="add_dependent_dont_have" />
+                                            <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                            <input type="hidden" id="users_type" name="users_type" value="<?php echo $users_type; ?>" />
+                                            <input type="hidden" id="users_sid" name="users_sid" value="<?php echo $users_sid; ?>" />
+
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="btn-wrp full-width text-right">
+                                                        <input class="btn btn-info" value="Save" type="submit">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+
+
                                 </div>
                             </div>
                         </div>
@@ -704,14 +742,14 @@ if ($_ssv) {
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
-                                                        <?php $field_id = 'email'; 
+                                                        <?php $field_id = 'email';
                                                         $emailRequired = '';
                                                         if ($contactOptionsStatus['emergency_contact_email_status'] == 1) {
                                                             $emailRequired = ' <span class="required">*</span>';
                                                         }
                                                         ?>
-                                                        <?php echo form_label('Email:'.$emailRequired, $field_id); ?>
-                                                        <input type="email" class="form-control" data-rule-email="true" <?php echo $contactOptionsStatus['emergency_contact_email_status'] == 1 ? 'data-rule-required="true"':''  ?> name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
+                                                        <?php echo form_label('Email:' . $emailRequired, $field_id); ?>
+                                                        <input type="email" class="form-control" data-rule-email="true" <?php echo $contactOptionsStatus['emergency_contact_email_status'] == 1 ? 'data-rule-required="true"' : ''  ?> name="<?php echo $field_id; ?>" id="<?php echo $field_id; ?>" />
                                                         <?php echo form_error($field_id); ?>
                                                     </div>
                                                 </div>
@@ -722,11 +760,11 @@ if ($_ssv) {
                                                         $phoneNumberRequiredRule = '';
                                                         if ($contactOptionsStatus['emergency_contact_phone_number_status'] == 1) {
                                                             $phoneNumberRequired = ' <span class="required">*</span>';
-                                                            $phoneNumberRequiredRule=' data-rule-required="true"';
+                                                            $phoneNumberRequiredRule = ' data-rule-required="true"';
                                                         }
                                                         ?>
                                                         <?php echo form_label('Phone Number:' . $phoneNumberRequired, $field_id); ?>
-                                                        <?php echo form_input($field_id, '', 'class="form-control"  id="' . $field_id . ' "'. $phoneNumberRequiredRule); ?>
+                                                        <?php echo form_input($field_id, '', 'class="form-control"  id="' . $field_id . ' "' . $phoneNumberRequiredRule); ?>
                                                         <?php echo form_error($field_id); ?>
                                                     </div>
                                                 </div>
@@ -1068,6 +1106,18 @@ if ($_ssv) {
         return false;
     });
     $(document).ready(function() {
+        <?php if (isDontHaveDependens($company_sid, $users_sid, $users_type) > 0) { ?>
+            $('#donthavedependantFormRow').show();
+            $('#havedependantFormRow').hide();
+            $("input[name=havedependents][value='0']").prop("checked", true);
+            $("input[name=havedependents][value='1']").prop("checked", false);
+        <?php  } else { ?>
+            $('#donthavedependantFormRow').hide();
+            $('#havedependantFormRow').show();
+            $("input[name=havedependents][value='1']").prop("checked", true);
+            $("input[name=havedependents][value='0']").prop("checked", false);
+        <?php } ?>
+
         $('#add_emergency_contacts').validate();
 
         $('#form_license_info').validate({
@@ -1337,5 +1387,17 @@ if ($_ssv) {
 
             }
         });
+    });
+
+
+    //
+    $(".havedependents").click(function() {
+        if ($(this).val() == '1') {
+            $('#havedependantFormRow').show();
+            $('#donthavedependantFormRow').hide();
+        } else {
+            $('#havedependantFormRow').hide();
+            $('#donthavedependantFormRow').show();
+        }
     });
 </script>
