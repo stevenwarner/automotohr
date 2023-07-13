@@ -13291,6 +13291,10 @@ if (!function_exists('isDocumentCompletedCheck')) {
                     $ra['ifram_url'] = $listaction['ifram_url'];
                     $ra['image_path'] = $listaction['image_path'];
                 }
+            } else if($type === 'hybrid_document') {
+                if ($document['user_consent'] == 1) {
+                    $ra['isCompleted'] = true;
+                }
             }
         }
         //

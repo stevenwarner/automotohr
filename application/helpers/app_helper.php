@@ -665,3 +665,23 @@ if (!function_exists('getEmergencyContactsOptionsStatus')) {
             ->row_array();
     }
 }
+
+if (!function_exists('getDataFromTable')) {
+    /**
+     * fetch data from tables
+     *
+     * @param string $table
+     * @param array  $where
+     * @param array  $columns Optional
+     * @return array
+     */
+    function getDataFromTable(string $table, array $where, array $columns = ['*']): array
+    {
+        return get_instance()
+            ->db
+            ->select($columns)
+            ->where($where)
+            ->get($table)
+            ->row_array();
+    }
+}
