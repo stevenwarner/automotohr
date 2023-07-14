@@ -1354,6 +1354,9 @@
                                                             <?php if ($v['module_name'] == "Payroll") { ?>
                                                                 <a href="<?php echo base_url('manage_admin/companies/manage_payroll/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
                                                             <?php } ?>
+                                                            <?php if ($v['module_name'] == "Learning Management System") { ?>
+                                                                <a href="<?php echo base_url('sa/lms/courses/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                            <?php } ?>
                                                         </header>
                                                         <div class="clearfix"></div>
                                                         <div class="table-outer">

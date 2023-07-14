@@ -43,6 +43,10 @@
     <?php if (isset($apiAccessToken)) { ?>
         apiAccessToken = "<?=$apiAccessToken;?>";
     <?php } ?>
+    <?php if (isset($apiAccessTokenStore)) { ?>
+        apiAccessTokenStore = "<?=$apiAccessTokenStore;?>";
+        companySid = "<?=$companyId;?>";
+    <?php } ?>
 </script>
 <?php if (isset($PageScripts)) : ?>
     <!-- Scripts -->

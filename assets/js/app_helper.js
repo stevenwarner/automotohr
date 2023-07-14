@@ -8,6 +8,19 @@ String.prototype.verifyEmail = function () {
 		: true;
 };
 
+String.prototype.isValidYoutubeLink = function () {
+	return this.match(/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/g) === null
+		? false 
+		: true;
+}
+
+String.prototype.isValidVimeoLink = function () {
+	return this.match(/^(http|https)?:\/\/(www\.|player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)$/gmi
+	) === null
+		? false
+		: true;
+}
+
 if (typeof ml === "undefined") {
 	/**
 	 * Loader
@@ -29,7 +42,7 @@ if (typeof CB === "undefined") {
 	/**
 	 * Empty callback
 	 */
-	function CB() {}
+	function CB() { }
 }
 
 if (typeof getErrorsStringFromArray === "undefined") {
@@ -98,14 +111,14 @@ if (typeof generateBrowserAlert === "undefined") {
 		if (
 			compatibleListObj[browserVersion[0].toLowerCase()] &&
 			browserVersion[1] <
-				compatibleListObj[browserVersion[0].toLowerCase()]
+			compatibleListObj[browserVersion[0].toLowerCase()]
 		) {
 			return alert(
 				"This module require '" +
-					browserVersion[0] +
-					"' with version greater or equal then '" +
-					browserVersion[1] +
-					"'."
+				browserVersion[0] +
+				"' with version greater or equal then '" +
+				browserVersion[1] +
+				"'."
 			);
 		}
 	}

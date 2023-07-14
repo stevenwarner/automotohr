@@ -44,13 +44,17 @@ $(function editQuestion() {
 		//
 		$(".jsEditQuestionUploadVideoBox").addClass("hidden");
 		$(".jsEditQuestionRecordVideoBox").addClass("hidden");
+		$(".jsEditQuestionLinkVideoBox").addClass("hidden");
+		//
+		videoFileRef.close();
 		//
 		if ($(this).val() === "upload") {
 			$(".jsEditQuestionUploadVideoBox").removeClass("hidden");
-			videoFileRef.close();
-		} else {
+		} else if ($(this).val() === "record") {
 			$(".jsEditQuestionRecordVideoBox").removeClass("hidden");
 			videoFileRef.init();
+		} else {
+			$(".jsEditQuestionLinkVideoBox").removeClass("hidden");
 		}
 	});
 
@@ -105,11 +109,20 @@ $(function editQuestion() {
 		$("#jsEditQuestionTitle").val(questionObj.question_title);
 		$("#jsEditQuestionHelp").val(questionObj.question_content);
 		$("#jsEditQuestionType").select("val", questionObj.question_type);
-		$(
-			'.jsEditQuestionVideoType[value="upload"]'
-		).prop("checked", true);
-		$(".jsEditQuestionRecordVideoBox").addClass("hidden");
-		$(".jsEditQuestionUploadVideoBox").removeClass("hidden");
+		$('.jsEditQuestionVideoType[value="'+questionObj.video_type+'"]').prop("checked", true);
+		//
+		if (questionObj.video_type === 'link') {
+			$('.jsEditQuestionVideoType[value="'+questionObj.video_type+'"]').prop("checked", true);
+			$(".jsEditQuestionUploadVideoBox").addClass("hidden");
+			$(".jsEditQuestionRecordVideoBox").addClass("hidden");
+			$(".jsEditQuestionLinkVideoBox").removeClass("hidden");
+			$("#jsEditQuestionLink").val(questionObj.video_file_name);
+		} else {
+			$('.jsEditQuestionVideoType[value="upload"]').prop("checked", true);
+			$(".jsEditQuestionRecordVideoBox").addClass("hidden");
+			$(".jsEditQuestionUploadVideoBox").removeClass("hidden");
+		}
+		//
 		$(".jsEditQuestionMultipleChoiceBox").addClass("hidden");
 		$("#jsEditQuestionMultipleChoiceAnswer").select("val", "choice_1");
 		$("#jsEditQuestionMultipleChoice1").val("");
@@ -225,7 +238,7 @@ $(function editQuestion() {
 				}
 				doUpdated = true;
 			}
-		} else {
+		} else if (questionObj.video_type === "record") {
 			// get the recorded stream
 			fileStream = await videoFileRef.getVideo();
 			// no recording found
@@ -236,6 +249,15 @@ $(function editQuestion() {
 			} else {
 				doUpdated = true;
 			}
+		} else if (questionObj.video_type === "link") {
+			questionObj.video_file_name = $("#jsEditQuestionLink").val().trim();
+			if (!questionObj.video_file_name ) {
+				errorArray.push("YouTube / Vimeo link is required.");
+			} else if (!questionObj.video_file_name .isValidYoutubeLink() && !questionObj.video_file_name .isValidVimeoLink()) {
+				errorArray.push("Invalid YouTube / Vimeo link.");
+			}
+			//
+			doUpdated = false;
 		}
 		//
 		if (errorArray.length) {
@@ -276,6 +298,7 @@ $(function editQuestion() {
 		// clear the file
 		$("#jsEditQuestionUploadVideo").msFileUploader("clear");
 		// pass the question to callback
+		console.log(questionObj)
 		callbackReference(questionObj);
 	}
 
