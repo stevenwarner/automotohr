@@ -61,6 +61,7 @@ class Dependents_model extends CI_Model {
         $this->db->select('*');
         $this->db->where('users_type', $type);
         $this->db->where('users_sid', $users_sid);
+        $this->db->where('have_dependents', '1');
         return $this->db->get('dependant_information')->result_array();
     }
 

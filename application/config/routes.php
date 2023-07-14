@@ -1779,3 +1779,9 @@ $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridD
 $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/downloadHybridDocument/$1';
 //
 $route['payroll/gusto/managepayment/(:num)'] = 'gusto/Gusto_payroll/managePayment/$1';
+
+//
+$route['add_dependant_information_donthave'] = 'dependents/add_dependant_information_donthave';
+$route['add_dependant_information_donthave/(:any)'] = 'dependents/add_dependant_information_donthave/$1';
+$route['add_dependant_information_donthave/(:any)/(:any)'] = 'dependents/add_dependant_information_donthave/$1/$2';
+$route['add_dependant_information_donthave/(:any)/(:any)/(:any)'] = 'dependents/add_dependant_information_donthave/$1/$2/$3';
