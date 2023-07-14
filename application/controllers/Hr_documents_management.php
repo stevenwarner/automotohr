@@ -1399,7 +1399,7 @@ class Hr_documents_management extends Public_Controller
                         }
                         //
                         $data_to_update['isdoctohandbook'] = $this->input->post('isdoctohandbook') ? $this->input->post('isdoctohandbook') : 0;
-                        
+
                         $data_to_update['is_required'] = $this->input->post('isRequired') ? $this->input->post('isRequired') : 0;
 
 
@@ -1924,7 +1924,7 @@ class Hr_documents_management extends Public_Controller
                         $s3_path = $this->input->post('s3_path');
                         //
                         // $pdf_decoded = base64_decode ($pdf_content);
-                        $path = ROOTPATH . '/temp_files/hybird_document/'.time().'/';
+                        $path = ROOTPATH . '/temp_files/hybird_document/' . time() . '/';
                         $zipath = ROOTPATH . '/temp_files/hybird_document/';
                         //
                         if (!file_exists($path)) {
@@ -1947,10 +1947,10 @@ class Hr_documents_management extends Public_Controller
                         $zipFileName = time() . '.zip';
                         $this->load->library('zip');
                         $this->zip->read_dir($path, FALSE);
-                        $this->zip->archive($zipath.$zipFileName);
-                        echo base_url('hr_documents_management/downloadHybridDocument/').$zipFileName;
+                        $this->zip->archive($zipath . $zipFileName);
+                        echo base_url('hr_documents_management/downloadHybridDocument/') . $zipFileName;
                         return;
-                        break;    
+                        break;
                 }
             }
         }
@@ -10629,7 +10629,7 @@ class Hr_documents_management extends Public_Controller
                     $user_sid,
                     $user_type
                 );
-               
+
                 //
                 $this->res['Status'] = TRUE;
                 $this->res['Response'] = array_merge($generalDocuments, $documents);
@@ -13865,6 +13865,41 @@ class Hr_documents_management extends Public_Controller
                 $employee_pending_i9,
                 $employee_pending
             );
+
+            //
+
+            if ($type == 'export') {
+                ob_start();
+                $h = array('Empoloyee Name', 'Document');
+                $companyHeader = '';
+                if (!empty($data['session']['company_detail']['CompanyName'])) {
+                    $companyHeader = 'Company Name: ' . $data['session']['company_detail']['CompanyName'];
+                }
+                //
+                $filename = date('m_d_Y_H_i_s', strtotime('now')) . "_managers_with_pending_document.csv";
+                $fp = fopen('php://output', 'w');
+                fputcsv($fp, array($companyHeader,''));
+                fputcsv($fp, $h);
+                //
+                foreach ($data['managers'] as $k => $v) {
+                    $iText = '';
+                
+                    $d = array(getUserNameBySID($v['user_sid']), $v['document_name']." \n(Verification)");
+                    fputcsv($fp, $d);
+                }
+                header('Content-type: application/csv');
+                header('Content-Disposition: attachment; filename=' . $filename);
+                ob_flush();
+                exit;
+            } else if ($type == 'print') {
+                $this->load->view('hr_documents_management/print_new_people_with_pending_employer_documents', $data);
+                 return;
+            } else if ($type == 'return') {
+                header('Content-Type: application/json');
+                echo json_encode($data['employees']);
+                exit(0);
+            }
+
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/new_people_with_pending_employer_documents');
@@ -15888,43 +15923,43 @@ class Hr_documents_management extends Public_Controller
         $data['session'] = $this->session->userdata('logged_in');
         $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
         //
-        $data["s3_path"] = ''; 
-        $data["document_body"] = ''; 
+        $data["s3_path"] = '';
+        $data["document_body"] = '';
         //
         switch ($t) {
             case 'assigned_history':
                 $d = $this->hr_documents_management_model->getDocumentHistoryById($i);
-                $data["s3_path"] = $d['document_s3_name']; 
+                $data["s3_path"] = $d['document_s3_name'];
                 $document_body = $this->convertMagicCodeToHTML($d);
-                $data["document_body"] = $document_body;    
+                $data["document_body"] = $document_body;
                 //
                 break;
             case 'original':
-                if ($tt == 'document'){
+                if ($tt == 'document') {
                     $d = $this->hr_documents_management_model->getDocumentById($i);
                     $d['user_type'] = null;
                     $d['user_sid'] = null;
                     $d['document_sid'] = null;
-                    $data["s3_path"] = $d['uploaded_document_s3_name']; 
+                    $data["s3_path"] = $d['uploaded_document_s3_name'];
                     $document_body = $this->convertMagicCodeToHTML($d);
-                    $data["document_body"] = $document_body;  
+                    $data["document_body"] = $document_body;
                 } else {
                     $d = $this->hr_documents_management_model->getOfferLetterById($i);
                     $d['user_type'] = null;
                     $d['user_sid'] = null;
                     $d['document_sid'] = null;
-                    $data["s3_path"] = $d['uploaded_document_s3_name']; 
+                    $data["s3_path"] = $d['uploaded_document_s3_name'];
                     $document_body = $this->convertMagicCodeToHTML($d);
-                    $data["document_body"] = $document_body;  
+                    $data["document_body"] = $document_body;
                 }
                 //     
                 break;
             case 'assigned':
             case 'submitted':
                 $d = $this->hr_documents_management_model->getAssignedDocumentById($i);
-                $data["s3_path"] = $d['document_s3_name']; 
+                $data["s3_path"] = $d['document_s3_name'];
                 $document_body = $this->convertMagicCodeToHTML($d, 'submitted');
-                $data["document_body"] = $document_body;  
+                $data["document_body"] = $document_body;
                 break;
         }
 
@@ -15945,7 +15980,8 @@ class Hr_documents_management extends Public_Controller
         $this->load->view('hr_documents_management/hybrid/print_download_hybird_document', $data);
     }
 
-    function convertMagicCodeToHTML ($document, $request_type = 'original') {
+    function convertMagicCodeToHTML($document, $request_type = 'original')
+    {
         $requested_content = '';
         //
         if ($request_type == 'submitted') {
