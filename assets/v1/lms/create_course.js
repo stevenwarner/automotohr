@@ -42,6 +42,8 @@ $(function createCourse() {
 			course_content: $("#jsAddCourseAbout").val().trim(),
 			job_titles: $("#jsAddCourseJobTitles").val() || [],
 			course_type: $(".jsAddCourseType:checked").val(),
+			course_recurring_in: $("#jsAddCourseReassignIn").val(),
+			course_recurring_type: $("#jsAddCourseReassignType").val(),
 			course_version: $("#jsAddCourseVersion").val(),
 			course_file_type: $(".jsAddCourseFileType:checked").val(),
 			course_file_link: $("#jsAddCourseLink").val(),
@@ -208,6 +210,8 @@ $(function createCourse() {
 				$("#jsAddCourseJobTitles").select2({
 					closeOnSelect: false,
 				});
+				///
+				$("#jsAddCourseReassignType").val("year");
 				// load image
 				$("#jsAddCourseFile").msFileUploader({
 					fileLimit: "50mb",
@@ -239,6 +243,7 @@ $(function createCourse() {
 	 * @param {*} courseObj
 	 */
 	async function handleCourseCreation(courseObj) {
+		console.log(courseObj)
 		//
 		const errorArray = [];
 		// validate
@@ -247,6 +252,14 @@ $(function createCourse() {
 		}
 		if (!courseObj.job_titles.length) {
 			errorArray.push("Select at least one job title.");
+		}
+		if (!courseObj.course_recurring_in) {
+			errorArray.push("Course recurring number is required.");
+		} else if (!courseObj.course_recurring_in.isValidInteger()) {
+			errorArray.push("Please enter valid integer value.");
+		}
+		if (!courseObj.course_recurring_type.length) {
+			errorArray.push("Course recurring type is required.");
 		}
 		if (!courseObj.course_type) {
 			errorArray.push("Course type is required.");

@@ -21,6 +21,13 @@ String.prototype.isValidVimeoLink = function () {
 		: true;
 }
 
+String.prototype.isValidInteger = function () {
+	console.log("pppp")
+	return this.match(/^[1-9]\d*$/g) === null
+		? false
+		: true;
+}
+
 if (typeof ml === "undefined") {
 	/**
 	 * Loader

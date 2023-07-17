@@ -82,6 +82,8 @@ $(function editCourse() {
 			course_content: $("#jsEditCourseAbout").val().trim(),
 			job_titles: $("#jsEditCourseJobTitles").val() || [],
 			course_type: $(".jsEditCourseType:checked").val(),
+			course_recurring_in: $("#jsEditCourseReassignIn").val(),
+			course_recurring_type: $("#jsEditCourseReassignType").val(),
 			course_version: $("#jsEditCourseVersion").val(),
 			course_file_name: courseObj.course_file_name,
 			course_file_type: $(".jsEditCourseFileType:checked").val(),
@@ -267,6 +269,7 @@ $(function editCourse() {
 	 * @param {*} courseObj
 	 */
 	async function handleCourseUpdate(courseObj) {
+		console.log(courseObj)
 		//
 		const errorArray = [];
 		// validate
@@ -278,6 +281,14 @@ $(function editCourse() {
 		}
 		if (!courseObj.course_type) {
 			errorArray.push("Course type is required.");
+		}
+		if (!courseObj.course_recurring_in) {
+			errorArray.push("Course recurring number is required.");
+		} else if (!courseObj.course_recurring_in.isValidInteger()) {
+			errorArray.push("Please enter valid integer value.");
+		}
+		if (!courseObj.course_recurring_type.length) {
+			errorArray.push("Course recurring type is required.");
 		}
 		// set default question array
 		courseObj.course_questions = questionsArray;
@@ -559,6 +570,9 @@ $(function editCourse() {
 		$("#jsEditCourseAbout").val(co.course_content);
 		// set the course job_titles
 		$("#jsEditCourseJobTitles").select2("val", co.job_titles);
+		//
+		$("#jsEditCourseReassignIn").val(co.course_recurring_value);
+		$("#jsEditCourseReassignType").val(co.course_recurring_type);
 		// set the course course_type
 		$('.jsEditCourseType[value="' + co.course_type + '"]').prop(
 			"checked",
