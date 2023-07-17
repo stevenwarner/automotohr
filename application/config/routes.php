@@ -1651,4 +1651,5 @@ $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/download
 /**
  * Payroll routes
  */
+$route['payroll/company/(:num)/requirements'] = 'v1/Payroll/checkCompanyRequirements/$1';
 $route['payroll/cpc/(:num)/(:num)'] = 'v1/Payroll/getCreatePartnerCompanyPage/$1/$2';

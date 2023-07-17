@@ -10,13 +10,31 @@ class Payroll extends CI_Controller
         //
         parent::__construct();
         //
-        if (!$this->session->userdata('logged_in') && !$this->session->userdata('user_id')) {
-            return SendResponse(401, ['errors' => ['Access denied, you are not authorized to make this call.']]);
-        }
+        // if (!$this->session->userdata('logged_in') && !$this->session->userdata('user_id')) {
+        //     return SendResponse(401, ['errors' => ['Access denied, you are not authorized to make this call.']]);
+        // }
         // Call the model
         $this->load->model("v1/Payroll_model", "payroll_model");
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
+    }
+
+    /**
+     * check company requirements
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function checkCompanyRequirements(int $companyId): array
+    {
+        //
+        $returnArray = $this->payroll_model->checkCompanyRequirements($companyId);
+        //
+        if (!$returnArray) {
+            return SendResponse(200, ['success' => true]);
+        }
+        //
+        return SendResponse(400, ['errors' => $returnArray]);
     }
 
     /**

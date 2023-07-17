@@ -23,6 +23,50 @@ class Payroll_model extends CI_Model
         ];
     }
 
+
+    /**
+     * check company requirements for onboard
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function checkCompanyRequirements(int $companyId): array
+    {
+        //
+        $r = [];
+        //
+        $record = $this->db
+            ->select('ssn, Location_Address, Location_City, Location_State, Location_ZipCode, PhoneNumber')
+            ->where('sid', $companyId)
+            ->get('users')
+            ->row_array();
+        //
+        if (!$record['ssn']) {
+            $r[] = 'Social Security Number (SSN) is missing.';
+        }
+        //
+        if (!$record['Location_Address']) {
+            $r[] = 'Company address is missing.';
+        }
+        //
+        if (!$record['Location_City']) {
+            $r[] = 'Company city is missing.';
+        }
+        //
+        if (!$record['Location_State']) {
+            $r[] = 'Company state is missing.';
+        }
+        //
+        if (!$record['Location_ZipCode']) {
+            $r[] = 'Company zip code is missing.';
+        } //
+        if (!$record['PhoneNumber']) {
+            $r[] = 'Company phone number code is missing.';
+        }
+        //
+        return $r;
+    }
+
     /**
      * get company employees
      *
@@ -338,8 +382,16 @@ class Payroll_model extends CI_Model
                 return $response;
             }
         }
-        // push the admins to Gusto
-        $this->checkAndSetPayrollStoreAdmin($companyId);
+        // // push the admins to Gusto
+        // $this->checkAndSetPayrollStoreAdmin($companyId);
+        // // sync the admins
+        // $this->syncPayrollAdmins($companyId);
+        // // push the location
+        // $this->checkAndPushCompanyLocationToGusto($companyId);
+        //
+        foreach ($employees as $employee) {
+            $this->onboardEmployee($employee, $companyId);
+        }
         // return
         return $returnArray;
     }
@@ -458,6 +510,7 @@ class Payroll_model extends CI_Model
             $request,
             "POST"
         );
+        _e($gustoResponse);
         //
         $errors = hasGustoErrors($gustoResponse);
         // check for errors
@@ -562,10 +615,11 @@ class Payroll_model extends CI_Model
                 return $gustoEmployee;
             }
         }
+        // set employee job
+        $this->createEmployeeJobOnGusto($employeeId, $companyId);
+        _e($gustoEmployee, true, true);
         // set home address
-        $this->checkAndSetEmployeeHomeAddressOnGusto($employeeId, $companyId);
-
-        _e($gustoEmployee, true);
+        // $this->checkAndSetEmployeeHomeAddressOnGusto($employeeId, $companyId);
     }
 
     /**
@@ -653,6 +707,104 @@ class Payroll_model extends CI_Model
             'gusto_uuid' => $gustoResponse['uuid'],
             'gusto_version' => $gustoResponse['version']
         ];
+    }
+
+    /**
+     * create an employee job on Gusto
+     *
+     * @param int $employeeId
+     * @param int $companyId
+     * @return array
+     */
+    private function createEmployeeJobOnGusto(int $employeeId, int $companyId): array
+    {
+        // check the company location
+        $location = $this->db
+            ->select('gusto_uuid')
+            ->where('company_sid', $companyId)
+            ->where('is_active', 1)
+            ->get('gusto_companies_locations')
+            ->row_array();
+        //
+        if (!$location) {
+            return ['errors' => ['"Location" is missing.']];
+        }
+        // get employee profile data
+        $employeeDetails = $this->db
+            ->select('
+                job_title,
+                complynet_job_title,
+                registration_date,
+                joined_at,
+                hourly_rate
+            ')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        // get job title
+        $jobTitle = 'Automotive';
+        $joiningDate = get_employee_latest_joined_date(
+            $employeeDetails['registration_date'],
+            $employeeDetails['joined_at'],
+            ''
+        );
+        //
+        if ($employeeDetails['job_title']) {
+            $jobTitle = $employeeDetails['job_title'];
+        } elseif ($employeeDetails['complynet_job_title']) {
+            $jobTitle = $employeeDetails['complynet_job_title'];
+        }
+        //
+        $hourlyRate = $employeeDetails['hourly_rate'] ? $employeeDetails['hourly_rate'] : 0;
+        //
+        $errorArray = [];
+        // validation
+        if (!$jobTitle) {
+            $errorArray[] = '"Job Title" is required.';
+        }
+        if (!$joiningDate) {
+            $errorArray[] = '"Joining Date" is required.';
+        }
+        //
+        if ($errorArray) {
+            return ['errors' => $errorArray];
+        }
+        // // make request
+        $request = [];
+        $request['title'] = $jobTitle;
+        $request['location_id'] = $location['gusto_uuid'];
+        $request['hire_date'] = $joiningDate;
+        // // get company details
+        // $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // // make call
+        // $gustoResponse = gustoCall(
+        //     "createEmployeeOnGusto",
+        //     $companyDetails,
+        //     $request,
+        //     "POST"
+        // );
+        // //
+        // $errors = hasGustoErrors($gustoResponse);
+        // //
+        // if ($errors) {
+        //     return $errors;
+        // }
+        // // insert
+        // $this->db
+        // ->insert('gusto_companies_employees', [
+        //     'company_sid' => $companyId,
+        //     'employee_sid' => $employeeId,
+        //     'gusto_uuid' => $gustoResponse['uuid'],
+        //     'gusto_version' => $gustoResponse['version'],
+        //     'is_onboarded' => 0,
+        //     'created_at' => getSystemDate(),
+        //     'updated_at' => getSystemDate(),
+        // ]);
+        // //
+        // return [
+        //     'gusto_uuid' => $gustoResponse['uuid'],
+        //     'gusto_version' => $gustoResponse['version']
+        // ];
     }
 
     /**
@@ -836,10 +988,10 @@ class Payroll_model extends CI_Model
             'company' => []
         ];
         // add primary admin
-        $request['user']['first_name'] = $this->ahrAdmin['first_name'];
-        $request['user']['last_name'] = $this->ahrAdmin['last_name'];
-        $request['user']['email'] = $this->ahrAdmin['email_address'];
-        $request['user']['phone'] = $this->ahrAdmin['phone_number'];
+        $request['user']['first_name'] = $this->adminArray['first_name'];
+        $request['user']['last_name'] = $this->adminArray['last_name'];
+        $request['user']['email'] = $this->adminArray['email_address'];
+        $request['user']['phone'] = $this->adminArray['phone_number'];
         // add company details
         $request['company']['name'] = $companyDetails['CompanyName'];
         $request['company']['ein'] = $companyDetails['ssn'];

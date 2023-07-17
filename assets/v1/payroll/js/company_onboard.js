@@ -23,6 +23,7 @@ $(function CreatePartnerCompany() {
 	 * set the process handler
 	 */
 	let processQueue = {
+		checkRequirements,
 		welcomeStep,
 		employeeListingStep,
 		adminStep,
@@ -63,7 +64,7 @@ $(function CreatePartnerCompany() {
 				Loader: modalId + "Loader",
 				Body: `<div id="${modalId}Body"></div>`,
 			},
-			processQueue.welcomeStep
+			processQueue.checkRequirements
 		);
 	});
 
@@ -118,6 +119,31 @@ $(function CreatePartnerCompany() {
 			processQueue.createPartnerCompany();
 		}
 	);
+
+	/**
+	 * check company requirements
+	 */
+	function checkRequirements() {
+		//
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		//
+		XHR = $.ajax({
+			url:
+				window.location.origin +
+				"/payroll/company/" +
+				companyId +
+				"/requirements",
+			method: "GET",
+		})
+			.success(function () {
+				XHR = null;
+				//
+				processQueue.welcomeStep();
+			})
+			.fail(failError);
+	}
 
 	/**
 	 * Welcome page
