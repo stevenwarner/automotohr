@@ -62,7 +62,7 @@ class Security{
      */
     public function checkBlockedIps(){
         //
-        if($this->getDataCountFromDB("SELECT admin_sid FROM `blocked_ips` WHERE `ip_address` = '".($this->getUserIp())."' LIMIT 1;") !== 0){
+        if($this->getDataCountFromDB("SELECT admin_sid FROM `blocked_ips` WHERE `ip_address` = '".($this->getUserIp())."' and is_block = 1 LIMIT 1;") !== 0){
             exit(0);
         }
     }
