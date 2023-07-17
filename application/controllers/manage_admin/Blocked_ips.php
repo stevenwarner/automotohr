@@ -1,14 +1,16 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 error_reporting(E_ALL);
 
-class Blocked_ips extends Admin_Controller {
+class Blocked_ips extends Admin_Controller
+{
 
     private $resp;
     private $limit = 100;
     private $listSize = 5;
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/ip_model', 'ipmodal');
@@ -26,7 +28,8 @@ class Blocked_ips extends Admin_Controller {
      * 
      * @return VOID
      */
-    public function index() {
+    public function index()
+    {
         $admin_id = $this->ion_auth->user()->row()->id;
         //
         $redirect_url   = 'manage_admin';
@@ -52,11 +55,12 @@ class Blocked_ips extends Admin_Controller {
      * 
      * @return JSON
      */
-    function handler(){
+    function handler()
+    {
         // Check for post type && AJAX request
-        if($this->input->method(TRUE) !== 'POST' || !$this->input->is_ajax_request()) $this->resp();
+        if ($this->input->method(TRUE) !== 'POST' || !$this->input->is_ajax_request()) $this->resp();
         // Check for post size && 'action' index
-        if(!sizeof($this->input->post()) || !$this->input->post('action', TRUE)) $this->resp();
+        if (!sizeof($this->input->post()) || !$this->input->post('action', TRUE)) $this->resp();
         // Save cleaned post to local variable
         $form_data = $this->input->post(NULL, TRUE);
 
@@ -66,8 +70,8 @@ class Blocked_ips extends Admin_Controller {
                 // 
                 $inset = 0;
                 $offset = $this->limit;
-                if($form_data['page'] > 1){
-                    $inset = ( $form_data['page'] - 1 ) * $this->limit;
+                if ($form_data['page'] > 1) {
+                    $inset = ($form_data['page'] - 1) * $this->limit;
                     $offset = $inset * $form_data['page'];
                 }
                 //
@@ -76,7 +80,7 @@ class Blocked_ips extends Admin_Controller {
                     $offset
                 );
                 //
-                if(!$ips || !sizeof($ips)){
+                if (!$ips || !sizeof($ips)) {
                     $this->resp['Response'] = 'No record found.';
                     $this->resp();
                 }
@@ -89,14 +93,14 @@ class Blocked_ips extends Admin_Controller {
                 $this->resp['TotalPages'] = ceil($ips['TotalRecords'] / $this->limit);
                 $this->resp['TotalRecords'] = $ips['TotalRecords'];
                 $this->resp();
-            break;
+                break;
 
             case 'save_ips';
                 //
                 $ip_list = array();
                 $new_ips_rows = '';
                 //
-                if(!sizeof($form_data['ip_list'])) $this->resp();
+                if (!sizeof($form_data['ip_list'])) $this->resp();
                 //
                 foreach ($form_data['ip_list'] as $k0 => $v0) {
                     //
@@ -106,7 +110,7 @@ class Blocked_ips extends Admin_Controller {
                     //
                     $is_exist = $this->ipmodal->check_ip($v0);
                     //
-                    if($is_exist){
+                    if ($is_exist) {
                         $ip_list[$k0]['status'] = 0;
                         continue;
                     }
@@ -118,24 +122,24 @@ class Blocked_ips extends Admin_Controller {
                         'ip_address' => $v0
                     ));
                     //
-                    $new_ips_rows .="DENY FROM $v0"."\n";
+                    $new_ips_rows .= "DENY FROM $v0" . "\n";
                 }
 
                 //
-                if($new_ips_rows != ''){
-                    $new_ips_rows = "\n".$new_ips_rows;
+                if ($new_ips_rows != '') {
+                    $new_ips_rows = "\n" . $new_ips_rows;
                     // Append it to htaccess
-                    $file_name = ROOTPATH.'.htaccess';
-                    $backup_folder = ROOTPATH.'htaccess_backups';
+                    $file_name = ROOTPATH . '.htaccess';
+                    $backup_folder = ROOTPATH . 'htaccess_backups';
                     //
                     $handler = fopen($file_name, 'a');
                     $old_file_data = file_get_contents($file_name);
                     fwrite($handler, $new_ips_rows);
                     fclose($handler);
                     //
-                    if(!is_dir($backup_folder)) mkdir($backup_folder, 0777);
+                    if (!is_dir($backup_folder)) mkdir($backup_folder, 0777);
                     //
-                    $backup_file = $backup_folder.DIRECTORY_SEPARATOR.'htaccess.'.date('dmYHis', strtotime('now'));
+                    $backup_file = $backup_folder . DIRECTORY_SEPARATOR . 'htaccess.' . date('dmYHis', strtotime('now'));
                     $handler = fopen($backup_file, 'w');
                     fwrite($handler, $old_file_data);
                     fclose($handler);
@@ -145,10 +149,20 @@ class Blocked_ips extends Admin_Controller {
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed.';
                 $this->resp();
-            break;
+                break;
 
-            default: $this->resp(); break;
+            default:
+                $this->resp();
+                break;
         }
+    }
+
+    public function statusHandler()
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $this->db->where('ip_address', $post['id'])->update('blocked_ips', ['is_block' => $post['status']]);
     }
 
     /**
@@ -157,7 +171,8 @@ class Blocked_ips extends Admin_Controller {
      * 
      * @return JSON
      */
-    function resp(){
+    function resp()
+    {
         header('Content-Type: application/json');
         echo @json_encode($this->resp);
         exit(0);

@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <!--  -->
 <div class="main">
     <div class="container-fluid">
@@ -36,6 +36,7 @@
                                                             <th class="col-xs-3">Blocked By</th>
                                                             <th class="col-xs-4">Blocked IP</th>
                                                             <th class="col-xs-4">Blocked At</th>
+                                                            <th class="col-xs-4">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -142,29 +143,29 @@
     </div>
 </div>
 <!--  -->
-<script src="<?=base_url('assets');?>/calendar/moment.min.js"></script>
+<script src="<?= base_url('assets'); ?>/calendar/moment.min.js"></script>
 <!--  -->
 <script>
-    $(function(){
+    $(function() {
         var tableTarget = $('#js-ip-table'),
-        addPageBtnRef = $('.js-ip-add'),
-        viewPageBtnRef = $('.js-ip-view'),
-        addPageRef = $('#js-ip-add-page'),
-        addListPageRef = $('#js-ip-add-list-page'),
-        viewPageRef = $('#js-ip-view-page'),
-        addConfirmPageRef = $('#js-ip-add-confirm-page'),
-        errorTarget = $('.js-error-msg'),
-        ipList = [],
-        // Set pagination object
-        pOBJ = { 
-            'fetchRecords' : {
-                page: 1,
-                totalPages: 0,
-                totalRecords: 0,
-                cb: fetchRecords
-            }
-        },
-        current_page = 1;
+            addPageBtnRef = $('.js-ip-add'),
+            viewPageBtnRef = $('.js-ip-view'),
+            addPageRef = $('#js-ip-add-page'),
+            addListPageRef = $('#js-ip-add-list-page'),
+            viewPageRef = $('#js-ip-view-page'),
+            addConfirmPageRef = $('#js-ip-add-confirm-page'),
+            errorTarget = $('.js-error-msg'),
+            ipList = [],
+            // Set pagination object
+            pOBJ = {
+                'fetchRecords': {
+                    page: 1,
+                    totalPages: 0,
+                    totalRecords: 0,
+                    cb: fetchRecords
+                }
+            },
+            current_page = 1;
 
         addPageBtnRef.click(loadAddPage);
         viewPageBtnRef.click(loadViewPage);
@@ -174,9 +175,9 @@
         loader('hide');
 
         // Add extra interviewer event
-        $(document).on('click', '#js-add-ip-address-row', function () {
+        $(document).on('click', '#js-add-ip-address-row', function() {
             var random_id = Math.floor((Math.random() * 1000) + 1),
-            new_row = $('#js-ip-row-0').clone();
+                new_row = $('#js-ip-row-0').clone();
             //
             $(new_row).find('i.fa').removeClass('fa-plus').addClass('fa-trash');
             $(new_row).find('button.btn').removeAttr('id').removeClass('btn-success').addClass('btn-danger').addClass('js-remove-ip-address-row').attr('data-id', random_id);
@@ -191,28 +192,41 @@
             $('#js-ip-address-box').append(new_row);
         });
         // Remove extra interviewer event
-        $(document).on('click', '.js-remove-ip-address-row', function () { $($(this).closest('.js-ip-address').get()).remove(); });
-            
+        $(document).on('click', '.js-remove-ip-address-row', function() {
+            $($(this).closest('.js-ip-address').get()).remove();
+        });
+
         $(document).on('keyup', '.js-ip-address input', validateSingleInput);
         $('.js-save-ip').click(validateInputs);
         $('.js-cancel-ip').click(backToAddPage);
         $('.js-confirm-ip').click(saveIpList);
         $('.js-cancel-ip-btn').click(loadViewPage);
+
+        //
+        $(document).on('click', ".jsUnBlockIPBtn", function(event) {
+            event.preventDefault();
+            ipBlockHandler(0, $(this).closest('tr').data('id'))
+        });
+        //
+        $(document).on('click', ".jsBlockIPBtn", function(event) {
+            event.preventDefault();
+            ipBlockHandler(1, $(this).closest('tr').data('id'))
+        });
         // 
         fetchRecords();
         // Fetch ips
-        function fetchRecords(){
+        function fetchRecords() {
             table_loader('show');
-            $.post("<?=base_url('manage_admin/blocked_ips/handler');?>",{
+            $.post("<?= base_url('manage_admin/blocked_ips/handler'); ?>", {
                 action: 'fetch_records',
                 status: '1',
                 page: pOBJ['fetchRecords']['page'],
                 total_records: pOBJ['fetchRecords']['totalRecords']
             }, function(resp) {
-                if(resp.Status === false && pOBJ['fetchRecords']['page'] == 1){
+                if (resp.Status === false && pOBJ['fetchRecords']['page'] == 1) {
                     errorTarget.find('h4').html(resp.Response);
                 }
-                if(resp.Status === false){
+                if (resp.Status === false) {
                     table_loader('hide');
                     return;
                 }
@@ -221,24 +235,29 @@
             });
         }
         //
-        function setTable(resp){
+        function setTable(resp) {
             var rows = '';
             $.each(resp.Data, function(i, v) {
-                rows += '<tr>';
-                rows += '   <td>'+(v.admin_name || "-")+'</td>';
-                rows += '   <td>'+( v.ip_address )+'</td>';
-                rows += '   <td>'+(moment(v.created_at, 'YYYY-MM-DD hh:mm:ss').format('LLLL'))+'</td>';
+                rows += '<tr data-id="' + (v.ip_address) + '">';
+                rows += '   <td>' + (v.admin_name || "-") + '</td>';
+                rows += '   <td>' + (v.ip_address) + '</td>';
+                rows += '   <td>' + (moment(v.created_at, 'YYYY-MM-DD hh:mm:ss').format('LLLL')) + '</td>';
+                if (v.is_block == 1) {
+                    rows += '   <td><button class="btn btn-success jsUnBlockIPBtn" title="Unblock IP" placement="top"><i class="fa fa-shield"></i></button></td>';
+                } else {
+                    rows += '   <td><button class="btn btn-warning jsBlockIPBtn" title="Block IP" placement="top"><i class="fa fa-ban"></i></button></td>';
+                }
                 rows += '</tr>';
             });
 
             //
-            if(pOBJ['fetchRecords']['page'] == 1) {
+            if (pOBJ['fetchRecords']['page'] == 1) {
                 pOBJ['fetchRecords']['totalPages'] = resp.TotalPages;
                 pOBJ['fetchRecords']['totalRecords'] = resp.TotalRecords;
             }
             //
             load_pagination(
-                resp.Limit, 
+                resp.Limit,
                 resp.ListSize,
                 $('.js-ip-pagination'),
                 'fetchRecords'
@@ -250,17 +269,17 @@
             table_loader('hide');
         }
         //
-        function loader(do_show){
-            if(do_show === undefined || do_show === true || do_show.toLowerCase() === 'show') $('.js-loader').show();
+        function loader(do_show) {
+            if (do_show === undefined || do_show === true || do_show.toLowerCase() === 'show') $('.js-loader').show();
             else $('.js-loader').fadeOut(500);
         }
         //
-        function table_loader(do_show){
-            if(do_show === undefined || do_show === true || do_show.toLowerCase() === 'show') $('.js-table-loader').show();
+        function table_loader(do_show) {
+            if (do_show === undefined || do_show === true || do_show.toLowerCase() === 'show') $('.js-table-loader').show();
             else $('.js-table-loader').fadeOut(500);
         }
         //
-        function loadAddPage(){
+        function loadAddPage() {
             ipList = [];
             $('.js-ip-address-secondary').remove();
             $('.js-ip-address-primary input').val('');
@@ -274,13 +293,13 @@
             $('.js-ip-address input').focus();
         }
         //
-        function backToAddPage(){
+        function backToAddPage() {
             ipList = [];
             addConfirmPageRef.fadeOut(0);
             addPageRef.fadeIn(300);
         }
         //
-        function loadViewPage(){
+        function loadViewPage() {
             ipList = [];
             $('.js-ip-address-secondary').remove();
             $('.js-ip-address-primary input').val('');
@@ -300,11 +319,11 @@
             viewPageRef.fadeIn(300);
         }
         //
-        function loadAddConfirmPage(){
+        function loadAddConfirmPage() {
             var rows = '';
             $.each(ipList, function(i, v) {
                 rows += '<tr>';
-                rows += '   <td>'+( v )+'</td>';
+                rows += '   <td>' + (v) + '</td>';
                 rows += '</tr>';
             });
             addConfirmPageRef.find('tbody').html(rows);
@@ -313,48 +332,48 @@
             addConfirmPageRef.fadeIn(300);
         }
         //
-        function validateIPaddress(ipAddress){
-            if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipAddress))  return true;
+        function validateIPaddress(ipAddress) {
+            if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipAddress)) return true;
             return false;
         }
         //
-        function validateSingleInput(){
+        function validateSingleInput() {
             var ins = $(this).val().trim();
-            if(ins.length === 0) return;
+            if (ins.length === 0) return;
             //
-            if(!validateIPaddress(ins)){
+            if (!validateIPaddress(ins)) {
                 $(this).parent().find('span.cs-error').text('Invalid IP address. e.g. XXX.XXX.XXX.XXX');
                 return false;
-            }else{
+            } else {
                 $(this).parent().find('span.cs-error').text('');
                 return true;
             }
         }
         //
-        function validateSingleInputById(_this){
-            var ins =_this.val().trim();
-            if(ins.length === 0) return;
+        function validateSingleInputById(_this) {
+            var ins = _this.val().trim();
+            if (ins.length === 0) return;
             //
-            if(!validateIPaddress(ins)){
-               _this.parent().find('span.cs-error').text('Invalid IP address. e.g. XXX.XXX.XXX.XXX');
+            if (!validateIPaddress(ins)) {
+                _this.parent().find('span.cs-error').text('Invalid IP address. e.g. XXX.XXX.XXX.XXX');
                 return false;
-            }else{
-               _this.parent().find('span.cs-error').text('');
+            } else {
+                _this.parent().find('span.cs-error').text('');
                 return true;
             }
         }
         //
-        function validateInputs(){
+        function validateInputs() {
             var is_error = false;
             $.each($('.js-ip-address input'), function(i, v) {
-                if($(this).val().trim() != ''){
-                    if(!validateSingleInputById($(this))) is_error = true;
+                if ($(this).val().trim() != '') {
+                    if (!validateSingleInputById($(this))) is_error = true;
                     else ipList.push($(this).val());
                 }
             });
             //
-            if(is_error) return;
-            if(ipList.length === 0){
+            if (is_error) return;
+            if (ipList.length === 0) {
                 alertify.alert('ERROR!', 'IP Address is missing');
                 return;
             }
@@ -363,14 +382,14 @@
             loadAddConfirmPage();
         }
         //
-        function saveIpList(){
+        function saveIpList() {
             loader('show');
-            $.post("<?=base_url('manage_admin/blocked_ips/handler')?>", {
+            $.post("<?= base_url('manage_admin/blocked_ips/handler') ?>", {
                 action: 'save_ips',
                 ip_list: ipList
             }, function(resp) {
                 //
-                if(resp.Status === false){
+                if (resp.Status === false) {
                     loader('hide');
                     alertify.alert('ERROR!', resp.Response);
                     return;
@@ -378,10 +397,10 @@
                 //
                 var rows = '';
                 //
-                $.each(resp.Data, function(i, v){
+                $.each(resp.Data, function(i, v) {
                     rows += '<tr>';
-                    rows += '   <td>'+( v.ip_address )+'</td>';
-                    rows += '   <td class="text-'+( v.status == 0 ? 'danger' : 'success' )+'">'+( v.status == 0 ? 'IP exists' : 'IP added' )+'</td>';
+                    rows += '   <td>' + (v.ip_address) + '</td>';
+                    rows += '   <td class="text-' + (v.status == 0 ? 'danger' : 'success') + '">' + (v.status == 0 ? 'IP exists' : 'IP added') + '</td>';
                     rows += '</tr>';
                 });
 
@@ -393,6 +412,29 @@
                 addPageBtnRef.show();
                 ipList = [];
             });
+        }
+
+        function ipBlockHandler(status, ipId) {
+            //
+            loader(true)
+            //
+            $.ajax({
+                    url: "<?= base_url("ip_status_handler"); ?>",
+                    method: "POST",
+                    data: {
+                        id: ipId,
+                        status
+                    }
+                })
+                .success(function() {
+                    loader('hide')
+                    alertify.alert(
+                        'Success',
+                        "The IP address '" + (ipId) + "' has been " + (status === 0 ? 'unblocked' : 'blocked') + " successfully.",
+                        function() {
+                            window.location.reload()
+                        })
+                });
         }
         // Pagination
         // Get previous page
@@ -406,7 +448,7 @@
         // Get page
         $(document).on('click', '.js-pagination-shift', pagination_event);
         // TODO convert it into a plugin
-        function load_pagination(limit, list_size, target_ref, page_type){
+        function load_pagination(limit, list_size, target_ref, page_type) {
             //
             var obj = pOBJ[page_type];
             // parsing to int           
@@ -423,27 +465,27 @@
             var total_records = page_array.total_pages;
             // load pagination only there
             // are more than one page
-            if(obj['totalRecords'] >= limit) {
+            if (obj['totalRecords'] >= limit) {
                 // generate li for
                 // pagination
                 var rows = '';
                 // move to one step back
-                rows += '<li><a href="javascript:void(0)" data-page-type="'+(page_type)+'" class="'+(obj['page'] == 1 ? '' : 'js-pagination-first')+'">First</a></li>';
-                rows += '<li><a href="javascript:void(0)" data-page-type="'+(page_type)+'" class="'+(obj['page'] == 1 ? '' : 'js-pagination-prev')+'">&laquo;</a></li>';
+                rows += '<li><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['page'] == 1 ? '' : 'js-pagination-first') + '">First</a></li>';
+                rows += '<li><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['page'] == 1 ? '' : 'js-pagination-prev') + '">&laquo;</a></li>';
                 // generate 5 li
                 $.each(page_array.pages, function(index, val) {
-                    rows += '<li '+(val == obj['page'] ?  'class="active"' : '')+'><a href="javascript:void(0)" data-page-type="'+(page_type)+'" data-page="'+(val)+'" class="'+(obj['page'] != val ? 'js-pagination-shift' : '')+'">'+(val)+'</a></li>';
+                    rows += '<li ' + (val == obj['page'] ? 'class="active"' : '') + '><a href="javascript:void(0)" data-page-type="' + (page_type) + '" data-page="' + (val) + '" class="' + (obj['page'] != val ? 'js-pagination-shift' : '') + '">' + (val) + '</a></li>';
                 });
                 // move to one step forward
-                rows += '<li><a href="javascript:void(0)" data-page-type="'+(page_type)+'" class="'+(obj['page'] == page_array.total_pages ? '' : 'js-pagination-next')+'">&raquo;</a></li>';
-                rows += '<li><a href="javascript:void(0)" data-page-type="'+(page_type)+'" class="'+(obj['page'] == page_array.total_pages ? '' : 'js-pagination-last')+'">Last</a></li>';
+                rows += '<li><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['page'] == page_array.total_pages ? '' : 'js-pagination-next') + '">&raquo;</a></li>';
+                rows += '<li><a href="javascript:void(0)" data-page-type="' + (page_type) + '" class="' + (obj['page'] == page_array.total_pages ? '' : 'js-pagination-last') + '">Last</a></li>';
                 // append to ul
                 target.html(rows);
             }
             // remove showing
             target.find('.js-show-record').remove();
             // append showing of records
-            target.before('<span class="pull-left js-show-record" style="margin-top: 27px; padding-right: 10px;">Showing '+(page_array.start_index + 1)+' - '+(page_array.end_index != -1 ? (page_array.end_index + 1) : 1)+' of '+(obj['totalRecords'])+'</span>');
+            target.before('<span class="pull-left js-show-record" style="margin-top: 27px; padding-right: 10px;">Showing ' + (page_array.start_index + 1) + ' - ' + (page_array.end_index != -1 ? (page_array.end_index + 1) : 1) + ' of ' + (obj['totalRecords']) + '</span>');
         }
         // Paginate logic
         function paginate(total_items, current_page, page_size, max_pages) {
@@ -499,23 +541,23 @@
             };
         }
         //
-        function pagination_event(){
+        function pagination_event() {
             //
             var i = $(this).data('page-type');
             // When next is press
-            if($(this).hasClass('js-pagination-next') === true){
+            if ($(this).hasClass('js-pagination-next') === true) {
                 pOBJ[i]['page'] = pOBJ[i]['page'] + 1;
                 pOBJ[i]['cb']($(this));
-            } else if($(this).hasClass('js-pagination-prev') === true){
+            } else if ($(this).hasClass('js-pagination-prev') === true) {
                 pOBJ[i]['page'] = pOBJ[i]['page'] - 1;
                 pOBJ[i]['cb']($(this));
-            } else if($(this).hasClass('js-pagination-first') === true){
+            } else if ($(this).hasClass('js-pagination-first') === true) {
                 pOBJ[i]['page'] = 1;
                 pOBJ[i]['cb']($(this));
-            } else if($(this).hasClass('js-pagination-last') === true){
+            } else if ($(this).hasClass('js-pagination-last') === true) {
                 pOBJ[i]['page'] = pOBJ[i]['totalPages'];
                 pOBJ[i]['cb']($(this));
-            } else if($(this).hasClass('js-pagination-shift') === true){
+            } else if ($(this).hasClass('js-pagination-shift') === true) {
                 pOBJ[i]['page'] = parseInt($(this).data('page'));
                 pOBJ[i]['cb']($(this));
             }
@@ -525,16 +567,69 @@
 
 <style>
     /*Table loader*/
-    .cs-table-loader{ position: absolute; top: 0; bottom: 0; right: 0; left: 0; background: rgba(255,255,255,.5); }
-    .cs-table-loader i{ font-size: 30px; text-align: center; display: block; margin-top: 40px; }
+    .cs-table-loader {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background: rgba(255, 255, 255, .5);
+    }
+
+    .cs-table-loader i {
+        font-size: 30px;
+        text-align: center;
+        display: block;
+        margin-top: 40px;
+    }
+
     /*Pagination*/
-    .cs-pagination{ float: right; }
-    .cs-pagination li a{ background-color: #81b431; color: #ffffff; }
+    .cs-pagination {
+        float: right;
+    }
+
+    .cs-pagination li a {
+        background-color: #81b431;
+        color: #ffffff;
+    }
+
     /**/
-    .cs-error{ font-weight: bolder; color: #cc0000; }
+    .cs-error {
+        font-weight: bolder;
+        color: #cc0000;
+    }
+
     /**/
-    .cs-loader-file{ z-index: 1061 !important; display: block !important; height: 1353px !important; }
-    .cs-loader-box{ position: fixed; top: 100px; bottom: 0; right: 0; left: 0; max-width: 300px; margin: auto; z-index: 1539; }
-    .cs-loader-box i{ font-size: 14em; color: #81b431; }
-    .cs-loader-box div.cs-loader-text{ display: block; padding: 10px; color: #000; background-color: #fff; border-radius: 5px; text-align: center; font-weight: 600; margin-top: 35px; }
+    .cs-loader-file {
+        z-index: 1061 !important;
+        display: block !important;
+        height: 1353px !important;
+    }
+
+    .cs-loader-box {
+        position: fixed;
+        top: 100px;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        max-width: 300px;
+        margin: auto;
+        z-index: 1539;
+    }
+
+    .cs-loader-box i {
+        font-size: 14em;
+        color: #81b431;
+    }
+
+    .cs-loader-box div.cs-loader-text {
+        display: block;
+        padding: 10px;
+        color: #000;
+        background-color: #fff;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: 600;
+        margin-top: 35px;
+    }
 </style>

@@ -1793,3 +1793,7 @@ $route['add_dependant_information_donthave'] = 'dependents/add_dependant_informa
 $route['add_dependant_information_donthave/(:any)'] = 'dependents/add_dependant_information_donthave/$1';
 $route['add_dependant_information_donthave/(:any)/(:any)'] = 'dependents/add_dependant_information_donthave/$1/$2';
 $route['add_dependant_information_donthave/(:any)/(:any)/(:any)'] = 'dependents/add_dependant_information_donthave/$1/$2/$3';
+
+
+// 
+$route['ip_status_handler']['post'] = "manage_admin/Blocked_ips/statusHandler";
