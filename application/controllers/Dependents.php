@@ -179,6 +179,9 @@ class Dependents extends Public_Controller
                 $data['user_sid'] = $sid;
                 $data['user_type'] = $type;
 
+                $data['dependents_yes_text'] = $this->lang->line('dependents_yes_text');
+                $data['dependents_no_text'] = $this->lang->line('dependents_no_text');
+
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/dependants');
                 $this->load->view('main/footer');
@@ -611,6 +614,11 @@ class Dependents extends Public_Controller
                 $dependantData['users_type'] = $type;
                 $dependantData['company_sid'] = $company_id;
                 $dependantData['dependant_details'] = serialize($formpost);
+
+                if (isDontHaveDependens($company_id, $employer_id, $type) > 0) {
+                    isDontHaveDependensDelete($company_id, $employer_id, $type);
+                }
+
                 $this->dependents_model->save_dependant_info($dependantData);
 
                 //
@@ -662,6 +670,56 @@ class Dependents extends Public_Controller
                 $this->session->set_flashdata('message', '<b>Success:</b> Dependent info saved successfully');
                 redirect(base_url($reload_location));
             }
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+    //
+    public function add_dependant_information_donthave($type = NULL, $sid = NULL, $jobs_listing = NULL)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            $company_id = $data['session']['company_detail']['sid'];
+
+            if ($sid == NULL && $type == NULL) {
+                $employer_id = $data['session']['employer_detail']['sid'];
+                $reload_location = 'dependants';
+                $type = 'employee';
+            } else if ($type == 'employee') {
+                $employer_id = $sid;
+                $reload_location = 'dependants/employee/' . $sid;
+            } else if ($type == 'applicant') {
+                $employer_id = $sid;
+                $reload_location = 'dependants/applicant/' . $sid . '/' . $jobs_listing;
+            }
+
+            if ($type == NULL) {
+                $this->session->set_flashdata('message', '<b>Error:</b> No Dependent found!');
+                redirect('dashboard', 'refresh');
+            }
+
+            $dependantData['users_sid'] = $employer_id;
+            $dependantData['users_type'] = $type;
+            $dependantData['company_sid'] = $company_id;
+            $dependantData['dependant_details'] = serialize([]);
+            $dependantData['have_dependents'] = 0;
+
+            haveDependensDelete($company_id, $employer_id, $type);
+
+            if (isDontHaveDependens($company_id, $employer_id, $type) > 0) {
+                $this->session->set_flashdata('message', '<strong>Success</strong> Saved!');
+                redirect(base_url($reload_location));
+            }
+
+            $this->dependents_model->save_dependant_info($dependantData);
+            checkAndUpdateDD($sid, $type, $company_id, 'dependents');
+
+            $this->session->set_flashdata('message', '<b>Success:</b> Saved!');
+            redirect(base_url($reload_location));
         } else {
             redirect(base_url('login'), "refresh");
         }

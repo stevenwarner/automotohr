@@ -720,6 +720,8 @@ class Onboarding_model extends CI_Model
         $this->db->select('*');
         $this->db->where('users_sid', $user_sid);
         $this->db->where('users_type', $user_type);
+        $this->db->where('have_dependents', '1');
+
         $records_obj = $this->db->get('dependant_information');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
