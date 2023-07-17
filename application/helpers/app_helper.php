@@ -528,55 +528,36 @@ if (!function_exists('isCompanyOnBoard')) {
     /**
      * Check company already onboard
      *
-     * @return
+     * @param int $companyId
+     * @return bool
      */
-    function isCompanyOnBoard()
+    function isCompanyOnBoard(int $companyId): bool
     {
-        // Get instance
-        $CI = &get_instance();
-        // Get the session
-        $ses = $CI->session->userdata('logged_in');
         //
-        $has = $CI->db
+        return (bool)get_instance()->db
             ->where([
-                'company_sid' => $ses['company_detail']['sid']
+                'company_sid' => $companyId
             ])
-            ->count_all_results('payroll_companies');
-        //
-        if ($has) {
-            return true;
-        }
-        // Don't created yet
-        return false;
+            ->count_all_results('gusto_companies');
     }
 }
 
-if (!function_exists('isCompanyTermsAccpeted')) {
+if (!function_exists('hasAcceptedPayrollTerms')) {
     /**
      * Check company already onboard
      *
-     * @return
+     * @param int $companyId
+     * @return bool
      */
-    function isCompanyTermsAccpeted()
+    function hasAcceptedPayrollTerms(int $companyId): bool
     {
-        // Get instance
-        $CI = &get_instance();
-        // Get the session
-        $ses = $CI->session->userdata('logged_in');
         //
-        $has = $CI->db
+        return (bool) get_instance()->db
+            ->where('is_ts_accepted is not null', null, null)
             ->where([
-                'company_sid' => $ses['company_detail']['sid'],
-                'terms_accepted' => 1
-
+                'company_sid' => $companyId
             ])
-            ->count_all_results('payroll_companies');
-        //
-        if ($has) {
-            return true;
-        }
-        // Don't created yet
-        return false;
+            ->count_all_results('gusto_companies');
     }
 }
 

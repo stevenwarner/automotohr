@@ -63,8 +63,7 @@ $(function CreatePartnerCompany() {
 				Loader: modalId + "Loader",
 				Body: `<div id="${modalId}Body"></div>`,
 			},
-			processQueue.pushSelectedEmployees
-			// processQueue.welcomeStep
+			processQueue.welcomeStep
 		);
 	});
 
@@ -139,6 +138,13 @@ $(function CreatePartnerCompany() {
 				XHR = null;
 				// load the view
 				$(`#${modalId}Body`).html(resp.view);
+				//
+				if (resp.onboard !== undefined) {
+					if (resp.onboard === "terms") {
+						return processQueue.gustoTerms();
+					}
+					window.location.reload();
+				}
 				// hide the loader
 				_ml(false, modalId + "Loader");
 				// attach trigger
@@ -517,7 +523,7 @@ $(function CreatePartnerCompany() {
 			})
 			.fail(saveErrorsList);
 	}
-	
+
 	/**
 	 * sync gusto admins
 	 * step 12
@@ -534,7 +540,7 @@ $(function CreatePartnerCompany() {
 			url: window.location.origin + "/payroll/cpc/12/" + companyId,
 			method: "POST",
 			data: {
-				employees: selectedEmployees
+				employees: selectedEmployees,
 			},
 		})
 			.success(function () {
@@ -569,7 +575,4 @@ $(function CreatePartnerCompany() {
 		// show error
 		return handleErrorResponse(err);
 	}
-
-	companyId = 28684;
-	$(".jsCreatePartnerCompanyBtn").trigger("click");
 });

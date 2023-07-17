@@ -32,6 +32,12 @@ class Payroll extends CI_Controller
     ) {
         // welcome page
         if ($step === 1) :
+            // check if company is already onboard
+            $isOnboard = $this->payroll_model->getCompanyOnboardLastStep($companyId);
+            //
+            if ($isOnboard !== 'onboard') {
+                return SendResponse(200, ['success' => true, 'onboard' => $isOnboard]);
+            }
             return SendResponse(
                 200,
                 [

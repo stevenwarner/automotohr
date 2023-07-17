@@ -224,6 +224,30 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * check company onboard
+     *
+     * @param int $companyId
+     * @return string
+     */
+    public function getCompanyOnboardLastStep(int $companyId): string
+    {
+        $record = $this->db
+            ->select('is_ts_accepted')
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('gusto_companies')
+            ->row_array();
+        //
+        if (!$record) {
+            return 'onboard';
+        } elseif (!$record['is_ts_accepted']) {
+            return 'terms';
+        }
+        return 'done';
+    }
+
+    /**
      * check payroll admin of a company
      *
      * @param int $companyId

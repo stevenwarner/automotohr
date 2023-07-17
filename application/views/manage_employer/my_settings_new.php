@@ -239,8 +239,12 @@
                                             <li><a href="<?php echo base_url('performance-management/goals'); ?>">Goals</a></li>
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
-                                        <?php if (checkIfAppIsEnabled('payroll') && !isCompanyOnBoard()) { ?>
-                                            <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</a></li>
+                                        <?php if (checkIfAppIsEnabled('payroll')) { ?>
+                                            <?php if (!isCompanyOnBoard($session['company_detail']['sid'])) { ?>
+                                                <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</a></li>
+                                            <?php } elseif(!hasAcceptedPayrollTerms($session['company_detail']['sid'])) { ?>
+                                                <li><a href="javascript:void(0)" class="jsServiceTerms" data-cid="<?= $session['company_detail']['sid']; ?>">Payroll Service Agreement</a></li>
+                                            <?php } ?>
                                         <?php } ?>
                                     </ul>
                                 </article>
