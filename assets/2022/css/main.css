@@ -164,7 +164,19 @@ pre {
 .csRBC {
 	background-color: #fff !important;
 }
-
+/* DatePicker */
 .ui-datepicker {
 	z-index: 1001 !important;
+}
+
+.ui-datepicker-header,
+.ui-datepicker-calendar .ui-state-active,
+.ui-datepicker-prev:hover,
+.ui-datepicker-next:hover,
+.ui-datepicker-prev:hover,
+.ui-datepicker-next:hover {
+	background-color: #f58e4e;
+}
+.ui-datepicker-calendar .ui-state-active {
+	border-color: #f58e4e;
 }

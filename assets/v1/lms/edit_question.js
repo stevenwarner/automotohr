@@ -30,10 +30,15 @@ $(function editQuestion() {
 	 */
 	$(document).on("change", "#jsEditQuestionType", function () {
 		//
-		$(".jsEditQuestionMultipleChoiceBox").addClass("hidden");
+		$(".jsEditQuestionPlace").addClass("hidden");
 		//
-		if ($(this).val() === "multiple_choice") {
-			$(".jsEditQuestionMultipleChoiceBox").removeClass("hidden");
+		if (
+			$(this).val() === "multiple_choice" ||
+			$(this).val() === "single_choice"
+		) {
+			$(".jsEditQuestionChoice").removeClass("hidden");
+		} else if ($(this).val() === "yes_no") {
+			$(".jsEditQuestionYesNo").removeClass("hidden");
 		}
 	});
 
@@ -69,6 +74,62 @@ $(function editQuestion() {
 	});
 
 	/**
+	 * add answer row
+	 */
+	$(document).on("click", ".jsEditChoiceAnswer", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		//
+		let choiceAnswer = `
+		<!-- secondary question row -->
+		<div class="csChoiceRowEdit">
+			<div class="row">
+				<div class="col-xs-12 col-sm-5">
+					<label>Answer Choice <strong class="text-danger">*</strong></label>
+					<input type="text" class="form-control jsEditQuestionChoiceAnswer" />
+				</div>
+				<div class="col-xs-12 col-sm-3">
+					<label>Question Score <strong class="text-danger">*</strong></label>
+					<select class="form-control jsEditQuestionChoiceAnswerScore">
+						<option value="0">Not acceptable - 0</option>
+						<option value="1">Acceptable - 1</option>
+						<option value="2">Good - 2</option>
+						<option value="3">Very Good - 3</option>
+						<option value="4">Excellent - 4</option>
+					</select>
+				</div>
+				<div class="col-xs-12 col-sm-2">
+					<label>Status <strong class="text-danger">*</strong></label>
+					<select class="form-control jsEditQuestionChoiceAnswerStatus">
+						<option value="pass">Pass</option>
+						<option value="fail">Fail</option>
+					</select>
+				</div>
+				<div class="col-xs-12 col-sm-1">
+					<p>&nbsp;</p>
+					<button class="btn btn-danger jsEditDeleteChoiceAnswer" type="button" title="Remove answer" placement="top">
+						<i class="fa fa-times-circle" aria-hidden="true"></i>
+					</button>
+				</div>
+			</div>
+			<br />
+		</div>
+				`;
+		// call the function
+		$(".csEditChoiceBox").append(choiceAnswer);
+	});
+
+	/**
+	 * remove answer row
+	 */
+	$(document).on("click", ".jsEditDeleteChoiceAnswer", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+		$(this).closest(".csChoiceRowEdit").remove();
+	});
+
+	/**
 	 * load question view
 	 *
 	 * @param {object} question
@@ -99,6 +160,12 @@ $(function editQuestion() {
 			allowedTypes: ["mp4"],
 			placeholderImage: questionObj.video_file_name,
 		});
+
+		$(
+			'#jsEditQuestionType option[value="' +
+				questionObj.question_type +
+				'"]'
+		).prop("selected", true);
 		$("#jsEditQuestionType").select2({
 			minimumResultsForSearch: -1,
 		});
@@ -108,11 +175,17 @@ $(function editQuestion() {
 		// reset the view
 		$("#jsEditQuestionTitle").val(questionObj.question_title);
 		$("#jsEditQuestionHelp").val(questionObj.question_content);
-		$("#jsEditQuestionType").select("val", questionObj.question_type);
-		$('.jsEditQuestionVideoType[value="'+questionObj.video_type+'"]').prop("checked", true);
 		//
-		if (questionObj.video_type === 'link') {
-			$('.jsEditQuestionVideoType[value="'+questionObj.video_type+'"]').prop("checked", true);
+		$(
+			'.jsEditQuestionVideoType[value="' + questionObj.video_type + '"]'
+		).prop("checked", true);
+		//
+		if (questionObj.video_type === "link") {
+			$(
+				'.jsEditQuestionVideoType[value="' +
+					questionObj.video_type +
+					'"]'
+			).prop("checked", true);
 			$(".jsEditQuestionUploadVideoBox").addClass("hidden");
 			$(".jsEditQuestionRecordVideoBox").addClass("hidden");
 			$(".jsEditQuestionLinkVideoBox").removeClass("hidden");
@@ -122,32 +195,168 @@ $(function editQuestion() {
 			$(".jsEditQuestionRecordVideoBox").addClass("hidden");
 			$(".jsEditQuestionUploadVideoBox").removeClass("hidden");
 		}
+		// yes and no
+		$('#jsEditQuestionYesNoYSelect option[value="0"]').prop(
+			"selected",
+			true
+		);
+		$('#jsEditQuestionYesNoYStatus option[value="pass"]').prop(
+			"selected",
+			true
+		);
+		$('#jsEditQuestionYesNoNSelect option[value="0"]').prop(
+			"selected",
+			true
+		);
+		$('#jsEditQuestionYesNoNStatus option[value="pass"]').prop(
+			"selected",
+			true
+		);
+		// choice
+		$(".csEditChoiceBox").html("");
+		$(".jsEditQuestionChoiceAnswer").val("");
+		$('#jsEditQuestionChoiceAnswerScore option[value="0"]').prop(
+			"selected",
+			true
+		);
+		$('#jsEditQuestionChoiceAnswerStatus option[value="pass"]').prop(
+			"selected",
+			true
+		);
 		//
-		$(".jsEditQuestionMultipleChoiceBox").addClass("hidden");
-		$("#jsEditQuestionMultipleChoiceAnswer").select("val", "choice_1");
-		$("#jsEditQuestionMultipleChoice1").val("");
-		$("#jsEditQuestionMultipleChoice2").val("");
-		$("#jsEditQuestionMultipleChoice3").val("");
-		$("#jsEditQuestionMultipleChoice4").val("");
+		$(".jsEditQuestionPlace").addClass("hidden");
 		//
-		if (questionObj.question_type === "multiple_choice") {
-			$(".jsEditQuestionMultipleChoiceBox").removeClass("hidden");
-			$("#jsEditQuestionMultipleChoiceAnswer").select(
-				"val",
-				questionObj.choice_list.rightChoice
+		if (questionObj.question_type === "yes_no") {
+			$(".jsEditQuestionYesNo").removeClass("hidden");
+			$(
+				'#jsEditQuestionYesNoYSelect option[value="' +
+					questionObj.choice_list["yes"]["score"] +
+					'"]'
+			).prop("selected", true);
+			$(
+				'#jsEditQuestionYesNoYStatus option[value="' +
+					questionObj.choice_list["yes"]["status"] +
+					'"]'
+			).prop("selected", true);
+			$(
+				'#jsEditQuestionYesNoNSelect option[value="' +
+					questionObj.choice_list["no"]["score"] +
+					'"]'
+			).prop("selected", true);
+			$(
+				'#jsEditQuestionYesNoNStatus option[value="' +
+					questionObj.choice_list["no"]["status"] +
+					'"]'
+			).prop("selected", true);
+		} else if (
+			questionObj.question_type === "single_choice" ||
+			questionObj.question_type === "multiple_choice"
+		) {
+			$(".jsEditQuestionChoice").removeClass("hidden");
+			//
+			$(".jsEditQuestionChoiceAnswerPrimary").val(
+				questionObj.choice_list[0]["answer_choice"]
 			);
-			$("#jsEditQuestionMultipleChoice1").val(
-				questionObj.choice_list.choice1
-			);
-			$("#jsEditQuestionMultipleChoice2").val(
-				questionObj.choice_list.choice2
-			);
-			$("#jsEditQuestionMultipleChoice3").val(
-				questionObj.choice_list.choice3
-			);
-			$("#jsEditQuestionMultipleChoice4").val(
-				questionObj.choice_list.choice4
-			);
+			//
+			$(
+				'.jsEditQuestionChoiceAnswerPrimaryScore option[value="' +
+					questionObj.choice_list[0]["answer_score"] +
+					'"]'
+			).prop("selected", true);
+			//
+			$(
+				'.jsEditQuestionChoiceAnswerPrimaryStatus option[value="' +
+					questionObj.choice_list[0]["answer_status"] +
+					'"]'
+			).prop("selected", true);
+
+			//
+			for (const index in questionObj.choice_list) {
+				//
+				if (index != 0) {
+					$(".csEditChoiceBox").append(`
+						<!-- secondary question row -->
+						<div class="csChoiceRow">
+							<div class="row">
+								<div class="col-xs-12 col-sm-5">
+									<label>Answer Choice <strong class="text-danger">*</strong></label>
+									<input type="text" class="form-control jsAddQuestionChoiceAnswer" value="${
+										questionObj.choice_list[index][
+											"answer_choice"
+										]
+									}" />
+								</div>
+								<div class="col-xs-12 col-sm-3">
+									<label>Question Score <strong class="text-danger">*</strong></label>
+									<select class="form-control jsAddQuestionChoiceAnswerScore">
+										<option ${
+											questionObj.choice_list[index][
+												"answer_score"
+											] === "0"
+												? "selected"
+												: ""
+										} value="0">Not acceptable - 0</option>
+										<option ${
+											questionObj.choice_list[index][
+												"answer_score"
+											] === "1"
+												? "selected"
+												: ""
+										} value="1">Acceptable - 1</option>
+										<option ${
+											questionObj.choice_list[index][
+												"answer_score"
+											] === "2"
+												? "selected"
+												: ""
+										} value="2">Good - 2</option>
+										<option ${
+											questionObj.choice_list[index][
+												"answer_score"
+											] === "3"
+												? "selected"
+												: ""
+										} value="3">Very Good - 3</option>
+										<option ${
+											questionObj.choice_list[index][
+												"answer_score"
+											] === "4"
+												? "selected"
+												: ""
+										} value="4">Excellent - 4</option>
+									</select>
+								</div>
+								<div class="col-xs-12 col-sm-2">
+									<label>Status <strong class="text-danger">*</strong></label>
+									<select class="form-control jsAddQuestionChoiceAnswerStatus">
+										<option ${
+											questionObj.choice_list[index][
+												"answer_status"
+											] === "pass"
+												? "selected"
+												: ""
+										} value="pass">Pass</option>
+										<option ${
+											questionObj.choice_list[index][
+												"answer_status"
+											] === "fail"
+												? "selected"
+												: ""
+										} value="fail">Fail</option>
+									</select>
+								</div>
+								<div class="col-xs-12 col-sm-1">
+									<p>&nbsp;</p>
+									<button class="btn btn-danger jsDeleteChoiceAnswer" type="button" title="Remove answer" placement="top">
+										<i class="fa fa-times-circle" aria-hidden="true"></i>
+									</button>
+								</div>
+							</div>
+							<br />
+						</div>
+				`);
+				}
+			}
 		}
 		//
 		$(".jsPageBox").addClass("hidden");
@@ -166,7 +375,7 @@ $(function editQuestion() {
 		questionObj.question_title = $("#jsEditQuestionTitle").val().trim();
 		questionObj.question_content = $("#jsEditQuestionHelp").val().trim();
 		questionObj.question_type = $("#jsEditQuestionType").select2("val");
-		questionObj.choice_list = [];
+		questionObj.choice_list = {};
 		questionObj.video_type =
 			$(".jsEditQuestionVideoType:checked").val() || null;
 		// validation
@@ -177,43 +386,46 @@ $(function editQuestion() {
 			errorArray.push('"Question type" field is mandatory.');
 		}
 		// for multiple choice
-		if (questionObj.question_type === "multiple_choice") {
+		if (
+			questionObj.question_type === "single_choice" ||
+			questionObj.question_type === "multiple_choice"
+		) {
 			//
-			let choice1 = $("#jsEditQuestionMultipleChoice1").val().trim();
-			let choice2 = $("#jsEditQuestionMultipleChoice2").val().trim();
-			let choice3 = $("#jsEditQuestionMultipleChoice3").val().trim();
-			let choice4 = $("#jsEditQuestionMultipleChoice4").val().trim();
-			let rightChoice = $("#jsEditQuestionMultipleChoiceAnswer").select2(
-				"val"
-			);
-			questionObj.choice_list = {
-				choice1,
-				choice2,
-				choice3,
-				choice4,
-				rightChoice,
+			$(".csEditChoiceBox").map(function (i) {
+				const obj = {
+					answer_choice: $(this)
+						.find(".jsEditQuestionChoiceAnswer")
+						.val()
+						.trim(),
+					answer_score: $(this)
+						.find(".jsEditQuestionChoiceAnswerScore")
+						.val()
+						.trim(),
+					answer_status: $(this)
+						.find(".jsEditQuestionChoiceAnswerStatus")
+						.val()
+						.trim(),
+				};
+				// validation
+				if (!obj.answer_choice) {
+					errorArray.push(
+						'"Answer Choice" is missing for row ' + (i + 1) + "."
+					);
+				}
+				//
+				questionObj.choice_list[i] = obj;
+			});
+		} else if (questionObj.question_type === "yes_no") {
+			//
+			questionObj.choice_list["yes"] = {
+				score: $("#jsEditQuestionYesNoYSelect option:checked").val(),
+				status: $("#jsEditQuestionYesNoYStatus option:checked").val(),
 			};
-
 			//
-			if (!choice1) {
-				errorArray.push('"Choice one" is mandatory.');
-			}
-			//
-			if (!choice2) {
-				errorArray.push('"Choice two" is mandatory.');
-			}
-			//
-			if (!choice3) {
-				errorArray.push('"Choice three" is mandatory.');
-			}
-			//
-			if (!choice4) {
-				errorArray.push('"Choice four" is mandatory.');
-			}
-			//
-			if (!rightChoice) {
-				errorArray.push('"Correct choice" is mandatory.');
-			}
+			questionObj.choice_list["no"] = {
+				score: $("#jsEditQuestionYesNoNSelect option:checked").val(),
+				status: $("#jsEditQuestionYesNoNStatus option:checked").val(),
+			};
 		}
 		if (!questionObj.video_type) {
 			errorArray.push('"Video type" field is mandatory.');
@@ -251,13 +463,14 @@ $(function editQuestion() {
 			}
 		} else if (questionObj.video_type === "link") {
 			questionObj.video_file_name = $("#jsEditQuestionLink").val().trim();
-			if (!questionObj.video_file_name ) {
+			if (!questionObj.video_file_name) {
 				errorArray.push("YouTube / Vimeo link is required.");
-			} else if (!questionObj.video_file_name .isValidYoutubeLink() && !questionObj.video_file_name .isValidVimeoLink()) {
+			} else if (
+				!questionObj.video_file_name.isValidYoutubeLink() &&
+				!questionObj.video_file_name.isValidVimeoLink()
+			) {
 				errorArray.push("Invalid YouTube / Vimeo link.");
 			}
-			//
-			doUpdated = false;
 		}
 		//
 		if (errorArray.length) {
@@ -298,7 +511,7 @@ $(function editQuestion() {
 		// clear the file
 		$("#jsEditQuestionUploadVideo").msFileUploader("clear");
 		// pass the question to callback
-		console.log(questionObj)
+		console.log(questionObj);
 		callbackReference(questionObj);
 	}
 

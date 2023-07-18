@@ -14,7 +14,6 @@ $(function addQuestion() {
 	let modalLoaderId;
 	//
 	let callbackReference;
-
 	// set video file reference
 	let videoFileRef;
 
@@ -30,10 +29,15 @@ $(function addQuestion() {
 	 */
 	$(document).on("change", "#jsAddQuestionType", function () {
 		//
-		$(".jsAddQuestionMultipleChoiceBox").addClass("hidden");
+		$(".jsAddQuestionPlace").addClass("hidden");
 		//
-		if ($(this).val() === "multiple_choice") {
-			$(".jsAddQuestionMultipleChoiceBox").removeClass("hidden");
+		if (
+			$(this).val() === "multiple_choice" ||
+			$(this).val() === "single_choice"
+		) {
+			$(".jsAddQuestionChoice").removeClass("hidden");
+		} else if ($(this).val() === "yes_no") {
+			$(".jsAddQuestionYesNo").removeClass("hidden");
 		}
 	});
 
@@ -69,6 +73,62 @@ $(function addQuestion() {
 	});
 
 	/**
+	 * add answer row
+	 */
+	$(document).on("click", ".jsAddChoiceAnswer", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		//
+		let choiceAnswer = `
+		<!-- secondary question row -->
+		<div class="csChoiceRow">
+			<div class="row">
+				<div class="col-xs-12 col-sm-5">
+					<label>Answer Choice <strong class="text-danger">*</strong></label>
+					<input type="text" class="form-control jsAddQuestionChoiceAnswer" />
+				</div>
+				<div class="col-xs-12 col-sm-3">
+					<label>Question Score <strong class="text-danger">*</strong></label>
+					<select class="form-control jsAddQuestionChoiceAnswerScore">
+						<option value="0">Not acceptable - 0</option>
+						<option value="1">Acceptable - 1</option>
+						<option value="2">Good - 2</option>
+						<option value="3">Very Good - 3</option>
+						<option value="4">Excellent - 4</option>
+					</select>
+				</div>
+				<div class="col-xs-12 col-sm-2">
+					<label>Status <strong class="text-danger">*</strong></label>
+					<select class="form-control jsAddQuestionChoiceAnswerStatus">
+						<option value="pass">Pass</option>
+						<option value="fail">Fail</option>
+					</select>
+				</div>
+				<div class="col-xs-12 col-sm-1">
+					<p>&nbsp;</p>
+					<button class="btn btn-danger jsDeleteChoiceAnswer" type="button" title="Remove answer" placement="top">
+						<i class="fa fa-times-circle" aria-hidden="true"></i>
+					</button>
+				</div>
+			</div>
+			<br />
+		</div>
+				`;
+		// call the function
+		$(".csChoiceBox").append(choiceAnswer);
+	});
+
+	/**
+	 * remove answer row
+	 */
+	$(document).on("click", ".jsDeleteChoiceAnswer", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+		$(this).closest(".csChoiceRow").remove();
+	});
+
+	/**
 	 * load add question view
 	 *
 	 * @param {string} modalCode
@@ -98,22 +158,46 @@ $(function addQuestion() {
 		$("#jsAddQuestionType").select2({
 			minimumResultsForSearch: -1,
 		});
-		$("#jsAddQuestionMultipleChoiceAnswer").select2({
-			minimumResultsForSearch: -1,
-		});
 		// reset the view
 		$("#jsAddQuestionTitle").val("");
 		$("#jsAddQuestionHelp").val("");
+		$("#jsAddQuestionRequired").prop("checked", false);
 		$("#jsAddQuestionType").select("val", "text");
-		$(".jsAddQuestionMultipleChoiceBox").addClass("hidden");
-		$("#jsAddQuestionMultipleChoiceAnswer").select("val", "choice_1");
+		$(".jsAddQuestionPlace").addClass("hidden");
+		// yes and no
+		$('#jsAddQuestionYesNoYSelect option[value="0"]').prop(
+			"selected",
+			true
+		);
+		$('#jsAddQuestionYesNoYStatus option[value="pass"]').prop(
+			"selected",
+			true
+		);
+		$('#jsAddQuestionYesNoNSelect option[value="0"]').prop(
+			"selected",
+			true
+		);
+		$('#jsAddQuestionYesNoNStatus option[value="pass"]').prop(
+			"selected",
+			true
+		);
+		// choice
+		$(".jsAddQuestionChoiceAnswer").val("");
+		$(".csChoiceBox").html("");
+		$('#jsAddQuestionChoiceAnswerScore option[value="0"]').prop(
+			"selected",
+			true
+		);
+		$('#jsAddQuestionChoiceAnswerStatus option[value="pass"]').prop(
+			"selected",
+			true
+		);
+		//
 		$(".jsAddQuestionVideoType").prop("checked", false);
 		$(".jsAddQuestionUploadVideoBox").addClass("hidden");
 		$(".jsAddQuestionRecordVideoBox").addClass("hidden");
-		$("#jsAddQuestionMultipleChoice1").val("");
-		$("#jsAddQuestionMultipleChoice2").val("");
-		$("#jsAddQuestionMultipleChoice3").val("");
-		$("#jsAddQuestionMultipleChoice4").val("");
+		$(".jsAddQuestionLinkVideoBox").addClass("hidden");
+		$("#jsAddQuestionLink").val("");
 		// set default object
 		questionObj = {
 			question_id: 0,
@@ -141,7 +225,7 @@ $(function addQuestion() {
 		questionObj.question_title = $("#jsAddQuestionTitle").val().trim();
 		questionObj.question_content = $("#jsAddQuestionHelp").val().trim();
 		questionObj.question_type = $("#jsAddQuestionType").select2("val");
-		questionObj.choice_list = [];
+		questionObj.choice_list = {};
 		questionObj.video_type =
 			$(".jsAddQuestionVideoType:checked").val() || null;
 		questionObj.video_file_name = "";
@@ -153,44 +237,49 @@ $(function addQuestion() {
 			errorArray.push('"Question type" field is mandatory.');
 		}
 		// for multiple choice
-		if (questionObj.question_type === "multiple_choice") {
+		if (
+			questionObj.question_type === "single_choice" ||
+			questionObj.question_type === "multiple_choice"
+		) {
 			//
-			let choice1 = $("#jsAddQuestionMultipleChoice1").val().trim();
-			let choice2 = $("#jsAddQuestionMultipleChoice2").val().trim();
-			let choice3 = $("#jsAddQuestionMultipleChoice3").val().trim();
-			let choice4 = $("#jsAddQuestionMultipleChoice4").val().trim();
-			let rightChoice = $("#jsAddQuestionMultipleChoiceAnswer").select2(
-				"val"
-			);
-			questionObj.choice_list = {
-				choice1,
-				choice2,
-				choice3,
-				choice4,
-				rightChoice,
+			$(".csChoiceRow").map(function (i) {
+				console.log($(this).find(".jsAddQuestionChoiceAnswer").val());
+				const obj = {
+					answer_choice: $(this)
+						.find(".jsAddQuestionChoiceAnswer")
+						.val()
+						.trim(),
+					answer_score: $(this)
+						.find(".jsAddQuestionChoiceAnswerScore")
+						.val()
+						.trim(),
+					answer_status: $(this)
+						.find(".jsAddQuestionChoiceAnswerStatus")
+						.val()
+						.trim(),
+				};
+				// validation
+				if (!obj.answer_choice) {
+					errorArray.push(
+						'"Answer Choice" is missing for row ' + (i + 1) + "."
+					);
+				}
+				//
+				questionObj.choice_list[i] = obj;
+			});
+		} else if (questionObj.question_type === "yes_no") {
+			//
+			questionObj.choice_list["yes"] = {
+				score: $("#jsAddQuestionYesNoYSelect option:checked").val(),
+				status: $("#jsAddQuestionYesNoYStatus option:checked").val(),
 			};
-
 			//
-			if (!choice1) {
-				errorArray.push('"Choice one" is mandatory.');
-			}
-			//
-			if (!choice2) {
-				errorArray.push('"Choice two" is mandatory.');
-			}
-			//
-			if (!choice3) {
-				errorArray.push('"Choice three" is mandatory.');
-			}
-			//
-			if (!choice4) {
-				errorArray.push('"Choice four" is mandatory.');
-			}
-			//
-			if (!rightChoice) {
-				errorArray.push('"Correct choice" is mandatory.');
-			}
+			questionObj.choice_list["no"] = {
+				score: $("#jsAddQuestionYesNoNSelect option:checked").val(),
+				status: $("#jsAddQuestionYesNoNStatus option:checked").val(),
+			};
 		}
+		//
 		if (!questionObj.video_type) {
 			errorArray.push('"Video type" field is mandatory.');
 		}
@@ -224,9 +313,12 @@ $(function addQuestion() {
 			doUpdated = true;
 		} else if (questionObj.video_type === "link") {
 			questionObj.video_file_name = $("#jsAddQuestionLink").val().trim();
-			if (!questionObj.video_file_name ) {
+			if (!questionObj.video_file_name) {
 				errorArray.push("YouTube / Vimeo link is required.");
-			} else if (!questionObj.video_file_name .isValidYoutubeLink() && !questionObj.video_file_name .isValidVimeoLink()) {
+			} else if (
+				!questionObj.video_file_name.isValidYoutubeLink() &&
+				!questionObj.video_file_name.isValidVimeoLink()
+			) {
 				errorArray.push("Invalid YouTube / Vimeo link.");
 			}
 		}
@@ -264,7 +356,7 @@ $(function addQuestion() {
 			}
 			// saves the file name
 			questionObj.video_file_name = uploadedFileObject.data;
-		}	
+		}
 		questionObj.question_id = Date.now();
 		// close the connection
 		videoFileRef.close();
