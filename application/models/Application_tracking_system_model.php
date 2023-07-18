@@ -3391,6 +3391,17 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->where('sid', $sid);
         $this->db->update('portal_applicant_jobs_list', $data);
     }
+
+    //
+    function get_applicant_obboarding_status_log($sid) {
+
+        $this->db->select('*');
+        $this->db->where('portal_applicant_jobs_list_sid', $sid);
+        $this->db->from('applicant_onboarding_status_log');
+        return $this->db->get()->result_array();
+        
+        }
+
 }
 
 //

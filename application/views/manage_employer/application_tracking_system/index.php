@@ -8,10 +8,10 @@
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
                         <span class="page-heading down-arrow">
-                            <?php if(!empty($session['company_detail']['Logo'])) { ?>
-                                <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/'.$session['company_detail']['Logo'] ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
+                            <?php if (!empty($session['company_detail']['Logo'])) { ?>
+                                <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo'] ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
                             <?php } ?>
-                            <?php if(!empty($session['company_detail']['CompanyName'])) { ?>
+                            <?php if (!empty($session['company_detail']['CompanyName'])) { ?>
                                 <?php echo $session['company_detail']['CompanyName']; ?><br>
                             <?php } ?>
                             <?php echo $title; ?>
@@ -479,7 +479,7 @@
                                     ?>
 
                                     <article id="manual_row<?php echo $employer_job["sid"]; ?>" class="applicant-box <?php echo check_blue_panel_status() && $employer_job['is_onboarding'] == 1 ? 'onboarding' : '';
-                                                                                                                        echo strtolower(preg_replace('/[^a-z]/i','',$employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
+                                                                                                                        echo strtolower(preg_replace('/[^a-z]/i', '', $employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
                                         <div class="box-head">
                                             <div class="row date-bar">
                                                 <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">
@@ -657,7 +657,7 @@
                                                             <div class="selected decline"><?= $employer_job["status"] ?></div>
                                                         <?php } elseif ($employer_job["status"] == 'Placed/Hired' || $employer_job["status"] == 'Ready to Hire') { ?>
                                                             <div class="selected placed">Ready to Hire</div>
-                                                        <?php } elseif (strtolower(preg_replace('/[^a-z]/i','',$employer_job["status"])) == 'donothire') { ?>
+                                                        <?php } elseif (strtolower(preg_replace('/[^a-z]/i', '', $employer_job["status"])) == 'donothire') { ?>
                                                             <div class="selected donothire">Do Not Hire</div>
                                                         <?php } elseif ($employer_job["status"] == 'Not Contacted Yet') { ?>
                                                             <div class="selected not_contacted"><?= $employer_job["status"] ?></div>
@@ -667,189 +667,188 @@
                                                             <div class="selected left_message"><?= $employer_job["status"] ?></div>
                                                         <?php } ?>
                                                     <?php } else { ?>
-                                                        <div <?php echo !empty($employer_job['status_type'])  ? ' style= "background-color: ' . $employer_job['bar_bgcolor'] . '"' : '' ?> class="selected <?php echo (isset($employer_job['status_css_class'])) ? $employer_job['status_css_class'] : ''; ?>">
-                                                            <?php echo (isset($employer_job['status_name'])) ? $employer_job['status_name'] : ''; ?>
-                                                        </div>
-                                                    <?php } ?>
-                                                    <div class="show-status-box" title="Edit Applicant Status"><i class="fa fa-pencil"></i></div>
-                                                    <div class="lable-wrapper">
-                                                        <div id="id" style="display:none;"><?= $employer_job["sid"] ?></div>
-                                                        <div style="height:20px;"><i class="fa fa-times cross"></i></div>
-                                                        <?php if ($have_status == false) { ?>
-                                                            <div data-status_sid="1" data-status_class="not_contacted" data-status_name="Not Contacted Yet" class="label applicant not_contacted">
-                                                                <div id="status">Not Contacted Yet</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="2" data-status_class="left_message" data-status_name="Left Message" class="label applicant left_message">
-                                                                <div id="status">Left Message</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="3" data-status_class="contacted" data-status_name="Contacted" class="label applicant contacted">
-                                                                <div id="status">Contacted</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="4" data-status_class="responded" data-status_name="Candidate Responded" class="label applicant responded">
-                                                                <div id="status">Candidate Responded</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="5" data-status_class="qualifying" data-status_name="Interviewing" class="label applicant interviewing">
-                                                                <div id="status">Interviewing</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="6" data-status_class="submitted" data-status_name="Submitted" class="label applicant submitted">
-                                                                <div id="status">Submitted</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="7" data-status_class="interviewing" data-status_name="Qualifying" class="label applicant qualifying">
-                                                                <div id="status">Qualifying</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="11" data-status_class="placed" data-status_name="Ready to Hire" class="label applicant placed">
-                                                                <div id="status">Ready to Hire</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
+                                                        <div <?php echo !empty($employer_job['status_type'])  ? ' style= "background-color: ' . $employer_job['bar_bgcolor'] . '"' : '' ?> class="selected <?php echo (isset($employer_job['status_css_class'])) ? $employer_job['status_css_class'] : ''; ?>" <?php echo (isset($employer_job['status_name'])) ? $employer_job['status_name'] : ''; ?> </div>
+                                                        <?php } ?>
+                                                        <div class="show-status-box jsProfileHistory" title="View Applicant Status History" data-name="<?php echo ucwords($employer_job["first_name"] .  $employer_job["last_name"]); ?>" data-id="<?= $employer_job["sid"] ?>"><i class="fa fa-history"></i></div>
 
-
-                                                            <div data-status_sid="13" data-status_class="donothire" data-status_name="Do Not Hire" class="label applicant donothire">
-                                                                <div id="status">Do Not Hire</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-
-                                                            <div data-status_sid="8" data-status_class="offered" data-status_name="Offered Job" class="label applicant offered">
-                                                                <div id="status">Offered Job</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="10" data-status_class="decline" data-status_name="Client Declined" class="label applicant decline">
-                                                                <div id="status">Client Declined</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="9" data-status_class="notin" data-status_name="Not In Consideration" class="label applicant notin">
-                                                                <div id="status">Not In Consideration</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                            <div data-status_sid="12" data-status_class="future_opportunity" data-status_name="Future Opportunity" class="label applicant future_opportunity">
-                                                                <div id="status">Future Opportunity</div>
-                                                                <i class="fa fa-check-square check"></i>
-                                                            </div>
-                                                        <?php } else { ?>
-                                                            <?php foreach ($company_statuses as $status) {  ?>
-                                                                <div <?php echo !empty($status['bar_bgcolor'])  ? ' style= "background-color: ' . $status['bar_bgcolor'] . '"' : '' ?> data-status_sid="<?php echo $status['sid']; ?>" data-status_class="<?php echo $status['css_class']; ?>" data-status_name="<?php echo $status['name']; ?>" class="label applicant <?php echo $status['css_class']; ?>">
-                                                                    <div id="status"><?php echo $status['name']; ?></div>
+                                                        <div class="lable-wrapper">
+                                                            <div id="id" style="display:none;"><?= $employer_job["sid"] ?></div>
+                                                            <div style="height:20px;"><i class="fa fa-times cross"></i></div>
+                                                            <?php if ($have_status == false) { ?>
+                                                                <div data-status_sid="1" data-status_class="not_contacted" data-status_name="Not Contacted Yet" class="label applicant not_contacted">
+                                                                    <div id="status">Not Contacted Yet</div>
                                                                     <i class="fa fa-check-square check"></i>
                                                                 </div>
+                                                                <div data-status_sid="2" data-status_class="left_message" data-status_name="Left Message" class="label applicant left_message">
+                                                                    <div id="status">Left Message</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="3" data-status_class="contacted" data-status_name="Contacted" class="label applicant contacted">
+                                                                    <div id="status">Contacted</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="4" data-status_class="responded" data-status_name="Candidate Responded" class="label applicant responded">
+                                                                    <div id="status">Candidate Responded</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="5" data-status_class="qualifying" data-status_name="Interviewing" class="label applicant interviewing">
+                                                                    <div id="status">Interviewing</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="6" data-status_class="submitted" data-status_name="Submitted" class="label applicant submitted">
+                                                                    <div id="status">Submitted</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="7" data-status_class="interviewing" data-status_name="Qualifying" class="label applicant qualifying">
+                                                                    <div id="status">Qualifying</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="11" data-status_class="placed" data-status_name="Ready to Hire" class="label applicant placed">
+                                                                    <div id="status">Ready to Hire</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+
+
+                                                                <div data-status_sid="13" data-status_class="donothire" data-status_name="Do Not Hire" class="label applicant donothire">
+                                                                    <div id="status">Do Not Hire</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+
+                                                                <div data-status_sid="8" data-status_class="offered" data-status_name="Offered Job" class="label applicant offered">
+                                                                    <div id="status">Offered Job</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="10" data-status_class="decline" data-status_name="Client Declined" class="label applicant decline">
+                                                                    <div id="status">Client Declined</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="9" data-status_class="notin" data-status_name="Not In Consideration" class="label applicant notin">
+                                                                    <div id="status">Not In Consideration</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                                <div data-status_sid="12" data-status_class="future_opportunity" data-status_name="Future Opportunity" class="label applicant future_opportunity">
+                                                                    <div id="status">Future Opportunity</div>
+                                                                    <i class="fa fa-check-square check"></i>
+                                                                </div>
+                                                            <?php } else { ?>
+                                                                <?php foreach ($company_statuses as $status) {  ?>
+                                                                    <div <?php echo !empty($status['bar_bgcolor'])  ? ' style= "background-color: ' . $status['bar_bgcolor'] . '"' : '' ?> data-status_sid="<?php echo $status['sid']; ?>" data-status_class="<?php echo $status['css_class']; ?>" data-status_name="<?php echo $status['name']; ?>" class="label applicant <?php echo $status['css_class']; ?>">
+                                                                        <div id="status"><?php echo $status['name']; ?></div>
+                                                                        <i class="fa fa-check-square check"></i>
+                                                                    </div>
+                                                                <?php } ?>
                                                             <?php } ?>
-                                                        <?php } ?>
-                                                    </div>
+                                                        </div>
+                                                        </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="interview-scoreing">
-                                                <?php  //if(check_access_permissions_for_view($security_details, 'resend_screening_questionnaire')) { 
-                                                ?>
-                                                <div class="rating-score">
-                                                    <div class="rating-col">
-                                                        <span class="text-left pull-left float_left"><a href="javascript:;" class="questionnaire-popup <?php echo (!empty($employer_job['manual_questionnaire_history']) || !empty($employer_job['questionnaire'])) ? 'text-blue' : 'text-success'; ?>" data-attr="<?= $employer_job["applicant_sid"]; ?>" data-job-sid="<?= $employer_job["job_sid"]; ?>" data-sid="<?= $employer_job["sid"]; ?>" onclick="fLaunchQuestionnaireModal(this)"><span class="float_left">Questionnaire Score:</span></a></span>
-                                                    </div>
-                                                    <div class="rating-col">
-                                                        <span class="pull-right">
-                                                            <?php if ($employer_job['questionnaire'] == '' || $employer_job['questionnaire'] == NULL) {
-                                                                $job_manual_questionnaire_history = $employer_job['manual_questionnaire_history'];
-                                                                $display_result = '';
-
-                                                                if (!empty($job_manual_questionnaire_history)) {
-                                                                    foreach ($job_manual_questionnaire_history as $job_man_key => $job_man_value) {
-                                                                        $job_man_questionnaire_result   = $job_man_value['questionnaire_result'];
-                                                                        $job_man_score                  = $job_man_value['score'];
-                                                                        $job_manual_questionnaire       = $job_man_value['questionnaire'];
-
-                                                                        if (($job_manual_questionnaire != NULL || $job_manual_questionnaire != '') && ($job_man_questionnaire_result != NULL || $job_man_questionnaire_result != '')) {
-                                                                            $display_result = '<span class="' . strtolower($job_man_questionnaire_result) . ' pull-right">(' . $job_man_questionnaire_result . ')</span>';
-                                                                            echo $job_man_score;
-                                                                            break;
-                                                                        }
-                                                                    }
-                                                                } else {
+                                                <div class="interview-scoreing">
+                                                    <?php  //if(check_access_permissions_for_view($security_details, 'resend_screening_questionnaire')) { 
+                                                    ?>
+                                                    <div class="rating-score">
+                                                        <div class="rating-col">
+                                                            <span class="text-left pull-left float_left"><a href="javascript:;" class="questionnaire-popup <?php echo (!empty($employer_job['manual_questionnaire_history']) || !empty($employer_job['questionnaire'])) ? 'text-blue' : 'text-success'; ?>" data-attr="<?= $employer_job["applicant_sid"]; ?>" data-job-sid="<?= $employer_job["job_sid"]; ?>" data-sid="<?= $employer_job["sid"]; ?>" onclick="fLaunchQuestionnaireModal(this)"><span class="float_left">Questionnaire Score:</span></a></span>
+                                                        </div>
+                                                        <div class="rating-col">
+                                                            <span class="pull-right">
+                                                                <?php if ($employer_job['questionnaire'] == '' || $employer_job['questionnaire'] == NULL) {
+                                                                    $job_manual_questionnaire_history = $employer_job['manual_questionnaire_history'];
                                                                     $display_result = '';
-                                                                    echo 'N/A';
-                                                                }
-                                                            } else {
-                                                                $my_questionnaire = unserialize($employer_job['questionnaire']);
 
-                                                                if (isset($my_questionnaire['applicant_sid'])) {
-                                                                    $questionnaire_type = 'new';
-                                                                    //$questionnaire_score = $employer_job['score'].'/'.$employer_job['passing_score'];
-                                                                    $questionnaire_score = $employer_job['score'];
-                                                                    $questionnaire_result = $my_questionnaire['questionnaire_result'];
-                                                                    $display_result = '<span class="' . strtolower($questionnaire_result) . ' pull-right">(' . $questionnaire_result . ')</span>';
-                                                                } else {
-                                                                    $questionnaire_type = 'old';
-                                                                    $questionnaire_score = $employer_job['score'];
+                                                                    if (!empty($job_manual_questionnaire_history)) {
+                                                                        foreach ($job_manual_questionnaire_history as $job_man_key => $job_man_value) {
+                                                                            $job_man_questionnaire_result   = $job_man_value['questionnaire_result'];
+                                                                            $job_man_score                  = $job_man_value['score'];
+                                                                            $job_manual_questionnaire       = $job_man_value['questionnaire'];
 
-                                                                    if ($employer_job['score'] >= $employer_job['passing_score']) {
-                                                                        $display_result = '<span class="pass pull-right">(Pass)</span>';
+                                                                            if (($job_manual_questionnaire != NULL || $job_manual_questionnaire != '') && ($job_man_questionnaire_result != NULL || $job_man_questionnaire_result != '')) {
+                                                                                $display_result = '<span class="' . strtolower($job_man_questionnaire_result) . ' pull-right">(' . $job_man_questionnaire_result . ')</span>';
+                                                                                echo $job_man_score;
+                                                                                break;
+                                                                            }
+                                                                        }
                                                                     } else {
-                                                                        $display_result = '<span class="fail pull-right">(Fail)</span>';
+                                                                        $display_result = '';
+                                                                        echo 'N/A';
                                                                     }
-                                                                } ?>
-                                                                <?php echo $questionnaire_score; ?>
-                                                            <?php } ?>
-                                                        </span>
+                                                                } else {
+                                                                    $my_questionnaire = unserialize($employer_job['questionnaire']);
+
+                                                                    if (isset($my_questionnaire['applicant_sid'])) {
+                                                                        $questionnaire_type = 'new';
+                                                                        //$questionnaire_score = $employer_job['score'].'/'.$employer_job['passing_score'];
+                                                                        $questionnaire_score = $employer_job['score'];
+                                                                        $questionnaire_result = $my_questionnaire['questionnaire_result'];
+                                                                        $display_result = '<span class="' . strtolower($questionnaire_result) . ' pull-right">(' . $questionnaire_result . ')</span>';
+                                                                    } else {
+                                                                        $questionnaire_type = 'old';
+                                                                        $questionnaire_score = $employer_job['score'];
+
+                                                                        if ($employer_job['score'] >= $employer_job['passing_score']) {
+                                                                            $display_result = '<span class="pass pull-right">(Pass)</span>';
+                                                                        } else {
+                                                                            $display_result = '<span class="fail pull-right">(Fail)</span>';
+                                                                        }
+                                                                    } ?>
+                                                                    <?php echo $questionnaire_score; ?>
+                                                                <?php } ?>
+                                                            </span>
+                                                        </div>
+                                                        <div class="rating-col">
+                                                            <?php echo $display_result; ?>
+                                                        </div>
                                                     </div>
-                                                    <div class="rating-col">
-                                                        <?php echo $display_result; ?>
-                                                    </div>
-                                                </div>
-                                                <?php //} 
-                                                ?>
-                                                <?php if (check_access_permissions_for_view($security_details, 'review_score')) { ?>
+                                                    <?php //} 
+                                                    ?>
+                                                    <?php if (check_access_permissions_for_view($security_details, 'review_score')) { ?>
+                                                        <div class="rating-score">
+                                                            <div class="rating-col text-left">
+                                                                <a href="javascript:void(0);" onclick="fLaunchReviewModal(this)" class="text-left <?php echo ($employer_job['reviews_count'] > 0) ? 'text-blue' : 'text-success'; ?>" data-applicant-sid="<?= $employer_job["applicant_sid"]; ?>" data-applicant-email="<?= $employer_job["email"]; ?>" data-job-sid="<?= $employer_job["sid"]; ?>" data-document-title="Reviews For <?= $employer_job["first_name"]; ?> <?= $employer_job["last_name"]; ?>">Review Score<span class="btn-tooltip">Reviews</span></a>
+                                                            </div>
+                                                            <div class="rating-col text-center">
+                                                                <span class="pull-left"><?php echo ($employer_job['applicant_average_rating'] > 0) ? $employer_job['applicant_average_rating'] : '0'; ?> with <?php echo $employer_job['reviews_count']; ?> Review(s)</span>
+                                                            </div>
+                                                            <div class="rating-col text-left">
+                                                                <span class="start-rating applicant-rating">
+                                                                    <input readonly="readonly" id="input-21b" <?php if (!empty($employer_job['applicant_average_rating'])) { ?> value="<?php echo $employer_job['applicant_average_rating']; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
                                                     <div class="rating-score">
                                                         <div class="rating-col text-left">
-                                                            <a href="javascript:void(0);" onclick="fLaunchReviewModal(this)" class="text-left <?php echo ($employer_job['reviews_count'] > 0) ? 'text-blue' : 'text-success'; ?>" data-applicant-sid="<?= $employer_job["applicant_sid"]; ?>" data-applicant-email="<?= $employer_job["email"]; ?>" data-job-sid="<?= $employer_job["sid"]; ?>" data-document-title="Reviews For <?= $employer_job["first_name"]; ?> <?= $employer_job["last_name"]; ?>">Review Score<span class="btn-tooltip">Reviews</span></a>
+                                                            <span class="text-left text-success pull-left">Avg. Interview Score :</span>
                                                         </div>
                                                         <div class="rating-col text-center">
-                                                            <span class="pull-left"><?php echo ($employer_job['applicant_average_rating'] > 0) ? $employer_job['applicant_average_rating'] : '0'; ?> with <?php echo $employer_job['reviews_count']; ?> Review(s)</span>
+                                                            <span class="pull-right"> <?php echo $employer_job['interview_score']['overall_score']; ?> Out of 100 Points</span>
                                                         </div>
                                                         <div class="rating-col text-left">
                                                             <span class="start-rating applicant-rating">
-                                                                <input readonly="readonly" id="input-21b" <?php if (!empty($employer_job['applicant_average_rating'])) { ?> value="<?php echo $employer_job['applicant_average_rating']; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
+                                                                <input readonly="readonly" id="interview_score_<?php echo $employer_job['sid']; ?>" value="<?php echo $employer_job['interview_score']['star_rating']; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
                                                             </span>
                                                         </div>
                                                     </div>
-                                                <?php } ?>
-                                                <div class="rating-score">
-                                                    <div class="rating-col text-left">
-                                                        <span class="text-left text-success pull-left">Avg. Interview Score :</span>
-                                                    </div>
-                                                    <div class="rating-col text-center">
-                                                        <span class="pull-right"> <?php echo $employer_job['interview_score']['overall_score']; ?> Out of 100 Points</span>
-                                                    </div>
-                                                    <div class="rating-col text-left">
-                                                        <span class="start-rating applicant-rating">
-                                                            <input readonly="readonly" id="interview_score_<?php echo $employer_job['sid']; ?>" value="<?php echo $employer_job['interview_score']['star_rating']; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="rating-score">
-                                                    <div class="rating-col text-left">
-                                                        <span class="text-left text-success pull-left">Video Interview :</span>
-                                                    </div>
-                                                    <div class="rating-col text-center">
-                                                        <span class="pull-right"> <?php echo $employer_job['video_interview_score']; ?> Out of 5 Points</span>
-                                                    </div>
-                                                    <div class="rating-col text-left">
-                                                        <span class="start-rating applicant-rating">
-                                                            <input readonly="readonly" id="video_interview_score_<?php echo $employer_job['sid']; ?>" value="<?php echo $employer_job['video_interview_score']; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
-                                                        </span>
+                                                    <div class="rating-score">
+                                                        <div class="rating-col text-left">
+                                                            <span class="text-left text-success pull-left">Video Interview :</span>
+                                                        </div>
+                                                        <div class="rating-col text-center">
+                                                            <span class="pull-right"> <?php echo $employer_job['video_interview_score']; ?> Out of 5 Points</span>
+                                                        </div>
+                                                        <div class="rating-col text-left">
+                                                            <span class="start-rating applicant-rating">
+                                                                <input readonly="readonly" id="video_interview_score_<?php echo $employer_job['sid']; ?>" value="<?php echo $employer_job['video_interview_score']; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="applicant-job-description">
-                                            <div class="text">
-                                                <span>Job Title</span>
-                                                <p><?php echo $employer_job['job_title']; ?></p>
+                                            <div class="applicant-job-description">
+                                                <div class="text">
+                                                    <span>Job Title</span>
+                                                    <p><?php echo $employer_job['job_title']; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
                                     </article>
                                 <?php } ?>
                             </form>
@@ -3667,6 +3666,37 @@ $this->session->set_userdata('ats_params', $_SERVER['REQUEST_URI']);
         $('.add_review_video_source:checked').trigger('click');
 
     })
+
+
+
+    //
+    $('.jsProfileHistory').click(getOnboardingStatusHistory);
+
+    function getOnboardingStatusHistory(e) {
+
+        sId = $(this).data('id');
+        applicantName = $(this).data('name');
+        //
+        Model({
+            Id: 'jsEmployeeProfileHistoryModel',
+            Loader: 'jsEmployeeProfileHistoryLoader',
+            Body: '<div class="container"><div id="jsEmployeeProfileHistoryBody"></div></div>',
+            Title: 'Applicant Status History of ' + applicantName
+        }, getData);
+
+    }
+
+    //
+    function getData() {
+        //
+        $.get(
+            "<?= base_url('get_applicant_onboarding_history/'); ?>/" + sId,
+            function(resp) {
+                $('#jsEmployeeProfileHistoryBody').html(resp.view);
+                ml(false, 'jsEmployeeProfileHistoryLoader');
+            });
+
+    }
 </script>
 
 
