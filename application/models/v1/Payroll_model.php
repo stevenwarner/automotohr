@@ -769,42 +769,60 @@ class Payroll_model extends CI_Model
         if ($errorArray) {
             return ['errors' => $errorArray];
         }
-        // // make request
+        // create request
         $request = [];
         $request['title'] = $jobTitle;
         $request['location_id'] = $location['gusto_uuid'];
         $request['hire_date'] = $joiningDate;
-        // // get company details
-        // $companyDetails = $this->getCompanyDetailsForGusto($companyId);
-        // // make call
-        // $gustoResponse = gustoCall(
-        //     "createEmployeeOnGusto",
-        //     $companyDetails,
-        //     $request,
-        //     "POST"
-        // );
-        // //
-        // $errors = hasGustoErrors($gustoResponse);
-        // //
-        // if ($errors) {
-        //     return $errors;
-        // }
-        // // insert
-        // $this->db
-        // ->insert('gusto_companies_employees', [
-        //     'company_sid' => $companyId,
-        //     'employee_sid' => $employeeId,
-        //     'gusto_uuid' => $gustoResponse['uuid'],
-        //     'gusto_version' => $gustoResponse['version'],
-        //     'is_onboarded' => 0,
-        //     'created_at' => getSystemDate(),
-        //     'updated_at' => getSystemDate(),
-        // ]);
-        // //
-        // return [
-        //     'gusto_uuid' => $gustoResponse['uuid'],
-        //     'gusto_version' => $gustoResponse['version']
-        // ];
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // make call
+        $gustoResponse = gustoCall(
+            "createEmployeeJobOnGusto",
+            $companyDetails,
+            $request,
+            "POST"
+        );
+        _e($gustoResponse);
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // insert
+        $this->db
+            ->insert('gusto_employees_jobs', [
+                'employee_sid' => $employeeId,
+                'gusto_uuid' => $gustoResponse['uuid'],
+                'gusto_version' => $gustoResponse['version'],
+                'is_primary' => $gustoResponse['primary'],
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate(),
+            ]);
+        //
+        $gustoEmployeeJobId = $this->db->insert_id();
+        // add compensations
+        foreach ($gustoResponse['compensations'] as $compensation) {
+            $this->db
+                ->insert('gusto_employees_jobs_compensations', [
+                    'gusto_employees_jobs_sid' => $gustoEmployeeJobId,
+                    'gusto_uuid' => $compensation['uuid'],
+                    'gusto_version' => $compensation['version'],
+                    'rate' => $compensation['rate'],
+                    'payment_unit' => $compensation['payment_unit'],
+                    'flsa_status' => $compensation['flsa_status'],
+                    'effective_date' => $compensation['effective_date'],
+                    'adjust_for_minimum_wage' => $compensation['adjust_for_minimum_wage'],
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate()
+                ]);
+        }
+        //
+        return [
+            'gusto_uuid' => $gustoResponse['uuid'],
+            'gusto_version' => $gustoResponse['version']
+        ];
     }
 
     /**

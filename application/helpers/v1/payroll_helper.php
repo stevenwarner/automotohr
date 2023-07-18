@@ -255,6 +255,8 @@ if (!function_exists('getUrl')) {
         $urls['getCompanyServiceAgreementFromGusto'] = "v1/companies/$key/admins";
         $urls['createCompanyLocationOnGusto'] = "v1/companies/$key/locations";
         $urls['createEmployeeOnGusto'] = "v1/companies/$key/employees";
+        // employee URLs
+        $urls['createEmployeeJobOnGusto'] = "v1/employees/$key/jobs";
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
