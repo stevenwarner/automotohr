@@ -44,6 +44,8 @@ $(function createCourse() {
 			course_type: $(".jsAddCourseType:checked").val(),
 			course_recurring_in: $("#jsAddCourseReassignIn").val(),
 			course_recurring_type: $("#jsAddCourseReassignType").val(),
+			course_start_period: $("#jsAddCourseStartPeriod").val(),
+			course_end_period: $("#jsAddCourseEndPeriod").val(),
 			course_version: $("#jsAddCourseVersion").val(),
 			course_file_type: $(".jsAddCourseFileType:checked").val(),
 			course_file_link: $("#jsAddCourseLink").val(),
@@ -223,6 +225,25 @@ $(function createCourse() {
 					allowedTypes: ["mp4", "ppt", "pptx"],
 				});
 				//
+				$('#jsAddCourseStartPeriod').datepicker({
+					dateFormat: 'mm-dd-yy',
+					changeYear: true,
+					changeMonth: true,
+					onSelect: function(value) {
+						$('#jsAddCourseEndPeriod').datepicker('option', 'minDate', value);
+					}
+				}).datepicker('option', 'maxDate', $('#jsAddCourseEndPeriod').val());
+				
+				$('#jsAddCourseEndPeriod').datepicker({
+					dateFormat: 'mm-dd-yy',
+					changeYear: true,
+					changeMonth: true,
+					onSelect: function(value) {
+						$('#jsAddCourseStartPeriod').datepicker('option', 'maxDate', value);
+					}
+				}).datepicker('option', 'minDate', $('#jsAddCourseStartPeriod').val());
+				//
+				//
 				$('.jsAddCourseFileType[value="' + courseFileType + '"]').trigger("click");
 
 				// hide the loader
@@ -257,6 +278,12 @@ $(function createCourse() {
 			errorArray.push("Course recurring number is required.");
 		} else if (!courseObj.course_recurring_in.isValidInteger()) {
 			errorArray.push("Please enter valid integer value.");
+		}
+		if (!courseObj.course_start_period) {
+			errorArray.push("Course start date is required.");
+		}
+		if (!courseObj.course_end_period) {
+			errorArray.push("Course end date is required.");
 		}
 		if (!courseObj.course_recurring_type.length) {
 			errorArray.push("Course recurring type is required.");

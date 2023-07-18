@@ -571,6 +571,18 @@ $(function editCourse() {
 		// set the course job_titles
 		$("#jsEditCourseJobTitles").select2("val", co.job_titles);
 		//
+		$('#jsEditCourseStartPeriod').datepicker({
+			dateFormat: 'mm-dd-yy',
+			changeYear: true,
+			changeMonth: true
+		})
+		//
+		$('#jsEditCourseStartPeriod').datepicker({
+			dateFormat: 'mm-dd-yy',
+			changeYear: true,
+			changeMonth: true
+		})
+		//
 		$("#jsEditCourseReassignIn").val(co.course_recurring_value);
 		$("#jsEditCourseReassignType").val(co.course_recurring_type);
 		// set the course course_type

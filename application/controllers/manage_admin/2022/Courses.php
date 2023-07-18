@@ -69,7 +69,7 @@ class Courses extends Admin_Controller
             ['1.0', 'v1/lms/edit_question'],
             ['1.0.2', 'v1/lms/create_course'],
             ['1.0.2', 'v1/lms/edit_course'],
-            ['1.0.1', 'v1/lms/main'],
+            ['1.0.1', 'v1/lms/main']
         ];
         // get access token
         $this->data['apiAccessToken'] = getApiAccessToken(
@@ -99,7 +99,8 @@ class Courses extends Admin_Controller
         $this->data['PageCSS'] = [
             ['1.2.1', 'v1/plugins/ms_uploader/main'],
             ['1.2.1', 'v1/plugins/ms_modal/main'],
-            ['1.0.1', '2022/css/main']
+            ['1.0.1', '2022/css/main'],
+            ['1.0', 'css/jquery.datetimepicker.css']
         ];
         // load JS
         $this->data['PageScripts'] = [
@@ -113,7 +114,8 @@ class Courses extends Admin_Controller
             ['1.0.2', 'v1/lms/create_course'],
             ['1.0.2', 'v1/lms/edit_course'],
             ['1.0.1', 'v1/lms/main'],
-            ['1.0', 'v1/lms/assign_company_courses']
+            ['1.0', 'v1/lms/assign_company_courses'],
+            ['1.0', '2022/js/jquery.datetimepicker']
         ];
         // get access token
         $this->data['apiAccessToken'] = getApiAccessToken(
