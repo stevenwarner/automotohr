@@ -25,6 +25,11 @@ $(function createCourse() {
 	let questionsArray = [];
 
 	/**
+	 * set the default course file type
+	 */
+	let courseFileType = "file";
+
+	/**
 	 * Create course save event
 	 */
 	//
@@ -37,7 +42,13 @@ $(function createCourse() {
 			course_content: $("#jsAddCourseAbout").val().trim(),
 			job_titles: $("#jsAddCourseJobTitles").val() || [],
 			course_type: $(".jsAddCourseType:checked").val(),
+			course_recurring_in: $("#jsAddCourseReassignIn").val(),
+			course_recurring_type: $("#jsAddCourseReassignType").val(),
+			course_start_period: $("#jsAddCourseStartPeriod").val().trim(),
+			course_end_period: $("#jsAddCourseEndPeriod").val().trim(),
 			course_version: $("#jsAddCourseVersion").val(),
+			course_file_type: $(".jsAddCourseFileType:checked").val(),
+			course_file_link: $("#jsAddCourseLink").val(),
 			course_file:
 				$(
 					"#" +
@@ -64,8 +75,18 @@ $(function createCourse() {
 			$(".jsAddCourseScormBox").removeClass("hidden");
 		} else {
 			$(".jsAddManualCourseBox").removeClass("hidden");
+			loadCourseFileView();
 			loadQuestionsView();
 		}
+	});
+
+	/**
+	 * Toggle upload, youtube and vimeo
+	 */
+	$(document).on("click", ".jsAddCourseFileType", function () {
+		// set defaults
+		courseFileType = $(this).val();
+		loadCourseFileView();
 	});
 
 	/**
@@ -191,6 +212,8 @@ $(function createCourse() {
 				$("#jsAddCourseJobTitles").select2({
 					closeOnSelect: false,
 				});
+				///
+				$("#jsAddCourseReassignType").val("year");
 				// load image
 				$("#jsAddCourseFile").msFileUploader({
 					fileLimit: "50mb",
@@ -201,6 +224,48 @@ $(function createCourse() {
 					fileLimit: "50mb",
 					allowedTypes: ["mp4", "ppt", "pptx"],
 				});
+				//
+				$("#jsAddCourseStartPeriod")
+					.datepicker({
+						dateFormat: "mm/dd/yy",
+						changeYear: true,
+						changeMonth: true,
+						onSelect: function (value) {
+							$("#jsAddCourseEndPeriod").datepicker(
+								"option",
+								"minDate",
+								value
+							);
+						},
+					})
+					.datepicker(
+						"option",
+						"maxDate",
+						$("#jsAddCourseEndPeriod").val()
+					);
+
+				$("#jsAddCourseEndPeriod")
+					.datepicker({
+						dateFormat: "mm/dd/yy",
+						changeYear: true,
+						changeMonth: true,
+						onSelect: function (value) {
+							$("#jsAddCourseStartPeriod").datepicker(
+								"option",
+								"maxDate",
+								value
+							);
+						},
+					})
+					.datepicker(
+						"option",
+						"minDate",
+						$("#jsAddCourseStartPeriod").val()
+					);
+				//
+				$(
+					'.jsAddCourseFileType[value="' + courseFileType + '"]'
+				).trigger("click");
 
 				// hide the loader
 				ml(false, modalLoaderId);
@@ -229,6 +294,20 @@ $(function createCourse() {
 		if (!courseObj.job_titles.length) {
 			errorArray.push("Select at least one job title.");
 		}
+		if (!courseObj.course_recurring_in) {
+			errorArray.push("Course recurring number is required.");
+		} else if (!courseObj.course_recurring_in.isValidInteger()) {
+			errorArray.push("Please enter valid integer value.");
+		}
+		if (!courseObj.course_start_period) {
+			errorArray.push("Course start date is required.");
+		}
+		if (!courseObj.course_end_period) {
+			errorArray.push("Course end date is required.");
+		}
+		if (!courseObj.course_recurring_type.length) {
+			errorArray.push("Course recurring type is required.");
+		}
 		if (!courseObj.course_type) {
 			errorArray.push("Course type is required.");
 		}
@@ -236,15 +315,32 @@ $(function createCourse() {
 		courseObj.course_questions = questionsArray;
 		// only when a file is uploaded
 		// check for empty file
-		if (!Object.keys(courseObj.course_file).length) {
-			errorArray.push(
-				"Please upload the " +
-					(courseObj.course_type === "manual" ? "Course" : "SCORM") +
-					" file."
-			);
-		} else if (courseObj.course_file.errorCode) {
-			errorArray.push(courseObj.course_file.errorCode);
+		if (
+			courseObj.course_file_type === "link" &&
+			courseObj.course_type === "manual"
+		) {
+			if (!courseObj.course_file_link) {
+				errorArray.push("YouTube / Vimeo link is required.");
+			} else if (
+				!courseObj.course_file_link.isValidYoutubeLink() &&
+				!courseObj.course_file_link.isValidVimeoLink()
+			) {
+				errorArray.push("Invalid YouTube / Vimeo link.");
+			}
+		} else {
+			if (!Object.keys(courseObj.course_file).length) {
+				errorArray.push(
+					"Please upload the " +
+						(courseObj.course_type === "manual"
+							? "Course"
+							: "SCORM") +
+						" file."
+				);
+			} else if (courseObj.course_file.errorCode) {
+				errorArray.push(courseObj.course_file.errorCode);
+			}
 		}
+
 		// for manual course
 		if (courseObj.course_type === "manual" && !questionsArray.length) {
 			errorArray.push(
@@ -262,16 +358,27 @@ $(function createCourse() {
 		}
 		// start the loader and upload the file
 		ml(true, modalLoaderId);
-		// upload file
-		let response = await uploadFile(courseObj.course_file);
-		// parse the JSON
-		response = JSON.parse(response);
-		// if file was not uploaded successfully
-		if (!response.data) {
-			return alertify.alert("ERROR", "Failed to upload the file.", CB);
+		//
+		if (Object.keys(courseObj.course_file).length) {
+			// upload file
+			let response = await uploadFile(courseObj.course_file);
+			// parse the JSON
+			response = JSON.parse(response);
+			// if file was not uploaded successfully
+			if (!response.data) {
+				return alertify.alert(
+					"ERROR",
+					"Failed to upload the file.",
+					CB
+				);
+			}
+			// set the file
+			courseObj.course_file = response.data;
+		} else {
+			courseObj.course_file = courseObj.course_file_link;
 		}
-		// set the file
-		courseObj.course_file = response.data;
+		//
+		delete courseObj.course_file_link;
 		// add company code
 		courseObj.company_code = companyCode;
 		//
@@ -368,6 +475,22 @@ $(function createCourse() {
 		//
 		$(".jsPageBox").addClass("hidden");
 		$('.jsPageBox[data-id="main"]').removeClass("hidden");
+	}
+
+	/**
+	 * Load course file type view
+	 *
+	 * @returns
+	 */
+	function loadCourseFileView() {
+		$(".jsAddUploadFile").addClass("hidden");
+		$(".jsAddLinkFile").addClass("hidden");
+		//
+		if (courseFileType == "file") {
+			$(".jsAddUploadFile").removeClass("hidden");
+		} else {
+			$(".jsAddLinkFile").removeClass("hidden");
+		}
 	}
 
 	/**
