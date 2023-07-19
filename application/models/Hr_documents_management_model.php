@@ -98,6 +98,15 @@ class Hr_documents_management_model extends CI_Model
     {
         $this->db->where('sid', $sid);
         $this->db->update($table_name, $data);
+        // updates the required field
+        if ($table_name == 'documents_management' && isset($data['is_required'])) {
+            $updatedata = [];
+            $updatedata['is_required'] = $data['is_required'];
+
+            $this->db->where('document_sid', $sid);
+            $this->db->where('document_type <> ', 'offer_letter');
+            $this->db->update('documents_assigned', $updatedata);
+        }
     }
 
     function is_assigned_authorized_document_to_me($company_sid, $document_sid, $assigned_to_sid)
@@ -8509,7 +8518,7 @@ class Hr_documents_management_model extends CI_Model
         $groups_assign = $this->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
         $assigned_groups = array();
 
-        
+
 
         if (!empty($groups_assign)) {
             foreach ($groups_assign as $value) {
