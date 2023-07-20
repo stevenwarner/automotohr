@@ -730,7 +730,7 @@
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
                                                         <small style="font-size: 12px"><?php echo $total_library_doc; ?> Total Form(s)<br></small>
-                                                        <small style="font-size: 12px">Forms allows Employees the ability to initiate and complete documents on their own.</small>
+                                                        <strong style="font-size: 12px" class="text-danger">Forms allows Employees the ability to initiate and complete documents on their own.</strong>
 
                                                     </div>
                                                     <div class="button-panel">

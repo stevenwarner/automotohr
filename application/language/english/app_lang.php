@@ -13,3 +13,9 @@ $lang['dm_handbook_label'] = 'Would you like to include this document in the Emp
 
 $lang['dependents_yes_text'] = "Yes, I have dependents";
 $lang['dependents_no_text'] = "No, I don't have dependents";
+
+
+/**
+ * Document library
+ */
+$lang['document_librray_helping_text'] = '"Employee Forms Library" allows Employee Team Members the ability to initiate and complete forms on their own.';
