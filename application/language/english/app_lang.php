@@ -13,3 +13,10 @@ $lang['dm_handbook_label'] = 'Would you like to include this document in the Emp
 
 $lang['dependents_yes_text'] = "Yes, I have dependents";
 $lang['dependents_no_text'] = "No, I don't have dependents";
+
+
+/**
+ * Incident reporting text
+ */
+$lang['tab_my_incidents'] = "Incidents that I have Reported";
+$lang['tab_assigned_incidents'] = "Employee Reported Incidents";
