@@ -66,7 +66,7 @@ foreach ($companies as $company)
                                                     <label>Employees Type</label>
                                                     <div class="hr-fields-wrap">
                                                         <select id="js-employee-type" style="width: 100%;">
-                                                            
+
                                                             <option value="all" selected="selected">All</option>
                                                             <option value="active">Active</option>
                                                             <option value="leave">Leave</option>
@@ -123,7 +123,7 @@ foreach ($companies as $company)
                                                             <input type="checkbox" id="jsMoveTimeoff" />
                                                             <div class="control__indicator"></div>
                                                         </label>
-                                                        
+
                                                     </div>
                                                 </li>
 
@@ -503,6 +503,7 @@ foreach ($companies as $company)
                     copy_employee_count = selected_employees.length;
                     loader();
                     $('#js-loader-text').html('Please wait, we are copying employee');
+                    copy_employees();
 
                 }, function() {
                     alertify.error('Cancel')
