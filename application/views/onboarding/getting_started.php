@@ -1,3 +1,4 @@
+
 <style>
     .bgred {
         background-color: #FF0000;
@@ -69,6 +70,11 @@
 
     .bgpink .status-panel {
         background: rgba(215, 68, 178, 0.6);
+    }
+    
+    .popover-title,
+    .popover-content{
+        color: #000 !important;
     }
 </style>
 <?php
@@ -585,12 +591,15 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 <div class="widget-box ">
                                     <a href="<?php echo base_url('library_document'); ?>">
                                         <div class="link-box bgdarkblue full-width">
-                                            <h2>Employee Document Library</h2>
+                                            <h2>Employee Forms Library <span href="javascript:void(0)" data-toggle="popover" data-trigger="hover" 
+                                            data-content="This 'Employee Forms Library' allows Employee Team Members the ability to initiate and complete forms on their own." ><i class="fa fa-question-circle" style="font-size: 25px;" aria-hidden="true"></i></span></h2>
+                                            
+
                                             <div class="current-date" style="margin-top: -25px;">
                                                 <span><?php echo $total_library_doc; ?><sub>Total</sub></span>
                                             </div>
                                             <div class="status-panel">
-                                                <h3>View Documents</h3>
+                                                <h3>View Forms</h3>
                                                 <span>Available to Complete</span>
                                             </div>
                                         </div>
@@ -928,6 +937,10 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 </div>
 
 <script>
+
+
+
+
     $(document).ready(function() {
         <?php if (isset($ems_notification) && sizeof($ems_notification) > 0) { ?>
             func_show_section_ems(0);
@@ -1306,7 +1319,8 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <th scope="col">Department</th>
                                             <th scope="col">Team</th>
                                             <th scope="col"># of Requests</th>
-                                            <th scope="col">Actions</th>
+                                            <th sco   
+                                         pe="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="timeoff_container"></tbody>
@@ -1340,7 +1354,8 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                 $('#filter_employees').select2({
                     closeOnSelect: false
                 });
-                $('#filter_departments').select2({
+                $('#filter_departments').select2({   
+                                         
                     closeOnSelect: false
                 });
                 $('#filter_teams').select2({
@@ -1395,7 +1410,8 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                 $("#my_tf_btn").on("click", function() {
                     RTOT = 'my';
                     $("#request_type").val('my');
-                    $("#my_tf_btn").css(enable);
+                    $("#my_tf_btn").css(enable);   
+                                         
                     $("#all_tf_btn").css(disable);
 
                     $('#filter_employees_section').hide();
