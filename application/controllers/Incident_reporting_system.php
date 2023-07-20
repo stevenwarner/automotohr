@@ -2565,7 +2565,7 @@ class Incident_reporting_system extends Public_Controller
             $this->incident_reporting_model->update_incident_report($id, $status);
             //
             $status_to_update = array();
-            $status_to_update['incident_status'] = 'Responded';
+            $status_to_update['incident_status'] = 'Closed';
             $this->db->where('incident_sid', $id);
             $this->db->where('employer_sid', $session['employer_detail']['sid']);
 		    $this->db->update('incident_assigned_emp', $status_to_update);
