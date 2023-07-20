@@ -71,6 +71,8 @@
 			"xlsx",
 			"csv",
 			"zip",
+			"mov",
+			"mp4",
 		];
 		options["text"] =
 			(opt !== undefined && opt.text) || `Click / Drag to upload`;

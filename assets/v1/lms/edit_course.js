@@ -52,7 +52,7 @@ $(function editCourse() {
 	 */
 	let manualOptions = {
 		fileLimit: "50mb",
-		allowedTypes: ["mp4", "ppt", "pptx"],
+		allowedTypes: ["mp4", "ppt", "pptx", "mov"],
 	};
 
 	// set default course obj

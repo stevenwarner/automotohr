@@ -180,3 +180,34 @@ pre {
 .ui-datepicker-calendar .ui-state-active {
 	border-color: #f58e4e;
 }
+
+/* Loader */
+.csIPLoader {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	background: rgba(0, 0, 0, 0.5);
+}
+.csIPLoader div {
+	position: relative;
+	top: 100px;
+	text-align: center;
+}
+
+.csIPLoader div p i {
+	font-size: 50px;
+	color: #f58e4e;
+}
+.csIPLoader div p span {
+	display: inline-block;
+	margin-top: 10px;
+	padding: 10px;
+	background-color: antiquewhite;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-size: 16px;
+}

@@ -222,7 +222,7 @@ $(function createCourse() {
 				//
 				$("#jsAddCourseVideoFile").msFileUploader({
 					fileLimit: "50mb",
-					allowedTypes: ["mp4", "ppt", "pptx"],
+					allowedTypes: ["mp4", "ppt", "pptx", "mov"],
 				});
 				//
 				$("#jsAddCourseStartPeriod")
