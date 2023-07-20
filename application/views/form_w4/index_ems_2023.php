@@ -97,52 +97,11 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                         <b> Step 1:Enter Personal Information</b>
                                     </div>
                                     <div class="panel-body">
-                                        <?php //_e($pre_form,true,true);
-                                        ?>
-
                                         <?php
-                                        $selectfields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,marital_status,";
-                                        $userData = getUserDataById($selectfields, $pre_form['employer_sid']);
+                                        $pre_form = syncW4Data($pre_form['employer_sid'], $pre_form);
+                                         ?>
 
-                                        if ($pre_form['first_name'] == null || $pre_form['first_name'] == '') {
-                                            $pre_form['first_name'] = $userData['first_name'];
-                                        }
-                                        if ($pre_form['last_name'] == null || $pre_form['last_name'] == '') {
-                                            $pre_form['last_name'] = $userData['last_name'];
-                                        }
 
-                                        if ($pre_form['middle_name'] == null || $pre_form['middle_name'] == '') {
-                                            $pre_form['middle_name'] = $userData['middle_name'];
-                                        }
-                                        if ($pre_form['ss_number'] == null || $pre_form['ss_number'] == '') {
-                                            $pre_form['ss_number'] = $userData['ssn'];
-                                        }
-                                        if ($pre_form['home_address'] == null || $pre_form['home_address'] == '') {
-                                            $pre_form['home_address'] = $userData['Location_Address'];
-                                        }
-                                        if ($pre_form['zip'] == null || $pre_form['zip'] == '') {
-                                            $pre_form['zip'] = $userData['Location_ZipCode'];
-                                        }
-                                        if ($pre_form['city'] == null || $pre_form['city'] == '') {
-                                            $pre_form['city'] = $userData['Location_City'];
-                                        }
-                                        if ($pre_form['marriage_status'] == null || $pre_form['marriage_status'] == '') {
-                                            if ($userData['marital_status'] == 'Single') {
-                                                $pre_form['marriage_status'] = 'separately';
-                                            }
-                                        }
-
-                                        if ($pre_form['marriage_status'] == null || $pre_form['marriage_status'] == '') {
-                                            if ($userData['marital_status'] == 'Married') {
-                                                $pre_form['marriage_status'] = 'jointly';
-                                            }
-                                        }
-
-                                        if ($pre_form['state'] == null || $pre_form['state'] == '') {
-                                            if (!empty($userData['Location_state'])) {
-                                                $pre_form['state'] = db_get_state_name_only($userData['Location_state']);
-                                            };
-                                        } ?>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 cs-full-width">
                                             <div class="form-group">
                                                 <label>1. Your first name <span class="staric">*</span></label>

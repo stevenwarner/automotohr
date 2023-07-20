@@ -852,50 +852,8 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 </div>
 <?php if (isset($w4_form) && sizeof($w4_form) > 0) {
     //
-    $selectfields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,marital_status,";
-    $userData = getUserDataById($selectfields, $w4_form['employer_sid']);
-
-    if ($w4_form['first_name'] == null || $w4_form['first_name'] == '') {
-        $w4_form['first_name'] = $userData['first_name'];
-    }
-    if ($w4_form['last_name'] == null || $w4_form['last_name'] == '') {
-        $w4_form['last_name'] = $userData['last_name'];
-    }
-
-    if ($w4_form['middle_name'] == null || $w4_form['middle_name'] == '') {
-        $w4_form['middle_name'] = $userData['middle_name'];
-    }
-    if ($w4_form['ss_number'] == null || $w4_form['ss_number'] == '') {
-        $w4_form['ss_number'] = $userData['ssn'];
-    }
-    if ($w4_form['home_address'] == null || $w4_form['home_address'] == '') {
-        $w4_form['home_address'] = $userData['Location_Address'];
-    }
-    if ($w4_form['zip'] == null || $w4_form['zip'] == '') {
-        $w4_form['zip'] = $userData['Location_ZipCode'];
-    }
-    if ($w4_form['city'] == null || $w4_form['city'] == '') {
-        $w4_form['city'] = $userData['Location_City'];
-    }
-    if ($w4_form['marriage_status'] == null || $w4_form['marriage_status'] == '') {
-        if ($userData['marital_status'] == 'Single') {
-            $w4_form['marriage_status'] = 'separately';
-        }
-    }
-
-    if ($w4_form['marriage_status'] == null || $w4_form['marriage_status'] == '') {
-        if ($userData['marital_status'] == 'Married') {
-            $w4_form['marriage_status'] = 'jointly';
-        }
-    }
-
-    if ($w4_form['state'] == null || $w4_form['state'] == '') {
-        if (!empty($userData['Location_state'])) {
-            $w4_form['state'] = db_get_state_name_only($userData['Location_state']);
-        };
-    }
-
-
+   // _e($w4_form,true,true);
+    $w4_form = syncW4Data($w4_form['employer_sid'], $w4_form);
 ?>
     <div id="w4_modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">

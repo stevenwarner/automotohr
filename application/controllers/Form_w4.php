@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Form_w4 extends Public_Controller
 {
@@ -207,12 +207,11 @@ class Form_w4 extends Public_Controller
             //
             if ($this->form_validation->run() == FALSE) {
                 $this->load->view('main/header', $data);
-                if(isset($previous_form['manual'])) $this->load->view('form_w4/index_upload');
-                else{
+                if (isset($previous_form['manual'])) $this->load->view('form_w4/index_upload');
+                else {
                     if ($assign_on >= $compare_date) {
-                       // $this->load->view('form_w4/index_ems_2020');
+                        // $this->load->view('form_w4/index_ems_2020');
                         $this->load->view('form_w4/index_ems_2023');
-
                     } else {
                         $this->load->view('form_w4/index');
                     }
@@ -243,7 +242,7 @@ class Form_w4 extends Public_Controller
                 $user_consent = $this->input->post('user_consent');
 
                 if (!empty($first_date_of_employment)) {
-                    $first_date_of_employment= DateTime::createFromFormat('m-d-Y', $first_date_of_employment)->format('Y-m-d');
+                    $first_date_of_employment = DateTime::createFromFormat('m-d-Y', $first_date_of_employment)->format('Y-m-d');
                 }
 
                 if ($assign_on >= $compare_date) {
@@ -268,7 +267,7 @@ class Form_w4 extends Public_Controller
                     $dw_input_5             = $this->input->post('dw_input_5');
 
                     if (!empty($signature_date)) {
-                        $signature_timestamp= DateTime::createFromFormat('m-d-Y', $signature_date)->format('Y-m-d');
+                        $signature_timestamp = DateTime::createFromFormat('m-d-Y', $signature_date)->format('Y-m-d');
                     }
                 } else {
                     $different_last_name = $this->input->post('different_last_name');
@@ -380,13 +379,19 @@ class Form_w4 extends Public_Controller
                     $data_to_update['temjw_multiply_7_by_6'] = $temjw_multiply_7_by_6;
                     $data_to_update['temjw_divide_8_by_period'] = $temjw_divide_8_by_period;
                 }
+
                 //
+                syncW4DataChanges(
+                    $employer_sid,
+                    $data_to_update
+                );
+                
                 $this->form_wi9_model->update_form('w4', $type, $employer_sid, $data_to_update);
                 //
-                $w4_sid = getVerificationDocumentSid ($employer_sid, $type, 'w4');
+                $w4_sid = getVerificationDocumentSid($employer_sid, $type, 'w4');
                 keepTrackVerificationDocument($employer_sid, $type, 'completed', $w4_sid, 'w4', 'Blue Panel');
                 //
-                if($type != 'applicant' && $this->input->post('user_consent') == 1){
+                if ($type != 'applicant' && $this->input->post('user_consent') == 1) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,
@@ -405,7 +410,6 @@ class Form_w4 extends Public_Controller
                 $this->session->set_flashdata('message', '<strong>Success: </strong> W4 Form Submitted Successfully!');
                 redirect('form_w4', 'refresh');
             }
-
         } else {
             redirect('login', "refresh");
         }
@@ -547,15 +551,15 @@ class Form_w4 extends Public_Controller
                 redirect($form_back_url, 'refresh');
             }
 
-//            $e_signature_data = $this->e_signature_model->get_signature_record('employee', $employer_sid);
-//            $data['e_signature_data'] = $e_signature_data;
+            //            $e_signature_data = $this->e_signature_model->get_signature_record('employee', $employer_sid);
+            //            $data['e_signature_data'] = $e_signature_data;
 
             $data['pre_form'] = $previous_form;
             $view = $this->load->view('form_w4/test_form_w4', $data, TRUE);
             $data['view'] = $view;
             if (isset($_GET['submit']) && $_GET['submit'] == 'Download PDF') {
-//                print_r($this->load->view('form_w4/form_w4', $data, TRUE));
-//                die();
+                //                print_r($this->load->view('form_w4/form_w4', $data, TRUE));
+                //                die();
                 $this->pdfgenerator->generate($view, 'W4 Form', true, 'A4');
             }
 
@@ -571,7 +575,7 @@ class Form_w4 extends Public_Controller
             $data['email'] = $data['employer']['email'];
             $data['documents_assignment_sid'] = null;
 
-//            $data['signed_flag'] = false;
+            //            $data['signed_flag'] = false;
             $data['signed_flag'] = isset($previous_form['user_consent']) && $previous_form['user_consent'] == 1 ? true : false;
 
             if ($this->form_validation->run() == FALSE) {
@@ -631,7 +635,7 @@ class Form_w4 extends Public_Controller
                 $temjw_multiply_7_by_6 = $this->input->post('temjw_multiply_7_by_6');
                 $temjw_divide_8_by_period = $this->input->post('temjw_divide_8_by_period');
                 $user_consent = $this->input->post('user_consent');
-                $first_date_of_employment=date("Y-m-d",strtotime($first_date_of_employment));
+                $first_date_of_employment = date("Y-m-d", strtotime($first_date_of_employment));
 
 
                 $data_to_update = array();
@@ -694,13 +698,13 @@ class Form_w4 extends Public_Controller
                 $this->session->set_flashdata('message', '<strong>Success: </strong> W4 Form Submitted Successfully!');
                 redirect('form_w4', 'refresh');
             }
-
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function upload_signed_form(){
+    public function upload_signed_form()
+    {
         $user_sid = $this->input->post('user_sid');
         $current_url = $this->input->post('current_url');
         $sid = $this->input->post('form_sid');
@@ -709,21 +713,21 @@ class Form_w4 extends Public_Controller
         $employer_sid = $data['session']['employer_detail']['sid'];
         $company_sid = $data['session']['company_detail']['sid'];
 
-        if($_SERVER['HTTP_HOST']=='localhost'){
-        // $aws_file_name = '0003-d_6-1542874444-39O.jpg';
-        // $aws_file_name = '0057-testing_uploaded_doc-58-AAH.docx';
+        if ($_SERVER['HTTP_HOST'] == 'localhost') {
+            // $aws_file_name = '0003-d_6-1542874444-39O.jpg';
+            // $aws_file_name = '0057-testing_uploaded_doc-58-AAH.docx';
             $aws_file_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
         } else {
-            $aws_file_name = upload_file_to_aws('upload_file', $company_sid, 'W4form_'.$user_sid , time());
+            $aws_file_name = upload_file_to_aws('upload_file', $company_sid, 'W4form_' . $user_sid, time());
         }
 
         $uploaded_file = '';
 
         if ($aws_file_name != 'error') {
             $uploaded_file = $aws_file_name;
-        } else{
+        } else {
             $this->session->set_flashdata('message', '<b>Error:</b> There is some problem in uploading form.');
-            redirect($current_url,'refresh');
+            redirect($current_url, 'refresh');
         }
 
         $upload_form_array = array();
@@ -732,10 +736,9 @@ class Form_w4 extends Public_Controller
         $upload_form_array['uploaded_file'] = $uploaded_file;
         $upload_form_array['signature_timestamp'] = date('Y-m-d H:i:s');
 
-        $this->form_wi9_model->do_manual_upload_form($sid,$upload_form_array);
+        $this->form_wi9_model->do_manual_upload_form($sid, $upload_form_array);
         $this->session->set_flashdata('message', '<b>Success:</b> W4 Form Uploaded Successfully.');
-        redirect($current_url,'refresh');
-
+        redirect($current_url, 'refresh');
     }
 
     public function preview_w4form($type, $sid)
@@ -754,7 +757,8 @@ class Form_w4 extends Public_Controller
         }
     }
 
-    public function download_w4_form ($type, $sid) {
+    public function download_w4_form($type, $sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
 
@@ -762,13 +766,13 @@ class Form_w4 extends Public_Controller
             $data['pre_form'] = $previous_form;
 
             $this->load->view('form_w4/download_w4_form', $data);
-
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function print_w4_form ($type, $sid) {
+    public function print_w4_form($type, $sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
 
@@ -781,7 +785,8 @@ class Form_w4 extends Public_Controller
         }
     }
 
-    public function print_w4_form_2020 ($type, $sid) {
+    public function print_w4_form_2020($type, $sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
 
@@ -793,7 +798,8 @@ class Form_w4 extends Public_Controller
         }
     }
 
-    public function download_w4_form_2020 ($type, $sid) {
+    public function download_w4_form_2020($type, $sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
 
@@ -801,7 +807,6 @@ class Form_w4 extends Public_Controller
             $data['pre_form'] = $previous_form;
 
             $this->load->view('form_w4/download_w4_2023', $data);
-
         } else {
             redirect('login', "refresh");
         }

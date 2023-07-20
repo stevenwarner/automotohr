@@ -792,3 +792,184 @@ if (!function_exists('updateW4DataById')) {
             ->update('form_w4_original', $data);
     }
 }
+
+//
+if (!function_exists('syncW4Data')) {
+
+    function syncW4Data($employeeId, $formData)
+    {
+
+        //
+        if ($formData['user_type'] == 'employee') {
+            $tableName = 'users';
+            $fields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,marital_status,";
+        }
+        //
+        if ($formData['user_type'] == 'applicant') {
+            $fields = "first_name,last_name,middle_name,ssn,address,city,zipcode,state,marital_status,";
+            $tableName = 'portal_job_applications';
+        }
+
+        // get CI instance
+        $CI = &get_instance();
+        $userData = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get($tableName)
+            ->row_array();
+
+        if ($formData['user_type'] == 'applicant') {
+            $userData['Location_Address'] = $userData['address'];
+            $userData['Location_City'] = $userData['city'];
+            $userData['Location_ZipCode'] = $userData['zipcode'];
+            $userData['Location_state'] = $userData['state'];
+        }
+
+        //
+        if ($formData['first_name'] == null || $formData['first_name'] == '') {
+            $formData['first_name'] = $userData['first_name'];
+        }
+        if ($formData['last_name'] == null || $formData['last_name'] == '') {
+            $formData['last_name'] = $userData['last_name'];
+        }
+
+        if ($formData['middle_name'] == null || $formData['middle_name'] == '') {
+            $formData['middle_name'] = $userData['middle_name'];
+        }
+        if ($formData['ss_number'] == null || $formData['ss_number'] == '') {
+            $formData['ss_number'] = $userData['ssn'];
+        }
+        if ($formData['home_address'] == null || $formData['home_address'] == '') {
+            $pre_form['home_address'] = $userData['Location_Address'];
+        }
+        if ($formData['zip'] == null || $formData['zip'] == '') {
+            $formData['zip'] = $userData['Location_ZipCode'];
+        }
+        if ($formData['city'] == null || $formData['city'] == '') {
+            $formData['city'] = $userData['Location_City'];
+        }
+        /*
+        if ($formData['marriage_status'] == null || $formData['marriage_status'] == '') {
+            if ($userData['marital_status'] == 'Single') {
+                $formData['marriage_status'] = 'separately';
+            }
+        }
+    
+            if ($formData['marriage_status'] == null || $formData['marriage_status'] == '') {
+                if ($userData['marital_status'] == 'Married') {
+                    $formData['marriage_status'] = 'jointly';
+                }
+            }
+      */
+        if ($formData['state'] == null || $formData['state'] == '') {
+            if (!empty($userData['Location_state'])) {
+                $formData['state'] = db_get_state_name_only($userData['Location_state']);
+            };
+        }
+
+        return $formData;
+    }
+}
+
+
+
+//
+if (!function_exists('syncW4DataChanges')) {
+
+    function syncW4DataChanges(
+        $employeeId,
+        $dataToInsert
+    ) {
+
+        //
+        $fields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,marital_status,";
+
+        // get CI instance
+        $CI = &get_instance();
+        $employeeDetail = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        //
+        $newCompareData = [];
+        $newCompareData['first_name'] = $dataToInsert['first_name'];
+        $newCompareData['middle_name'] = $dataToInsert['middle_name'];
+        $newCompareData['last_name'] = $dataToInsert['last_name'];
+        $newCompareData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newCompareData['Location_City'] = $dataToInsert['Location_City'];
+        $newCompareData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newCompareData['Location_State'] = $dataToInsert['Location_State'];
+        $newCompareData['ssn'] = $dataToInsert['ssn'];
+        $newCompareData['marital_status'] = $dataToInsert['marital_status'];
+
+        // Old Data
+        $oldCompareData = [];
+        $oldCompareData['first_name'] = $employeeDetail['first_name'];
+        $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
+        $oldCompareData['last_name'] = $employeeDetail['last_name'];
+        $oldCompareData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldCompareData['Location_City'] = $employeeDetail['Location_City'];
+        $oldCompareData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        $oldCompareData['Location_State'] = $employeeDetail['Location_State'];
+        $oldCompareData['ssn'] = $employeeDetail['ssn'];
+
+        $difference = findDifferenceData($oldCompareData, $newCompareData);
+
+        //
+        if ($difference['profile_changed'] == 0) {
+            return false;
+        }
+        //
+        $data_array = [];
+        foreach ($difference['data'] as $key => $val) {
+            $data_array[$key]=$val['new']; 
+        }
+
+        //Update to user
+        $CI->db->where('sid', $employeeId);
+        $CI->db->update('users', $data_array);
+
+        //Insert To Log 
+        $employerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
+
+        $CI->db->insert('profile_history', [
+            'user_sid' => $employeeId,
+            'employer_sid' => $employerId,
+            'profile_data' => json_encode($difference['data']),
+            'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+            'change_from' => 'w4'
+        ]);
+    }
+}
+
+
+//
+if (!function_exists('findDifferenceData')) {
+    function findDifferenceData($previous_data, $form_data)
+    {
+        // 
+        $profile_changed = 0;
+        //
+        $dt = [];
+        //
+        if (!empty($previous_data)) {
+            foreach ($previous_data as $key => $data) {
+                //
+                if (!isset($form_data[$key])) {
+                    continue;
+                }
+                //   
+                if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
+                    //
+                    $dt[$key] = [
+                        'old' => $data,
+                        'new' => $form_data[$key]
+                    ];
+                    //
+                    $profile_changed = 1;
+                }
+            }
+        }
+        //
+        return ['profile_changed' => $profile_changed, 'data' => $dt];
+    }
+}
