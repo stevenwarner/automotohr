@@ -255,19 +255,18 @@
         <?php  } ?>
 
 
-        <?php $comply_status = $data["session"]["company_detail"]["complynet_status"];
-        $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
-        $complynet_dashboard_link = $session["company_detail"]["complynet_dashboard_link"];
-        $access_level  = $session["employer_detail"]['access_level'];
+        <?php 
+            $comply_status = $data["session"]["company_detail"]["complynet_status"];
+            $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
         ?>
         <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
-            <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
+            <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
             <?php if ($complyNetLink) {
             ?>
 
                 <li>
-                <a href="<?php echo base_url('cn/redirect');?>" target="_blank">
-                        <figure><i class="fa fa-book"></i></figure>Complynet
+                    <a href="<?php echo base_url('cn/redirect'); ?>" target="_blank">
+                        <figure><i class="fa fa-book"></i></figure>ComplyNet
                     </a>
                 </li>
         <?php
