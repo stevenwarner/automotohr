@@ -29,6 +29,10 @@ class Incident_reporting_model extends CI_Model
 		return $this->db->insert_id();
 	}
 
+	function insert_incident_report_log ($insert) {
+		$this->db->insert('incident_report_log', $insert);
+	}
+
 	function insert_safety_checklist($insert)
 	{
 		$this->db->insert('incident_reporting_checklist', $insert);

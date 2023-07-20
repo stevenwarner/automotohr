@@ -33,7 +33,9 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                 <?php if (sizeof($assigned_incidents) > 0) { ?>
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
-                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
+                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                            <a class="btn btn-info btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $id; ?>">Mark it Resolved</a>
+                        </div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                             <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2') . '/' . $id; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i> Download Reported Incident </a>
                         </div>
@@ -1935,6 +1937,28 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
     <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 
     <script type="application/javascript">
+        $(document).on('click', '.jsMarkItResolved', function() {
+            var iid = $(this).attr('data-incidentId');
+            alertify.confirm('Resolved?', 'Are you sure, you want to mark this incident resolved?', function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '<?= base_url('incident_reporting_system/mark_resolved') ?>',
+                    data: {
+                        id: iid
+                    },
+                    success: function(response) {
+                        if (response == 'Done') {
+                            window.location.href = window.location.href;
+                        }
+                    },
+                    error: function() {
+
+                    }
+                });
+            }, function() {
+
+            });
+        });
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
