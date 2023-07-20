@@ -2274,14 +2274,20 @@ class Hr_documents_management extends Public_Controller
                         case 'assign_w4': //W4 Form Active
                             $w4_form_history = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
                             //
+
                             if (empty($w4_form_history)) {
+
                                 $w4_data_to_insert = array();
+
+                                //
                                 $w4_data_to_insert['employer_sid'] = $user_sid;
                                 $w4_data_to_insert['company_sid'] = $company_sid;
                                 $w4_data_to_insert['user_type'] = $user_type;
                                 $w4_data_to_insert['sent_status'] = 1;
                                 $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                                 $w4_data_to_insert['status'] = 1;
+
+                                //
                                 $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
                             } else {
                                 $w4_data_to_update                                          = array();
@@ -13878,13 +13884,13 @@ class Hr_documents_management extends Public_Controller
                 //
                 $filename = date('m_d_Y_H_i_s', strtotime('now')) . "_managers_with_pending_document.csv";
                 $fp = fopen('php://output', 'w');
-                fputcsv($fp, array($companyHeader,''));
+                fputcsv($fp, array($companyHeader, ''));
                 fputcsv($fp, $h);
                 //
                 foreach ($data['managers'] as $k => $v) {
                     $iText = '';
-                
-                    $d = array(getUserNameBySID($v['user_sid']), $v['document_name']." \n(Verification)");
+
+                    $d = array(getUserNameBySID($v['user_sid']), $v['document_name'] . " \n(Verification)");
                     fputcsv($fp, $d);
                 }
                 header('Content-type: application/csv');
@@ -13893,7 +13899,7 @@ class Hr_documents_management extends Public_Controller
                 exit;
             } else if ($type == 'print') {
                 $this->load->view('hr_documents_management/print_new_people_with_pending_employer_documents', $data);
-                 return;
+                return;
             } else if ($type == 'return') {
                 header('Content-Type: application/json');
                 echo json_encode($data['employees']);

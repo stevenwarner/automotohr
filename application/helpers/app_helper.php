@@ -763,3 +763,32 @@ if (!function_exists('haveDependensDelete')) {
         return $result;
     }
 }
+
+
+//
+if (!function_exists('getUserDataById')) {
+
+    function getUserDataById($fieldsName = '*', $employeeId)
+    {
+        // get CI instance
+        $CI = &get_instance();
+        $users = $CI->db->select($fieldsName)
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        return $users;
+    }
+}
+
+//
+if (!function_exists('updateW4DataById')) {
+    function updateW4DataById($employeeId, $w4sid, $data)
+    {
+        $CI = &get_instance();
+        $CI->db
+            ->where('employer_sid', $employeeId)
+            ->where('sid', $w4sid)
+            ->where('users_type', 'employee')
+            ->update('form_w4_original', $data);
+    }
+}

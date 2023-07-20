@@ -1,5 +1,5 @@
 <?php
-    $company_name = ucwords($session['company_detail']['CompanyName']);
+$company_name = ucwords($session['company_detail']['CompanyName']);
 ?>
 <?php if (!$load_view) { ?>
 
@@ -15,9 +15,9 @@
                                 <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
 
                                 <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
-                                    <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
-                                    <?php echo $title; ?></span>
+                                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                        <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
+                                        <?php echo $title; ?></span>
                                 </div>
                                 <div class="dashboard-conetnt-wrp">
                                     <div class="form-wrp full-width">
@@ -26,14 +26,15 @@
                                                 <h2 class="section-ttile">Form W-4 (<?php echo date('Y'); ?>)</h2>
                                                 <div class="row mb-2">
                                                     <div class="col-lg-3 pull-right">
-                                                        <form action="<?php echo current_url()?>" method="get">
-                                                            <?php if( isset($pre_form['user_consent']) && $pre_form['user_consent'] == 1){ ?>
+                                                        <form action="<?php echo current_url() ?>" method="get">
+                                                            <?php if (isset($pre_form['user_consent']) && $pre_form['user_consent'] == 1) { ?>
                                                                 <input class="btn btn-success btn-block" id="download-pdf" value="Download PDF" name="submit" type="submit">
-                                                            <?php }?>
+                                                            <?php } ?>
                                                         </form>
                                                     </div>
                                                     <!--                        <div class="col-lg-3 pull-right">-->
-                                                    <!--                            <a target="_blank" href="--><?php //echo base_url('form_w9/preview_w9form/' . $pre_form['user_type'] . '/' . $pre_form['user_sid'])?><!--" class="btn btn-success btn-block">Preview</a>-->
+                                                    <!--                            <a target="_blank" href="--><?php //echo base_url('form_w9/preview_w9form/' . $pre_form['user_type'] . '/' . $pre_form['user_sid'])
+                                                                                                                ?><!--" class="btn btn-success btn-block">Preview</a>-->
                                                     <!--                        </div>-->
                                                 </div>
                                             </div>
@@ -51,12 +52,12 @@
                                                             <strong>Exemption from withholding.</strong> You may claim exemption from withholding for <?php echo date('Y'); ?> if both of the following apply.
                                                         </p>
                                                         <p class="form-w4-text">
-                                                            • For <?php echo date('Y')-1; ?> you had a right to a refund of all federal income tax withheld because you had no tax liability, and
+                                                            • For <?php echo date('Y') - 1; ?> you had a right to a refund of all federal income tax withheld because you had no tax liability, and
                                                         </p>
                                                         <p class="form-w4-text">
                                                             • For <?php echo date('Y'); ?> you expect a refund of all federal income tax withheld because you expect to have no tax liability.
                                                         </p>
-                                                        <p>If you’re exempt, complete only lines 1, 2, 3, 4, and 7 and sign the form to validate it. Your exemption for <?php echo date('Y'); ?> expires February 15, <?php echo date('Y')+1; ?>. See Pub. 505, Tax Withholding and Estimated Tax, to learn more about whether you qualify for exemption from withholding.</p>
+                                                        <p>If you’re exempt, complete only lines 1, 2, 3, 4, and 7 and sign the form to validate it. Your exemption for <?php echo date('Y'); ?> expires February 15, <?php echo date('Y') + 1; ?>. See Pub. 505, Tax Withholding and Estimated Tax, to learn more about whether you qualify for exemption from withholding.</p>
                                                         <h3>General Instructions</h3>
                                                         <p>If you aren’t exempt, follow the rest of these instructions to determine the number of withholding allowances you should claim for withholding for <?php echo date('Y'); ?> and any additional amount of tax to have withheld. For regular wages, withholding must be based on allowances you claimed and may not be a flat amount or percentage of wages.</p>
                                                         <p>You can also use the calculator at <strong>www.irs.gov/W4App</strong> to determine your tax withholding more accurately. Consider</p>
@@ -110,35 +111,81 @@
                                                     </div>
                                                 </div>
                                                 <form id="w4-form" action="" method="post">
+
+                                                    <?php
+                                                    $selectfields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,marital_status,";
+                                                    $userData = getUserDataById($selectfields, $pre_form['employer_sid']);
+
+                                                    if ($pre_form['first_name'] == null || $pre_form['first_name'] == '') {
+                                                        $pre_form['first_name'] = $userData['first_name'];
+                                                    }
+                                                    if ($pre_form['last_name'] == null || $pre_form['last_name'] == '') {
+                                                        $pre_form['last_name'] = $userData['last_name'];
+                                                    }
+
+                                                    if ($pre_form['middle_name'] == null || $pre_form['middle_name'] == '') {
+                                                        $pre_form['middle_name'] = $userData['middle_name'];
+                                                    }
+                                                    if ($pre_form['ss_number'] == null || $pre_form['ss_number'] == '') {
+                                                        $pre_form['ss_number'] = $userData['ssn'];
+                                                    }
+                                                    if ($pre_form['home_address'] == null || $pre_form['home_address'] == '') {
+                                                        $pre_form['home_address'] = $userData['Location_Address'];
+                                                    }
+                                                    if ($pre_form['zip'] == null || $pre_form['zip'] == '') {
+                                                        $pre_form['zip'] = $userData['Location_ZipCode'];
+                                                    }
+                                                    if ($pre_form['city'] == null || $pre_form['city'] == '') {
+                                                        $pre_form['city'] = $userData['Location_City'];
+                                                    }
+                                                    if ($pre_form['marriage_status'] == null || $pre_form['marriage_status'] == '') {
+                                                        if ($userData['marital_status'] == 'Single') {
+                                                            $pre_form['marriage_status'] = 'separately';
+                                                        }
+                                                    }
+
+                                                    if ($pre_form['marriage_status'] == null || $pre_form['marriage_status'] == '') {
+                                                        if ($userData['marital_status'] == 'Married') {
+                                                            $pre_form['marriage_status'] = 'jointly';
+                                                        }
+                                                    }
+
+                                                    if ($pre_form['state'] == null || $pre_form['state'] == '') {
+                                                        if (!empty($userData['Location_state'])) {
+                                                            $pre_form['state'] = db_get_state_name_only($userData['Location_state']);
+                                                        };
+                                                    } ?>
+
+
                                                     <div class="row">
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="form-group">
                                                                 <label>1. Your first name</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['first_name']: ''?>" name="w4_first_name" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['first_name'] : '' ?>" name="w4_first_name" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="form-group">
                                                                 <label>Your middle initial</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['middle_name']: ''?>" name="w4_middle_name" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['middle_name'] : '' ?>" name="w4_middle_name" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="form-group">
                                                                 <label>Last name</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['last_name']: ''?>" name="w4_last_name" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['last_name'] : '' ?>" name="w4_last_name" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="form-group">
                                                                 <label>2. Your social security number</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['ss_number']: ''?>" name="ss_number" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['ss_number'] : '' ?>" name="ss_number" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <div class="form-group">
                                                                 <label>Home address (number and street or rural route)</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['home_address']: ''?>" name="home_address" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['home_address'] : '' ?>" name="home_address" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -149,7 +196,7 @@
                                                                         <div class="form-group autoheight">
                                                                             <label class="control control--checkbox">
                                                                                 Single
-                                                                                <input type="radio" name="marriage_status" value="single" <?php echo sizeof($pre_form)>0 && $pre_form['marriage_status'] == 'single' ? 'checked="checked"': ''?>>
+                                                                                <input type="radio" name="marriage_status" value="single" <?php echo sizeof($pre_form) > 0 && $pre_form['marriage_status'] == 'single' ? 'checked="checked"' : '' ?>>
                                                                                 <div class="control__indicator"></div>
                                                                             </label>
                                                                         </div>
@@ -158,7 +205,7 @@
                                                                         <div class="form-group autoheight">
                                                                             <label class="control control--checkbox">
                                                                                 Married
-                                                                                <input type="radio" name="marriage_status" value="married" <?php echo sizeof($pre_form)>0 && $pre_form['marriage_status'] == 'married' ? 'checked="checked"': ''?>>
+                                                                                <input type="radio" name="marriage_status" value="married" <?php echo sizeof($pre_form) > 0 && $pre_form['marriage_status'] == 'married' ? 'checked="checked"' : '' ?>>
                                                                                 <div class="control__indicator"></div>
                                                                             </label>
                                                                         </div>
@@ -167,7 +214,7 @@
                                                                         <div class="form-group autoheight">
                                                                             <label class="control control--checkbox">
                                                                                 Married, but withhold at higher Single rate.
-                                                                                <input type="radio" name="marriage_status" value="complex" <?php echo sizeof($pre_form)>0 && $pre_form['marriage_status'] == 'complex' ? 'checked="checked"': ''?>>
+                                                                                <input type="radio" name="marriage_status" value="complex" <?php echo sizeof($pre_form) > 0 && $pre_form['marriage_status'] == 'complex' ? 'checked="checked"' : '' ?>>
                                                                                 <div class="control__indicator"></div>
                                                                             </label>
                                                                         </div>
@@ -179,26 +226,26 @@
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="form-group">
                                                                 <label>City or town</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['city']: ''?>" name="city" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['city'] : '' ?>" name="city" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="form-group">
                                                                 <label>State</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['state']: ''?>" name="state" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['state'] : '' ?>" name="state" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <div class="form-group">
                                                                 <label>ZIP Code</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['zip']: ''?>" name="zip" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['zip'] : '' ?>" name="zip" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <div class="form-group autoheight">
                                                                 <label class="control control--checkbox">
                                                                     4. If your last name differs from that shown on your social security card, check here. You must call 800-772-1213 for a replacement card.
-                                                                    <input type="checkbox" name="different_last_name" value="1" <?php echo sizeof($pre_form)>0 && $pre_form['different_last_name'] == 1 ? 'checked="checked"': ''?>>
+                                                                    <input type="checkbox" name="different_last_name" value="1" <?php echo sizeof($pre_form) > 0 && $pre_form['different_last_name'] == 1 ? 'checked="checked"' : '' ?>>
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
@@ -206,13 +253,13 @@
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <div class="form-group">
                                                                 <label>5. Total number of allowances you’re claiming (from the applicable worksheet on the following pages)</label>
-                                                                <input type="number" value="<?php echo sizeof($pre_form)>0 && !empty($pre_form['number_of_allowance']) ? $pre_form['number_of_allowance']: 0; ?>" min="0" max="5" name="number_of_allowance" class="form-control" />
+                                                                <input type="number" value="<?php echo sizeof($pre_form) > 0 && !empty($pre_form['number_of_allowance']) ? $pre_form['number_of_allowance'] : 0; ?>" min="0" max="5" name="number_of_allowance" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <div class="form-group">
                                                                 <label>6. Additional amount, if any, you want withheld from each paycheck</label>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['additional_amount']: ''?>" name="additional_amount" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['additional_amount'] : '' ?>" name="additional_amount" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -223,7 +270,7 @@
                                                                     &nbsp;&nbsp;• This year I expect a refund of all federal income tax withheld because I expect to have no tax liability.<br>
                                                                     If you meet both conditions, write “Exempt” here
                                                                 </p>
-                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['claim_exempt']: ''?>" name="claim_exempt" class="form-control" />
+                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['claim_exempt'] : '' ?>" name="claim_exempt" class="form-control" />
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -235,15 +282,15 @@
                                                         <!--                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
                                                         <!--                                    <div class="form-group autoheight">-->
                                                         <!--                                        <label>Date</label>-->
-                                                        <!--                                        <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['ss_number']: ''?>" name="signature_date" class="form-control" />-->
+                                                        <!--                                        <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['ss_number'] : '' ?>" name="signature_date" class="form-control" />-->
                                                         <!--                                    </div>-->
                                                         <!--                                </div>-->
 
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <div class="form-group autoheight">
                                                                 <span><b>Employee's signature</b> (This form is not valid unless you sign it.)</span>
-                                                                <?php if($signed_flag == true) { ?>
-                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $e_signature_data['signature_bas64_image']; ?>"  />
+                                                                <?php if ($signed_flag == true) { ?>
+                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $e_signature_data['signature_bas64_image']; ?>" />
                                                                 <?php } else { ?>
                                                                     <!-- the below loaded view add e-signature -->
                                                                     <?php $this->load->view('static-pages/e_signature_button'); ?>
@@ -252,38 +299,42 @@
                                                         </div>
                                                         <!--                            </div>-->
 
-<!--                                                        For Employer Section - Commented because employer need to save it after employee concent it-->
-<!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
-<!--                                                            <div class="form-group autoheight">-->
-<!--                                                                <label>8. Employer’s name</label>-->
-<!--                                                                <input type="text" value="--><?php //echo sizeof($pre_form)>0 ? $pre_form['emp_name']: ''?><!--" name="emp_name" class="form-control" />-->
-<!--                                                            </div>-->
-<!--                                                        </div>-->
-<!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
-<!--                                                            <div class="form-group autoheight">-->
-<!--                                                                <label> Employer’s address </label>-->
-<!--                                                                <input type="text" value="--><?php //echo sizeof($pre_form)>0 ? $pre_form['emp_address']: ''?><!--" name="emp_address" class="form-control" />-->
-<!--                                                            </div>-->
-<!--                                                        </div>-->
-<!---->
-<!--                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">-->
-<!--                                                            <div class="form-group autoheight">-->
-<!--                                                                <label>Note: (Employer: Complete boxes 8 and 10 if sending to IRS and complete boxes 8, 9, and 10 if sending to State Directory of New Hires.)</label>-->
-<!--                                                            </div>-->
-<!--                                                        </div>-->
-<!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
-<!--                                                            <div class="form-group autoheight">-->
-<!--                                                                <label>9. First date of employment</label>-->
-<!--                                                                <input type="text" value="--><?php //echo isset($pre_form) && !empty($pre_form['first_date_of_employment']) && $pre_form['first_date_of_employment'] != '0000-00-00' ? date("m-d-Y",strtotime($pre_form['first_date_of_employment'])): ''?><!--" name="first_date_of_employment" class="form-control" id="first_date_of_employment"/>-->
-<!--                                                            </div>-->
-<!--                                                        </div>-->
-<!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
-<!--                                                            <div class="form-group">-->
-<!--                                                                <label>10. Employer identification number (EIN)</label>-->
-<!--                                                                <input type="text" value="--><?php //echo sizeof($pre_form)>0 ? $pre_form['emp_identification_number']: ''?><!--" name="emp_identification_number" class="form-control" />-->
-<!--                                                            </div>-->
-<!--                                                        </div>-->
-<!--                                                        End of Employer Section-->
+                                                        <!--                                                        For Employer Section - Commented because employer need to save it after employee concent it-->
+                                                        <!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
+                                                        <!--                                                            <div class="form-group autoheight">-->
+                                                        <!--                                                                <label>8. Employer’s name</label>-->
+                                                        <!--                                                                <input type="text" value="--><?php //echo sizeof($pre_form)>0 ? $pre_form['emp_name']: ''
+                                                                                                                                                            ?><!--" name="emp_name" class="form-control" />-->
+                                                        <!--                                                            </div>-->
+                                                        <!--                                                        </div>-->
+                                                        <!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
+                                                        <!--                                                            <div class="form-group autoheight">-->
+                                                        <!--                                                                <label> Employer’s address </label>-->
+                                                        <!--                                                                <input type="text" value="--><?php //echo sizeof($pre_form)>0 ? $pre_form['emp_address']: ''
+                                                                                                                                                            ?><!--" name="emp_address" class="form-control" />-->
+                                                        <!--                                                            </div>-->
+                                                        <!--                                                        </div>-->
+                                                        <!---->
+                                                        <!--                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">-->
+                                                        <!--                                                            <div class="form-group autoheight">-->
+                                                        <!--                                                                <label>Note: (Employer: Complete boxes 8 and 10 if sending to IRS and complete boxes 8, 9, and 10 if sending to State Directory of New Hires.)</label>-->
+                                                        <!--                                                            </div>-->
+                                                        <!--                                                        </div>-->
+                                                        <!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
+                                                        <!--                                                            <div class="form-group autoheight">-->
+                                                        <!--                                                                <label>9. First date of employment</label>-->
+                                                        <!--                                                                <input type="text" value="--><?php //echo isset($pre_form) && !empty($pre_form['first_date_of_employment']) && $pre_form['first_date_of_employment'] != '0000-00-00' ? date("m-d-Y",strtotime($pre_form['first_date_of_employment'])): ''
+                                                                                                                                                            ?><!--" name="first_date_of_employment" class="form-control" id="first_date_of_employment"/>-->
+                                                        <!--                                                            </div>-->
+                                                        <!--                                                        </div>-->
+                                                        <!--                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">-->
+                                                        <!--                                                            <div class="form-group">-->
+                                                        <!--                                                                <label>10. Employer identification number (EIN)</label>-->
+                                                        <!--                                                                <input type="text" value="--><?php //echo sizeof($pre_form)>0 ? $pre_form['emp_identification_number']: ''
+                                                                                                                                                            ?><!--" name="emp_identification_number" class="form-control" />-->
+                                                        <!--                                                            </div>-->
+                                                        <!--                                                        </div>-->
+                                                        <!--                                                        End of Employer Section-->
 
 
                                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
@@ -359,19 +410,19 @@
                                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                                             <div class="form-group autoheight">
                                                                                 <label>A. Enter “1” for yourself</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_yourself']: ''?>" name="paw_yourself" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_yourself'] : '' ?>" name="paw_yourself" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                                             <div class="form-group autoheight">
                                                                                 <label>B. Enter “1” if you will file as married filing jointly</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_married']: ''?>" name="paw_married" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_married'] : '' ?>" name="paw_married" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>C. Enter “1” if you will file as head of household</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_head']: ''?>" name="paw_head" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_head'] : '' ?>" name="paw_head" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -382,7 +433,7 @@
                                                                                     &nbsp;&nbsp;• You’re married filing jointly, have only one job, and your spouse doesn’t work; or<br>
                                                                                     &nbsp;&nbsp;• Your wages from a second job or your spouse’s wages (or the total of both) are $1,500 or less.
                                                                                 </p>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_single_wages']: ''?>" name="paw_single_wages" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_single_wages'] : '' ?>" name="paw_single_wages" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -394,7 +445,7 @@
                                                                                     &nbsp;&nbsp;• If your total income will be from $175,551 to $200,000 ($339,001 to $400,000 if married filing jointly), enter “1” for each eligible child.
                                                                                     &nbsp;&nbsp;• If your total income will be higher than $200,000 ($400,000 if married filing jointly), enter “-0-”.
                                                                                 </p>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_child_tax']: ''?>" name="paw_child_tax" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_child_tax'] : '' ?>" name="paw_child_tax" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -405,13 +456,13 @@
                                                                                     &nbsp;&nbsp;• If your total income will be from $69,801 to $175,550 ($101,401 to $339,000 if married filing jointly), enter “1” for every two dependents (for example, “-0-” for one dependent, “1” if you have two or three dependents, and “2” if you have four dependents).<br>
                                                                                     &nbsp;&nbsp;• If your total income will be higher than $175,550 ($339,000 if married filing jointly), enter “-0-”
                                                                                 </p>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_dependents']: ''?>" name="paw_dependents" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_dependents'] : '' ?>" name="paw_dependents" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>G. <strong>Other credits.</strong>If you have other credits, see Worksheet 1-6 of Pub. 505 and enter the amount from that worksheet here</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_other_credit']: ''?>" name="paw_other_credit" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_other_credit'] : '' ?>" name="paw_other_credit" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -423,7 +474,7 @@
                                                                                     &nbsp;&nbsp;• If you have more than one job at a time or are married filing jointly and you and your spouse both work, and the combined earnings from all jobs exceed $52,000 ($24,000 if married filing jointly), see the Two-Earners/Multiple Jobs Worksheet on page 4 to avoid having too little tax withheld.<br>
                                                                                     &nbsp;&nbsp;• If neither of the above situations applies, stop here and enter the number from line H on line 5 of Form W-4 above.
                                                                                 </p>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['paw_accuracy']: ''?>" name="paw_accuracy" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['paw_accuracy'] : '' ?>" name="paw_accuracy" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -442,7 +493,7 @@
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>1. Enter an estimate of your <?php echo date('Y'); ?> itemized deductions. These include qualifying home mortgage interest, charitable contributions, state and local taxes (up to $10,000), and medical expenses in excess of 7.5% of your income. See Pub. 505 for details</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_estimate']: ''?>" name="daaiw_estimate" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_estimate'] : '' ?>" name="daaiw_estimate" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -453,55 +504,55 @@
                                                                                     &nbsp;&nbsp;• $18,000 if you’re head of household<br>
                                                                                     &nbsp;&nbsp;• $12,000 if you’re single or married filing separately
                                                                                 </p>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_enter_status']: ''?>" name="daaiw_enter_status" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_enter_status'] : '' ?>" name="daaiw_enter_status" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>3. <strong>Subtract</strong> line 2 from line 1. If zero or less, enter “-0-”</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_subtract_line_2']: ''?>" name="daaiw_subtract_line_2" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_subtract_line_2'] : '' ?>" name="daaiw_subtract_line_2" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>4. Enter an estimate of your <?php echo date('Y'); ?> adjustments to income and any additional standard deduction for age or blindness (see Pub. 505 for information about these items) </label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_estimate_of_adjustment']: ''?>" name="daaiw_estimate_of_adjustment" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_estimate_of_adjustment'] : '' ?>" name="daaiw_estimate_of_adjustment" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>5. <strong>Add</strong> lines 3 and 4 and enter the total</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_add_line_3_4']: ''?>" name="daaiw_add_line_3_4" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_add_line_3_4'] : '' ?>" name="daaiw_add_line_3_4" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>6. Enter an estimate of your <?php echo date('Y'); ?> nonwage income (such as dividends or interest)</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_estimate__of_nonwage']: ''?>" name="daaiw_estimate__of_nonwage" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_estimate__of_nonwage'] : '' ?>" name="daaiw_estimate__of_nonwage" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>7. <strong>Subtract</strong>line 6 from line 5. If zero, enter “-0-”. If less than zero, enter the amount in parentheses</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_subtract_line_6']: ''?>" name="daaiw_subtract_line_6" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_subtract_line_6'] : '' ?>" name="daaiw_subtract_line_6" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>8. <strong>Divide</strong> the amount on line 7 by $4,150 and enter the result here. If a negative amount, enter in parentheses. Drop any fraction</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_divide_line_7']: ''?>" name="daaiw_divide_line_7" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_divide_line_7'] : '' ?>" name="daaiw_divide_line_7" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>9. Enter the number from the <strong>Personal Allowances Worksheet, line H above</strong></label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_enter_number_personal_allowance']: ''?>" name="daaiw_enter_number_personal_allowance" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_enter_number_personal_allowance'] : '' ?>" name="daaiw_enter_number_personal_allowance" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>10. <strong>Add</strong> lines 8 and 9 and enter the total here. If zero or less, enter “-0-”. If you plan to use the <strong>Two-Earners/Multiple Jobs Worksheet</strong>, also enter this total on line 1, page 4. Otherwise, <strong>stop here</strong> and enter this total on Form W-4, line 5, page 1</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['daaiw_add_line_8_9']: ''?>" name="daaiw_add_line_8_9" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['daaiw_add_line_8_9'] : '' ?>" name="daaiw_add_line_8_9" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -520,19 +571,19 @@
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>1. Enter the number from the <strong>Personal Allowances Worksheet,</strong> line H, page 3 (or, if you used the <strong>Deductions, Adjustments, and Additional Income Worksheet</strong> on page 3, the number from line 10 of that worksheet)</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_personal_allowance']: ''?>" name="temjw_personal_allowance" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_personal_allowance'] : '' ?>" name="temjw_personal_allowance" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>2. Find the number in <strong>Table 1</strong> below that applies to the <strong>LOWEST</strong> paying job and enter it here. <strong>However,</strong> if you’re married filing jointly and wages from the highest paying job are $75,000 or less and the combined wages for you and your spouse are $107,000 or less, don’t enter more than “3” </label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_num_in_table_1']: ''?>" name="temjw_num_in_table_1" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_num_in_table_1'] : '' ?>" name="temjw_num_in_table_1" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>3. If line 1 is <strong>more than or equal to</strong> line 2, subtract line 2 from line 1. Enter the result here (if zero, enter “-0-”) and on Form W-4, line 5, page 1. <strong>Do not</strong> use the rest of this worksheet</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_more_line2']: ''?>" name="temjw_more_line2" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_more_line2'] : '' ?>" name="temjw_more_line2" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -543,37 +594,37 @@
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>4. Enter the number from line 2 of this worksheet</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_num_from_line2']: ''?>" name="temjw_num_from_line2" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_num_from_line2'] : '' ?>" name="temjw_num_from_line2" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>5. Enter the number from line 1 of this worksheet</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_num_from_line1']: ''?>" name="temjw_num_from_line1" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_num_from_line1'] : '' ?>" name="temjw_num_from_line1" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>6. <strong>Subtract</strong> line 5 from line 4</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_subtract_5_from_4']: ''?>" name="temjw_subtract_5_from_4" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_subtract_5_from_4'] : '' ?>" name="temjw_subtract_5_from_4" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>7. Find the amount in <strong>Table 2</strong> below that applies to the <strong>HIGHEST</strong> paying job and enter it here</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_amount_in_table_2']: ''?>" name="temjw_amount_in_table_2" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_amount_in_table_2'] : '' ?>" name="temjw_amount_in_table_2" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>8. <strong>Multiply</strong> line 7 by line 6 and enter the result here. This is the additional annual withholding needed</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_multiply_7_by_6']: ''?>" name="temjw_multiply_7_by_6" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_multiply_7_by_6'] : '' ?>" name="temjw_multiply_7_by_6" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                             <div class="form-group autoheight">
                                                                                 <label>9. <strong>Divide</strong> line 8 by the number of pay periods remaining in <?php echo date('Y'); ?>. For example, divide by 18 if you’re paid every 2 weeks and you complete this form on a date in late April when there are 18 pay periods remaining in <?php echo date('Y'); ?>. Enter the result here and on Form W-4, line 6, page 1. This is the additional amount to be withheld from each paycheck</label>
-                                                                                <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['temjw_divide_8_by_period']: ''?>" name="temjw_divide_8_by_period" class="form-control" />
+                                                                                <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['temjw_divide_8_by_period'] : '' ?>" name="temjw_divide_8_by_period" class="form-control" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -595,19 +646,19 @@
                                                                                     <div class="table-responsive">
                                                                                         <table class="table table-bordered">
                                                                                             <thead>
-                                                                                            <tr>
-                                                                                                <th class="text-center" colspan="2">Married Filing Jointly</th>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <th class="text-center" colspan="2">Married Filing Jointly</th>
+                                                                                                </tr>
                                                                                             </thead>
                                                                                             <tbody>
-                                                                                            <tr>
-                                                                                                <td class="text-center">If wages from LOWEST paying job are—</td>
-                                                                                                <td class="text-center">Enter on line 2 above</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td class="text-center">$0 - $5,000 <br> 5,001 - 9,500 <br> 9,501 - 19,000 <br> 19,001 - 26,500 <br> 26,501 - 37,000 <br> 37,001 - 43,500 <br> 43,501 - 55,000 <br> 55,001 - 60,000 <br> 60,001 - 70,000 <br> 70,001 - 75,000 <br> 75,001 - 85,000 <br> 85,001 - 95,000 <br> 95,001 - 130,000 <br> 130,001 - 150,000 <br> 150,001 - 160,000 <br> 160,001 - 170,000 <br> 170,001 - 180,000 <br> 180,001 - 190,000 <br> 190,001 - 200,000 <br> 200,001 and over</td>
-                                                                                                <td class="text-center">0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19</td>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">If wages from LOWEST paying job are—</td>
+                                                                                                    <td class="text-center">Enter on line 2 above</td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">$0 - $5,000 <br> 5,001 - 9,500 <br> 9,501 - 19,000 <br> 19,001 - 26,500 <br> 26,501 - 37,000 <br> 37,001 - 43,500 <br> 43,501 - 55,000 <br> 55,001 - 60,000 <br> 60,001 - 70,000 <br> 70,001 - 75,000 <br> 75,001 - 85,000 <br> 85,001 - 95,000 <br> 95,001 - 130,000 <br> 130,001 - 150,000 <br> 150,001 - 160,000 <br> 160,001 - 170,000 <br> 170,001 - 180,000 <br> 180,001 - 190,000 <br> 190,001 - 200,000 <br> 200,001 and over</td>
+                                                                                                    <td class="text-center">0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19</td>
+                                                                                                </tr>
                                                                                             </tbody>
                                                                                         </table>
                                                                                     </div>
@@ -616,19 +667,19 @@
                                                                                     <div class="table-responsive">
                                                                                         <table class="table table-bordered">
                                                                                             <thead>
-                                                                                            <tr>
-                                                                                                <th class="text-center" colspan="2">All Others</th>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <th class="text-center" colspan="2">All Others</th>
+                                                                                                </tr>
                                                                                             </thead>
                                                                                             <tbody>
-                                                                                            <tr>
-                                                                                                <td class="text-center">If wages from LOWEST paying job are—</td>
-                                                                                                <td class="text-center">Enter on line 2 above</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td class="text-center">$0 - $7,000 <br> 7,001 - 12,500 <br> 12,501 - 24,500 <br> 24,501 - 31,500 <br> 31,501 - 39,000<br> 39,001 - 55,000 <br> 55,001 - 70,000 <br> 70,001 - 85,000 <br> 85,001 - 90,000 <br> 90,001 - 100,000 <br> 100,001 - 105,000 <br> 105,001 - 115,000 <br> 115,001 - 120,000 <br> 120,001 - 130,000 <br> 130,001 - 145,000 <br> 145,001 - 155,000 <br> 155,001 - 185,000 <br> 185,001 and over</td>
-                                                                                                <td class="text-center">0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17</td>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">If wages from LOWEST paying job are—</td>
+                                                                                                    <td class="text-center">Enter on line 2 above</td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">$0 - $7,000 <br> 7,001 - 12,500 <br> 12,501 - 24,500 <br> 24,501 - 31,500 <br> 31,501 - 39,000<br> 39,001 - 55,000 <br> 55,001 - 70,000 <br> 70,001 - 85,000 <br> 85,001 - 90,000 <br> 90,001 - 100,000 <br> 100,001 - 105,000 <br> 105,001 - 115,000 <br> 115,001 - 120,000 <br> 120,001 - 130,000 <br> 130,001 - 145,000 <br> 145,001 - 155,000 <br> 155,001 - 185,000 <br> 185,001 and over</td>
+                                                                                                    <td class="text-center">0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17</td>
+                                                                                                </tr>
                                                                                             </tbody>
                                                                                         </table>
                                                                                     </div>
@@ -649,19 +700,19 @@
                                                                                     <div class="table-responsive">
                                                                                         <table class="table table-bordered">
                                                                                             <thead>
-                                                                                            <tr>
-                                                                                                <th class="text-center" colspan="2">Married Filing Jointly</th>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <th class="text-center" colspan="2">Married Filing Jointly</th>
+                                                                                                </tr>
                                                                                             </thead>
                                                                                             <tbody>
-                                                                                            <tr>
-                                                                                                <td class="text-center">If wages from HIGHEST paying job are—</td>
-                                                                                                <td class="text-center">Enter on line 7 above</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td class="text-center">$0 - $24,375 <br> 24,376 - 82,7250 <br> 82,726 - 170,325 <br> 170,326 - 320,325 <br> 320,326 - 405,325 <br> 405,326 - 605,325 <br> 605,326 and over</td>
-                                                                                                <td class="text-center">420<br>500<br>910<br>1,000<br>1,330<br>1,450<br>1,540</td>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">If wages from HIGHEST paying job are—</td>
+                                                                                                    <td class="text-center">Enter on line 7 above</td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">$0 - $24,375 <br> 24,376 - 82,7250 <br> 82,726 - 170,325 <br> 170,326 - 320,325 <br> 320,326 - 405,325 <br> 405,326 - 605,325 <br> 605,326 and over</td>
+                                                                                                    <td class="text-center">420<br>500<br>910<br>1,000<br>1,330<br>1,450<br>1,540</td>
+                                                                                                </tr>
                                                                                             </tbody>
                                                                                         </table>
                                                                                     </div>
@@ -671,19 +722,19 @@
                                                                                     <div class="table-responsive">
                                                                                         <table class="table table-bordered">
                                                                                             <thead>
-                                                                                            <tr>
-                                                                                                <th class="text-center" colspan="2">Married Filing Jointly</th>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <th class="text-center" colspan="2">Married Filing Jointly</th>
+                                                                                                </tr>
                                                                                             </thead>
                                                                                             <tbody>
-                                                                                            <tr>
-                                                                                                <td class="text-center">If wages from HIGHEST paying job are—</td>
-                                                                                                <td class="text-center">Enter on line 7 above</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td class="text-center">$0 - $7,000 <br> 7,001 - 36,175 <br> 36,176 - 79,975 <br> 79,976 - 154,975 <br> 154,976 - 197,475 <br> 197,476 - 497,475 <br> 497,476 and over</td>
-                                                                                                <td class="text-center">$420<br>500<br>910<br>1,000<br>1,330<br>1,450<br>1,540</td>
-                                                                                            </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">If wages from HIGHEST paying job are—</td>
+                                                                                                    <td class="text-center">Enter on line 7 above</td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <td class="text-center">$0 - $7,000 <br> 7,001 - 36,175 <br> 36,176 - 79,975 <br> 79,976 - 154,975 <br> 154,976 - 197,475 <br> 197,476 - 497,475 <br> 497,476 and over</td>
+                                                                                                    <td class="text-center">$420<br>500<br>910<br>1,000<br>1,330<br>1,450<br>1,540</td>
+                                                                                                </tr>
                                                                                             </tbody>
                                                                                         </table>
                                                                                     </div>
@@ -720,7 +771,8 @@
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <?php //if(!empty($e_signature_data)) { ?>
+                                                    <?php //if(!empty($e_signature_data)) { 
+                                                    ?>
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <input type="hidden" id="perform_action" name="perform_action" value="sign_document" />
                                                         <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
@@ -733,9 +785,9 @@
                                                         <input type="hidden" id="email_address" name="email_address" value="<?php echo $email; ?>" />
                                                         <input type="hidden" id="signature_timestamp" name="signature_timestamp" value="<?php echo date('d/m/Y H:i:s'); ?>" />
 
-                                                        <input type="hidden" id="active_signature" name="active_signature" value="<?php echo isset($active_signature)? $active_signature:''; ?>" />
+                                                        <input type="hidden" id="active_signature" name="active_signature" value="<?php echo isset($active_signature) ? $active_signature : ''; ?>" />
 
-                                                        <input type="hidden" id="signature" name="signature" value="<?php echo isset($signature)? $signature:''; ?>" />
+                                                        <input type="hidden" id="signature" name="signature" value="<?php echo isset($signature) ? $signature : ''; ?>" />
 
                                                         <input type="hidden" id="signature_bas64_image" name="signature_bas64_image" value="" />
 
@@ -750,13 +802,13 @@
                                                         <div class="row">
                                                             <div class="col-xs-12 text-justify">
                                                                 <p>
-                                                                    <?php echo str_replace("{{company_name}}",$company_name,SIGNATURE_CONSENT_HEADING); ?>
+                                                                    <?php echo str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_HEADING); ?>
                                                                 </p>
                                                                 <p>
                                                                     <?php echo SIGNATURE_CONSENT_TITLE; ?>
                                                                 </p>
                                                                 <p>
-                                                                    <?php echo str_replace("{{company_name}}",$company_name,SIGNATURE_CONSENT_DESCRIPTION); ?>
+                                                                    <?php echo str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_DESCRIPTION); ?>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -766,22 +818,23 @@
                                                                 <?php $consent = isset($e_signature_data['user_consent']) ? $e_signature_data['user_consent'] : 0; ?>
                                                                 <label class="control control--checkbox">
                                                                     <?php echo SIGNATURE_CONSENT_CHECKBOX; ?>
-                                                                    <input <?php echo set_checkbox('user_consent', 1, $consent == 1); ?> data-rule-required="true" type="checkbox" id="user_consent" name="user_consent" value="1" <?php echo sizeof($pre_form)>0 && $pre_form['user_consent'] == 1 ? 'disabled="disabled"' : '' ?>/>
+                                                                    <input <?php echo set_checkbox('user_consent', 1, $consent == 1); ?> data-rule-required="true" type="checkbox" id="user_consent" name="user_consent" value="1" <?php echo sizeof($pre_form) > 0 && $pre_form['user_consent'] == 1 ? 'disabled="disabled"' : '' ?> />
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
                                                         </div>
                                                         <hr />
 
-                                                        <?php if($signed_flag == false) { ?>
-                                                        <div class="row">
-                                                            <div class="col-lg-12 text-center">
-                                                                <button onclick="func_save_e_signature();" type="button" class="btn btn-success break-word-text"><?php echo SIGNATURE_CONSENT_BUTTON; ?></button>
+                                                        <?php if ($signed_flag == false) { ?>
+                                                            <div class="row">
+                                                                <div class="col-lg-12 text-center">
+                                                                    <button onclick="func_save_e_signature();" type="button" class="btn btn-success break-word-text"><?php echo SIGNATURE_CONSENT_BUTTON; ?></button>
+                                                                </div>
                                                             </div>
-                                                        </div>
                                                         <?php } ?>
                                                     </div>
-                                                    <?php //} ?>
+                                                    <?php //} 
+                                                    ?>
                                                 </form>
                                             </div>
                                         </div>
@@ -800,102 +853,105 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js" integrity="sha384-CchuzHs077vGtfhGYl9Qtc7Vx64rXBXdIAZIPbItbNyWIRTdG0oYAqki3Ry13Yzu" crossorigin="anonymous"></script>
 
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 
-<script language="JavaScript" type="text/javascript">
-    $("#w9-form").validate({
-        ignore: ":hidden:not(select)",
-        rules: {
-            w4_first_name: {
-                required: true
+    <script language="JavaScript" type="text/javascript">
+        $("#w9-form").validate({
+            ignore: ":hidden:not(select)",
+            rules: {
+                w4_first_name: {
+                    required: true
+                },
+                // w4_middle_name: {
+                //     required: true
+                // },
+                number_of_allowance: {
+                    required: true
+                },
+                user_consent: {
+                    required: true
+                }
             },
-            // w4_middle_name: {
-            //     required: true
-            // },
-            number_of_allowance: {
-                required: true
+            messages: {
+                w4_first_name: {
+                    required: 'First Name is required'
+                },
+                w4_middle_name: {
+                    required: 'Middle Name is required'
+                },
+                number_of_allowance: {
+                    required: 'Number of Allowance is required'
+                },
+                user_consent: {
+                    required: true
+                }
             },
-            user_consent: {
-                required: true
-            }
-        },
-        messages: {
-            w4_first_name: {
-                required: 'First Name is required'
-            },
-            w4_middle_name: {
-                required: 'Middle Name is required'
-            },
-            number_of_allowance: {
-                required: 'Number of Allowance is required'
-            },
-            user_consent: {
-                required: true
-            }
-        },
-        submitHandler: function(form){
-//            var flag = 0;
-//            var name = "input:checkbox[name^='w4_federaltax_classification']:checked";
-//            var checked = $(name).length;
-//            var check_val = $(name).val();
-//            if(!checked){
-//                alertify.error('Federal Tax Classification is required');
-//                flag = 1;
-//                return false;
-//            }
-//            if(check_val=='llc' && $('#llc_desc').val() == ''){
-//                alertify.error('Enter The Tax Classification (C=C Corporation, S=S Corporation, P=Partnership)');
-//                flag = 1;
-//                return false;
-//            }
-//            if(check_val=='other' && $('#other_desc').val() == ''){
-//                alertify.error('Enter Other Federal Tax Classification');
-//                flag = 1;
-//                return false;
-//            }
-//            if(flag){
-//                return false;
-//            }
-//            else{
-//            }
+            submitHandler: function(form) {
+                //            var flag = 0;
+                //            var name = "input:checkbox[name^='w4_federaltax_classification']:checked";
+                //            var checked = $(name).length;
+                //            var check_val = $(name).val();
+                //            if(!checked){
+                //                alertify.error('Federal Tax Classification is required');
+                //                flag = 1;
+                //                return false;
+                //            }
+                //            if(check_val=='llc' && $('#llc_desc').val() == ''){
+                //                alertify.error('Enter The Tax Classification (C=C Corporation, S=S Corporation, P=Partnership)');
+                //                flag = 1;
+                //                return false;
+                //            }
+                //            if(check_val=='other' && $('#other_desc').val() == ''){
+                //                alertify.error('Enter Other Federal Tax Classification');
+                //                flag = 1;
+                //                return false;
+                //            }
+                //            if(flag){
+                //                return false;
+                //            }
+                //            else{
+                //            }
                 form.submit();
-        }
-    });
-    $(document).ready(function(){
-        $('input[name=w4_federaltax_classification]').on('change', function() {
-            $('input[name=w4_federaltax_classification]').not(this).prop('checked', false);
+            }
+        });
+        $(document).ready(function() {
+            $('input[name=w4_federaltax_classification]').on('change', function() {
+                $('input[name=w4_federaltax_classification]').not(this).prop('checked', false);
+            });
+
+
+            $('#first_date_of_employment').datepicker({
+                dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-100:+50",
+            }).val();
         });
 
+        function func_save_e_signature() {
 
-        $('#first_date_of_employment').datepicker({
-            dateFormat: 'mm-dd-yy',
-            changeMonth: true,
-            changeYear: true,
-            yearRange: "-100:+50",
-        }).val();
-    });
-    function func_save_e_signature() {
+            var is_signature_exist = $('#signature_bas64_image').val();
+            if (is_signature_exist == "") {
+                alertify.error('Please Add Your Signature!');
+                return false;
+            }
 
-        var is_signature_exist = $('#signature_bas64_image').val();
-        if(is_signature_exist == ""){
-            alertify.error('Please Add Your Signature!');
-            return false;
+            if ($('#w4-form').validate()) {
+                alertify.confirm(
+                    'Are you Sure?',
+                    'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
+                    function() {
+                        $('#w4-form').submit();
+                    },
+                    function() {
+                        alertify.error('Cancelled!');
+                    }).set('labels', {
+                    ok: 'I Consent and Accept!',
+                    cancel: 'Cancel'
+                });
+            }
         }
-
-        if ($('#w4-form').validate()) {
-            alertify.confirm(
-                'Are you Sure?',
-                'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
-                function () {
-                    $('#w4-form').submit();
-                },
-                function () {
-                    alertify.error('Cancelled!');
-                }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
-        }
-    }
-
-</script>
-<?php }  else if ($load_view == 'new') { ?>
+    </script>
+<?php } else if ($load_view == 'new') { ?>
     <?php $this->load->view('form_w4/index_ems'); ?>
 <?php } ?>
