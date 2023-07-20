@@ -25,7 +25,11 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th><span>Record not found!</span> </th>
+                <th>
+                    <p class="alert alert-info text-center">
+                        <strong>No records found.</strong>
+                    </p>
+                </th>
             </tr>
         </thead>
 

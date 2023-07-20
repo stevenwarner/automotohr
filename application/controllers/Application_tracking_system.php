@@ -2764,7 +2764,13 @@ class Application_tracking_system extends Public_Controller
 
     public function getApplicantStatusHistory($sId)
     {
-        $statusHistory = $this->application_tracking_system_model->get_applicant_obboarding_status_log($sId);
-        return SendResponse(200, ['view' => $this->load->view('manage_employer/application_tracking_system/status_log', ['data' => $statusHistory], true)]);
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('manage_employer/application_tracking_system/status_log', [
+                    'data' => $this->application_tracking_system_model->get_applicant_obboarding_status_log($sId)
+                ], true)
+            ]
+        );
     }
 }

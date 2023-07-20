@@ -1800,4 +1800,3 @@ $route['ip_status_handler']['post'] = "manage_admin/Blocked_ips/statusHandler";
 
 //
 $route['get_applicant_onboarding_history/(:num)']['get'] = 'application_tracking_system/getApplicantStatusHistory/$1';
-
