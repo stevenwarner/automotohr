@@ -34,7 +34,7 @@
                                 <th>Report Name</th>
                                 <th>Report Type</th>
                                 <th>Status</th>
-                                <th class="text-center last-col" colspan="3">Actions</th>
+                                <th class="text-center last-col" colspan="4">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -48,6 +48,9 @@
                                         <td><b><?= $incident['status'];?></b></td>
                                         <td class="text-center">
                                             <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="btn btn-info btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
                                         </td>
                                         <td>
                                             <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2" src="<?php echo $incident['id']; ?>"><i class="fa fa-download"></i></a>
@@ -82,7 +85,7 @@
                                 <th>Report Name</th>
                                 <th>Report Type</th>
                                 <th>Status</th>
-                                <th class="text-center last-col" colspan="3">Actions</th>
+                                <th class="text-center last-col" colspan="4">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -95,6 +98,9 @@
                                         <td><b><?php echo $incident['status']; ?></b></td>
                                         <td class="text-center">
                                             <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="btn btn-info btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
                                         </td>
                                         <td>
                                             <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
@@ -142,6 +148,9 @@
                                         <td><b>Read Only</b></td>
                                         <td class="text-center">
                                             <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'View'; ?></a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="btn btn-info btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
                                         </td>
                                     </tr>
                                 <?php }
@@ -209,5 +218,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).on('click', '.jsMarkItResolved', function() {
+        var iid = $(this).attr('data-incidentId');
+        alertify.confirm('Resolved?', 'Are you sure, you want to mark this incident resolved?', function() {
+            $.ajax({
+                type: 'POST',
+                url: '<?= base_url('incident_reporting_system/mark_resolved') ?>',
+                data: {
+                    id: iid
+                },
+                success: function(response) {
+                    if (response == 'Done') {
+                        window.location.href = window.location.href;
+                    }
+                },
+                error: function() {
+
+                }
+            });
+        }, function() {
+
+        });
+    });
+</script>
+
 
 

@@ -233,17 +233,17 @@ class Incident_reporting_system extends Public_Controller
 
                     // Sending incident email to Steven start
                     $stevendata = [
-                        'first_name'=> 'Steven',
-                        'last_name'=> 'Warner',
-                        'email'=> FROM_EMAIL_STEVEN,
+                        'first_name' => 'Steven',
+                        'last_name' => 'Warner',
+                        'email' => FROM_EMAIL_STEVEN,
                         'phone' => '',
-                        'firstname'=>'Steven',
-                        'lastname'=>'Warner',
-                        'company_name'=> getCompanyNameBySid($company_sid)
+                        'firstname' => 'Steven',
+                        'lastname' => 'Warner',
+                        'company_name' => getCompanyNameBySid($company_sid)
                     ];
-                
+
                     log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $stevendata['email'], $stevendata);
-                    
+
                     $this->session->set_flashdata('message', '<b>Success:</b> New ' . ucfirst($report_type) . ' Incident Reported');
                     redirect(base_url('incident_reporting_system/list_incidents'), "refresh");
                 }
@@ -2556,9 +2556,27 @@ class Incident_reporting_system extends Public_Controller
     public function mark_resolved()
     {
         if ($this->input->is_ajax_request()) {
+            //
+            //
+            $session = $this->session->userdata('logged_in');
+            //
             $id = $this->input->post('id');
             $status = array('status' => 'Closed');
             $this->incident_reporting_model->update_incident_report($id, $status);
+            //
+            $status_to_update = array();
+            $status_to_update['incident_status'] = 'Responded';
+            $this->db->where('incident_sid', $id);
+            $this->db->where('employer_sid', $session['employer_detail']['sid']);
+		    $this->db->update('incident_assigned_emp', $status_to_update);
+            // If status Is "pending" then Update It To "respond"
+            //
+            $data_to_insert = array();
+            $data_to_insert['incident_id'] = $id;
+            $data_to_insert['manager_id'] = $session['employer_detail']['sid'];
+            //
+            $this->incident_reporting_model->insert_incident_report_log($data_to_insert);
+            //
             echo 'Done';
         }
     }

@@ -1059,9 +1059,9 @@
                 <!-- Change Incident type Section End -->
             </div>
             <?php if ($incident[0]['status'] != 'Closed') { ?>
-                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4 pull-right">
+                <!-- <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4 pull-right">
                     <a href="javascript:;" class="btn btn-warning pull-right" id="confirm-closed">Mark it Resolved</a>
-                </div>
+                </div> -->
             <?php } else { ?>
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="panel panel-blue">
