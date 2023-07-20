@@ -1,12 +1,15 @@
 <?php
 
-class Application_tracking_system_model extends CI_Model {
+class Application_tracking_system_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
-    function rearrange_applicant_data($company_sid, $applications = array()) {
+    function rearrange_applicant_data($company_sid, $applications = array())
+    {
         $have_status = $this->have_status_records($company_sid);
 
         if ($have_status == true) {
@@ -128,13 +131,15 @@ class Application_tracking_system_model extends CI_Model {
         return $result_array;
     }
 
-    function get_applicant_notes_count($applicant_sid = NULL){
-        $this->db->where('applicant_job_sid',$applicant_sid);
+    function get_applicant_notes_count($applicant_sid = NULL)
+    {
+        $this->db->where('applicant_job_sid', $applicant_sid);
         $this->db->from('portal_misc_notes');
         return $this->db->count_all_results();
     }
 
-    function get_admin_jobs_and_applicants($company_sid, $archived = 0, $limit = 0, $start = 1, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    function get_admin_jobs_and_applicants($company_sid, $archived = 0, $limit = 0, $start = 1, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -154,9 +159,9 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->select('IF ((portal_applicant_jobs_list.resume IS NULL) , (portal_job_applications.resume) , (portal_applicant_jobs_list.resume)) AS resume');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-        if($applicant_status != 'onboarding'){
+        if ($applicant_status != 'onboarding') {
             $this->db->where('portal_applicant_jobs_list.archived', $archived);
-        } else{
+        } else {
             $this->db->where('portal_job_applications.is_onboarding', 1);
         }
 
@@ -170,11 +175,11 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->where('portal_applicant_jobs_list.applicant_type', $type);
         }
 
-        if($type == 'Job Fair' && $fair_type !='all') {
+        if ($type == 'Job Fair' && $fair_type != 'all') {
             $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
         }
 
-        if($ques_status == 'qs') {
+        if ($ques_status == 'qs') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -182,7 +187,7 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->group_end();
         }
 
-        if($ques_status == 'qc') {
+        if ($ques_status == 'qc') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -208,17 +213,17 @@ class Application_tracking_system_model extends CI_Model {
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
 
-        if($emp_app_status == 'eas') {
+        if ($emp_app_status == 'eas') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'sent');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
         }
 
-        if($emp_app_status == 'eans') {
-            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+        if ($emp_app_status == 'eans') {
+            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
         }
 
-        if($emp_app_status == 'eac') {
+        if ($emp_app_status == 'eac') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'signed');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -243,14 +248,15 @@ class Application_tracking_system_model extends CI_Model {
         return $applications;
     }
 
-    function get_admin_jobs_and_applicants_count($company_sid, $archived = 0, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    function get_admin_jobs_and_applicants_count($company_sid, $archived = 0, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         $this->db->select('portal_applicant_jobs_list.sid');
         $this->db->select('portal_applicant_jobs_list.applicant_type');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-        if($applicant_status != 'onboarding'){
+        if ($applicant_status != 'onboarding') {
             $this->db->where('portal_applicant_jobs_list.archived', $archived);
-        } else{
+        } else {
             $this->db->where('portal_job_applications.is_onboarding', 1);
         }
 
@@ -277,11 +283,11 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->where('portal_applicant_jobs_list.applicant_type', $type);
         }
 
-        if($type == 'Job Fair' && $fair_type !='all') {
+        if ($type == 'Job Fair' && $fair_type != 'all') {
             $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
         }
 
-        if($ques_status == 'qs') {
+        if ($ques_status == 'qs') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -289,7 +295,7 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->group_end();
         }
 
-        if($ques_status == 'qc') {
+        if ($ques_status == 'qc') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -298,17 +304,17 @@ class Application_tracking_system_model extends CI_Model {
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
 
-        if($emp_app_status == 'eas') {
+        if ($emp_app_status == 'eas') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'sent');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
         }
 
-        if($emp_app_status == 'eans') {
-            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+        if ($emp_app_status == 'eans') {
+            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
         }
 
-        if($emp_app_status == 'eac') {
+        if ($emp_app_status == 'eac') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'signed');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -331,8 +337,9 @@ class Application_tracking_system_model extends CI_Model {
 
     /*     * * employee ** */
 
-    function get_employee_jobs_and_applicants($company_sid, $employer_sid, $archived = 0, $limit = 0, $start = 1, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
-       //
+    function get_employee_jobs_and_applicants($company_sid, $employer_sid, $archived = 0, $limit = 0, $start = 1, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
+        //
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -363,9 +370,9 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->select('portal_job_listings.Location_City');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-        if($applicant_status != 'onboarding'){
+        if ($applicant_status != 'onboarding') {
             $this->db->where('portal_applicant_jobs_list.archived', $archived);
-        } else{
+        } else {
             $this->db->where('portal_job_applications.is_onboarding', 1);
         }
 
@@ -391,11 +398,11 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->where('portal_applicant_jobs_list.applicant_type', $type);
         }
 
-        if($type == 'Job Fair' && $fair_type !='all') {
+        if ($type == 'Job Fair' && $fair_type != 'all') {
             $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
         }
 
-        if($ques_status == 'qs') {
+        if ($ques_status == 'qs') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -403,7 +410,7 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->group_end();
         }
 
-        if($ques_status == 'qc') {
+        if ($ques_status == 'qc') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -413,17 +420,17 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.job_sid = portal_job_listings_visibility.job_sid', 'left');
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
 
-        if($emp_app_status == 'eas') {
+        if ($emp_app_status == 'eas') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'sent');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
         }
 
-        if($emp_app_status == 'eans') {
-            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+        if ($emp_app_status == 'eans') {
+            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
         }
 
-        if($emp_app_status == 'eac') {
+        if ($emp_app_status == 'eac') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'signed');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -433,7 +440,7 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->where('FIND_IN_SET(' . $job_fit_category_sid . ', `portal_job_applications`.`job_fit_category_sid`)');
         }
 
-        if(!empty($applicant_sid_list)) {
+        if (!empty($applicant_sid_list)) {
             $this->db->or_where_in('portal_applicant_jobs_list.sid', $applicant_sid_list);
         }
 
@@ -458,29 +465,28 @@ class Application_tracking_system_model extends CI_Model {
 
         $get = array();
         //
-        if($type == 'Job Fair' || $type == 'all') {
+        if ($type == 'Job Fair' || $type == 'all') {
             $applicant_sid_list = array_column($applications, "sid");
             $get = getEmployeeJobfairApplicant($company_sid, $employer_sid, $applicant_sid_list, '', '', '', 'no', $fair_type, $applicant_filters);
-        }    
+        }
         //
 
         if (!empty($get)) {
             $job_fair_list = array_column($get, "sid");
             $job_fair_applications = $this->get_job_fair_applicant($job_fair_list, $company_sid, $applicant_status);
-            $applicants = array_merge($applications,$job_fair_applications);
-            
+            $applicants = array_merge($applications, $job_fair_applications);
+
             //
             usort($applicants, 'sort_by_date');
-           
+
             return $applicants;
         } else {
             return $applications;
         }
-        
-        
     }
 
-    function get_job_fair_applicant ($applicant_sids, $company_sid, $applicant_status) {
+    function get_job_fair_applicant($applicant_sids, $company_sid, $applicant_status)
+    {
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -501,7 +507,7 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->select('portal_job_applications.referred_by_email');
         $this->db->select('portal_job_applications.job_fit_category_sid');
         $this->db->select('portal_job_applications.is_onboarding');
-        $this->db->select('portal_applicant_jobs_list.*'); 
+        $this->db->select('portal_applicant_jobs_list.*');
         $this->db->select('IF ((portal_applicant_jobs_list.resume IS NULL) , (portal_job_applications.resume) , (portal_applicant_jobs_list.resume)) AS resume');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
@@ -524,7 +530,8 @@ class Application_tracking_system_model extends CI_Model {
         return $applications;
     }
 
-    function rearrange_jobfair_data($company_sid, $applications = array()) {
+    function rearrange_jobfair_data($company_sid, $applications = array())
+    {
         $have_status = $this->have_status_records($company_sid);
 
         if ($have_status == true) {
@@ -640,14 +647,15 @@ class Application_tracking_system_model extends CI_Model {
         return $result_array;
     }
 
-    function get_employee_jobs_and_applicants_count($company_sid, $employer_sid, $archived = 0, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    function get_employee_jobs_and_applicants_count($company_sid, $employer_sid, $archived = 0, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         $this->db->select('portal_job_listings_visibility.sid');
         $this->db->select('portal_applicant_jobs_list.applicant_type');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-        if($applicant_status != 'onboarding'){
+        if ($applicant_status != 'onboarding') {
             $this->db->where('portal_applicant_jobs_list.archived', $archived);
-        } else{
+        } else {
             $this->db->where('portal_job_applications.is_onboarding', 1);
         }
 
@@ -668,11 +676,11 @@ class Application_tracking_system_model extends CI_Model {
             }
         }
 
-        if($type == 'Job Fair' && $fair_type !='all') {
+        if ($type == 'Job Fair' && $fair_type != 'all') {
             $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
         }
 
-        if($ques_status == 'qs') {
+        if ($ques_status == 'qs') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -680,7 +688,7 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->group_end();
         }
 
-        if($ques_status == 'qc') {
+        if ($ques_status == 'qc') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -690,17 +698,17 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.job_sid = portal_job_listings_visibility.job_sid', 'left');
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
 
-        if($emp_app_status == 'eas') {
+        if ($emp_app_status == 'eas') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'sent');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
         }
 
-        if($emp_app_status == 'eans') {
-            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+        if ($emp_app_status == 'eans') {
+            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
         }
 
-        if($emp_app_status == 'eac') {
+        if ($emp_app_status == 'eac') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'signed');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -753,7 +761,7 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->where_in('portal_applicant_jobs_list.applicant_type', ['Manual Candidate', 'Job Fair', 'Talent Network']);
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
         $this->db->join('portal_job_listings_visibility', 'portal_job_listings_visibility.job_sid = portal_applicant_jobs_list.job_sid');
-//        $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.job_sid = portal_job_listings_visibility.job_sid', 'left');
+        //        $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.job_sid = portal_job_listings_visibility.job_sid', 'left');
 
         $records_obj = $this->db->get('portal_applicant_jobs_list');
         $records_arr = $records_obj->result_array();
@@ -764,17 +772,17 @@ class Application_tracking_system_model extends CI_Model {
 
         $get = array();
         //
-        if($type == 'Job Fair' || $type == 'all') {
+        if ($type == 'Job Fair' || $type == 'all') {
             $applicant_sid_list = array_column($applicants, "sid");
             $get = getEmployeeJobfairApplicant($company_sid, $employer_sid, $applicant_sid_list, '', '', '', 'no', $fair_type, $applicant_filters);
-        }    
+        }
         //
 
         if (!empty($get)) {
             $job_fair_list = array_column($get, "sid");
             $job_fair_applications = $this->get_job_fair_applicant($job_fair_list, $company_sid, $applicant_status);
-           
-            $applicants = array_merge($applicants,$job_fair_applications);
+
+            $applicants = array_merge($applicants, $job_fair_applications);
             //
             usort($applicants, 'sort_by_date');
         }
@@ -784,7 +792,8 @@ class Application_tracking_system_model extends CI_Model {
         return $result;
     }
 
-    function get_job_specific_applicants($company_sid, $employer_sid, $job_sid, $archived, $limit = 0, $start = 1, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    function get_job_specific_applicants($company_sid, $employer_sid, $job_sid, $archived, $limit = 0, $start = 1, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         $this->db->select('has_job_approval_rights');
         $this->db->where('sid', $company_sid);
         $records = $this->db->get('users')->result_array();
@@ -797,9 +806,9 @@ class Application_tracking_system_model extends CI_Model {
         //
         $t = explode(',', $job_sid);
         //
-        if(sizeof($t)){
+        if (sizeof($t)) {
             foreach ($t as $k => $v) {
-                if(preg_match('/[a-z]/', $v)){
+                if (preg_match('/[a-z]/', $v)) {
                     $tempIdsArray[] = ltrim($v, 'd');
                     unset($t[$k]);
                 }
@@ -869,17 +878,17 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->select('IF ((portal_applicant_jobs_list.resume IS NULL) , (portal_job_applications.resume) , (portal_applicant_jobs_list.resume)) AS resume');
             $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-            if($applicant_status != 'onboarding'){
+            if ($applicant_status != 'onboarding') {
                 $this->db->where('portal_applicant_jobs_list.archived', $archived);
-            } else{
+            } else {
                 $this->db->where('portal_job_applications.is_onboarding', 1);
             }
 
 
-            if(sizeof($check_jobs_exists) || $tempIdsArray != ''){
+            if (sizeof($check_jobs_exists) || $tempIdsArray != '') {
                 $this->db->group_start();
-                if((sizeof($check_jobs_exists) && !empty($check_jobs_exists[0]) )) $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
-                if($tempIdsArray != '' && $tempIdsArray != null) $this->db->or_where_in('portal_applicant_jobs_list.desired_job_title', $tempIdsArray, false);
+                if ((sizeof($check_jobs_exists) && !empty($check_jobs_exists[0]))) $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
+                if ($tempIdsArray != '' && $tempIdsArray != null) $this->db->or_where_in('portal_applicant_jobs_list.desired_job_title', $tempIdsArray, false);
                 $this->db->group_end();
             }
             $this->db->where('portal_job_applications.hired_status', 0);
@@ -892,11 +901,11 @@ class Application_tracking_system_model extends CI_Model {
                 $this->db->where('portal_applicant_jobs_list.applicant_type', $type);
             }
 
-            if($type == 'Job Fair' && $fair_type !='all') {
+            if ($type == 'Job Fair' && $fair_type != 'all') {
                 $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
             }
 
-            if($ques_status == 'qs') {
+            if ($ques_status == 'qs') {
                 $this->db->group_start();
                 $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
                 $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -904,7 +913,7 @@ class Application_tracking_system_model extends CI_Model {
                 $this->db->group_end();
             }
 
-            if($ques_status == 'qc') {
+            if ($ques_status == 'qc') {
                 $this->db->group_start();
                 $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
                 $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -914,17 +923,17 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
             $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
 
-            if($emp_app_status == 'eas') {
+            if ($emp_app_status == 'eas') {
                 $this->db->where('form_full_employment_application.user_type', 'applicant');
                 $this->db->where('form_full_employment_application.status', 'sent');
                 $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
             }
 
-            if($emp_app_status == 'eans') {
-                $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+            if ($emp_app_status == 'eans') {
+                $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
             }
 
-            if($emp_app_status == 'eac') {
+            if ($emp_app_status == 'eac') {
                 $this->db->where('form_full_employment_application.user_type', 'applicant');
                 $this->db->where('form_full_employment_application.status', 'signed');
                 $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -963,13 +972,14 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    private function getSiblingIds($t){
-        if(!sizeof($t)) return array();
+    private function getSiblingIds($t)
+    {
+        if (!sizeof($t)) return array();
         //
         $a = $this->db
-        ->select('distinct(portal_applicant_jobs_list.desired_job_title)')
-        ->where_in('portal_applicant_jobs_list.sid', $t)
-        ->get('portal_applicant_jobs_list');
+            ->select('distinct(portal_applicant_jobs_list.desired_job_title)')
+            ->where_in('portal_applicant_jobs_list.sid', $t)
+            ->get('portal_applicant_jobs_list');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -978,13 +988,13 @@ class Application_tracking_system_model extends CI_Model {
 
         //
         $slugs = '';
-        foreach ($b as $k => $v) $slugs .= "'".$v['desired_job_title']."',";
-        return rtrim($slugs, ',');    
+        foreach ($b as $k => $v) $slugs .= "'" . $v['desired_job_title'] . "',";
+        return rtrim($slugs, ',');
         //
         $a = $this->db
-        ->select('distinct(portal_applicant_jobs_list.sid)')
-        ->where_in('portal_applicant_jobs_list.desired_job_title', $slugs, false)
-        ->get('portal_applicant_jobs_list');
+            ->select('distinct(portal_applicant_jobs_list.sid)')
+            ->where_in('portal_applicant_jobs_list.desired_job_title', $slugs, false)
+            ->get('portal_applicant_jobs_list');
 
         //
         $b = $a->result_array();
@@ -992,12 +1002,13 @@ class Application_tracking_system_model extends CI_Model {
         //
         $r = [];
         //
-        if(sizeof($b)) foreach ($b as $v) $r[] = $v['sid'];
+        if (sizeof($b)) foreach ($b as $v) $r[] = $v['sid'];
         //
         return $r;
     }
 
-    function get_job_specific_applicants_count($company_sid, $employer_sid, $job_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    function get_job_specific_applicants_count($company_sid, $employer_sid, $job_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         $this->db->select('has_job_approval_rights');
         $this->db->where('sid', $company_sid);
         $records = $this->db->get('users')->result_array();
@@ -1012,9 +1023,9 @@ class Application_tracking_system_model extends CI_Model {
         //
         $t = explode(',', $job_sid);
         //
-        if(sizeof($t)){
+        if (sizeof($t)) {
             foreach ($t as $k => $v) {
-                if(preg_match('/[a-z]/', $v)){
+                if (preg_match('/[a-z]/', $v)) {
                     $tempIdsArray[] = ltrim($v, 'd');
                     unset($t[$k]);
                 }
@@ -1050,16 +1061,16 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->select('portal_applicant_jobs_list.applicant_type');
             $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-            if($applicant_status != 'onboarding'){
+            if ($applicant_status != 'onboarding') {
                 $this->db->where('portal_applicant_jobs_list.archived', $archived);
-            } else{
+            } else {
                 $this->db->where('portal_job_applications.is_onboarding', 1);
             }
 
-            if(sizeof($check_jobs_exists) || $tempIdsArray != ''){
+            if (sizeof($check_jobs_exists) || $tempIdsArray != '') {
                 $this->db->group_start();
-                if((sizeof($check_jobs_exists) && !empty($check_jobs_exists[0]) )) $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
-                if($tempIdsArray != '' && $tempIdsArray != null) $this->db->or_where_in('portal_applicant_jobs_list.desired_job_title', $tempIdsArray, false);
+                if ((sizeof($check_jobs_exists) && !empty($check_jobs_exists[0]))) $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
+                if ($tempIdsArray != '' && $tempIdsArray != null) $this->db->or_where_in('portal_applicant_jobs_list.desired_job_title', $tempIdsArray, false);
                 $this->db->group_end();
             }
 
@@ -1087,11 +1098,11 @@ class Application_tracking_system_model extends CI_Model {
                 $this->db->where('portal_applicant_jobs_list.applicant_type', $type);
             }
 
-            if($type == 'Job Fair' && $fair_type !='all') {
+            if ($type == 'Job Fair' && $fair_type != 'all') {
                 $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
             }
 
-            if($ques_status == 'qs') {
+            if ($ques_status == 'qs') {
                 $this->db->group_start();
                 $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
                 $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -1099,7 +1110,7 @@ class Application_tracking_system_model extends CI_Model {
                 $this->db->group_end();
             }
 
-            if($ques_status == 'qc') {
+            if ($ques_status == 'qc') {
                 $this->db->group_start();
                 $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
                 $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -1108,17 +1119,17 @@ class Application_tracking_system_model extends CI_Model {
 
             $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
 
-            if($emp_app_status == 'eas') {
+            if ($emp_app_status == 'eas') {
                 $this->db->where('form_full_employment_application.user_type', 'applicant');
                 $this->db->where('form_full_employment_application.status', 'sent');
                 $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
             }
 
-            if($emp_app_status == 'eans') {
-                $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+            if ($emp_app_status == 'eans') {
+                $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
             }
 
-            if($emp_app_status == 'eac') {
+            if ($emp_app_status == 'eac') {
                 $this->db->where('form_full_employment_application.user_type', 'applicant');
                 $this->db->where('form_full_employment_application.status', 'signed');
                 $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -1143,12 +1154,14 @@ class Application_tracking_system_model extends CI_Model {
 
     /*     * * job specific ** */
 
-    function get_applicant_status($status_sid) {
+    function get_applicant_status($status_sid)
+    {
         $this->db->where('sid', $status_sid);
         return $this->db->get('application_status')->result_array();
     }
 
-    function have_status_records($company_sid) {
+    function have_status_records($company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $status = $this->db->get('application_status')->result_array();
 
@@ -1159,14 +1172,16 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_company_statuses($company_sid) {
+    function get_company_statuses($company_sid)
+    {
         $this->db->select('sid, name, css_class, status_order, status_type, bar_bgcolor');
         $this->db->where('company_sid', $company_sid);
         $this->db->order_by('status_order', 'asc');
         return $this->db->get('application_status')->result_array();
     }
 
-    function get_company_statuses_specific($company_sid) {
+    function get_company_statuses_specific($company_sid)
+    {
         $this->db->select('sid, name, css_class, text_css_class, status_order, status_type, bar_bgcolor');
         $this->db->where('company_sid', $company_sid);
         $this->db->order_by('status_order', 'asc');
@@ -1182,7 +1197,8 @@ class Application_tracking_system_model extends CI_Model {
             $status_type = $status_ids[$i]['status_type'];
             $bar_bgcolor = $status_ids[$i]['bar_bgcolor'];
 
-            $retun_array[$sid] = array('sid' => $sid,
+            $retun_array[$sid] = array(
+                'sid' => $sid,
                 'name' => $name,
                 'css_class' => $css_class,
                 'text_css_class' => $text_css_class,
@@ -1196,14 +1212,16 @@ class Application_tracking_system_model extends CI_Model {
         return $retun_array;
     }
 
-    function get_applicant_reviews_count($applicant_sid) {
+    function get_applicant_reviews_count($applicant_sid)
+    {
         $this->db->select('sid');
         $this->db->where('applicant_job_sid', $applicant_sid);
         $this->db->from('portal_applicant_rating');
         return $this->db->count_all_results();
     }
 
-    function get_all_jobs_company_specific($company_sid, $status = null) {
+    function get_all_jobs_company_specific($company_sid, $status = null)
+    {
         $this->db->select('portal_job_listings.Location_State');
         $this->db->select('portal_job_listings.Location_Country');
         $this->db->select('portal_job_listings.Location_ZipCode');
@@ -1223,9 +1241,9 @@ class Application_tracking_system_model extends CI_Model {
         $records_obj = $this->db->get('portal_job_listings');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
+
         //
-        $records_arr = array_merge($records_arr, $this->getDesiredJobs( $company_sid, $status ));
+        $records_arr = array_merge($records_arr, $this->getDesiredJobs($company_sid, $status));
 
         return $records_arr;
     }
@@ -1234,10 +1252,10 @@ class Application_tracking_system_model extends CI_Model {
     private function getDesiredJobs(
         $company_sid,
         $status
-    ){
+    ) {
         $this->db
-        ->select("desired_job_title, sid")
-        ->where('company_sid', $company_sid);
+            ->select("desired_job_title, sid")
+            ->where('company_sid', $company_sid);
         //
         $a = $this->db->get('portal_applicant_jobs_list');
         //
@@ -1245,14 +1263,15 @@ class Application_tracking_system_model extends CI_Model {
         $a = $a->free_result();
         //
         $r = [];
-        if(sizeof($b)) foreach ($b as $k => $v) if(!isset($r[$v['desired_job_title']])) $r[$v['desired_job_title']] = $v;
+        if (sizeof($b)) foreach ($b as $k => $v) if (!isset($r[$v['desired_job_title']])) $r[$v['desired_job_title']] = $v;
 
         // _e($b, true, true);
         //
         return array_values($r);
     }
 
-    function get_all_jobs_company_and_employer_specific($company_sid, $employer_sid, $status = null) {
+    function get_all_jobs_company_and_employer_specific($company_sid, $employer_sid, $status = null)
+    {
         $this->db->select('portal_job_listings.Location_State');
         $this->db->select('portal_job_listings.Location_Country');
         $this->db->select('portal_job_listings.Location_ZipCode');
@@ -1283,7 +1302,8 @@ class Application_tracking_system_model extends CI_Model {
         return $records_arr;
     }
 
-    function filtration($keywords) {
+    function filtration($keywords)
+    {
         if (!empty($keywords)) {
             $position = strpos($keywords, '@');
 
@@ -1298,26 +1318,26 @@ class Application_tracking_system_model extends CI_Model {
                 // _e($keywords, true);
                 //
                 $this->db->group_start();
-                $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$keywords));
-                $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$keywords.'" ', null);
+                $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ', '', $keywords));
+                $this->db->or_where('portal_job_applications.extra_info REGEXP "' . $keywords . '" ', null);
                 //
-                if($phoneKeywords) {
+                if ($phoneKeywords) {
                     $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', $phoneKeywords, false);
-                    $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', '1'.$phoneKeywords, false);
-                    $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', '+1'.$phoneKeywords, false);
+                    $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', '1' . $phoneKeywords, false);
+                    $this->db->or_where('REGEXP_REPLACE(portal_job_applications.phone_number,"[^0-9]","")', '+1' . $phoneKeywords, false);
                 }
                 $this->db->group_end();
-               
             } else {   // this is an email
                 $this->db->group_start();
-                $this->db->like('portal_job_applications.email', trim($keywords));                
-                $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$keywords.'" ', null);
+                $this->db->like('portal_job_applications.email', trim($keywords));
+                $this->db->or_where('portal_job_applications.extra_info REGEXP "' . $keywords . '" ', null);
                 $this->db->group_end();
             }
         }
     }
 
-    function get_applicants_by_search($company_sid, $employer_sid, $archived, $keywords, $limit = 0, $start = 1, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    function get_applicants_by_search($company_sid, $employer_sid, $archived, $keywords, $limit = 0, $start = 1, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         if (!($is_admin)) {
             $this->db->select('portal_job_listings_visibility.job_sid as visibility_job_sid');
             $this->db->where('portal_job_listings_visibility.company_sid', $company_sid);
@@ -1359,9 +1379,9 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->select('IF ((portal_applicant_jobs_list.resume IS NULL) , (portal_job_applications.resume) , (portal_applicant_jobs_list.resume)) AS resume');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-        if($applicant_status != 'onboarding'){
+        if ($applicant_status != 'onboarding') {
             $this->db->where('portal_applicant_jobs_list.archived', $archived);
-        } else{
+        } else {
             $this->db->where('portal_job_applications.is_onboarding', 1);
         }
 
@@ -1375,11 +1395,11 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->where('portal_applicant_jobs_list.applicant_type', $type);
         }
 
-        if($type == 'Job Fair' && $fair_type !='all') {
+        if ($type == 'Job Fair' && $fair_type != 'all') {
             $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
         }
 
-        if($ques_status == 'qs') {
+        if ($ques_status == 'qs') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -1387,7 +1407,7 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->group_end();
         }
 
-        if($ques_status == 'qc') {
+        if ($ques_status == 'qc') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -1396,17 +1416,17 @@ class Application_tracking_system_model extends CI_Model {
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
 
-        if($emp_app_status == 'eas') {
+        if ($emp_app_status == 'eas') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'sent');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
         }
 
-        if($emp_app_status == 'eans') {
-            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+        if ($emp_app_status == 'eans') {
+            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
         }
 
-        if($emp_app_status == 'eac') {
+        if ($emp_app_status == 'eac') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'signed');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -1429,7 +1449,8 @@ class Application_tracking_system_model extends CI_Model {
         return $applications;
     }
 
-    function get_applicants_by_search_count($company_sid, $employer_sid, $archived, $keywords, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    function get_applicants_by_search_count($company_sid, $employer_sid, $archived, $keywords, $assigned_applicants_sids = null, $applicant_status = 'active', $type = 'all', $is_admin, $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         if (!($is_admin)) {
             $this->db->select('portal_job_listings_visibility.job_sid as visibility_job_sid');
             $this->db->where('portal_job_listings_visibility.company_sid', $company_sid);
@@ -1440,9 +1461,9 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->select('portal_applicant_jobs_list.sid');
         $this->db->select('portal_applicant_jobs_list.applicant_type');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
-        if($applicant_status != 'onboarding'){
+        if ($applicant_status != 'onboarding') {
             $this->db->where('portal_applicant_jobs_list.archived', $archived);
-        } else{
+        } else {
             $this->db->where('portal_job_applications.is_onboarding', 1);
         }
         $this->db->where('portal_job_applications.hired_status', 0);
@@ -1455,11 +1476,11 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->where('portal_applicant_jobs_list.applicant_type', $type);
         }
 
-        if($type == 'Job Fair' && $fair_type !='all') {
+        if ($type == 'Job Fair' && $fair_type != 'all') {
             $this->db->where('portal_applicant_jobs_list.job_fair_key', $fair_type);
         }
 
-        if($ques_status == 'qs') {
+        if ($ques_status == 'qs') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire <> ', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire <> ', '');
@@ -1467,7 +1488,7 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->group_end();
         }
 
-        if($ques_status == 'qc') {
+        if ($ques_status == 'qc') {
             $this->db->group_start();
             $this->db->where('portal_applicant_jobs_list.questionnaire_result <>', NULL);
             $this->db->or_where('portal_applicant_jobs_list.questionnaire_result <>', '');
@@ -1477,17 +1498,17 @@ class Application_tracking_system_model extends CI_Model {
         $this->filtration($keywords);
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid');
 
-        if($emp_app_status == 'eas') {
+        if ($emp_app_status == 'eas') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'sent');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
         }
 
-        if($emp_app_status == 'eans') {
-            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = '.$company_sid.')', NULL, FALSE);
+        if ($emp_app_status == 'eans') {
+            $this->db->where('portal_job_applications.sid NOT IN (select form_full_employment_application.user_sid from form_full_employment_application inner join portal_job_applications on form_full_employment_application.user_sid = portal_job_applications.sid WHERE form_full_employment_application.company_sid = ' . $company_sid . ')', NULL, FALSE);
         }
 
-        if($emp_app_status == 'eac') {
+        if ($emp_app_status == 'eac') {
             $this->db->where('form_full_employment_application.user_type', 'applicant');
             $this->db->where('form_full_employment_application.status', 'signed');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
@@ -1507,7 +1528,8 @@ class Application_tracking_system_model extends CI_Model {
         return $result;
     }
 
-    function get_not_hired_applicants($company_sid) {
+    function get_not_hired_applicants($company_sid)
+    {
         $this->db->select('sid');
         $this->db->where('employer_sid', $company_sid);
         $this->db->where('hired_status', 0);
@@ -1521,7 +1543,8 @@ class Application_tracking_system_model extends CI_Model {
         return $applicant_sids;
     }
 
-    function get_applicant_count_by_type($employer_id, $archived, $type) {
+    function get_applicant_count_by_type($employer_id, $archived, $type)
+    {
         $applicants_not_hired_sids = $this->get_not_hired_applicants($employer_id);
         $this->db->where('applicant_type', $type);
         $this->db->where('company_sid', $employer_id);
@@ -1535,12 +1558,14 @@ class Application_tracking_system_model extends CI_Model {
         return $result->num_rows();
     }
 
-    function getApplicantCountByMonth($applicant_type, $company_id) {
+    function getApplicantCountByMonth($applicant_type, $company_id)
+    {
         $result = $this->db->query('SELECT MONTH(date_applied) as month, COUNT(*) as count FROM `portal_applicant_jobs_list` where applicant_type = "' . $applicant_type . '" and company_sid = ' . $company_id . ' and YEAR(date_applied) = ' . date('Y') . ' GROUP BY MONTH(date_applied)');
         return $result->result_array();
     }
 
-    function active_single_applicant($id) {
+    function active_single_applicant($id)
+    {
         $data = array(
             'archived' => 0
         );
@@ -1549,18 +1574,22 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->update('portal_applicant_jobs_list', $data);
     }
 
-    function get_application_status($status_sid) {
+    function get_application_status($status_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $status_sid);
         return $this->db->get('application_status')->result_array();
     }
 
-    function getEmployerID($job_id) {
+    function getEmployerID($job_id)
+    {
         $result = $this->db
-                ->get_where('portal_job_listings', array(
-            'sid' => $job_id
+            ->get_where(
+                'portal_job_listings',
+                array(
+                    'sid' => $job_id
                 )
-        );
+            );
 
         if ($result->num_rows() > 0) {
             $res = $result->result_array();
@@ -1568,7 +1597,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function getApplicantNotes($app_id) {
+    function getApplicantNotes($app_id)
+    {
         $this->db->select('*');
         $this->db->select("DATE_FORMAT(insert_date, '%b %d %Y %H:%i %a') AS insert_date");
         $this->db->where('applicant_job_sid', $app_id);
@@ -1576,7 +1606,8 @@ class Application_tracking_system_model extends CI_Model {
         return $this->db->get('portal_misc_notes')->result_array();
     }
 
-    function getApplicantAverageRating($app_id, $users_type = NULL, $date = NULL) {
+    function getApplicantAverageRating($app_id, $users_type = NULL, $date = NULL)
+    {
         $this->db->where('applicant_job_sid', $app_id);
 
         if ($users_type != NULL) {
@@ -1590,7 +1621,7 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->from('portal_applicant_rating');
         $rows = $this->db->count_all_results();
 
-//        echo $this->db->last_query(); exit;
+        //        echo $this->db->last_query(); exit;
         if ($rows > 0) {
             $this->db->select_sum('rating');
             $this->db->where('applicant_job_sid', $app_id);
@@ -1600,7 +1631,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function getApplicantAllRating($app_id, $users_type = NULL, $date = NULL) {
+    function getApplicantAllRating($app_id, $users_type = NULL, $date = NULL)
+    {
         $this->db->select('portal_applicant_rating.*, users.username, users.first_name, users.last_name');
         $this->db->select("DATE_FORMAT(date_added, '%b %d %Y %H:%i %a') AS date_added");
         $this->db->where('applicant_job_sid', $app_id);
@@ -1619,18 +1651,21 @@ class Application_tracking_system_model extends CI_Model {
             return NULL;
     }
 
-    function get_sent_messages($to_id, $job_id) {
+    function get_sent_messages($to_id, $job_id)
+    {
         $result = $this->db->query('SELECT * FROM `private_message`  WHERE `to_id` = "' . $to_id . '" AND `job_id` = "' . $job_id . '" AND `outbox` = 1 UNION SELECT * FROM `private_message` WHERE `from_id` = "' . $to_id . '"  AND `job_id` = "' . $job_id . '" AND `outbox` = 0 ORDER BY id DESC')->result_array();
         return $result;
     }
 
-    function getEmployerDetail($employer_id) {
+    function getEmployerDetail($employer_id)
+    {
         $this->db->where('sid', $employer_id);
         $result = $this->db->get('users')->result_array();
         return $result[0];
     }
 
-    function getCompanyAccounts($company_id) {
+    function getCompanyAccounts($company_id)
+    {
         $args = array('parent_sid' => $company_id, 'active' => 1, 'career_page_type' => 'standard_career_site');
         $this->db->select('sid,username,email,first_name,last_name,access_level,is_executive_admin,timezone');
         //$this->db->where('is_executive_admin', 0);
@@ -1639,7 +1674,8 @@ class Application_tracking_system_model extends CI_Model {
         return $ret;
     }
 
-    function getApplicantEvents($employer_id, $applicant_id, $users_type, $date = NULL) {
+    function getApplicantEvents($employer_id, $applicant_id, $users_type, $date = NULL)
+    {
         $this->db->select('*');
         $this->db->where('companys_sid', $employer_id);
         $this->db->where('applicant_job_sid', $applicant_id);
@@ -1677,7 +1713,8 @@ class Application_tracking_system_model extends CI_Model {
         return $records_arr;
     }
 
-    function getCountryName($country_id) {
+    function getCountryName($country_id)
+    {
         $res = $this->db->get_where('countries', array('sid' => $country_id));
         if ($res->num_rows() > 0) {
             $ret = $res->result_array();
@@ -1686,7 +1723,8 @@ class Application_tracking_system_model extends CI_Model {
             return "";
     }
 
-    function getStateName($state_id) {
+    function getStateName($state_id)
+    {
         $res = $this->db->get_where('states', array(
             'sid' => $state_id
         ));
@@ -1698,13 +1736,15 @@ class Application_tracking_system_model extends CI_Model {
             return "";
     }
 
-    function get_all_jobs($employer_id) {
+    function get_all_jobs($employer_id)
+    {
         $this->db->select('sid,Title');
         $this->db->where('user_sid', $employer_id);
         return $this->db->get('portal_job_listings');
     }
 
-    function check_assign_offer_letter($company_sid, $user_type, $user_sid) {
+    function check_assign_offer_letter($company_sid, $user_type, $user_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
@@ -1720,54 +1760,64 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_kpa_email_sent_count($company_sid, $applicant_sid) {
+    function get_kpa_email_sent_count($company_sid, $applicant_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', $applicant_sid);
         return $this->db->get("outsource_onboarding_emails")->num_rows();
     }
 
-    function check_applicant_email_exist($app_id, $company_sid, $email) {
+    function check_applicant_email_exist($app_id, $company_sid, $email)
+    {
         return check_is_employee_exist_or_transfer($company_sid, $app_id, $email);
     }
 
-    function update_private_message_to_id($job_id, $email, $data) {
+    function update_private_message_to_id($job_id, $email, $data)
+    {
         $this->db->where('to_id', $email)
-                ->where('job_id', $job_id)
-                ->update('private_message', $data);
+            ->where('job_id', $job_id)
+            ->update('private_message', $data);
     }
 
-    function update_private_message_from_id($job_id, $email, $data) {
+    function update_private_message_from_id($job_id, $email, $data)
+    {
         $this->db->where('from_id', $email)
-                ->where('job_id', $job_id)
-                ->update('private_message', $data);
+            ->where('job_id', $job_id)
+            ->update('private_message', $data);
     }
 
-    function update_applicant($id, $data) {
+    function update_applicant($id, $data)
+    {
         $this->db->where('sid', $id);
         $this->db->update('portal_job_applications', $data);
     }
 
-    function upload_extra_attachments($user_data) {
+    function upload_extra_attachments($user_data)
+    {
         $this->db->insert('portal_applicant_attachments', $user_data);
     }
 
-    function insertNote($employers_sid, $applicant_job_sid, $applicant_email, $notes, $attachment, $attachment_extension, $employee_sid = 0) {
+    function insertNote($employers_sid, $applicant_job_sid, $applicant_email, $notes, $attachment, $attachment_extension, $employee_sid = 0)
+    {
         $now = date('Y-m-d H:i:s');
         $args = array('employers_sid' => $employers_sid, 'applicant_job_sid' => $applicant_job_sid, 'applicant_email' => $applicant_email, 'notes' => $notes, 'insert_date' => $now, 'attachment' => $attachment, 'attachment_extension' => $attachment_extension, 'insert_sid' => $employee_sid);
         $this->db->insert('portal_misc_notes', $args);
     }
 
-    function updateNote($sid, $employers_sid, $applicant_job_sid, $applicant_email, $notes, $attachment, $attachment_extension) {
+    function updateNote($sid, $employers_sid, $applicant_job_sid, $applicant_email, $notes, $attachment, $attachment_extension)
+    {
         $now = date('Y-m-d H:i:s');
         $args = array('employers_sid' => $employers_sid, 'applicant_job_sid' => $applicant_job_sid, 'applicant_email' => $applicant_email, 'notes' => $notes, 'insert_date' => $now, 'attachment' => $attachment, 'attachment_extension' => $attachment_extension);
         $this->db->where(array('sid' => $sid))->update('portal_misc_notes', $args);
     }
 
-    function updateRightNotes($sid, $update_array) {
+    function updateRightNotes($sid, $update_array)
+    {
         $this->db->where(array('sid' => $sid))->update('portal_misc_notes', $update_array);
     }
 
-    function user_data_by_id($sid) {
+    function user_data_by_id($sid)
+    {
         $this->db->from('users');
         $this->db->where('sid', $sid);
         $this->db->limit(1);
@@ -1779,27 +1829,28 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function getApplicantData($app_id) {
+    function getApplicantData($app_id)
+    {
         //
         $args = array('portal_job_applications.sid' => $app_id);
         //
         $res = $this->db
-        ->get_where('portal_job_applications', $args);
+            ->get_where('portal_job_applications', $args);
         $ret = $res->row_array();
-        
+
         //
-        if ($ret){
+        if ($ret) {
             // get last job
             $lastJob = $this->db
-            ->select('
+                ->select('
                 portal_applicant_jobs_list.desired_job_title,
                 portal_job_listings.Title
             ')
-            ->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left')
-            ->where('portal_applicant_jobs_list.portal_job_applications_sid', $ret['sid'])
-            ->order_by('portal_applicant_jobs_list.sid', 'desc')
-            ->get('portal_applicant_jobs_list')
-            ->row_array();
+                ->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left')
+                ->where('portal_applicant_jobs_list.portal_job_applications_sid', $ret['sid'])
+                ->order_by('portal_applicant_jobs_list.sid', 'desc')
+                ->get('portal_applicant_jobs_list')
+                ->row_array();
             //
             $ret['job_title'] = $lastJob && $lastJob['Title'] ? $lastJob['Title'] : $lastJob['desired_job_title'];
         }
@@ -1807,7 +1858,8 @@ class Application_tracking_system_model extends CI_Model {
         return $ret;
     }
 
-    function getApplicantRating($app_id, $employer_id, $users_type = NULL, $date = NULL) {
+    function getApplicantRating($app_id, $employer_id, $users_type = NULL, $date = NULL)
+    {
         $this->db->where('applicant_job_sid', $app_id);
         $this->db->where('employer_sid', $employer_id);
 
@@ -1827,40 +1879,47 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function save_message($data) {
+    function save_message($data)
+    {
         $data['outbox'] = 1;
         $this->db->insert('private_message', $data);
         $data['outbox'] = 0;
         $this->db->insert('private_message', $data);
     }
 
-    function update_Event($sid, $data) {
+    function update_Event($sid, $data)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('portal_schedule_event', $data);
     }
 
-    function saveEvent($data) {
+    function saveEvent($data)
+    {
         $data['created_on'] = date('Y-m-d H:i:s');
         $this->db->insert('portal_schedule_event', $data);
     }
 
-    function get_portal_detail($employer_id) {
+    function get_portal_detail($employer_id)
+    {
         $this->db->where('user_sid', $employer_id);
         $result = $this->db->get('portal_employer')->result_array();
         return $result[0];
     }
 
-    function save_email_logs($data) {
+    function save_email_logs($data)
+    {
         $this->db->insert('email_log', $data);
     }
 
-    function deleteEvent($sid) {
+    function deleteEvent($sid)
+    {
         $this->db->delete('portal_schedule_event', array(
             'sid' => $sid
         ));
     }
 
-    function updateVerificationKey($applicant_sid, $verification_key) {
+    function updateVerificationKey($applicant_sid, $verification_key)
+    {
         $this->db->where('sid', $applicant_sid);
         $data = array(
             'verification_key' => $verification_key
@@ -1869,7 +1928,8 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->update('portal_job_applications', $data);
     }
 
-    public function check_whether_table_exists($template_code, $company_sid) {
+    public function check_whether_table_exists($template_code, $company_sid)
+    {
         $this->db->select('*');
         $this->db->where('template_code', $template_code);
         $this->db->where('company_sid', $company_sid);
@@ -1877,24 +1937,28 @@ class Application_tracking_system_model extends CI_Model {
         return $template;
     }
 
-    function deleteMessage($sid) {
+    function deleteMessage($sid)
+    {
         $this->db->delete('private_message', array(
             'id' => $sid
         ));
     }
 
-    function getMessageDetail($id) {
+    function getMessageDetail($id)
+    {
         $this->db->where('id', $id);
         $result = $this->db->get('private_message')->result_array();
         return $result[0];
     }
 
-    function delete_note($id) {
+    function delete_note($id)
+    {
         $this->db->where('sid', $id);
         $this->db->delete('portal_misc_notes');
     }
 
-    function set_applicant_approval_status($company_sid, $applicant_sid, $status, $status_by, $reason = null, $status_type = null, $reason_response = null, $job_sid = 0) {
+    function set_applicant_approval_status($company_sid, $applicant_sid, $status, $status_by, $reason = null, $status_type = null, $reason_response = null, $job_sid = 0)
+    {
         $data = array();
         $data['approval_status'] = $status;
         $data['approval_by'] = $status_by;
@@ -1923,7 +1987,8 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->update('portal_applicant_jobs_list', $data);
     }
 
-    function insert_applicant_approval_history_record($company_sid, $employer_sid, $applicant_sid, $approval_status, $approval_status_type, $approval_status_date, $approval_status_text) {
+    function insert_applicant_approval_history_record($company_sid, $employer_sid, $applicant_sid, $approval_status, $approval_status_type, $approval_status_date, $approval_status_text)
+    {
         $data_to_insert = array();
         $data_to_insert['company_sid'] = $company_sid;
         $data_to_insert['employer_sid'] = $employer_sid;
@@ -1935,7 +2000,8 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->insert('applicants_approval_status_history', $data_to_insert);
     }
 
-    function get_all_users_with_approval_rights($company_sid) {
+    function get_all_users_with_approval_rights($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('has_job_approval_rights', 1);
@@ -1945,7 +2011,8 @@ class Application_tracking_system_model extends CI_Model {
         return $this->db->get()->result_array();
     }
 
-    function get_single_applicant($applicant_id, $job_sid) {
+    function get_single_applicant($applicant_id, $job_sid)
+    {
         $this->db->select('portal_job_applications.sid as pja_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -1984,15 +2051,18 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_kpa_onboarding($company_sid) {
+    function get_kpa_onboarding($company_sid)
+    {
         return $this->db->get_where('kpa_onboarding', array('company_sid' => $company_sid))->row_array();
     }
 
-    function save_onboarding_email_record($data) {
+    function save_onboarding_email_record($data)
+    {
         $this->db->insert('outsource_onboarding_emails', $data);
     }
 
-    function delete_file($id, $type) {
+    function delete_file($id, $type)
+    {
         if ($type == 'file') {
             $this->db->where('sid', $id);
             $this->db->update('portal_applicant_attachments', array('status' => 'deleted'));
@@ -2002,7 +2072,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function save_rating($data) {
+    function save_rating($data)
+    {
         $applicant_job_sid = $data['applicant_job_sid'];
         $employer_sid = $data['employer_sid'];
         $users_type = $data['users_type'];
@@ -2011,7 +2082,7 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->where('users_type', $users_type);
         $this->db->from('portal_applicant_rating');
         $count = $this->db->count_all_results();
-        if($data['source_type'] == '') $data['source_type'] = 'no_video';
+        if ($data['source_type'] == '') $data['source_type'] = 'no_video';
 
         if ($count > 0) {
             unset($data['applicant_job_sid']);
@@ -2030,7 +2101,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function update_applicant_status($company_sid, $applicant_job_list_sid, $status_sid, $status_name) {
+    function update_applicant_status($company_sid, $applicant_job_list_sid, $status_sid, $status_name)
+    {
         $data_to_update = array();
         $data_to_update['status'] = $status_name;
         $data_to_update['status_sid'] = $status_sid;
@@ -2040,7 +2112,8 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->update('portal_applicant_jobs_list', $data_to_update);
     }
 
-    function change_current_status($id, $status, $company_sid, $table) {
+    function change_current_status($id, $status, $company_sid, $table)
+    {
         $have_status = $this->have_status_records($company_sid);
 
         $data = array(
@@ -2067,7 +2140,8 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->update($table, $data);
     }
 
-    function arch_single_applicant($id) {
+    function arch_single_applicant($id)
+    {
         $data = array(
             'archived' => 1
         );
@@ -2075,13 +2149,15 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->update('portal_applicant_jobs_list', $data);
     }
 
-    function delete_single_applicant($id) {
+    function delete_single_applicant($id)
+    {
         $this->db->where('sid', $id);
         //$this->db->where('hired_status', 0);
         $this->db->delete('portal_applicant_jobs_list');
     }
 
-    function get_job_details($job_sid) {
+    function get_job_details($job_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $job_sid);
         $result = $this->db->get('portal_job_listings')->result_array();
@@ -2093,7 +2169,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_single_applicant_all_jobs($applicant_sid, $company_sid) {
+    function get_single_applicant_all_jobs($applicant_sid, $company_sid)
+    {
         //$this->db->select('sid, job_sid, desired_job_title, applicant_type, date_applied, score, passing_score, status, questionnaire, status_sid');
         $this->db->select('portal_applicant_jobs_list.*');
         $this->db->where('portal_applicant_jobs_list.portal_job_applications_sid', $applicant_sid);
@@ -2167,34 +2244,40 @@ class Application_tracking_system_model extends CI_Model {
         return $applicants;
     }
 
-    function deleteTalentUser($id) {
+    function deleteTalentUser($id)
+    {
         $this->db->delete('portal_join_network', array('sid' => $id));
     }
 
-    function mc_decline_applicant($id, $table) {
+    function mc_decline_applicant($id, $table)
+    {
         $data = array('status' => 'Client Declined');
         $this->db->where('sid', $id);
         $this->db->update($table, $data);
     }
 
-    function mc_hire_applicant($id, $table) {
+    function mc_hire_applicant($id, $table)
+    {
         $data = array('status' => 'Placed/Hired');
         $this->db->where('sid', $id);
         $this->db->update($table, $data);
     }
 
-    function mc_delete_applicant($id) {
+    function mc_delete_applicant($id)
+    {
         $this->db->where('sid', $id);
         $this->db->delete('portal_manual_candidates');
     }
 
-    function delete_applicant($id) {
+    function delete_applicant($id)
+    {
         $this->db->where('sid', $id);
         //$this->db->where('hired_status', 0);
         $this->db->delete('portal_applicant_jobs_list');
     }
 
-    function get_job_title_by_type($job_sid, $applicant_type, $desired_job_title) {
+    function get_job_title_by_type($job_sid, $applicant_type, $desired_job_title)
+    {
         $job_title = '';
 
         if ($applicant_type == 'Applicant') {
@@ -2220,7 +2303,8 @@ class Application_tracking_system_model extends CI_Model {
         return $job_title;
     }
 
-    function get_applicant_multiple_job_count($applicant_sid, $company_sid) {
+    function get_applicant_multiple_job_count($applicant_sid, $company_sid)
+    {
         $this->db->where('portal_job_applications_sid', $applicant_sid);
         $this->db->where('company_sid', $company_sid);
         $this->db->from('portal_applicant_jobs_list');
@@ -2233,7 +2317,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function check_applicant_access($applicant_sid, $company_sid, $employer_sid) {
+    function check_applicant_access($applicant_sid, $company_sid, $employer_sid)
+    {
         $this->db->select('*'); // first check if applicant is assigned to me
         $this->db->where('applicant_sid', $applicant_sid);
         $this->db->where('company_sid', $company_sid);
@@ -2270,7 +2355,8 @@ class Application_tracking_system_model extends CI_Model {
         return false;
     }
 
-    function check_applicant_exists($applicant_sid, $company_sid) {
+    function check_applicant_exists($applicant_sid, $company_sid)
+    {
         $this->db->select('sid');
         $this->db->where('portal_job_applications_sid', $applicant_sid);
         $this->db->where('company_sid', $company_sid);
@@ -2284,7 +2370,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_applicants_order($employer_sid, $ats_params = '') {
+    function get_applicants_order($employer_sid, $ats_params = '')
+    {
         $param_array = explode('/', $ats_params);
 
         if ($_SERVER['HTTP_HOST'] == 'localhost') {
@@ -2348,7 +2435,8 @@ class Application_tracking_system_model extends CI_Model {
         return $this->db->get('portal_job_applications')->result_array();
     }
 
-    function next_applicant($application_id, $employer_sid, $is_archived = false) {
+    function next_applicant($application_id, $employer_sid, $is_archived = false)
+    {
         if ($is_archived == true) {
             $data = $this->db->query("SELECT `sid` FROM `portal_job_applications` WHERE sid > $application_id and `employer_sid` = $employer_sid and `hired_status` = 0 and `archived` = 1  ORDER BY `sid` ASC LIMIT 1");
         } else {
@@ -2361,7 +2449,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function previous_applicant($application_id, $employer_sid, $is_archived = false) {
+    function previous_applicant($application_id, $employer_sid, $is_archived = false)
+    {
         if ($is_archived == true) {
             $data = $this->db->query("SELECT `sid` FROM `portal_job_applications` WHERE sid < $application_id and `employer_sid` = $employer_sid and `hired_status` = 0 and `archived` = 1 ORDER BY `sid` DESC LIMIT 1");
         } else {
@@ -2374,7 +2463,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function getApplicantExtraAttachments($app_id, $employer_id, $users_type = NULL) {
+    function getApplicantExtraAttachments($app_id, $employer_id, $users_type = NULL)
+    {
         $result = $this->db->get_where('portal_applicant_attachments', array(
             'applicant_job_sid' => $app_id,
             /* 'employer_sid' => $employer_id, */  //This  brings only Employer Specific Files
@@ -2386,7 +2476,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_job_categories($category_sid) {
+    function get_job_categories($category_sid)
+    {
         if ($category_sid != '') {
             $this->db->select('value');
             $this->db->where('field_sid', 198);
@@ -2398,7 +2489,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function check_company_status($company_sid) {
+    function check_company_status($company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $records = $this->db->get('application_status')->result_array();
 
@@ -2409,26 +2501,30 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_status_by_company($company_sid) {
+    function get_status_by_company($company_sid)
+    {
         $this->db->select('sid, name, css_class, status_order');
         $this->db->where('company_sid', $company_sid);
         $this->db->order_by('status_order', 'asc');
         return $this->db->get('application_status')->result_array();
     }
 
-    function get_min_applicant_id($company_name) {
+    function get_min_applicant_id($company_name)
+    {
         $data = $this->db->query("SELECT MIN(sid) as sid FROM `portal_job_applications` where `employer_sid` = $company_name and `hired_status` = 0 ");
         $data = $data->result_array();
         return $data[0]['sid'];
     }
 
-    function get_max_applicant_id($company_name) {
+    function get_max_applicant_id($company_name)
+    {
         $data = $this->db->query("SELECT MAX(sid) as sid FROM `portal_job_applications` where `employer_sid` = $company_name and `hired_status` = 0 ");
         $data = $data->result_array();
         return $data[0]['sid'];
     }
 
-    function get_all_applicants_by_approval_status($company_sid, $status, $applicant_id = null) {
+    function get_all_applicants_by_approval_status($company_sid, $status, $applicant_id = null)
+    {
         $this->db->select('portal_applicant_jobs_list.*');
         $this->db->select('portal_job_listings.Title');
         $this->db->select('portal_job_applications.sid as pja_sid');
@@ -2474,11 +2570,12 @@ class Application_tracking_system_model extends CI_Model {
         return $this->db->get('portal_applicant_jobs_list')->result_array();
     }
 
-    function get_employer_details($employer_sid) {
+    function get_employer_details($employer_sid)
+    {
         $this->db->select('first_name,last_name,email');
         $this->db->where('sid', $employer_sid);
         $this->db->where('terminated_status', 0);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $data_from_db = $this->db->get('users')->result_array();
 
         if (!empty($data_from_db)) {
@@ -2488,7 +2585,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_portal_applicant_jobs_list_record($applicant_sid, $company_sid, $job_sid) {
+    function get_portal_applicant_jobs_list_record($applicant_sid, $company_sid, $job_sid)
+    {
         $this->db->select('*');
         $this->db->where('portal_job_applications_sid', $applicant_sid);
         $this->db->where('company_sid', $company_sid);
@@ -2503,7 +2601,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function reset_applicant_for_approval($company_sid, $employer_sid, $applicant_sid, $approval_status_reason_response, $job_sid) {
+    function reset_applicant_for_approval($company_sid, $employer_sid, $applicant_sid, $approval_status_reason_response, $job_sid)
+    {
         $dataToUpdate = array();
         $dataToUpdate['approval_status_reason_response'] = $approval_status_reason_response;
         $dataToUpdate['approval_status'] = 'pending';
@@ -2517,7 +2616,8 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->update('portal_applicant_jobs_list', $dataToUpdate);
     }
 
-    function check_sent_video_questionnaires($applicant_sid, $company_sid) {
+    function check_sent_video_questionnaires($applicant_sid, $company_sid)
+    {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', $applicant_sid);
         $this->db->limit(1);
@@ -2530,7 +2630,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function check_answered_video_questionnaires($applicant_sid, $company_sid) {
+    function check_answered_video_questionnaires($applicant_sid, $company_sid)
+    {
         $this->db->where('video_interview_questions_sent.applicant_sid', $applicant_sid);
         $this->db->where('video_interview_questions_sent.company_sid', $company_sid);
         $this->db->where('video_interview_questions_sent.status', 'answered');
@@ -2544,7 +2645,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_applicant_video_interview_rating($company_sid, $applicant_sid) {
+    function get_applicant_video_interview_rating($company_sid, $applicant_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', $applicant_sid);
@@ -2557,15 +2659,16 @@ class Application_tracking_system_model extends CI_Model {
         return $ratings_arr;
     }
 
-    function generate_applicants_counts($records_arr) {
+    function generate_applicants_counts($records_arr)
+    {
         $result = array();
         $applicant = 0;
         $manual = 0;
         $talent = 0;
         $job_fair = 0;
-//         echo "<pre>";
-//         print_r($records_arr);
-//         exit;
+        //         echo "<pre>";
+        //         print_r($records_arr);
+        //         exit;
         if (!empty($records_arr)) {
             for ($i = 0; $i < count($records_arr); $i++) {
                 $applicant_type = $records_arr[$i]['applicant_type'];
@@ -2585,7 +2688,8 @@ class Application_tracking_system_model extends CI_Model {
                 }
             }
 
-            $result = array('all_job_applicants' => $applicant,
+            $result = array(
+                'all_job_applicants' => $applicant,
                 'all_manual_applicants' => $manual,
                 'all_talent_applicants' => $talent,
                 'all_job_fair_applicants' => $job_fair
@@ -2594,7 +2698,8 @@ class Application_tracking_system_model extends CI_Model {
         return $result;
     }
 
-    function get_all_applicants_assigned_to_me($company_sid, $employer_sid) {
+    function get_all_applicants_assigned_to_me($company_sid, $employer_sid)
+    {
         $this->db->select('applicant_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
@@ -2610,7 +2715,8 @@ class Application_tracking_system_model extends CI_Model {
         return $return_data;
     }
 
-    function get_all_applicants_assigned_by_me($company_sid, $employer_sid) {
+    function get_all_applicants_assigned_by_me($company_sid, $employer_sid)
+    {
         $this->db->select('applicant_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('assigned_by_sid', $employer_sid);
@@ -2626,7 +2732,8 @@ class Application_tracking_system_model extends CI_Model {
         return $return_data;
     }
 
-    function check_assignment_management($applicant_sid, $company_sid, $employer_sid) {
+    function check_assignment_management($applicant_sid, $company_sid, $employer_sid)
+    {
         $this->db->select('sid');
         $this->db->where('applicant_sid', $applicant_sid);
         $this->db->where('company_sid', $company_sid);
@@ -2645,7 +2752,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_interview_questionnaires($company_sid) {
+    function get_interview_questionnaires($company_sid)
+    {
         $this->db->select('sid');
         $this->db->select('title');
         $this->db->where('company_sid', $company_sid);
@@ -2658,7 +2766,8 @@ class Application_tracking_system_model extends CI_Model {
         return $records_arr;
     }
 
-    function get_interview_questionnaires_scores($applicant_sid) {
+    function get_interview_questionnaires_scores($applicant_sid)
+    {
         $this->db->select('interview_questionnaires.title');
         $this->db->select('interview_questionnaire_score.questionnaire_sid');
         $this->db->distinct('interview_questionnaire_score.questionnaire_sid');
@@ -2673,7 +2782,8 @@ class Application_tracking_system_model extends CI_Model {
         return $records_arr;
     }
 
-    function is_onboarding_configured($company_sid) {
+    function is_onboarding_configured($company_sid)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->from('onboarding_getting_started_sections');
@@ -2701,11 +2811,11 @@ class Application_tracking_system_model extends CI_Model {
 
 
         if (
-                $getting_started_count > 0 ||
-                $office_locations_count > 0 ||
-                $office_timings_count > 0 ||
-                $people_count > 0 ||
-                $links_count > 0
+            $getting_started_count > 0 ||
+            $office_locations_count > 0 ||
+            $office_timings_count > 0 ||
+            $people_count > 0 ||
+            $links_count > 0
         ) {
             return true;
         } else {
@@ -2713,7 +2823,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_onboarding_status($company_sid, $applicant_sid) {
+    function get_onboarding_status($company_sid, $applicant_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', $applicant_sid);
@@ -2730,7 +2841,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_portal_email_templates($company_sid) {
+    function get_portal_email_templates($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('is_custom', 1);
@@ -2740,7 +2852,8 @@ class Application_tracking_system_model extends CI_Model {
         return $records_arr;
     }
 
-    function screening_questionnaire_manual_sent_tracking($applicant_sid, $applicant_jobs_list_sid) {
+    function screening_questionnaire_manual_sent_tracking($applicant_sid, $applicant_jobs_list_sid)
+    {
         $this->db->select('*');
         $this->db->where('applicant_sid', $applicant_sid);
         $this->db->where('applicant_jobs_list_sid', $applicant_jobs_list_sid);
@@ -2753,7 +2866,8 @@ class Application_tracking_system_model extends CI_Model {
 
     // deprecated
     // at: 26-03-2019
-    function get_applicant_events($applicant_sid, $events_date = null) {
+    function get_applicant_events($applicant_sid, $events_date = null)
+    {
         $this->db->select('*');
         $this->db->select('eventstarttime as event_start_time');
         $this->db->select('date as event_date');
@@ -2787,7 +2901,8 @@ class Application_tracking_system_model extends CI_Model {
         return $records_arr;
     }
 
-    public function get_company_addresses($company_sid) {
+    public function get_company_addresses($company_sid)
+    {
         return $this->fetch_company_addresses($company_sid);
         $this->db->select('address');
         $this->db->group_by('address');
@@ -2842,7 +2957,8 @@ class Application_tracking_system_model extends CI_Model {
         return $addresses;
     }
 
-    public function get_event_external_participants($event_sid) {
+    public function get_event_external_participants($event_sid)
+    {
         $this->db->where('event_sid', $event_sid);
         $this->db->from('portal_schedule_event_external_participants');
 
@@ -2857,7 +2973,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    public function get_questionnaire_average_score($company_sid, $user_sid, $user_type, $job_sid) {
+    public function get_questionnaire_average_score($company_sid, $user_sid, $user_type, $job_sid)
+    {
         // Please note: This function is also added in Interview Questionnaires Model
         // therefore if you modify anything in it then please apply same changes at other model too
         $my_return = array();
@@ -2897,7 +3014,8 @@ class Application_tracking_system_model extends CI_Model {
         return $my_return;
     }
 
-    public function get_questionnaire_score_data_candidate_specific($company_sid, $candidate_sid, $candidate_type, $job_sid, $questionnaire_sid) {
+    public function get_questionnaire_score_data_candidate_specific($company_sid, $candidate_sid, $candidate_type, $job_sid, $questionnaire_sid)
+    {
         // Please note: This function is also added in Interview Questionnaires Model
         // therefore if you modify anything in it then please apply same changes at other model too
         $this->db->select('*');
@@ -2932,7 +3050,8 @@ class Application_tracking_system_model extends CI_Model {
         return $questionnaire_score_data;
     }
 
-    function job_fair_configuration($company_sid) {
+    function job_fair_configuration($company_sid)
+    {
         $this->db->select('status');
         $this->db->where('company_sid', $company_sid);
         $record_obj = $this->db->get('job_fairs_recruitment');
@@ -2946,7 +3065,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_status_sid($company_sid, $status) {
+    function get_status_sid($company_sid, $status)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('LOWER(name)', strtolower($status));
@@ -2961,7 +3081,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_applicant_unique_sid($company_sid, $applicant_sid) {
+    function get_applicant_unique_sid($company_sid, $applicant_sid)
+    {
         $this->db->select('unique_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('applicant_sid', $applicant_sid);
@@ -2978,7 +3099,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_company_detail($sid) {
+    function get_company_detail($sid)
+    {
         $this->db->where('sid', $sid);
         $result = $this->db->get('users')->result_array();
 
@@ -2987,11 +3109,12 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_all_questionnaires_by_employer($employer_sid) {
+    function get_all_questionnaires_by_employer($employer_sid)
+    {
         $this->db->select('portal_screening_questionnaires.sid,portal_screening_questionnaires.name,count(portal_questions.sid) as que_count');
         $this->db->where('employer_sid', $employer_sid);
         $this->db->order_by("sid", "desc");
-        $this->db->join('portal_questions','portal_questions.questionnaire_sid = portal_screening_questionnaires.sid','left')->group_by('portal_questions.questionnaire_sid');
+        $this->db->join('portal_questions', 'portal_questions.questionnaire_sid = portal_screening_questionnaires.sid', 'left')->group_by('portal_questions.questionnaire_sid');
         return $this->db->get('portal_screening_questionnaires')->result_array();
     }
 
@@ -3004,20 +3127,21 @@ class Application_tracking_system_model extends CI_Model {
      *
      * @return Array|Bool
      */
-    function fetch_applicant_events($applicant_sid, $events_date = null) {
+    function fetch_applicant_events($applicant_sid, $events_date = null)
+    {
         // fetch all events
         $this->db
-        ->select('sid')
-        ->select('applicant_email')
-        ->select('users_phone')
-        ->select('title')
-        ->select('category')
-        ->select('description')
-        ->select('eventstarttime')
-        ->select('eventendtime')
-        ->from('portal_schedule_event')
-        ->where('applicant_job_sid', $applicant_sid)
-        ->where('users_type', 'applicant');
+            ->select('sid')
+            ->select('applicant_email')
+            ->select('users_phone')
+            ->select('title')
+            ->select('category')
+            ->select('description')
+            ->select('eventstarttime')
+            ->select('eventendtime')
+            ->from('portal_schedule_event')
+            ->where('applicant_job_sid', $applicant_sid)
+            ->where('users_type', 'applicant');
 
         $today = date('Y-m-d');
 
@@ -3035,7 +3159,7 @@ class Application_tracking_system_model extends CI_Model {
         $records_arr = $records_obj->result_array();
         $records_obj = $records_obj->free_result();
 
-        if(!sizeof($records_arr)) return false;
+        if (!sizeof($records_arr)) return false;
 
         foreach ($records_arr as $key => $record) {
             $external_participants = $this->get_event_external_participants($record['sid']);
@@ -3056,19 +3180,20 @@ class Application_tracking_system_model extends CI_Model {
      *
      * @return Array|Bool
      */
-    function get_company_accounts($company_sid) {
+    function get_company_accounts($company_sid)
+    {
         // $args = array('parent_sid' => $company_id, 'active' => 1, 'career_page_type' => 'standard_career_site');
         $result = $this->db
-        ->select('sid as employer_id')
-        ->select('email as email_address')
-        ->select('concat(first_name," ",last_name) as full_name')
-        ->select('case when is_executive_admin = 1 then "Executive Admin" else access_level end as employee_type', false)
-        ->where('parent_sid', $company_sid)
-        ->where('active', 1)
-        ->where('career_page_type', 'standard_career_site')
-        ->from('users')
-        ->order_by('full_name', 'ASC')
-        ->get();
+            ->select('sid as employer_id')
+            ->select('email as email_address')
+            ->select('concat(first_name," ",last_name) as full_name')
+            ->select('case when is_executive_admin = 1 then "Executive Admin" else access_level end as employee_type', false)
+            ->where('parent_sid', $company_sid)
+            ->where('active', 1)
+            ->where('career_page_type', 'standard_career_site')
+            ->from('users')
+            ->order_by('full_name', 'ASC')
+            ->get();
         // fetch result
         $result_arr = $result->result_array();
         // free result from memory
@@ -3086,20 +3211,21 @@ class Application_tracking_system_model extends CI_Model {
      *
      * @return Array|Bool
      */
-    function fetch_company_addresses($company_sid) {
+    function fetch_company_addresses($company_sid)
+    {
         //
         $SQL2 = $this->db
-        ->select('distinct(Location_Address) as address')
-        ->where('sid', $company_sid)
-        ->from('users')
-        ->get_compiled_select();
+            ->select('distinct(Location_Address) as address')
+            ->where('sid', $company_sid)
+            ->from('users')
+            ->get_compiled_select();
         //
         $SQL3 = $this->db
-        ->select('distinct(address)')
-        ->from('company_addresses_locations')
-        ->where('company_sid', $company_sid)
-        ->where('status', 1)
-        ->get_compiled_select();
+            ->select('distinct(address)')
+            ->from('company_addresses_locations')
+            ->where('company_sid', $company_sid)
+            ->where('status', 1)
+            ->get_compiled_select();
 
         //
         $result = $this->db->query("$SQL2 UNION $SQL3");
@@ -3107,7 +3233,7 @@ class Application_tracking_system_model extends CI_Model {
         $result_arr = $result->result_array();
         $result = $result->free_result();
         //
-        if(!sizeof($result_arr)) return false;
+        if (!sizeof($result_arr)) return false;
         //
         $return_array = array();
         foreach ($result_arr as $k0 => $v0) {
@@ -3116,7 +3242,8 @@ class Application_tracking_system_model extends CI_Model {
         return $return_array;
     }
 
-    function job_fair_forms($company_sid) {
+    function job_fair_forms($company_sid)
+    {
         $this->db->select('sid, title, page_url');
         $this->db->where('company_sid', $company_sid);
         $record_obj_main = $this->db->get('job_fairs_recruitment');
@@ -3124,17 +3251,17 @@ class Application_tracking_system_model extends CI_Model {
         $record_obj_main = $record_obj_main->free_result();
         $return_array = array();
 
-        if(!empty($result_main)) {
+        if (!empty($result_main)) {
             $main_sid = $result_main[0]['sid'];
             $main_title = $result_main[0]['title'];
             $main_page_url = $result_main[0]['page_url'];
 
-            if($main_page_url == '' || $main_page_url == NULL) {
-                $main_page_url = md5('default_'.$main_sid);
+            if ($main_page_url == '' || $main_page_url == NULL) {
+                $main_page_url = md5('default_' . $main_sid);
                 $this->db->set('page_url', $main_page_url); //update page url at database
                 $this->db->where('sid', $main_sid);
                 $this->db->update('job_fairs_recruitment');
-                $return_array[] = array('sid'=>$main_sid, 'title'=>$main_title, 'page_url'=>$main_page_url, 'form_type'=>'default');
+                $return_array[] = array('sid' => $main_sid, 'title' => $main_title, 'page_url' => $main_page_url, 'form_type' => 'default');
             } else {
                 $default_form = $result_main[0];
                 $default_form['form_type'] = 'default';
@@ -3149,18 +3276,18 @@ class Application_tracking_system_model extends CI_Model {
         $result_custom = $record_obj_custom->result_array();
         $record_obj_custom = $record_obj_custom->free_result();
 
-        if(!empty($result_custom)) {
-            foreach($result_custom as $rc){
+        if (!empty($result_custom)) {
+            foreach ($result_custom as $rc) {
                 $custom_sid = $rc['sid'];
                 $custom_title = $rc['title'];
                 $custom_page_url = $rc['page_url'];
 
-                if($custom_page_url == '' || $custom_page_url == NULL) {
-                    $custom_page_url = md5('custom_'.$custom_sid);
+                if ($custom_page_url == '' || $custom_page_url == NULL) {
+                    $custom_page_url = md5('custom_' . $custom_sid);
                     $this->db->set('page_url', $custom_page_url); //update page url at database
                     $this->db->where('sid', $custom_sid);
                     $this->db->update('job_fairs_forms');
-                    $return_array[] = array('sid'=>$custom_sid, 'title'=>$custom_title, 'page_url'=>$custom_page_url);
+                    $return_array[] = array('sid' => $custom_sid, 'title' => $custom_title, 'page_url' => $custom_page_url);
                 } else {
                     $return_array[] = $rc;
                 }
@@ -3178,7 +3305,8 @@ class Application_tracking_system_model extends CI_Model {
      *
      * @return Integer|Bool
      */
-    function save_sent_message($insert_array){
+    function save_sent_message($insert_array)
+    {
         $insert = $this->db->insert('portal_sms', $insert_array);
         return $insert ? $this->db->insert_id() : false;
     }
@@ -3196,10 +3324,11 @@ class Application_tracking_system_model extends CI_Model {
      *
      * @return Array|Bool
      */
-    function fetch_sms($user_type, $user_id, $company_id, $lastId, $module = ''){
+    function fetch_sms($user_type, $user_id, $company_id, $lastId, $module = '')
+    {
         $this
-        ->db
-        ->select('
+            ->db
+            ->select('
             sid,
             message_body,
             sender_user_id,
@@ -3207,40 +3336,40 @@ class Application_tracking_system_model extends CI_Model {
             IF(is_sent = "1", "sent", "received") as message_type,
             created_at
         ')
-        ->from('portal_sms')
-        ->group_start()
-        ->where('receiver_user_id', $user_id)
-        ->or_where('sender_user_id', $user_id)
-        ->group_end()
-        ->group_start()
-        ->where('receiver_user_type', $user_type)
-        ->or_where('sender_user_type', $user_type)
-        ->group_end()
-        ->where('company_id', $company_id)
-        ->limit(100)
-        ->order_by('sid', 'DESC');
+            ->from('portal_sms')
+            ->group_start()
+            ->where('receiver_user_id', $user_id)
+            ->or_where('sender_user_id', $user_id)
+            ->group_end()
+            ->group_start()
+            ->where('receiver_user_type', $user_type)
+            ->or_where('sender_user_type', $user_type)
+            ->group_end()
+            ->where('company_id', $company_id)
+            ->limit(100)
+            ->order_by('sid', 'DESC');
 
-        if($lastId != 0) $this->db->where('sid <', $lastId);
-        if($module != '') $this->db->where('module_slug', $module);
+        if ($lastId != 0) $this->db->where('sid <', $lastId);
+        if ($module != '') $this->db->where('module_slug', $module);
         //
         $result = $this->db->get();
         //
         $result_arr = $result->result_array();
         $result     = $result->free_result();
         //
-        if(!sizeof($result_arr)) return false;
+        if (!sizeof($result_arr)) return false;
 
         // $result_arr = array_reverse($result_arr);
         //
         // $lastFetchedId = $result_arr[0]['sid'];
         foreach ($result_arr as $k0 => $v0) {
             // Fetch user name
-             $this->db
-            ->from($v0['sender_user_type'] != 'applicant' ? 'users' : 'portal_job_applications');
-            if($v0['sender_user_type'] == 'applicant'){
+            $this->db
+                ->from($v0['sender_user_type'] != 'applicant' ? 'users' : 'portal_job_applications');
+            if ($v0['sender_user_type'] == 'applicant') {
                 $this->db->select('CONCAT(portal_job_applications.first_name," ",portal_job_applications.last_name) as full_name');
                 $this->db->where('portal_job_applications.sid', $v0['sender_user_id']);
-            }else{
+            } else {
                 $this->db->select('CONCAT(first_name," ",last_name) as full_name');
                 $this->db->where('sid', $v0['sender_user_id']);
             }
@@ -3263,7 +3392,7 @@ class Application_tracking_system_model extends CI_Model {
             $lastFetchedId = $v0['sid'];
         }
 
-        return array( 'Records' => $result_arr, 'LastId' => $lastFetchedId);
+        return array('Records' => $result_arr, 'LastId' => $lastFetchedId);
     }
 
 
@@ -3276,15 +3405,18 @@ class Application_tracking_system_model extends CI_Model {
      *
      * @return VOID
      */
-    function applicant_phone_number($phone_number, $applicant_sid){
-        $this->db->where('sid', $applicant_sid)->update('portal_job_applications', array( 'phone_number' => $phone_number));
+    function applicant_phone_number($phone_number, $applicant_sid)
+    {
+        $this->db->where('sid', $applicant_sid)->update('portal_job_applications', array('phone_number' => $phone_number));
     }
 
-    function insert_resume_log($resume_log_data){
+    function insert_resume_log($resume_log_data)
+    {
         $this->db->insert('resume_request_logs', $resume_log_data);
     }
 
-    function get_single_job_detail($portal_job_applications_sid,$company_sid,$job_sid,$job_type = ''){
+    function get_single_job_detail($portal_job_applications_sid, $company_sid, $job_sid, $job_type = '')
+    {
         $this->db->select('resume');
 
         if ($job_type == 'job') {
@@ -3309,11 +3441,12 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function get_single_job_detail_old ($portal_job_applications_sid,$company_sid,$job_sid,$job_type = ''){
-        if($job_type == 'desired_job'){
+    function get_single_job_detail_old($portal_job_applications_sid, $company_sid, $job_sid, $job_type = '')
+    {
+        if ($job_type == 'desired_job') {
             $this->db->select('sid,resume');
             $this->db->where('sid', $job_sid);
-        }else{
+        } else {
             $this->db->select('resume');
             $this->db->where('job_sid', $job_sid);
         }
@@ -3331,7 +3464,8 @@ class Application_tracking_system_model extends CI_Model {
         }
     }
 
-    function update_resume_applicant_job_list ($portal_job_applications_sid,$company_sid,$job_sid,$resume,$job_type = ''){
+    function update_resume_applicant_job_list($portal_job_applications_sid, $company_sid, $job_sid, $resume, $job_type = '')
+    {
         if ($job_type == 'job') {
             $this->db->where('job_sid', $job_sid);
         } else if ($job_type == 'desired_job') {
@@ -3342,48 +3476,53 @@ class Application_tracking_system_model extends CI_Model {
         }
 
         $this->db->where('portal_job_applications_sid', $portal_job_applications_sid);
-        $this->db->where('company_sid',$company_sid);
+        $this->db->where('company_sid', $company_sid);
 
-        $this->db->update('portal_applicant_jobs_list', array( 'resume' => $resume, 'last_update' => date('Y-m-d')));
+        $this->db->update('portal_applicant_jobs_list', array('resume' => $resume, 'last_update' => date('Y-m-d')));
     }
 
-    function update_resume_applicant_job_list_old ($portal_job_applications_sid,$company_sid,$job_sid,$resume,$job_type = ''){
-        if($job_type == 'desired_job'){
-            $this->db->where('sid',$job_sid);
-        }else{
-            $this->db->where('job_sid',$job_sid);
+    function update_resume_applicant_job_list_old($portal_job_applications_sid, $company_sid, $job_sid, $resume, $job_type = '')
+    {
+        if ($job_type == 'desired_job') {
+            $this->db->where('sid', $job_sid);
+        } else {
+            $this->db->where('job_sid', $job_sid);
         }
         $this->db->where('portal_job_applications_sid', $portal_job_applications_sid);
-        $this->db->where('company_sid',$company_sid);
+        $this->db->where('company_sid', $company_sid);
 
-        $this->db->update('portal_applicant_jobs_list', array( 'resume' => $resume));
+        $this->db->update('portal_applicant_jobs_list', array('resume' => $resume));
     }
 
-    function getEmploymentStatuses(){
+    function getEmploymentStatuses()
+    {
         return [
             'permanent' => 'Permanent',
             'probation' => 'Probation',
-           // 'contractual' => 'Contractual',
-          //  'trainee' => 'Trainee',
-          //  'other' => 'Other',
+            // 'contractual' => 'Contractual',
+            //  'trainee' => 'Trainee',
+            //  'other' => 'Other',
         ];
     }
-    function getEmploymentTypes(){
+    function getEmploymentTypes()
+    {
         return [
             'fulltime' => 'Full-time',
             'parttime' => 'Part-time',
             //'casual' => 'Casual',
-//            'fixedterm' => 'Fixed term',
-//            'apprentices-and-trainees' => 'Apprentices and trainees',
-//            'commission-and-piece-rate-employees' => 'Commission and piece rate employees',
+            //            'fixedterm' => 'Fixed term',
+            //            'apprentices-and-trainees' => 'Apprentices and trainees',
+            //            'commission-and-piece-rate-employees' => 'Commission and piece rate employees',
         ];
     }
 
-    function mantain_incorrect_email_log($email_data) {
+    function mantain_incorrect_email_log($email_data)
+    {
         $this->db->insert('fix_email_address_log', $email_data);
     }
 
-    function update_applicant_job_title($sid, $job_title) {
+    function update_applicant_job_title($sid, $job_title)
+    {
         $data = array(
             'desired_job_title' => $job_title
         );
@@ -3391,9 +3530,20 @@ class Application_tracking_system_model extends CI_Model {
         $this->db->where('sid', $sid);
         $this->db->update('portal_applicant_jobs_list', $data);
     }
+
+    //
+    function get_applicant_obboarding_status_log($sid)
+    {
+
+        $this->db->select('*');
+        $this->db->where('portal_applicant_jobs_list_sid', $sid);
+        $this->db->from('applicant_onboarding_status_log');
+        return $this->db->order_by('sid', 'desc')->get()->result_array();
+    }
 }
 
 //
-function sort_by_date($a, $b){
+function sort_by_date($a, $b)
+{
     return $a['date_applied'] < $b['date_applied'];
 }

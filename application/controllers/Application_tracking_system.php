@@ -137,7 +137,16 @@ class Application_tracking_system extends Public_Controller
                 $sid                                                            = $_REQUEST['id'];
                 $status                                                         = $_REQUEST['status'];
                 $status_sid                                                     = $_REQUEST['status_sid'];
+
+                //
+                $oldStatus = getApplicantOnboardingPreviousStatus($sid);
                 $this->application_tracking_system_model->change_current_status($sid, $status, $company_sid, 'portal_applicant_jobs_list');
+
+                // Log 
+                $data['session'] = $this->session->userdata('logged_in');
+                $employers_details  = $data['session']['employer_detail'];
+                $employer_sid       = $employers_details['sid'];
+                saveApplicantOnboardingStatusLog($sid, $employer_sid, $status, $oldStatus);
                 echo 'Done';
                 exit;
             }
@@ -2434,7 +2443,15 @@ class Application_tracking_system extends Public_Controller
         $status = $this->input->post('status');
         $status_sid = $this->input->post('status_sid');
         //$this->application_tracking_system_model->change_current_status($user_id, $status, $company_sid, 'portal_applicant_jobs_list');
+        $oldStatus = getApplicantOnboardingPreviousStatus($user_id);
+
         $this->application_tracking_system_model->update_applicant_status($company_sid, $user_id, $status_sid, $status);
+
+        // Log 
+        $data['session'] = $this->session->userdata('logged_in');
+        $employers_details  = $data['session']['employer_detail'];
+        $employer_sid       = $employers_details['sid'];
+        saveApplicantOnboardingStatusLog($user_id, $employer_sid, $status, $oldStatus);
 
         echo 'success';
     }
@@ -2741,5 +2758,19 @@ class Application_tracking_system extends Public_Controller
         header('Content-Type: application/json');
         echo @json_encode($resp);
         exit(0);
+    }
+
+
+
+    public function getApplicantStatusHistory($sId)
+    {
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('manage_employer/application_tracking_system/status_log', [
+                    'data' => $this->application_tracking_system_model->get_applicant_obboarding_status_log($sId)
+                ], true)
+            ]
+        );
     }
 }

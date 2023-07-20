@@ -763,3 +763,47 @@ if (!function_exists('haveDependensDelete')) {
         return $result;
     }
 }
+
+
+
+//
+if (!function_exists('saveApplicantOnboardingStatusLog')) {
+
+    function saveApplicantOnboardingStatusLog($portalApplicantJobsListSid, $createdBySid, $newStatus, $oldStatus)
+    {
+
+        //
+        $status = '[{"OldStatus":"' . $oldStatus . '","NewStatus":"' . $newStatus . '"}]';
+        //
+        $data['created_at'] = date('Y-m-d H:i:s');
+        $data['portal_applicant_jobs_list_sid'] = $portalApplicantJobsListSid;
+        $data['created_by'] = $createdBySid;
+        $data['status'] = $status;
+
+        $CI = &get_instance();
+
+        $result = $CI->db
+            ->insert('applicant_onboarding_status_log', $data);
+
+        return $result;
+    }
+}
+
+if (!function_exists('getApplicantOnboardingPreviousStatus')) {
+
+    function getApplicantOnboardingPreviousStatus($portalApplicantJobsListSid)
+    {
+
+        $CI = &get_instance();
+        $oldStatus = get_instance()->db
+            ->select('status')
+            ->where('sid', $portalApplicantJobsListSid)
+            ->get('portal_applicant_jobs_list')
+            ->row_array();
+        if (!empty($oldStatus)) {
+            return $oldStatus['status'];
+        } else {
+            return '';
+        }
+    }
+}

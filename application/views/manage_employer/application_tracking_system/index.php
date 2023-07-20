@@ -8,10 +8,10 @@
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
                         <span class="page-heading down-arrow">
-                            <?php if(!empty($session['company_detail']['Logo'])) { ?>
-                                <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/'.$session['company_detail']['Logo'] ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
+                            <?php if (!empty($session['company_detail']['Logo'])) { ?>
+                                <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo'] ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
                             <?php } ?>
-                            <?php if(!empty($session['company_detail']['CompanyName'])) { ?>
+                            <?php if (!empty($session['company_detail']['CompanyName'])) { ?>
                                 <?php echo $session['company_detail']['CompanyName']; ?><br>
                             <?php } ?>
                             <?php echo $title; ?>
@@ -479,7 +479,7 @@
                                     ?>
 
                                     <article id="manual_row<?php echo $employer_job["sid"]; ?>" class="applicant-box <?php echo check_blue_panel_status() && $employer_job['is_onboarding'] == 1 ? 'onboarding' : '';
-                                                                                                                        echo strtolower(preg_replace('/[^a-z]/i','',$employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
+                                                                                                                        echo strtolower(preg_replace('/[^a-z]/i', '', $employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
                                         <div class="box-head">
                                             <div class="row date-bar">
                                                 <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">
@@ -657,7 +657,7 @@
                                                             <div class="selected decline"><?= $employer_job["status"] ?></div>
                                                         <?php } elseif ($employer_job["status"] == 'Placed/Hired' || $employer_job["status"] == 'Ready to Hire') { ?>
                                                             <div class="selected placed">Ready to Hire</div>
-                                                        <?php } elseif (strtolower(preg_replace('/[^a-z]/i','',$employer_job["status"])) == 'donothire') { ?>
+                                                        <?php } elseif (strtolower(preg_replace('/[^a-z]/i', '', $employer_job["status"])) == 'donothire') { ?>
                                                             <div class="selected donothire">Do Not Hire</div>
                                                         <?php } elseif ($employer_job["status"] == 'Not Contacted Yet') { ?>
                                                             <div class="selected not_contacted"><?= $employer_job["status"] ?></div>
@@ -671,7 +671,8 @@
                                                             <?php echo (isset($employer_job['status_name'])) ? $employer_job['status_name'] : ''; ?>
                                                         </div>
                                                     <?php } ?>
-                                                    <div class="show-status-box" title="Edit Applicant Status"><i class="fa fa-pencil"></i></div>
+                                                    <div class="show-status-box jsProfileHistory" title="View Applicant Status History" data-name="<?php echo ucwords($employer_job["first_name"] .  $employer_job["last_name"]); ?>" data-id="<?= $employer_job["sid"] ?>"><i class="fa fa-history"></i></div>
+
                                                     <div class="lable-wrapper">
                                                         <div id="id" style="display:none;"><?= $employer_job["sid"] ?></div>
                                                         <div style="height:20px;"><i class="fa fa-times cross"></i></div>
@@ -3667,6 +3668,37 @@ $this->session->set_userdata('ats_params', $_SERVER['REQUEST_URI']);
         $('.add_review_video_source:checked').trigger('click');
 
     })
+
+
+
+    //
+    $('.jsProfileHistory').click(getOnboardingStatusHistory);
+
+    function getOnboardingStatusHistory(e) {
+
+        sId = $(this).data('id');
+        applicantName = $(this).data('name');
+        //
+        Model({
+            Id: 'jsEmployeeProfileHistoryModel',
+            Loader: 'jsEmployeeProfileHistoryLoader',
+            Body: '<div class="container"><div id="jsEmployeeProfileHistoryBody"></div></div>',
+            Title: 'Applicant Status History of ' + applicantName
+        }, getData);
+
+    }
+
+    //
+    function getData() {
+        //
+        $.get(
+            "<?= base_url('get_applicant_onboarding_history/'); ?>/" + sId,
+            function(resp) {
+                $('#jsEmployeeProfileHistoryBody').html(resp.view);
+                ml(false, 'jsEmployeeProfileHistoryLoader');
+            });
+
+    }
 </script>
 
 
