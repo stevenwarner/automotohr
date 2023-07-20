@@ -622,7 +622,7 @@ if (!function_exists('getStaticFileVersion')) {
         // common files
         $files['2022/js/jquery.datetimepicker'] = ['css' => '2.0.0', 'js' => '2.0.0'];
         // set the main CSS file
-        $files['2022/css/main'] = ['css' => '2.0.1'];
+        $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files
         $files['v1/common'] = ['js' => '2.0.0'];
         $files['v1/lms/add_question'] = ['js' => '2.0.0'];
