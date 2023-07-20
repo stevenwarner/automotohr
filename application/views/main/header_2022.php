@@ -50,6 +50,11 @@
     <!-- Bable -->
     <script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
     <!-- Bable -->
+
+    <?php if (isset($PageCSS)) : ?>
+        <!-- Stylesheets -->
+        <?= GetCss($PageCSS); ?>
+    <?php endif; ?>
 </head>
 
 <body>
