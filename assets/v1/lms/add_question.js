@@ -153,7 +153,7 @@ $(function addQuestion() {
 		//
 		$("#jsAddQuestionUploadVideo").msFileUploader({
 			fileLimit: "30mb",
-			allowedTypes: ["mp4"],
+			allowedTypes: ["mp4", "mov"],
 		});
 		$("#jsAddQuestionType").select2({
 			minimumResultsForSearch: -1,

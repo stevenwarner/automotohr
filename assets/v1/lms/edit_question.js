@@ -157,7 +157,7 @@ $(function editQuestion() {
 		//
 		$("#jsEditQuestionUploadVideo").msFileUploader({
 			fileLimit: "30mb",
-			allowedTypes: ["mp4"],
+			allowedTypes: ["mp4", "mov"],
 			placeholderImage: questionObj.video_file_name,
 		});
 
