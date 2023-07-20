@@ -503,7 +503,6 @@ foreach ($companies as $company)
                     copy_employee_count = selected_employees.length;
                     loader();
                     $('#js-loader-text').html('Please wait, we are copying employee');
-                    ();
 
                 }, function() {
                     alertify.error('Cancel')
