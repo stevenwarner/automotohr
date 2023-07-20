@@ -20,3 +20,8 @@ $lang['dependents_no_text'] = "No, I don't have dependents";
  */
 $lang['tab_my_incidents'] = "Incidents that I have Reported";
 $lang['tab_assigned_incidents'] = "Employee Reported Incidents";
+
+/**
+ * Document library
+ */
+$lang['document_librray_helping_text'] = '"Employee Forms Library" allows Employee Team Members the ability to initiate and complete forms on their own.';

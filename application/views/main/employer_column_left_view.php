@@ -253,18 +253,29 @@
                 </a>
             </li>
         <?php  } ?>
-        <?php $comply_status = $session["company_detail"]["complynet_status"];
-        $employee_comply_status = $session["employer_detail"]["complynet_status"];
+
+
+        <?php $comply_status = $data["session"]["company_detail"]["complynet_status"];
+        $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
+        $complynet_dashboard_link = $session["company_detail"]["complynet_dashboard_link"];
+        $access_level  = $session["employer_detail"]['access_level'];
         ?>
         <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('complynet')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url("complynet"); ?>">
-                    <figure><i class="fa fa-book"></i></figure>Complynet
-                </a>
-            </li>
-        <?php  } ?>
+            <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
+            <?php if ($complyNetLink) {
+            ?>
+
+                <li>
+                <a href="<?php echo base_url('cn/redirect');?>" target="_blank">
+                        <figure><i class="fa fa-book"></i></figure>Complynet
+                    </a>
+                </li>
+        <?php
+            }
+        }
+        ?>
+
+
 
         <!--        --><?php // $load_view = check_blue_panel_status(false, 'self');
                         ?>

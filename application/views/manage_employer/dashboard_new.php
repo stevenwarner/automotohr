@@ -726,13 +726,15 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-clipboard" aria-hidden="true"></i></figure>
                                                     <h2 class="post-title" style="margin: 2px 0;">
-                                                        <a href="<?php echo base_url('library_document'); ?>">Employee Document Library</a>
+                                                        <a href="<?php echo base_url('library_document'); ?>">Employee Forms Library</a>
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
-                                                        <small style="font-size: 12px"><?php echo $total_library_doc; ?> Total Document(s)</small>
+                                                        <small style="font-size: 12px"><?php echo $total_library_doc; ?> Total Form(s)<br></small>
+                                                        <strong style="font-size: 12px" class="text-danger">Forms allows Employees the ability to initiate and complete documents on their own.</strong>
+
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?php echo base_url('library_document'); ?>" class="site-btn">View Documents</a>
+                                                        <a href="<?php echo base_url('library_document'); ?>" class="site-btn">View Forms</a>
                                                     </div>
                                                 </div>
                                             </div>

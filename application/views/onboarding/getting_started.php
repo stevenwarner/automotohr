@@ -70,6 +70,11 @@
     .bgpink .status-panel {
         background: rgba(215, 68, 178, 0.6);
     }
+
+    .popover-title,
+    .popover-content {
+        color: #000 !important;
+    }
 </style>
 <?php
 $show_empty_box = true;
@@ -445,15 +450,13 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                                 ?>
                                                             </td>
                                                             <td class="text-center hidden-xs">
-                                                                <?php if ($document['document_type'] == 'generated' ) { ?>
+                                                                <?php if ($document['document_type'] == 'generated') { ?>
                                                                     <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/print"); ?>" class="btn btn-orange" target="_blank">Print</a>
-                                                                <?php }?>
-                                                                <?php if ($document['document_type'] == 'uploaded' ) { ?>
+                                                                <?php } ?>
+                                                                <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                     <a href="<?= base_url("hr_documents_management/download_upload_document/" . ($document['uploaded_document_s3_name'])); ?>" class="btn btn-black" target="_blank">Download</a>
-                                                                <?php }else if($document['document_type'] == 'hybrid_document'){
-
-                                                                } 
-                                                                else { ?>
+                                                                <?php } else if ($document['document_type'] == 'hybrid_document') {
+                                                                } else { ?>
                                                                     <a href="<?= base_url("hr_documents_management/print_generated_and_offer_later/original/generated/" . ($document['sid']) . "/download"); ?>" class="btn btn-black" target="_blank">Download</a>
                                                                 <?php } ?>
 
@@ -585,12 +588,18 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 <div class="widget-box ">
                                     <a href="<?php echo base_url('library_document'); ?>">
                                         <div class="link-box bgdarkblue full-width">
-                                            <h2>Employee Document Library</h2>
-                                            <div class="current-date" style="margin-top: -25px;">
-                                                <span><?php echo $total_library_doc; ?><sub>Total</sub></span>
+                                            <h2>
+                                                Employee Forms Library&nbsp;
+                                                <span href="javascript:void(0)" data-toggle="popover" data-trigger="hover" data-content='<?=$this->lang->line('document_librray_helping_text');?>'>
+                                                    <i class="fa fa-question-circle" style="font-size: 25px;" aria-hidden="true"></i>
+                                                </span>
+                                            </h2>
+
+                                            <div class="current-date">
+                                                <span><?php echo $total_library_doc; ?> <sub>Total</sub></span>
                                             </div>
                                             <div class="status-panel">
-                                                <h3>View Documents</h3>
+                                                <h3>View Forms</h3>
                                                 <span>Available to Complete</span>
                                             </div>
                                         </div>
@@ -1306,7 +1315,8 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <th scope="col">Department</th>
                                             <th scope="col">Team</th>
                                             <th scope="col"># of Requests</th>
-                                            <th scope="col">Actions</th>
+                                            <th sco   
+                                         pe="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="timeoff_container"></tbody>
@@ -1341,6 +1351,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                     closeOnSelect: false
                 });
                 $('#filter_departments').select2({
+
                     closeOnSelect: false
                 });
                 $('#filter_teams').select2({
@@ -1396,6 +1407,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                     RTOT = 'my';
                     $("#request_type").val('my');
                     $("#my_tf_btn").css(enable);
+
                     $("#all_tf_btn").css(disable);
 
                     $('#filter_employees_section').hide();
