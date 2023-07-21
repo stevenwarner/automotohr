@@ -91,7 +91,12 @@ class Settings extends Public_Controller
             $data['PageScripts'][] = 'js/app_helper';
             // check and add payroll scripts
             if (checkIfAppIsEnabled('payroll')) {
-                $data['PageScripts'][] = 'v1/payroll/js/company_onboard';
+                if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])){
+                    $data['PageScripts'][] = 'v1/payroll/js/agreement';
+                }
+                if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
+                    $data['PageScripts'][] = 'v1/payroll/js/company_onboard';
+                }
             }
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_settings_new');

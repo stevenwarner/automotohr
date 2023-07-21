@@ -554,6 +554,7 @@ if (!function_exists('hasAcceptedPayrollTerms')) {
         //
         return (bool) get_instance()->db
             ->where('is_ts_accepted is not null', null, null)
+            ->where('is_ts_accepted', 1)
             ->where([
                 'company_sid' => $companyId
             ])

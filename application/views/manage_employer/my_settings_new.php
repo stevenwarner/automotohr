@@ -242,8 +242,8 @@
                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                             <?php if (!isCompanyOnBoard($session['company_detail']['sid'])) { ?>
                                                 <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</a></li>
-                                            <?php } elseif(!hasAcceptedPayrollTerms($session['company_detail']['sid'])) { ?>
-                                                <li><a href="javascript:void(0)" class="jsServiceTerms" data-cid="<?= $session['company_detail']['sid']; ?>">Payroll Service Agreement</a></li>
+                                            <?php } elseif (!hasAcceptedPayrollTerms($session['company_detail']['sid'])) { ?>
+                                                <li><a href="javascript:void(0)" class="jsServiceAgreement" data-cid="<?= $session['company_detail']['sid']; ?>">Payroll Service Agreement</a></li>
                                             <?php } ?>
                                         <?php } ?>
                                     </ul>

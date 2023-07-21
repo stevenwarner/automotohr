@@ -857,7 +857,7 @@
 
                                     <?php if (
                                         checkIfAppIsEnabled('payroll')
-                                        && !isCompanyOnBoard()
+                                        && !isCompanyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])
                                         && (
                                             isEmployeeOnPayroll(
                                                 $this->session->userdata('logged_in')['employer_detail']['sid']

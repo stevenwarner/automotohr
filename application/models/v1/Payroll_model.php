@@ -268,6 +268,30 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * Get gusto company details for gusto
+     *
+     * @param int   $companyId
+     * @param array $extra Optional
+     * @param bool  $include Optional
+     * @return array
+     */
+    public function getCompanyDetailsForGusto(int $companyId, array $extra = [], bool $include = true): array
+    {
+        //
+        $columns = $include ? array_merge([
+            'gusto_uuid',
+            'refresh_token',
+            'access_token'
+        ], $extra) : $extra;
+        //
+        return $this->db
+            ->select($columns)
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies')
+            ->row_array();
+    }
+
+    /**
      * check company onboard
      *
      * @param int $companyId
@@ -362,6 +386,8 @@ class Payroll_model extends CI_Model
         return $this->db->insert_id();
     }
 
+    // Create partner company process
+
     /**
      * create partner company on Gusto
      *
@@ -382,42 +408,54 @@ class Payroll_model extends CI_Model
                 return $response;
             }
         }
-        // // push the admins to Gusto
-        // $this->checkAndSetPayrollStoreAdmin($companyId);
-        // // sync the admins
-        // $this->syncPayrollAdmins($companyId);
-        // // push the location
-        // $this->checkAndPushCompanyLocationToGusto($companyId);
-        //
-        foreach ($employees as $employee) {
-            $this->onboardEmployee($employee, $companyId);
-        }
+        // saves the employees list
+        $this->db
+            ->where('company_sid' , $companyId)
+            ->update('gusto_companies', [
+                'employee_ids' => implode(',', $employees)
+            ]);
+        // push the admins to Gusto
+        $this->checkAndSetPayrollStoreAdmin($companyId);
+        // sync the admins
+        $this->syncPayrollAdmins($companyId);
         // return
         return $returnArray;
     }
 
     /**
-     * Get gusto company details for gusto
+     * set the store admin against company
      *
-     * @param int   $companyId
-     * @param array $extra Optional
-     * @param bool  $include Optional
-     * @return array
+     * @param int $companyId
+     * @return int
      */
-    public function getCompanyDetailsForGusto(int $companyId, array $extra = [], bool $include = true): array
+    private function checkAndSetPayrollStoreAdmin(int $companyId): int
     {
-        //
-        $columns = $include ? array_merge([
-            'gusto_uuid',
-            'refresh_token',
-            'access_token'
-        ], $extra) : $extra;
-        //
-        return $this->db
-            ->select($columns)
-            ->where('company_sid', $companyId)
-            ->get('gusto_companies')
-            ->row_array();
+        // set where array
+        $whereArray = [
+            'company_sid' => $companyId,
+            'is_store_admin' => 1,
+            'email_address' => $this->adminArray['email_address']
+        ];
+        // check if already pushed
+        if ($this->db->where($whereArray)->count_all_results('gusto_companies_admin')) {
+            return 0;
+        }
+        // insert the admin
+        $this->db->insert(
+            'gusto_companies_admin',
+            [
+                'company_sid' => $companyId,
+                'is_store_admin' => 1,
+                'first_name' => $this->adminArray['first_name'],
+                'last_name' => $this->adminArray['last_name'],
+                'email_address' => $this->adminArray['email_address'],
+                'gusto_uuid' => null,
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate()
+            ]
+        );
+        // inserted id
+        return $this->db->insert_id();
     }
 
     /**
@@ -437,6 +475,229 @@ class Payroll_model extends CI_Model
         //
         return true;
     }
+
+    /**
+     * sync Gusto admins to store
+     *
+     * @param int $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    private function syncGustoToStore(int $companyId, array $companyDetails): bool
+    {
+        // get the admins
+        $admins = $this->db
+            ->select('
+                sid,
+                first_name,
+                last_name,
+                email_address,
+                gusto_uuid
+            ')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_admin')
+            ->result_array();
+        // check if admins are found
+        if (!$admins) {
+            return false;
+        }
+        // fetch all admins from Gusto
+        $gustoAdmins = getAdminsFromGusto($companyDetails);
+        // check for errors
+        $errors = hasGustoErrors($gustoAdmins);
+        // error occurred
+        if ($errors) {
+            return $errors;
+        }
+        // remake
+        $gustoAdmins = covertArrayToObject($gustoAdmins, 'email');
+        // loop through
+        foreach ($admins as $admin) {
+            // check and set gusto uuids
+            if ($gustoAdmins[$admin['email_address']]) {
+                $this->db->where('sid', $admin['sid'])
+                    ->update('gusto_companies_admin', [
+                        'gusto_uuid' => $gustoAdmins[$admin['email_address']]['uuid']
+                    ]);
+            }
+        }
+        //
+        return true;
+    }
+
+    /**
+     * sync store admins to Gusto
+     *
+     * @param int $companyId
+     * @param array $companyDetails
+     * @return bool
+     */
+    private function syncStoreToGusto(int $companyId, array $companyDetails): bool
+    {
+        // get the admins
+        $admins = $this->db
+            ->select('
+                sid,
+                first_name,
+                last_name,
+                email_address,
+                gusto_uuid
+            ')
+            ->where('company_sid', $companyId)
+            ->group_start()
+            ->where('gusto_uuid is null', null)
+            ->or_where('gusto_uuid', '')
+            ->group_end()
+            ->get('gusto_companies_admin')
+            ->result_array();
+        // check if admins are found
+        if (!$admins) {
+            return false;
+        }
+        // loop through
+        foreach ($admins as $admin) {
+            // set request
+            $request = [];
+            $request['first_name'] = $admin['first_name'];
+            $request['last_name'] = $admin['last_name'];
+            $request['email'] = $admin['email_address'];
+            // make call
+            $gustoResponse = createAdminOnGusto($request, $companyDetails);
+            // check for errors
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                // block the iteration
+                continue;
+            }
+            // update the UUID
+            $this->db
+                ->where('sid', $admin['sid'])
+                ->update('gusto_companies_admin', [
+                    'gusto_uuid' => $gustoResponse['uuid'],
+                    'updated_at' => getSystemDate()
+                ]);
+        }
+        //
+        return true;
+    }
+
+    /**
+     * check if company already partnered with Gusto
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    private function checkIfCompanyAlreadyPartnered(int $companyId): bool
+    {
+        return $this->db
+            ->where('company_sid', $companyId)
+            ->count_all_results('gusto_companies');
+    }
+
+    /**
+     * create partner company on Gusto
+     *
+     * @param int $companyId
+     * @return
+     */
+    private function createPartnerCompany(int $companyId): array
+    {
+        // set default return array
+        $returnArray = [];
+        $returnArray['errors'] = [];
+        // check and get company
+        $companyDetails = $this->db
+            ->select('
+            users.CompanyName,
+            users.ssn,
+            users.Location_Address,
+            users.Location_City,
+            users.Location_State,
+            users.Location_ZipCode
+        ')
+            ->where(
+                'users.sid',
+                $companyId
+            )
+            ->get('users')
+            ->row_array();
+        // check for SSN
+        if (!$companyDetails['ssn']) {
+            // set error
+            $returnArray['errors'][] = '"EIN" is missing.';
+        }
+        // Check if EIN is already used
+        if ($this->db->where('ein', $companyDetails['ssn'])->count_all_results('gusto_companies')) {
+            // set error
+            $returnArray['errors'][] = '"EIN" already in used.';
+        }
+        // check for company location
+        if (!$companyDetails['Location_Address']) {
+            // set error
+            $returnArray['errors'][] = '"Location Address" is missing.';
+        }
+        if (!$companyDetails['Location_State']) {
+            // set error
+            $returnArray['errors'][] = '"Location State" is missing.';
+        }
+        if (!$companyDetails['Location_City']) {
+            // set error
+            $returnArray['errors'][] = '"Location City" is missing.';
+        }
+        if (!$companyDetails['Location_ZipCode']) {
+            // set error
+            $returnArray['errors'][] = '"Location Zip" is missing.';
+        }
+        // check and return errors
+        if ($returnArray['errors']) {
+            //
+            return $returnArray;
+        }
+        // set request array
+        $request = [
+            'user' => [],
+            'company' => []
+        ];
+        // add primary admin
+        $request['user']['first_name'] = $this->adminArray['first_name'];
+        $request['user']['last_name'] = $this->adminArray['last_name'];
+        $request['user']['email'] = $this->adminArray['email_address'];
+        $request['user']['phone'] = $this->adminArray['phone_number'];
+        // add company details
+        $request['company']['name'] = $companyDetails['CompanyName'];
+        $request['company']['ein'] = $companyDetails['ssn'];
+        //
+        $response = createPartnerCompany($request);
+        // // set errors
+        $errors = hasGustoErrors($response);
+        //
+        if ($errors) {
+            // Error took place
+            return $errors;
+        }
+        // set the insert array
+        $ia = [];
+        $ia['company_sid'] = $companyId;
+        $ia['ein'] = $request['company']['ein'];
+        $ia['parent_company_sid'] = 0;
+        $ia['gusto_uuid'] = $response['company_uuid'];
+        $ia['refresh_token'] = $response['refresh_token'];
+        $ia['access_token'] = $response['access_token'];
+        $ia['is_ts_accepted'] = 0;
+        $ia['ts_email'] = null;
+        $ia['ts_ip'] = null;
+        $ia['ts_user_sid'] = null;
+        $ia['created_at'] = $ia['updated_at'] = getSystemDate();
+        // insert the array
+        $this->db->insert('gusto_companies', $ia);
+        // set the success array
+        return [
+            'success' => true
+        ];
+    }
+
+    // create partner company ends
 
     /**
      * check and set the company location
@@ -823,259 +1084,5 @@ class Payroll_model extends CI_Model
             'gusto_uuid' => $gustoResponse['uuid'],
             'gusto_version' => $gustoResponse['version']
         ];
-    }
-
-    /**
-     * sync Gusto admins to store
-     *
-     * @param int $companyId
-     * @param array $companyDetails
-     * @return bool
-     */
-    private function syncGustoToStore(int $companyId, array $companyDetails): bool
-    {
-        // get the admins
-        $admins = $this->db
-            ->select('
-                sid,
-                first_name,
-                last_name,
-                email_address,
-                gusto_uuid
-            ')
-            ->where('company_sid', $companyId)
-            ->get('gusto_companies_admin')
-            ->result_array();
-        // check if admins are found
-        if (!$admins) {
-            return false;
-        }
-        // fetch all admins from Gusto
-        $gustoAdmins = getAdminsFromGusto($companyDetails);
-        // check for errors
-        $errors = hasGustoErrors($gustoAdmins);
-        // error occurred
-        if ($errors) {
-            return $errors;
-        }
-        // remake
-        $gustoAdmins = covertArrayToObject($gustoAdmins, 'email');
-        // loop through
-        foreach ($admins as $admin) {
-            // check and set gusto uuids
-            if ($gustoAdmins[$admin['email_address']]) {
-                $this->db->where('sid', $admin['sid'])
-                    ->update('gusto_companies_admin', [
-                        'gusto_uuid' => $gustoAdmins[$admin['email_address']]['uuid']
-                    ]);
-            }
-        }
-        //
-        return true;
-    }
-
-    /**
-     * sync store admins to Gusto
-     *
-     * @param int $companyId
-     * @param array $companyDetails
-     * @return bool
-     */
-    private function syncStoreToGusto(int $companyId, array $companyDetails): bool
-    {
-        // get the admins
-        $admins = $this->db
-            ->select('
-                sid,
-                first_name,
-                last_name,
-                email_address,
-                gusto_uuid
-            ')
-            ->where('company_sid', $companyId)
-            ->group_start()
-            ->where('gusto_uuid is null', null)
-            ->or_where('gusto_uuid', '')
-            ->group_end()
-            ->get('gusto_companies_admin')
-            ->result_array();
-        // check if admins are found
-        if (!$admins) {
-            return false;
-        }
-        // loop through
-        foreach ($admins as $admin) {
-            // set request
-            $request = [];
-            $request['first_name'] = $admin['first_name'];
-            $request['last_name'] = $admin['last_name'];
-            $request['email'] = $admin['email_address'];
-            // make call
-            $gustoResponse = createAdminOnGusto($request, $companyDetails);
-            // check for errors
-            $errors = hasGustoErrors($gustoResponse);
-            //
-            if ($errors) {
-                // block the iteration
-                continue;
-            }
-            // update the UUID
-            $this->db
-                ->where('sid', $admin['sid'])
-                ->update('gusto_companies_admin', [
-                    'gusto_uuid' => $gustoResponse['uuid'],
-                    'updated_at' => getSystemDate()
-                ]);
-        }
-        //
-        return true;
-    }
-
-    /**
-     * check if company already partnered with Gusto
-     *
-     * @param int $companyId
-     * @return bool
-     */
-    private function checkIfCompanyAlreadyPartnered(int $companyId): bool
-    {
-        return $this->db
-            ->where('company_sid', $companyId)
-            ->count_all_results('gusto_companies');
-    }
-
-    /**
-     * create partner company on Gusto
-     *
-     * @param int $companyId
-     * @return
-     */
-    private function createPartnerCompany(int $companyId): array
-    {
-        // set default return array
-        $returnArray = [];
-        $returnArray['errors'] = [];
-        // check and get company
-        $companyDetails = $this->db
-            ->select('
-            users.CompanyName,
-            users.ssn,
-            users.Location_Address,
-            users.Location_City,
-            users.Location_State,
-            users.Location_ZipCode
-        ')
-            ->where('users.sid', $companyId)
-            ->get('users')
-            ->row_array();
-        // check for SSN
-        if (!$companyDetails['ssn']) {
-            // set error
-            $returnArray['errors'][] = '"EIN" is missing.';
-        }
-        // Check if EIN is already used
-        if ($this->db->where('ein', $companyDetails['ssn'])->count_all_results('gusto_companies')) {
-            // set error
-            $returnArray['errors'][] = '"EIN" already in used.';
-        }
-        // check for company location
-        if (!$companyDetails['Location_Address']) {
-            // set error
-            $returnArray['errors'][] = '"Location Address" is missing.';
-        }
-        if (!$companyDetails['Location_State']) {
-            // set error
-            $returnArray['errors'][] = '"Location State" is missing.';
-        }
-        if (!$companyDetails['Location_City']) {
-            // set error
-            $returnArray['errors'][] = '"Location City" is missing.';
-        }
-        if (!$companyDetails['Location_ZipCode']) {
-            // set error
-            $returnArray['errors'][] = '"Location Zip" is missing.';
-        }
-        // check and return errors
-        if ($returnArray['errors']) {
-            //
-            return $returnArray;
-        }
-        // set request array
-        $request = [
-            'user' => [],
-            'company' => []
-        ];
-        // add primary admin
-        $request['user']['first_name'] = $this->adminArray['first_name'];
-        $request['user']['last_name'] = $this->adminArray['last_name'];
-        $request['user']['email'] = $this->adminArray['email_address'];
-        $request['user']['phone'] = $this->adminArray['phone_number'];
-        // add company details
-        $request['company']['name'] = $companyDetails['CompanyName'];
-        $request['company']['ein'] = $companyDetails['ssn'];
-        //
-        $response = createPartnerCompany($request);
-        // // set errors
-        $errors = hasGustoErrors($response);
-        //
-        if ($errors) {
-            // Error took place
-            return $errors;
-        }
-        // set the insert array
-        $ia = [];
-        $ia['company_sid'] = $companyId;
-        $ia['ein'] = $request['company']['ein'];
-        $ia['parent_company_sid'] = 0;
-        $ia['gusto_uuid'] = $response['company_uuid'];
-        $ia['refresh_token'] = $response['refresh_token'];
-        $ia['access_token'] = $response['access_token'];
-        $ia['is_ts_accepted'] = 0;
-        $ia['ts_email'] = null;
-        $ia['ts_ip'] = null;
-        $ia['ts_user_sid'] = null;
-        $ia['created_at'] = $ia['updated_at'] = getSystemDate();
-        // insert the array
-        $this->db->insert('gusto_companies', $ia);
-        // set the success array
-        return [
-            'success' => true
-        ];
-    }
-
-    /**
-     * set the store admin against company
-     *
-     * @param int $companyId
-     * @return int
-     */
-    private function checkAndSetPayrollStoreAdmin(int $companyId): int
-    {
-        // set where array
-        $whereArray = [
-            'company_sid' => $companyId,
-            'is_store_admin' => 1,
-            'email_address' => $this->adminArray['email_address']
-        ];
-        // check if already pushed
-        if ($this->db->where($whereArray)->count_all_results('gusto_companies_admin')) {
-            return 0;
-        }
-        // insert the admin
-        $this->db->insert(
-            'gusto_companies_admin',
-            [
-                'company_sid' => $companyId,
-                'is_store_admin' => 1,
-                'first_name' => $this->adminArray['first_name'],
-                'last_name' => $this->adminArray['last_name'],
-                'email_address' => $this->adminArray['email_address'],
-                'gusto_uuid' => null,
-                'created_at' => getSystemDate(),
-                'updated_at' => getSystemDate()
-            ]
-        );
-        // inserted id
-        return $this->db->insert_id();
     }
 }
