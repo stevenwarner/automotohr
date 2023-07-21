@@ -670,11 +670,9 @@ class employers extends Admin_Controller
                 $employee_type = $this->input->post('employee_type');
                 $salt = generateRandomString(48);
 
-
-
                 if ($registration_date != NULL) {
-                    $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
-                    $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
+                    $joined_at = formatDateToDB($registration_date);
+                    $registration_date = formatDateToDB($registration_date);
                 } else {
                     $joined_at = NULL;
                     $registration_date = NULL;
