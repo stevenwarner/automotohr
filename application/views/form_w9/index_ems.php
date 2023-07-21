@@ -31,7 +31,6 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                     <div class="document-section-header text-center">
                         <h3>Request for Taxpayer<br> Identification Number and Certification</h3>
                         <h5><strong>Go to www.irs.gov/FormW9 for instructions and the latest information.</strong></h5>
-<?php _e($pre_form,true,true);?>
                         <?php if ($pre_form['user_consent'] == 1) {?>
                             <?php if ($pre_form['uploaded_file'] != null) {?>
                             <div class="col-lg-7"></div>
