@@ -34,7 +34,9 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <a class="btn btn-info btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $id; ?>">Mark it Resolved</a>
+                            <?php if ($assigned_incidents[0]['status'] !== "Closed") { ?>
+                                <a class="btn btn-warning btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $id; ?>">Mark it Resolved</a>
+                            <?php } ?>
                         </div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                             <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2') . '/' . $id; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i> Download Reported Incident </a>
