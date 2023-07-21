@@ -6,7 +6,16 @@
         <table class="table table-bordered">
             <thead>
                 <tr class="bg-primary">
-                    <th colspan="2"><span class="pull-right"><?php echo formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);  ?></span> <?php echo getUserNameBySID($row['created_by']); ?> </th>
+                    <th colspan="2">
+                        <span class="pull-right">
+                            <?php echo reset_datetime(array(
+                                'datetime' => $row['created_at'],
+                                'from_format' => DB_DATE_WITH_TIME,
+                                'format' => DATE_WITH_TIME,
+                                '_this' => $this
+                            )); ?>
+                        </span> <?php echo getUserNameBySID($row['created_by']); ?>
+                    </th>
                 </tr>
             </thead>
             <tbody>

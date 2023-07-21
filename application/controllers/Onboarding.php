@@ -9233,8 +9233,6 @@ class Onboarding extends CI_Controller
                             $mailbody['previous_form_sid'] = $previous_form['emp_app_sid'];
                             $mailbody['reviewer_signature_base64'] = '';
 
-                            sendI9EmailToDevs('I9 tracker', $mailbody);
-
                             $insert_data['section2_last_name'] = $formpost['section2_last_name'];
                             $insert_data['section2_first_name'] = $formpost['section2_first_name'];
                             $insert_data['section2_middle_initial'] = $formpost['section2_middle_initial'];

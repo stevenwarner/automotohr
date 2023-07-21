@@ -755,29 +755,26 @@
                                         ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
-                                                    <?php if ($complyNetLink) echo '<a href="' . (base_url('cn/redirect')) . '" target="_blank">'; ?>
-                                                    <div class="dashboard-widget-box">
-                                                        <figure>
-                                                            <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
-                                                        </figure>
-                                                        <h2 class="post-title">
-                                                            <a href="<?php echo $complyNetLink ? $complyNetLink : base_url('complynet'); ?>">Compliance <br /> Management System</a>
-                                                        </h2>
-                                                        <div class="button-panel col-lg-12">
-                                                            <div class="row">
-                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                    <a href="<?= $complyNetLink; ?>" target="_blank" class="btn btn-success btn-block">Dashboard</a>
+                                                    <a href="<?php echo base_url('cn/redirect'); ?>" target="_blank">
+                                                        <div class="dashboard-widget-box">
+                                                            <figure>
+                                                                <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
+                                                            </figure>
+                                                            <h2 class="post-title">
+                                                                <a href="<?php echo base_url('cn/redirect'); ?>">Compliance <br /> Management System</a>
+                                                            </h2>
+                                                            <div class="button-panel col-lg-12">
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                        <a href="<?php echo base_url('cn/redirect'); ?>" target="_blank" class="btn btn-success btn-block">Dashboard</a>
+                                                                    </div>
                                                                 </div>
-
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <?php if ($complyNetLink) echo '</a>'; ?>
+                                                    </a>
                                                 </div>
                                             </div>
-                                        <?php
-                                        } ?>
-
+                                        <?php } ?>
                                     <?php } ?>
 
                                     <?php
