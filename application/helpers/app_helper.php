@@ -786,7 +786,7 @@ if (!function_exists('saveApplicantOnboardingStatusLog')) {
         //
         $status = '[{"OldStatus":"' . $oldStatus . '","NewStatus":"' . $newStatus . '"}]';
         //
-        $data['created_at'] = date('Y-m-d H:i:s');
+        $data['created_at'] = getSystemDate();
         $data['portal_applicant_jobs_list_sid'] = $portalApplicantJobsListSid;
         $data['created_by'] = $createdBySid;
         $data['status'] = $status;

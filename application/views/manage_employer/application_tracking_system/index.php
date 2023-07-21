@@ -671,7 +671,7 @@
                                                             <?php echo (isset($employer_job['status_name'])) ? $employer_job['status_name'] : ''; ?>
                                                         </div>
                                                     <?php } ?>
-                                                    <div class="show-status-box jsProfileHistory" title="View Applicant Status History" data-name="<?php echo ucwords($employer_job["first_name"] .  $employer_job["last_name"]); ?>" data-id="<?= $employer_job["sid"] ?>"><i class="fa fa-history"></i></div>
+                                                    <div class="show-status-box jsProfileHistory" title="View Applicant Status History" data-name="<?php echo ucwords($employer_job["first_name"] .  $employer_job["last_name"]); ?>" data-id="<?= $employer_job["sid"] ?>"><i class="fa fa-pencil"></i></div>
 
                                                     <div class="lable-wrapper">
                                                         <div id="id" style="display:none;"><?= $employer_job["sid"] ?></div>
