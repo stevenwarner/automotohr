@@ -91,7 +91,7 @@ class Settings extends Public_Controller
             $data['PageScripts'][] = 'js/app_helper';
             // check and add payroll scripts
             if (checkIfAppIsEnabled('payroll')) {
-                if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])){
+                if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
                     $data['PageScripts'][] = 'v1/payroll/js/agreement';
                 }
                 if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
@@ -319,7 +319,7 @@ class Settings extends Public_Controller
             $data['title'] = 'Company Profile';
             $company = $this->dashboard_model->get_company_detail($company_id);
 
-            
+
             if (empty($company['extra_info'])) {
                 $data['onboarding_eeo_form_status'] = 1;
                 $data['safety_sheet'] = 1;

@@ -1647,9 +1647,12 @@ $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridD
 $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/downloadHybridDocument/$1';
 
 
-
 /**
  * Payroll routes
  */
 $route['payroll/company/(:num)/requirements'] = 'v1/Payroll/checkCompanyRequirements/$1';
 $route['payroll/cpc/(:num)/(:num)'] = 'v1/Payroll/getCreatePartnerCompanyPage/$1/$2';
+// agreement
+$route['payrolls/agreement/(:num)']['get'] = 'v1/Payroll/getCompanyAgreement/$1';
+$route['payrolls/agreement/(:num)']['post'] = 'v1/Payroll/signCompanyAgreement/$1';
+$route['payrolls/dashboard']['get'] = 'v1/Payroll/dashboard';

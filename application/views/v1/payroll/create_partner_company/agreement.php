@@ -1,11 +1,11 @@
 <!--  -->
 <div class="container">
     <div class="csPageWrap">
-        <?php if ($companyTerms['is_ts_accepted'] == 1) { ?>
+        <?php if ($agreement['is_ts_accepted'] == 1) { ?>
             <div class="alert alert-success">
-                <strong>Email: </strong> <?= $companyTerms['ts_email']; ?> <br>
-                <strong>IP Address: </strong> <?= $companyTerms['ts_ip']; ?> <br>
-                <strong>System User Reference : </strong> <?= $companyTerms['ts_user_sid']; ?>
+                <strong>Email: </strong> <?= $agreement['ts_email']; ?> <br>
+                <strong>IP Address: </strong> <?= $agreement['ts_ip']; ?> <br>
+                <strong>System User Reference : </strong> <?= $agreement['ts_user_sid']; ?>
             </div>
         <?php } ?>
         <div class="row">
@@ -15,7 +15,7 @@
             </div>
         </div>
         <hr>
-        <?php if ($companyTerms['is_ts_accepted'] == 0) { ?>
+        <?php if ($agreement['is_ts_accepted'] == 0) { ?>
             <form>
                 <div class="form-group">
                     <label>Email <strong class="text-danger">*</strong></label>

@@ -19,6 +19,52 @@ class Payroll extends CI_Controller
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
     }
 
+    public function dashboard()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        //
+        $companyId = $data['session']['company_detail']['sid'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [];
+        $data['PageScripts'] = [];
+        //
+        $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId);
+        // get the company onboard flow
+        $data['flow'] = gustoCall(
+            'getCompanyOnboardFlow',
+            $companyGustoDetails,
+            [
+                'flow_type' => "federal_tax_setup,select_industry,add_bank_info,verify_bank_info,state_setup,payroll_schedule,sign_all_forms",
+                "entity_type" => "Company",
+                "entity_uuid" => $companyGustoDetails['gusto_uuid']
+            ],
+            "POST"
+        )['url'];
+        // get the payroll blockers
+        $data['payrollBlockers'] = gustoCall(
+            'getPayrollBlockers',
+            $companyGustoDetails
+        );
+        // check if payroll can be run
+        $data['canRunPayroll'] = $data['payrollBlockers'] ? false : true;
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/dashboard')
+            ->view('main/footer');
+    }
+
     /**
      * check company requirements
      *
@@ -153,5 +199,91 @@ class Payroll extends CI_Controller
         endif;
         // send default response
         return SendResponse(400, ['errors' => ['Invalid call.']]);
+    }
+
+    /**
+     * get the company agreement
+     *
+     * @param int $companyId
+     */
+    public function getCompanyAgreement(int $companyId)
+    {
+        // set
+        $data = [];
+        // check if the contract is signed
+        $data['agreement'] = $this->db
+            ->select('is_ts_accepted, ts_email, ts_ip')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies')
+            ->row_array();
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('v1/payroll/create_partner_company/agreement', $data, true)
+            ]
+        );
+    }
+
+    /**
+     * get the company agreement
+     *
+     * @param int $companyId
+     */
+    public function signCompanyAgreement(int $companyId)
+    {
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $errors = [];
+        // validation
+        if (!$post['email']) {
+            $errors[] = '"Email" is required.';
+        }
+        if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = '"Email" is invalid.';
+        }
+        if (!$post['userReference']) {
+            $errors[] = '"System User Reference" is required.';
+        }
+        //
+        if ($errors) {
+            return SendResponse(400, ['errors' => $errors]);
+        }
+        //
+        $companyDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['employee_ids']);
+        //
+        $request = [];
+        $request['ip_address'] = getUserIP();
+        $request['external_user_id'] = $post['userReference'];
+        $request['email'] = $post['email'];
+        //
+        $gustoResponse = agreeToServiceAgreementFromGusto($request, $companyDetails);
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return SendResponse(400, $errors);
+        }
+        //
+        $this->db->where('company_sid', $companyId)
+            ->update('gusto_companies', [
+                'is_ts_accepted' => 1,
+                'ts_email' => $request['email'],
+                'ts_ip' => $request['ip_address'],
+                'ts_user_sid' => $request['external_user_id'],
+            ]);
+        // let's push the saved data
+        // location
+        $this->payroll_model->checkAndPushCompanyLocationToGusto($companyId);
+        // get the employee list
+        $ids = explode(',', $companyDetails['employee_ids']);
+        //
+        foreach ($ids as $employeeId) {
+            // selected employees
+            $this->payroll_model->onboardEmployee($employeeId, $companyId);
+        }
+        //
+        return SendResponse(200, ['success' => true]);
     }
 }

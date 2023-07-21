@@ -771,7 +771,6 @@ class Payroll_model extends CI_Model
             $request,
             "POST"
         );
-        _e($gustoResponse);
         //
         $errors = hasGustoErrors($gustoResponse);
         // check for errors
@@ -789,65 +788,6 @@ class Payroll_model extends CI_Model
                 'filing_address' => (int) $gustoResponse['filing_address'],
                 'created_at' => getSystemDate(),
                 'updated_at' => getSystemDate()
-            ]);
-        //
-        return $gustoResponse;
-    }
-
-    /**
-     * get company terms from Gusto
-     *
-     * @param int $companyId
-     * @return array
-     */
-    public function getGustoTerms(int $companyId): array
-    {
-        // get the company
-        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
-        //
-        $gustoResponse = getCompanyServiceAgreementFromGusto($companyDetails);
-        //
-        $errors = hasGustoErrors($gustoResponse);
-        //
-        return $errors ?? $gustoResponse;
-    }
-
-    /**
-     * get company terms from Gusto
-     *
-     * @param array $post
-     * @param int   $companyId
-     * @return array
-     */
-    public function agreeToGustoTerms(array $post, int $companyId): array
-    {
-        // get the company
-        $companyDetails = $this->getCompanyDetailsForGusto($companyId, ['is_ts_accepted']);
-        //
-        if ($companyDetails['is_ts_accepted'] == 1) {
-            return ['errors' => ['"Payroll Service Agreement" is already consent.']];
-        }
-        // make request array
-        $request = [];
-        $request['email'] = $post['email'];
-        $request['external_user_id'] = $post['userCode'];
-        $request['ip_address'] = getUserIP();
-        //
-        $gustoResponse = agreeToServiceAgreementFromGusto($request, $companyDetails);
-        //
-        $errors = hasGustoErrors($gustoResponse);
-        //
-        if ($errors) {
-            return $errors;
-        }
-        // update
-        $this->db
-            ->where('company_sid', $companyId)
-            ->update('gusto_companies', [
-                'is_ts_accepted' => $gustoResponse['latest_terms_accepted'],
-                'ts_email' => $request['email'],
-                'ts_ip' => $request['ip_address'],
-                'ts_user_id' => $request['external_user_id'],
             ]);
         //
         return $gustoResponse;
@@ -876,9 +816,9 @@ class Payroll_model extends CI_Model
                 return $gustoEmployee;
             }
         }
+        return [];
         // set employee job
-        $this->createEmployeeJobOnGusto($employeeId, $companyId);
-        _e($gustoEmployee, true, true);
+        // $this->createEmployeeJobOnGusto($employeeId, $companyId);
         // set home address
         // $this->checkAndSetEmployeeHomeAddressOnGusto($employeeId, $companyId);
     }

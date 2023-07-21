@@ -636,3 +636,28 @@ if (!function_exists('covertArrayToObject')) {
         return $tmp;
     }
 }
+
+/**
+ * check the user session
+ *
+ * @param bool $redirect
+ * @return
+ */
+if (!function_exists('checkUserSession')) {
+    function checkUserSession(bool $redirect = true)
+    {
+        // get instance
+        $CI = &get_instance();
+        // check the session
+        if (!$CI->session->userdata('logged_in')) {
+            //
+            if ($redirect) {
+                return redirect('login', 'refresh');
+            }
+            //
+            return false;
+        }
+        //
+        return $CI->session->userdata('logged_in');
+    }
+}

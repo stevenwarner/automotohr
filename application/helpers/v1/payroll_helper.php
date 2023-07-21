@@ -252,11 +252,15 @@ if (!function_exists('getUrl')) {
         // get all company admins
         $urls['getAdminsFromGusto'] = "v1/companies/$key/admins";
         $urls['createAdminOnGusto'] = "v1/companies/$key/admins";
-        $urls['getCompanyServiceAgreementFromGusto'] = "v1/companies/$key/admins";
         $urls['createCompanyLocationOnGusto'] = "v1/companies/$key/locations";
         $urls['createEmployeeOnGusto'] = "v1/companies/$key/employees";
+        // payroll blocker
+        $urls['getPayrollBlockers'] = "v1/companies/$key/payrolls/blockers";
+        //company flow
+        $urls['getCompanyOnboardFlow'] = "v1/companies/$key/flows";
         // employee URLs
         $urls['createEmployeeJobOnGusto'] = "v1/employees/$key/jobs";
+
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -379,56 +383,6 @@ if (!function_exists('createAdminOnGusto')) {
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 // recall the event
                 return createAdminOnGusto($request, $company);
-            } else {
-                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
-            }
-        } else {
-            // pass actual response
-            return $response;
-        }
-    }
-}
-
-if (!function_exists('getCompanyServiceAgreementFromGusto')) {
-    /**
-     * get company admins from Gusto
-     *
-     * @param array $company
-     * @return array
-     */
-    function getCompanyServiceAgreementFromGusto(array $company): array
-    {
-        // set call headers
-        $callHeaders = [
-            'Authorization: Bearer ' . ($company['access_token']) . '',
-            'Content-Type: application/json',
-            'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
-        ];
-        // make call to Gusto
-        $response =  makeCall(
-            getUrl('getCompanyServiceAgreementFromGusto', $company['gusto_uuid']),
-            [
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => $callHeaders
-            ]
-        );
-        // auth failed needs to generate new tokens
-        if (isset($response['errors']['auth'])) {
-            // generate new access token
-            $tokenResponse = refreshToken([
-                'access_token' => $company['access_token'],
-                'refresh_token' => $company['refresh_token']
-            ]);
-            // generated
-            if (isset($tokenResponse['access_token'])) {
-                // update in database
-                updateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']]);
-                // set to local variable
-                $company['access_token'] = $tokenResponse['access_token'];
-                $company['refresh_token'] = $tokenResponse['refresh_token'];
-                // recall the event
-                return getCompanyServiceAgreementFromGusto($company);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }
