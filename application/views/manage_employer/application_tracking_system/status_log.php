@@ -11,7 +11,7 @@
                             <?php echo reset_datetime(array(
                                 'datetime' => $row['created_at'],
                                 'from_format' => DB_DATE_WITH_TIME,
-                                'format' => DATE_WITH_TIME,
+                                'format' => DB_DATE_WITH_TIME,
                                 '_this' => $this
                             )); ?>
                         </span> <?php echo getUserNameBySID($row['created_by']); ?>
