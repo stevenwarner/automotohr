@@ -106,7 +106,7 @@
                                     </div>
                                     <div class="col-md-3 col-xs-12">
                                         <p class="csColumSection"><strong>STATUS</strong></p>
-                                        <p>Past Due5/2/2023</p>
+                                        <p>Past Due</p>
                                     </div>
                                     <div class="col-md-3 col-xs-12">
                                         <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
@@ -154,7 +154,7 @@
                                     </div>
                                     <div class="col-md-3 col-xs-12">
                                         <p class="csColumSection"><strong>STATUS</strong></p>
-                                        <p>Past Due5/2/2023</p>
+                                        <p>Past Due</p>
                                     </div>
                                     <div class="col-md-3 col-xs-12">
                                         <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
@@ -195,7 +195,7 @@
                                     </div>
                                     <div class="col-md-3 col-xs-12">
                                         <p class="csColumSection"><strong>STATUS</strong></p>
-                                        <p>Past Due5/2/2023</p>
+                                        <p>Past Due</p>
                                     </div>
                                     <div class="col-md-3 col-xs-12">
                                         <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
