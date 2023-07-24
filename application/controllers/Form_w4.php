@@ -383,7 +383,8 @@ class Form_w4 extends Public_Controller
                 //
                 syncW4DataChanges(
                     $employer_sid,
-                    $data_to_update
+                    $data_to_update,
+                    'employee'
                 );
                 
                 $this->form_wi9_model->update_form('w4', $type, $employer_sid, $data_to_update);

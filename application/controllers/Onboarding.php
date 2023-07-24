@@ -9077,6 +9077,13 @@ class Onboarding extends CI_Controller
                         keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $w4_sid, 'w4', 'Blue Panel');
                         //
                         $this->form_wi9_model->update_form('w4', 'applicant', $applicant_sid, $data_to_update);
+                        //
+                        syncW4DataChanges(
+                            $applicant_sid,
+                            $data_to_update,
+                            'applicant'
+                        );
+
                         $this->session->set_flashdata('message', '<strong>Success: </strong> Request Submitted Successfully!');
                         redirect('onboarding/hr_documents/' . $unique_sid, 'refresh');
                     }
@@ -11075,7 +11082,5 @@ class Onboarding extends CI_Controller
                     ]
                 );
         }
-
-       
     }
 }

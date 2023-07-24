@@ -852,7 +852,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 </div>
 <?php if (isset($w4_form) && sizeof($w4_form) > 0) {
     //
-   // _e($w4_form,true,true);
     $w4_form = syncW4Data($w4_form['employer_sid'], $w4_form);
 ?>
     <div id="w4_modal" class="modal fade" tabindex="-1" role="dialog">
@@ -860,7 +859,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
             <div class="modal-content">
                 <div class="modal-header modal-header-bg">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="review_modal_title">Assigned W4 Form ff</h4>
+                    <h4 class="modal-title" id="review_modal_title">Assigned W4 Form</h4>
                 </div>
                 <div id="review_modal_body" class="modal-body">
                     <?php $view = get_form_view('w4', $w4_form);
@@ -873,7 +872,13 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         </div>
     </div>
 <?php } ?>
-<?php if (isset($w9_form) && sizeof($w9_form) > 0) { ?>
+<?php if (isset($w9_form) && sizeof($w9_form) > 0) { 
+    
+   // _e($w9_form,true,true);
+    
+    $w9_form = syncW4Data($w9_form['user_sid'], $w9_form);
+
+    ?>
     <div id="w9_modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">

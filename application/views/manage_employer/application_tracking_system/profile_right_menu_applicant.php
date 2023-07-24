@@ -1096,7 +1096,9 @@ if ($this->session->userdata('logged_in')) {
     </div>
 </div>
 
-<?php if(sizeof($w4_form)>0) { ?>
+<?php if(sizeof($w4_form)>0) { 
+    $w4_form = syncW4Data($w4_form['employer_sid'], $w4_form);
+    ?>
     <div id="w4_modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">

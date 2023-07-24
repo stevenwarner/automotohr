@@ -877,19 +877,32 @@ if (!function_exists('syncW4DataChanges')) {
 
     function syncW4DataChanges(
         $employeeId,
-        $dataToInsert
+        $dataToInsert,
+        $userType
     ) {
 
         //
         $fields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,marital_status,";
 
+
+        if ($userType == 'employee') {
+            $tableName = 'users';
+            $fields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,marital_status,";
+        }
+        //
+        if ($userType == 'applicant') {
+            $fields = "first_name,last_name,middle_name,ssn,address,city,zipcode,state,marital_status,";
+            $tableName = 'portal_job_applications';
+        }
+
         // get CI instance
         $CI = &get_instance();
         $employeeDetail = $CI->db->select($fields)
             ->where('sid', $employeeId)
-            ->get('users')
+            ->get($tableName)
             ->row_array();
         //
+
         $newCompareData = [];
         $newCompareData['first_name'] = $dataToInsert['first_name'];
         $newCompareData['middle_name'] = $dataToInsert['middle_name'];
@@ -903,14 +916,28 @@ if (!function_exists('syncW4DataChanges')) {
 
         // Old Data
         $oldCompareData = [];
-        $oldCompareData['first_name'] = $employeeDetail['first_name'];
-        $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
-        $oldCompareData['last_name'] = $employeeDetail['last_name'];
-        $oldCompareData['Location_Address'] = $employeeDetail['Location_Address'];
-        $oldCompareData['Location_City'] = $employeeDetail['Location_City'];
-        $oldCompareData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
-        $oldCompareData['Location_State'] = $employeeDetail['Location_State'];
-        $oldCompareData['ssn'] = $employeeDetail['ssn'];
+        if ($userType == 'employee') {
+            $oldCompareData['first_name'] = $employeeDetail['first_name'];
+            $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
+            $oldCompareData['last_name'] = $employeeDetail['last_name'];
+            $oldCompareData['Location_Address'] = $employeeDetail['Location_Address'];
+            $oldCompareData['Location_City'] = $employeeDetail['Location_City'];
+            $oldCompareData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+            $oldCompareData['Location_State'] = $employeeDetail['Location_State'];
+            $oldCompareData['ssn'] = $employeeDetail['ssn'];
+        }
+
+        //
+        if ($userType == 'applicant') {
+            $oldCompareData['first_name'] = $employeeDetail['first_name'];
+            $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
+            $oldCompareData['last_name'] = $employeeDetail['last_name'];
+            $oldCompareData['Location_Address'] = $employeeDetail['address'];
+            $oldCompareData['Location_City'] = $employeeDetail['city'];
+            $oldCompareData['Location_ZipCode'] = $employeeDetail['zipcode'];
+            $oldCompareData['Location_State'] = $employeeDetail['state'];
+            $oldCompareData['ssn'] = $employeeDetail['ssn'];
+        }
 
         $difference = findDifferenceData($oldCompareData, $newCompareData);
 
@@ -921,23 +948,36 @@ if (!function_exists('syncW4DataChanges')) {
         //
         $data_array = [];
         foreach ($difference['data'] as $key => $val) {
-            $data_array[$key]=$val['new']; 
+            $data_array[$key] = $val['new'];
         }
 
         //Update to user
-        $CI->db->where('sid', $employeeId);
-        $CI->db->update('users', $data_array);
+        if ($userType == 'employee') {
+            $CI->db->where('sid', $employeeId);
+            $CI->db->update('users', $data_array);
 
-        //Insert To Log 
-        $employerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
+            //Insert To Log 
+            $employerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
 
-        $CI->db->insert('profile_history', [
-            'user_sid' => $employeeId,
-            'employer_sid' => $employerId,
-            'profile_data' => json_encode($difference['data']),
-            'created_at' => date('Y-m-d H:i:s', strtotime('now')),
-            'change_from' => 'w4'
-        ]);
+            $CI->db->insert('profile_history', [
+                'user_sid' => $employeeId,
+                'employer_sid' => $employerId,
+                'profile_data' => json_encode($difference['data']),
+                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'change_from' => 'w4'
+            ]);
+        }
+
+          //Update to Applicant
+          if ($userType == 'applicant') {
+            $CI->db->where('sid', $employeeId);
+            $CI->db->update('portal_job_applications', $data_array);
+          }
+
+
+
+
+
     }
 }
 

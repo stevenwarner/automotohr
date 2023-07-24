@@ -65,7 +65,9 @@
                     <div class="form-wrp">
                         <iframe src="<?=AWS_S3_BUCKET_URL.$pre_form['uploaded_file'];?>?embedded=true" style="width: 100%; height: 80rem;"></iframe>
                     </div>
-                <?php }else{?>
+                <?php }else{
+                    $pre_form = syncW4Data($pre_form['employer_sid'], $pre_form);
+                    ?>
                 <div class="form-wrp">
                     <div class="col-lg-2">
                         <strong>Form W-4</strong>
