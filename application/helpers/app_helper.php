@@ -871,7 +871,6 @@ if (!function_exists('syncW4Data')) {
 }
 
 
-
 //
 if (!function_exists('syncW4DataChanges')) {
 
@@ -968,16 +967,11 @@ if (!function_exists('syncW4DataChanges')) {
             ]);
         }
 
-          //Update to Applicant
-          if ($userType == 'applicant') {
+        //Update to Applicant
+        if ($userType == 'applicant') {
             $CI->db->where('sid', $employeeId);
             $CI->db->update('portal_job_applications', $data_array);
-          }
-
-
-
-
-
+        }
     }
 }
 
@@ -1011,5 +1005,63 @@ if (!function_exists('findDifferenceData')) {
         }
         //
         return ['profile_changed' => $profile_changed, 'data' => $dt];
+    }
+}
+
+
+//
+if (!function_exists('syncW9Data')) {
+
+    function syncW9Data($employeeId, $formData)
+    {
+
+        //
+        if ($formData['user_type'] == 'employee') {
+            $tableName = 'users';
+            $fields = "first_name,last_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state";
+        }
+        //
+        if ($formData['user_type'] == 'applicant') {
+            $fields = "first_name,last_name,middle_name,ssn,address,city,zipcode,state";
+            $tableName = 'portal_job_applications';
+        }
+
+        // get CI instance
+        $CI = &get_instance();
+        $userData = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get($tableName)
+            ->row_array();
+
+
+        $userData['w9_social_security_number'] = $userData['ssn'];
+
+        if ($formData['user_type'] == 'employee') {
+            $userData['w9_address'] = $userData['Location_Address'];
+            $userData['w9_city_state_zip'] = $userData['Location_City'] . ',' . $userData['Location_state'] . ',' . $userData['Location_ZipCode'];
+        }
+
+        if ($formData['user_type'] == 'applicant') {
+            $userData['w9_address'] = $userData['address'];
+            $userData['w9_city_state_zip'] = $userData['city'] . ',' . $userData['state'] . ',' . $userData['zipcode'];
+        }
+
+        //
+        if ($formData['w9_social_security_number'] == null || $formData['w9_social_security_number'] == '') {
+            $formData['w9_social_security_number'] = $userData['ssn'];
+        }
+        if ($formData['w9_address'] == null || $formData['w9_address'] == '') {
+            $formData['w9_address'] = $userData['w9_address'];
+        }
+
+        if ($formData['w9_name'] == null || $formData['w9_name'] == '') {
+            $formData['w9_name'] = $userData['first_name'] . ' ' . $userData['last_name'];
+        }
+
+        if ($formData['w9_city_state_zip'] == null || $formData['w9_city_state_zip'] == '') {
+            $formData['w9_city_state_zip'] = $userData['w9_city_state_zip'];
+        }
+
+        return $formData;
     }
 }

@@ -872,13 +872,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         </div>
     </div>
 <?php } ?>
-<?php if (isset($w9_form) && sizeof($w9_form) > 0) { 
-    
-   // _e($w9_form,true,true);
-    
-    $w9_form = syncW4Data($w9_form['user_sid'], $w9_form);
-
-    ?>
+<?php if (isset($w9_form) && sizeof($w9_form) > 0) {
+    $w9_form = syncW9Data($w9_form['user_sid'], $w9_form);
+?>
     <div id="w9_modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
