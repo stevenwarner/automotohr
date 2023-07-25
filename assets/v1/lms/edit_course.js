@@ -293,6 +293,8 @@ $(function editCourse() {
 		// set default question array
 		courseObj.course_questions = questionsArray;
 		//
+		let isCourseTypeFile = false;
+		//
 		if (
 			courseObj.course_file_type === "link" &&
 			courseObj.course_type === "manual"
@@ -306,7 +308,7 @@ $(function editCourse() {
 				errorArray.push("Invalid YouTube / Vimeo link.");
 			}
 		} else {
-			let isCourseTypeFile = false;
+			
 			//
 			if (
 				courseObj.course_type === "scorm" &&
@@ -366,6 +368,7 @@ $(function editCourse() {
 			if (!isCourseTypeFile) {
 				// upload file
 				let response = await uploadFile(courseObj.course_file);
+				console.log(response)
 				// parse the JSON
 				response = JSON.parse(response);
 				// if file was not uploaded successfully
@@ -373,7 +376,9 @@ $(function editCourse() {
 					return alertify.alert(
 						"ERROR",
 						"Failed to upload the file.",
-						CB
+						function () {
+							ml(false, modalLoaderId);
+						}
 					);
 				}
 				// set the file
@@ -575,7 +580,6 @@ $(function editCourse() {
 	 * @param {*} courseObj
 	 */
 	function setEditView(co) {
-		console.log(co)
 		// set the title
 		$("#jsEditCourseTitleHeader").html(" - " + co.course_title);
 		$("#jsEditCourseTitle").val(co.course_title);

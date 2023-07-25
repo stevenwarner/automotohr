@@ -190,6 +190,8 @@ $(function createCourse() {
 	 * get the view from server
 	 */
 	function loadView() {
+		//
+		questionsArray = [];
 		// check the call
 		if (XHR !== null) {
 			XHR.abort();
@@ -369,7 +371,10 @@ $(function createCourse() {
 				return alertify.alert(
 					"ERROR",
 					"Failed to upload the file.",
-					CB
+					function () {
+						console.log("close the modal "+modalId)
+						ml(false, modalLoaderId);
+					}
 				);
 			}
 			// set the file

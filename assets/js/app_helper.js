@@ -22,7 +22,7 @@ String.prototype.isValidVimeoLink = function () {
 }
 
 String.prototype.isValidInteger = function () {
-	console.log("pppp")
+	
 	return this.match(/^[1-9]\d*$/g) === null
 		? false
 		: true;
@@ -156,8 +156,8 @@ if (typeof uploadFile === "undefined") {
 				.success(function (response) {
 					resolve(response);
 				})
-				.fail(function () {
-					resolve({});
+				.fail(function (error) {
+					resolve(error.responseText);
 				});
 		});
 	}
