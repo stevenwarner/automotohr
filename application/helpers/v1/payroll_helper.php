@@ -213,12 +213,15 @@ if (!function_exists('hasGustoErrors')) {
         } elseif (isset($response['errors'])) {
             foreach ($response['errors'] as $err) {
                 //
-                if (isset($err[0])) {
+                if (isset($err['errors'])) {
+                    foreach ($err['errors'] as $err0) {
+                        $errors['errors'][] = $err0['message'];
+                    }
+                } elseif (isset($err[0])) {
                     foreach ($err as $err0) {
                         $errors['errors'][] = $err0['message'];
                     }
                 } else {
-
                     //
                     $errors['errors'][] = $err['message'];
                 }
@@ -252,8 +255,10 @@ if (!function_exists('getUrl')) {
         // get all company admins
         $urls['getAdminsFromGusto'] = "v1/companies/$key/admins";
         $urls['createAdminOnGusto'] = "v1/companies/$key/admins";
+        $urls['createSignatory'] = "v1/companies/$key/signatories";
         $urls['createCompanyLocationOnGusto'] = "v1/companies/$key/locations";
         $urls['createEmployeeOnGusto'] = "v1/companies/$key/employees";
+        $urls['getFederalTax'] = "v1/companies/$key/federal_tax_details";
         // payroll blocker
         $urls['getPayrollBlockers'] = "v1/companies/$key/payrolls/blockers";
         //company flow

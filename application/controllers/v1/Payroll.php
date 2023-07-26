@@ -9,10 +9,9 @@ class Payroll extends CI_Controller
     {
         //
         parent::__construct();
+        $this->form_validation->set_message('required', '"{field}" is required.');
+        $this->form_validation->set_message('valid_email', '"{field}" is invalid.');
         //
-        // if (!$this->session->userdata('logged_in') && !$this->session->userdata('user_id')) {
-        //     return SendResponse(401, ['errors' => ['Access denied, you are not authorized to make this call.']]);
-        // }
         // Call the model
         $this->load->model("v1/Payroll_model", "payroll_model");
         // set the logged in user id
@@ -27,6 +26,9 @@ class Payroll extends CI_Controller
         $data['session'] = checkUserSession();
         // set
         $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['companyId'] = $data['session']['company_detail']['sid'];
+        $data['employerId'] = $data['session']['employer_detail']['sid'];
+        $data['level'] = 0;
         //
         $companyId = $data['session']['company_detail']['sid'];
         // get the security details
@@ -37,7 +39,10 @@ class Payroll extends CI_Controller
         );
         // scripts
         $data['PageCSS'] = [];
-        $data['PageScripts'] = [];
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/payroll/js/dashboard'
+        ];
         //
         $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId);
         // get the company onboard flow
@@ -45,7 +50,15 @@ class Payroll extends CI_Controller
             'getCompanyOnboardFlow',
             $companyGustoDetails,
             [
-                'flow_type' => "federal_tax_setup,select_industry,add_bank_info,verify_bank_info,state_setup,payroll_schedule,sign_all_forms",
+                'flow_type' => "
+                    federal_tax_setup,
+                    select_industry,
+                    add_bank_info,
+                    verify_bank_info,
+                    state_setup,
+                    payroll_schedule,
+                    sign_all_forms
+                ",
                 "entity_type" => "Company",
                 "entity_uuid" => $companyGustoDetails['gusto_uuid']
             ],
@@ -56,13 +69,422 @@ class Payroll extends CI_Controller
             'getPayrollBlockers',
             $companyGustoDetails
         );
-        // check if payroll can be run
-        $data['canRunPayroll'] = $data['payrollBlockers'] ? false : true;
         //
         $this->load
             ->view('main/header', $data)
             ->view('v1/payroll/dashboard')
             ->view('main/footer');
+    }
+
+    /**
+     * Manage admins
+     */
+    public function manageAdmins()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [];
+        $data['PageScripts'] = [];
+        // get admins
+        $data['admins'] = $this->db
+            ->where([
+                'company_sid' => $data['loggedInPersonCompany']['sid'],
+                'is_store_admin' => 0
+            ])
+            ->get('gusto_companies_admin')
+            ->result_array();
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/admins/manage')
+            ->view('main/footer');
+    }
+
+    /**
+     * add admins
+     */
+    public function manageAddAdmin()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [];
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/payroll/js/admin/add'
+        ];
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/admins/add')
+            ->view('main/footer');
+    }
+
+    /**
+     * manage signatories
+     */
+    public function manageSignatories()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [];
+        $data['PageScripts'] = [];
+        // get admins
+        $data['signatories'] = $this->db
+            ->where([
+                'company_sid' => $data['loggedInPersonCompany']['sid'],
+            ])
+            ->get('gusto_companies_signatories')
+            ->row_array();
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/signatories/manage')
+            ->view('main/footer');
+    }
+
+    /**
+     * create signatory
+     */
+    public function createSignatoriesPage()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        //
+        if ($this->db
+            ->where([
+                'company_sid' => $data['loggedInPersonCompany']['sid'],
+            ])
+            ->count_all_results('gusto_companies_signatories')
+        ) {
+            return redirect('payrolls/signatories');
+        }
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [];
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/payroll/js/signatories/create'
+        ];
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/signatories/create')
+            ->view('main/footer');
+    }
+
+
+    // API routes
+    /**
+     * Create admin
+     *
+     * @return
+     */
+    public function createAdmin()
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // validation
+        $this->form_validation->set_message('required', '"{field}" is required.');
+        $this->form_validation->set_message('valid_email', '"{field}" is invalid.');
+        $this->form_validation->set_rules(
+            'first_name',
+            'First Name',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'last_name',
+            'Last Name',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'email_address',
+            'Email Address',
+            'trim|xss_clean|required|valid_email'
+        );
+        // validate
+        if ($this->form_validation->run() === false) {
+            //
+            $errors = explode("\n", validation_errors(' ', ' '));
+            //
+            unset($errors[count($errors) - 1]);
+            //
+            return SendResponse(
+                400,
+                [
+                    'errors' => $errors
+                ]
+            );
+        }
+        // get post
+        $post = $this->input->post(null, true);
+        // check if admin all ready created
+        if ($this->db->where([
+            'email_address' => $post['email_address'],
+            'company_sid' =>  $session['company_detail']['sid']
+        ])->count_all_results('gusto_companies_admin')) {
+            //
+            return SendResponse(
+                400,
+                [
+                    'errors' => ['"' . ($post['email_address']) . '" already exists.']
+                ]
+            );
+        }
+        // get the company
+        $companyDetails = $this->payroll_model
+            ->getCompanyDetailsForGusto($session['company_detail']['sid']);
+        // set request
+        $request = [];
+        $request['first_name'] = $post['first_name'];
+        $request['last_name'] = $post['last_name'];
+        $request['email'] = $post['email_address'];
+        // make call
+        $gustoResponse = createAdminOnGusto($request, $companyDetails);
+        // check for errors
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            // block the iteration
+            return SendResponse(400, $errors);
+        }
+        // add the admin to store
+        $insertArray = [];
+        $insertArray['company_sid'] = $session['company_detail']['sid'];
+        $insertArray['gusto_uuid'] = $gustoResponse['uuid'];
+        $insertArray['first_name'] = $post['first_name'];
+        $insertArray['last_name'] = $post['last_name'];
+        $insertArray['email_address'] = $post['email_address'];
+        $insertArray['is_store_admin'] = 0;
+        $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+        // add the admin
+        $this->db->insert(
+            'gusto_companies_admin',
+            $insertArray
+        );
+        //
+        return SendResponse(
+            200,
+            [
+                'success' => true
+            ]
+        );
+    }
+
+    /**
+     * Create admin
+     *
+     * @return
+     */
+    public function createSignatory()
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // validation
+
+        $this->form_validation->set_rules(
+            'first_name',
+            'First Name',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'last_name',
+            'Last Name',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'ssn',
+            'Social Security Number',
+            'trim|xss_clean|required|exact_length[9]'
+        );
+        $this->form_validation->set_rules(
+            'email',
+            'Email',
+            'trim|xss_clean|required|valid_email'
+        );
+        $this->form_validation->set_rules(
+            'title',
+            'Title',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'birthday',
+            'Birthday',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'street1',
+            'Street 1',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'city',
+            'City',
+            'trim|xss_clean|required'
+        );
+        $this->form_validation->set_rules(
+            'state',
+            'State',
+            'trim|xss_clean|required|min_length[2]|max_length[3]'
+        );
+        $this->form_validation->set_rules(
+            'zip',
+            'Zip',
+            'trim|xss_clean|required|min_length[5]'
+        );
+        // validate
+        if ($this->form_validation->run() === false) {
+            //
+            $errors = explode("\n", validation_errors(' ', ' '));
+            //
+            unset($errors[count($errors) - 1]);
+            //
+            return SendResponse(
+                400,
+                [
+                    'errors' => $errors
+                ]
+            );
+        }
+        // get post
+        $post = $this->input->post(null, true);
+        // check if admin all ready created
+        if ($this->db->where([
+            'company_sid' =>  $session['company_detail']['sid']
+        ])->count_all_results('gusto_companies_signatories')) {
+            //
+            return SendResponse(
+                400,
+                [
+                    'errors' => ['"Signatory" already exists.']
+                ]
+            );
+        }
+        // get the company
+        $companyDetails = $this->payroll_model
+            ->getCompanyDetailsForGusto($session['company_detail']['sid']);
+        // set request
+        $request = [];
+        $request['first_name'] = $post['first_name'];
+        $request['last_name'] = $post['last_name'];
+        $request['middle_initial'] = $post['middle_initial'][0];
+        $request['ssn'] = $post['ssn'];
+        $request['email'] = $post['email'];
+        $request['title'] = $post['title'];
+        $request['phone'] = $post['phone'];
+        $request['birthday'] = formatDateToDB($post['birthday'], SITE_DATE, DB_DATE);
+        $request['home_address']['street_1'] = $post['street1'];
+        $request['home_address']['street_2'] = $post['street2'];
+        $request['home_address']['city'] = $post['city'];
+        $request['home_address']['state'] = $post['state'];
+        $request['home_address']['zip'] = $post['zip'];
+        // make call
+        $gustoResponse = gustoCall(
+            'createSignatory',
+            $companyDetails,
+            $request,
+            "POST"
+        );
+
+        // check for errors
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            // block the iteration
+            return SendResponse(400, $errors);
+        }
+        // add the admin to store
+        $insertArray = $request;
+        $insertArray['street_1'] = $request['home_address']['street_1'];
+        $insertArray['street_2'] = $request['home_address']['street_2'];
+        $insertArray['city'] = $request['home_address']['city'];
+        $insertArray['state'] = $request['home_address']['state'];
+        $insertArray['zip'] = $request['home_address']['zip'];
+        $insertArray['company_sid'] = $session['company_detail']['sid'];
+        $insertArray['gusto_uuid'] = $gustoResponse['uuid'];
+        $insertArray['gusto_version'] = $gustoResponse['version'];
+        $insertArray['identity_verification_status'] = $gustoResponse['identity_verification_status'];
+        $insertArray['created_at'] = $insertArray['updated_at'] = getSystemDate();
+        //
+        unset($insertArray['home_address']);
+        // add the admin
+        $this->db->insert(
+            'gusto_companies_signatories',
+            $insertArray
+        );
+        //
+        return SendResponse(
+            200,
+            [
+                'success' => true
+            ]
+        );
+    }
+
+    /**
+     * Sync company
+     *
+     * @return
+     */
+    public function syncCompanyWithGusto()
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        $this->payroll_model->syncCompanyWithGusto(
+            $session['company_detail']['sid']
+        );
     }
 
     /**
@@ -285,5 +707,23 @@ class Payroll extends CI_Controller
         }
         //
         return SendResponse(200, ['success' => true]);
+    }
+
+    /**
+     * generate error based on session
+     *
+     * @param mixed $session
+     * @return
+     */
+    private function checkSessionStatus($session)
+    {
+        if (!$session) {
+            return SendResponse(
+                401,
+                [
+                    'errors' => ['Access denied. Please login to access this route']
+                ]
+            );
+        }
     }
 }

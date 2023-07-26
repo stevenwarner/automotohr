@@ -1,3 +1,16 @@
+<?php
+$sideBarUrls = [
+    'admins' => [
+        'payrolls/admins',
+        'payrolls/admins/add',
+    ],
+    'signatories' => [
+        'payrolls/signatories',
+        'payrolls/signatories/add',
+    ],
+]
+?>
+
 <div class="dashboard-menu">
     <ul>
         <li>
@@ -14,20 +27,25 @@
             </a>
         </li>
         <?php if (isPayrollAuthorizePerson($loggedInPerson['email'])) : ?>
-            <!-- Manage Admins -->
-            <li>
-                <a href="javascript:void(0);" class="jsPayrollManageAdmins">
-                    <figure><i class="fa fa-users"></i></figure>Manage Admins
-                </a>
-            </li>
-            <!-- Manage Signatories -->
-            <li>
-                <a href="javascript:void(0);" class="jsPayrollManageSignatory">
-                    <figure><i class=" fa fa-pencil-square"></i></figure>Manage Signatories
-                </a>
-            </li>
-        <?php endif; ?>
-        <?php if ($canRunPayroll) : ?>
+            <?php if (isPayrollOrPlus()) : ?>
+                <!-- Manage Admins -->
+                <li>
+                    <a <?php if (in_array(uri_string(), $sideBarUrls['admins'])) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('payrolls/admins'); ?>">
+                        <figure><i class="fa fa-users"></i></figure>Manage Admins
+                    </a>
+                </li>
+                <!-- Manage Signatories -->
+                <li>
+                    <a <?php if (in_array(uri_string(), $sideBarUrls['signatories'])) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('payrolls/signatories'); ?>">
+                        <figure><i class="fa fa-pencil-square"></i></figure>Manage Signatories
+                    </a>
+                </li>
+            <?php endif; ?>
+
             <!-- Regular -->
             <li>
                 <a <?php if (uri_string() === 'payrolls/regular') {
@@ -46,14 +64,14 @@
                 </a>
             </li>
 
-            <!-- Pay stubs -->
-            <li>
-                <a <?php if (uri_string() === 'payrolls/pay_stubs') {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
-                    <figure><i class="fa fa-money"></i></figure>My Pay Stubs
-                </a>
-            </li>
         <?php endif; ?>
+        <!-- Pay stubs -->
+        <li>
+            <a <?php if (uri_string() === 'payrolls/pay_stubs') {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
+                <figure><i class="fa fa-money"></i></figure>My Pay Stubs
+            </a>
+        </li>
     </ul>
 </div>

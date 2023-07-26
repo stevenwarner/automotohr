@@ -21,12 +21,18 @@
                             </div>
                         </div>
                     </div>
+
+                    <?php $this->load->view('loader_new', ['id' => 'jsDashboard']); ?>
                     <!-- Content area -->
                     <div class="row">
                         <div class="col-sm-12 col-md-12 text-right">
-                            <button class="btn btn-success csF16" title="Sync data" placement="top">
+                            <button class="btn btn-success jsVerifyBankAccount csF16" title="Verify bank account" placement="top">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
-                                Sync
+                                Verify
+                            </button>
+                            <button class="btn btn-success jsSyncCompanyData csF16" title="Sync data" placement="top">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                <span>Sync</span>
                             </button>
                         </div>
                     </div>

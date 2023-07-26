@@ -1656,3 +1656,13 @@ $route['payroll/cpc/(:num)/(:num)'] = 'v1/Payroll/getCreatePartnerCompanyPage/$1
 $route['payrolls/agreement/(:num)']['get'] = 'v1/Payroll/getCompanyAgreement/$1';
 $route['payrolls/agreement/(:num)']['post'] = 'v1/Payroll/signCompanyAgreement/$1';
 $route['payrolls/dashboard']['get'] = 'v1/Payroll/dashboard';
+// admin routes
+$route['payrolls/admins']['get'] = 'v1/Payroll/manageAdmins';
+$route['payrolls/admins/add']['get'] = 'v1/Payroll/manageAddAdmin';
+$route['payrolls/admin/create']['post'] = 'v1/Payroll/createAdmin';
+// signatories routes
+$route['payrolls/signatories']['get'] = 'v1/Payroll/manageSignatories';
+$route['payrolls/signatories/create']['get'] = 'v1/Payroll/createSignatoriesPage';
+$route['payrolls/signatories/create']['post'] = 'v1/Payroll/createSignatory';
+// sync with Gusto
+$route['payrolls/company/sync']['get'] = 'v1/Payroll/syncCompanyWithGusto';
