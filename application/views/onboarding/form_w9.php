@@ -64,7 +64,11 @@
                         <div class="" style="margin-top: 10px">
                             <iframe src="<?=AWS_S3_BUCKET_URL.$pre_form['uploaded_file'];?>?embedded=true" style="width: 100%; height: 80rem;"></iframe>
                         </div>
-                    <?php }else{?>
+                    <?php }else{
+                        
+                        $pre_form = syncW9Data($pre_form['user_sid'], $pre_form);
+
+                        ?>
                     <form id="w9-form" action="<?php echo current_url()?>" method="post">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

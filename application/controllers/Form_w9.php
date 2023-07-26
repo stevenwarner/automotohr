@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Form_w9 extends Public_Controller
 {
@@ -195,7 +195,7 @@ class Form_w9 extends Public_Controller
 
             if ($this->form_validation->run() == FALSE) {
                 $this->load->view('main/header', $data);
-                if(isset($previous_form['manual'])) $this->load->view('form_w9/index_upload');
+                if (isset($previous_form['manual'])) $this->load->view('form_w9/index_upload');
                 else $this->load->view('form_w9/index');
                 $this->load->view('main/footer');
             } else {
@@ -266,13 +266,20 @@ class Form_w9 extends Public_Controller
                 $data_to_update['signature_user_agent'] = $signature_user_agent;
                 $data_to_update['company_sid'] = $company_sid;
                 $data_to_update['employee_sid'] = $employer_sid;
+
                 //
+                syncW9DataChanges(
+                    $employer_sid,
+                    $data_to_update,
+                    $type
+                );
+
                 $this->form_wi9_model->update_form('w9', $type, $employer_sid, $data_to_update);
                 //
-                $w9_sid = getVerificationDocumentSid ($employer_sid, $type, 'w9');
+                $w9_sid = getVerificationDocumentSid($employer_sid, $type, 'w9');
                 keepTrackVerificationDocument($employer_sid, $type, 'completed', $w9_sid, 'w9', 'Blue Panel');
                 //
-                if($type != 'applicant' && $this->input->post('user_consent') == 1){
+                if ($type != 'applicant' && $this->input->post('user_consent') == 1) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,
@@ -291,13 +298,13 @@ class Form_w9 extends Public_Controller
                 $this->session->set_flashdata('message', '<strong>Success: </strong> Request Submitted Successfully!');
                 redirect('form_w9', 'refresh');
             }
-
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function upload_signed_form(){
+    public function upload_signed_form()
+    {
         $user_sid = $this->input->post('user_sid');
         $current_url = $this->input->post('current_url');
         $sid = $this->input->post('form_sid');
@@ -306,21 +313,21 @@ class Form_w9 extends Public_Controller
         $employer_sid = $data['session']['employer_detail']['sid'];
         $company_sid = $data['session']['company_detail']['sid'];
 
-        if($_SERVER['HTTP_HOST']=='localhost'){
-//            $aws_file_name = '0003-d_6-1542874444-39O.jpg';
-//            $aws_file_name = '0057-testing_uploaded_doc-58-AAH.docx';
+        if ($_SERVER['HTTP_HOST'] == 'localhost') {
+            //            $aws_file_name = '0003-d_6-1542874444-39O.jpg';
+            //            $aws_file_name = '0057-testing_uploaded_doc-58-AAH.docx';
             $aws_file_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
         } else {
-            $aws_file_name = upload_file_to_aws('upload_file', $company_sid, 'W9form_'.$user_sid , time());
+            $aws_file_name = upload_file_to_aws('upload_file', $company_sid, 'W9form_' . $user_sid, time());
         }
 
         $uploaded_file = '';
 
         if ($aws_file_name != 'error') {
             $uploaded_file = $aws_file_name;
-        } else{
+        } else {
             $this->session->set_flashdata('message', '<b>Error:</b> There is some problem in uploading form.');
-            redirect($current_url,'refresh');
+            redirect($current_url, 'refresh');
         }
 
         $upload_form_array = array();
@@ -329,13 +336,13 @@ class Form_w9 extends Public_Controller
         $upload_form_array['uploaded_file'] = $uploaded_file;
         $upload_form_array['signature_timestamp'] = date('Y-m-d H:i:s');
 
-        $this->form_wi9_model->do_manual_upload_form($sid,$upload_form_array,'w9');
+        $this->form_wi9_model->do_manual_upload_form($sid, $upload_form_array, 'w9');
         $this->session->set_flashdata('message', '<b>Success:</b> W9 Form Uploaded Successfully.');
-        redirect($current_url,'refresh');
-
+        redirect($current_url, 'refresh');
     }
 
-    public function print_w9_form ($type, $sid) {
+    public function print_w9_form($type, $sid)
+    {
 
         if ($this->session->userdata('logged_in')) {
 
@@ -343,7 +350,6 @@ class Form_w9 extends Public_Controller
             $data['pre_form'] = $previous_form;
 
             $this->load->view('form_w9/print_w9_pdf', $data);
-
         } else {
             redirect('login', "refresh");
         }
@@ -365,7 +371,8 @@ class Form_w9 extends Public_Controller
         }
     }
 
-    public function download_w9form ($type, $sid) {
+    public function download_w9form($type, $sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-9';
 

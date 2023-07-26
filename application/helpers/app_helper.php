@@ -839,7 +839,7 @@ if (!function_exists('syncW4Data')) {
             $formData['ss_number'] = $userData['ssn'];
         }
         if ($formData['home_address'] == null || $formData['home_address'] == '') {
-            $pre_form['home_address'] = $userData['Location_Address'];
+            $formData['home_address'] = $userData['Location_Address'];
         }
         if ($formData['zip'] == null || $formData['zip'] == '') {
             $formData['zip'] = $userData['Location_ZipCode'];
@@ -906,16 +906,18 @@ if (!function_exists('syncW4DataChanges')) {
         $newCompareData['first_name'] = $dataToInsert['first_name'];
         $newCompareData['middle_name'] = $dataToInsert['middle_name'];
         $newCompareData['last_name'] = $dataToInsert['last_name'];
-        $newCompareData['Location_Address'] = $dataToInsert['Location_Address'];
-        $newCompareData['Location_City'] = $dataToInsert['Location_City'];
-        $newCompareData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
-        $newCompareData['Location_State'] = $dataToInsert['Location_State'];
         $newCompareData['ssn'] = $dataToInsert['ssn'];
         $newCompareData['marital_status'] = $dataToInsert['marital_status'];
 
         // Old Data
         $oldCompareData = [];
         if ($userType == 'employee') {
+
+            $newCompareData['Location_Address'] = $dataToInsert['Location_Address'];
+            $newCompareData['Location_City'] = $dataToInsert['Location_City'];
+            $newCompareData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+            $newCompareData['Location_State'] = $dataToInsert['Location_State'];
+
             $oldCompareData['first_name'] = $employeeDetail['first_name'];
             $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
             $oldCompareData['last_name'] = $employeeDetail['last_name'];
@@ -928,13 +930,19 @@ if (!function_exists('syncW4DataChanges')) {
 
         //
         if ($userType == 'applicant') {
+
+            $newCompareData['address'] = $dataToInsert['address'];
+            $newCompareData['city'] = $dataToInsert['city'];
+            $newCompareData['zipcode'] = $dataToInsert['zipcode'];
+            $newCompareData['state'] = $dataToInsert['state'];
+
             $oldCompareData['first_name'] = $employeeDetail['first_name'];
             $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
             $oldCompareData['last_name'] = $employeeDetail['last_name'];
-            $oldCompareData['Location_Address'] = $employeeDetail['address'];
-            $oldCompareData['Location_City'] = $employeeDetail['city'];
-            $oldCompareData['Location_ZipCode'] = $employeeDetail['zipcode'];
-            $oldCompareData['Location_State'] = $employeeDetail['state'];
+            $oldCompareData['address'] = $employeeDetail['address'];
+            $oldCompareData['city'] = $employeeDetail['city'];
+            $oldCompareData['zipcode'] = $employeeDetail['zipcode'];
+            $oldCompareData['state'] = $employeeDetail['state'];
             $oldCompareData['ssn'] = $employeeDetail['ssn'];
         }
 
@@ -1060,6 +1068,165 @@ if (!function_exists('syncW9Data')) {
 
         if ($formData['w9_city_state_zip'] == null || $formData['w9_city_state_zip'] == '') {
             $formData['w9_city_state_zip'] = $userData['w9_city_state_zip'];
+        }
+
+        return $formData;
+    }
+}
+
+//
+if (!function_exists('syncW9DataChanges')) {
+
+    function syncW9DataChanges(
+        $employeeId,
+        $dataToInsert,
+        $userType
+    ) {
+          
+         //
+         if ($userType== 'employee') {
+            $tableName = 'users';
+            $fields = "first_name,last_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state";
+        }
+        //
+        if ($userType == 'applicant') {
+            $fields = "first_name,last_name,middle_name,ssn,address,city,zipcode,state";
+            $tableName = 'portal_job_applications';
+        }
+
+        // get CI instance
+        $CI = &get_instance();
+        $employeeDetail = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get($tableName)
+            ->row_array();
+        //
+
+        $newCompareData = [];
+
+        $newCompareData['ssn'] = $dataToInsert['w9_social_security_number'];
+      
+        // Old Data
+        $oldCompareData = [];
+        if ($userType == 'employee') {
+            $newCompareData['Location_Address'] = $dataToInsert['w9_address'];
+
+            $oldCompareData['Location_Address'] = $employeeDetail['Location_Address'];
+            $oldCompareData['ssn'] = $employeeDetail['ssn'];
+        }
+
+        //
+        if ($userType == 'applicant') {
+            $newCompareData['address'] = $dataToInsert['w9_address'];
+
+            $oldCompareData['address'] = $employeeDetail['address'];
+            $oldCompareData['ssn'] = $employeeDetail['ssn'];
+        }
+
+        $difference = findDifferenceData($oldCompareData, $newCompareData);
+
+        //
+        if ($difference['profile_changed'] == 0) {
+            return false;
+        }
+        //
+        $data_array = [];
+        foreach ($difference['data'] as $key => $val) {
+            $data_array[$key] = $val['new'];
+        }
+
+        //Update to user
+        if ($userType == 'employee') {
+            $CI->db->where('sid', $employeeId);
+            $CI->db->update('users', $data_array);
+
+            //Insert To Log 
+            $employerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
+
+            $CI->db->insert('profile_history', [
+                'user_sid' => $employeeId,
+                'employer_sid' => $employerId,
+                'profile_data' => json_encode($difference['data']),
+                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'change_from' => 'w9'
+            ]);
+        }
+
+        //Update to Applicant
+        if ($userType == 'applicant') {
+            $CI->db->where('sid', $employeeId);
+            $CI->db->update('portal_job_applications', $data_array);
+        }
+    }
+}
+
+//
+if (!function_exists('syncI9Data')) {
+
+    function syncI9Data($employeeId, $formData)
+    {
+
+        //
+        if ($formData['user_type'] == 'employee') {
+            $tableName = 'users';
+            $fields = "first_name,last_name,middle_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state,dob,email";
+        }
+        //
+        if ($formData['user_type'] == 'applicant') {
+            $fields = "first_name,last_name,middle_name,ssn,address,city,zipcode,state,dob,email";
+            $tableName = 'portal_job_applications';
+        }
+
+        // get CI instance
+        $CI = &get_instance();
+        $userData = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get($tableName)
+            ->row_array();
+
+        if ($formData['user_type'] == 'applicant') {
+            $userData['Location_Address'] = $userData['address'];
+            $userData['Location_City'] = $userData['city'];
+            $userData['Location_ZipCode'] = $userData['zipcode'];
+            $userData['Location_state'] = $userData['state'];
+        }
+
+        //
+        if ($formData['section1_first_name'] == null || $formData['section1_first_name'] == '') {
+            $formData['section1_first_name'] = $userData['first_name'];
+        }
+        if ($formData['section1_last_name'] == null || $formData['section1_last_name'] == '') {
+            $formData['section1_last_name'] = $userData['last_name'];
+        }
+
+        if ($formData['section1_middle_initial'] == null || $formData['section1_middle_initial'] == '') {
+            $formData['section1_middle_initial'] = $userData['middle_name'];
+        }
+        if ($formData['section1_social_security_number'] == null || $formData['section1_social_security_number'] == '') {
+            $formData['section1_social_security_number'] = $userData['ssn'];
+        }
+        if ($formData['section1_address'] == null || $formData['section1_address'] == '') {
+            $formData['section1_address'] = $userData['Location_Address'];
+        }
+        if ($formData['section1_zip_code'] == null || $formData['section1_zip_code'] == '') {
+            $formData['section1_zip_code'] = $userData['Location_ZipCode'];
+        }
+        if ($formData['section1_city_town'] == null || $formData['section1_city_town'] == '') {
+            $formData['section1_city_town'] = $userData['Location_City'];
+        }
+
+        if ($formData['section1_state'] == null || $formData['section1_state'] == '') {
+            if (!empty($userData['Location_state'])) {
+                $formData['section1_state'] = db_get_state_name_only($userData['Location_state']);
+            };
+        }
+        
+        if ($formData['section1_emp_email_address'] == null || $formData['section1_emp_email_address'] == '') {
+            $formData['section1_emp_email_address'] = $userData['email'];
+        }
+
+        if ($formData['section1_date_of_birth'] == null || $formData['section1_date_of_birth'] == '') {
+            $formData['section1_date_of_birth'] = $userData['dob'];
         }
 
         return $formData;

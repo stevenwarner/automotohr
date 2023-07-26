@@ -8796,6 +8796,13 @@ class Onboarding extends CI_Controller
                         unset($formpost['w9_llc_federaltax_description']);
                         unset($formpost['w9_other_federaltax_description']);
                         unset($formpost['submit']);
+                     
+                        //
+                        syncW9DataChanges(
+                            $applicant_sid,
+                            $formpost,
+                            'applicant'
+                        );
                         //
                         $this->form_wi9_model->update_form('w9', 'applicant', $applicant_sid, $formpost);
                         //
