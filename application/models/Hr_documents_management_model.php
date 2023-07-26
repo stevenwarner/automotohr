@@ -2117,14 +2117,14 @@ class Hr_documents_management_model extends CI_Model
                         $generalDocuments
                     );
 
-                    $other_employees[$other_key]['Documents'] = array_merge(
-                        $other_employees[$other_key]['Documents'],
-                        $generalDocuments
-                    );
-
+                    
                     if ($pending_w4 == 0 && $pending_w9 == 0 && $pending_i9 == 0 && count($generalDocuments) == 0) {
                         unset($employee_sids[$emp_key]);
                     } else {
+                        $other_employees[$other_key]['Documents'] = array_merge(
+                            $other_employees[$other_key]['Documents'],
+                            $generalDocuments
+                        );
                         $r[$other_employee['sid']]['Documents'] = $other_employees[$other_key]['Documents'];
                     }
                 }
