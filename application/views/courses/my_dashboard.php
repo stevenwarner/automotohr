@@ -43,7 +43,7 @@
                                 <div class="col-xs-12 col-md-3">
                                     <div class="thumbnail black-block ">
                                         <div class="caption">
-                                            <h3>55</h3>
+                                            <h3 id="jsAssignedCount">0</h3>
                                             <h4><strong>Assigned</strong></h4>
                                         </div>
                                     </div>
@@ -52,7 +52,7 @@
                                 <div class="col-xs-12 col-md-3">
                                     <div class="thumbnail csPendingBlock">
                                         <div class="caption">
-                                            <h3>66</h3>
+                                            <h3 id="jsPendingCount">0</h3>
                                             <h4><strong>Pending</strong></h4>
                                         </div>
                                     </div>
@@ -61,7 +61,7 @@
                                 <div class="col-xs-12 col-md-3">
                                     <div class="thumbnail success-block">
                                         <div class="caption">
-                                            <h3>5</h3>
+                                            <h3 id="jsCompletedCount">0</h3>
                                             <h4><strong>Completed</strong></h4>
                                         </div>
                                     </div>
@@ -70,7 +70,7 @@
                                 <div class="col-xs-12 col-md-3">
                                     <div class="thumbnail error-block">
                                         <div class="caption">
-                                            <h3>5</h3>
+                                            <h3 id="jsFailedCount">0</h3>
                                             <h4><strong>Failed</strong></h4>
                                         </div>
                                     </div>
@@ -85,142 +85,146 @@
                                 </div>    
                             </div>
 
-                            <article class="article-sec">
-                                <div class="row">
-                                    <div class="col-md-12 col-xs-12 text-right">
-                                    <span class="csF16 text-danger"><strong><i class="fa fa-ban" aria-hidden="true"></i> FAILED</strong></span>
-                                    </div>
-                                </div>
-                                <h1>
-                                    Discrimination for Employees
-                                </h1>
-                                <br>
-                                <div class="row">
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>
-                                        <p>5/2/2023</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>DUE DATE</strong></p>
-                                        <p>5/2/2023</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>STATUS</strong></p>
-                                        <p>Past Due</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
-                                        <p>puma pu</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>
-                                        <p>15 min / 15 min</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>STARTED DATE </strong></p>
-                                        <p>5/2/2023</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>LANGUAGE</strong></p>
-                                        <select name="" id="" class="form-control">
-                                            <option value="eng">English</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12 text-right">
-                                        <p>&nbsp;</p>
-                                        <button class="btn btn-info csRadius5 csF16" onclick="">Launch Content</button>
-                                    </div>
-                                </div>
-                            </article>
+                            <div id="jsMyAssignedCourses"></div>
 
-                            <article class="article-sec">
-                                <div class="row">
-                                    <div class="col-md-12 col-xs-12 text-right">
-                                        <span class="csF16 text-success"><strong><i class="fa fa-trophy" aria-hidden="true"></i> PASSED</strong></span>
+                            <div style="display: none;">
+                                <article class="article-sec">
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12 text-right">
+                                        <span class="csF16 text-danger"><strong><i class="fa fa-ban" aria-hidden="true"></i> FAILED</strong></span>
+                                        </div>
                                     </div>
-                                </div>
-                                <br>
-                                <h1>Discrimination for Employees</h1>
-                                <div class="row">
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>
-                                        <p>5/2/2023</p>
+                                    <h1>
+                                        Discrimination for Employees
+                                    </h1>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>DUE DATE</strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>STATUS</strong></p>
+                                            <p>Past Due</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
+                                            <p>puma pu</p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>DUE DATE</strong></p>
-                                        <p>5/2/2023</p>
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>
+                                            <p>15 min / 15 min</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>STARTED DATE </strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>LANGUAGE</strong></p>
+                                            <select name="" id="" class="form-control">
+                                                <option value="eng">English</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12 text-right">
+                                            <p>&nbsp;</p>
+                                            <button class="btn btn-info csRadius5 csF16" onclick="">Launch Content</button>
+                                        </div>
                                     </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>STATUS</strong></p>
-                                        <p>Past Due</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
-                                        <p>puma pu</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>
-                                        <p>15 min / 15 min</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>STARTED DATE </strong></p>
-                                        <p>5/2/2023</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>LANGUAGE</strong></p>
-                                        <p>English</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12 text-right">
-                                        <p></p>
-                                        <button class="btn btn-info csRadius5 csF16" onclick="">Launch Content</button>
-                                    </div>
-                                </div>
-                            </article>
+                                </article>
 
-                            <article class="article-sec">
-                                <h1>Discrimination for Employees</h1>
+                                <article class="article-sec">
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12 text-right">
+                                            <span class="csF16 text-success"><strong><i class="fa fa-trophy" aria-hidden="true"></i> PASSED</strong></span>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <h1>Discrimination for Employees</h1>
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>DUE DATE</strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>STATUS</strong></p>
+                                            <p>Past Due</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
+                                            <p>puma pu</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>
+                                            <p>15 min / 15 min</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>STARTED DATE </strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>LANGUAGE</strong></p>
+                                            <p>English</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12 text-right">
+                                            <p></p>
+                                            <button class="btn btn-info csRadius5 csF16" onclick="">Launch Content</button>
+                                        </div>
+                                    </div>
+                                </article>
 
-                                <div class="row">
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>
-                                        <p>5/2/2023</p>
+                                <article class="article-sec">
+                                    <h1>Discrimination for Employees</h1>
+
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>DUE DATE</strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>STATUS</strong></p>
+                                            <p>Past Due</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
+                                            <p>puma pu</p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>DUE DATE</strong></p>
-                                        <p>5/2/2023</p>
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>
+                                            <p>15 min / 15 min</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>STARTED DATE </strong></p>
+                                            <p>5/2/2023</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <p class="csColumSection"><strong>LANGUAGE</strong></p>
+                                            <p>English</p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12 text-right">
+                                            <p></p>
+                                            <button class="btn btn-info csRadius5 csF16" onclick="">Launch Content</button>
+                                        </div>
                                     </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>STATUS</strong></p>
-                                        <p>Past Due</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>ASSIGNED TO</strong></p>
-                                        <p>puma pu</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>
-                                        <p>15 min / 15 min</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>STARTED DATE </strong></p>
-                                        <p>5/2/2023</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12">
-                                        <p class="csColumSection"><strong>LANGUAGE</strong></p>
-                                        <p>English</p>
-                                    </div>
-                                    <div class="col-md-3 col-xs-12 text-right">
-                                        <p></p>
-                                        <button class="btn btn-info csRadius5 csF16" onclick="">Launch Content</button>
-                                    </div>
-                                </div>
-                            </article>
+                                </article>
+                            </div>    
                         </div>
                     </div>
                 </div>

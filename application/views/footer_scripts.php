@@ -1,3 +1,4 @@
+<?php $session = $this->session->userdata('logged_in'); ?>
 <script type="text/javascript" src="<?= base_url('assets/js/moment.min.js'); ?>"></script>
 <script type="text/javascript" src="<?= base_url(_m('assets/js/uri', 'js', '1.0.1')); ?>"></script>
 <script type="text/javascript" src="<?= base_url(_m('assets/js/common', 'js', '1.0.2')); ?>"></script>
@@ -7,6 +8,7 @@
 <?php if ($this->session->userdata('logged_in')) : ?>
     <script>
         companyId = <?= $session['company_detail']['sid'] ?>;
+        employeeId = <?= $session['employer_detail']['sid'] ?>;
         /**
          * Set base url
          * @type {string}

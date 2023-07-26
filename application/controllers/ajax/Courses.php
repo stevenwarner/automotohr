@@ -42,19 +42,12 @@ class Courses extends Public_Controller
             ['1.0.1', '2022/css/main']
         ];
          // load JS
-        $data['PageScripts'] = [
+         $this->data['PageScripts'] = [
             ['1.0', 'js/app_helper'],
             ['1.0.0', 'v1/common'],
+            ['1.0.1', 'v1/lms/main'],
             ['1.0', 'v1/lms/assign_employee_courses'],
         ];
-        //
-        // get access token
-        $data['apiAccessToken'] = getApiAccessToken(
-            $company_sid,
-            $employeeId
-        );
-        //
-        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         //
         $this->load
         ->view('main/header_2022', $data)
