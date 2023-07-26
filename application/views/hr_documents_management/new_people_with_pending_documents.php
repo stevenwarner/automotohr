@@ -213,9 +213,12 @@
                                                         return $a['AssignedOn'] < $b['AssignedOn'];
                                                     }
                                                     foreach ($employees as $employee) {
-                                                        $icount = sizeof($employee['Documents']);
+                                                        $icount = count($employee['Documents']);
+                                                        if (!$icount) {
+                                                            continue;
+                                                        }
                                                         $itext = '';
-                                                        if(sizeof($employee['Documents'])){
+                                                        if(count($employee['Documents'])){
                                                             //
                                                             usort($employee['Documents'], 'dateSorter');
                                                             foreach ($employee['Documents'] as $ke => $v) {
