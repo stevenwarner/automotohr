@@ -63,7 +63,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (!empty($assigned_documents)) { ?>
+                                    <?php if (!empty($assigned_documents)) { 
+                                        ?>
                                         <?php $assigned_documents = array_reverse($assigned_documents);  ?>
                                         <?php foreach ($assigned_documents as $document) { ?>
                                             <?php if (!in_array($document['sid'], $payroll_documents_sids)) { ?>

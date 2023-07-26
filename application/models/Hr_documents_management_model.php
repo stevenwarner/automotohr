@@ -1852,6 +1852,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_type', 'employee');
         $this->db->group_by('user_sid');
         //
+       // _e($employeeList);
         if ($employeeList != 'all') $this->db->where_in('user_sid', explode(':', $employeeList));
         //
         if ($documentList != 'all') $this->db->where_in('document_sid', explode(':', $documentList));
@@ -1860,123 +1861,117 @@ class Hr_documents_management_model extends CI_Model
 
         $r = [];
 
+      //  _e($employee_sids);
+
         foreach ($employee_sids as $emp_key => $employee) {
 
             $employee_sid = $employee['user_sid'];
+
             $employee_sids[$emp_key]['Documents'] = array();
             $assigned_documents = $this->get_employee_assigned_documents($company_sid, 'employee', $employee_sid);
+           // _e($assigned_documents);
 
             foreach ($assigned_documents as $document_key => $assigned_document) {
                 //
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
 
-                if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['offer_letter_type'] == 'generated' || $assigned_document['offer_letter_type'] == 'hybrid_document' || $assigned_document['document_type'] == 'hybrid_document')) {
+                // if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['offer_letter_type'] == 'generated' || $assigned_document['offer_letter_type'] == 'hybrid_document' || $assigned_document['document_type'] == 'hybrid_document')) {
+                if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
+
                     $document_body = $assigned_document['document_description'];
-                    $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    //$magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+
+                    $magic_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_codes, '', $document_body) != $document_body) {
                         $is_magic_tag_exist = 1;
                     }
                 }
 
-                if ($assigned_document['approval_process'] == 0) {
-                    if ($assigned_document['document_type'] != 'offer_letter') {
-                        if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
+                //  if ($assigned_document['approval_process'] == 0) {
+                if ($assigned_document['document_type'] != 'offer_letter') {
 
-                            if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
-                                if ($is_magic_tag_exist == 1) {
-                                    if ($assigned_document['uploaded'] == 1) {
-                                        $is_document_completed = 1;
-                                    } else {
-                                        $is_document_completed = 0;
-                                    }
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['acknowledgment_required'] == 1) {
-                                if ($assigned_document['acknowledged'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['download_required'] == 1) {
-                                if ($assigned_document['downloaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($is_magic_tag_exist == 1) {
-                                if ($assigned_document['user_consent'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            }
+                    if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist)) {
 
-                            if ($is_document_completed > 0) {
-                                unset($assigned_documents[$document_key]);
+                        if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
                             } else {
-                                $assigned_sids[] = $assigned_document['document_sid'];
-                                $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
-                                $now = time();
-                                $datediff = $now - strtotime($assigned_document['assigned_date']);
-                                $days = round($datediff / (60 * 60 * 24));
-
-                                $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+                                $is_document_completed = 0;
                             }
-                        } else {
-                            unset($assigned_documents[$document_key]);
+                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                            if ($is_magic_tag_exist == 1) {
+                                if ($assigned_document['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['acknowledgment_required'] == 1) {
+                            if ($assigned_document['acknowledged'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['download_required'] == 1) {
+                            if ($assigned_document['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['signature_required'] == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($is_magic_tag_exist == 1) {
+                            if ($assigned_document['user_consent'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
                         }
-                    } else {
-                        //
-                        if ($assigned_document['user_consent'] == 1) {
+
+                        if ($is_document_completed > 0) {
                             unset($assigned_documents[$document_key]);
                         } else {
                             $assigned_sids[] = $assigned_document['document_sid'];
                             $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
-                            //
                             $now = time();
                             $datediff = $now - strtotime($assigned_document['assigned_date']);
                             $days = round($datediff / (60 * 60 * 24));
-                            //
-                            $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+
+                            $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
                         }
+                    } else {
+                        unset($assigned_documents[$document_key]);
                     }
                 } else {
-                    unset($assigned_documents[$document_key]);
+                    //
                 }
             }
 
@@ -2060,7 +2055,9 @@ class Hr_documents_management_model extends CI_Model
             $this->db->where('parent_sid', $company_sid);
             $this->db->where('terminated_status', 0);
             $this->db->where('active', 1);
-            $this->db->where_not_in('sid', $ignore);
+            if (!empty($ignore)) {
+                $this->db->where_not_in('sid', $ignore);
+            }
 
             $record_obj = $this->db->get('users');
             $other_employees = [];
@@ -2112,8 +2109,20 @@ class Hr_documents_management_model extends CI_Model
                             'Days' => $i9_info['days']
                         );
                     }
+                    $generalDocuments = [];
+                    // Get General Documents
+                    $this->addGeneralDocuments(
+                        $company_sid,
+                        $other_employee['sid'],
+                        $generalDocuments
+                    );
 
-                    if ($pending_w4 == 0 && $pending_w9 == 0 && $pending_i9 == 0) {
+                    $other_employees[$other_key]['Documents'] = array_merge(
+                        $other_employees[$other_key]['Documents'],
+                        $generalDocuments
+                    );
+
+                    if ($pending_w4 == 0 && $pending_w9 == 0 && $pending_i9 == 0 && count($generalDocuments) == 0) {
                         unset($employee_sids[$emp_key]);
                     } else {
                         $r[$other_employee['sid']]['Documents'] = $other_employees[$other_key]['Documents'];
