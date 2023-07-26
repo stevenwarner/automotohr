@@ -120,7 +120,7 @@
             ?>
             </select>
         </div>
-    </div>https://www.youtube.com/watch?v=W3uXcV9m3G0
+    </div>
 
     <div class="row">
         <br />
