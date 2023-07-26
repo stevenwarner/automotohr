@@ -398,6 +398,12 @@ $(function editCourse() {
 			//
 			const updateCourseResponse = await updateCourseCall(courseObj);
 			//
+			if (courseObj.course_type === "scorm") {
+				await updateScormCourseCall(
+					courseObj.course_file
+				);
+			}
+			//
 			return alertify.alert(
 				"SUCCESS!",
 				updateCourseResponse.data,
@@ -415,6 +421,30 @@ $(function editCourse() {
 				CB
 			);
 		}
+	}
+
+	/**
+	 * Read Scorm manifest file and update Course
+	 *
+	 * @param {*} filePath
+	 * @returns
+	 */
+	function updateScormCourseCall(filePath) {
+		return new Promise(function (resolve, reject) {
+			const courseObj = {
+				scorm_file: filePath,
+			};
+			//
+			$.ajax({
+				url: baseURI + "lms/course/scorm/parse/" + courseCode,
+				method: "POST",
+				data: courseObj,
+			})
+				.success(resolve)
+				.fail(function (response) {
+					reject(response.responseJSON);
+				});
+		});
 	}
 
 	/**
@@ -580,6 +610,8 @@ $(function editCourse() {
 	 * @param {*} courseObj
 	 */
 	function setEditView(co) {
+		//
+		questionsArray = []
 		// set the title
 		$("#jsEditCourseTitleHeader").html(" - " + co.course_title);
 		$("#jsEditCourseTitle").val(co.course_title);
