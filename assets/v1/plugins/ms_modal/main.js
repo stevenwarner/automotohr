@@ -46,7 +46,7 @@
 		// save the header height
 		additionalHeight = $(`#${options.Id} .csModalHeader`).height() + 50;
 		// remove the modals
-		$(`#jsMsModal`).remove();
+		$(`.jsMsModal`).remove();
 		// remove specific modal
 		$(`#${options.Id}`).remove();
 		// append the modal to body
@@ -80,7 +80,7 @@
 					$("body").css("overflow-y", "auto");
 					//
 					$("#ui-datepicker-div").remove();
-					$(`#jsMsModal`).remove();
+					$(`.jsMsModal`).remove();
 				})
 				.set("labels", {
 					ok: "LEAVE",
@@ -92,6 +92,7 @@
 			$(e.target).closest(".csModal").fadeOut(300);
 			//
 			$("body").css("overflow-y", "auto");
+			$(`.jsMsModal`).remove();
 			//
 			$("#ui-datepicker-div").remove();
 		}
@@ -110,7 +111,7 @@
 		// when modal is set
 		if (modelId !== undefined) {
 			// always scroll to top when loader appear
-			if (document.getElementsByClassName("csModalBody").length){
+			if (document.getElementsByClassName("csModalBody").length) {
 				document.getElementsByClassName("csModalBody")[0].scrollTop = 0;
 			}
 		}

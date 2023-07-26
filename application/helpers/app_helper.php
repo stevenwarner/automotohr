@@ -616,21 +616,21 @@ if (!function_exists('getStaticFileVersion')) {
         // set files
         $files = [];
         // plugins
-        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
-        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
-        $files['v1/plugins/ms_recorder/main'] = ['js' => '2.0.1'];
+        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.1', 'js' => '2.0.1'];
+        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.1', 'js' => '2.0.1'];
+        $files['v1/plugins/ms_recorder/main'] = ['js' => '2.0.2'];
         // common files
-        $files['2022/js/jquery.datetimepicker'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        $files['2022/js/jquery.datetimepicker'] = ['css' => '2.0.1', 'js' => '2.0.1'];
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files
-        $files['v1/common'] = ['js' => '2.0.0'];
+        $files['v1/common'] = ['js' => '2.0.1'];
         $files['v1/lms/add_question'] = ['js' => '2.0.1'];
         $files['v1/lms/edit_question'] = ['js' => '2.0.1'];
-        $files['v1/lms/create_course'] = ['js' => '2.0.0'];
-        $files['v1/lms/edit_course'] = ['js' => '2.0.0'];
-        $files['v1/lms/main'] = ['js' => '2.0.0'];
-        $files['v1/lms/assign_company_courses'] = ['js' => '2.0.0'];
+        $files['v1/lms/create_course'] = ['js' => '2.0.1'];
+        $files['v1/lms/edit_course'] = ['js' => '2.0.1'];
+        $files['v1/lms/main'] = ['js' => '2.0.1'];
+        $files['v1/lms/assign_company_courses'] = ['js' => '2.0.1'];
         // check and return data
         return $files[$file] ?? [];
     }
