@@ -308,38 +308,34 @@ $(function editCourse() {
 				errorArray.push("Invalid YouTube / Vimeo link.");
 			}
 		} else {
-			
 			//
 			if (
-				courseObj.course_type === "scorm" &&
-				courseObj.course_file_name.match(/.zip$/) !== null
+				Object.keys(courseObj.course_file).length &&
+				courseObj.course_file.hasError
 			) {
-				isCourseTypeFile = true;
-			}
-			//
-			if (
-				courseObj.course_type === "manual" &&
-				courseObj.course_file_name.match(/.zip$/) === null
-			) {
-				isCourseTypeFile = true;
-			}
-			// if no file content is changed
-			if (
-				!Object.keys(courseObj.course_file).length &&
-				!isCourseTypeFile
-			) {
-				if (!Object.keys(courseObj.course_file).length) {
-					// only when a file is uploaded
-					// check for empty file
-					errorArray.push(
-						"Please upload the " +
-							(courseObj.course_type === "manual"
-								? "Course"
-								: "SCORM") +
-							" file."
-					);
-				} else if (courseObj.course_file.errorCode) {
-					errorArray.push(courseObj.course_file.errorCode);
+				// only when a file is uploaded
+				// check for empty file
+				errorArray.push(
+					"Please upload the " +
+						(courseObj.course_type === "manual"
+							? "Course"
+							: "SCORM") +
+						" file."
+				);
+			} else if (!Object.keys(courseObj.course_file).length) {
+				//
+				if (
+					courseObj.course_type === "scorm" &&
+					courseObj.course_file_name.match(/.zip/gi) === null
+				) {
+					errorArray.push("Please use the right SCORM file.");
+				}
+				//
+				if (
+					courseObj.course_type === "manual" &&
+					courseObj.course_file_name.match(/.zip/gi) !== null
+				) {
+					errorArray.push("Please use the right file.");
 				}
 			}
 		}
@@ -368,7 +364,6 @@ $(function editCourse() {
 			if (!isCourseTypeFile) {
 				// upload file
 				let response = await uploadFile(courseObj.course_file);
-				console.log(response)
 				// parse the JSON
 				response = JSON.parse(response);
 				// if file was not uploaded successfully
@@ -399,9 +394,7 @@ $(function editCourse() {
 			const updateCourseResponse = await updateCourseCall(courseObj);
 			//
 			if (courseObj.course_type === "scorm") {
-				await updateScormCourseCall(
-					courseObj.course_file
-				);
+				await updateScormCourseCall(courseObj.course_file);
 			}
 			//
 			return alertify.alert(
@@ -611,7 +604,7 @@ $(function editCourse() {
 	 */
 	function setEditView(co) {
 		//
-		questionsArray = []
+		questionsArray = [];
 		// set the title
 		$("#jsEditCourseTitleHeader").html(" - " + co.course_title);
 		$("#jsEditCourseTitle").val(co.course_title);

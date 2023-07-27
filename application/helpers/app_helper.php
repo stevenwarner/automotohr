@@ -628,7 +628,7 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/lms/add_question'] = ['js' => '2.0.1'];
         $files['v1/lms/edit_question'] = ['js' => '2.0.1'];
         $files['v1/lms/create_course'] = ['js' => '2.0.1'];
-        $files['v1/lms/edit_course'] = ['js' => '2.0.1'];
+        $files['v1/lms/edit_course'] = ['js' => '2.0.2'];
         $files['v1/lms/main'] = ['js' => '2.0.1'];
         $files['v1/lms/assign_company_courses'] = ['js' => '2.0.1'];
         // check and return data
