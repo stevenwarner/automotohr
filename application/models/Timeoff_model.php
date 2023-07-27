@@ -6694,4 +6694,25 @@ class Timeoff_model extends CI_Model
             'policy_sid' => $newPolicyId
         ]);
     }
+
+
+//
+    function getTimeoffRequestDate($policyId,$employeeId)
+    {
+        $this->db->select('sid,request_from_date,request_to_date');
+        $this->db->where('timeoff_policy_sid', $policyId);
+        $this->db->where('employee_sid', $employeeId);
+
+        $record_obj = $this->db->get('timeoff_requests');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+
 }

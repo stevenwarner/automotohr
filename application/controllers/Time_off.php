@@ -2989,8 +2989,6 @@ class Time_off extends Public_Controller
                 //
                 $employeeList = $post['Data'];
                 //
-                _e($employeeList, true, true);
-
                 if (empty($employeeList)) {
                     $this->res['Response'] = 'We are unable to process your request.';
                     $this->resp();
@@ -3002,6 +3000,9 @@ class Time_off extends Public_Controller
                     $employeeSid = $employee['employeeId'];
 
                     if ($newPolicy != null && $newPolicy != '' && $newPolicy != 0) {
+
+                        $oldRequestData = $this->timeoff_model->getTimeoffRequestDate($oldPolicy, $employeeSid);
+
                         $this->timeoff_model->updateEmployeeRequestPolicy($employeeSid, $oldPolicy, $newPolicy);
                         //
                         $in = [];
@@ -3013,6 +3014,13 @@ class Time_off extends Public_Controller
                         $note['title'] = $this->timeoff_model->getPolicyTitleById($oldPolicy);
                         $note['employee_sid'] = $employee['employeeId'];
                         $note['transferred'] = true;
+                        //
+                        if (!empty($oldRequestData)) {
+                            $note['request_sid'] = $oldRequestData['sid'];
+                            $note['request_from_date'] = $oldRequestData['request_from_date'];
+                            $note['request_to_date'] = $oldRequestData['request_to_date'];
+                        }
+
                         //
                         $in['note'] = json_encode($note);
                         //

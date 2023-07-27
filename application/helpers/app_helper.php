@@ -83,7 +83,10 @@ if (!function_exists('getPolicyDifference')) {
                     ->where('sid', $oldDataArray['employee_sid'])
                     ->get('users')
                     ->row_array();
-                $differenceArray['transferred']['new_value'] .= '<br/><br/><p><strong>' . (remakeEmployeeName($user)) . '</strong></p>';
+                if (!empty($oldDataArray['request_sid'])) {
+                    $differenceArray['transferred']['new_value'] .= '<br><br/><p><strong> Time off Request ID: ' . $oldDataArray['request_sid'] . '<br>Time off Period: ' . formatDateToDB($oldDataArray['request_from_date'], DB_DATE, DATE) . ' - ' . formatDateToDB($oldDataArray['request_to_date'], DB_DATE, DATE) . '</strong></p>';
+                }
+                $differenceArray['transferred']['new_value'] .= '<br/><p><strong>' . (remakeEmployeeName($user)) . '</strong></p>';
             }
 
             return $differenceArray;
