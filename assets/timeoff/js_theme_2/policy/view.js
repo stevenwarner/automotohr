@@ -307,11 +307,14 @@ $(function () {
 			var newPolicy = $(this).val();
 			//
 			if (newPolicy != PolicyID) {
-				employeesList.push({
-					employeeId: $(this).closest(".jsEmployeeRow").data("sid"),
-					oldPolicyId: PolicyID,
-					newPolicyId: newPolicy,
-				});
+				if (newPolicy != null && newPolicy != '' && newPolicy != '0') {
+					employeesList.push({
+						employeeId: $(this).closest(".jsEmployeeRow").data("sid"),
+						oldPolicyId: PolicyID,
+						newPolicyId: newPolicy,
+					});
+				}
+
 			}
 		});
 		//
@@ -614,7 +617,7 @@ $(function () {
 		$("#jsPolicyHistoryTable").html("");
 		//
 
-    	xhr = $.post(
+		xhr = $.post(
 			handlerURL,
 			Object.assign(callOBJ.ManagePolicy.Main, {
 				policyId: policyId,
@@ -752,10 +755,10 @@ $(function () {
 		rows += `            <div class="csBoxBalanceSection">`;
 		rows += `                <div class="col-sm-12">`;
 		rows += `                    <p><strong>${accruals.applicableDate === null ||
-				accruals.applicableDate == "" ||
-				accruals.applicableDate == 0
-				? "Joining Date"
-				: moment(accruals.applicableDate, "").format(timeoffDateFormat)
+			accruals.applicableDate == "" ||
+			accruals.applicableDate == 0
+			? "Joining Date"
+			: moment(accruals.applicableDate, "").format(timeoffDateFormat)
 			}</strong></p>`;
 		rows += `                    <p>Applicable Date</p>`;
 		rows += `                </div>`;

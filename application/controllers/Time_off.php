@@ -1155,19 +1155,19 @@ class Time_off extends Public_Controller
             $filter_policy = "all";
         }
 
-       
+
         //
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
-      
 
-         if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate']) ) {
+
+        if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate'])) {
             $start_date = '';
             $end_date  = '';
-         }
+        }
 
 
-         //
+        //
         $data['page'] = 'view';
         $data['title'] = 'Report::time-off';
         //
@@ -1227,7 +1227,7 @@ class Time_off extends Public_Controller
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
-        
+
         $data['filter_employees'] = $filter_employees;
         $data['filter_departments'] = $filter_departments;
         $data['filter_teams'] = $filter_teams;
@@ -2989,6 +2989,8 @@ class Time_off extends Public_Controller
                 //
                 $employeeList = $post['Data'];
                 //
+                _e($employeeList, true, true);
+
                 if (empty($employeeList)) {
                     $this->res['Response'] = 'We are unable to process your request.';
                     $this->resp();
@@ -2998,21 +3000,24 @@ class Time_off extends Public_Controller
                     $oldPolicy = $employee['oldPolicyId'];
                     $newPolicy = $employee['newPolicyId'];
                     $employeeSid = $employee['employeeId'];
-                    $this->timeoff_model->updateEmployeeRequestPolicy($employeeSid, $oldPolicy, $newPolicy);
-                    //
-                    $in = [];
-                    $in['policy_sid'] = $newPolicy;
-                    $in['employee_sid'] = $post['employerId'];
-                    $in['action'] = 'update';
-                    //
-                    $note = [];
-                    $note['title'] = $this->timeoff_model->getPolicyTitleById($oldPolicy);
-                    $note['employee_sid'] = $employee['employeeId'];
-                    $note['transferred'] = true;
-                    //
-                    $in['note'] = json_encode($note);
-                    //
-                    $this->timeoff_model->insertPolicyHistory($in);
+
+                    if ($newPolicy != null && $newPolicy != '' && $newPolicy != 0) {
+                        $this->timeoff_model->updateEmployeeRequestPolicy($employeeSid, $oldPolicy, $newPolicy);
+                        //
+                        $in = [];
+                        $in['policy_sid'] = $newPolicy;
+                        $in['employee_sid'] = $post['employerId'];
+                        $in['action'] = 'update';
+                        //
+                        $note = [];
+                        $note['title'] = $this->timeoff_model->getPolicyTitleById($oldPolicy);
+                        $note['employee_sid'] = $employee['employeeId'];
+                        $note['transferred'] = true;
+                        //
+                        $in['note'] = json_encode($note);
+                        //
+                        $this->timeoff_model->insertPolicyHistory($in);
+                    }
                 }
                 //
                 $this->res['Code'] = 'SUCCESS';
