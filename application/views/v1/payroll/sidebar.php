@@ -8,6 +8,9 @@ $sideBarUrls = [
         'payrolls/signatories',
         'payrolls/signatories/add',
     ],
+    'employees' => [
+        'payroll/employees',
+    ]
 ]
 ?>
 
@@ -26,45 +29,49 @@ $sideBarUrls = [
                 <figure><i class="fa fa-home"></i></figure>Payroll Dashboard
             </a>
         </li>
-        <?php if (isPayrollAuthorizePerson($loggedInPerson['email'])) : ?>
-            <?php if (isPayrollOrPlus()) : ?>
-                <!-- Manage Admins -->
-                <li>
-                    <a <?php if (in_array(uri_string(), $sideBarUrls['admins'])) {
-                            echo 'class="active"';
-                        } ?> href="<?php echo base_url('payrolls/admins'); ?>">
-                        <figure><i class="fa fa-users"></i></figure>Manage Admins
-                    </a>
-                </li>
-                <!-- Manage Signatories -->
-                <li>
-                    <a <?php if (in_array(uri_string(), $sideBarUrls['signatories'])) {
-                            echo 'class="active"';
-                        } ?> href="<?php echo base_url('payrolls/signatories'); ?>">
-                        <figure><i class="fa fa-pencil-square"></i></figure>Manage Signatories
-                    </a>
-                </li>
-            <?php endif; ?>
+        <!-- Manage Admins -->
+        <li>
+            <a <?php if (in_array(uri_string(), $sideBarUrls['admins'])) {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/admins'); ?>">
+                <figure><i class="fa fa-users"></i></figure>Manage Admins
+            </a>
+        </li>
+        <!-- Manage Signatories -->
+        <li>
+            <a <?php if (in_array(uri_string(), $sideBarUrls['signatories'])) {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/signatories'); ?>">
+                <figure><i class="fa fa-pencil-square"></i></figure>Manage Signatories
+            </a>
+        </li>
+        <!-- Manage Employees -->
+        <li>
+            <a <?php if (in_array(uri_string(), $sideBarUrls['employees'])) {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/employees'); ?>">
+                <figure><i class="fa fa-users"></i></figure>Manage Employees
+            </a>
+        </li>
 
-            <!-- Regular -->
-            <li>
-                <a <?php if (uri_string() === 'payrolls/regular') {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
-                    <figure><i class="fa fa-calendar"></i></figure>Regular Payroll
-                </a>
-            </li>
+        <!-- Regular -->
+        <li>
+            <a <?php if (uri_string() === 'payrolls/regular') {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
+                <figure><i class="fa fa-calendar"></i></figure>Regular Payroll
+            </a>
+        </li>
 
-            <!-- Off cycle -->
-            <li>
-                <a <?php if (uri_string() === 'payrolls/off_cycle') {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
-                    <figure><i class="fa fa-calculator"></i></figure>Off-Cycle Payroll
-                </a>
-            </li>
+        <!-- Off cycle -->
+        <li>
+            <a <?php if (uri_string() === 'payrolls/off_cycle') {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
+                <figure><i class="fa fa-calculator"></i></figure>Off-Cycle Payroll
+            </a>
+        </li>
 
-        <?php endif; ?>
         <!-- Pay stubs -->
         <li>
             <a <?php if (uri_string() === 'payrolls/pay_stubs') {

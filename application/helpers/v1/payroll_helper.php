@@ -258,7 +258,14 @@ if (!function_exists('getUrl')) {
         $urls['createSignatory'] = "v1/companies/$key/signatories";
         $urls['createCompanyLocationOnGusto'] = "v1/companies/$key/locations";
         $urls['createEmployeeOnGusto'] = "v1/companies/$key/employees";
+        // for sync purpose
         $urls['getFederalTax'] = "v1/companies/$key/federal_tax_details";
+        $urls['getIndustry'] = "v1/companies/$key/industry_selection";
+        $urls['getPaySchedules'] = "v1/companies/$key/pay_schedules";
+        $urls['getPaymentConfig'] = "v1/companies/$key/payment_configs";
+        $urls['getBankAccounts'] = "v1/companies/$key/bank_accounts";
+        $urls['sendDeposits'] = "v1/companies/$key/bank_accounts/$key1/send_test_deposits";
+        $urls['verifyBankAccount'] = "v1/companies/$key/bank_accounts/$key1/verify";
         // payroll blocker
         $urls['getPayrollBlockers'] = "v1/companies/$key/payrolls/blockers";
         //company flow
@@ -480,7 +487,11 @@ if (!function_exists('gustoCall')) {
         }
         // make call to Gusto
         $response =  makeCall(
-            getUrl($event, $company['gusto_uuid']),
+            getUrl(
+                $event,
+                $company['gusto_uuid'],
+                $company['other_uuid'] ?? ''
+            ),
             $curlOptions
         );
         // auth failed needs to generate new tokens

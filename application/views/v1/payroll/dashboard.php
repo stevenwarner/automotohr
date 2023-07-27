@@ -28,7 +28,7 @@
                         <div class="col-sm-12 col-md-12 text-right">
                             <button class="btn btn-success jsVerifyBankAccount csF16" title="Verify bank account" placement="top">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
-                                Verify
+                                <span>Verify</span>
                             </button>
                             <button class="btn btn-success jsSyncCompanyData csF16" title="Sync data" placement="top">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;

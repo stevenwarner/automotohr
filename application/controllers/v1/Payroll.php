@@ -57,7 +57,8 @@ class Payroll extends CI_Controller
                     verify_bank_info,
                     state_setup,
                     payroll_schedule,
-                    sign_all_forms
+                    sign_all_forms,
+                    add_employees
                 ",
                 "entity_type" => "Company",
                 "entity_uuid" => $companyGustoDetails['gusto_uuid']
@@ -69,6 +70,8 @@ class Payroll extends CI_Controller
             'getPayrollBlockers',
             $companyGustoDetails
         );
+        //
+        $this->payroll_model->handleInitialEmployeeOnboard($data['session']['company_detail']['sid']);
         //
         $this->load
             ->view('main/header', $data)
@@ -215,6 +218,46 @@ class Payroll extends CI_Controller
         $this->load
             ->view('main/header', $data)
             ->view('v1/payroll/signatories/create')
+            ->view('main/footer');
+    }
+
+    /**
+     * Manage employees
+     */
+    public function manageEmployees()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        //
+        $companyId = $data['session']['company_detail']['sid'];
+        //
+        $data['title'] = "Manage Payroll Employees";
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [
+            'v1/plugins/ms_modal/main',
+        ];
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/plugins/ms_modal/main',
+            'v1/payroll/js/employees/manage'
+        ];
+        // get employees
+        $data['payrollEmployees'] = $this->payroll_model->getPayrollEmployees($companyId);
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/employees/manage')
             ->view('main/footer');
     }
 
@@ -472,6 +515,7 @@ class Payroll extends CI_Controller
 
     /**
      * Sync company
+     * TODO
      *
      * @return
      */
@@ -484,6 +528,103 @@ class Payroll extends CI_Controller
         //
         $this->payroll_model->syncCompanyWithGusto(
             $session['company_detail']['sid']
+        );
+    }
+
+    /**
+     * Verify bank account
+     * Only available on demo mode
+     *
+     * @return
+     */
+    public function verifyCompanyBankAccount()
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get the company
+        $companyDetails = $this->payroll_model
+            ->getCompanyDetailsForGusto($session['company_detail']['sid']);
+        // get the company bank details
+        $companyBankAccounts = $this->db
+            ->select('sid, gusto_uuid')
+            ->where('company_sid', $session['company_detail']['sid'])
+            ->get('companies_bank_accounts')
+            ->result_array();
+        //
+        if (!$companyBankAccounts) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => 'Company doesn\'t registered a bank account. Please sync the company first.'
+                ]
+            );
+        }
+        //
+        $errorsArray = [];
+        //
+        foreach ($companyBankAccounts as $bankAccount) {
+            //
+            $companyDetails['other_uuid'] = $bankAccount['gusto_uuid'];
+            //
+            $gustoResponse = gustoCall(
+                'sendDeposits',
+                $companyDetails,
+                [
+                    'deposit_1' => '0.02',
+                    'deposit_2' => '0.42',
+                ],
+                "POST"
+            );
+            //
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                $errorsArray = array_merge($errorsArray, $errors['errors']);
+                continue;
+            }
+            // verify call
+            $gustoResponse = gustoCall(
+                'verifyBankAccount',
+                $companyDetails,
+                $gustoResponse,
+                "PUT"
+            );
+            //
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                $errorsArray = array_merge($errorsArray, $errors['errors']);
+            }
+            //
+            $this->db
+                ->where('sid', $bankAccount['sid'])
+                ->update(
+                    'companies_bank_accounts',
+                    [
+                        'verification_status' => $gustoResponse['verification_status'],
+                        'verification_type' => $gustoResponse['verification_type'],
+                        'plaid_status' => $gustoResponse['plaid_status'],
+                        'last_cached_balance' => $gustoResponse['last_cached_balance'],
+                        'balance_fetched_date' => $gustoResponse['balance_fetched_date'],
+                    ]
+                );
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => $errorsArray
+                ]
+            );
+        }
+        return SendResponse(
+            200,
+            [
+                'success' => true
+            ]
         );
     }
 
@@ -707,6 +848,23 @@ class Payroll extends CI_Controller
         }
         //
         return SendResponse(200, ['success' => true]);
+    }
+
+    /**
+     * employee onboard flow
+     *
+     * @param int $employeeId
+     * @return json
+     */
+    public function employeeOnboardFlow(int $employeeId)
+    {
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('v1/payroll/employees/flow', [], true)
+            ]
+        );
     }
 
     /**

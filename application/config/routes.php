@@ -1666,3 +1666,10 @@ $route['payrolls/signatories/create']['get'] = 'v1/Payroll/createSignatoriesPage
 $route['payrolls/signatories/create']['post'] = 'v1/Payroll/createSignatory';
 // sync with Gusto
 $route['payrolls/company/sync']['get'] = 'v1/Payroll/syncCompanyWithGusto';
+// verify company bank account
+// only on demo mode
+$route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAccount';
+// employees
+$route['payrolls/employees']['get'] = 'v1/Payroll/manageEmployees';
+// employee onboard flow
+$route['payrolls/flow/employee/(:num)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1';

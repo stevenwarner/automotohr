@@ -11,6 +11,7 @@ $(function dashboard() {
 	 * set XHR request holder
 	 */
 	let XHR = null;
+	let XHR2 = null;
 	/**
 	 * capture the view admin event
 	 */
@@ -23,10 +24,11 @@ $(function dashboard() {
 	/**
 	 * capture the view admin event
 	 */
-	$("#jsVerifyBankAccount").click(function (event) {
+	$(".jsVerifyBankAccount").click(function (event) {
 		//
 		event.preventDefault();
 		//
+		verifyCompanyBankAccount();
 	});
 
 	/**
@@ -39,7 +41,7 @@ $(function dashboard() {
 			return false;
 		}
 		//
-		$("#jsSyncCompanyData span").html("Syncing...");
+		$(".jsSyncCompanyData span").html("Syncing...");
 		//
 		XHR = $.ajax({
 			url: baseUrl("payrolls/company/sync"),
@@ -66,7 +68,48 @@ $(function dashboard() {
 			.always(function () {
 				XHR = null;
 				ml(false, "jsDashboard");
-				$("#jsSyncCompanyData span").html("Sync");
+				$(".jsSyncCompanyData span").html("Sync");
+			});
+	}
+
+	/**
+	 *
+	 * @returns
+	 */
+	function verifyCompanyBankAccount() {
+		//
+		if (XHR2 !== null) {
+			return false;
+		}
+		//
+		$(".jsVerifyBankAccount span").html("Verifying...");
+		//
+		XHR2 = $.ajax({
+			url: baseUrl("payrolls/company/bank/verify"),
+			method: "GET",
+		})
+			.success(function () {
+				return alertify.alert(
+					"Success!",
+					"Company bank accounts are verified.",
+					CB
+				);
+			})
+			.fail(function (response) {
+				return alertify.alert(
+					"Error!",
+					getErrorsStringFromArray(
+						(
+							response.responseJSON ||
+							JSON.parse(response.responseText)
+						).errors
+					)
+				);
+			})
+			.always(function () {
+				XHR2 = null;
+				ml(false, "jsDashboard");
+				$(".jsVerifyBankAccount span").html("Verify");
 			});
 	}
 
