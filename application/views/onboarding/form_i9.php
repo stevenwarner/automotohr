@@ -33,6 +33,9 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                             </div>
                             <div class="hr-innerpadding">
                                 <div class="row">
+
+                                <?php   $pre_form = syncI9Data($pre_form['user_sid'], $pre_form); ?>
+
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Last Name (Family Name) <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_last_name"></i></label>

@@ -67,6 +67,9 @@
                                 than the first day of employment, but not before accepting a job offer.)
                             </div>
                             <div class="hr-innerpadding">
+
+                        <?php $pre_form = syncI9Data($pre_form['user_sid'], $pre_form); ?>
+
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
