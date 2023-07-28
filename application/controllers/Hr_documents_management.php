@@ -6542,7 +6542,7 @@ class Hr_documents_management extends Public_Controller
                     $emp_ids = explode(':', $employees);
                 }
 
-                
+
                 if (!empty($emp_ids)) {
                     $data['employees'] = $this->hr_documents_management_model->getEmployeesDetails($emp_ids);
                 } else {
@@ -6897,6 +6897,7 @@ class Hr_documents_management extends Public_Controller
                     $company_sid,
                     'not_completed'
                 );
+                $data['employee_sid'] = $employee_id;
                 $this->load->view('main/header', $data);
                 $this->load->view('hr_documents_management/pending-hr-document');
                 $this->load->view('main/footer');

@@ -34,6 +34,9 @@
                                         <button class="btn btn-success jsSendEmailReminder">
                                             Send Email Reminder
                                         </button>
+                                        <a class="btn btn-success" href="<?php echo base_url('employee_profile/'.$employee_sid); ?>" target="_blank">
+                                        View Employee Profile
+                                       </a>
                                     </span>
                                     <div class="clearfix"></div>
                                 </h3>
