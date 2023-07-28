@@ -1114,12 +1114,34 @@ class Hire_onboarding_applicant_model extends CI_Model
 
         if (!empty($records_arr)) {
             foreach ($records_arr as $record) {
+
+                $oldSid = 0;
+                if ($record['document_sid'] == 0) {
+                    $oldSid = $record['sid'];
+                }
+
                 unset($record['sid']);
                 $record['user_sid'] = $hired_sid;
                 $record['user_type'] = 'employee';
 
-                //                $this->db->insert('documents_assignment', $record);
                 $this->db->insert('documents_assigned', $record);
+                $newSid = $this->db->insert_id();
+
+                //
+                if ($oldSid != 0) {
+                    $this->db->select('*');
+                    $this->db->where('document_sid', $oldSid);
+                    $records_obj = $this->db->get('documents_2_category');
+                    $records_arr = $records_obj->result_array();
+                    $records_obj->free_result();
+
+                    if (!empty($records_arr)) {
+                        foreach ($records_arr as $record) {
+                            $record['document_sid'] = $newSid;
+                            $this->db->insert('documents_2_category', $record);
+                        }
+                    }
+                }
             }
 
             return $records_arr;
