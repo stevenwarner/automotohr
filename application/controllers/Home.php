@@ -2094,7 +2094,6 @@ class Home extends CI_Controller
                 $action = 'updated';
             }
             $employee_sid = $employeeId;
-
         } else {
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;
@@ -2132,4 +2131,47 @@ class Home extends CI_Controller
             'hf' => $hf
         ]);
     }
+
+
+
+
+    public function home_new()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $session_details = $this->session->userdata('logged_in');
+            $sid = $session_details['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($sid);
+            $data['security_details'] = $security_details;
+            $data['session'] = $this->session->userdata('logged_in');
+        }
+
+        $data['title'] = 'Home';
+
+        if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
+            $this->load->model('users_model');
+            $username = $this->decryptCookie($_COOKIE[STORE_NAME]['username']);
+            $password = $this->decryptCookie($_COOKIE[STORE_NAME]['password']);
+            $result = $this->users_model->login($username, $password);
+
+            if ($result) {
+                $sess_array = array(
+                    'company_detail' => $result['company'],
+                    'employer_detail' => $result['employer'],
+                    'cart' => $result['cart'],
+                    'portal_detail' => $result['portal'],
+                    'clocked_status' => $result['clocked_status'],
+                    'is_super' => 0
+                );
+
+                $this->session->set_userdata('logged_in', $sess_array);
+            }
+        }
+
+        $data['home_page'] = $this->home_model->get_home_page_data();
+        $this->load->view('main/header_new', $data);
+        $this->load->view('static-pages/home_new');
+        $this->load->view('main/footer_new');
+    }
+
+
 }

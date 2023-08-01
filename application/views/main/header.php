@@ -1618,66 +1618,7 @@
                             });
                             // $('.maintenance-message').show();
                         </script>
-                        <?php /*
-    if (
-        ($class == 'dashboard' ||
-        $class == 'screening_questionnaires' ||
-        $class == 'settings' ||
-        $class == 'users' ||
-        $class == 'eeo' ||
-        $class == 'demo' ||
-        $class == 'application_tracking' ||
-        $class == 'market_place' ||
-        $class == 'portal_email_templates' ||
-        $class == 'manual_candidate' ||
-        $class == 'private_messages' ||
-        $class == 'xml_export' ||
-        $class == 'employee_management' ||
-        $class == 'appearance' ||
-        $class == 'hr_documents' ||
-        $class == 'background_check' ||
-        $class == 'my_hr_documents' ||
-        $class == 'order_history' ||
-        $class == 'received_documents' ||
-        $class == 'order_detail' ||
-        $class == 'reference_checks' ||
-        $class == 'i9form' ||
-        $class == 'facebook_configuration' ||
-        $class == 'security_access_level' ||
-        $class == 'reference_network' ||
-        $class == 'expirations_manager' ||
-        $class == 'reports' ||
-        $class == 'approval_rights_management' ||
-        $class == 'job_approval_management' ||
-        $class == 'applicant_approval_management' ||
-        $class == 'misc' ||
-        $class == 'cc_management' ||
-        $class == 'import_csv' ||
-        $class == 'accurate_background' ||
-        $class == 'job_listing_categories_manager' ||
-        $class == 'support_tickets' ||
-        $class == 'resume_database' ||
-        $class == 'notification_emails' ||
-        $class == 'post_on_jobs_to_career' ||
-        $class == 'application_status' ||
-        $class == 'interview_questionnaire' ||
-        $class == 'application_tracking_system' ||
-        $class == 'import_applicants_csv' ||
-        $class == 'turnover_cost_calculator' ||
-        $class == 'photo_gallery' ||
-        $class == 'organizational_hierarchy' ||
-        $class == 'video_interview_system' ||
-        $class == 'attendance' ||
-        $class == 'task_management') && $this->session->userdata('logged_in')
-    ) {
-        $cookie_name = "maintenance-message";
-        $cookie_value = "true";
-
-        if(!isset($_COOKIE[$cookie_name])) { ?>
-            <script> $('.maintenance-message').show(); </script><?php
-            setcookie($cookie_name, $cookie_value, time() + (86400), "/");
-        }
-    } */ ?>
+                     
                         <style>
                             .notification-bell {
                                 border: none;
