@@ -1461,6 +1461,10 @@ $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
 $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
 $route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
 
+// Off cycle route
+$route['payrolls/off_cycle/new']['get'] = 'payroll/Payroll/offCyclePayroll/new';
+$route['payrolls/off_cycle/inprogress']['get'] = 'payroll/Payroll/offCyclePayroll/inprogress';
+
 
 
 /**

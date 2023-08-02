@@ -1436,7 +1436,7 @@ class Payroll extends CI_Controller
         // Make request array
         $employeeArray = [];
 
-        
+
         //
         foreach ($post['payroll'] as $payroll) {
             //
@@ -1665,7 +1665,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            return([
+            return ([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1706,7 +1706,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            return([
+            return ([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1745,7 +1745,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            return([
+            return ([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1780,7 +1780,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            return([
+            return ([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -1838,7 +1838,7 @@ class Payroll extends CI_Controller
                 $errors[] = $error[0];
             }
             // Error took place
-            return([
+            return ([
                 'Status' => false,
                 'Errors' => $errors
             ]);
@@ -2383,5 +2383,41 @@ class Payroll extends CI_Controller
         }
         //
         return $response;
+    }
+
+
+    /**
+     * Run off-cycle payroll
+     *
+     * @param string $payrollStatus
+     */
+    public function offCyclePayroll(string $payrollStatus = 'new')
+    {
+        // validate company login
+        if (!$this->session->userdata('logged_in')) {
+            return redirect('/login');
+        }
+        // set empty data array
+        $data = [];
+        $data['title'] = 'Run Off cycle payroll';
+        // extract the session data
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employer'] = $data['session']['employer_detail'];
+        // set security details
+        $data['security_details'] = db_get_access_level_details($data['employer']['sid']);
+        // set company is
+        $companyId = $data['session']['company_detail']['sid'];
+        // check and get payroll details from
+        // database
+        $data['payrollDetails'] = $payrollDetails = $this->db
+            ->where('company_sid', $companyId)
+            ->get('payroll_off_cycle')
+            ->row_array();
+        //
+        $data['loadPage'] = !$payrollDetails ? 'step_1' : '';
+        // load view
+        $this->load->view('main/header', $data)
+            ->view('v1/payrolls/off_cycle/layout')
+            ->view('main/footer');
     }
 }
