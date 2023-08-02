@@ -70,6 +70,8 @@
                                     <ul>
                                         <div class="container-fluid">
                                             <div class="row">
+
+                                            <?php _e($employer,true)?>
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <label>First Name <span class="staric">*</span></label>

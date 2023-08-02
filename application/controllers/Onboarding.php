@@ -2977,8 +2977,16 @@ class Onboarding extends CI_Controller
                 $this->onboarding_model->save_eeoc('applicant', $users_sid, $data_to_save);
                 $data_to_update = array();
                 $data_to_update['eeo_form'] = $eeoc_form_status;
+
                 $this->eeo_model->update_eeo_form_status($users_type, $users_sid, $eeoc_form_status);
                 //
+                syncEoocDataChanges(
+                    $users_sid,
+                    $data_to_save,
+                    'applicant'
+                );
+
+
                 $dataToUpdate = array();
                 $dataToUpdate['gender'] = strtolower($gender);
                 update_user_gender($applicant_info['sid'], 'applicant', $dataToUpdate);
@@ -8796,7 +8804,7 @@ class Onboarding extends CI_Controller
                         unset($formpost['w9_llc_federaltax_description']);
                         unset($formpost['w9_other_federaltax_description']);
                         unset($formpost['submit']);
-                     
+
                         //
                         syncW9DataChanges(
                             $applicant_sid,
@@ -9316,6 +9324,12 @@ class Onboarding extends CI_Controller
                         //
                         portalFormI9Tracker($applicant_sid, 'applicant', $i9TrackerData);
 
+                        //
+                        syncI9DataChanges(
+                            $applicant_sid,
+                            $insert_data,
+                            'applicant'
+                        );
                         //
                         $this->form_wi9_model->update_form('i9', 'applicant', $applicant_sid, $insert_data);
                         //

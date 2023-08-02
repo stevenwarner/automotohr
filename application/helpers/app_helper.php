@@ -1029,7 +1029,7 @@ if (!function_exists('syncW9Data')) {
             $fields = "first_name,last_name,ssn,Location_Address,Location_City,Location_ZipCode,Location_state";
         }
         //
-        if ($formData['user_type'] == 'applicant') {
+        if ($formData['user_type'] == 'applicant' || $formData['user_type'] == 'Applicant') {
             $fields = "first_name,last_name,middle_name,ssn,address,city,zipcode,state";
             $tableName = 'portal_job_applications';
         }
@@ -1339,5 +1339,178 @@ if (!function_exists('syncI9DataChanges')) {
             $CI->db->where('sid', $employeeId);
             $CI->db->update('portal_job_applications', $data_array);
         }
+    }
+}
+
+
+
+//
+if (!function_exists('syncEeocData')) {
+
+    function syncEeocData($employeeId, $formData)
+    {
+
+        //
+        if ($formData['users_type'] == 'employee') {
+            $tableName = 'users';
+            $fields = "gender";
+        }
+        //
+        if ($formData['users_type'] == 'applicant') {
+            $fields = "gender";
+            $tableName = 'portal_job_applications';
+        }
+
+        // get CI instance
+        $CI = &get_instance();
+        $userData = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get($tableName)
+            ->row_array();
+
+        //
+        if ($formData['gender'] == null || $formData['gender'] == '') {
+            $formData['gender'] = ucfirst($userData['gender']);
+        }
+
+        return $formData;
+    }
+}
+
+//
+if (!function_exists('syncEoocDataChanges')) {
+
+    function syncEoocDataChanges(
+        $employeeId,
+        $dataToInsert,
+        $userType
+    ) {
+
+        //
+        if ($userType == 'employee') {
+            $tableName = 'users';
+            $fields = "gender";
+        }
+        //
+        if ($userType == 'applicant') {
+            $fields = "gender";
+            $tableName = 'portal_job_applications';
+        }
+
+        // get CI instance
+        $CI = &get_instance();
+        $employeeDetail = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get($tableName)
+            ->row_array();
+        //
+
+        $newCompareData = [];
+        $newCompareData['gender'] = $dataToInsert['gender'];
+        // Old Data
+        $oldCompareData = [];
+        $oldCompareData['gender'] = $employeeDetail['gender'];
+        //
+        $difference = findDifferenceData($oldCompareData, $newCompareData);
+
+        //
+        if ($difference['profile_changed'] == 0) {
+            return false;
+        }
+        //
+        $data_array = [];
+        foreach ($difference['data'] as $key => $val) {
+            $data_array[$key] = $val['new'];
+        }
+
+        //Update to user
+        if ($userType == 'employee') {
+            $CI->db->where('sid', $employeeId);
+            $CI->db->update('users', $data_array);
+
+            //Insert To Log 
+            $employerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
+
+            $CI->db->insert('profile_history', [
+                'user_sid' => $employeeId,
+                'employer_sid' => $employerId,
+                'profile_data' => json_encode($difference['data']),
+                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                'change_from' => 'EEOC'
+            ]);
+        }
+
+        //Update to Applicant
+        if ($userType == 'applicant') {
+            $CI->db->where('sid', $employeeId);
+            $CI->db->update('portal_job_applications', $data_array);
+        }
+    }
+}
+
+
+//
+if (!function_exists('syncFullEmploymentApplicationData')) {
+
+    function syncFullEmploymentApplicationData($employeeId, $formData)
+    {
+
+        //
+        if ($formData['users_type'] == 'employee') {
+            $tableName = 'users';
+            $fields = "first_name,last_name,middle_name,ssn,dob,email,Location_City,Location_ZipCode,Location_state";
+        }
+        //
+        if ($formData['users_type'] == 'applicant') {
+            $fields = "first_name,last_name,middle_name,ssn,dob,email,address,city,zipcode,state";
+            $tableName = 'portal_job_applications';
+        }
+
+        // get CI instance
+        $CI = &get_instance();
+        $userData = $CI->db->select($fields)
+            ->where('sid', $employeeId)
+            ->get($tableName)
+            ->row_array();
+
+        //
+        if ($formData['user_type'] == 'applicant') {
+            $userData['Location_Address'] = $userData['address'];
+            $userData['Location_City'] = $userData['city'];
+            $userData['Location_ZipCode'] = $userData['zipcode'];
+            $userData['Location_state'] = $userData['state'];
+        }
+
+        //
+        if ($formData['first_name'] == null || $formData['first_name'] == '') {
+            $formData['first_name'] = $userData['first_name'];
+        }
+        if ($formData['last_name'] == null || $formData['last_name'] == '') {
+            $formData['last_name'] = $userData['last_name'];
+        }
+
+        if ($formData['middle_name'] == null || $formData['middle_name'] == '') {
+            $formData['middle_name'] = $userData['middle_name'];
+        }
+        if ($formData['ss_number'] == null || $formData['ss_number'] == '') {
+            $formData['ss_number'] = $userData['ssn'];
+        }
+        if ($formData['home_address'] == null || $formData['home_address'] == '') {
+            $formData['home_address'] = $userData['Location_Address'];
+        }
+        if ($formData['zip'] == null || $formData['zip'] == '') {
+            $formData['zip'] = $userData['Location_ZipCode'];
+        }
+        if ($formData['city'] == null || $formData['city'] == '') {
+            $formData['city'] = $userData['Location_City'];
+        }
+        if ($formData['email'] == null || $formData['email'] == '') {
+            $formData['email'] = $userData['email'];
+        }
+        if ($formData['dob'] == null || $formData['dob'] == '') {
+            $formData['dob'] = $userData['dob'];
+        }
+
+        return $formData;
     }
 }

@@ -2104,6 +2104,14 @@ class Home extends CI_Controller
             'application_sid' => $document['application_sid'],
             'users_type' => $document['users_type']
         ])->update('portal_eeo_form', $upd);
+
+        //
+        syncEoocDataChanges(
+            $document['application_sid'],
+            $upd,
+            $document['users_type']
+        );
+
         //
         $dataToUpdate = array();
         $dataToUpdate['gender'] = strtolower($post['gender']);

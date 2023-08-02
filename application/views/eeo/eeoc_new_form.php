@@ -47,6 +47,10 @@
     </div>
 <?php } ?>
 <!--  -->
+<?php 
+$eeo_form_info=syncEeocData($eeo_form_info['application_sid'], $eeo_form_info);
+?>
+
 <div class="row">
     <br>
     <div class="col-sm-12">

@@ -142,7 +142,7 @@ class Form_i9 extends Public_Controller
                 $data['employer'] = $data_employer;
 
                 $load_view = check_blue_panel_status(false, $type);
-                $redirect_url = base_url('hr_documents_management/applicant/' . $sid . '/' . $jobs_listing);
+                $redirect_url = base_url('hr_documents_management/documents_assignment/applicant/' . $sid . '/' . $jobs_listing);
             }
 
             $data['states'] = db_get_active_states(227);
@@ -446,7 +446,14 @@ class Form_i9 extends Public_Controller
                 $i9TrackerData['reviewer_signature_base64'] = $reviewer_signature_base64;
                 $i9TrackerData['module'] = $sid ? 'fi9/gp' : 'fi9/bp';
                 //
+
                 portalFormI9Tracker($employer_sid, $type, $i9TrackerData);
+                //
+                syncI9DataChanges(
+                    $employer_sid,
+                    $insert_data,
+                    $type
+                );
 
                 //$this->form_wi9_model->insert_form_data('i9', $insert_data, $employer_sid);
                 $this->form_wi9_model->update_form('i9', $type, $employer_sid, $insert_data);
