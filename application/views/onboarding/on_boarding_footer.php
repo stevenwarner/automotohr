@@ -301,10 +301,24 @@ if ($class == 'time_off' || in_array('employee_management_system', $this->uri->s
 if ($class == 'performance_management') { ?>
     <?php $this->load->view("{$pp}scripts"); ?>
 <?php } ?>
-
+<!--  -->
 
 <!--  -->
+<?php $session = $this->session->userdata('logged_in'); ?>
+<!--  -->
 <script>
+    //
+    <?php if (isset($apiURL)) { ?>
+        apiURL = "<?=$apiURL;?>";
+    <?php } ?>
+    // 
+    <?php if (isset($apiAccessToken)) { ?>
+        apiAccessToken = "<?=$apiAccessToken;?>";
+    <?php } ?>
+    // 
+    companyId = <?= $session['company_detail']['sid'] ?>;
+    employeeId = <?= $session['employer_detail']['sid'] ?>;
+    //
     $(function() {
         var targets = {
             count: $('#js-notification-count'),

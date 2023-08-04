@@ -249,3 +249,23 @@ if (typeof handleErrorResponse === "undefined") {
 		);
 	}
 }
+
+if (typeof getQuestionsFromArray === "undefined") {
+	/**
+	 * Error message
+	 *
+	 * @param {*} errorArray
+	 * @param {*} errorMessage
+	 * @returns
+	 */
+	function getQuestionsFromArray(errorArray, errorMessage) {
+		return (
+			"<strong><p>" +
+			(errorMessage
+				? errorMessage
+				: "Please, provide the following question answer") +
+			"</p></strong><br >" +
+			errorArray.join("<br />")
+		);
+	}
+}

@@ -1,0 +1,268 @@
+$(function LMSEmployeeCourses() {
+	// set the xhr
+	let XHR = null;
+	// set the default filter
+	//
+    let timeOffDateFormatWithTime = 'MMM DD YYYY, ddd';
+
+	if (courseType === "scorm") {
+		function sendCourseToSave(CMIElements) {
+			// make the call
+			XHR = $.ajax({
+				url: apiURL + "lms/trainings/save_scorm/" + employeeId,
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				data: JSON.stringify({
+					courseId: courseId,
+					cmiElement: CMIElements,
+					type: 'scorm',
+					version: scormVersion
+				})
+			})
+			.success(function (response) {
+				if (response.status === "failed") {
+					return alertify.alert(
+						"WARNING!",
+						"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
+						function () {
+							window.location = baseURI+"lms/courses/"+courseId;
+						}
+					);
+				} else if (response.status === "passed"){
+					return alertify.alert(
+						"SUCCESS!",
+						"Congratulations on successfully passing this course!",
+						function () {
+							window.location = baseURI+"lms/courses/my";
+						}
+					);
+				}
+			})
+			.fail(handleErrorResponse)
+			.done(function (response) {
+				// empty the call
+				XHR = null;
+			});
+			//
+		}
+	
+		//
+		window.sendCourseToSave = sendCourseToSave;
+	}
+	
+	/**
+	 * From question to main screen
+	 */
+	$(document).on("click", ".jsSaveQuestionResult", function (event) {
+		// stop the default behavior
+		event.preventDefault();
+		var errorArray = [];
+		var answerObj = {};
+		//
+		JSON.parse(questions).map(function (question) {
+			//
+			var name = question.question_type+"_"+question.question_id;
+			//
+			if (question.question_type === "yes_no" || question.question_type === "single_choice") {
+				//
+				var value = $('input[name='+name+']:checked').val();
+				//
+				answerObj[question.question_id] = value;
+				//
+				if (!value || value === undefined) {
+					if (question.is_required === "yes") {
+						errorArray.push(question.question_title);
+					}
+				}
+			} else if (question.question_type === "multiple_choice") {
+				//
+				var list = [];
+				//
+				$("input[name='"+name+"']:checked").each(function () {
+					list.push($(this).val());
+				});
+				//
+				answerObj[question.question_id] = list;
+				//
+				if (list.length == 0) {
+					if (question.is_required === "yes") {
+						errorArray.push(question.question_title);
+					}
+				}
+			} else if (question.question_type === "text") {
+				var text = $('textarea[name="textarea_'+question.question_id+'"]').val();
+				//
+				answerObj[question.question_id] = text;
+				//
+				if (!text || text === undefined) {
+					if (question.is_required === "yes") {
+						errorArray.push(question.question_title);
+					}
+				}
+			}
+			
+		})
+		//
+		if (errorArray.length) {
+			// make the user notify of errors
+			return alertify.alert(
+				"WARNING!",
+				getQuestionsFromArray(errorArray),
+				CB
+			);
+		}
+		//
+		try {
+			//
+			saveCourseAnswers(answerObj);
+			//
+			return alertify.alert(
+				"SUCCESS!",
+				createCourseResponse.data,
+				function () {
+					//
+					getLMSDefaultCourses();
+					$("#" + modalId).remove();
+				}
+			);
+		} catch (err) {
+			ml(false, modalLoaderId);
+			return alertify.alert(
+				"ERROR!",
+				getErrorsStringFromArray(err.errors, "Errors!!"),
+				CB
+			);
+		}
+	});
+
+	/**
+	 * get LMS Specific course
+	 */
+	function getLMSAssignCourse() {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url: apiURL + "lms/trainings/" + employeeId + "/" +courseId,
+			method: "GET",
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				// set the view
+                $("#jsPreviewCourse").html(response);
+				//
+				if (courseType === "manual") {
+					getCourseQuetions()
+				}
+                //
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
+
+	/**
+	 * get LMS course questions
+	 */
+	function getCourseQuetions() {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url: apiURL + "lms/trainings/" + employeeId + "/" +courseId + "/questions/" + mode,
+			method: "GET",
+		})
+		.success(function (response) {
+			// empty the call
+			XHR = null;
+			// set the view
+			$("#jsPreviewCourseQuestion").html(response);
+			//
+			ml(false, "jsPageLoader");
+		})
+		.fail(handleErrorResponse)
+		.done(function () {
+			// empty the call
+			XHR = null;
+			// hide the loader
+			ml(false, "jsPageLoader");
+		});
+	}
+	//
+	/**
+	 * Save the manual questions result
+	 *
+	 * @param {*} answerObj
+	 * @returns
+	 */
+	function saveCourseAnswers(answerObj) {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url: apiURL + "lms/trainings/" + employeeId,
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			data: JSON.stringify({
+				"courseId": courseId,
+				"answers": answerObj
+			}),
+		})
+		.success(function (response) {
+			// empty the call
+			XHR = null;
+			// set the view
+	
+			if (response.status === "failed") {
+				return alertify.alert(
+					"WARNING!",
+					"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
+					function () {
+						window.location = baseURI+"lms/courses/"+courseId;
+					}
+				);
+			} else if (response.status === "passed"){
+				return alertify.alert(
+					"SUCCESS!",
+					"Congratulations on successfully passing this course!",
+					function () {
+						window.location = baseURI+"lms/courses/my";
+					}
+				);
+			}
+			//
+			ml(false, "jsPageLoader");
+		})
+		.fail(handleErrorResponse)
+		.done(function () {
+			// empty the call
+			XHR = null;
+			// hide the loader
+			ml(false, "jsPageLoader");
+		});
+	}
+	//
+	getLMSAssignCourse();
+});

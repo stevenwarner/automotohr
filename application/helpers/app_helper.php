@@ -621,6 +621,11 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/plugins/ms_recorder/main'] = ['js' => '2.0.2'];
         // common files
         $files['2022/js/jquery.datetimepicker'] = ['css' => '2.0.1', 'js' => '2.0.1'];
+        // 
+        $files['v1/plugins/ms_scorm/main'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '2.0.0'];
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files

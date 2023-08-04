@@ -929,6 +929,34 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
+
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <a href="<?= base_url('lms/courses/my'); ?>">
+                                <div class="widget-box">
+                                    <div class="link-box bg-info full-width">
+                                        <h2 class="text-blue">Course(s)</h2>
+                                        <ul class="pto-box">
+                                            <li>
+                                                <span><?= $coursesInfo['Total']; ?></span>
+                                                <span>Total</span>
+                                            </li>
+                                            <li>
+                                                <span><?= $coursesInfo['pass']; ?></span>
+                                                <span>Pass(s)</span>
+                                            </li>
+                                            <li>
+                                                <span><?= $coursesInfo['fail']; ?></span>
+                                                <span>Fail(s)</span>
+                                            </li>
+                                        </ul>
+                                        <div class="status-panel">
+                                            <h3>View Course(s)</h3>
+                                            <span>Show</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
