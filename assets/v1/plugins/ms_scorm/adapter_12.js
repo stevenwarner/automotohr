@@ -110,6 +110,7 @@ const SCORM_12_API = {
 // check if the course object is set
 // if defined we need to overwrite CMIElement
 // defaults
+console.log(CMIElementsObj)
 if (typeof CMIElementsObj !== "undefined") {
 	SCORM_12_API.CMIElements = Object.assign(
 		{},

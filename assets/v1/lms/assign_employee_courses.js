@@ -4,9 +4,24 @@ $(function LMSEmployeeCourses() {
 	// set the default filter
 	let filterObj = {
 		title: "",
+        status: "all"
 	};
 	//
-    let timeoffDateFormatWithTime = 'MMM DD YYYY, ddd';
+    let timeOffDateFormatWithTime = 'MMM DD YYYY, ddd';
+
+    /**
+	 * Apply filter
+	 */
+	$(".jsApplyFilterMyCourse").click(function (event) {
+		// prevent default event
+		event.preventDefault();
+		//
+		filterObj.title = $(".jsCourseTitleMyCourse").val() || "";
+        filterObj.status = $(".jsCourseStatus").val();
+		//
+		getLMSAssignCourses();
+	});
+
 	/**
 	 * get LMS default courses
 	 */
@@ -19,7 +34,7 @@ $(function LMSEmployeeCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-			url: apiURL + "lms/trainings/" + employeeId,
+			url: apiURL + "lms/trainings/" + employeeId + "?title=" + filterObj.title + "&status=" + filterObj.status,
 			method: "GET",
 		})
 			.success(function (response) {
@@ -29,6 +44,7 @@ $(function LMSEmployeeCourses() {
                 var coursesHTML = '';
                 var count = response.data.count;
                 var courses = response.data.courses;
+                var completedCourses = response.data.completedIds;
                 //
 				$("#jsAssignedCount").html(count.assigned);
                 $("#jsPendingCount").html(count.pending);
@@ -39,19 +55,13 @@ $(function LMSEmployeeCourses() {
                     courses.map(function (course) {
                         coursesHTML += `<article class="article-sec">`;
 
-                        if (course.result_status === "PASSED") {
+                        if (completedCourses.includes(course.sid)) {
                             coursesHTML += `    <div class="row">`;
                             coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
                             coursesHTML += `        <span class="csF16 text-success"><strong><i class="fa fa-trophy" aria-hidden="true"></i> PASSED</strong></span>`;
                             coursesHTML += `        </div>`;
                             coursesHTML += `    </div>`;
-                        } else if (course.result_status === "FAILED") {
-                            coursesHTML += `    <div class="row">`;
-                            coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
-                            coursesHTML += `        <span class="csF16 text-danger"><strong><i class="fa fa-ban" aria-hidden="true"></i> FAILED</strong></span>`;
-                            coursesHTML += `        </div>`;
-                            coursesHTML += `    </div>`;
-                        }
+                        } 
                 
                         coursesHTML += `    <h1>`;
                         coursesHTML +=          course.course_title;
@@ -60,11 +70,11 @@ $(function LMSEmployeeCourses() {
                         coursesHTML += `    <div class="row">`;
                         coursesHTML += `        <div class="col-md-3 col-xs-12">`;
                         coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>`;
-                        coursesHTML += `            <p>${moment(course.course_start_period).format(timeoffDateFormatWithTime)}</p>`;
+                        coursesHTML += `            <p>${moment(course.course_start_period).format(timeOffDateFormatWithTime)}</p>`;
                         coursesHTML += `        </div>`;
                         coursesHTML += `        <div class="col-md-3 col-xs-12">`;
                         coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
-                        coursesHTML += `            <p>${moment(course.course_end_period).format(timeoffDateFormatWithTime)}</p>`;
+                        coursesHTML += `            <p>${moment(course.course_end_period).format(timeOffDateFormatWithTime)}</p>`;
                         coursesHTML += `        </div>`;
                         coursesHTML += `        <div class="col-md-3 col-xs-12">`;
                         coursesHTML += `            <p class="csColumSection"><strong>STATUS</strong></p>`;
@@ -92,13 +102,13 @@ $(function LMSEmployeeCourses() {
                         coursesHTML += `        </div>`;
                         coursesHTML += `        <div class="col-md-3 col-xs-12 text-right">`;
                         coursesHTML += `            <p>&nbsp;</p>`;
-                        coursesHTML += `            <button class="btn btn-info csRadius5 csF16" onclick="">Launch Content</button>`;
+                        coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI+"lms/courses/"+course.sid}" >${completedCourses.includes(course.sid) ? "Retake Course" : "Launch Content"}</a>`;
                         coursesHTML += `        </div>`;
                         coursesHTML += `    </div>`;
                         coursesHTML += `</article>`;
                     })
                 } else {
-
+                    coursesHTML = '<p class="alert alert-info text-center">No Courses Found</p>';
                 }   
                 //
                 $("#jsMyAssignedCourses").html(coursesHTML);  

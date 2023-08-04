@@ -618,6 +618,10 @@ if (!function_exists('getStaticFileVersion')) {
         // plugins
         $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
         $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/main'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '2.0.0'];
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.0.0'];
         // check and return data
