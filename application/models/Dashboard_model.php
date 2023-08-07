@@ -3407,4 +3407,22 @@ class Dashboard_model extends CI_Model
         // return the array
         return $documents;
     }
+
+    function getLMSStatus($companySid)
+    {
+        $a = $this->db
+            ->select('
+            portal_applicant_jobs_list.portal_job_applications_sid as sid
+        ')
+            ->where('portal_applicant_jobs_list.company_sid', $companySid)
+            ->where('portal_applicant_jobs_list.archived', 1)
+            ->or_where('portal_job_applications.hired_status', 1)
+            ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
+            ->get('portal_applicant_jobs_list');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+
+        return array_column($b, 'sid');
+    }
 }

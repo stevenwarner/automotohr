@@ -937,15 +937,15 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                         <h2 class="text-blue">Course(s)</h2>
                                         <ul class="pto-box">
                                             <li>
-                                                <span><?= $coursesInfo['Total']; ?></span>
+                                                <span><?= $coursesInfo['Total'] ?? 0; ?></span>
                                                 <span>Total</span>
                                             </li>
                                             <li>
-                                                <span><?= $coursesInfo['pass']; ?></span>
+                                                <span><?= $coursesInfo['pass'] ?? 0; ?></span>
                                                 <span>Pass(s)</span>
                                             </li>
                                             <li>
-                                                <span><?= $coursesInfo['fail']; ?></span>
+                                                <span><?= $coursesInfo['fail'] ?? 0; ?></span>
                                                 <span>Fail(s)</span>
                                             </li>
                                         </ul>

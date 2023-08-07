@@ -1003,9 +1003,11 @@ class Dashboard extends Public_Controller
                 $employer_id,
                 'employee'
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
+            //
+            $data['LMSStatus'] = $this->dashboard_model->getLMSStatus($company_id);
 
             $this->load->view('main/header', $data);
-            $this->load->view('onboarding/getting_started');
+            // $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), 'refresh');
