@@ -690,3 +690,6 @@ define('CALENDAR_EVENT_UPDATE', 432);
 define('CALENDAR_EVENT_REMINDER', 433);
 // Payroll Fast Payment Limit
 define('FAST_PAYMENT_LIMIT', 500);
+// module constants
+// lms
+define('MODULE_LMS', 'lms');

@@ -1,27 +1,24 @@
-<?php if ($load_view) { ?>
-    <div class="main">
-        <div class="container">
+<div class="main jsmaincontent">
+    <div class="container">
+        <div style="position: relative">
+            <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
+            <?php $this->load->view('courses/partials/my_course_filter'); ?>
+            <!--  -->
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                    <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                </div>
+            </div>
+            <!--  -->
             <div class="row">
                 <div class="col-lg-12">
-                    <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                    <div class="row">
-                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
-                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
-                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
+                    <div class="page-header">
+                        <h1 class="section-ttile">Trainings</h1>
                     </div>
                 </div>
-
-                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                    <div class="page-header">
-                        <h1 class="section-ttile">Courses <div style="float: right;"></div>
-                        </h1>
-                    </div>
-
-                    <?php $this->load->view('courses/partials/my_course_filter'); ?>
-
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
                     <div class="section-inner">
                         <div class="heading-sec">
                             <div class="row hidden">
@@ -42,7 +39,7 @@
                             <br>
                             <div class="row">
                                 <!-- Assign courses -->
-                                <div class="col-xs-12 col-md-3">
+                                <div class="col-xs-12 col-md-3 jsFilterBox" data-key="all">
                                     <div class="thumbnail black-block ">
                                         <div class="caption">
                                             <h3 id="jsAssignedCount">0</h3>
@@ -51,7 +48,7 @@
                                     </div>
                                 </div>
                                 <!-- Pending courses -->
-                                <div class="col-xs-12 col-md-3">
+                                <div class="col-xs-12 col-md-3 jsFilterBox" data-key="pending">
                                     <div class="thumbnail csPendingBlock">
                                         <div class="caption">
                                             <h3 id="jsPendingCount">0</h3>
@@ -60,7 +57,7 @@
                                     </div>
                                 </div>
                                 <!-- Completed courses -->
-                                <div class="col-xs-12 col-md-3">
+                                <div class="col-xs-12 col-md-3 jsFilterBox" data-key="completed">
                                     <div class="thumbnail success-block">
                                         <div class="caption">
                                             <h3 id="jsCompletedCount">0</h3>
@@ -81,22 +78,27 @@
 
                             <div class="row" style="margin-top: 20px;"></div>
 
-                            <div class="row mb10">
-                                <div class="col-xs-12 col-md-12 text-right">
-                                    <button class="btn btn-black csRadius5 jsFilterSectionBtn" data-key="jsPageLoader">
-                                        <i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Filter
-                                    </button>
-                                </div>    
-                            </div>
 
-                            <div id="jsMyAssignedCourses"></div>  
                         </div>
                     </div>
                 </div>
             </div>
+            <!--  -->
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right">
+                    <button class="btn btn-black csRadius5 jsFilterSectionBtn" data-key="jsPageLoader">
+                        <i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Filter
+                    </button>
+                </div>
+            </div>
+            <!--  -->
+            <div class="row">
+                <br>
+                <div class="col-sm-12">
+                    <div id="jsMyAssignedCourses"></div>
+                </div>
+            </div>
         </div>
     </div>
-    
-<?php } else {
-    $this->load->view('learning_center/my_courses_blue');
-}
+
+</div>

@@ -1784,6 +1784,7 @@ $route['sa/lms/courses'] = 'manage_admin/2022/Courses';
 $route['sa/lms/courses/(:num)']['get'] = 'manage_admin/2022/Courses/companyCourses/$1';
 $route['lms/courses/my']['get'] = 'v1/Courses/myCourses';
 $route['lms/courses/(:num)']['get'] = 'v1/Courses/getCourse/$1';
+$route['lms/courses/(:num)/certificate']['get'] = 'v1/Courses/viewCertificate/$1';
 $route['lms/course/preview/(:num)']['get'] = 'v1/Courses/previewResult/$1';
 $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 
