@@ -616,26 +616,28 @@ if (!function_exists('getStaticFileVersion')) {
         // set files
         $files = [];
         // plugins
-        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.1', 'js' => '2.0.1'];
-        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.1', 'js' => '2.0.1'];
-        $files['v1/plugins/ms_recorder/main'] = ['js' => '2.0.2'];
+        $files['v1/plugins/ms_uploader/main'] = ['css' => '3.0.0', 'js' => '3.0.0'];
+        $files['v1/plugins/ms_modal/main'] = ['css' => '3.0.0', 'js' => '3.0.0'];
+        $files['v1/plugins/ms_recorder/main'] = ['js' => '3.0.0'];
         // common files
-        $files['2022/js/jquery.datetimepicker'] = ['css' => '2.0.1', 'js' => '2.0.1'];
+        $files['2022/js/jquery.datetimepicker'] = ['css' => '3.0.0', 'js' => '3.0.0'];
         // 
-        $files['v1/plugins/ms_scorm/main'] = ['js' => '2.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '2.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '2.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/main'] = ['js' => '3.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '3.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '3.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '3.0.0'];
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files
-        $files['v1/common'] = ['js' => '2.0.1'];
-        $files['v1/lms/add_question'] = ['js' => '2.0.1'];
-        $files['v1/lms/edit_question'] = ['js' => '2.0.1'];
-        $files['v1/lms/create_course'] = ['js' => '2.0.1'];
-        $files['v1/lms/edit_course'] = ['js' => '2.0.2'];
-        $files['v1/lms/main'] = ['js' => '2.0.1'];
-        $files['v1/lms/assign_company_courses'] = ['js' => '2.0.1'];
+        $files['assets/app_helper'] = ['js' => '3.0.0'];
+        $files['v1/common'] = ['js' => '3.0.0'];
+        $files['v1/lms/add_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/create_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/main'] = ['js' => '3.0.0'];
+        $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
+        $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
         // check and return data
         return $files[$file] ?? [];
     }

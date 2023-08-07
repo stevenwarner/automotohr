@@ -3,6 +3,7 @@ $(function editQuestion() {
 	let questionObj = {
 		question_id: 0,
 		question_title: "",
+		question_required: false,
 		question_content: "",
 		question_type: "text",
 		choice_list: {},
@@ -82,7 +83,7 @@ $(function editQuestion() {
 		//
 		let choiceAnswer = `
 		<!-- secondary question row -->
-		<div class="csChoiceRowEdit">
+		<div class="csEditChoiceRow">
 			<div class="row">
 				<div class="col-xs-12 col-sm-5">
 					<label>Answer Choice <strong class="text-danger">*</strong></label>
@@ -174,6 +175,10 @@ $(function editQuestion() {
 		});
 		// reset the view
 		$("#jsEditQuestionTitle").val(questionObj.question_title);
+		$("#jsEditQuestionRequired").prop(
+			"checked",
+			questionObj.question_required
+		);
 		$("#jsEditQuestionHelp").val(questionObj.question_content);
 		//
 		$(
@@ -276,11 +281,11 @@ $(function editQuestion() {
 				if (index != 0) {
 					$(".csEditChoiceBox").append(`
 						<!-- secondary question row -->
-						<div class="csChoiceRow">
+						<div class="csEditChoiceRow">
 							<div class="row">
 								<div class="col-xs-12 col-sm-5">
 									<label>Answer Choice <strong class="text-danger">*</strong></label>
-									<input type="text" class="form-control jsAddQuestionChoiceAnswer" value="${
+									<input type="text" class="form-control jsEditQuestionChoiceAnswer" value="${
 										questionObj.choice_list[index][
 											"answer_choice"
 										]
@@ -288,7 +293,7 @@ $(function editQuestion() {
 								</div>
 								<div class="col-xs-12 col-sm-3">
 									<label>Question Score <strong class="text-danger">*</strong></label>
-									<select class="form-control jsAddQuestionChoiceAnswerScore">
+									<select class="form-control jsEditQuestionChoiceAnswerScore">
 										<option ${
 											questionObj.choice_list[index][
 												"answer_score"
@@ -328,7 +333,7 @@ $(function editQuestion() {
 								</div>
 								<div class="col-xs-12 col-sm-2">
 									<label>Status <strong class="text-danger">*</strong></label>
-									<select class="form-control jsAddQuestionChoiceAnswerStatus">
+									<select class="form-control jsEditQuestionChoiceAnswerStatus">
 										<option ${
 											questionObj.choice_list[index][
 												"answer_status"
@@ -347,7 +352,7 @@ $(function editQuestion() {
 								</div>
 								<div class="col-xs-12 col-sm-1">
 									<p>&nbsp;</p>
-									<button class="btn btn-danger jsDeleteChoiceAnswer" type="button" title="Remove answer" placement="top">
+									<button class="btn btn-danger jsEditDeleteChoiceAnswer" type="button" title="Remove answer" placement="top">
 										<i class="fa fa-times-circle" aria-hidden="true"></i>
 									</button>
 								</div>
@@ -372,6 +377,9 @@ $(function editQuestion() {
 		// set default array
 		const errorArray = [];
 		// set data
+		questionObj.question_required = $("#jsEditQuestionRequired").prop(
+			"checked"
+		);
 		questionObj.question_title = $("#jsEditQuestionTitle").val().trim();
 		questionObj.question_content = $("#jsEditQuestionHelp").val().trim();
 		questionObj.question_type = $("#jsEditQuestionType").select2("val");
@@ -391,7 +399,7 @@ $(function editQuestion() {
 			questionObj.question_type === "multiple_choice"
 		) {
 			//
-			$(".csEditChoiceBox").map(function (i) {
+			$(".csEditChoiceRow").map(function (i) {
 				const obj = {
 					answer_choice: $(this)
 						.find(".jsEditQuestionChoiceAnswer")

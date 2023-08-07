@@ -2,6 +2,7 @@ $(function addQuestion() {
 	// set default question object
 	let questionObj = {
 		question_id: 0,
+		question_required: false,
 		question_title: "",
 		question_content: "",
 		question_type: "text",
@@ -162,7 +163,7 @@ $(function addQuestion() {
 		$("#jsAddQuestionTitle").val("");
 		$("#jsAddQuestionHelp").val("");
 		$("#jsAddQuestionRequired").prop("checked", false);
-		$("#jsAddQuestionType").select("val", "text");
+		$("#jsAddQuestionType").select2("val", "text");
 		$(".jsAddQuestionPlace").addClass("hidden");
 		// yes and no
 		$('#jsAddQuestionYesNoYSelect option[value="0"]').prop(
@@ -202,6 +203,7 @@ $(function addQuestion() {
 		questionObj = {
 			question_id: 0,
 			question_title: "",
+			question_required: false,
 			question_content: "",
 			question_type: "text",
 			choice_list: {},
@@ -224,6 +226,9 @@ $(function addQuestion() {
 		// set data
 		questionObj.question_title = $("#jsAddQuestionTitle").val().trim();
 		questionObj.question_content = $("#jsAddQuestionHelp").val().trim();
+		questionObj.question_required = $("#jsAddQuestionRequired").prop(
+			"checked"
+		);
 		questionObj.question_type = $("#jsAddQuestionType").select2("val");
 		questionObj.choice_list = {};
 		questionObj.video_type =

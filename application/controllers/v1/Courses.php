@@ -140,7 +140,7 @@ class Courses extends Public_Controller
             ->view('courses/' . $viewName)
             ->view('main/footer');
     }
-    
+
     /**
      *
      */
@@ -208,13 +208,13 @@ class Courses extends Public_Controller
         $data['courseInfo'] = $courseInfo;
         // load CSS
         $data['PageCSS'] = [
-            ['1.0.1', '2022/css/main']
+            '2022/css/main'
         ];
         // load JS
         $data['PageScripts'] = [
-            ['1.0', 'js/app_helper'],
-            ['1.0.0', 'v1/common'],
-            ['1.0', 'v1/lms/preview_assign'],
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/preview_assign'
         ];
         //
         // get access token
