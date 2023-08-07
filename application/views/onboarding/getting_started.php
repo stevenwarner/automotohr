@@ -590,7 +590,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                         <div class="link-box bgdarkblue full-width">
                                             <h2>
                                                 Employee Forms Library&nbsp;
-                                                <span href="javascript:void(0)" data-toggle="popover" data-trigger="hover" data-content='<?=$this->lang->line('document_librray_helping_text');?>'>
+                                                <span href="javascript:void(0)" data-toggle="popover" data-trigger="hover" data-content='<?= $this->lang->line('document_librray_helping_text'); ?>'>
                                                     <i class="fa fa-question-circle" style="font-size: 25px;" aria-hidden="true"></i>
                                                 </span>
                                             </h2>
@@ -929,6 +929,27 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
+<<<<<<< Updated upstream
+=======
+
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <div class="widget-box">
+                                <a href="<?php echo base_url('lms/courses/my'); ?>">
+                                    <div class="link-box bg-redish full-width">
+                                        <h2>Course(s)</h2>
+                                        <div><span>&nbsp;</span></div>
+                                        <div class="current-date">
+                                            <span>0<sub>Pending</sub></span>
+                                        </div>
+                                        <div class="status-panel">
+                                            <h3>Trainings</h3>
+                                            <span>Assigned to You</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+>>>>>>> Stashed changes
                     </div>
                 </div>
             </div>
