@@ -13,6 +13,46 @@ class App extends CI_Controller
         parent::__construct();
     }
 
+    public function index()
+    {
+        $data = [];
+        $data['meta'] = [];
+        $data['meta']['title'] = 'Homepage | AutomotoHR.com';
+        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
+        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
+        // stylesheets
+        $data['pageCSS'] = [
+            'v1/app/css/bootstrap',
+            'v1/app/css/app'
+        ];
+        //
+        $data['slider'] = [
+            [
+                'title'=> 'Effortlessly Manage HR, Benefits & Payroll!',
+                'sub_title'=> 'Say goodbye to administrative hassles by embracing a simplified solution that serves all your HR needs –',
+                'link'=> 'product-1',
+                'image' => 'assets/v1/app/images/banner_1.png'
+            ],
+            [
+                'title' => 'Smart Onboarding with AutomotoHR!',
+                'sub_title' => 'Leave behind inefficient onboarding methods and embrace <a class="anchar_tag">AutomotoHR</a> to optimize data management, expedite paperwork, & elevate orientation.',
+                'link' => 'product-1',
+                'image' => 'assets/v1/app/images/banner_2.png'
+            ],
+            [
+                'title' => 'One-Stop Shop for HR & Hiring!',
+                'sub_title' => 'Efficiently handle job postings, targeted advertising, candidate management, and assessment checks in one place.',
+                'link' => 'product-1',
+                'image' => 'assets/v1/app/images/banner_3.png'
+            ]
+        ];
+        //
+        $this->load
+            ->view('v1/app/header', $data)
+            ->view('v1/app/homepage')
+            ->view('v1/app/footer');
+    }
+
     /**
      * SCORM parse
      */
