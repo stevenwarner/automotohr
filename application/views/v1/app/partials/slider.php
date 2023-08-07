@@ -33,7 +33,7 @@
             </div>
         <?php endforeach; ?>
         <!--  -->
-        <div class="carousel-indicators">
+        <div class="carousel-indicators desktop-bullets">
             <?= $bullets; ?>
         </div>
     </div>
