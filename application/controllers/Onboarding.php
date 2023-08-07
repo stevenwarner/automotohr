@@ -5149,6 +5149,7 @@ class Onboarding extends CI_Controller
                             $i9_data_to_insert['sent_status'] = 1;
                             $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                             $i9_data_to_insert['status'] = 1;
+                            $i9_data_to_insert['version'] = getSystemDate('Y');
                             $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                         } else {
                             //
@@ -5166,6 +5167,7 @@ class Onboarding extends CI_Controller
                             $data_to_update["section1_preparer_signature_user_agent"] = NULL;
                             $data_to_update["user_consent"] = NULL;
                             $data_to_update["s3_filename"] = NULL;
+                            $data_to_update["version"] = getSystemDate('Y');
                             //
                             $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                         }

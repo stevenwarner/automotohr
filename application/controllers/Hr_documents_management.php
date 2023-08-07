@@ -2539,6 +2539,7 @@ class Hr_documents_management extends Public_Controller
                                 $i9_data_to_insert['sent_status'] = 1;
                                 $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                                 $i9_data_to_insert['status'] = 1;
+                                $i9_data_to_insert['version'] = getSystemDate('Y');
                                 $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                             } else {
                                 //
@@ -2559,6 +2560,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update["employer_flag"] = NULL;
                                 $data_to_update["user_consent"] = NULL;
                                 $data_to_update["s3_filename"] = NULL;
+                                $data_to_update["version"] = getSystemDate('Y');
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                             }
@@ -8452,6 +8454,7 @@ class Hr_documents_management extends Public_Controller
                     $i9_data_to_update["section3_emp_sign"] = NULL;
                     $i9_data_to_update["employer_flag"] = 0;
                     $i9_data_to_update["user_consent"] = NULL;
+                    $i9_data_to_update["version"] = getSystemDate('Y');
                     //
                     $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
                 } else {
@@ -8462,6 +8465,7 @@ class Hr_documents_management extends Public_Controller
                     $i9_data_to_insert['sent_status'] = 1;
                     $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                     $i9_data_to_insert['status'] = 1;
+                    $i9_data_to_insert["version"] = getSystemDate('Y');
                     //
                     $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                 }

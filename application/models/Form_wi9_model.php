@@ -36,16 +36,16 @@ class Form_wi9_model extends CI_Model
 
     function fetch_form($form_name, $user_type, $user_sid)
     {
-//        $this->db->select('*, "1" as status, "1" as user_consent, "1" as manual, employee_sid as user_sid');
-//        $this->db->where('employee_sid', $user_sid);
-//        $this->db->where('document_type ', $form_name);
-//        $this->db->from('eev_documents');
-//
-//        $a = $this->db->get();
-//        $b = $a->row_array();
-//        $a->free_result();
-//
-//        if(sizeof($b)) return $b;
+        //        $this->db->select('*, "1" as status, "1" as user_consent, "1" as manual, employee_sid as user_sid');
+        //        $this->db->where('employee_sid', $user_sid);
+        //        $this->db->where('document_type ', $form_name);
+        //        $this->db->from('eev_documents');
+        //
+        //        $a = $this->db->get();
+        //        $b = $a->row_array();
+        //        $a->free_result();
+        //
+        //        if(sizeof($b)) return $b;
 
         $this->db->select('*');
         if ($form_name == 'w4') {
@@ -57,7 +57,7 @@ class Form_wi9_model extends CI_Model
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
-        }elseif ($form_name == 'w9') {
+        } elseif ($form_name == 'w9') {
             $this->db->where('user_type', $user_type);
             $this->db->where('user_sid', $user_sid);
             $this->db->where('status', 1);
@@ -75,7 +75,6 @@ class Form_wi9_model extends CI_Model
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
-
         }
         if (sizeof($records_arr) > 0) {
             return $records_arr[0];
@@ -107,10 +106,9 @@ class Form_wi9_model extends CI_Model
     {
         $this->db->select('sid,file_code,upload_date,file_name,verified');
         $this->db->where('form_id', $form_id);
-//        $this->db->where('applicant_sid <>',NULL);
+        //        $this->db->where('applicant_sid <>',NULL);
         $files = $this->db->get('form_i9_docs')->result_array();
         return $files;
-
     }
 
     function mark_as_verified($doc_id, $data)
@@ -134,7 +132,7 @@ class Form_wi9_model extends CI_Model
         $this->db->from('portal_applicant_rating');
         $rows = $this->db->count_all_results();
 
-//        echo $this->db->last_query(); exit;
+        //        echo $this->db->last_query(); exit;
         if ($rows > 0) {
             $this->db->select_sum('rating');
             $this->db->where('applicant_job_sid', $app_id);
@@ -214,16 +212,18 @@ class Form_wi9_model extends CI_Model
         }
     }
 
-    function do_manual_upload_form($sid, $upload_form_array, $form = 'w4'){
-        $this->db->where('sid',$sid);
-        if($form == 'w4'){
-            $this->db->update('form_w4_original',$upload_form_array);
-        } else if($form == 'w9'){
-            $this->db->update('applicant_w9form',$upload_form_array);
+    function do_manual_upload_form($sid, $upload_form_array, $form = 'w4')
+    {
+        $this->db->where('sid', $sid);
+        if ($form == 'w4') {
+            $this->db->update('form_w4_original', $upload_form_array);
+        } else if ($form == 'w9') {
+            $this->db->update('applicant_w9form', $upload_form_array);
         }
     }
 
-     function check_i9_exist($user_type, $user_sid) {
+    function check_i9_exist($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->from('applicant_i9form');
@@ -239,17 +239,111 @@ class Form_wi9_model extends CI_Model
         }
     }
 
-    function insert_i9_form_record($data_to_insert) {
+    function insert_i9_form_record($data_to_insert)
+    {
         $data_to_insert['emp_app_sid'] = $data_to_insert['user_sid'];
         $this->db->insert('applicant_i9form', $data_to_insert);
     }
 
-    function i9_forms_history($data_to_insert) {
+    function i9_forms_history($data_to_insert)
+    {
         $this->db->insert('applicant_i9form_history', $data_to_insert);
     }
 
-    function delete_i9_form($sid) {
+    function delete_i9_form($sid)
+    {
         $this->db->where('sid', $sid);
         $this->db->delete('applicant_i9form');
+    }
+
+
+    /**
+     * get I9 form by user id and
+     * user type
+     *
+     * @param int $userId
+     * @param string $userType
+     * @param string $section Optional
+     * @return array
+     */
+    public function getI9Form(int $userId, string $userType, string $section = 'all'): array
+    {
+        //
+        $columns = $section == 'all' ? '*' : [
+            'applicant_i9form.sid',
+            'applicant_i9form.user_consent',
+        ];
+        //
+        if ($section == 'section1') {
+            $columns[] = 'applicant_i9form.section1_last_name';
+            $columns[] = 'applicant_i9form.section1_first_name';
+            $columns[] = 'applicant_i9form.section1_middle_initial';
+            $columns[] = 'applicant_i9form.section1_other_last_names';
+            $columns[] = 'applicant_i9form.section1_address';
+            $columns[] = 'applicant_i9form.section1_apt_number';
+            $columns[] = 'applicant_i9form.section1_city_town';
+            $columns[] = 'applicant_i9form.section1_state';
+            $columns[] = 'applicant_i9form.section1_zip_code';
+            $columns[] = 'applicant_i9form.section1_date_of_birth';
+            $columns[] = 'applicant_i9form.section1_social_security_number';
+            $columns[] = 'applicant_i9form.section1_emp_email_address';
+            $columns[] = 'applicant_i9form.section1_emp_telephone_number';
+            $columns[] = 'applicant_i9form.section1_emp_signature';
+            $columns[] = 'applicant_i9form.section1_today_date';
+            $columns[] = 'applicant_i9form.section1_alien_registration_number';
+            $columns[] = 'applicant_i9form.section1_penalty_of_perjury';
+            $columns[] = 'applicant_i9form.section1_preparer_or_translator';
+            $columns[] = 'applicant_i9form.section1_preparer_json';
+        }
+        //
+        $record =
+            $this->db
+            ->select($columns)
+            ->where([
+                'applicant_i9form.user_sid' => $userId,
+                'applicant_i9form.user_type' => $userType,
+            ])
+            ->get('applicant_i9form')
+            ->row_array();
+        //
+        if ($record) {
+            $record = array_merge(
+                $record,
+                unserialize($record['section1_alien_registration_number'])
+            );
+            //
+            $record['section1_date_of_birth'] = trim(explode(' ', $record['section1_date_of_birth'])[0]);
+            $record['section1_today_date'] = trim(explode(' ', $record['section1_today_date'])[0]);
+        }
+        // check and merge records
+        return checkI9RecordWithProfile(
+            $userId,
+            $userType,
+            $record
+        );
+    }
+
+    /**
+     * get I9 form by id
+     *
+     * @param int $formId
+     * @param array $extra
+     * @return array
+     */
+    public function getI9FormById(int $formId, array $extra = []): array
+    {
+        //
+        $columns = array_merge(
+            ['user_sid', 'user_type', 'status'],
+            $extra
+        );
+        return
+            $this->db
+            ->select($columns)
+            ->where([
+                'applicant_i9form.sid' => $formId
+            ])
+            ->get('applicant_i9form')
+            ->row_array();
     }
 }

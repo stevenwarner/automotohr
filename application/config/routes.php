@@ -1801,3 +1801,12 @@ $route['ip_status_handler']['post'] = "manage_admin/Blocked_ips/statusHandler";
 
 //
 $route['get_applicant_onboarding_history/(:num)']['get'] = 'application_tracking_system/getApplicantStatusHistory/$1';
+
+
+/**
+ * 2023 I9 routes
+ */
+$route['forms/i9/my']['get'] = 'v1/I9/my';
+$route['forms/i9/my']['post'] = 'v1/I9/saveMy';
+$route['forms/i9/signature/preparer/(:num)/(:num)']['get'] = 'v1/I9/getPreparerSignature/$1/$2';
+$route['forms/i9/signature/preparer/save/(:num)/(:num)']['post'] = 'v1/I9/savePreparerSignature/$1/$2';

@@ -818,3 +818,111 @@ if (!function_exists('getApplicantOnboardingPreviousStatus')) {
         }
     }
 }
+
+
+if (!function_exists('checkI9RecordWithProfile')) {
+    /**
+     * check user profile with I9
+     *
+     * @param int    $userId
+     * @param string $userType
+     * @param array  $data
+     * @return array
+     */
+    function checkI9RecordWithProfile(int $userId, string $userType, array $data): array
+    {
+        //
+        $CI = &get_instance();
+        //
+        $table = $userType === 'employee' ? 'users' : 'portal_job_applicant';
+        //
+        $columns = [
+            'first_name',
+            'last_name',
+            'middle_name',
+            'ssn',
+            'dob',
+            'PhoneNumber',
+            'email',
+            'Location_Address',
+            'Location_Address_2',
+            'Location_City',
+            'Location_ZipCode',
+            'Location_State',
+        ];
+        //
+        if ($userType === 'applicant') {
+            //
+            $columns = [
+                'first_name',
+                'last_name',
+                'middle_name',
+                'ssn',
+                'dob',
+                'phone_number',
+                'email',
+                'address',
+                'city',
+                'zipcode',
+                'state',
+            ];
+        }
+        //
+        $profileData = $CI->db
+            ->select($columns)
+            ->where('sid', $userId)
+            ->get($table)
+            ->row_array();
+        //
+        if ($userType === 'applicant') {
+            $profileData['PhoneNumber'] = $profileData['phone_number'];
+            $profileData['Location_City'] = $profileData['city'];
+            $profileData['Location_ZipCode'] = $profileData['zipcode'];
+            $profileData['Location_state'] = $profileData['state'];
+            $profileData['Location_Address'] = $profileData['address'];
+            $profileData['Location_Address_2'] = '';
+        }
+        //
+        $address = trim($profileData['Location_Address'] . ' ' . $profileData['Location_Address_2']);
+        //
+        $data['section1_last_name'] = $data['section1_last_name'] ?? $profileData['last_name'];
+        $data['section1_first_name'] = $data['section1_first_name'] ?? $profileData['first_name'];
+        $data['section1_middle_initial'] = $data['section1_middle_initial'] ?? $profileData['middle_name'];
+        $data['section1_address'] = $data['section1_address'] ?? $address;
+        $data['section1_city_town'] = $data['section1_city_town'] ?? $profileData['Location_City'];
+        $data['section1_state'] = $data['section1_state'] ?? getStateColumnById($profileData['Location_State'] ?? 0);
+        $data['section1_zip_code'] = $data['section1_zip_code'] ?? $profileData['Location_ZipCode'];
+        $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ?? $profileData['dob'];
+        $data['section1_social_security_number'] = $data['section1_social_security_number'] ?? $profileData['ssn'];
+        $data['section1_emp_email_address'] = $data['section1_emp_email_address'] ?? $profileData['email'];
+        $data['section1_emp_telephone_number'] = $data['section1_emp_telephone_number'] ?? $profileData['PhoneNumber'];
+        $data['section1_today_date'] = $data['section1_today_date'] ?? getSystemDate(DB_DATE);
+        //
+        return $data;
+    }
+}
+
+if (!function_exists('getStateColumnById')) {
+    /**
+     * get state details
+     *
+     * @param int    $stateId
+     * @param string $column Optional
+     * @return array
+     */
+    function getStateColumnById(int $stateId = 0, string $column = 'state_code'): string
+    {
+        //
+        if (!$stateId) {
+            return '';
+        }
+        //
+        $CI = &get_instance();
+        //
+        return $CI->db
+            ->select($column)
+            ->where('sid', $stateId)
+            ->get('states')
+            ->row_array()[$column];
+    }
+}
