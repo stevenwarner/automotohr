@@ -18,8 +18,74 @@
     <!-- main area -->
     <div class="row">
         <div class="col-sm-12">
-            <h3>Off-cycle payroll - select employees</h3>
+            <h2>Off-cycle payroll - select employees</h2>
             <p>Select who will be on this payroll. You can only choose from employees at your company.</p>
+
+            <div class="hr-document-list">
+                <table class="hr-doc-list-table">
+                    <caption></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" style="vertical-align: middle; width:8%">
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" id="jsSelectAll" />
+                                    <div class="control__indicator" style="top: -7px;"></div>
+                                </label>
+                            </th>
+                            <th scope="col">Employee Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr data-id="11">
+                            <td style="vertical-align: middle;">
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" class="jsSelectSingle" />
+                                    <div class="control__indicator" style="top: -7px;"></div>
+                                </label>
+                            </td>
+                            <td>Wittgenstein, Ludwig</td>
+                        </tr>
+                        <tr data-id="11">
+                            <td style="vertical-align: middle;">
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" class="jsSelectSingle" />
+                                    <div class="control__indicator" style="top: -7px;"></div>
+                                </label>
+                            </td>
+                            <td>Arendt, Hannah</td>
+                        </tr>
+                        <tr data-id="11">
+                            <td style="vertical-align: middle;">
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" class="jsSelectSingle" />
+                                    <div class="control__indicator" style="top: -7px;"></div>
+                                </label>
+                            </td>
+                            <td>Berlin, Isaiah</td>
+                        </tr>
+                        <tr data-id="11">
+                            <td style="vertical-align: middle;">
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" class="jsSelectSingle" />
+                                    <div class="control__indicator" style="top: -7px;"></div>
+                                </label>
+                            </td>
+                            <td>Churchland, Patricia</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <span class="pull-right">
+                <button class="btn btn-success js-action-btn" data-step="step_0">Cancel</button>
+                <button class="btn btn-success js-action-btn" data-step="step_2">Continue</button>
+            </span>
         </div>
     </div>
 </div>

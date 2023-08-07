@@ -41,13 +41,20 @@ class Payroll extends CI_Controller
         $this->version = 'v=' . (MINIFIED ? '1.0' : time());
         //
 
+        /* will open later 
         if (!isCompanyOnBoard()) {
             return redirect('/dashboard');
         }
+
+
+
         //
         if (!isCompanyTermsAccpeted() &&  $this->uri->segment(1) != 'payroll' && $this->uri->segment(2) != 'service-terms') {
             return redirect('/payroll/service-terms');
         }
+*/
+
+
     }
 
     /**
@@ -2391,8 +2398,9 @@ class Payroll extends CI_Controller
      *
      * @param string $payrollStatus
      */
-    public function offCyclePayroll(string $payrollStatus = 'new')
+    public function offCyclePayroll(string $payrollStatus = 'step_1')
     {
+       // die($payrollStatus);
         // validate company login
         if (!$this->session->userdata('logged_in')) {
             return redirect('/login');
@@ -2414,7 +2422,7 @@ class Payroll extends CI_Controller
             ->get('payroll_off_cycle')
             ->row_array();
         //
-        $data['loadPage'] = !$payrollDetails ? 'step_1' : '';
+        $data['loadPage'] = $payrollDetails=='' ? 'step_1' : $payrollStatus;
         // load view
         $this->load->view('main/header', $data)
             ->view('v1/payrolls/off_cycle/layout')
