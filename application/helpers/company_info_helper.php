@@ -3143,4 +3143,48 @@ if (!function_exists('getGroupOtherDocuments')) {
         //
         return $doCount ? count($documentArray) : $documentArray;
     }
+
+
+//
+    if (!function_exists('get_print_document_url_secure')) {
+        function get_print_document_url_secure($document_sid)
+        {
+            $urls = [];
+                    $CI = &get_instance();
+                    $CI->db->select('*');
+                    $CI->db->where('sid', $document_sid);
+                    $CI->db->from('company_secure_documents');
+                    $CI->db->limit(1);
+                    $result = $CI->db->get()->result_array();
+                    $upload_document = $result[0]['document_s3_name'];
+                    $file_name = explode(".", $upload_document);
+                    $document_name = $file_name[0];
+                    $document_extension = $file_name[1];
+                    if ($document_extension == 'pdf') {
+                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
+                    } else if ($document_extension == 'doc') {
+                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
+                    } else if ($document_extension == 'docx') {
+                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                    } else if ($document_extension == 'ppt') {
+                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
+                    } else if ($document_extension == 'pptx') {
+                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
+                    } else if ($document_extension == 'xls') {
+                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
+                    } else if ($document_extension == 'xlsx') {
+                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
+                    } else if ($document_extension == 'csv') {
+                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
+                    } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
+                       $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later_secure/' . $document_sid);
+                    }
+    
+                    $document_path = $result[0]['document_s3_name'];
+                    $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
+    
+                    return $urls;
+        }
+    }
+
 }

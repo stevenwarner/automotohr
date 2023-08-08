@@ -6542,7 +6542,7 @@ class Hr_documents_management extends Public_Controller
                     $emp_ids = explode(':', $employees);
                 }
 
-                
+
                 if (!empty($emp_ids)) {
                     $data['employees'] = $this->hr_documents_management_model->getEmployeesDetails($emp_ids);
                 } else {
@@ -16050,5 +16050,34 @@ class Hr_documents_management extends Public_Controller
         }
         //
         return $requested_content;
+    }
+
+
+    //
+    public function get_print_url_secure()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $document_sid = $this->input->post('document_sid');
+            $url = get_print_document_url_secure($document_sid);
+            echo json_encode($url);
+        }
+    }
+
+    //
+    public function print_generated_and_offer_later_secure($document_sid, $download = NULL)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $document = $this->hr_documents_management_model->getSecureDocuemntById($document_sid);
+            //
+            $document_file = AWS_S3_BUCKET_URL . $document['document_s3_name'];
+            $data['print'] = 'generated';
+            $data['document_file'] = 'no_pdf';
+            $data['download'] = $download;
+            $data['file_name'] = $document['document_title'];
+            $data['original_document_description'] = '<img src="' . $document_file . '" style="width:100%; height:500px;" />';
+            $this->load->view('hr_documents_management/print_generated_document', $data);
+        }
     }
 }

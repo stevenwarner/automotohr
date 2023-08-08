@@ -284,7 +284,7 @@ class Assign_bulk_documents extends Public_Controller
         if (!isset($_POST['employeeId']) || empty($_POST['employeeId'])) $this->response($resp);
         //
         $this->load->model('Hr_documents_management_model', 'HRDMM');
-        if($this->HRDMM->isActiveUser($_POST['employeeId'])){
+        if ($this->HRDMM->isActiveUser($_POST['employeeId'])) {
             // Fetch employee information
             $user_info = $this->assign_bulk_documents_model->get_employee_information(
                 $this->session->userdata('logged_in')['company_detail']['sid'],
@@ -322,5 +322,123 @@ class Assign_bulk_documents extends Public_Controller
         header('Content-Type: application/json');
         echo json_encode($array);
         exit(0);
+    }
+
+
+    //
+    function SecureDocumentsListing()
+    {
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+
+
+        //document_title
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['company_sid']  = $data['session']['company_detail']['sid'];
+
+        $data['company_name'] = strtolower(clean($data['session']['company_detail']['CompanyName']));
+        $data['employer_sid'] = $data['session']['employer_detail']['sid'];
+        $data['title'] = 'Upload Secure Documents';
+
+        $documentTitle = '';
+        if (isset($_POST['document_title']) && $_POST['document_title'] != '') {
+            $documentTitle = $_POST['document_title'];
+        }
+
+
+        $data['secure_documents'] = $this->assign_bulk_documents_model->getSecureDocuments($data['company_sid'], $documentTitle);
+
+        $data['documentTitle'] = $documentTitle;
+        //_e($data['secure_documents'],true);
+
+        $this->load->view('main/header', $data);
+        $this->load->view('manage_employer/company_secure_documents_listing');
+        $this->load->view('main/footer');
+    }
+
+
+    //
+    function AddSecureDocument()
+    {
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['company_sid']  = $data['session']['company_detail']['sid'];
+
+        $data['company_name'] = strtolower(clean($data['session']['company_detail']['CompanyName']));
+        $data['employer_sid'] = $data['session']['employer_detail']['sid'];
+        $data['title'] = 'Add Secure Document';
+        $this->load->view('main/header', $data);
+        $this->load->view('manage_employer/add_secure_document');
+        $this->load->view('main/footer');
+    }
+
+
+    function UploadSecureDocument()
+    {
+        // check if ajax request is not set
+        if (!$this->input->is_ajax_request()) redirect('assign_bulk_documents', 'referesh');
+        $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
+        if ($this->input->server('REQUEST_METHOD') != 'POST' || !$this->session->userdata('logged_in')) $this->response($return_array);
+        //
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $companyId = $data['session']['company_detail']['sid'];
+        $employerId = $data['session']['employer_detail']['sid'];
+        //
+        $file = $_FILES['file'];
+        $formpost = $this->input->post(NULL, TRUE);
+        if (!sizeof($file)) $this->response($return_array);
+        if ($file['error'] != 0) $this->response($return_array);
+        //
+        $document_title = $file['name'];
+
+        $gen_document_title = substr($document_title, 0, strrpos($document_title, '.'));
+        $gen_document_title = ucwords((preg_replace('/[^A-Za-z0-9\-]/', ' ', $gen_document_title)));
+
+        //
+        if ($_SERVER['HTTP_HOST'] == 'localhost') $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
+        else $uploaded_document_s3_name = upload_file_to_aws('file', $companyId, str_replace(' ', '_', $document_title), $employerId, AWS_S3_BUCKET_NAME);
+        //
+        $data_to_insert = array();
+        $data_to_insert['document_title'] = $gen_document_title;
+        //
+        if ($uploaded_document_s3_name != 'error') {
+            $data_to_insert['document_s3_name'] = $uploaded_document_s3_name;
+        } else {
+            $return_array['Response'] = 'Error';
+            $this->response($return_array);
+        }
+        //
+        if ($formpost['document_sid']!= '') {
+            $data_to_insert['updated_at'] = date('Y-m-d H:i:s');
+            $this->assign_bulk_documents_model->updateSecureDocument($formpost['document_sid'],$data_to_insert);
+        } else {
+            $data_to_insert['created_by'] = $employerId;
+            $data_to_insert['company_sid'] = $companyId;
+            $data_to_insert['created_at'] = date('Y-m-d H:i:s');
+            $this->assign_bulk_documents_model->insertSecureDocument($data_to_insert);
+        }
+
+        $return_array['Status'] = true;
+        $return_array['Response'] = 'Proceed';
+        $this->response($return_array);
+    }
+
+
+    function EditSecureDocument($document_sid)
+    {
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['company_sid']  = $data['session']['company_detail']['sid'];
+
+        $data['company_name'] = strtolower(clean($data['session']['company_detail']['CompanyName']));
+        $data['employer_sid'] = $data['session']['employer_detail']['sid'];
+        $data['title'] = 'Add Secure Document';
+        $data['document_sid'] = $document_sid;
+        $this->load->view('main/header', $data);
+        $this->load->view('manage_employer/edit_secure_document');
+        $this->load->view('main/footer');
     }
 }

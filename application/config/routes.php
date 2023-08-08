@@ -1804,3 +1804,12 @@ $route['ip_status_handler']['post'] = "manage_admin/Blocked_ips/statusHandler";
 
 //
 $route['get_applicant_onboarding_history/(:num)']['get'] = 'application_tracking_system/getApplicantStatusHistory/$1';
+
+//
+$route['secure_documents_listing'] = 'Assign_bulk_documents/SecureDocumentsListing';
+$route['add_secure_document'] = 'Assign_bulk_documents/AddSecureDocument';
+
+$route['assign-bulk-documents/upload_secure_document'] = 'assign_bulk_documents/UploadSecureDocument';
+
+$route['edit_secure_document/(:num)'] = 'Assign_bulk_documents/EditSecureDocument/$1';
+
