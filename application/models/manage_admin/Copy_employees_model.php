@@ -1100,9 +1100,36 @@ class Copy_employees_model extends CI_Model
             ->where('is_archived', 0)
             ->order_by('sort_order', 'ASC');
         //
-        $policies = $this->db->get('timeoff_policies')
+        return $this->db->get('timeoff_policies')
+            ->result_array();
+    }
+
+    //
+    public function getPoliciesByCompanyRequests(int $companyId): array
+    {
+        //
+        $policyIds = $this->db
+            ->select(
+                'distinct(timeoff_policy_sid) as timeoff_policy_sid'
+            )
+            ->where('company_sid', $companyId)
+            ->get('timeoff_requests')
             ->result_array();
         //
-        return $policies;
+        if (empty($policyIds)) {
+            return [];
+        }
+        //
+        return
+            $this->db
+            ->select('
+                timeoff_policies.sid,
+                timeoff_policies.title
+            ')
+            ->where('company_sid', $companyId)
+            ->where_in('sid', array_column($policyIds, 'timeoff_policy_sid'))
+            ->order_by('sort_order', 'ASC')
+            ->get('timeoff_policies')
+            ->result_array();
     }
 }

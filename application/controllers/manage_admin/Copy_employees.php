@@ -313,8 +313,8 @@ class Copy_employees extends Admin_Controller
                 //  transfer employee timeoff request
                 if ($formpost['timeoff'] == 1) {
 
-                    $managePolicies=$formpost['policyObj'];
-                    
+                    $managePolicies = $formpost['policyObj'];
+
                     $this->transferEmployeeTimeoff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company, $managePolicies);
                 }
                 //
@@ -800,7 +800,7 @@ class Copy_employees extends Admin_Controller
 
                 //  transfer employee timeoff request
                 if ($formpost['timeoff'] == 1) {
-                    $this->transferEmployeeTimeoff($employee_sid, $new_employee_sid, $from_company, $to_company);
+                    $this->transferEmployeeTimeoff($employee_sid, $new_employee_sid, $from_company, $to_company, $formpost['policyObj']);
                 }
 
                 $resp['status'] = TRUE;
@@ -823,7 +823,6 @@ class Copy_employees extends Admin_Controller
         $managePolicies
     ) {
         //
-        //
         $moveCategory = 'no';
         $moveCategorysIds = array();
         $movePolicy = 'no';
@@ -832,8 +831,7 @@ class Copy_employees extends Admin_Controller
         $moveRequestsIds = array();
         $moveBalance = 'no';
         $moveBalancesIds = array();
-        //
-        // get secondary company employee timeoff requests
+        // get secondary company employee time off requests
         $employeeRequests = $this->copy_employees_model->getEmployeeRequests($secondaryEmployeeSid, $secondaryCompanySid);
         //
         // get primary company admin plus or employee sid
@@ -843,98 +841,7 @@ class Copy_employees extends Admin_Controller
             //
             foreach ($employeeRequests as $request) {
                 //
-                // get request policy
-                
-                //search in array
-                //$managePolicies
-               
-                //$request['timeoff_policy_sid']
-
-                
-                $policy = $this->copy_employees_model->getCompanyPolicy($request['timeoff_policy_sid']);
-
-                //
-                // get policy category sid
-                $category_sid = $this->copy_employees_model->getPolicyType($policy['type_sid'], $policy['company_sid']);
-                //
-                $typeSid = 0;
-                $policySid = 0;
-                //
-                // check category exist in primary company
-                if (!$this->copy_employees_model->isPolicyCategoryExist($category_sid, $primaryCompanySid)) {
-                    //
-                    // add policy category
-                    $insertCategory = array();
-                    $insertCategory['company_sid'] = $primaryCompanySid;
-                    $insertCategory['timeoff_category_list_sid'] = $category_sid;
-                    $insertCategory['creator_sid'] = $primaryAdminSid;
-                    $insertCategory['status'] = 1;
-                    $insertCategory['is_archived'] = 0;
-                    $insertCategory['sort_order'] = 1;
-                    $insertCategory['category_type'] = 1;
-                    //
-                    $typeSid = $this->copy_employees_model->insertCategory($insertCategory);
-                    //
-                    $moveCategory = 'yes';
-                    array_push($moveCategorysIds, $category_sid);
-                    //
-                } else {
-                    $typeSid = $this->copy_employees_model->getCategoryTypeById($category_sid, $primaryCompanySid);
-                }
-                //
-                // check policy exist in primary company
-                if (!$this->copy_employees_model->isRequestPolicyExist($policy['title'],  $typeSid, $primaryCompanySid)) {
-                    //
-                    // add policy
-                    $insertPolicy = array();
-                    $insertPolicy['company_sid'] = $primaryCompanySid;
-                    $insertPolicy['type_sid'] = $typeSid;
-                    $insertPolicy['creator_sid'] = $primaryAdminSid;
-                    $insertPolicy['title'] = $policy['title'];
-                    $insertPolicy['assigned_employees'] = $primaryEmployeeSid;
-                    $insertPolicy['off_days'] = $policy['off_days'];
-                    $insertPolicy['note'] = $policy['note'];
-                    $insertPolicy['is_default'] = $policy['is_default'];
-                    $insertPolicy['for_admin'] = $policy['for_admin'];
-                    $insertPolicy['is_archived'] = $policy['is_archived'];
-                    $insertPolicy['is_unlimited'] = $policy['is_unlimited'];
-                    $insertPolicy['creator_type'] = $policy['creator_type'];
-                    $insertPolicy['status'] = $policy['status'];
-                    $insertPolicy['sort_order'] = $policy['sort_order'];
-                    $insertPolicy['fmla_range'] = $policy['fmla_range'];
-                    $insertPolicy['policy_start_date'] = $policy['policy_start_date'];
-                    $insertPolicy['is_included'] = $policy['is_included'];
-                    $insertPolicy['reset_policy'] = $policy['reset_policy'];
-                    $insertPolicy['accruals'] = $policy['accruals'];
-                    $insertPolicy['is_entitled_employee'] = 1;
-                    $insertPolicy['policy_category_type'] = $policy['policy_category_type'];
-                    $insertPolicy['allowed_approvers'] = '';
-                    //
-                    $policySid = $this->copy_employees_model->insertPolicy($insertPolicy);
-                    //
-                    $movePolicy = 'yes';
-                    array_push($movePolicysTitle, $policy['title']);
-                } else {
-                    $policySid = $this->copy_employees_model->getRequestActivePolicyId($policy['title'], $typeSid, $primaryCompanySid);
-                    //
-                    // check if primary employee exist in previous company policy 
-                    // then add employee into new company policy too
-                    if (str_replace($secondaryEmployeeSid, '', $policy['assigned_employees']) != $policy['assigned_employees']) {
-                        //
-                        // get assigned employees from new company policy
-                        $assignedEmployees = $this->copy_employees_model->getAssignedEmployees($policy['title'],  $typeSid, $primaryCompanySid);
-                        //
-                        $dataToUpdate = array();
-                        //
-                        if (empty($assignedEmployees)) {
-                            $dataToUpdate['assigned_employees'] = $primaryEmployeeSid;
-                        } else if (str_replace($primaryEmployeeSid, '', $assignedEmployees) == $assignedEmployees) {
-                            $dataToUpdate['assigned_employees'] = $assignedEmployees . ',' . $primaryEmployeeSid;
-                        }
-                        $this->copy_employees_model->updateCompanyPolicy($policySid, $dataToUpdate);
-                    }
-                }
-                //
+                $policySid = $managePolicies[$request['timeoff_policy_sid']];
                 // check employee request exist in primary company
                 if (!$this->copy_employees_model->checkTimeOffForSpecificEmployee($primaryCompanySid, $primaryEmployeeSid, $policySid,  $request['request_from_date'], $request['request_to_date'])) {
                     //
@@ -973,7 +880,7 @@ class Copy_employees extends Admin_Controller
                                 'endDate' => $request['request_to_date'],
                                 'time' => $request['requested_time'],
                                 'policyId' => $policySid,
-                                'policyTitle' => $policy['title'],
+                                'policyTitle' => $this->db->select('title')->where('sid', $policySid)->get('timeoff_policies')->row_array()['title'],
                             ],
                             'comment' => $comment
                         ]);
@@ -998,12 +905,13 @@ class Copy_employees extends Admin_Controller
             //
             foreach ($employeeBalances as $balance) {
                 //
+                $policySid = $managePolicies[$balance['policy_sid']];
                 // check employee request exist in primary company
-                if (!$this->copy_employees_model->checkbalanceForSpecificEmployee($primaryEmployeeSid, $balance['policy_sid'], $balance['is_added'], $balance['added_time'], $balance['effective_at'])) {
+                if (!$this->copy_employees_model->checkbalanceForSpecificEmployee($primaryEmployeeSid, $policySid, $balance['is_added'], $balance['added_time'], $balance['effective_at'])) {
                     //
                     $insertBalance = array();
                     $insertBalance['user_sid'] = $primaryEmployeeSid;
-                    $insertBalance['policy_sid'] = $balance['policy_sid'];
+                    $insertBalance['policy_sid'] = $policySid;
                     $insertBalance['added_by'] = $primaryAdminSid;
                     $insertBalance['is_added'] = $balance['is_added'];
                     $insertBalance['added_time'] = $balance['added_time'];
@@ -1496,13 +1404,16 @@ class Copy_employees extends Admin_Controller
     public function getCompaniesPolicies($from_company_sid, $to_company_sid)
     {
 
-        $fromCompanyPolicies = $this->copy_employees_model->getAllActivePolicies($from_company_sid);
+        $fromCompanyPolicies = $this->copy_employees_model->getPoliciesByCompanyRequests($from_company_sid);
         $toCompanyPolicies = $this->copy_employees_model->getAllActivePolicies($to_company_sid);
 
         $data['fromCompanyPolicies'] = $fromCompanyPolicies;
         $data['toCompanyPolicies'] = $toCompanyPolicies;
 
-        // _e($data, true);
-        echo json_encode($data);
+        //
+        return SendResponse(
+            200,
+            $data
+        );
     }
 }
