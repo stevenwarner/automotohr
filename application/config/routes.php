@@ -1809,3 +1809,15 @@ $route['get_applicant_onboarding_history/(:num)']['get'] = 'application_tracking
 
 //
 $route['home2']['get'] = 'v1/App/index';
+// Company document listing
+$route['company/documents/secure/listing'] = 'Assign_bulk_documents/secureDocumentsListing';
+$route['company/documents/secure/add'] = 'Assign_bulk_documents/addSecureDocument';
+
+$route['assign-bulk-documents/upload_secure_document'] = 'assign_bulk_documents/uploadSecureDocument';
+
+$route['edit_secure_document/(:num)'] = 'Assign_bulk_documents/EditSecureDocument/$1';
+
+$route['download/file/(:any)'] = 'v1/App/downloadFileFromAWSAndStream/$1';
+$route['file/preview']['post'] = 'v1/App/previewDocument';
+// company secure documents
+$route['manage_admin/company/documents/secure/listing/(:num)']['get'] = 'manage_admin/Companies/secureDocumentByCompany/$1';

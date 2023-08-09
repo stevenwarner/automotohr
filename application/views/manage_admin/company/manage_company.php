@@ -774,7 +774,7 @@
                                                 </article>
 
 
-                                               <article class="information-box">
+                                                <article class="information-box">
                                                     <header class="hr-box-header">Send Bulk Email</header>
                                                     <div class="table-outer">
                                                         <div class="info-row">
@@ -801,6 +801,7 @@
                                                     </div>
                                                     <header class="hr-box-header hr-box-footer"></header>
                                                 </article>
+
 
 
 
@@ -1333,7 +1334,7 @@
                                                         </div>
                                                         <header class="hr-box-header hr-box-footer"></header>
                                                     </article>
-                                                    
+
                                                 </div>
                                             <?php } ?>
                                         </div>
@@ -1380,6 +1381,24 @@
                                                     </article>
                                             <?php }
                                             } ?>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <article class="col-sm-6 information-box">
+                                                <header class="hr-box-header"> Company Secure Documents</header>
+                                                <div class="table-outer">
+                                                    <div class="info-row">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 text-center">
+                                                                <a href="<?= base_url('manage_admin/company/documents/secure/listing/' . ($company_sid) . ''); ?>" class="btn btn-success">View Documents</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <header class="hr-box-header hr-box-footer"></header>
+                                            </article>
+
                                         </div>
 
 
@@ -2045,16 +2064,16 @@
             $.post(
                 "<?= base_url('send_invoice_by_email'); ?>", {
                     invoiceId: invoiceId,
-                    companyId: <?=$company_sid;?>
+                    companyId: <?= $company_sid; ?>
                 }
             ).done(function(resp) {
                 $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Send Invoice');
                 invoiceIds.splice(invoiceIds.indexOf(invoiceId, 1));
                 //
                 if (resp.error) {
-                    return alertify.alert('Error!', resp.error, function(){});
+                    return alertify.alert('Error!', resp.error, function() {});
                 }
-                return alertify.alert('Success!', resp.success, function(){});
+                return alertify.alert('Success!', resp.success, function() {});
             });
         }
     });

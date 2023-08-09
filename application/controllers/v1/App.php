@@ -110,4 +110,53 @@ class App extends CI_Controller
         //
         return SendResponse(200, ['status' => true, 'success' => ['SCORM file read successfully.']]);
     }
+
+    /**
+     * preview s3 document
+     */
+    public function previewDocument(): array
+    {
+        // get post
+        $post = $this->input->post(
+            null,
+            true
+        );
+        // set error array
+        $errorArray = [];
+        //
+        if (!$post['key']) {
+            $errorArray[] = '"File name" is missing.';
+        }
+        //
+        if (!$post['ext']) {
+            $errorArray[] = '"File extension" is missing.';
+        }
+        //
+        if ($errorArray) {
+            return SendResponse(
+                404,
+                [
+                    'errors' => $errorArray
+                ]
+            );
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('v1/file/preview', $post, true)
+            ]
+        );
+    }
+
+    /**
+     * download dile from AWS
+     *
+     * @param string $key
+     * @return void
+     */
+    public function downloadFileFromAWSAndStream(string $key): void
+    {
+        downloadAWSFileToBrowser($key);
+    }
 }
