@@ -9,7 +9,7 @@
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
                         <span class="page-heading down-arrow">
-                            <a class="dashboard-link-btn" href="<?php echo base_url('settings') ?>"><i class="fa fa-chevron-left"></i>Settings</a>
+                            <a class="dashboard-link-btn" href="<?php echo base_url('my_settings') ?>"><i class="fa fa-chevron-left"></i>Settings</a>
                             <?php $this->load->view('manage_employer/company_logo_name'); ?>
                             <?= $title; ?>
                         </span>
