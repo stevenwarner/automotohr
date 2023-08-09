@@ -128,6 +128,7 @@ foreach ($companies as $company)
                                                 </li>
 
                                                 <li>
+
                                                     <a class="site-btn" id="js-fetch-employees" href="#">Fetch Employees</a>
                                                 </li>
                                             </ul>
@@ -273,7 +274,10 @@ foreach ($companies as $company)
         var coped_employees = 0;
         var current_employee = 0;
 
-        $(document).on('click', '.js-copy-employees-btn', start_copy_process);
+        $(document).on('click', '.js-copy-employees-btn', function(e) {
+            e.preventDefault();
+            start_copy_process()
+        });
 
         // Select 2
         $('#js-from-company').select2();
@@ -480,16 +484,21 @@ foreach ($companies as $company)
             // $('#js-total-employees').text(records.length); 
         }
 
-        function start_copy_process(e) {
-            e.preventDefault();
+        function start_copy_process(doBypass) {
+
 
             selected_employees = get_all_selected_employees();
 
             if (selected_employees.length === 0) {
-                alertify.alert('ERROR!', 'Please select atleast one employee to start the process.');
+                alertify.alert('ERROR!', 'Please select at least one employee to start the process.');
                 return;
             }
+            console.log(policyObj)
 
+            // for policies
+            if ($('#jsMoveTimeoff').prop('checked') && policyObj.hasOwnProperty('hasErrors') && doBypass === undefined) {
+                return callLoader()
+            }
 
             alertify.prompt('Please Enter a Note', '', '', function(evt, value) {
 
@@ -553,12 +562,16 @@ foreach ($companies as $company)
             employee.from_company = $('#js-from-company').val();
             employee.transferred_note = $("#transferred_note").val();
             employee.timeoff = $('#jsMoveTimeoff').is(':checked') ? 1 : 0;
+            employee.policyObj = policyObj;
+
 
             var myurl = "<?php echo base_url('manage_admin/copy_employees/copy_companies_employees') ?>";
             $.post(myurl, employee, function(resp) {
                 if (resp.status === false) {
                     loader('hide');
-                    alertify.alert('NOTICE', resp.response);
+                    alertify.alert('NOTICE', resp.response, function() {
+                        window.location.reload();
+                    });
                     return;
                 }
 
@@ -617,4 +630,175 @@ foreach ($companies as $company)
             //
             return row;
         }
+
+
+        //
+        $("#jsFetchPolicies").on('click', function(event) {
+            //
+            event.preventDefault()
+
+            callLoader();
+
+        });
+
+
+        function loadModal(data) {
+
+            //
+            let obj = (data);
+            //
+            let
+                modal = '';
+
+            modal += '<div class="modal fade" id="modal-id">';
+            modal += '    <div class="modal-dialog modal-lg">';
+            modal += '        <div class="modal-content">';
+            modal += '            <div class="modal-header">';
+            modal += '                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
+            modal += '                <h2 class="modal-title">Manage Policies</h2>';
+            modal += '            </div>';
+            modal += '            <div class="modal-body" style="min-height: 400px;">';
+
+            modal += '  <div class="row"> ';
+            modal += '      <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
+            modal += '                         <div class=" page-title">'
+            modal += '                             <h1 class="page-title" style="width: 100%;">From Company</h1>';
+            modal += '                         </div>';
+            modal += '        </div>';
+
+            modal += '       <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
+            modal += '                        <div class="page-title">'
+            modal += '                             <h1 class="page-title" style="width: 100%;">To Company</h1>';
+            modal += '                         </div>';
+            modal += '        </div>';
+
+            modal += '      </div>';
+
+
+
+            if (obj.fromCompanyPolicies.length > 0) {
+                $.each(obj.fromCompanyPolicies, function(key, value) {
+                    modal += '<br /> <div class="row csPolicyRow" data-key="' + (key) + '"> ';
+                    modal += '       <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
+                    modal += '                         <div > <input type="text"  class="invoice-fields csPolicyRowFrom" data-id="' + value.sid + '" value="' + value.title + '" id="" readonly>'
+
+                    modal += '                         </div>';
+                    modal += '        </div>';
+
+                    modal += '        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
+                    modal += '                         <div> <select id="" style="width: 100%;" class="invoice-fields csPolicyRowTo">';
+
+                    modal += '<option value="0">Please Select a Policy</option>';
+
+                    if (obj.toCompanyPolicies.length > 0) {
+                        $.each(obj.toCompanyPolicies, function(key, value) {
+
+                            modal += '<option value="' + value.sid + '">' + value.title + '</option>';
+
+                        });
+                    }
+
+                    modal += '                                 </select>';
+                    modal += '                         </div>';
+                    modal += '        </div>';
+
+                    modal += '  </div>';
+
+                });
+            }
+
+
+
+            modal += '            </div>';
+            modal += '            <div class="modal-footer">';
+            modal += '                <button type="button" class="btn btn-success js-btn-save">Save</button>';
+            modal += '                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
+            modal += '            </div>';
+            modal += '        </div>';
+            modal += '    </div>';
+            modal += '</div>';
+
+            //
+            $('#modal-id').remove();
+            $('body').append(modal);
+            $('#modal-id').modal();
+            //
+        }
+
+
+        let policyObj = {
+            hasErrors: []
+        };
+
+
+
+        function callLoader() {
+            policyObj = {
+                hasErrors: []
+            };
+            // Get company policies
+            let fromCompanySid = $('#js-from-company').val();
+            let toCompanySid = $('#js-to-company').val();
+
+            if (fromCompanySid == 0 || toCompanySid == 0) {
+                return alertify.alert('Please select "From & To" company to proceed.');
+            }
+
+            //Get From and to Company Policies
+            var myurl = "<?php echo base_url('manage_admin/copy_employees/getCompaniesPolicies') ?>" + "/" + fromCompanySid + "/" + toCompanySid;
+            $.ajax({
+                type: "GET",
+                url: myurl,
+                async: false,
+                success: function(data) {
+                    if (data.fromCompanyPolicies.length === 0) {
+                        return start_copy_process('bypass');
+                    }
+                    loadModal(data);
+                },
+                error: function(data) {}
+            });
+        }
+
+
+        //
+        $(document).on('click', '.js-btn-save', function(event) {
+            //
+            event.preventDefault();
+            //
+            let errorArray = [];
+
+            policyObj = {
+                hasErrors: []
+            };
+
+            let tmpPolicyHolder = {};
+            //
+            $('.csPolicyRow').map(function(index) {
+                let fromId = $(this).find('.csPolicyRowFrom').data('id');
+                let toId = $(this).find('.csPolicyRowTo option:selected').val();
+                //
+                if (!toId || toId == 0) {
+                    errorArray.push("Please match the policy at row " + (index + 1) + "");
+                } else {
+                    tmpPolicyHolder[fromId] = toId;
+                }
+            });
+            //
+            if (errorArray.length) {
+                policyObj.hasErrors = errorArray;
+                return alertify.alert(
+                    'Error!',
+                    errorArray.join('<br />')
+                );
+            }
+
+            policyObj = tmpPolicyHolder;
+
+            //
+            $('#modal-id').modal('hide');
+            $('#modal-id').remove();
+
+            start_copy_process()
+        });
     </script>
