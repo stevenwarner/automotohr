@@ -39,7 +39,7 @@
                         </li>
                         <li class="nav-item active nav_link mx-3 mt-lg-2 my-2">
                             <div class="dropdown">
-                                <a class="dropdown-toggle navbar-dropdown nav-link nav_link" id="hoverDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle navbar-dropdown nav-link nav_link" id="hoverDropdown" data-bs-toggle="dropdown">
                                     Product
                                 </a>
                                 <ul class="dropdown-menu p-0" aria-labelledby="hoverDropdown">

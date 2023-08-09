@@ -1,7 +1,7 @@
 <div class="row video-div auto-video-div">
     <div class="col-12 col-md-12 col-lg-5 no-padding-right">
         <div class="abosulte-div">
-            <iframe src="//www.youtube.com/embed/g4BsAB3PliY" class="embed-responsive-item responsive-video" frameborder="0"></iframe>
+            <iframe src="//www.youtube.com/embed/g4BsAB3PliY" class="embed-responsive-item responsive-video" style="border: 0" title="AutomotoHR Video"></iframe>
         </div>
     </div>
     <div class="col-12 col-md-12 col-lg-7 col-xl-7 no-padding-left">

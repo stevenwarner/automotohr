@@ -25,7 +25,7 @@
     <div class="row margin-btm">
         <div class="col-sm-12 col-md-2 col-lg-2 text-center div-content-center">
             <div class="small-img-div">
-                <img class="small-inline-img image-on-mob-adj" src="<?= base_url('assets/v1/app/images/group_1.png') ?>" alt="pad and pencil image" />
+                <img class="small-inline-img image-on-mob-adj" src="<?= base_url('assets/v1/app/images/group_1.webp') ?>" alt="pad and pencil image" />
             </div>
             <div>
                 <p class="img-below-text">
@@ -35,11 +35,11 @@
             </div>
         </div>
         <div class="col-lg-1 col-md-1 mob-exclude div-content-center arrow-margin-bottom">
-            <img src="<?= base_url('assets/v1/app/images/group_divider.png'); ?>" alt="right arrow image" />
+            <img src="<?= base_url('assets/v1/app/images/group_divider.webp'); ?>" alt="right arrow image" />
         </div>
         <div class="col-sm-12 col-md-2 col-lg-2 text-center div-content-center">
             <div class="small-img-div">
-                <img class="image-on-mob-adj specific-img-adj" src="<?= base_url('assets/v1/app/images/group_2.png') ?>" alt="person with screen image" />
+                <img class="image-on-mob-adj specific-img-adj" src="<?= base_url('assets/v1/app/images/group_2.webp') ?>" alt="person with screen image" />
             </div>
 
             <div>
@@ -51,11 +51,11 @@
             </div>
         </div>
         <div class="col-lg-1 col-md-1 mob-exclude div-content-center arrow-margin-bottom">
-            <img src="<?= base_url('assets/v1/app/images/group_divider.png'); ?>" alt="divider" />
+            <img src="<?= base_url('assets/v1/app/images/group_divider.webp'); ?>" alt="divider" />
         </div>
         <div class="col-sm-12 col-md-2 col-lg-2 text-center div-content-center">
             <div class="small-img-div">
-                <img class="image-on-mob-adj" src="<?= base_url('assets/v1/app/images/group_3.png') ?>" alt="world with magnifier image" />
+                <img class="image-on-mob-adj" src="<?= base_url('assets/v1/app/images/group_3.webp') ?>" alt="world with magnifier image" />
             </div>
 
             <div>
@@ -67,11 +67,11 @@
             </div>
         </div>
         <div class="col-lg-1 col-md-1 mob-exclude div-content-center arrow-margin-bottom">
-            <img src="<?= base_url('assets/v1/app/images/group_divider.png'); ?>" alt="right arrow image" />
+            <img src="<?= base_url('assets/v1/app/images/group_divider.webp'); ?>" alt="right arrow image" />
         </div>
         <div class="col-sm-12 col-md-2 col-lg-2 text-center div-content-center">
             <div class="small-img-div">
-                <img class="small-inline-img image-on-mob-adj" src="<?= base_url('assets/v1/app/images/group_4.png') ?>" alt="human mind with bulb image" />
+                <img class="small-inline-img image-on-mob-adj" src="<?= base_url('assets/v1/app/images/group_4.webp') ?>" alt="human mind with bulb image" />
             </div>
             <div>
                 <p class="img-below-text">Witness the Transformation</p>

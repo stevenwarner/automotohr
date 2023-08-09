@@ -21,7 +21,7 @@
         </div>
         <div class="width_80 d-flex flex-wrap justify-content-lg-between align-items-lg-start align-items-center flex-lg-row flex-column mt- pt-5">
             <div class="footer_logo mt-4">
-                <img src="<?=base_url('assets/v1/app/images/');?>footer_logo.png" alt="footer logo" />
+                <img src="<?= base_url('assets/v1/app/images/'); ?>footer_logo.webp" alt="footer logo" />
                 <p class="text-white text-end">
                     Hire & Manage Great People AutomotoHR.com
                 </p>
@@ -29,19 +29,19 @@
                     <p class="text-white footer-auto-logo-heading">Stay Connect</p>
                     <div class="d-flex align-items-center mt-2 footer-auto-logo-heading">
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-youtube"></i></a>
+                            <a href="https://www.youtube.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-youtube"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="https://www.instagram.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-instagram"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-twitter"></i></a>
+                            <a href="https://www.twitter.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-twitter"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="https://www.facebook.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-facebook"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                            <a href="https://www.linkdin.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-linkedin-in"></i></a>
                         </div>
                     </div>
                 </div>
@@ -49,32 +49,32 @@
             <div class="mt-4">
                 <ul class="text-white mt-lg-0 mt-md-5 mt-lg-5 no-margin-bottom-onmobile d-flex flex-column align-items-lg-start align-items-center no-padding-onmobile auto-footer-ul">
                     <li>
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag"> Solutions </a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag"> Solutions </a>
                     </li>
                     <li class="mt-3">
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Privacy Policy</a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Privacy Policy</a>
                     </li>
                     <li class="mt-3">
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Login</a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Login</a>
                     </li>
                 </ul>
             </div>
             <div class="mt-4">
                 <ul class="text-white mt-lg-0 mt-lg-5 mt-md-5 d-flex flex-column align-items-lg-start align-items-center no-padding-onmobile auto-footer-ul">
                     <li>
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Contact Us</a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Contact Us</a>
                     </li>
                     <li class="mt-3">
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Site Map</a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Site Map</a>
                     </li>
                     <li class="mt-3">
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Affiliate Partner Login</a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Affiliate Partner Login</a>
                     </li>
                     <li class="mt-3">
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Can we send you a check every month?</a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Can we send you a check every month?</a>
                     </li>
                     <li class="mt-3">
-                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Join our automotoHR affiliate program now!</a>
+                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Join our automotoHR affiliate program now!</a>
                     </li>
                 </ul>
             </div>
@@ -124,13 +124,13 @@
                 </p>
                 <div class="d-flex align-items-center">
                     <p class="detail text-white me-3">Powered by</p>
-                    <img src="<?=base_url('assets/v1/app/images/');?>footer_logo.png" class="auto-copy-right-common" alt="copy right image" />
+                    <img src="<?= base_url('assets/v1/app/images/'); ?>footer_logo.webp" class="auto-copy-right-common" alt="copy right image" />
                 </div>
             </div>
             <div class="copyright_section_footer d-md-none d-flex flex-column align-items-center mt-5 pt-4">
                 <div class="d-flex align-items-center">
                     <p class="detail text-white me-3">Powered by</p>
-                    <img src="<?=base_url('assets/v1/app/images/');?>footer_logo.png" class="auto-copy-right-common" alt="" />
+                    <img src="<?= base_url('assets/v1/app/images/'); ?>footer_logo.webp" class="auto-copy-right-common" alt="" />
                 </div>
                 <p class="detail text-white mt-4">
                     © 2023 AutomotoHR. All Rights Reserved.
@@ -147,7 +147,9 @@
 <script src="https://kit.fontawesome.com/fac56683c8.js" crossorigin="anonymous"></script>
 
 <script>
-    $('.carousel').css('height', $(window).height() + 'px')
+    if ($(window).width() >= 1200) {
+        $('.carousel').css('height', $(window).height() + 'px')
+    }
 </script>
 </body>
 

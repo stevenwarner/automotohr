@@ -81,10 +81,10 @@
             <div class="col-sm-12 col-md-12 col-lg-6 position-relative div-one">
                 <div class="text-right text-align-center-ontablet">
                     <img class="rotate-img" src="<?= base_url('assets/v1/app/images/'); ?>girl.webp" alt="girl with glasses on face image" />
-                    <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse 9.png" class="light-green-half-circle" alt="half circle" />
-                    <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse 10.png" class="light-red-circle" alt="half circle" />
+                    <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse_9.webp" class="light-green-half-circle" alt="half circle" />
+                    <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse_10.webp" class="light-red-circle" alt="half circle" />
                 </div>
-                <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse 8.png" class="yellow-half-circle" alt="half circle" />
+                <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse_8.webp" class="yellow-half-circle" alt="half circle" />
             </div>
         </div>
         <div class="row notable-benifits-row"></div>

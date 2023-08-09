@@ -29,25 +29,25 @@ class App extends CI_Controller
         //
         $data['slider'] = [
             [
-                'title'=> 'Effortlessly Manage HR, Benefits & Payroll!',
-                'sub_title'=> 'Say goodbye to administrative hassles by embracing a simplified solution that serves all your HR needs –',
-                'link'=> 'product-1',
-                'link_text'=> 'product-1',
-                'image' => 'assets/v1/app/images/banner_1.png'
+                'title' => 'Effortlessly Manage HR, Benefits & Payroll!',
+                'sub_title' => 'Say goodbye to administrative hassles by embracing a simplified solution that serves all your HR needs –',
+                'link' => 'product-1',
+                'link_text' => 'product-1',
+                'image' => 'assets/v1/app/images/banner_1.webp'
             ],
             [
                 'title' => 'Smart Onboarding with AutomotoHR!',
                 'sub_title' => 'Leave behind inefficient onboarding methods and embrace <span class="anchar_tag">AutomotoHR</span> to optimize data management, expedite paperwork, & elevate orientation.',
-                'link' => 'product-1',
-                'link_text' => 'product-1',
-                'image' => 'assets/v1/app/images/banner_2.png'
+                'link' => 'product-2',
+                'link_text' => 'product-2',
+                'image' => 'assets/v1/app/images/banner_2.webp'
             ],
             [
                 'title' => 'One-Stop Shop for HR & Hiring!',
                 'sub_title' => 'Efficiently handle job postings, targeted advertising, candidate management, and assessment checks in one place.',
-                'link' => 'product-1',
-                'link_text' => 'product-1',
-                'image' => 'assets/v1/app/images/banner_3.png'
+                'link' => 'product-3',
+                'link_text' => 'product-3',
+                'image' => 'assets/v1/app/images/banner_3.webp'
             ]
         ];
         //
