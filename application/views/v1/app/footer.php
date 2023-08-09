@@ -29,19 +29,19 @@
                     <p class="text-white footer-auto-logo-heading">Stay Connect</p>
                     <div class="d-flex align-items-center mt-2 footer-auto-logo-heading">
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-youtube"></i></a>
+                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-youtube"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-instagram"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-twitter"></i></a>
+                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-twitter"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-facebook"></i></a>
                         </div>
                         <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                            <a href="<?=base_url()?>" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-linkedin-in"></i></a>
                         </div>
                     </div>
                 </div>
@@ -49,32 +49,32 @@
             <div class="mt-4">
                 <ul class="text-white mt-lg-0 mt-md-5 mt-lg-5 no-margin-bottom-onmobile d-flex flex-column align-items-lg-start align-items-center no-padding-onmobile auto-footer-ul">
                     <li>
-                        <a class="text-white simple-anchor anchar_tag"> Solutions </a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag"> Solutions </a>
                     </li>
                     <li class="mt-3">
-                        <a class="text-white simple-anchor anchar_tag">Privacy Policy</a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Privacy Policy</a>
                     </li>
                     <li class="mt-3">
-                        <a class="text-white simple-anchor anchar_tag">Login</a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Login</a>
                     </li>
                 </ul>
             </div>
             <div class="mt-4">
                 <ul class="text-white mt-lg-0 mt-lg-5 mt-md-5 d-flex flex-column align-items-lg-start align-items-center no-padding-onmobile auto-footer-ul">
                     <li>
-                        <a class="text-white simple-anchor anchar_tag">Contact Us</a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Contact Us</a>
                     </li>
                     <li class="mt-3">
-                        <a class="text-white simple-anchor anchar_tag">Site Map</a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Site Map</a>
                     </li>
                     <li class="mt-3">
-                        <a class="text-white simple-anchor anchar_tag">Affiliate Partner Login</a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Affiliate Partner Login</a>
                     </li>
                     <li class="mt-3">
-                        <a class="text-white simple-anchor anchar_tag">Can we send you a check every month?</a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Can we send you a check every month?</a>
                     </li>
                     <li class="mt-3">
-                        <a class="text-white simple-anchor anchar_tag">Join our automotoHR affiliate program now!</a>
+                        <a href="<?=base_url()?>" class="text-white simple-anchor anchar_tag">Join our automotoHR affiliate program now!</a>
                     </li>
                 </ul>
             </div>

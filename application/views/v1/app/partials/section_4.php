@@ -80,7 +80,7 @@
             </div>
             <div class="col-sm-12 col-md-12 col-lg-6 position-relative div-one">
                 <div class="text-right text-align-center-ontablet">
-                    <img class="rotate-img" src="<?= base_url('assets/v1/app/images/'); ?>girl.png" alt="girl with glasses on face image" />
+                    <img class="rotate-img" src="<?= base_url('assets/v1/app/images/'); ?>girl.webp" alt="girl with glasses on face image" />
                     <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse 9.png" class="light-green-half-circle" alt="half circle" />
                     <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse 10.png" class="light-red-circle" alt="half circle" />
                 </div>

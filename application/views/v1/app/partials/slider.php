@@ -21,7 +21,7 @@
                                     <?= $slide['sub_title']; ?>
                                 </p>
                                 <a href="<?= base_url('products/' . ($slide['link']) . ''); ?>" class="button explore_btn d-flex top-button text-white mt-5">
-                                    <p class="btn-text mb-0">Learn More</p>
+                                    <p class="btn-text mb-0"><?= $slide['link_text'];?></p>
                                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                                 </a>
                             </div>

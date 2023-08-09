@@ -1,6 +1,6 @@
 <div class="form_section_main width_100 d-flex flex-column align-items-center top-tweleverem-margin">
     <div class="width_80 d-flex position-relative">
-        <img src="<?= base_url('assets/v1/app/images/boy.png'); ?>" class="form_boy-pic d-lg-flex d-none" alt="man image" />
+        <img src="<?= base_url('assets/v1/app/images/boy.webp'); ?>" class="form_boy-pic d-lg-flex d-none" alt="man image" />
         <div class="purple_bubble_div d-lg-flex d-none">
             <div class="purple_bubble"></div>
         </div>

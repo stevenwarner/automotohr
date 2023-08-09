@@ -15,6 +15,7 @@ class App extends CI_Controller
 
     public function index()
     {
+        ob_start(“ob_gzhandler”);
         $data = [];
         $data['meta'] = [];
         $data['meta']['title'] = 'Homepage | AutomotoHR.com';
@@ -31,18 +32,21 @@ class App extends CI_Controller
                 'title'=> 'Effortlessly Manage HR, Benefits & Payroll!',
                 'sub_title'=> 'Say goodbye to administrative hassles by embracing a simplified solution that serves all your HR needs –',
                 'link'=> 'product-1',
+                'link_text'=> 'product-1',
                 'image' => 'assets/v1/app/images/banner_1.png'
             ],
             [
                 'title' => 'Smart Onboarding with AutomotoHR!',
-                'sub_title' => 'Leave behind inefficient onboarding methods and embrace <a class="anchar_tag">AutomotoHR</a> to optimize data management, expedite paperwork, & elevate orientation.',
+                'sub_title' => 'Leave behind inefficient onboarding methods and embrace <span class="anchar_tag">AutomotoHR</span> to optimize data management, expedite paperwork, & elevate orientation.',
                 'link' => 'product-1',
+                'link_text' => 'product-1',
                 'image' => 'assets/v1/app/images/banner_2.png'
             ],
             [
                 'title' => 'One-Stop Shop for HR & Hiring!',
                 'sub_title' => 'Efficiently handle job postings, targeted advertising, candidate management, and assessment checks in one place.',
                 'link' => 'product-1',
+                'link_text' => 'product-1',
                 'image' => 'assets/v1/app/images/banner_3.png'
             ]
         ];
