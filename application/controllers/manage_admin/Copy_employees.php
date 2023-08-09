@@ -120,6 +120,9 @@ class Copy_employees extends Admin_Controller
             exit(0);
         }
 
+
+
+
         $resp = array();
         $resp['status'] = FALSE;
         $resp['response'] = 'Invalid request';
@@ -309,7 +312,10 @@ class Copy_employees extends Admin_Controller
                 //
                 //  transfer employee timeoff request
                 if ($formpost['timeoff'] == 1) {
-                    $this->transferEmployeeTimeoff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company);
+
+                    $managePolicies=$formpost['policyObj'];
+                    
+                    $this->transferEmployeeTimeoff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company, $managePolicies);
                 }
                 //
                 $this->load->model('2022/Complynet_model', 'complynet_model');
@@ -813,7 +819,8 @@ class Copy_employees extends Admin_Controller
         $secondaryEmployeeSid,
         $primaryEmployeeSid,
         $secondaryCompanySid,
-        $primaryCompanySid
+        $primaryCompanySid,
+        $managePolicies
     ) {
         //
         //
@@ -837,7 +844,15 @@ class Copy_employees extends Admin_Controller
             foreach ($employeeRequests as $request) {
                 //
                 // get request policy
+                
+                //search in array
+                //$managePolicies
+               
+                //$request['timeoff_policy_sid']
+
+                
                 $policy = $this->copy_employees_model->getCompanyPolicy($request['timeoff_policy_sid']);
+
                 //
                 // get policy category sid
                 $category_sid = $this->copy_employees_model->getPolicyType($policy['type_sid'], $policy['company_sid']);
@@ -876,7 +891,7 @@ class Copy_employees extends Admin_Controller
                     $insertPolicy['type_sid'] = $typeSid;
                     $insertPolicy['creator_sid'] = $primaryAdminSid;
                     $insertPolicy['title'] = $policy['title'];
-                    $insertPolicy['assigned_employees'] = $primaryEmployeeSid; 
+                    $insertPolicy['assigned_employees'] = $primaryEmployeeSid;
                     $insertPolicy['off_days'] = $policy['off_days'];
                     $insertPolicy['note'] = $policy['note'];
                     $insertPolicy['is_default'] = $policy['is_default'];
@@ -1475,5 +1490,19 @@ class Copy_employees extends Admin_Controller
 
         echo 'employee copy successfully';
         die('stop');
+    }
+
+
+    public function getCompaniesPolicies($from_company_sid, $to_company_sid)
+    {
+
+        $fromCompanyPolicies = $this->copy_employees_model->getAllActivePolicies($from_company_sid);
+        $toCompanyPolicies = $this->copy_employees_model->getAllActivePolicies($to_company_sid);
+
+        $data['fromCompanyPolicies'] = $fromCompanyPolicies;
+        $data['toCompanyPolicies'] = $toCompanyPolicies;
+
+        // _e($data, true);
+        echo json_encode($data);
     }
 }

@@ -905,13 +905,13 @@ class Copy_employees_model extends CI_Model
             return 0;
         }
     }
-    
+
     public function getRequestActivePolicyId($title, $categoryTypeSid, $companySid)
     {
         //
         $table = 'timeoff_policies';
         $where = [
-            'title' => $title, 
+            'title' => $title,
             'type_sid' => $categoryTypeSid,
             'company_sid' => $companySid
         ];
@@ -1086,5 +1086,23 @@ class Copy_employees_model extends CI_Model
     public function insertTrasnferLog($insertArray)
     {
         $this->db->insert('timeoff_transfer_log', $insertArray);
+    }
+
+    //
+    public function getAllActivePolicies($companyId)
+    {
+        $this->db
+            ->select('
+                sid,
+                title
+            ')
+            ->where('company_sid', $companyId)
+            ->where('is_archived', 0)
+            ->order_by('sort_order', 'ASC');
+        //
+        $policies = $this->db->get('timeoff_policies')
+            ->result_array();
+        //
+        return $policies;
     }
 }
