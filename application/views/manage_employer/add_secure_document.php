@@ -10,7 +10,13 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
+                                <span class="page-heading down-arrow">
+                                    <a class="dashboard-link-btn" href="<?php echo base_url('company/documents/secure/listing') ?>">
+                                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                        &nbsp;Company Secure Documents
+                                    </a>
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                    <?= $title; ?>
                             </div>
                         </div>
                     </div>
@@ -354,9 +360,9 @@
 
         // Generate file row
         targets.dropzoneBox.html(generateDropzoneRow());
-      
+
         loader('hide');
-   
+
         //
         String.prototype.ucwords = function() {
             str = this.toLowerCase();
@@ -436,7 +442,7 @@
             }
 
             if (fileArray.length === 0) {
-                alertify.alert('ERROR!', 'Please upload atleast one document.');
+                alertify.alert('ERROR!', 'Please upload at least one document.');
                 return;
             }
 
@@ -457,7 +463,7 @@
             $.each(megaOBJ, function(i, v) {
                 formpost.append(i, v);
             });
-                
+
             $.ajax({
                     url: baseURI + 'upload_secure_document',
                     type: 'POST',
@@ -480,7 +486,7 @@
                             uploadAndAssignFiles();
                         }, 700);
                     } else {
-                      
+
                         showUploadStatus();
                         fileIndex = 0;
                         currentFile = 0;
@@ -510,8 +516,8 @@
             loader('hide');
 
             setTimeout(function() {
-                window.location = "<?php echo base_url('secure_documents_listing'); ?>"
-                        }, 3000);
+                window.location = "<?php echo base_url('company/documents/secure/listing'); ?>"
+            }, 3000);
 
         }
 
@@ -529,8 +535,8 @@
         }
 
         // Update count
-        function updateCount() {https://www.facebook.com/reel/468189294985689/?group_id=1313040009052459&s=group&__cft__[0]=AZX-q8ttPzgzf_AV18N_qEMx058shS2x0wz-x9Rdoree0bEDZKCO9Mj02P1KKoK8F24XdokmmC8rs4-PAnQIBHlomY7X4pC3t3_LnxPidY6bUKY9wTltqCgKD9OY6aBIbK7K6Tja0OkPv6xQ_W9BqvmpPethpG3iDs11IZvBOU779GzcvUKKhz-LxOt9s4-5s7FqePv62Z7fxSidCFjuff8N&__tn__=H-R
-            targets.count.text(fileArray.length);
+        function updateCount() {
+                targets.count.text(fileArray.length);
         }
 
         //
@@ -540,6 +546,6 @@
                 if (typeof(v.file_code) !== 'undefined' && v.file_code == file_code) fileArray.splice(i, 1);
             });
         }
-      
+
     })
 </script>

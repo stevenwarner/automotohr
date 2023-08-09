@@ -247,8 +247,8 @@
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
 
-                                        <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag']) { ?>
-                                            <li><a href="<?php echo base_url('secure_documents_listing'); ?>">Upload Secure Document</a></li>
+                                        <?php if (isPayrollOrPlus(true)) { ?>
+                                            <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
                                         <?php } ?>
 
                                     </ul>
