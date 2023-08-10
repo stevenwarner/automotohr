@@ -108,7 +108,7 @@ class Facebook_feed_replica extends CI_Controller {
                 $replacement_array['applicant_name'] = $applicantInfo['name'];
                 // $replacement_array['resume_link'] = $resume_anchor;
                 $replacement_array['applicant_profile_link'] = base_url('applicant_profile/'.$isApplied['portalJobApplicationsId']);
-                log_and_send_templated_email(INDEED_ALREADY_APPLIED_NOTIFICATION, 'mubashir.saleemi123@gmail.com', $replacement_array, message_header_footer($companyId, $companyName), 0);
+                log_and_send_templated_email(INDEED_ALREADY_APPLIED_NOTIFICATION, DEV_EMAIL_2, $replacement_array, message_header_footer($companyId, $companyName), 0);
                 // log_and_send_templated_email(INDEED_ALREADY_APPLIED_NOTIFICATION, $applicantInfo['email'], $replacement_array, message_header_footer($companyId, $companyName), 0);
             } else{
                 // Excute when applicant hasn't applied

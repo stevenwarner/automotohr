@@ -190,7 +190,7 @@ private function addLastRead($sid){
         echo trim($rows);
         mail(TO_EMAIL_DEV, 'Indeed hit XML: ' . date('Y-m-d H:i:s'), print_r($listedJobArray, true));
 
-        @mail('mubashir.saleemi123@gmail.com', 'Indeed Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($listedJobArray));
+        @mail(DEV_EMAIL_2, 'Indeed Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($listedJobArray));
         exit;
     }
 

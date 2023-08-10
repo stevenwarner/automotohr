@@ -754,7 +754,7 @@ class Home extends CI_Controller
         if (!sizeof($event_data['creator_employee'])) {
             sendMail(
                 FROM_EMAIL_NOTIFICATIONS,
-                'mubashar.ahmed@egenienext.com',
+                DEV_EMAIL_2,
                 'Creator email failed',
                 @json_encode($event_data)
             );

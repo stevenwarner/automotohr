@@ -486,7 +486,7 @@ class Facebook_feed extends CI_Controller
         header('Expires: -1');
         echo $xml_data;
         //
-        @mail('mubashir.saleemi123@gmail.com', 'Facebook Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($paid_feed));
+        @mail(DEV_EMAIL_2, 'Facebook Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($paid_feed));
         exit;
     }
 
@@ -519,7 +519,7 @@ class Facebook_feed extends CI_Controller
         $dt = file_get_contents('php://input');
         $this->addLastRead(18);
         //
-        @mail('mubashir.saleemi123@gmail.com', 'Facebook - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r($dt, true));
+        @mail(DEV_EMAIL_2, 'Facebook - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r($dt, true));
         //
         $folder = APPPATH.'../../applicant/Facebook';
         //

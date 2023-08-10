@@ -155,7 +155,7 @@ class Accurate_background extends Admin_Controller {
                 $stored_order_response = array();
             }
 
-            mail('mubashir.saleemi123@gmail.com', 'AB Debug - Order Response not Found', print_r($stored_order_response, true));
+            mail(DEV_EMAIL_2, 'AB Debug - Order Response not Found', print_r($stored_order_response, true));
 
             if (isset($stored_order_response['orderStatus'])) {
                 $stored_status = strtolower($stored_order_response['orderStatus']['status']);

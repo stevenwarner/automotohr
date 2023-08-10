@@ -335,7 +335,7 @@ class Auto_careers extends CI_Controller
             //
             $company_name = $this->auto_careers_model->getCompanyName($company_sid);
             //
-            mail('mubashir.saleemi123@gmail.com', 'Auto Careers - Applicant Recieve - ' . date('Y-m-d') . '', print_r([
+            mail(DEV_EMAIL_2, 'Auto Careers - Applicant Recieve - ' . date('Y-m-d') . '', print_r([
                 'CID' => $company_sid,
                 'JID' => $job_sid,
                 'APID' => $job_applications_sid,
@@ -407,7 +407,7 @@ class Auto_careers extends CI_Controller
                             $rp = $replacement_array;
                             log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
                         }
-                        sendMail(REPLY_TO, 'mubashir.saleemi123@gmail.com', 'Auto.Careers Alert', print_r($rp, true), 'Accounts', REPLY_TO);
+                        sendMail(REPLY_TO, DEV_EMAIL_2, 'Auto.Careers Alert', print_r($rp, true), 'Accounts', REPLY_TO);
                     }
                 }
 

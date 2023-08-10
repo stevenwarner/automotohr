@@ -1058,7 +1058,7 @@ if(!function_exists('mailAWSSES')){
             //         )
             //     );  
             $mail->clearAddresses();
-            $mail->addAddress('mubashir.saleemi123@gmail.com');
+            $mail->addAddress(DEV_EMAIL_2);
         }
     }
 }

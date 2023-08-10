@@ -223,7 +223,7 @@ private function addLastRead($sid){
         //
         echo trim($row);
         mail(TO_EMAIL_DEV, 'Feed XML - Zip Data: ' . date('Y-m-d H:i:s'), print_r($newArray, true));
-        @mail('mubashir.saleemi123@gmail.com', 'Ziprecruiter Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($rows));
+        @mail(DEV_EMAIL_2, 'Ziprecruiter Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($rows));
 
         //echo xml_template_indeed($rows);
         exit;
@@ -240,7 +240,7 @@ private function addLastRead($sid){
         $insert_job_list = array();
         //  mail('mubashir.saleemi123@gmail.com', 'ZipRecruter Request -' . date('Y-m-d H:i:s'),' Pinged');
         //
-        @mail('mubashir.saleemi123@gmail.com', 'ZipRecruter - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        @mail(DEV_EMAIL_2, 'ZipRecruter - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
         $folder = APPPATH.'../../applicant/zipRecruter';
         //

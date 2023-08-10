@@ -153,7 +153,7 @@ class Indeed_feed extends CI_Controller
         $rows .=  '</source>
         ';
         echo trim($rows);
-        @mail('mubashir.saleemi123@gmail.com', 'Indeed Feed Paid - HIT on ' . date('Y-m-d H:i:s') . '', count($jobData));
+        @mail(DEV_EMAIL_2, 'Indeed Feed Paid - HIT on ' . date('Y-m-d H:i:s') . '', count($jobData));
         exit;
     }
 
@@ -185,7 +185,7 @@ class Indeed_feed extends CI_Controller
         // error_reporting(E_ALL);
         //
         $this->addLastRead(9);
-        @mail('mubashir.saleemi123@gmail.com', 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        @mail(DEV_EMAIL_2, 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
         //
         $folder = APPPATH . '../../applicant/indeed';
         //

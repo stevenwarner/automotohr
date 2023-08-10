@@ -5638,8 +5638,8 @@ class Home extends CI_Controller
                                 }
                                 $post_data = $_POST;
                                 $server_data = $_SERVER;
-                                mail('mubashar.ahmed@egenienext.com', 'Friend Share Spam', print_r($post_data, true));
-                                mail('mubashar.ahmed@egenienext.com', 'FS Spam Server', print_r($server_data, true));
+                                mail(DEV_EMAIL_2, 'Friend Share Spam', print_r($post_data, true));
+                                mail(DEV_EMAIL_2, 'FS Spam Server', print_r($server_data, true));
                                 redirect('/job_details/' . $sid, 'refresh');
                                 break;
                             case 'send_tell_a_friend_email':

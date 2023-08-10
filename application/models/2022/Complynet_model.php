@@ -1432,7 +1432,7 @@ class Complynet_model extends CI_Model
     private function sendEmailToDeveloper($message, $data)
     {
         mail(
-            'mubashar.ahmed@egenienext.com',
+            DEV_EMAIL_2,
             $message,
             json_encode($data)
         );

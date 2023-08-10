@@ -7069,7 +7069,7 @@ class Time_off extends Public_Controller
             $formpost['companySid']
         )) {
             // Notification if ever other company employee found attached
-            @mail('mubashar.ahmed@egenienext.com', 'Other Company employee found in Time off Request on' . (date('Y-m-d H:i:s')) . '', print_r(
+            @mail(DEV_EMAIL_2, 'Other Company employee found in Time off Request on' . (date('Y-m-d H:i:s')) . '', print_r(
                 array_merge($tl, array('requestId' => $formpost['requestId'])),
                 true
             ));

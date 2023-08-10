@@ -156,7 +156,7 @@ class Career_feed_organic extends CI_Controller {
         $det .=  trim($rows);
         $det .=  '</source>';
         echo trim($det);
-        @mail('mubashir.saleemi123@gmail.com', 'Career Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($rows));
+        @mail(DEV_EMAIL_2, 'Career Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($rows));
         exit;
     }
 

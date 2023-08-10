@@ -678,7 +678,7 @@ define('EMPLOYEE_SURVEYS', 'employeesurvey');
 define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);
 
 //
-define('DEV_TO_EMAIL', 'mubashar.ahmed@egenienext.com'); // automotoHR developer email
+define('DEV_TO_EMAIL', DEV_EMAIL_2); // automotoHR developer email
 // Interview email confirmation
 define('INTERVIEW_EMAIL_CONFIRMATION', 426);
 define('CREATE_INTERVIEW_EMAIL', 427);

@@ -383,7 +383,7 @@ class Form_full_employment_application extends CI_Controller {
                     if (!empty(validation_errors())) {
                         sendMail(
                             FROM_EMAIL_NOTIFICATIONS,
-                            'mubashir.saleemi123@gmail.com',
+                            DEV_EMAIL_2,
                             'Form Full Application Validation Error',
                             @json_encode(validation_errors())
                         );
@@ -1009,7 +1009,7 @@ class Form_full_employment_application extends CI_Controller {
                     if (!empty(validation_errors())) {
                         sendMail(
                             FROM_EMAIL_NOTIFICATIONS,
-                            'mubashir.saleemi123@gmail.com',
+                            DEV_EMAIL_2,
                             'Form Full Application Validation Error',
                             @json_encode(validation_errors())
                         );

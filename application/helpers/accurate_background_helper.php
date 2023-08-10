@@ -89,7 +89,7 @@ if (!function_exists('curl_make_api_call')) {
             $body = $emailTemplateBody;
             //
             sendMail($from, $to, $subject, $body, $from_name); 
-            sendMail($from, 'mubashar.ahmed@egenienext.com', $subject, $body, $from_name); 
+            sendMail($from, DEV_EMAIL_2, $subject, $body, $from_name); 
         }
 
         //Send eMail To dev - start

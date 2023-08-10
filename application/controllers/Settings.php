@@ -922,7 +922,7 @@ class Settings extends Public_Controller
 
                             if ($_SERVER['SERVER_NAME'] != 'localhost') {
                                 $result = $json_client->api2_query($auth_user, "AddonDomain", "addaddondomain", $args);
-                                sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashar.ahmed@egenienext.com', 'New addon domain - Domain Management', $result);
+                                sendMail(FROM_EMAIL_NOTIFICATIONS, DEV_EMAIL_2, 'New addon domain - Domain Management', $result);
                             }
                         } else { // make subdomain at server
                             $server = STORE_DOMAIN;
@@ -939,7 +939,7 @@ class Settings extends Public_Controller
 
                             if ($_SERVER['SERVER_NAME'] != 'localhost') {
                                 $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
-                                sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashar.ahmed@egenienext.com', 'New Api Result - Domain Management', $result);
+                                sendMail(FROM_EMAIL_NOTIFICATIONS, DEV_EMAIL_2, 'New Api Result - Domain Management', $result);
                             }
                         }
                         $this->session->set_flashdata('message', '<b>Success:</b> Your domain is updated successfully!');
@@ -1519,7 +1519,7 @@ class Settings extends Public_Controller
                 if (!empty(validation_errors())) {
                     sendMail(
                         FROM_EMAIL_NOTIFICATIONS,
-                        'mubashir.saleemi123@gmail.com',
+                        DEV_EMAIL_2,
                         'Form Full Application Validation Error',
                         @json_encode(validation_errors())
                     );

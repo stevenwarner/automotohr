@@ -610,8 +610,8 @@ class Misc extends Admin_Controller
                         } else {
                             //log_and_send_templated_email(ADMIN_INVOICE_PAYMENT_NOTIFICATION, $company_admin_user['email'], $replacement_array);
                         }
-                        mail('mubashar.ahmed@egenienext.com', 'Payment Invoice Notification billing contacts: ' . date('Y-m-d H:i:s'), print_r($company_billing_contacts, true));
-                        mail('mubashar.ahmed@egenienext.com', 'Payment Invoice Notification company data: ' . date('Y-m-d H:i:s'), print_r($replacement_array, true));
+                        mail(DEV_EMAIL_2, 'Payment Invoice Notification billing contacts: ' . date('Y-m-d H:i:s'), print_r($company_billing_contacts, true));
+                        mail(DEV_EMAIL_2, 'Payment Invoice Notification company data: ' . date('Y-m-d H:i:s'), print_r($replacement_array, true));
                         //log_and_send_templated_email(ADMIN_INVOICE_PAYMENT_NOTIFICATION, TO_EMAIL_STEVEN, $replacement_array);
                         //log_and_send_templated_email(ADMIN_INVOICE_PAYMENT_NOTIFICATION, TO_EMAIL_ALEX, $replacement_array);
                         //Send Emails Through System Notifications Email - Start

@@ -4207,7 +4207,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
             //Update Discount
             $CI->admin_invoices_model->Update_admin_invoice_discount($invoice_sid, 0, $discount_amount, $total_after_discount);
             //Send Invoice In Email
-            $test_email = 'mubashar.ahmed@egenienext.com';
+            $test_email = DEV_EMAIL_2;
             //Create Commission Invoice
             $commission_invoice_sid = $CI->admin_invoices_model->Save_commission_invoice($admin_sid, $company_sid, $item_ids, $item_id_to_number_of_rooftops, $item_id_to_quantity, 'automatic', 'super_admin');
             $secondary_invoice = 0;
@@ -4338,7 +4338,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
                 $headers = "MIME-Version: 1.0" . "\r\n";
                 $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 
-                mail('mubashar.ahmed@egenienext.com', 'Automatic Invoice Generated' . date('Y-m-d H:i:s'), $invoice_html, $headers);
+                mail(DEV_EMAIL_2, 'Automatic Invoice Generated' . date('Y-m-d H:i:s'), $invoice_html, $headers);
             }
         }
     }
