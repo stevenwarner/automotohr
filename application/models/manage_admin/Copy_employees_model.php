@@ -1103,6 +1103,22 @@ class Copy_employees_model extends CI_Model
         return $this->db->get('timeoff_policies')
             ->result_array();
     }
+    
+    //
+    public function getAllCompanyPolicies(int $companyId): array
+    {
+        $this->db
+            ->select('
+                sid,
+                title,
+                is_archived
+            ')
+            ->where('company_sid', $companyId)
+            ->order_by('is_archived', 'ASC');
+        //
+        return $this->db->get('timeoff_policies')
+            ->result_array();
+    }
 
     //
     public function getPoliciesByCompanyRequests(int $companyId): array

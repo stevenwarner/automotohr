@@ -1405,7 +1405,7 @@ class Copy_employees extends Admin_Controller
     {
 
         $fromCompanyPolicies = $this->copy_employees_model->getPoliciesByCompanyRequests($from_company_sid);
-        $toCompanyPolicies = $this->copy_employees_model->getAllActivePolicies($to_company_sid);
+        $toCompanyPolicies = $this->copy_employees_model->getAllCompanyPolicies($to_company_sid);
 
         $data['fromCompanyPolicies'] = $fromCompanyPolicies;
         $data['toCompanyPolicies'] = $toCompanyPolicies;

@@ -693,7 +693,7 @@ foreach ($companies as $company)
                     if (obj.toCompanyPolicies.length > 0) {
                         $.each(obj.toCompanyPolicies, function(key, value) {
 
-                            modal += '<option value="' + value.sid + '">' + value.title + '</option>';
+                            modal += '<option class="' + (value.is_archived == 1 ? 'bg-danger' : '') + '" value="' + value.sid + '">' + value.title + '' + (value.is_archived == 1 ? ' [Deactivated]' : '') + '</option>';
 
                         });
                     }
