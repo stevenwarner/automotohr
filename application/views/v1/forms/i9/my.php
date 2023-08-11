@@ -6,28 +6,39 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
     <div class="container-fluid">
         <!-- Header menu -->
         <div class="row">
-            <div class="col-sm-12 text-left">
-                <!-- Dashboard button -->
-                <a href="<?= base_url('employee_management_system') ?>" class="btn csBG2 csW csF16 csRadius5">
+            <?php if ($user_type == "employee") { ?> 
+                <div class="col-sm-12 text-left">
+                    <!-- Dashboard button -->
+                    <a href="<?= base_url('employee_management_system') ?>" class="btn csBG2 csW csF16 csRadius5">
 
-                    &nbsp;<i class="fa fa-arrow-left csF16"></i>
-                    &nbsp;Dashboard
-                </a>
-                <!-- My documents button -->
-                <a href="<?= base_url('hr_documents_management/my_documents') ?>" class="btn csBG2 csF16 csRadius5">
-
-                    &nbsp;<i class="fa fa-files-o csF16"></i>
-                    &nbsp;My Documents
-                </a>
-                <?php if (checkIfAppIsEnabled('documentlibrary')) : ?>
-                    <!-- My documents button -->
-                    <a href="<?= base_url('library_document') ?>" class="btn csBG2 csF16 csRadius5">
-
-                        &nbsp;<i class="fa fa-book csF16"></i>
-                        &nbsp;Document Library
+                        &nbsp;<i class="fa fa-arrow-left csF16"></i>
+                        &nbsp;Dashboard
                     </a>
-                <?php endif; ?>
-            </div>
+                    <!-- My documents button -->
+                    <a href="<?= base_url('hr_documents_management/my_documents') ?>" class="btn csBG2 csF16 csRadius5">
+
+                        &nbsp;<i class="fa fa-files-o csF16"></i>
+                        &nbsp;My Documents
+                    </a>
+                    <?php if (checkIfAppIsEnabled('documentlibrary')) : ?>
+                        <!-- My documents button -->
+                        <a href="<?= base_url('library_document') ?>" class="btn csBG2 csF16 csRadius5">
+
+                            &nbsp;<i class="fa fa-book csF16"></i>
+                            &nbsp;Document Library
+                        </a>
+                    <?php endif; ?>
+                </div>
+            <?php } else if ($user_type == "applicant" && $formMode == "applicant_onboarding") { ?>  
+                <div class="col-sm-12 text-left">
+                    <!-- My documents button -->
+                    <a href="<?= base_url('onboarding/hr_documents/'.$unique_sid) ?>" class="btn csBG2 csF16 csRadius5">
+
+                        &nbsp;<i class="fa fa-files-o csF16"></i>
+                        &nbsp;Documents
+                    </a>
+                </div>
+            <?php } ?>        
         </div>
         <!-- Header menu ends -->
 
@@ -61,12 +72,12 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
             <?= $this->lang->line('i9_form_text_line_1'); ?>
             <?= $this->lang->line('i9_form_text_line_2'); ?>
             <!-- Form start -->
-            <form action="javascript:void(0)" id="jsI9Form">
+            <form action="javascript:void(0)" id="jsI9Form" data-formType="<?php echo $formType; ?>">
                 <!-- helping material -->
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <strong><?= $this->lang->line('i9_form_text_line_3'); ?></strong>
-                    </div>
+                    </div> 
                     <div class="panel-body">
                         <!-- 1 -->
                         <div class="row">
@@ -413,7 +424,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                                     <div class="form-group">
                                         <label>Last Name (Family Name) from Section 1.
                                         </label>
-                                        <input autocomplete="nope" type="text" value="<?= $form['section1_last_name']; ?>" class="form-control input-lg input-grey jsEmployeeLastName" disabled />
+                                        <input autocomplete="nope" type="text" value="<?= $form['section1_last_name']; ?>" class="form-control input-lg input-grey jsEmployeeLastName" />
                                     </div>
                                 </div>
 
@@ -421,7 +432,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                                     <div class="form-group">
                                         <label>First Name (Given Name) from Section 1.
                                         </label>
-                                        <input autocomplete="nope" type="text" value="<?= $form['section1_first_name']; ?>" class="form-control input-lg input-grey jsEmployeeFirstName" disabled />
+                                        <input autocomplete="nope" type="text" value="<?= $form['section1_first_name']; ?>" class="form-control input-lg input-grey jsEmployeeFirstName" />
                                     </div>
                                 </div>
 
@@ -429,7 +440,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                                     <div class="form-group">
                                         <label>Middle Initial (If Any) from Section 1.
                                         </label>
-                                        <input autocomplete="nope" type="text" value="<?= $form['section1_middle_initial']; ?>" class="form-control input-lg input-grey jsEmployeeMiddleInitial" disabled />
+                                        <input autocomplete="nope" type="text" value="<?= $form['section1_middle_initial']; ?>" class="form-control input-lg input-grey jsEmployeeMiddleInitial" />
                                     </div>
                                 </div>
                             </div>
@@ -499,6 +510,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                     <div class="row">
                         <div class="col-lg-12 text-center">
                             <input type="hidden" class="jsFormCode" value="<?= $form['sid']; ?>" />
+                            <input type="hidden" class="jsFormMode" value="<?= $formMode; ?>" />
                             <button type="submit" onclick="" type="button" class="btn btn-info break-word-text"><?php echo SIGNATURE_CONSENT_BUTTON; ?></button>
                         </div>
                     </div>

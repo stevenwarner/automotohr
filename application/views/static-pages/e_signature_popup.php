@@ -1363,6 +1363,7 @@ if (isset($cn)) {
 
     function checkAndGenerateSignature(signType) {
         let documentId = <?= $form['sid'] ?? 0; ?>;
+
         // set the url for preparer
         let myurl = window.location.origin + "/forms/i9/signature/preparer/" + (targets.key) + "/" + (documentId);
         // send the call
@@ -1371,7 +1372,6 @@ if (isset($cn)) {
             url: myurl,
             async: false,
             success: function(data) {
-                console.log(data)
                 if (data.data.length == 0) {
 
                     $('#E_Signature_Modal').modal('show');
@@ -1396,4 +1396,50 @@ if (isset($cn)) {
             }
         });
     }
+
+    $(".jsSetAuthorizedSignature").click(function(event) {
+        //
+        event.preventDefault();
+        //
+        targets.key = $(this).data('key');
+        //
+        checkAndGenerateAuthorizedSignature(
+            'auth'
+        );
+    });
+
+    function checkAndGenerateAuthorizedSignature(signType) {
+        // set the url for preparer
+        let myurl = window.location.origin + "/forms/i9/signature/authorized";
+        // send the call
+        $.ajax({
+            type: "GET",
+            url: myurl,
+            async: false,
+            success: function(data) {
+                if (data.data.length == 0) {
+
+                    $('#E_Signature_Modal').modal('show');
+                    clearAreaInit();
+                    clearArea();
+                    $('#common_e_signature').val('');
+                    $('#init_signature').val('');
+                    $('#tergit').text('');
+                    $('#init_tergit').text('');
+                    $('#tergit').removeClass();
+                    $('#tergit').addClass('e_signature_type_fixed_p e_signature_font_family_5');
+                    $('#init_tergit').removeClass();
+                    $('#init_tergit').addClass('e_signature_type_fixed_p e_signature_font_family_5');
+                    $('#save_prepare_signature').val(1);
+                    return false;
+                }
+                //
+                
+                $('.jsSetAuthorizedSignature_' + (targets.key) + '').remove();
+                $('.authorized_signature_img_' + targets.key).prop('src', data.data.signature);
+                $('#section3_authorized_signature_' + targets.key).val(data.data.signature);
+                targets.key = '';
+            }
+        });
+    }    
 </script>

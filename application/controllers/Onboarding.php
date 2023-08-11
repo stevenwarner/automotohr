@@ -9100,6 +9100,7 @@ class Onboarding extends CI_Controller
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
             if (!empty($onboarding_details)) {
+                redirect('forms/i9/user/section/applicant/'.$onboarding_details['applicant_sid'].'/applicant_onboarding');
                 $data['onboarding_details'] = $onboarding_details;
                 $applicant_info = $onboarding_details['applicant_info'];
                 $data['applicant'] = $applicant_info;
@@ -9688,7 +9689,10 @@ class Onboarding extends CI_Controller
         } else {
             if (count($d) < 4) redirect('/');
         }
-
+        //
+        if ($d[0] == "I9") {
+            redirect('forms/i9/user/section/applicant/'.$d[1].'/public_link');
+        }
         //
         $document = [];
         // Validate and check for expire
@@ -9953,6 +9957,7 @@ class Onboarding extends CI_Controller
                     $data['e_signature_data'] = $e_signature_data;
                     $previous_form = $this->form_wi9_model->fetch_form('i9', 'applicant', $d[1]);
                     $data['pre_form'] = $previous_form;
+                    $data['form'] = $previous_form;
                     $data['prepare_signature'] = 'get_prepare_signature';
                 }
                 //
@@ -9982,7 +9987,7 @@ class Onboarding extends CI_Controller
         $page = 'public/documents/document_public';
         if ($type != 'document') {
             if ($d[0] == "I9") {
-                $page = 'public/documents/form_i9';
+                $page = 'public/documents/form_i9_new';
             } else if ($d[0] == "w4") {
                 $page = 'public/documents/form_w4';
             } else {

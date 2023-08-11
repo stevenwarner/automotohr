@@ -307,14 +307,18 @@ class Form_wi9_model extends CI_Model
             ->row_array();
         //
         if ($record) {
-            $record = array_merge(
-                $record,
-                unserialize($record['section1_alien_registration_number'])
-            );
+            //
+            if (!empty($record['section1_alien_registration_number'])) {
+                $record = array_merge(
+                    $record,
+                    unserialize($record['section1_alien_registration_number'])
+                );
+            }
             //
             $record['section1_date_of_birth'] = trim(explode(' ', $record['section1_date_of_birth'])[0]);
             $record['section1_today_date'] = trim(explode(' ', $record['section1_today_date'])[0]);
         }
+        
         // check and merge records
         return checkI9RecordWithProfile(
             $userId,
@@ -345,5 +349,66 @@ class Form_wi9_model extends CI_Model
             ])
             ->get('applicant_i9form')
             ->row_array();
+    }
+
+    /**
+     * get applicant info by ID
+     *
+     * @param int $applicantId
+     * @return array
+     */
+    function getApplicantInformation($applicantId)
+    {
+        $this->db->select('*');
+        $this->db->where('sid', $applicantId);
+
+        $record_obj = $this->db->get('portal_job_applications');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $record_arr = $record_arr[0];
+
+            if (isset($record_arr['extra_info']) && !empty($record_arr['extra_info'])) {
+                $extra_info = unserialize($record_arr['extra_info']);
+                $record_arr = array_merge($record_arr, $extra_info);
+            }
+
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * get company detail by ID
+     *
+     * @param int $sid
+     * @return array
+     */
+    function getCompanyDetail($sid) {
+        $this->db->where('sid', $sid);
+        $result = $this->db->get('users')->result_array();
+        if (!empty($result)) {
+            return $result[0];
+        }
+    }
+
+    function getApplicantUniqueId($applicantId, $companyId, $onboarding_status = 'in_process')
+    {   
+        $this->db->select('unique_sid');
+        $this->db->where('applicant_sid', $applicantId);
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('onboarding_status', $onboarding_status);
+
+        $record_obj = $this->db->get('onboarding_applicants');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr['unique_sid'];
+        } else {
+            return array();
+        }
     }
 }

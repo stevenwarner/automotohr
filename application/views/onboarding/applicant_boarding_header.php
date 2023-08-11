@@ -60,6 +60,10 @@
     }
 </style>
 
+<!--  -->
+<link rel="stylesheet" href="<?= base_url('assets/css/theme-2021.css?v=' . time()); ?>">
+<!--  -->
+
 <!-- Bable -->
 <script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
 <!-- Bable -->

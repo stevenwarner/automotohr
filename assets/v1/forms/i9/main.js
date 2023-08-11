@@ -345,6 +345,7 @@ $(function i9Form() {
 			section1_signature: $("#draw_upload_img").prop("src"),
 			form_admission_number: $("#form_admission_number").val().trim(),
 			form_code: $(".jsFormCode").val(),
+			form_mode: $(".jsFormMode").val(),
 			section1_preparer_or_translator: $(
 				".section1_preparer_or_translator:checked"
 			).val(),
@@ -680,16 +681,26 @@ $(function i9Form() {
 			""
 		);
 		//
+		var formURL = window.location.origin + "/forms/i9/my";
+		//
+		if ($("#jsI9Form").attr("data-formType") === "applicant") {
+			formURL = window.location.origin + "/forms/i9/applicant/save";
+		}
 		ml(true, "jsI9Section1");
 		//
 		$.ajax({
-			url: window.location.origin + "/forms/i9/my",
+			url: formURL,
 			method: "POST",
 			data: obj,
 		})
 			.success(function (resp) {
 				return alertify.alert("Success!", resp.message, function () {
-					window.location.reload();
+					if (resp.return === "true") {
+						location.href = resp.URL;
+					} else {
+						window.location.reload();
+					}
+					
 				});
 			})
 			.fail(handleErrorResponse)

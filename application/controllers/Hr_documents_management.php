@@ -14028,7 +14028,8 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
-            $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
+            // _e($data['pre_for'])
+            $html = $this->load->view('2022/federal_fillable/form_i9_preview_new', $data, true);
             $name = 'I9 Fillable';
         }
         //

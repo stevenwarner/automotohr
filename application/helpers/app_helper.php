@@ -834,7 +834,7 @@ if (!function_exists('checkI9RecordWithProfile')) {
         //
         $CI = &get_instance();
         //
-        $table = $userType === 'employee' ? 'users' : 'portal_job_applicant';
+        $table = $userType === 'employee' ? 'users' : 'portal_job_applications';
         //
         $columns = [
             'first_name',

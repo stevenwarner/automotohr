@@ -1810,3 +1810,10 @@ $route['forms/i9/my']['get'] = 'v1/I9/my';
 $route['forms/i9/my']['post'] = 'v1/I9/saveMy';
 $route['forms/i9/signature/preparer/(:num)/(:num)']['get'] = 'v1/I9/getPreparerSignature/$1/$2';
 $route['forms/i9/signature/preparer/save/(:num)/(:num)']['post'] = 'v1/I9/savePreparerSignature/$1/$2';
+$route['forms/i9/signature/authorized']['get'] = 'v1/I9/getAuthorizedSignature';
+$route['forms/i9/authorized/section/(:num)']['post'] = 'v1/I9/saveAuthorizedSection/$1';
+$route['forms/i9/user/section/(:any)/(:num)/(:any)']['get'] = 'v1/I9/getUserSection/$1/$2/$3';
+$route['forms/i9/applicant/save']['post'] = 'v1/I9/saveUserSection';
+$route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
+
+
