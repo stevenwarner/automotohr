@@ -1094,10 +1094,10 @@ class Copy_employees_model extends CI_Model
         $this->db
             ->select('
                 sid,
-                title
+                title,
+                is_archived
             ')
             ->where('company_sid', $companyId)
-            ->where('is_archived', 0)
             ->order_by('sort_order', 'ASC');
         //
         return $this->db->get('timeoff_policies')

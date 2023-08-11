@@ -690,10 +690,17 @@ foreach ($companies as $company)
 
                     modal += '<option value="0">Please Select a Policy</option>';
 
+                    var policyStatus = '';
                     if (obj.toCompanyPolicies.length > 0) {
                         $.each(obj.toCompanyPolicies, function(key, value) {
 
-                            modal += '<option value="' + value.sid + '">' + value.title + '</option>';
+                            if (value.is_archived == 1) {
+                                policyStatus = ' "De-Active"';
+                            } else {
+                                policyStatus = '';
+                            }
+
+                            modal += '<option value="' + value.sid + '">' + value.title + policyStatus + '</option>';
 
                         });
                     }
