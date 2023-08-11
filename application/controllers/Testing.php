@@ -32,4 +32,29 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
+
+    public function test()
+    {
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $security_sid = $data['session']['employer_detail']['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        $data['security_details'] = $security_details;
+        check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
+
+
+        //
+        $data['PageScripts'] = [
+            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js',
+            'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.4.0/dist/chartjs-plugin-datalabels.min.js'
+        ];
+
+        $data['theme'] = 2;
+
+        $this->load->view('main/header', $data);
+       // $this->load->view('timeoff/includes/on_boarding_header', $data);
+
+        $this->load->view('v1/app/lms/reports/index');
+        $this->load->view('main/footer');
+    }
 }
