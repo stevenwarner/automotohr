@@ -689,7 +689,7 @@ foreach ($companies as $company)
                     modal += '                         <div> <select id="" style="width: 100%;" class="invoice-fields csPolicyRowTo">';
 
                     modal += '<option value="0">Please Select a Policy</option>';
-                    modal += '<option value="-1">Create a new one</option>';
+                    modal += '<option value="-1">Create a new policy</option>';
 
                     if (obj.toCompanyPolicies.length > 0) {
                         $.each(obj.toCompanyPolicies, function(key, value) {
