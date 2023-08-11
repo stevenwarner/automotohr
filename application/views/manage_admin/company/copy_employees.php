@@ -695,7 +695,7 @@ foreach ($companies as $company)
                         $.each(obj.toCompanyPolicies, function(key, value) {
 
                             if (value.is_archived == 1) {
-                                policyStatus = ' "De-Active"';
+                                policyStatus = ' (Deactivated)';
                             } else {
                                 policyStatus = '';
                             }
