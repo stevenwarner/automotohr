@@ -669,7 +669,7 @@ class Import_csv extends Public_Controller
                     // Insert employee
 
                     if (isset($v0['marital_status']) && !empty($v0['marital_status'])) {
-                        $insertArray['marital_status'] = $v0['marital_status'];
+                        $insertArray['marital_status'] = ucwords(trim($v0['marital_status']));
                     }
 
                    $employeeId = $this->import_csv_model->InsertNewUser($insertArray);
