@@ -842,6 +842,76 @@ class Copy_employees extends Admin_Controller
             foreach ($employeeRequests as $request) {
                 //
                 $policySid = $managePolicies[$request['timeoff_policy_sid']];
+                // we need to create policy
+                if ($policySid == -1) {
+                    // get policy title and category details
+                    $record = $this->db
+                        ->select('
+                        timeoff_categories.timeoff_category_list_sid,
+                        timeoff_categories.is_archived as category_is_archived,
+                        timeoff_policies.title,
+                        timeoff_policies.is_archived,
+                        timeoff_policies.accruals,
+                        timeoff_policies.policy_category_type
+                    ')
+                        ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
+                        ->where([
+                            'timeoff_policies.sid' => $request['timeoff_policy_sid']
+                        ])
+                        ->get('timeoff_policies')
+                        ->row_array();
+                    // check the policy
+                    $destPolicy = $this->db
+                        ->select('sid')
+                        ->where('company_sid', $primaryCompanySid)
+                        ->where("LOWER(REGEXP_REPLACE(title, '[^a-zA-z0-9]', '')) = '" . (strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $record['title']))) . "'", null, null)
+                        ->get('timeoff_policies')
+                        ->row_array();
+                    //
+                    if ($destPolicy) {
+                        $policySid = $destPolicy['sid'];
+                    } else {
+                        // check if category exists
+                        $destType = $this->db
+                            ->select('sid')
+                            ->where('company_sid', $primaryCompanySid)
+                            ->where('timeoff_category_list_sid', $record['timeoff_category_list_sid'])
+                            ->get('timeoff_categories')
+                            ->row_array();
+                        //
+                        if (!$destType) {
+                            // lets create the type
+                            $this->db
+                                ->insert('timeoff_categories', [
+                                    'company_sid' => $primaryCompanySid,
+                                    'creator_sid' => $primaryAdminSid,
+                                    'status' => 1,
+                                    'category_type' => 0,
+                                    'timeoff_category_list_sid' => $record['timeoff_category_list_sid']
+                                ]);
+                            //
+                            $typeId = $this->db->insert_id();
+                        } else {
+                            $typeId = $destType['sid'];
+                        }
+                        // we need to create policy
+                        $this->db
+                            ->insert('timeoff_policies', [
+                                'company_sid' => $primaryCompanySid,
+                                'type_sid' => $typeId,
+                                'creator_sid' => $primaryAdminSid,
+                                'title' => $record['title'],
+                                'assigned_employees' => $primaryEmployeeSid,
+                                'policy_category_type' => $record['policy_category_type'],
+                                'is_archived' => $record['is_archived'],
+                                'is_entitled_employee' => 1,
+                                'accruals' => $record['accruals'],
+                                'created_at' => getSystemDate(),
+                                'updated_at' => getSystemDate(),
+                            ]);
+                        $policySid = $this->db->insert_id();
+                    }
+                }
                 // check employee request exist in primary company
                 if (!$this->copy_employees_model->checkTimeOffForSpecificEmployee($primaryCompanySid, $primaryEmployeeSid, $policySid,  $request['request_from_date'], $request['request_to_date'])) {
                     //
