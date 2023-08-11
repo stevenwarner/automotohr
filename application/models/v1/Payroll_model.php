@@ -324,6 +324,29 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * Get gusto employees details for gusto
+     *
+     * @param int   $employeeId
+     * @param array $extra Optional
+     * @param bool  $include Optional
+     * @return array
+     */
+    public function getEmployeeDetailsForGusto(int $employeeId, array $extra = [], bool $include = true): array
+    {
+        //
+        $columns = $include ? array_merge([
+            'gusto_uuid',
+            'gusto_version',
+        ], $extra) : $extra;
+        //
+        return $this->db
+            ->select($columns)
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
+    }
+
+    /**
      * check company onboard
      *
      * @param int $companyId
@@ -863,6 +886,8 @@ class Payroll_model extends CI_Model
      */
     public function onboardEmployee(int $employeeId, int $companyId): array
     {
+        //
+        $megaResponse = [];
         // let's check the employee
         $gustoEmployee = $this->db
             ->select('gusto_uuid, gusto_version')
@@ -878,7 +903,47 @@ class Payroll_model extends CI_Model
             }
         }
         //
-        return $gustoEmployee;
+        $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->update('gusto_companies_employees', ['personal_details' => 1]);
+        //
+        $megaResponse['employee'] = $gustoEmployee;
+        $megaResponse['errors'] = [];
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // add employee gusto uuid
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        //
+        $companyDetails['company_sid'] = $companyId;
+        // sync employee jobs
+        $response = $this->syncEmployeeJobs($employeeId, $companyDetails);
+        // if has errors
+        if ($response['errors']) {
+            $megaResponse['errors'] = array_merge(
+                $megaResponse['errors'],
+                ['Jobs & Compensations' => $response['errors']]
+            );
+        } else {
+            // check if there were jobs
+            if ($response['count'] == 0) {
+                // we need to add the employee job and compensations
+                $response = $this->createEmployeeJobOnGusto(
+                    $employeeId,
+                    $companyDetails
+                );
+                // if errors occurs
+                if ($response['errors']) {
+                    $megaResponse['errors'] = array_merge(
+                        $megaResponse['errors'],
+                        ['Jobs & Compensations' => $response['errors']]
+                    );
+                }
+            }
+        }
+        // sync employee work locations
+        $this->syncEmployeeWorkAddresses($employeeId);
+        //
+        return $megaResponse;
     }
 
     /**
@@ -1222,18 +1287,189 @@ class Payroll_model extends CI_Model
     }
 
     /**
-     * create an employee job on Gusto
+     * sync employee job with Gusto
      *
-     * @param int $employeeId
-     * @param int $companyId
+     * @param int   $employeeId
+     * @param array $companyDetails
      * @return array
      */
-    private function createEmployeeJobOnGusto(int $employeeId, int $companyId): array
+    private function syncEmployeeJobs(int $employeeId, array $companyDetails): array
+    {
+        // make call
+        $gustoResponse = gustoCall(
+            "getEmployeeJobs",
+            $companyDetails,
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        if (!$gustoResponse) {
+            return ['count' => 0];
+        }
+        //
+        $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->update('gusto_companies_employees', ['compensation_details' => 1]);
+        //
+        foreach ($gustoResponse as $gustoJobs) {
+            // set array
+            $ins = [];
+
+            $ins['gusto_version'] = $gustoJobs['version'];
+            $ins['is_primary'] = $gustoJobs['primary'];
+            $ins['gusto_location_uuid'] = $gustoJobs['location_uuid'];
+            $ins['hire_date'] = $gustoJobs['hire_date'];
+            $ins['title'] = $gustoJobs['title'];
+            $ins['rate'] = $gustoJobs['rate'];
+            $ins['current_compensation_uuid'] = $gustoJobs['current_compensation_uuid'];
+
+            // let's quickly check
+            if (
+                $gustoEmployeeJobId =
+                $this->db
+                    ->select('sid')
+                    ->where(['gusto_uuid' => $gustoJobs['uuid']])
+                    ->get('gusto_employees_jobs')
+                    ->row_array()['sid']
+            ) {
+                //
+                $ins['updated_at'] = getSystemDate();
+                // insert
+                $this->db
+                    ->where(['gusto_uuid' => $gustoJobs['uuid']])
+                    ->update('gusto_employees_jobs', $ins);
+            } else {
+                //
+                $ins['created_at'] =
+                    $ins['updated_at'] =
+                    getSystemDate();
+                $ins['employee_sid'] = $employeeId;
+                $ins['gusto_uuid'] = $gustoJobs['uuid'];
+                // insert
+                $this->db
+                    ->insert('gusto_employees_jobs', $ins);
+                $gustoEmployeeJobId = $this->db->insert_id();
+            }
+            //
+            // add compensations
+            foreach ($gustoJobs['compensations'] as $compensation) {
+                //
+                $ins = [];
+                $ins['gusto_version'] = $compensation['version'];
+                $ins['rate'] = $compensation['rate'];
+                $ins['payment_unit'] = $compensation['payment_unit'];
+                $ins['flsa_status'] = $compensation['flsa_status'];
+                $ins['effective_date'] = $compensation['effective_date'];
+                $ins['adjust_for_minimum_wage'] = $compensation['adjust_for_minimum_wage'];
+                //
+                if ($this->db->where(['gusto_uuid' => $compensation['uuid']])->count_all_results('gusto_employees_jobs_compensations')) {
+                    $ins['updated_at'] = getSystemDate();
+                    $this->db
+                        ->where(['gusto_uuid' => $compensation['uuid']])
+                        ->update('gusto_employees_jobs_compensations', $ins);
+                } else {
+                    $ins['gusto_employees_jobs_sid'] = $gustoEmployeeJobId;
+                    $ins['gusto_uuid'] = $compensation['uuid'];
+                    $ins['created_at'] = getSystemDate();
+                    $ins['updated_at'] = getSystemDate();
+                    $this->db->insert('gusto_employees_jobs_compensations', $ins);
+                }
+            }
+        }
+        //
+        return ['count' => count($gustoResponse)];
+    }
+
+    /**
+     * sync employee work addresses
+     *
+     * @param int   $employeeId
+     */
+    public function syncEmployeeWorkAddresses(int $employeeId): array
+    {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getEmployeeWorkAddress',
+            $companyDetails
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$gustoResponse) {
+            return ['success' => true];
+        }
+        //
+        foreach ($gustoResponse as $location) {
+            //
+            $ins = [];
+
+            $ins['gusto_location_uuid'] = $location['location_uuid'];
+            $ins['gusto_version'] = $location['version'];
+            $ins['effective_date'] = $location['effective_date'];
+            $ins['active'] = $location['active'];
+            $ins['street_1'] = $location['street_1'];
+            $ins['street_2'] = $location['street_2'];
+            $ins['city'] = $location['city'];
+            $ins['state'] = $location['state'];
+            $ins['zip'] = $location['zip'];
+            $ins['country'] = $location['country'];
+            $ins['updated_at'] = getSystemDate();
+            //
+            $whereArray = [
+                'gusto_uuid' => $location['uuid']
+            ];
+            //
+            if (!$this->db->where($whereArray)->count_all_results('gusto_companies_employees_work_addresses')) {
+
+                $ins['created_at'] = getSystemDate();
+                $ins['gusto_uuid'] = $location['uuid'];
+                $ins['employee_sid'] = $employeeId;
+                // insert
+                $this->db->insert('gusto_companies_employees_work_addresses', $ins);
+            } else {
+                // update
+                $this->db
+                    ->where($whereArray)
+                    ->update('gusto_companies_employees_work_addresses', $ins);
+            }
+        }
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * create and sync employee job on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $companyDetails
+     * @return array
+     */
+    private function createEmployeeJobOnGusto(int $employeeId, array $companyDetails): array
     {
         // check the company location
         $location = $this->db
             ->select('gusto_uuid')
-            ->where('company_sid', $companyId)
+            ->where('company_sid', $companyDetails['company_sid'])
             ->where('is_active', 1)
             ->get('gusto_companies_locations')
             ->row_array();
@@ -1248,7 +1484,6 @@ class Payroll_model extends CI_Model
                 complynet_job_title,
                 registration_date,
                 joined_at,
-                hourly_rate
             ')
             ->where('sid', $employeeId)
             ->get('users')
@@ -1267,8 +1502,6 @@ class Payroll_model extends CI_Model
             $jobTitle = $employeeDetails['complynet_job_title'];
         }
         //
-        $hourlyRate = $employeeDetails['hourly_rate'] ? $employeeDetails['hourly_rate'] : 0;
-        //
         $errorArray = [];
         // validation
         if (!$jobTitle) {
@@ -1284,10 +1517,8 @@ class Payroll_model extends CI_Model
         // create request
         $request = [];
         $request['title'] = $jobTitle;
-        $request['location_id'] = $location['gusto_uuid'];
+        $request['location_uuid'] = $location['gusto_uuid'];
         $request['hire_date'] = $joiningDate;
-        // get company details
-        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
         // make call
         $gustoResponse = gustoCall(
             "createEmployeeJobOnGusto",
@@ -1307,9 +1538,14 @@ class Payroll_model extends CI_Model
                 'employee_sid' => $employeeId,
                 'gusto_uuid' => $gustoResponse['uuid'],
                 'gusto_version' => $gustoResponse['version'],
+                'gusto_location_uuid' => $gustoResponse['location_uuid'],
                 'is_primary' => $gustoResponse['primary'],
+                'hire_date' => $gustoResponse['hire_date'],
+                'title' => $gustoResponse['title'],
+                'rate' => $gustoResponse['rate'],
+                'current_compensation_uuid' => $gustoResponse['current_compensation_uuid'],
                 'created_at' => getSystemDate(),
-                'updated_at' => getSystemDate(),
+                'updated_at' => getSystemDate()
             ]);
         //
         $gustoEmployeeJobId = $this->db->insert_id();
@@ -1325,14 +1561,672 @@ class Payroll_model extends CI_Model
                     'flsa_status' => $compensation['flsa_status'],
                     'effective_date' => $compensation['effective_date'],
                     'adjust_for_minimum_wage' => $compensation['adjust_for_minimum_wage'],
+                    'minimum_wages' => json_encode($compensation['minimum_wages']),
                     'created_at' => getSystemDate(),
                     'updated_at' => getSystemDate()
                 ]);
         }
         //
+        $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->update('gusto_companies_employees', [
+                'work_address' => 1,
+                'compensation_details' => 1
+            ]);
+        //
         return [
             'gusto_uuid' => $gustoResponse['uuid'],
             'gusto_version' => $gustoResponse['version']
         ];
+    }
+
+    /**
+     * get employee personal details for Gusto
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeePersonalDetailsForGusto(int $employeeId): array
+    {
+        // get user profile data
+        $record = $this->db
+            ->select('
+            first_name,
+            last_name,
+            middle_name,
+            registration_date,
+            joined_at,
+            email,
+            ssn,
+            dob,
+        ')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        // let reset the array
+        $record['start_date'] = get_employee_latest_joined_date(
+            $record['registration_date'],
+            $record['joined_at'],
+            '',
+        );
+        $record['middle_initial'] = substr($record['middle_name'], 0, 1);
+        $record['start_date'] = formatDateToDB(
+            $record['start_date'],
+            DB_DATE,
+            SITE_DATE
+        );
+        $record['dob'] = $record['dob'] ? formatDateToDB(
+            $record['dob'],
+            DB_DATE,
+            SITE_DATE
+        ) : '';
+        //
+        return $record;
+    }
+
+    /**
+     * get company locations
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyLocations(int $companyId): array
+    {
+        // get user profile data
+        return $this->db
+            ->select('
+                users.Location_Address,
+                users.Location_City,
+                states.state_code,
+                users.Location_ZipCode,
+                users.Location_Address_2,
+                gusto_companies_locations.gusto_uuid
+        ')
+            ->join('users', 'users.sid = gusto_companies_locations.company_sid', 'inner')
+            ->join('states', 'states.sid = users.Location_State', 'left')
+            ->where('gusto_companies_locations.company_sid', $companyId)
+            ->get('gusto_companies_locations')
+            ->result_array();
+    }
+
+    /**
+     * get employee primary job
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeePrimaryJob(int $employeeId): array
+    {
+        // get the job
+        $job = $this->db
+            ->select('title, current_compensation_uuid')
+            ->where([
+                'employee_sid' => $employeeId,
+                'is_primary' => 1
+            ])
+            ->get('gusto_employees_jobs')
+            ->row_array();
+        //
+        if ($job) {
+            // get the compensation
+            $job['compensation'] = $this->db
+                ->select('rate, payment_unit, flsa_status, adjust_for_minimum_wage, minimum_wages')
+                ->where([
+                    'gusto_uuid' => $job['current_compensation_uuid']
+                ])
+                ->get('gusto_employees_jobs_compensations')
+                ->row_array();
+        }
+        return $job;
+    }
+
+    /**
+     * get employee home address
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeeHomeAddress(int $employeeId): array
+    {
+        // get the company location
+        return $this->db
+            ->select('
+                users.Location_Address,
+                users.Location_City,
+                states.state_code,
+                users.Location_ZipCode,
+                users.Location_Address_2,
+            ')
+            ->join('states', 'states.sid = users.Location_State', 'left')
+            ->where('users.sid', $employeeId)
+            ->get('users')
+            ->row_array();
+    }
+    
+    /**
+     * get employee federal tax
+     *
+     * TODO: extract employee data from w4
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeeFederalTax(int $employeeId): array
+    {
+        // get the company location
+        return [];
+    }
+
+    /**
+     * update employee's profile details on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeePersonalDetails(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                    'gusto_version',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // let's make request
+        $request = [];
+        $request['version'] = $gustoEmployee['gusto_version'];
+        $request['first_name'] = $data['first_name'];
+        $request['last_name'] = $data['last_name'];
+        $request['middle_initial'] = substr($data['middle_initial'], 0, 1);
+        $request['date_of_birth'] = $data['date_of_birth'];
+        $request['email'] = $data['email'];
+        $request['ssn'] = $data['ssn'];
+        $request['two_percent_shareholder'] = false;
+        // response
+        $gustoResponse = gustoCall(
+            'updateEmployeePersonalDetails',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $updateArray = [];
+        $updateArray['gusto_version'] = $gustoResponse['version'];
+        $updateArray['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('employee_sid', $employeeId)
+            ->update('gusto_companies_employees', $updateArray);
+        //
+        $updateArray = [];
+        $updateArray['first_name'] = $request['first_name'];
+        $updateArray['last_name'] = $request['last_name'];
+        $updateArray['email'] = $request['email'];
+        $updateArray['middle_name'] = $request['middle_initial'];
+        $updateArray['ssn'] = $request['ssn'];
+        $updateArray['dob'] = $request['date_of_birth'];
+        $updateArray['joined_at'] = $data['start_date'];
+        //
+        $this->db
+            ->where('sid', $employeeId)
+            ->update('users', $updateArray);
+        // TODO
+        // record change history
+        return ['success' => true];
+    }
+
+    /**
+     * update employee's work address on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeeWorkAddress(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                ]
+            );
+        // get gusto work address
+        $gustoWorkLocation = $this->db
+            ->select('sid, gusto_version, gusto_uuid')
+            ->where([
+                'employee_sid' => $employeeId,
+                'active' => 1
+            ])
+            ->get('gusto_companies_employees_work_addresses')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoWorkLocation['gusto_uuid'];
+        // let's make request
+        $request = [];
+        $request['version'] = $gustoWorkLocation['gusto_version'];
+        $request['location_uuid'] = $data['location_uuid'];
+        $request['effective_date'] = $data['start_date'];
+        // response
+        $gustoResponse = gustoCall(
+            'updateEmployeeWorkAddress',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $updateArray = [];
+        $updateArray['gusto_version'] = $gustoResponse['version'];
+        $updateArray['location_uuid'] = $gustoResponse['location_uuid'];
+        $updateArray['effective_date'] = $gustoResponse['effective_date'];
+        $updateArray['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $gustoWorkLocation['sid'])
+            ->update('gusto_companies_employees_work_addresses', $updateArray);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * update employee's job on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeeJob(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                ]
+            );
+        // get the job
+        $gustoJob = $this->db
+            ->select('sid, title, gusto_uuid, gusto_location_uuid, hire_date, gusto_version')
+            ->where([
+                'employee_sid' => $employeeId,
+                'is_primary' => 1
+            ])
+            ->get('gusto_employees_jobs')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoJob['gusto_uuid'];
+        // let's make request
+        $request = [];
+        $request['version'] = $gustoJob['gusto_version'];
+        $request['title'] = $data['title'] ?? $gustoJob['title'];
+        $request['location_uuid'] = $data['location_uuid'] ?? $gustoJob['gusto_location_uuid'];
+        $request['hire_date'] = $data['start_date'] ?? $gustoJob['hire_date'];
+        //
+        if (!$request['title']) {
+            $employeeDetails = $this->db
+                ->select('
+                job_title,
+                complynet_job_title
+            ')
+                ->where('sid', $employeeId)
+                ->get('users')
+                ->row_array();
+            // get job title
+            $jobTitle = 'Automotive';
+            //
+            if ($employeeDetails['job_title']) {
+                $jobTitle = $employeeDetails['job_title'];
+            } elseif ($employeeDetails['complynet_job_title']) {
+                $jobTitle = $employeeDetails['complynet_job_title'];
+            }
+            //
+            $request['title'] = $jobTitle;
+        }
+        // response
+        $gustoResponse = gustoCall(
+            'updateEmployeeJob',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->update('gusto_companies_employees', ['compensation_details' => 1]);
+        // set array
+        $ins = [];
+        $ins['gusto_version'] = $gustoResponse['version'];
+        $ins['is_primary'] = $gustoResponse['primary'];
+        $ins['gusto_location_uuid'] = $gustoResponse['location_uuid'];
+        $ins['hire_date'] = $gustoResponse['hire_date'];
+        $ins['title'] = $gustoResponse['title'];
+        $ins['rate'] = $gustoResponse['rate'];
+        $ins['current_compensation_uuid'] = $gustoResponse['current_compensation_uuid'];
+        $ins['updated_at'] = getSystemDate();
+        // update
+        $this->db
+            ->where(['gusto_uuid' => $gustoResponse['uuid']])
+            ->update('gusto_employees_jobs', $ins);
+
+        //
+        // add compensations
+        foreach ($gustoResponse['compensations'] as $compensation) {
+            //
+            $ins = [];
+            $ins['gusto_version'] = $compensation['version'];
+            $ins['rate'] = $compensation['rate'];
+            $ins['payment_unit'] = $compensation['payment_unit'];
+            $ins['flsa_status'] = $compensation['flsa_status'];
+            $ins['effective_date'] = $compensation['effective_date'];
+            $ins['adjust_for_minimum_wage'] = $compensation['adjust_for_minimum_wage'];
+            //
+            if ($this->db->where(['gusto_uuid' => $compensation['uuid']])->count_all_results('gusto_employees_jobs_compensations')) {
+                $ins['updated_at'] = getSystemDate();
+                $this->db
+                    ->where(['gusto_uuid' => $compensation['uuid']])
+                    ->update('gusto_employees_jobs_compensations', $ins);
+            } else {
+                $ins['gusto_employees_jobs_sid'] = $gustoJob['sid'];
+                $ins['gusto_uuid'] = $compensation['uuid'];
+                $ins['created_at'] = getSystemDate();
+                $ins['updated_at'] = getSystemDate();
+                $this->db->insert('gusto_employees_jobs_compensations', $ins);
+            }
+        }
+
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * update employee's job on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeeCompensation(
+        int $employeeId,
+        array $data
+    ): array {
+        //
+        $response = $this->updateEmployeeJob($employeeId, ['title' => $data['title']]);
+        //
+        if ($response['errors']) {
+            return $response;
+        }
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                ]
+            );
+        // get the job
+        $gustoJob = $this->db
+            ->select('
+                gusto_employees_jobs_compensations.gusto_uuid,
+                gusto_employees_jobs_compensations.gusto_version,
+                gusto_employees_jobs_compensations.adjust_for_minimum_wage,
+                gusto_employees_jobs_compensations.minimum_wages
+            ')
+            ->where([
+                'gusto_employees_jobs.employee_sid' => $employeeId,
+                'gusto_employees_jobs.is_primary' => 1
+            ])
+            ->join(
+                'gusto_employees_jobs_compensations',
+                'gusto_employees_jobs_compensations.gusto_uuid = gusto_employees_jobs.current_compensation_uuid',
+                'inner'
+            )
+            ->get('gusto_employees_jobs')
+            ->row_array();
+        //
+        if (!$gustoJob) {
+            return [
+                'errors' => [
+                    "Compensation doesn't exists."
+                ]
+            ];
+        }
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoJob['gusto_uuid'];
+        // let's make request
+        $request = [];
+        $request['version'] = $gustoJob['gusto_version'];
+        $request['rate'] = $data['amount'];
+        $request['flsa_status'] = $data['classification'];
+        $request['payment_unit'] = $data['per'];
+        $request['adjust_for_minimum_wage'] = $gustoJob['adjust_for_minimum_wage'];
+        $request['minimum_wages'] = json_decode($gustoJob['minimum_wages'], true);
+        // response
+        $gustoResponse = gustoCall(
+            'updateEmployeeJobCompensation',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $ins = [];
+        $ins['gusto_version'] = $gustoResponse['version'];
+        $ins['rate'] = $gustoResponse['rate'];
+        $ins['payment_unit'] = $gustoResponse['payment_unit'];
+        $ins['flsa_status'] = $gustoResponse['flsa_status'];
+        $ins['effective_date'] = $gustoResponse['effective_date'];
+        $ins['adjust_for_minimum_wage'] = $gustoResponse['adjust_for_minimum_wage'];
+        $ins['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where(['gusto_uuid' => $gustoResponse['uuid']])
+            ->update('gusto_employees_jobs_compensations', $ins);
+        // set job id
+        $companyDetails['other_uuid'] = $gustoResponse['job_uuid'];
+
+        // let's sync single job
+        $gustoResponse = gustoCall(
+            'getSingleJob',
+            $companyDetails
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db
+            ->where('gusto_uuid', $gustoResponse['uuid'])
+            ->update(
+                'gusto_employees_jobs',
+                [
+                    'title' => $gustoResponse['title'],
+                    'hire_date' => $gustoResponse['hire_date'],
+                    'gusto_version' => $gustoResponse['version'],
+                    'rate' => $gustoResponse['rate']
+                ]
+            );
+
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * update employee's home address on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeeHomeAddress(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_home_address_uuid',
+                    'gusto_home_address_version',
+                    'gusto_home_address_effective_date',
+                    'gusto_home_address_courtesy_withholding'
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_home_address_uuid'];
+        // let's make request
+        $request = [];
+        $request['version'] = $gustoEmployee['gusto_home_address_version'];
+        $request['street_1'] = $data['street_1'];
+        $request['street_2'] = $data['street_2'];
+        $request['city'] = $data['city'];
+        $request['state'] = strtoupper($data['state']);
+        $request['zip'] = $data['zip'];
+        // response
+        $gustoResponse = gustoCall(
+            'updateHomeAddress',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['gusto_home_address_version'] = $gustoResponse['version'];
+        //
+        $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->update('gusto_companies_employees', $upd);
+        //
+        $upd = [];
+        $upd['Location_Address'] = $request['street_1'];
+        $upd['Location_Address_2'] = $request['street_2'];
+        $upd['Location_City'] = $request['city'];
+        $upd['Location_State'] = getStateColumn(['state_code' => $request['state']], 'sid');
+        $upd['Location_ZipCode'] = $request['zip'];
+
+        $this->db
+            ->where(['sid' => $employeeId])
+            ->update('users', $upd);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * update employee's home address on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function createEmployeeHomeAddress(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // let's make request
+        $request = [];
+        $request['street_1'] = $data['street_1'];
+        $request['street_2'] = $data['street_2'];
+        $request['city'] = $data['city'];
+        $request['state'] = strtoupper($data['state']);
+        $request['zip'] = $data['zip'];
+        // response
+        $gustoResponse = gustoCall(
+            'createHomeAddress',
+            $companyDetails,
+            $request,
+            'POST'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // set update array
+        $upd = [];
+        $upd['gusto_home_address_uuid'] = $gustoResponse['uuid'];
+        $upd['gusto_home_address_version'] = $gustoResponse['version'];
+        $upd['gusto_home_address_effective_date'] = $gustoResponse['effective_date'];
+        $upd['gusto_home_address_courtesy_withholding'] = $gustoResponse['courtesy_withholding'];
+        //
+        $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->update('gusto_companies_employees', $upd);
+        //
+        $upd = [];
+        $upd['Location_Address'] = $request['street_1'];
+        $upd['Location_Address_2'] = $request['street_2'];
+        $upd['Location_City'] = $request['city'];
+        $upd['Location_State'] = getStateColumn(['state_code' => $request['state']], 'sid');
+        $upd['Location_ZipCode'] = $request['zip'];
+
+        $this->db
+            ->where(['sid' => $employeeId])
+            ->update('users', $upd);
+        //
+        return ['success' => true];
     }
 }

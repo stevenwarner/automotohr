@@ -271,7 +271,18 @@ if (!function_exists('getUrl')) {
         //company flow
         $urls['getCompanyOnboardFlow'] = "v1/companies/$key/flows";
         // employee URLs
-        $urls['createEmployeeJobOnGusto'] = "v1/employees/$key/jobs";
+        $urls['createEmployeeJobOnGusto'] = "v1/employees/$key1/jobs";
+        $urls['getEmployeeJobs'] = "v1/employees/$key1/jobs";
+        // flow urls
+        $urls['updateEmployeePersonalDetails'] = "v1/employees/$key1";
+        $urls['getEmployeeWorkAddress'] = "v1/employees/$key1/work_addresses";
+        $urls['updateEmployeeWorkAddress'] = "v1/work_addresses/$key1";
+        $urls['updateEmployeeJob'] = "v1/jobs/$key1";
+        $urls['updateEmployeeJobCompensation'] = "v1/compensations/$key1";
+        $urls['getSingleJob'] = "v1/jobs/$key1";
+        // home address urls
+        $urls['updateHomeAddress'] = "v1/home_addresses/$key1";
+        $urls['createHomeAddress'] = "v1/employees/$key1/home_addresses";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];

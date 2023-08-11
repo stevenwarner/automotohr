@@ -16,8 +16,6 @@
         </p>
         <br>
         <form action="javascript:void(0)">
-
-
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Select payment method&nbsp;
@@ -34,8 +32,23 @@
                     <div class="control__indicator"></div>
                 </label>
             </div>
-
         </form>
+
+        <!--  -->
+        <br />
+        <h4>
+            <strong>
+                Employee bank account
+            </strong>
+        </h4>
+        <p class="csF16">
+            Enter the details of the bank account the employee wishes to be paid with. Multiple accounts can be added after continuing this page.
+        </p>
+        <button class="btn csBG4 csW csF16">
+            <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
+            &nbsp;Add a bank account
+        </button>
+
     </div>
     <div class="panel-footer text-right">
         <button class="btn csBG3 csF16 jsEmployeeFlowSavePaymentMethodBtn">

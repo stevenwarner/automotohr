@@ -21,31 +21,31 @@
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Street 1 <strong class="text-danger">*</strong></label>
-                <input type="text" class="form-control jsEmployeeFlowStreet1" placeholder="PO BOX 123" />
+                <input type="text" class="form-control input-lg jsEmployeeFlowStreet1" placeholder="PO BOX 123" value="<?= $record['Location_Address']; ?>" />
             </div>
 
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Street 2</label>
-                <input type="text" class="form-control jsEmployeeFlowStreet2" placeholder="PO BOX 123" />
+                <input type="text" class="form-control input-lg jsEmployeeFlowStreet2" placeholder="PO BOX 123" value="<?= $record['Location_Address_2']; ?>" />
             </div>
 
             <!--  -->
             <div class="form-group">
                 <label class="csF16">City <strong class="text-danger">*</strong></label>
-                <input type="text" class="form-control jsEmployeeFlowCity" placeholder="New York" />
+                <input type="text" class="form-control input-lg jsEmployeeFlowCity" placeholder="New York" value="<?= $record['Location_City']; ?>" />
             </div>
 
             <!--  -->
             <div class="form-group">
                 <label class="csF16">State <strong class="text-danger">*</strong></label>
-                <input type="text" class="form-control jsEmployeeFlowState" placeholder="NY" />
+                <input type="text" class="form-control input-lg jsEmployeeFlowState" placeholder="NY" value="<?= $record['state_code']; ?>" />
             </div>
 
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Zip <strong class="text-danger">*</strong></label>
-                <input type="text" class="form-control jsEmployeeFlowZip" placeholder="123456" />
+                <input type="text" class="form-control input-lg jsEmployeeFlowZip" placeholder="123456" value="<?= $record['Location_ZipCode']; ?>" />
             </div>
 
         </form>

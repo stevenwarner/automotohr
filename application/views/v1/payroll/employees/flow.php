@@ -11,30 +11,26 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <span class="visible-xs navbar-brand">Sidebar menu</span>
+                        <span class="visible-xs navbar-brand">Employee payroll menu</span>
                     </div>
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="#" class="csF16" data-target="jsPersonalDetails">Personal details</a></li>
-                            <li><a href="#" class="csF16" data-target="jsCompensation">Compensation</a></li>
-                            <li><a href="#" class="csF16" data-target="jsHomeAddress">Home address</a></li>
-                            <li><a href="#" class="csF16" data-target="jsFederalTax">Federal Tax</a></li>
-                            <li><a href="#" class="csF16" data-target="jsState">State Tax</a></li>
-                            <li><a href="#" class="csF16" data-target="jsPaymentMethod">Payment Method</a></li>
-                            <li><a href="#" class="csF16" data-target="jsDocument">Documents</a></li>
-                            <li><a href="#" class="csF16" data-target="jsDeduction">Deductions</a></li>
-                            <li><a href="#" class="csF16" data-target="jsSummary">Summary</a></li>
+                            <li <?= $step == 'personal_details' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="personal_details">Personal details</a></li>
+                            <li <?= $step == 'compensation_details' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="compensation_details">Compensation</a></li>
+                            <li <?= $step == 'home_address' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="home_address">Home address</a></li>
+                            <li <?= $step == 'federal_tax' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="federal_tax">Federal Tax</a></li>
+                            <li <?= $step == 'state_tax' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="state_tax">State Tax</a></li>
+                            <li <?= $step == 'payment_method' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="payment_method">Payment Method</a></li>
+                            <li <?= $step == 'documents' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="documents">Documents</a></li>
+                            <li <?= $step == 'deductions' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="deductions">Deductions</a></li>
+                            <li <?= $step == 'summary' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="summary">Summary</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-9">
-            <?php //$this->load->view("v1/payroll/employees/personal_details"); ?>
-            <?php // $this->load->view("v1/payroll/employees/compensation"); ?>
-            <?php //$this->load->view("v1/payroll/employees/home_address"); ?>
-            <?php //$this->load->view("v1/payroll/employees/federal_tax"); ?>
-            <?php $this->load->view("v1/payroll/employees/payment_method"); ?>
+            <?php $this->load->view("v1/payroll/employees/" . $step); ?>
         </div>
     </div>
 </div>

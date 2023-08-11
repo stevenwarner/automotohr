@@ -50,7 +50,7 @@
                         </em>
                     </strong>
                 </p>
-                <select class="form-control jsEmployeeFlowFilingStatus">
+                <select class="form-control jsEmployeeFlow">
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
                     <option value="Head of Household">Head of Household</option>
@@ -89,7 +89,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowDependents" />
+                <input type="text" class="form-control jsEmployeeFlow" />
             </div>
 
             <!--  -->
@@ -102,7 +102,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowOtherIncome" />
+                <input type="text" class="form-control jsEmployeeFlow" />
             </div>
 
             <!--  -->
@@ -115,7 +115,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowDeductions" />
+                <input type="text" class="form-control jsEmployeeFlow" />
             </div>
 
             <!--  -->
@@ -128,7 +128,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowExtraWithholding" />
+                <input type="text" class="form-control jsEmployeeFlow" />
             </div>
 
         </form>

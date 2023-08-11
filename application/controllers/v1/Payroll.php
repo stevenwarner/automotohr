@@ -51,14 +51,14 @@ class Payroll extends CI_Controller
             $companyGustoDetails,
             [
                 'flow_type' => "
-                    federal_tax_setup,
                     select_industry,
                     add_bank_info,
                     verify_bank_info,
-                    state_setup,
                     payroll_schedule,
-                    sign_all_forms,
-                    add_employees
+                    federal_tax_setup,
+                    add_employees,
+                    state_setup,
+                    " . (isLoggedInPersonIsSignatory() ? 'sign_all_forms' : '') . "
                 ",
                 "entity_type" => "Company",
                 "entity_uuid" => $companyGustoDetails['gusto_uuid']
@@ -268,7 +268,7 @@ class Payroll extends CI_Controller
      *
      * @return
      */
-    public function createAdmin()
+    public function createAdmin(): array
     {
         // get the session
         $session = checkUserSession(false);
@@ -366,7 +366,7 @@ class Payroll extends CI_Controller
      *
      * @return
      */
-    public function createSignatory()
+    public function createSignatory(): array
     {
         // get the session
         $session = checkUserSession(false);
@@ -519,14 +519,14 @@ class Payroll extends CI_Controller
      *
      * @return
      */
-    public function syncCompanyWithGusto()
+    public function syncCompanyWithGusto(): array
     {
         // get the session
         $session = checkUserSession(false);
         // check for session out
         $this->checkSessionStatus($session);
         //
-        $this->payroll_model->syncCompanyWithGusto(
+        return $this->payroll_model->syncCompanyWithGusto(
             $session['company_detail']['sid']
         );
     }
@@ -537,7 +537,7 @@ class Payroll extends CI_Controller
      *
      * @return
      */
-    public function verifyCompanyBankAccount()
+    public function verifyCompanyBankAccount(): array
     {
         // get the session
         $session = checkUserSession(false);
@@ -656,7 +656,7 @@ class Payroll extends CI_Controller
     public function getCreatePartnerCompanyPage(
         int $step,
         int $companyId
-    ) {
+    ): array {
         // welcome page
         if ($step === 1) :
             // check if company is already onboard
@@ -769,7 +769,7 @@ class Payroll extends CI_Controller
      *
      * @param int $companyId
      */
-    public function getCompanyAgreement(int $companyId)
+    public function getCompanyAgreement(int $companyId): array
     {
         // set
         $data = [];
@@ -793,7 +793,7 @@ class Payroll extends CI_Controller
      *
      * @param int $companyId
      */
-    public function signCompanyAgreement(int $companyId)
+    public function signCompanyAgreement(int $companyId): array
     {
         // set the sanitized post
         $post = $this->input->post(null, true);
@@ -853,16 +853,322 @@ class Payroll extends CI_Controller
     /**
      * employee onboard flow
      *
-     * @param int $employeeId
+     * @param int    $employeeId
+     * @param string $step
      * @return json
      */
-    public function employeeOnboardFlow(int $employeeId)
+    public function employeeOnboardFlow(int $employeeId, string $step): array
     {
+        // get employee details
+        $gustoEmployee = $this->payroll_model->getEmployeeDetailsForGusto(
+            $employeeId,
+            [
+                'company_sid',
+                'personal_details',
+                'compensation_details',
+                'work_address',
+                'home_address',
+                'federal_tax',
+                'state_tax',
+                'new_hire_report',
+            ]
+        );
+        // set data
+        $data = [];
+        $data['step'] = $step;
+        // for summary page
+        if ($step === 'summary') {
+            $data['summary'] = [
+                ['Personal details', $gustoEmployee['personal_details']],
+                ['Enter compensation details', $gustoEmployee['compensation_details']],
+                ['Add work address', $gustoEmployee['work_address']],
+                ['Add home address', $gustoEmployee['home_address']],
+                ['Enter federal tax withholdings', $gustoEmployee['federal_tax']],
+                ['Enter state tax information', $gustoEmployee['state_tax']],
+                ['File new hire report', $gustoEmployee['new_hire_report']],
+            ];
+        } elseif ($step === 'personal_details') {
+            //
+            $data['locations'] = $this->payroll_model->getCompanyLocations(
+                $gustoEmployee['company_sid']
+            );
+            //
+            $data['personalDetails'] = $this->payroll_model->getEmployeePersonalDetailsForGusto(
+                $employeeId
+            );
+        } elseif ($step === 'compensation_details') {
+            //
+            $data['primaryJob'] = $this->payroll_model
+                ->getEmployeePrimaryJob(
+                    $employeeId
+                );
+        } elseif ($step === 'home_address') {
+            //
+            $data['record'] = $this->payroll_model
+                ->getEmployeeHomeAddress(
+                    $employeeId
+                );
+        } elseif ($step === 'federal_tax') {
+            //
+            $data['record'] = $this->payroll_model
+                ->getEmployeeFederalTax(
+                    $employeeId
+                );
+        }
         //
         return SendResponse(
             200,
             [
-                'view' => $this->load->view('v1/payroll/employees/flow', [], true)
+                'view' => $this->load->view('v1/payroll/employees/flow', $data, true)
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow personal details
+     *
+     * @param int    $employeeId
+     * @return json
+     */
+    public function updateEmployeePersonalDetails(int $employeeId): array
+    {
+        // get post
+        $post = $this->input->post(null, true);
+        // get employee details
+        $employeeDetails = $this->db
+            ->select('ssn, dob')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        //
+        $post['ssn'] = strpos($post['ssn'], '#') === false ? $post['ssn'] : $employeeDetails['ssn'];
+        $post['date_of_birth'] = strpos($post['date_of_birth'], '#') === false
+            ? formatDateToDB($post['date_of_birth'], SITE_DATE, DB_DATE)
+            : $employeeDetails['dob'];
+        //
+        $post['start_date'] = formatDateToDB($post['start_date'], SITE_DATE, DB_DATE);
+        // set error array
+        $errorsArray = [];
+        // validation
+        if (!$post['first_name']) {
+            $errorsArray[] = '"First name" is missing.';
+        }
+        if (!$post['last_name']) {
+            $errorsArray[] = '"Last name" is missing.';
+        }
+        if (!$post['location_uuid']) {
+            $errorsArray[] = '"Work address" is missing.';
+        }
+        if (!$post['start_date']) {
+            $errorsArray[] = '"Start date" is missing.';
+        }
+        if (!$post['email']) {
+            $errorsArray[] = '"Email" is missing.';
+        }
+        if (!$post['ssn']) {
+            $errorsArray[] = '"Social Security Number (SSN)" is missing.';
+        }
+        if (!$post['date_of_birth']) {
+            $errorsArray[] = '"Date of birth" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                404,
+                ['errors' => $errorsArray]
+            );
+        }
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                404,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+
+        // let's update employee's profile
+        $response = $this->payroll_model
+            ->updateEmployeePersonalDetails(
+                $employeeId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                404,
+                $response
+            );
+        }
+
+        // let's update employee's work address
+        $response = $this->payroll_model
+            ->updateEmployeeJob(
+                $employeeId,
+                [
+                    'location_uuid' => $post['location_uuid'],
+                    'start_date' => $post['start_date'],
+                ]
+            );
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated employees personal details' . ($response['errors'] ? '' : ' and work location.')
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow compensation
+     *
+     * @param int    $employeeId
+     * @return json
+     */
+    public function updateEmployeeCompensation(int $employeeId): array
+    {
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        // validation
+        if (!$post['title']) {
+            $errorsArray[] = '"Job title" is missing.';
+        }
+        if (!$post['classification']) {
+            $errorsArray[] = '"Employee classification" is missing.';
+        }
+        if (!$post['amount']) {
+            $errorsArray[] = '"Amount" is missing.';
+        }
+        if (!$post['per']) {
+            $errorsArray[] = '"Per" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                404,
+                ['errors' => $errorsArray]
+            );
+        }
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                404,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+
+        // let's update employee's profile
+        $response = $this->payroll_model
+            ->updateEmployeeCompensation(
+                $employeeId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                404,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated compensation.'
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow home address
+     *
+     * @param int    $employeeId
+     * @return json
+     */
+    public function updateEmployeeHomeAddress(int $employeeId): array
+    {
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        // validation
+        if (!$post['street_1']) {
+            $errorsArray[] = '"Street 1" is missing.';
+        }
+        if (!$post['city']) {
+            $errorsArray[] = '"City" is missing.';
+        }
+        if (!$post['state']) {
+            $errorsArray[] = '"State" is missing.';
+        }
+        if (!$post['zip']) {
+            $errorsArray[] = '"Zip" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                404,
+                ['errors' => $errorsArray]
+            );
+        }
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                404,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+
+        // get the job
+        $gustoHomeAddress = $this->db
+            ->where('employee_sid', $employeeId)
+            ->where('gusto_home_address_uuid is not null', null)
+            ->count_all_results('gusto_companies_employees');
+        //
+        $method = !$gustoHomeAddress ? 'createEmployeeHomeAddress' : 'updateEmployeeHomeAddress';
+        // let's update employee's home address
+        $response = $this->payroll_model
+            ->$method(
+                $employeeId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                404,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated compensation.'
             ]
         );
     }

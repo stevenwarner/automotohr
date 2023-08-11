@@ -568,7 +568,7 @@ if (!function_exists('isLoggedInPersonIsSignatory')) {
      *
      * @return bool
      */
-    function isLoggedInPersonIsSignatory()
+    function isLoggedInPersonIsSignatory(): bool
     {
         // Get instance
         $CI = &get_instance();
@@ -581,7 +581,7 @@ if (!function_exists('isLoggedInPersonIsSignatory')) {
                 'email' => $ses['employer_detail']['email']
 
             ])
-            ->count_all_results('payroll_signatories');
+            ->count_all_results('gusto_companies_signatories');
     }
 }
 
@@ -659,5 +659,40 @@ if (!function_exists('checkUserSession')) {
         }
         //
         return $CI->session->userdata('logged_in');
+    }
+}
+
+
+if (!function_exists('makeLocation')) {
+    /**
+     * converts location array to string
+     *
+     * @param array $location
+     */
+    function makeLocation(array $location): string
+    {
+        //
+        $str = '';
+        //
+        $str .= $location['Location_Address'];
+        $str .= $location['Location_Address_2'] ? ', ' . $location['Location_Address_2'] : '';
+        $str .= $location['Location_City'] ? ', ' . $location['Location_City'] : '';
+        $str .= $location['state_code'] ? ', ' . $location['state_code'] : '';
+        $str .= $location['Location_ZipCode'] ? ', ' . $location['Location_ZipCode'] : '';
+        //
+        return trim($str);
+    }
+}
+
+if (!function_exists('getStateByCol')) {
+
+    function getStateColumn(array $where, string $column):string
+    {
+        $CI = &get_instance();
+        return $CI->db
+            ->select($column)
+            ->where($where)
+            ->get('states')
+            ->row_array()[$column];
     }
 }

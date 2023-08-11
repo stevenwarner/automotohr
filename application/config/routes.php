@@ -1672,4 +1672,8 @@ $route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAcc
 // employees
 $route['payrolls/employees']['get'] = 'v1/Payroll/manageEmployees';
 // employee onboard flow
-$route['payrolls/flow/employee/(:num)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1';
+$route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';
+$route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';
+$route['payrolls/flow/employee/(:num)/personal_details']['post'] = 'v1/Payroll/updateEmployeePersonalDetails/$1';
+$route['payrolls/flow/employee/(:num)/compensation']['post'] = 'v1/Payroll/updateEmployeeCompensation/$1';
+$route['payrolls/flow/employee/(:num)/home_address']['post'] = 'v1/Payroll/updateEmployeeHomeAddress/$1';
