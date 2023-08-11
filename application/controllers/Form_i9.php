@@ -174,6 +174,10 @@ class Form_i9 extends Public_Controller
                 redirect($form_back_url, 'refresh');
             }
 
+            if (!empty($previous_form["section1_preparer_or_translator"]) && empty($previous_form["section1_preparer_json"])) {
+                $previous_form["section1_preparer_json"] = copyPrepareI9Json($previous_form);
+            }
+
             $data['pre_form'] = $previous_form;
 
             if ($employer_access_level == 'Admin' && sizeof($previous_form) > 0 && $previous_form['user_sid'] != $security_sid) {
@@ -1063,7 +1067,7 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "employee_section";
             //
-            $this->load->view('2022/federal_fillable/form_i9_preview', $data);
+            $this->load->view('2022/federal_fillable/form_i9_preview_new', $data);
             //
         } else {
             redirect('login', "refresh");
@@ -1081,7 +1085,7 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "employee_section";
             //
-            $this->load->view('2022/federal_fillable/form_i9_download', $data);
+            $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
             //
         } else {
             redirect('login', "refresh");
@@ -1099,7 +1103,8 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "complete_pdf";
             //
-            $this->load->view('2022/federal_fillable/form_i9_print', $data);
+            // $this->load->view('2022/federal_fillable/form_i9_print', $data);
+            $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
         } else {
             redirect('login', "refresh");
         }
@@ -1116,7 +1121,7 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "complete_pdf";
             //
-            $this->load->view('2022/federal_fillable/form_i9_download', $data);
+            $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
         } else {
             redirect('login', "refresh");
         }

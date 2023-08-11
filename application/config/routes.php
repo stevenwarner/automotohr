@@ -1815,5 +1815,6 @@ $route['forms/i9/authorized/section/(:num)']['post'] = 'v1/I9/saveAuthorizedSect
 $route['forms/i9/user/section/(:any)/(:num)/(:any)']['get'] = 'v1/I9/getUserSection/$1/$2/$3';
 $route['forms/i9/applicant/save']['post'] = 'v1/I9/saveUserSection';
 $route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
+$route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 
 

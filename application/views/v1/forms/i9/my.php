@@ -53,11 +53,11 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
         <!-- Page buttons -->
         <div class="row">
             <div class="col-sm-12 text-right">
-                <a href="<?= base_url('forms/i9/my/print/' . ($form['sid']) . ''); ?>" class="btn csBG4 csW csRadius5 csF16">
+                <a href="<?= base_url('forms/i9/my/print/' . ($form['sid']) . ''); ?>" target="_blank" class="btn csBG4 csW csRadius5 csF16">
                     &nbsp;<i class="fa fa-print csF16"></i>
                     &nbsp;Print I9 Form
                 </a>
-                <a href="<?= base_url('forms/i9/my/download/' . ($form['sid']) . ''); ?>" class="btn csBG3 csW csRadius5 csF16">
+                <a href="<?= base_url('forms/i9/my/download/' . ($form['sid']) . ''); ?>" target="_blank" class="btn csBG3 csW csRadius5 csF16">
                     &nbsp;<i class="fa fa-download csF16"></i>
                     &nbsp;Download I9 Form
                 </a>

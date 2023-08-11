@@ -71,7 +71,7 @@ class I9 extends Public_Controller
      * @param int    $formId
      * @param string $section
      */
-    public function printOrDownload(int $formId, string $action)
+    public function printOrDownload(string $action, int $formId)
     {
         // check session
         if (!$this->session->userdata('logged_in')) {
@@ -82,34 +82,17 @@ class I9 extends Public_Controller
         $data['title'] = "My I9 Form";
         $data['session'] = $this->session->userdata('logged_in');
         //
-        $columns = [];
-        $columns[] = 'applicant_i9form.user_consent';
-        $columns[] = 'applicant_i9form.section1_last_name';
-        $columns[] = 'applicant_i9form.section1_first_name';
-        $columns[] = 'applicant_i9form.section1_middle_initial';
-        $columns[] = 'applicant_i9form.section1_other_last_names';
-        $columns[] = 'applicant_i9form.section1_address';
-        $columns[] = 'applicant_i9form.section1_apt_number';
-        $columns[] = 'applicant_i9form.section1_city_town';
-        $columns[] = 'applicant_i9form.section1_state';
-        $columns[] = 'applicant_i9form.section1_zip_code';
-        $columns[] = 'applicant_i9form.section1_date_of_birth';
-        $columns[] = 'applicant_i9form.section1_social_security_number';
-        $columns[] = 'applicant_i9form.section1_emp_email_address';
-        $columns[] = 'applicant_i9form.section1_emp_telephone_number';
-        $columns[] = 'applicant_i9form.section1_emp_signature';
-        $columns[] = 'applicant_i9form.section1_today_date';
-        $columns[] = 'applicant_i9form.section1_alien_registration_number';
-        $columns[] = 'applicant_i9form.section1_penalty_of_perjury';
-        $columns[] = 'applicant_i9form.section1_preparer_or_translator';
-        $columns[] = 'applicant_i9form.section1_preparer_json';
-
-        //
-        $data['form'] = $this->i9_model->getI9FormById(
-            $formId,
-            $columns
+        $formInfo = $this->i9_model->getI9FormById(
+            $formId
         );
-        // _e($data['form'], true);
+        //
+        $data['form'] = $this->i9_model->getI9Form(
+            $formInfo["user_sid"],
+            $formInfo["user_type"],
+            'section1'
+        );
+        //
+        // _e($data['form'],true,true);
         //
         $data['states'] = $this->db
             ->select('state_code, state_name')
@@ -120,7 +103,15 @@ class I9 extends Public_Controller
         // load page scripts
         $data['PageScripts'] = [];
         //
-        $this->load->view('v1/forms/i9/print', $data);
+        $data['title'] = 'Form i-9';
+        $data['pre_form'] = $data['form']; 
+        $data['section_access'] = "complete_pdf";
+        //
+        if ($action == "print") {
+            $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
+        } else {
+            $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+        }    
     }
 
     /**

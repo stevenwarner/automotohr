@@ -926,3 +926,64 @@ if (!function_exists('getStateColumnById')) {
             ->row_array()[$column];
     }
 }
+
+if (!function_exists('copyPrepareI9Json')) {
+    /**
+     * copy I9 Prepare json
+     *
+     * @param array  $form
+     * @return array
+     */
+    function copyPrepareI9Json(array $form): string
+    {
+        $details = [];
+        for ($i = 1; $i <= 4; $i++) {
+            if ($i == 1) {
+                $createDate = new DateTime($form['section1_preparer_today_date']);
+                $today_date = $createDate->format('Y-m-d');
+
+                $details[$i] = [
+                    'signature' => $form['section1_preparer_signature'],
+                    'initial' => $form['section1_preparer_signature_init'],
+                    'user_agent' => $form['section1_preparer_signature_user_agent'],
+                    'ip_address' => $form['section1_preparer_signature_ip_address'],
+                    'last_name' => $form['section1_preparer_last_name'],
+                    'first_name' => $form['section1_preparer_first_name'],
+                    'middle_initial' => $form['user_agent'],
+                    'address' => $form['section1_preparer_address'],
+                    'city' => $form['section1_preparer_city_town'],
+                    'state' => $form['section1_preparer_state'],
+                    'zip_code' => $form['section1_preparer_zip_code'],
+                    'today_date' => $today_date,
+                ];
+            } else {
+                $details[$i] = [
+                    'signature' => '',
+                    'initial' => '',
+                    'user_agent' => '',
+                    'ip_address' => '',
+                    'last_name' => '',
+                    'first_name' => '',
+                    'middle_initial' => '',
+                    'address' => '',
+                    'city' => '',
+                    'state' => '',
+                    'zip_code' => '',
+                    'today_date' => '',
+                ];
+            }
+        }
+        //
+        $updateArray = [];
+        $updateArray['section1_preparer_json'] = json_encode($details);
+        $updateArray['section1_preparer_or_translator'] = "used";
+        
+        //
+        // get CI instance
+        $CI = &get_instance();
+        // update the user in "users" table
+        $CI->db->where(['sid' => $form['sid']])->update('applicant_i9form', $updateArray);
+        //
+        return json_encode($details);
+    }
+}

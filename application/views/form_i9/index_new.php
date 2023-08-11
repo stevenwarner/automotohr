@@ -749,6 +749,7 @@
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
+                                                
                                                 <div class="col-lg-7 col-md-7 col-xs-12 col-sm-7">
                                                     <label class="control control--radio">
                                                         A preparer(s) and/or translator(s) assisted the employee in completing Section 1

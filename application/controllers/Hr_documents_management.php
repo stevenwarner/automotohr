@@ -14028,7 +14028,11 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
-            // _e($data['pre_for'])
+            //
+            if (!empty($data["pre_form"]["section1_preparer_or_translator"]) && empty($data["pre_form"]["section1_preparer_json"])) {
+                $data["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $data["pre_form"]);
+            }
+            //
             $html = $this->load->view('2022/federal_fillable/form_i9_preview_new', $data, true);
             $name = 'I9 Fillable';
         }
