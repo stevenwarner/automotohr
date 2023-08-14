@@ -136,6 +136,10 @@ if (!function_exists('get_form_view')) {
                 $form_values["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $form_values["pre_form"]);
             }
             //
+            if (!empty($form_values["pre_form"]["section3_emp_sign"]) && empty($form_values["pre_form"]["section3_authorized_json"])) {
+                $form_values["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json( $form_values["pre_form"]);
+            }
+            //
             $view = $CI->load->view('2022/federal_fillable/form_i9_preview_new', $form_values, TRUE);
         } else if ($form == 'pw4') {
             $form_values['pre_form'] = $form_data;

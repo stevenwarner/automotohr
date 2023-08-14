@@ -178,6 +178,10 @@ class Form_i9 extends Public_Controller
                 $previous_form["section1_preparer_json"] = copyPrepareI9Json($previous_form);
             }
 
+            if (!empty($previous_form["section3_emp_sign"]) && empty($previous_form["section3_authorized_json"])) {
+                $previous_form["section3_authorized_json"] = copyAuthorizedI9Json($previous_form);
+            }
+
             $data['pre_form'] = $previous_form;
 
             if ($employer_access_level == 'Admin' && sizeof($previous_form) > 0 && $previous_form['user_sid'] != $security_sid) {

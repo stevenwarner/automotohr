@@ -14033,6 +14033,10 @@ class Hr_documents_management extends Public_Controller
                 $data["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $data["pre_form"]);
             }
             //
+            if (!empty($data["pre_form"]["section3_emp_sign"]) && empty($data["pre_form"]["section3_authorized_json"])) {
+                $data["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json( $data["pre_form"]);
+            }
+            //
             $html = $this->load->view('2022/federal_fillable/form_i9_preview_new', $data, true);
             $name = 'I9 Fillable';
         }
