@@ -905,13 +905,13 @@ class Copy_employees_model extends CI_Model
             return 0;
         }
     }
-    
+
     public function getRequestActivePolicyId($title, $categoryTypeSid, $companySid)
     {
         //
         $table = 'timeoff_policies';
         $where = [
-            'title' => $title, 
+            'title' => $title,
             'type_sid' => $categoryTypeSid,
             'company_sid' => $companySid
         ];
@@ -1086,5 +1086,66 @@ class Copy_employees_model extends CI_Model
     public function insertTrasnferLog($insertArray)
     {
         $this->db->insert('timeoff_transfer_log', $insertArray);
+    }
+
+    //
+    public function getAllActivePolicies($companyId)
+    {
+        $this->db
+            ->select('
+                sid,
+                title
+            ')
+            ->where('company_sid', $companyId)
+            ->where('is_archived', 0)
+            ->order_by('sort_order', 'ASC');
+        //
+        return $this->db->get('timeoff_policies')
+            ->result_array();
+    }
+    
+    //
+    public function getAllCompanyPolicies(int $companyId): array
+    {
+        $this->db
+            ->select('
+                sid,
+                title,
+                is_archived
+            ')
+            ->where('company_sid', $companyId)
+            ->order_by('is_archived', 'ASC');
+        //
+        return $this->db->get('timeoff_policies')
+            ->result_array();
+    }
+
+    //
+    public function getPoliciesByCompanyRequests(int $companyId): array
+    {
+        //
+        $policyIds = $this->db
+            ->select(
+                'distinct(timeoff_policy_sid) as timeoff_policy_sid'
+            )
+            ->where('company_sid', $companyId)
+            ->get('timeoff_requests')
+            ->result_array();
+        //
+        if (empty($policyIds)) {
+            return [];
+        }
+        //
+        return
+            $this->db
+            ->select('
+                timeoff_policies.sid,
+                timeoff_policies.title
+            ')
+            ->where('company_sid', $companyId)
+            ->where_in('sid', array_column($policyIds, 'timeoff_policy_sid'))
+            ->order_by('sort_order', 'ASC')
+            ->get('timeoff_policies')
+            ->result_array();
     }
 }

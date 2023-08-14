@@ -2539,6 +2539,7 @@ class Hr_documents_management extends Public_Controller
                                 $i9_data_to_insert['sent_status'] = 1;
                                 $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                                 $i9_data_to_insert['status'] = 1;
+                                $i9_data_to_insert['version'] = getSystemDate('Y');
                                 $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                             } else {
                                 //
@@ -2559,6 +2560,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update["employer_flag"] = NULL;
                                 $data_to_update["user_consent"] = NULL;
                                 $data_to_update["s3_filename"] = NULL;
+                                $data_to_update["version"] = getSystemDate('Y');
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                             }
@@ -6542,7 +6544,7 @@ class Hr_documents_management extends Public_Controller
                     $emp_ids = explode(':', $employees);
                 }
 
-                
+
                 if (!empty($emp_ids)) {
                     $data['employees'] = $this->hr_documents_management_model->getEmployeesDetails($emp_ids);
                 } else {
@@ -8452,6 +8454,7 @@ class Hr_documents_management extends Public_Controller
                     $i9_data_to_update["section3_emp_sign"] = NULL;
                     $i9_data_to_update["employer_flag"] = 0;
                     $i9_data_to_update["user_consent"] = NULL;
+                    $i9_data_to_update["version"] = getSystemDate('Y');
                     //
                     $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
                 } else {
@@ -8462,6 +8465,7 @@ class Hr_documents_management extends Public_Controller
                     $i9_data_to_insert['sent_status'] = 1;
                     $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                     $i9_data_to_insert['status'] = 1;
+                    $i9_data_to_insert["version"] = getSystemDate('Y');
                     //
                     $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                 }
@@ -14024,7 +14028,12 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
-            $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
+            //
+            if (!empty($data["pre_form"]["section1_preparer_or_translator"]) && empty($data["pre_form"]["section1_preparer_json"])) {
+                $data["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $data["pre_form"]);
+            }
+            //
+            $html = $this->load->view('2022/federal_fillable/form_i9_preview_new', $data, true);
             $name = 'I9 Fillable';
         }
         //
@@ -16050,5 +16059,34 @@ class Hr_documents_management extends Public_Controller
         }
         //
         return $requested_content;
+    }
+
+
+    //
+    public function get_print_url_secure()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $document_sid = $this->input->post('document_sid');
+            $url = get_print_document_url_secure($document_sid);
+            echo json_encode($url);
+        }
+    }
+
+    //
+    public function print_generated_and_offer_later_secure($document_sid, $download = NULL)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $document = $this->hr_documents_management_model->getSecureDocuemntById($document_sid);
+            //
+            $document_file = AWS_S3_BUCKET_URL . $document['document_s3_name'];
+            $data['print'] = 'generated';
+            $data['document_file'] = 'no_pdf';
+            $data['download'] = $download;
+            $data['file_name'] = $document['document_title'];
+            $data['original_document_description'] = '<img src="' . $document_file . '" style="width:100%; height:500px;" />';
+            $this->load->view('hr_documents_management/print_generated_document', $data);
+        }
     }
 }

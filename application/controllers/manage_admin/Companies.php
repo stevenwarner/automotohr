@@ -3422,4 +3422,26 @@ class Companies extends Admin_Controller
         //
         return SendResponse(200, ['success' => 'Email sent!']);
     }
+
+
+    public function secureDocumentByCompany(int $companyId)
+    {
+        $redirect_url = 'manage_admin/companies';
+        $function_name = 'edit_company';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+        $documentTitle = $this->input->get('title', true);
+
+        $this->load->model('assign_bulk_documents_model');
+
+        $this->data['secure_documents'] = $this->assign_bulk_documents_model->getSecureDocuments($companyId, $documentTitle);
+
+        $this->data['page_title'] = 'Company Secure Documents';
+        $this->data['company_sid'] = $companyId;
+        //
+        $this->render('manage_admin/company/company_secure_documents');
+    }
 }

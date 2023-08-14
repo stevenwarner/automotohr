@@ -295,7 +295,7 @@ class Dashboard extends Public_Controller
             $is_w4_assign = $this->dashboard_model->check_w4_form_exist('employee', $employer_id);
             $is_w9_assign = $this->dashboard_model->check_w9_form_exist('employee', $employer_id);
             $is_i9_assign = $this->dashboard_model->check_i9_exist('employee', $employer_id);
-            
+
             //
             $documents_count = 0;
 
@@ -558,7 +558,7 @@ class Dashboard extends Public_Controller
             //
             if ($data['employee_handbook_enable']) {
                 //
-               $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents_new($company_id,$employer_id);
+                $data['handbook_documents'] = $this->dashboard_model->get_employee_handbook_documents_new($company_id, $employer_id);
             }
             //
             $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
@@ -588,8 +588,21 @@ class Dashboard extends Public_Controller
                     '1.0.1', 'assets/gusto/js/company_onboard'
                 ];
             }
-            $data['incident_count'] = $this->dashboard_model->assigned_incidents_count
-            ($employer_id, $company_id);
+            $data['incident_count'] = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
+
+            // LMS - Trainings
+            if ($isLMSModuleEnabled = checkIfAppIsEnabled(MODULE_LMS)) {
+                // load model
+                $this->load->model('v1/course_model');
+                // get pending course count
+                $data['pendingTrainings'] =
+                $this->course_model->getEmployeePendingCourseCount(
+                    $data['session']['company_detail']['sid'],
+                    $data['session']['employer_detail']['sid']
+                );
+            }
+            //
+            $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
 
             //
             $this->load->view('main/header', $data);
@@ -1003,8 +1016,23 @@ class Dashboard extends Public_Controller
                 $employer_id,
                 'employee'
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
+
             //
             $data['LMSStatus'] = $this->dashboard_model->getLMSStatus($company_id);
+
+            // LMS - Trainings
+            if ($isLMSModuleEnabled = checkIfAppIsEnabled(MODULE_LMS)) {
+                // load model
+                $this->load->model('v1/course_model');
+                // get pending course count
+                $data['pendingTrainings'] =
+                    $this->course_model->getEmployeePendingCourseCount(
+                        $data['session']['company_detail']['sid'],
+                        $data['session']['employer_detail']['sid']
+                    );
+            }
+            //
+            $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

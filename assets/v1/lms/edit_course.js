@@ -385,6 +385,10 @@ $(function editCourse() {
 			courseObj.course_file = courseObj.course_file_link;
 		}
 		//
+		if (!courseObj.course_file) {
+			courseObj.course_file = courseObj.course_file_name;
+		}
+		//
 		delete courseObj.course_file_link;
 		// add company code
 		courseObj.company_code = companyCode;

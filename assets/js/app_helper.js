@@ -9,24 +9,24 @@ String.prototype.verifyEmail = function () {
 };
 
 String.prototype.isValidYoutubeLink = function () {
-	return this.match(/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/g) === null
-		? false 
-		: true;
-}
-
-String.prototype.isValidVimeoLink = function () {
-	return this.match(/^(http|https)?:\/\/(www\.|player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)$/gmi
+	return this.match(
+		/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/g
 	) === null
 		? false
 		: true;
-}
+};
 
-String.prototype.isValidInteger = function () {
-	
-	return this.match(/^[1-9]\d*$/g) === null
+String.prototype.isValidVimeoLink = function () {
+	return this.match(
+		/^(http|https)?:\/\/(www\.|player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)$/gim
+	) === null
 		? false
 		: true;
-}
+};
+
+String.prototype.isValidInteger = function () {
+	return this.match(/^[1-9]\d*$/g) === null ? false : true;
+};
 
 if (typeof ml === "undefined") {
 	/**
@@ -49,7 +49,7 @@ if (typeof CB === "undefined") {
 	/**
 	 * Empty callback
 	 */
-	function CB() { }
+	function CB() {}
 }
 
 if (typeof getErrorsStringFromArray === "undefined") {
@@ -118,14 +118,14 @@ if (typeof generateBrowserAlert === "undefined") {
 		if (
 			compatibleListObj[browserVersion[0].toLowerCase()] &&
 			browserVersion[1] <
-			compatibleListObj[browserVersion[0].toLowerCase()]
+				compatibleListObj[browserVersion[0].toLowerCase()]
 		) {
 			return alert(
 				"This module require '" +
-				browserVersion[0] +
-				"' with version greater or equal then '" +
-				browserVersion[1] +
-				"'."
+					browserVersion[0] +
+					"' with version greater or equal then '" +
+					browserVersion[1] +
+					"'."
 			);
 		}
 	}
@@ -241,12 +241,11 @@ if (typeof handleErrorResponse === "undefined") {
 				CB
 			);
 		}
+		//
+		const parsedJSON =
+			response.responseJSON || JSON.parse(response.responseText);
 		// when error object came in
-		return alertify.alert(
-			"Errors!",
-			response.responseJSON.errors.join("<br />"),
-			CB
-		);
+		return alertify.alert("Errors!", parsedJSON.errors.join("<br />"), CB);
 	}
 }
 

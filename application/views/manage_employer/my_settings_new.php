@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="row">
                 <!--  -->
-                <?php $this->load->view('loader', ['props'=>'id="jsPayrollLoader"']); ?>
+                <?php $this->load->view('loader', ['props' => 'id="jsPayrollLoader"']); ?>
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
                     <?php $this->load->view('main/employer_column_left_view'); ?>
                 </div>
@@ -246,6 +246,11 @@
                                             <li><a href="<?php echo base_url('performance-management/goals'); ?>">Goals</a></li>
                                         <?php } ?>
                                         <li><a href="<?php echo base_url('export_documents/employee'); ?>">Bulk Download Documents</a></li>
+
+                                        <?php if (isPayrollOrPlus(true)) { ?>
+                                            <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
+                                        <?php } ?>
+
                                     </ul>
                                 </article>
                             <?php } ?>

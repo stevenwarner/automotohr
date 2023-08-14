@@ -590,7 +590,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                         <div class="link-box bgdarkblue full-width">
                                             <h2>
                                                 Employee Forms Library&nbsp;
-                                                <span href="javascript:void(0)" data-toggle="popover" data-trigger="hover" data-content='<?=$this->lang->line('document_librray_helping_text');?>'>
+                                                <span href="javascript:void(0)" data-toggle="popover" data-trigger="hover" data-content='<?= $this->lang->line('document_librray_helping_text'); ?>'>
                                                     <i class="fa fa-question-circle" style="font-size: 25px;" aria-hidden="true"></i>
                                                 </span>
                                             </h2>
@@ -930,33 +930,26 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         <?php } ?>
 
-                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                            <a href="<?= base_url('lms/courses/my'); ?>">
+                        <?php if ($isLMSModuleEnabled) : ?>
+                            <!-- LMS - Trainings -->
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
-                                    <div class="link-box bg-info full-width">
-                                        <h2 class="text-blue">Course(s)</h2>
-                                        <ul class="pto-box">
-                                            <li>
-                                                <span><?= $coursesInfo['Total'] ?? 0; ?></span>
-                                                <span>Total</span>
-                                            </li>
-                                            <li>
-                                                <span><?= $coursesInfo['pass'] ?? 0; ?></span>
-                                                <span>Pass(s)</span>
-                                            </li>
-                                            <li>
-                                                <span><?= $coursesInfo['fail'] ?? 0; ?></span>
-                                                <span>Fail(s)</span>
-                                            </li>
-                                        </ul>
-                                        <div class="status-panel">
-                                            <h3>View Course(s)</h3>
-                                            <span>Show</span>
+                                    <a href="<?php echo base_url('lms/courses/my'); ?>">
+                                        <div class="link-box bg-redish full-width">
+                                            <h2>Training(s)</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date">
+                                                <span><?= $pendingTrainings;?><sub>Pending</sub></span>
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>Trainings</h3>
+                                                <span>Assigned to You</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
-                            </a>
-                        </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

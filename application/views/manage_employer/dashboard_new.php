@@ -935,6 +935,26 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <?php if ($isLMSModuleEnabled) : ?>
+                                        <!--  -->
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-file <?= $pendingTrainings != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                    </figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?= base_url('lms/courses/my'); ?>">Trainings</a>
+                                                    </h2>
+                                                    <div class="count-box" style="font-size: 12px">
+                                                        <span class="green"><?= $pendingTrainings ?? 0; ?> Pending</span><br>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">View Trainings</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
 
                                     <!-- Account Activity -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

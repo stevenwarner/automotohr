@@ -9697,4 +9697,20 @@ class Hr_documents_management_model extends CI_Model
 
         return $return_data;
     }
+
+
+
+    //
+    function getSecureDocuemntById($document_sid)
+    {
+        $this->db->select('*');
+        $this->db->where('sid', $document_sid);
+        $records_obj = $this->db->get('company_secure_documents');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }
+
+
+
 }

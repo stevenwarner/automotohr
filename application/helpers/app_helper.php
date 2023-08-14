@@ -616,26 +616,28 @@ if (!function_exists('getStaticFileVersion')) {
         // set files
         $files = [];
         // plugins
-        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.1', 'js' => '2.0.1'];
-        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.1', 'js' => '2.0.1'];
-        $files['v1/plugins/ms_recorder/main'] = ['js' => '2.0.2'];
+        $files['v1/plugins/ms_uploader/main'] = ['css' => '3.0.0', 'js' => '3.0.0'];
+        $files['v1/plugins/ms_modal/main'] = ['css' => '3.0.0', 'js' => '3.0.0'];
+        $files['v1/plugins/ms_recorder/main'] = ['js' => '3.0.0'];
         // common files
-        $files['2022/js/jquery.datetimepicker'] = ['css' => '2.0.1', 'js' => '2.0.1'];
+        $files['2022/js/jquery.datetimepicker'] = ['css' => '3.0.0', 'js' => '3.0.0'];
         // 
-        $files['v1/plugins/ms_scorm/main'] = ['js' => '2.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '2.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '2.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '2.0.0'];
+        $files['v1/plugins/ms_scorm/main'] = ['js' => '3.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '3.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '3.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '3.0.0'];
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files
-        $files['v1/common'] = ['js' => '2.0.1'];
-        $files['v1/lms/add_question'] = ['js' => '2.0.1'];
-        $files['v1/lms/edit_question'] = ['js' => '2.0.1'];
-        $files['v1/lms/create_course'] = ['js' => '2.0.1'];
-        $files['v1/lms/edit_course'] = ['js' => '2.0.2'];
-        $files['v1/lms/main'] = ['js' => '2.0.1'];
-        $files['v1/lms/assign_company_courses'] = ['js' => '2.0.1'];
+        $files['assets/app_helper'] = ['js' => '3.0.0'];
+        $files['v1/common'] = ['js' => '3.0.0'];
+        $files['v1/lms/add_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/create_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/main'] = ['js' => '3.0.0'];
+        $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
+        $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
         // check and return data
         return $files[$file] ?? [];
     }
@@ -821,5 +823,174 @@ if (!function_exists('getApplicantOnboardingPreviousStatus')) {
         } else {
             return '';
         }
+    }
+}
+
+
+if (!function_exists('checkI9RecordWithProfile')) {
+    /**
+     * check user profile with I9
+     *
+     * @param int    $userId
+     * @param string $userType
+     * @param array  $data
+     * @return array
+     */
+    function checkI9RecordWithProfile(int $userId, string $userType, array $data): array
+    {
+        //
+        $CI = &get_instance();
+        //
+        $table = $userType === 'employee' ? 'users' : 'portal_job_applications';
+        //
+        $columns = [
+            'first_name',
+            'last_name',
+            'middle_name',
+            'ssn',
+            'dob',
+            'PhoneNumber',
+            'email',
+            'Location_Address',
+            'Location_Address_2',
+            'Location_City',
+            'Location_ZipCode',
+            'Location_State',
+        ];
+        //
+        if ($userType === 'applicant') {
+            //
+            $columns = [
+                'first_name',
+                'last_name',
+                'middle_name',
+                'ssn',
+                'dob',
+                'phone_number',
+                'email',
+                'address',
+                'city',
+                'zipcode',
+                'state',
+            ];
+        }
+        //
+        $profileData = $CI->db
+            ->select($columns)
+            ->where('sid', $userId)
+            ->get($table)
+            ->row_array();
+        //
+        if ($userType === 'applicant') {
+            $profileData['PhoneNumber'] = $profileData['phone_number'];
+            $profileData['Location_City'] = $profileData['city'];
+            $profileData['Location_ZipCode'] = $profileData['zipcode'];
+            $profileData['Location_state'] = $profileData['state'];
+            $profileData['Location_Address'] = $profileData['address'];
+            $profileData['Location_Address_2'] = '';
+        }
+        //
+        $address = trim($profileData['Location_Address'] . ' ' . $profileData['Location_Address_2']);
+        //
+        $data['section1_last_name'] = $data['section1_last_name'] ?? $profileData['last_name'];
+        $data['section1_first_name'] = $data['section1_first_name'] ?? $profileData['first_name'];
+        $data['section1_middle_initial'] = $data['section1_middle_initial'] ?? $profileData['middle_name'];
+        $data['section1_address'] = $data['section1_address'] ?? $address;
+        $data['section1_city_town'] = $data['section1_city_town'] ?? $profileData['Location_City'];
+        $data['section1_state'] = $data['section1_state'] ?? getStateColumnById($profileData['Location_State'] ?? 0);
+        $data['section1_zip_code'] = $data['section1_zip_code'] ?? $profileData['Location_ZipCode'];
+        $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ?? $profileData['dob'];
+        $data['section1_social_security_number'] = $data['section1_social_security_number'] ?? $profileData['ssn'];
+        $data['section1_emp_email_address'] = $data['section1_emp_email_address'] ?? $profileData['email'];
+        $data['section1_emp_telephone_number'] = $data['section1_emp_telephone_number'] ?? $profileData['PhoneNumber'];
+        $data['section1_today_date'] = $data['section1_today_date'] ?? getSystemDate(DB_DATE);
+        //
+        return $data;
+    }
+}
+
+if (!function_exists('getStateColumnById')) {
+    /**
+     * get state details
+     *
+     * @param int    $stateId
+     * @param string $column Optional
+     * @return array
+     */
+    function getStateColumnById(int $stateId = 0, string $column = 'state_code'): string
+    {
+        //
+        if (!$stateId) {
+            return '';
+        }
+        //
+        $CI = &get_instance();
+        //
+        return $CI->db
+            ->select($column)
+            ->where('sid', $stateId)
+            ->get('states')
+            ->row_array()[$column];
+    }
+}
+
+if (!function_exists('copyPrepareI9Json')) {
+    /**
+     * copy I9 Prepare json
+     *
+     * @param array  $form
+     * @return array
+     */
+    function copyPrepareI9Json(array $form): string
+    {
+        $details = [];
+        for ($i = 1; $i <= 4; $i++) {
+            if ($i == 1) {
+                $createDate = new DateTime($form['section1_preparer_today_date']);
+                $today_date = $createDate->format('Y-m-d');
+
+                $details[$i] = [
+                    'signature' => $form['section1_preparer_signature'],
+                    'initial' => $form['section1_preparer_signature_init'],
+                    'user_agent' => $form['section1_preparer_signature_user_agent'],
+                    'ip_address' => $form['section1_preparer_signature_ip_address'],
+                    'last_name' => $form['section1_preparer_last_name'],
+                    'first_name' => $form['section1_preparer_first_name'],
+                    'middle_initial' => $form['user_agent'],
+                    'address' => $form['section1_preparer_address'],
+                    'city' => $form['section1_preparer_city_town'],
+                    'state' => $form['section1_preparer_state'],
+                    'zip_code' => $form['section1_preparer_zip_code'],
+                    'today_date' => $today_date,
+                ];
+            } else {
+                $details[$i] = [
+                    'signature' => '',
+                    'initial' => '',
+                    'user_agent' => '',
+                    'ip_address' => '',
+                    'last_name' => '',
+                    'first_name' => '',
+                    'middle_initial' => '',
+                    'address' => '',
+                    'city' => '',
+                    'state' => '',
+                    'zip_code' => '',
+                    'today_date' => '',
+                ];
+            }
+        }
+        //
+        $updateArray = [];
+        $updateArray['section1_preparer_json'] = json_encode($details);
+        $updateArray['section1_preparer_or_translator'] = "used";
+        
+        //
+        // get CI instance
+        $CI = &get_instance();
+        // update the user in "users" table
+        $CI->db->where(['sid' => $form['sid']])->update('applicant_i9form', $updateArray);
+        //
+        return json_encode($details);
     }
 }

@@ -165,6 +165,12 @@
         <!-- Bable -->
         <script src="https://unpkg.com/@babel/standalone@7.13.10/babel.min.js"></script>
         <!-- Bable -->
+
+        <?php
+        if (isset($pageCSS)) {
+            echo GetCss($pageCSS);
+        }
+        ?>
     </head>
 
     <body>

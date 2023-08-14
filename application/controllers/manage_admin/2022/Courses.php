@@ -36,7 +36,6 @@ class Courses extends Admin_Controller
                 $this->loggedInId
             );
         }
-       
     }
 
     /**
@@ -54,22 +53,22 @@ class Courses extends Admin_Controller
         $this->data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         // load CSS
         $this->data['PageCSS'] = [
-            ['1.2.1', 'v1/plugins/ms_uploader/main'],
-            ['1.2.1', 'v1/plugins/ms_modal/main'],
-            ['1.0.1', '2022/css/main']
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            '2022/css/main'
         ];
         // load JS
         $this->data['PageScripts'] = [
-            ['1.0', 'js/app_helper'],
-            ['1.2.0', 'v1/plugins/ms_uploader/main'],
-            ['1.2.0', 'v1/plugins/ms_modal/main'],
-            ['1.0', 'v1/plugins/ms_recorder/main'],
-            ['1.0.0', 'v1/common'],
-            ['1.0', 'v1/lms/add_question'],
-            ['1.0', 'v1/lms/edit_question'],
-            ['1.0.2', 'v1/lms/create_course'],
-            ['1.0.2', 'v1/lms/edit_course'],
-            ['1.0.1', 'v1/lms/main']
+            'js/app_helper',
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            'v1/plugins/ms_recorder/main',
+            'v1/common',
+            'v1/lms/add_question',
+            'v1/lms/edit_question',
+            'v1/lms/create_course',
+            'v1/lms/edit_course',
+            'v1/lms/main'
         ];
         // get access token
         $this->data['apiAccessToken'] = getApiAccessToken(
@@ -97,25 +96,25 @@ class Courses extends Admin_Controller
         $this->data['companyId'] = $companyId;
         // load CSS
         $this->data['PageCSS'] = [
-            ['1.2.1', 'v1/plugins/ms_uploader/main'],
-            ['1.2.1', 'v1/plugins/ms_modal/main'],
-            ['1.0.1', '2022/css/main'],
-            ['1.0', 'css/jquery.datetimepicker.css']
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            '2022/css/main',
+            'css/jquery.datetimepicker.css'
         ];
         // load JS
         $this->data['PageScripts'] = [
-            ['1.0', 'js/app_helper'],
-            ['1.2.0', 'v1/plugins/ms_uploader/main'],
-            ['1.2.0', 'v1/plugins/ms_modal/main'],
-            ['1.0', 'v1/plugins/ms_recorder/main'],
-            ['1.0.0', 'v1/common'],
-            ['1.0', 'v1/lms/add_question'],
-            ['1.0', 'v1/lms/edit_question'],
-            ['1.0.2', 'v1/lms/create_course'],
-            ['1.0.2', 'v1/lms/edit_course'],
-            ['1.0.1', 'v1/lms/main'],
-            ['1.0', 'v1/lms/assign_company_courses'],
-            ['1.0', '2022/js/jquery.datetimepicker']
+            '2022/js/jquery.datetimepicker',
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            'v1/plugins/ms_recorder/main',
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/add_question',
+            'v1/lms/edit_question',
+            'v1/lms/create_course',
+            'v1/lms/edit_course',
+            'v1/lms/main',
+            'v1/lms/assign_company_courses'
         ];
         // get access token
         $this->data['apiAccessToken'] = getApiAccessToken(
@@ -130,5 +129,4 @@ class Courses extends Admin_Controller
         // render the view
         $this->render('manage_admin/courses/company_dashboard', 'admin_master');
     }
-
 }

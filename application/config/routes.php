@@ -1784,6 +1784,7 @@ $route['sa/lms/courses'] = 'manage_admin/2022/Courses';
 $route['sa/lms/courses/(:num)']['get'] = 'manage_admin/2022/Courses/companyCourses/$1';
 $route['lms/courses/my']['get'] = 'v1/Courses/myCourses';
 $route['lms/courses/(:num)']['get'] = 'v1/Courses/getCourse/$1';
+$route['lms/courses/(:num)/certificate']['get'] = 'v1/Courses/viewCertificate/$1';
 $route['lms/course/preview/(:num)']['get'] = 'v1/Courses/previewResult/$1';
 $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 
@@ -1804,3 +1805,34 @@ $route['ip_status_handler']['post'] = "manage_admin/Blocked_ips/statusHandler";
 
 //
 $route['get_applicant_onboarding_history/(:num)']['get'] = 'application_tracking_system/getApplicantStatusHistory/$1';
+
+
+//
+$route['home2']['get'] = 'v1/App/index';
+// Company document listing
+$route['company/documents/secure/listing'] = 'Assign_bulk_documents/secureDocumentsListing';
+$route['company/documents/secure/add'] = 'Assign_bulk_documents/addSecureDocument';
+
+$route['assign-bulk-documents/upload_secure_document'] = 'assign_bulk_documents/uploadSecureDocument';
+
+$route['edit_secure_document/(:num)'] = 'Assign_bulk_documents/EditSecureDocument/$1';
+
+$route['download/file/(:any)'] = 'v1/App/downloadFileFromAWSAndStream/$1';
+$route['file/preview']['post'] = 'v1/App/previewDocument';
+// company secure documents
+$route['manage_admin/company/documents/secure/listing/(:num)']['get'] = 'manage_admin/Companies/secureDocumentByCompany/$1';
+/**
+ * 2023 I9 routes
+ */
+$route['forms/i9/my']['get'] = 'v1/I9/my';
+$route['forms/i9/my']['post'] = 'v1/I9/saveMy';
+$route['forms/i9/signature/preparer/(:num)/(:num)']['get'] = 'v1/I9/getPreparerSignature/$1/$2';
+$route['forms/i9/signature/preparer/save/(:num)/(:num)']['post'] = 'v1/I9/savePreparerSignature/$1/$2';
+$route['forms/i9/signature/authorized']['get'] = 'v1/I9/getAuthorizedSignature';
+$route['forms/i9/authorized/section/(:num)']['post'] = 'v1/I9/saveAuthorizedSection/$1';
+$route['forms/i9/user/section/(:any)/(:num)/(:any)']['get'] = 'v1/I9/getUserSection/$1/$2/$3';
+$route['forms/i9/applicant/save']['post'] = 'v1/I9/saveUserSection';
+$route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
+$route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
+
+

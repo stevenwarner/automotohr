@@ -12,8 +12,6 @@ $(function LMSStoreCourses() {
 	let coped_course = 0;
 	let current_course = 0;
 
-
-
 	/**
 	 * Apply filter
 	 */
@@ -41,52 +39,66 @@ $(function LMSStoreCourses() {
 		).toggleClass("hidden");
 	});
 
-    $(document).on('click', '.jsCheckAll', selectAllInputs);
-    $(document).on('click', '.jsStoreCourseRow', selectSingleInput);
-    $(document).on('click', '.jsCopyCoursesBtn', start_copy_process);
+	$(document).on("click", ".jsCheckAll", selectAllInputs);
+	$(document).on("click", ".jsStoreCourseRow", selectSingleInput);
+	$(document).on("click", ".jsCopyCoursesBtn", start_copy_process);
 
-    // Select all input: checkbox
-    function selectAllInputs() {
-        $('.jsStoreCourseRow').find('input[name="courses_ids[]"]').prop('checked', $(this).prop('checked'));
-    }
+	// Select all input: checkbox
+	function selectAllInputs() {
+		$(".jsStoreCourseRow")
+			.find('input[name="courses_ids[]"]')
+			.prop("checked", $(this).prop("checked"));
+	}
 
-    // Select single input: checkbox
-    function selectSingleInput() {
-        $(this).find('input[name="courses_ids[]"]').prop('checked', !$(this).find('input[name="courses_ids[]"]').prop('checked'));
-    }
+	// Select single input: checkbox
+	function selectSingleInput() {
+		$(this)
+			.find('input[name="courses_ids[]"]')
+			.prop(
+				"checked",
+				!$(this).find('input[name="courses_ids[]"]').prop("checked")
+			);
+	}
 
-    function start_copy_process(e) {
-        e.preventDefault();
-		
-        selected_courses = get_all_selected_courses();
+	function start_copy_process(e) {
+		e.preventDefault();
 
-        if (selected_courses.length === 0) {
-            alertify.alert('ERROR!', 'Please select atleast one course to start the process.');
-            return;
-        }
-		
+		selected_courses = get_all_selected_courses();
+
+		if (selected_courses.length === 0) {
+			return alertify.alert(
+				"ERROR!",
+				"Please select at least one course to start the process."
+			);
+		}
+
 		ml(true, "jsPageLoader");
-		$('#js-loader-text').html('Please wait, we are copying employee');
+		$("#js-loader-text").html("Please wait, we are copying employee");
 		copy_courses();
-    }
+	}
 
 	function copy_courses() {
-		if (selected_courses.length > 0 && selected_courses[current_course] === undefined) {
+		if (
+			selected_courses.length > 0 &&
+			selected_courses[current_course] === undefined
+		) {
 			ml(false, "jsPageLoader");
-			$('#js-loader-text').html('');
-			alertify.alert('Course Copy process is completed successfully!').set('onok', function(closeEvent) {
-				selected_courses = [];
-				copy_course_count = 0;
-				coped_course = 0;
-				current_course = 0;
-				getLMSStoreCourses();
-				getLMSDefaultCourses();
-			});
-			return;
+			$("#js-loader-text").html("");
+			return alertify.alert(
+				"Course Copy process is completed successfully!",
+				function () {
+					selected_courses = [];
+					copy_course_count = 0;
+					coped_course = 0;
+					current_course = 0;
+					getLMSStoreCourses();
+					getLMSDefaultCourses();
+				}
+			);
 		}
 		if (selected_courses[current_course] === undefined) {
 			ml(false, "jsPageLoader");
-			$('#js-loader-text').html('');
+			$("#js-loader-text").html("");
 			return;
 		}
 		//
@@ -99,44 +111,46 @@ $(function LMSStoreCourses() {
 			headers: {
 				"content-type": "application/json",
 			},
-			data: JSON.stringify({ 
-				courseID: course.course_sid 
+			data: JSON.stringify({
+				courseID: course.course_sid,
 			}),
 		})
 			.fail(handleErrorResponse)
 			.done(function () {
 				if (current_course <= copy_course_count) {
 					current_course++;
-					setTimeout(function() {
-						copy_courses()
+					setTimeout(function () {
+						copy_courses();
 					}, 1000);
 				} else {
 					ml(false, "jsPageLoader");
 					//
-					alertify.alert('Course copy process is completed successfully!').set('onok', function(closeEvent) {
-						selected_courses = [];
-						copy_course_count = 0;
-						coped_course = 0;
-						current_course = 0;
-						
-					});
+					alertify
+						.alert("Course copy process is completed successfully!")
+						.set("onok", function (closeEvent) {
+							selected_courses = [];
+							copy_course_count = 0;
+							coped_course = 0;
+							current_course = 0;
+						});
 				}
 			});
 	}
 
+	function get_all_selected_courses() {
+		var tmp = [];
+		$.each($('input[name="courses_ids[]"]:checked'), function () {
+			var obj = {};
+			obj.course_sid = parseInt($(this).val());
+			obj.course_name = $(this)
+				.closest("tr")
+				.find("td.js-course-name")
+				.text();
 
-    function get_all_selected_courses() {
-        var tmp = [];
-        $.each($('input[name="courses_ids[]"]:checked'), function() {
-            var obj = {};
-            obj.course_sid = parseInt($(this).val());
-            obj.course_name = $(this).closest('tr').find('td.js-course-name').text();
-
-            tmp.push(obj);
-        });
-        return tmp;
-    }
-
+			tmp.push(obj);
+		});
+		return tmp;
+	}
 
 	/**
 	 * convert filter object to string
@@ -175,9 +189,9 @@ $(function LMSStoreCourses() {
 		XHR = $.ajax({
 			url: apiURL + "lms/course/store/courses?" + getFilterAsString(),
 			method: "GET",
-            headers: {
-                Authorization: "Bearer " + apiAccessTokenStore,
-            },
+			headers: {
+				Authorization: "Bearer " + apiAccessTokenStore,
+			},
 		})
 			.success(function (response) {
 				// empty the call

@@ -124,16 +124,6 @@ $(function LMSCourses() {
 	});
 
 	/**
-	 * Disable course
-	 */
-	$(document).on("click", ".jsDisableModule", function (event) {
-		// stop the default functionality
-		event.preventDefault();
-		// call the function
-		previewCourse($(this).closest("tr").data("id"));
-	});
-
-	/**
 	 * convert filter object to string
 	 * @returns
 	 */
