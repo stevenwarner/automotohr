@@ -132,7 +132,11 @@ if (!function_exists('get_form_view')) {
             $form_values['section_access'] = "complete_pdf";
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
             //
-            $view = $CI->load->view('2022/federal_fillable/form_i9_preview', $form_values, TRUE);
+            if (!empty($form_values["pre_form"]["section1_preparer_or_translator"]) && empty($form_values["pre_form"]["section1_preparer_json"])) {
+                $form_values["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $form_values["pre_form"]);
+            }
+            //
+            $view = $CI->load->view('2022/federal_fillable/form_i9_preview_new', $form_values, TRUE);
         } else if ($form == 'pw4') {
             $form_values['pre_form'] = $form_data;
             $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);

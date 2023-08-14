@@ -1821,3 +1821,18 @@ $route['download/file/(:any)'] = 'v1/App/downloadFileFromAWSAndStream/$1';
 $route['file/preview']['post'] = 'v1/App/previewDocument';
 // company secure documents
 $route['manage_admin/company/documents/secure/listing/(:num)']['get'] = 'manage_admin/Companies/secureDocumentByCompany/$1';
+/**
+ * 2023 I9 routes
+ */
+$route['forms/i9/my']['get'] = 'v1/I9/my';
+$route['forms/i9/my']['post'] = 'v1/I9/saveMy';
+$route['forms/i9/signature/preparer/(:num)/(:num)']['get'] = 'v1/I9/getPreparerSignature/$1/$2';
+$route['forms/i9/signature/preparer/save/(:num)/(:num)']['post'] = 'v1/I9/savePreparerSignature/$1/$2';
+$route['forms/i9/signature/authorized']['get'] = 'v1/I9/getAuthorizedSignature';
+$route['forms/i9/authorized/section/(:num)']['post'] = 'v1/I9/saveAuthorizedSection/$1';
+$route['forms/i9/user/section/(:any)/(:num)/(:any)']['get'] = 'v1/I9/getUserSection/$1/$2/$3';
+$route['forms/i9/applicant/save']['post'] = 'v1/I9/saveUserSection';
+$route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
+$route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
+
+

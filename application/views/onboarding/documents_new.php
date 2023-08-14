@@ -41,6 +41,9 @@ if (isset($applicant)) {
     $w4_url = base_url('form_w4');
     $w9_url = base_url('form_w9');
 }
+//
+$i9_url = base_url('forms/i9/my');
+//
 $tab_data = array();
 $tab_data['document_d_base'] = $document_d_base;
 $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
