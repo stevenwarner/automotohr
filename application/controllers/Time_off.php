@@ -1155,19 +1155,19 @@ class Time_off extends Public_Controller
             $filter_policy = "all";
         }
 
-       
+
         //
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
-      
 
-         if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate']) ) {
+
+        if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate'])) {
             $start_date = '';
             $end_date  = '';
-         }
+        }
 
 
-         //
+        //
         $data['page'] = 'view';
         $data['title'] = 'Report::time-off';
         //
@@ -1227,7 +1227,7 @@ class Time_off extends Public_Controller
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
-        
+
         $data['filter_employees'] = $filter_employees;
         $data['filter_departments'] = $filter_departments;
         $data['filter_teams'] = $filter_teams;
@@ -3722,6 +3722,7 @@ class Time_off extends Public_Controller
                 // EMOPLOYEE POLCIIES
             case "get_employee_policies":
                 //
+
                 $policies = $this->timeoff_model->getEmployeePoliciesById(
                     $post['companyId'],
                     $post['employeeId']
@@ -3770,9 +3771,15 @@ class Time_off extends Public_Controller
                 // Get employee balance history
             case "get_employee_balance_history":
                 //
+                $panel='green';
+                if(isset($post['panel']) && $post['panel']=='blue'){
+                    $panel='blue';
+                }
+                
                 $history = $this->timeoff_model->getEmployeeBalanceHistory(
                     $post['companyId'],
-                    $post['employeeId']
+                    $post['employeeId'],
+                    $panel
                 );
                 //
                 $this->res['Status'] = true;
@@ -3797,7 +3804,11 @@ class Time_off extends Public_Controller
                 // TODO
             case "get_requests":
                 //
-                $data = $this->timeoff_model->getRequests($post);
+                if (isset($post['panel']) && $post['panel'] == 'blue') {
+                    $data = $this->timeoff_model->getRequests($post);
+                } else {
+                    $data = $this->timeoff_model->getRequestsNew($post);
+                }
 
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed...';
@@ -7323,7 +7334,7 @@ class Time_off extends Public_Controller
                 //
                 if ($request_id > 0) {
                     $data['request'] = $this->timeoff_model->getRequestById($request_id);
-                    $data['policies'] = $this->timeoff_model->getEmployeePoliciesById($data['request']['company_sid'], $data['request']['employee_sid']);
+                    $data['policies'] = $this->timeoff_model->getEmployeePoliciesById($data['request']['company_sid'], $data['request']['employee_sid'],$section);
                     //
                     $page = 'request';
                 } else {

@@ -19,6 +19,7 @@ $(function () {
                     endDate: "",
                 },
                 public: 0,
+                panel: "blue",
             },
         },
     },
@@ -788,8 +789,8 @@ $(function () {
             }
         }
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsHistoryTimeOff" title="Show History"><i class="fa fa-history"></i></span>`;
-        rows += `                <a href="${baseURL}timeoff/print/requests/${v.sid}" target="_blank" style="color: #eee" class="csCircleBtn csRadius50 jsTooltip" title="Print"><i class="fa fa-print"></i></a>`;
-        rows += `                <a href="${baseURL}timeoff/download/requests/${v.sid}" target="_blank" style="color: #eee" class="csCircleBtn csRadius50 jsTooltip" title="Download"><i class="fa fa-download"></i></a>`;
+        rows += `                <a href="${baseURL}timeoff/print/requests/${v.sid}/blue" target="_blank" style="color: #eee" class="csCircleBtn csRadius50 jsTooltip" title="Print"><i class="fa fa-print"></i></a>`;
+        rows += `                <a href="${baseURL}timeoff/download/requests/${v.sid}/blue" target="_blank" style="color: #eee" class="csCircleBtn csRadius50 jsTooltip" title="Download"><i class="fa fa-download"></i></a>`;
         if (allow_update == "yes") {
             if (callOBJ.Requests.Main.isMine == 0) {
                 if (v.archive == 0) {

@@ -155,6 +155,7 @@ $(function () {
     // 
     $(document).on('click', '.jsEditTimeOff', function (e) {
         //
+        
         e.preventDefault();
         //
         console.log($(this).closest('.jsBox').data())
@@ -425,6 +426,7 @@ $(function () {
             companyId: companyId,
             employerId: employerId,
             employeeId: selectedEmployeeId,
+            panel: 'blue',
         }
         ).done(function (resp) {
             //

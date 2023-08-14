@@ -220,6 +220,7 @@ $(function () {
             companyId: companyId,
             employerId: employerId,
             employeeId: selectedEmployeeId,
+            panel: 'blue',
         }
         ).done(function (resp) {
             //
@@ -488,6 +489,7 @@ $(function () {
                         }
 
                     }
+                    //is_archived
                     //
                     rows += '<tr>';
                     rows += '   <td>';
@@ -497,7 +499,7 @@ $(function () {
                     rows += employeeRole;
                     rows += '   </td>';
                     rows += '   <td>';
-                    rows += '       <strong>' + (balance.title) + '</strong>';
+                    rows += '       <strong>' + (balance.title) + '</strong> '+(balance.is_archived == 1 ? '<strong class="text-danger">(Deactivated)</strong>' : '');
                     rows += '       <p>' + (startDate) + (endDate != '' ? ' - ' + endDate : '') + '</p>';
                     rows += '   </td>';
                     rows += ' <td class="' + (balance.is_added == 0 ? 'text-danger' : 'text-success') + '"><i class="fa fa-arrow-' + (balance.is_added == 0 ? 'down ' : 'up') + '"></i>&nbsp;' + (balance.timeoff_breakdown.text) + '</td>';

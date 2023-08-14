@@ -243,7 +243,7 @@ $(function () {
 						timeoffDateFormat
 					)
 				}</h4>                  
-                                <span>${v.title} (<strong class="text-${v.categoryType == 1 ? 'success' : 'danger'}">${v.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</span><br />          
+                                <span>${v.title} (<strong class="text-${v.categoryType == 1 ? 'success' : 'danger'}">${v.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</span> ${v.is_archived == 1 ? '<strong class="text-danger">(Deactivated)</strong>' : ''} <br />         
                                 <span>${v.breakdown.text}</span>
                             </div>       
                         </div>

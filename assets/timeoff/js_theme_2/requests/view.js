@@ -802,7 +802,7 @@ $(function () {
         rows += `            <!-- Section 2 -->`;
         rows += `            <div class="csBoxContentInfoSection">`;
         rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${v.breakdown.text} of ${v.title} (<strong class="text-${v.categoryType == 1 ? 'success' : 'danger'}">${v.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</strong></p>`;
+        rows += `                    <p><strong>${v.breakdown.text} of ${v.title} (<strong class="text-${v.categoryType == 1 ? 'success' : 'danger'}">${v.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</strong></p>`+`${v.is_archived == 1 ? '<strong class="text-danger">(Deactivated)</strong>' : ''}`;
         rows += `                    <p>Requested on ${moment(v.created_at, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;

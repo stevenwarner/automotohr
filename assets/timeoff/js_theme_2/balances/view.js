@@ -278,14 +278,15 @@ $(function () {
                 balancePolicyOBJ[v.total.UserId] = { allowed: [], pending: [] };
                 //
                 $.each(v, (index, poli) => {
-                    console.log(poli)
+                    //  console.log(poli)
                     if (index == "total") return "";
+
                     balancePolicyOBJ[v.total.UserId]['allowed'].push({
-                        policy: index + ' <strong class="text-' + (poli.policy_type == 1 ? 'success' : 'danger') + '">(' + (poli.policy_type == 1 ? 'Paid' : 'Unpaid') + '</strong>)',
+                        policy: index + ' <strong class="text-' + (poli.policy_type == 1 ? 'success' : 'danger') + '">(' + (poli.policy_type == 1 ? 'Paid' : 'Unpaid') + '</strong>) ' + (poli.is_archived == 1 ? '<strong class="text-danger">(Deactivated)</strong>' : '') ,
                         time: poli.AllowedTime.text
                     });
                     balancePolicyOBJ[v.total.UserId]['pending'].push({
-                        policy: index + ' <strong class="text-' + (poli.policy_type == 1 ? 'success' : 'danger') + '">(' + (poli.policy_type == 1 ? 'Paid' : 'Unpaid') + '</strong>)',
+                        policy: index + ' <strong class="text-' + (poli.policy_type == 1 ? 'success' : 'danger') + '">(' + (poli.policy_type == 1 ? 'Paid' : 'Unpaid') + '</strong>) ' + (poli.is_archived == 1 ? '<strong class="text-danger">(Deactivated)</strong>' : '') ,
                         time: poli.RemainingTime.text
                     });
                 });
@@ -349,7 +350,7 @@ $(function () {
 
     //
     function getBalanceBox(v, userRow, popo) {
-        console.log({userRow})
+        console.log({ userRow })
         return `
         <!--  -->
         <div class="col-sm-3">

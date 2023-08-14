@@ -31,7 +31,7 @@
     let balanceFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startBalanceProcess(employeeId, employeeName,anniversarytext) {
+    async function startBalanceProcess(employeeId, employeeName, anniversarytext) {
         // Set the employee id
         balanceEmployeeId = employeeId;
         // Load Modal
@@ -526,6 +526,9 @@
 
             }
             //
+            '';
+            var policyStatus = balance.is_archived == 1 ? '<strong class="text-danger"> (Deactivated) </strong>' : '';
+
             rows += '<tr>';
             rows += '   <td>';
             rows += '       <strong>';
@@ -534,7 +537,7 @@
             rows += employeeRole;
             rows += '   </td>';
             rows += '   <td>';
-            rows += '       <strong>' + (balance.title) + '</strong>';
+            rows += '       <strong>' + (balance.title) + '</strong>' + policyStatus;
             rows += '       <p>' + (startDate) + (endDate != '' ? ' - ' + endDate : '') + '</p>';
             rows += '   </td>';
             rows += ' <td class="' + (balance.is_added == 0 ? 'text-danger' : 'text-success') + '"><i class="fa fa-arrow-' + (balance.is_added == 0 ? 'down ' : 'up') + '"></i>&nbsp;' + (balance.timeoff_breakdown.text) + '</td>';
@@ -551,7 +554,7 @@
             rows += '<tr>';
             rows += '   <td colspan="6">';
             if (balance.is_manual == 0 && balance.is_allowed == 1) {
-                rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
             } else {
                 rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
             }
