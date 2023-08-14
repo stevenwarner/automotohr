@@ -1007,7 +1007,7 @@ class Dashboard extends Public_Controller
             $data['LMSStatus'] = $this->dashboard_model->getLMSStatus($company_id);
 
             $this->load->view('main/header', $data);
-            // $this->load->view('onboarding/getting_started');
+            $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), 'refresh');
