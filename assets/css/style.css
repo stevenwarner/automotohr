@@ -17904,3 +17904,7 @@ input[type='checkbox'].user_checkbox:checked:after {
 .goog-te-gadget-simple .VIpgJd-ZVi9od-xl07Ob-lTBxed {
     color: #fff !important;
 }
+
+.jsStateDropDown{
+    padding: 0px 20px !important;
+}

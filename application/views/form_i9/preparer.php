@@ -1,7 +1,7 @@
 <?php
 for ($i = 1; $i <= 4; $i++) : ?>
 
-    <div class="row <?= $i % 2 === 0 ? 'csBG4 p10' : '' ?>">
+    <div class="row <?= $i % 2 === 0 ? 'csBG5 p10' : '' ?>">
         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
             <div class="form-group">
                 <label>
@@ -78,7 +78,7 @@ for ($i = 1; $i <= 4; $i++) : ?>
                     &nbsp;<strong class="text-danger">*</strong>
                     &nbsp;<i class="fa fa-question-circle-o modalShow" src="section_41_state"></i></label>
                 <div class="select">
-                    <select name="section1_preparer_state_<?= $i; ?>" id="section1_preparer_state_<?= $i; ?>" class="form-control input-grey input-lg">
+                    <select name="section1_preparer_state_<?= $i; ?>" id="section1_preparer_state_<?= $i; ?>" class="form-control input-grey input-lg jsStateDropDown">
                         <?php
                         foreach ($states as $state) {
                             echo '<option value="' . $state['state_code'] . '" ' . ($state['state_code'] == ($preparerArray[$i]['state'] ??  '') ? 'selected' : '') . '>' . $state['state_name'] . '</option>';

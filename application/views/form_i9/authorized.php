@@ -1,7 +1,7 @@
 <?php
 for ($i = 1; $i <= 3; $i++) : ?>
 
-    <div class="row <?= $i % 2 === 0 ? 'csBG4 p10' : '' ?>">
+    <div class="row <?= $i % 2 === 0 ? 'csBG5 p10' : '' ?>">
         <div class="col-lg-3 col-md-12 col-xs-12 col-sm-12">
             <div class="form-group autoheight">
                 <strong>B. </strong><em>Date of Rehire (if applicable)</em>
