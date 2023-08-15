@@ -266,5 +266,21 @@ if (typeof getQuestionsFromArray === "undefined") {
 			"</p></strong><br >" +
 			errorArray.join("<br />")
 		);
+		let json = response.responseJSON || JSON.parse(response.responseText);
+		// when error object came in
+		return alertify.alert("Errors!", json.errors.join("<br />"), CB);
+	}
+}
+
+if (typeof baseUrl === "undefined") {
+	/**
+	 * get the base url
+	 *
+	 * @param {string} appendUrl
+	 * @returns
+	 */
+	function baseUrl(appendUrl = "") {
+		// return the url
+		return window.location.origin + "/" + appendUrl;
 	}
 }

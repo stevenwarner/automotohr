@@ -124,6 +124,11 @@
             <script src="<?php echo base_url('assets/video_interview/video-js-record/dist/videojs.record.js') ?>"></script>
         <?php } ?>
 
+        <?php if (isset($PageCSS)) : ?>
+            <!-- Stylesheets -->
+            <?= GetCss($PageCSS); ?>
+        <?php endif; ?>
+
         <!--  -->
         <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
             <?php $this->load->view("{$pp}styles"); ?>
