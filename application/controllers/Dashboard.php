@@ -1016,6 +1016,10 @@ class Dashboard extends Public_Controller
                 $employer_id,
                 'employee'
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
+
+            //
+            $data['LMSStatus'] = $this->dashboard_model->getLMSStatus($company_id);
+
             // LMS - Trainings
             if ($isLMSModuleEnabled = checkIfAppIsEnabled(MODULE_LMS)) {
                 // load model

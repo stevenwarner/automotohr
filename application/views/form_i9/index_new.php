@@ -138,8 +138,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <p><strong>I am aware that federal law provides for imprisonment and/or fines for false statements or use of false documents in connection with the completion of this form.</strong></p>
-                                    <p><strong>I attest, under penalty of perjury, that I am (check one of the following boxes):</strong></p>
+                                    <p><strong>I am aware that federal law provides for imprisonment and/or fines for false statements, or the use of false documents, in connection with the completion of this form. I attest, under penalty of perjury, that this information, including my selection of the box attesting to my citizenship or immigration status, is true and correct.</strong></p>
+                                    <p><strong>Check one of the following boxes to attest to your citizenship or immigration status (See page 2 and 3 of the instructions.):</strong></p>
                                     <div class="hr-box">
                                         <div class="hr-innerpadding">
                                             <div class="row">
@@ -256,474 +256,476 @@
                                     </div>
                                     <?php } ?>
 
-                                    <div class="hr-box">
-                                        <div class="hr-box-header">
-                                            <strong>Section 2. </strong> Employer Review and Verification: Employers or their authorized representative must complete and sign Section 2 within three
-                                             business days after the employee's first day of employment, and must physically examine, or examine consistent with an alternative procedure 
-                                             authorized by the Secretary of DHS, documentation from List A OR a combination of documentation from List B and List C. Enter any additional 
-                                             documentation in the Additional Information box; see Instructions.
-                                        </div>
-                                        <div class="hr-innerpadding">
-                                            <div class="row list-a-fields">
-                                                <div class="col-lg-12">
-                                                    <div class="col-header text-center">
-                                                        <strong>List A <br> Identity and Employment
-                                                            Authorization</strong>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_5_document_title"></i></label>
-
-                                                        <div class="lista_part1_doc">
-                                                            <label>
-                                                                <input type="radio" name="lista_part1_doc_select_input" value="select" <?= $pre_form['lista_part1_doc_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="lista_part1_doc_select_input" value="input" <?= $pre_form['lista_part1_doc_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="lista_part1_doc_text" style="display: none">
-                                                                <input type="text" id="lista_part1_doc_text_val" placeholder="Write Here" name="section2_lista_part1_document_title_text_val" class="form-control">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="select lista_part1_doc" id="lista_part1_doc_select">
-                                                            <select class="form-control"
-                                                                    name="section2_lista_part1_document_title"
-                                                                    id="section2_lista_part1_document_title">
-                                                                <option value="n_a">N/A</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_5_issuing_authority"></i></label>
-
-                                                        <div class="lista_part1_issuing">
-                                                            <label>
-                                                                <input type="radio" name="lista_part1_issuing_select_input" value="select" <?= $pre_form['lista_part1_issuing_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="lista_part1_issuing_select_input" value="input" <?= $pre_form['lista_part1_issuing_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="lista_part1_issuing_text" style="display: none">
-                                                                <input type="text" id="lista_part1_issuing_text_val" placeholder="Write Here" name="section2_lista_part1_issuing_authority_text_val" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="select lista_part1_issuing" id="lista_part1_issuing_select">
-                                                            <select class="form-control"
-                                                                    name="section2_lista_part1_issuing_authority"
-                                                                    id="section2_lista_part1_issuing_authority">
-                                                                <option value="n_a">N/A</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_5_document_number"></i></label>
-                                                        <input type="text" name="section2_lista_part1_document_number"
-                                                                value="<?= isset($pre_form['section2_lista_part1_document_number']) && !empty($pre_form['section2_lista_part1_document_number']) ? $pre_form['section2_lista_part1_document_number'] : "";?>"
-                                                                id="section2_lista_part1_document_number"
-                                                                class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
-                                                        <input type="text" 
-                                                        
-                                                        readonly
-                                                        name="section2_lista_part1_expiration_date"
-                                                                id="section2_lista_part1_expiration_date"
-                                                                value="<?= isset($pre_form['section2_lista_part1_expiration_date']) && !empty($pre_form['section2_lista_part1_expiration_date']) && $pre_form['section2_lista_part1_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part1_expiration_date'])) : "";?>"
-                                                                class="form-control date_picker2" readonly>
-                                                    </div>
-                                                </div>
+                                    <?php if($section2_flag && $signed_flag == true) { ?>
+                                        <div class="hr-box">
+                                            <div class="hr-box-header">
+                                                <strong>Section 2. </strong> Employer Review and Verification: Employers or their authorized representative must complete and sign Section 2 within three
+                                                business days after the employee's first day of employment, and must physically examine, or examine consistent with an alternative procedure 
+                                                authorized by the Secretary of DHS, documentation from List A OR a combination of documentation from List B and List C. Enter any additional 
+                                                documentation in the Additional Information box; see Instructions.
                                             </div>
-                                            <div class="row bg-gray list-a-fields">
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_51_document_title"></i></label>
-                                                        <!--                                                    <input type="text"  class="form-control">-->
-                                                        <div class="lista_part2_doc">
-                                                            <label>
-                                                                <input type="radio" name="lista_part2_doc_select_input" value="select" <?= $pre_form['lista_part2_doc_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="lista_part2_doc_select_input" value="input" <?= $pre_form['lista_part2_doc_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="lista_part2_doc_text" style="display: none">
-                                                                <input type="text" id="lista_part2_doc_text_val" placeholder="Write Here" name="section2_lista_part2_document_title_text_val" class="form-control">
+                                            <div class="hr-innerpadding">
+                                                <div class="row list-a-fields">
+                                                    <div class="col-lg-12">
+                                                        <div class="col-header text-center">
+                                                            <strong>List A <br> Identity and Employment
+                                                                Authorization</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_5_document_title"></i></label>
+
+                                                            <div class="lista_part1_doc">
+                                                                <label>
+                                                                    <input type="radio" name="lista_part1_doc_select_input" value="select" <?= $pre_form['lista_part1_doc_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="lista_part1_doc_select_input" value="input" <?= $pre_form['lista_part1_doc_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="lista_part1_doc_text" style="display: none">
+                                                                    <input type="text" id="lista_part1_doc_text_val" placeholder="Write Here" name="section2_lista_part1_document_title_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="select lista_part1_doc" id="lista_part1_doc_select">
+                                                                <select class="form-control"
+                                                                        name="section2_lista_part1_document_title"
+                                                                        id="section2_lista_part1_document_title">
+                                                                    <option value="n_a">N/A</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-                                                        <div class="select lista_part2_doc" id="lista_part2_doc_select">
-                                                            <select class="form-control"
-                                                                    name="section2_lista_part2_document_title"
-                                                                    id="section2_lista_part2_document_title">
-                                                                <option value="n_a">N/A</option>
-                                                            </select>
-                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_51_issuing_authority"></i></label>
-                                                        <!--                                                    <input type="text"  class="form-control">-->
-                                                        <div class="lista_part2_issuing">
-                                                            <label>
-                                                                <input type="radio" name="lista_part2_issuing_select_input" value="select" <?= $pre_form['lista_part2_issuing_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="lista_part2_issuing_select_input" value="input" <?= $pre_form['lista_part2_issuing_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="lista_part2_issuing_text" style="display: none">
-                                                                <input type="text" id="lista_part2_issuing_text_val" placeholder="Write Here" name="section2_lista_part2_issuing_authority_text_val" class="form-control">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_5_issuing_authority"></i></label>
+
+                                                            <div class="lista_part1_issuing">
+                                                                <label>
+                                                                    <input type="radio" name="lista_part1_issuing_select_input" value="select" <?= $pre_form['lista_part1_issuing_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="lista_part1_issuing_select_input" value="input" <?= $pre_form['lista_part1_issuing_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="lista_part1_issuing_text" style="display: none">
+                                                                    <input type="text" id="lista_part1_issuing_text_val" placeholder="Write Here" name="section2_lista_part1_issuing_authority_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="select lista_part1_issuing" id="lista_part1_issuing_select">
+                                                                <select class="form-control"
+                                                                        name="section2_lista_part1_issuing_authority"
+                                                                        id="section2_lista_part1_issuing_authority">
+                                                                    <option value="n_a">N/A</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-                                                        <div class="select lista_part2_issuing" id="lista_part2_issuing_select">
-                                                            <select class="form-control"
-                                                                    name="section2_lista_part2_issuing_authority"
-                                                                    id="section2_lista_part2_issuing_authority">
-                                                                <option value="n_a">N/A</option>
-                                                            </select>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_5_document_number"></i></label>
+                                                            <input type="text" name="section2_lista_part1_document_number"
+                                                                    value="<?= isset($pre_form['section2_lista_part1_document_number']) && !empty($pre_form['section2_lista_part1_document_number']) ? $pre_form['section2_lista_part1_document_number'] : "";?>"
+                                                                    id="section2_lista_part1_document_number"
+                                                                    class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
+                                                            <input type="text" 
+                                                            
+                                                            readonly
+                                                            name="section2_lista_part1_expiration_date"
+                                                                    id="section2_lista_part1_expiration_date"
+                                                                    value="<?= isset($pre_form['section2_lista_part1_expiration_date']) && !empty($pre_form['section2_lista_part1_expiration_date']) && $pre_form['section2_lista_part1_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part1_expiration_date'])) : "";?>"
+                                                                    class="form-control date_picker2" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_51_document_number"></i></label>
-                                                        <input type="text" name="section2_lista_part2_document_number"
-                                                                id="section2_lista_part2_document_number"
-                                                                value="<?= isset($pre_form['section2_lista_part2_document_number']) && !empty($pre_form['section2_lista_part2_document_number']) ? $pre_form['section2_lista_part2_document_number'] : "";?>"
-                                                                class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_51_expiration_date"></i></label>
-                                                        <input type="text" name="section2_lista_part2_expiration_date"
-                                                                id="section2_lista_part2_expiration_date"
-                                                                value="<?= isset($pre_form['section2_lista_part2_expiration_date']) && !empty($pre_form['section2_lista_part2_expiration_date']) && $pre_form['section2_lista_part2_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part2_expiration_date'])) : "";?>"
-                                                                class="form-control date_picker2" readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row list-a-fields">
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_52_document_title"></i></label>
-                                                        <!--                                                    <input type="text"  class="form-control">-->
-                                                        <div class="lista_part3_doc">
-                                                            <label>
-                                                                <input type="radio" name="lista_part3_doc_select_input" value="select" <?= $pre_form['lista_part3_doc_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="lista_part3_doc_select_input" value="input" <?= $pre_form['lista_part3_doc_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="lista_part3_doc_text" style="display: none">
-                                                                <input type="text" id="lista_part3_doc_text_val" placeholder="Write Here" name="section2_lista_part3_document_title_text_val" class="form-control">
+                                                <div class="row bg-gray list-a-fields">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_51_document_title"></i></label>
+                                                            <!--                                                    <input type="text"  class="form-control">-->
+                                                            <div class="lista_part2_doc">
+                                                                <label>
+                                                                    <input type="radio" name="lista_part2_doc_select_input" value="select" <?= $pre_form['lista_part2_doc_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="lista_part2_doc_select_input" value="input" <?= $pre_form['lista_part2_doc_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="lista_part2_doc_text" style="display: none">
+                                                                    <input type="text" id="lista_part2_doc_text_val" placeholder="Write Here" name="section2_lista_part2_document_title_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="select lista_part2_doc" id="lista_part2_doc_select">
+                                                                <select class="form-control"
+                                                                        name="section2_lista_part2_document_title"
+                                                                        id="section2_lista_part2_document_title">
+                                                                    <option value="n_a">N/A</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-
-                                                        <div class="select lista_part3_doc" id="lista_part3_doc_select">
-                                                            <select class="form-control"
-                                                                    name="section2_lista_part3_document_title"
-                                                                    id="section2_lista_part3_document_title">
-                                                                <option value="n_a">N/A</option>
-                                                            </select>
-                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_52_issuing_authority"></i></label>
-                                                        <!--                                                    <input type="text" class="form-control">-->
-                                                        <div class="lista_part3_issuing">
-                                                            <label>
-                                                                <input type="radio" name="lista_part3_issuing_select_input" value="select" <?= $pre_form['lista_part3_issuing_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="lista_part3_issuing_select_input" value="input" <?= $pre_form['lista_part3_issuing_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="lista_part3_issuing_text" style="display: none">
-                                                                <input type="text" id="lista_part3_issuing_text_val" placeholder="Write Here" name="section2_lista_part3_issuing_authority_text_val" class="form-control">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_51_issuing_authority"></i></label>
+                                                            <!--                                                    <input type="text"  class="form-control">-->
+                                                            <div class="lista_part2_issuing">
+                                                                <label>
+                                                                    <input type="radio" name="lista_part2_issuing_select_input" value="select" <?= $pre_form['lista_part2_issuing_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="lista_part2_issuing_select_input" value="input" <?= $pre_form['lista_part2_issuing_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="lista_part2_issuing_text" style="display: none">
+                                                                    <input type="text" id="lista_part2_issuing_text_val" placeholder="Write Here" name="section2_lista_part2_issuing_authority_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="select lista_part2_issuing" id="lista_part2_issuing_select">
+                                                                <select class="form-control"
+                                                                        name="section2_lista_part2_issuing_authority"
+                                                                        id="section2_lista_part2_issuing_authority">
+                                                                    <option value="n_a">N/A</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-                                                        <div class="select lista_part3_issuing" id="lista_part3_issuing_select">
-                                                            <select class="form-control"
-                                                                    name="section2_lista_part3_issuing_authority"
-                                                                    id="section2_lista_part3_issuing_authority">
-                                                                <option value="n_a">N/A</option>
-                                                            </select>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_51_document_number"></i></label>
+                                                            <input type="text" name="section2_lista_part2_document_number"
+                                                                    id="section2_lista_part2_document_number"
+                                                                    value="<?= isset($pre_form['section2_lista_part2_document_number']) && !empty($pre_form['section2_lista_part2_document_number']) ? $pre_form['section2_lista_part2_document_number'] : "";?>"
+                                                                    class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_51_expiration_date"></i></label>
+                                                            <input type="text" name="section2_lista_part2_expiration_date"
+                                                                    id="section2_lista_part2_expiration_date"
+                                                                    value="<?= isset($pre_form['section2_lista_part2_expiration_date']) && !empty($pre_form['section2_lista_part2_expiration_date']) && $pre_form['section2_lista_part2_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part2_expiration_date'])) : "";?>"
+                                                                    class="form-control date_picker2" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_52_document_number"></i></label>
-                                                        <input type="text" name="section2_lista_part3_document_number"
-                                                                id="section2_lista_part3_document_number"
-                                                                value="<?= isset($pre_form['section2_lista_part3_document_number']) && !empty($pre_form['section2_lista_part3_document_number']) ? $pre_form['section2_lista_part3_document_number'] : "";?>"
-                                                                class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_52_expiration_date"></i></label>
-                                                        <input type="text" name="section2_lista_part3_expiration_date"
-                                                                id="section2_lista_part3_expiration_date"
-                                                                value="<?= isset($pre_form['section2_lista_part3_expiration_date']) && !empty($pre_form['section2_lista_part3_expiration_date']) && $pre_form['section2_lista_part3_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part3_expiration_date'])) : "";?>"
-                                                                class="form-control date_picker2" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="form-group autoheight">
-                                                        <label>Additional Information <i class="fa fa-question-circle-o modalShow" src="section_52_additional_information"></i></label>
-                                                        <textarea class="form-control textarea" name="section2_additional_information" id="section2_additional_information">
-                                                            <?= isset($pre_form['section2_additional_information']) && !empty($pre_form['section2_additional_information']) && $pre_form['section2_additional_information'] != null ? $pre_form['section2_additional_information'] : "";?>
-                                                        </textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <label for="page_status">
-                                                        <input type="checkbox" name="section2_authorized_alternative_procedure" value="yes" <?php echo ($pre_form['section2_alternative_procedure'] == 1 ? 'checked="checked"' : ''); ?>  />
-                                                        Check here if you used an alternative procedure authorized by DHS to examine documents.
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 list-b-fields">
-                                                    <div class="col-header text-center">
-                                                        <strong>List B <br> Identity</strong>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_53_document_title"></i></label>
+                                                <div class="row list-a-fields">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_52_document_title"></i></label>
+                                                            <!--                                                    <input type="text"  class="form-control">-->
+                                                            <div class="lista_part3_doc">
+                                                                <label>
+                                                                    <input type="radio" name="lista_part3_doc_select_input" value="select" <?= $pre_form['lista_part3_doc_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="lista_part3_doc_select_input" value="input" <?= $pre_form['lista_part3_doc_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="lista_part3_doc_text" style="display: none">
+                                                                    <input type="text" id="lista_part3_doc_text_val" placeholder="Write Here" name="section2_lista_part3_document_title_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
 
-                                                        <div class="select">
-                                                            <select class="form-control"
-                                                                    name="section2_listb_document_title"
-                                                                    id="section2_listb_document_title"></select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_53_issuing_authority"></i></label>
-                                                        <!--                                                    <input type="text"class="form-control">-->
-                                                        <div class="list_b_auth">
-                                                            <label>
-                                                                <input type="radio" name="listb-auth-select-input" value="select" <?= $pre_form['listb_auth_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="listb-auth-select-input" value="input" <?= $pre_form['listb_auth_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="list_b_auth_text" style="display: none">
-                                                                <input type="text" id="list_b_auth_text_val" placeholder="Write Here" name="section2_listb_issuing_authority_text_val" class="form-control">
+                                                            <div class="select lista_part3_doc" id="lista_part3_doc_select">
+                                                                <select class="form-control"
+                                                                        name="section2_lista_part3_document_title"
+                                                                        id="section2_lista_part3_document_title">
+                                                                    <option value="n_a">N/A</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-                                                        <div class="select list_b_auth" id="list_b_auth_select">
-                                                            <select class="form-control"
-                                                                    name="section2_listb_issuing_authority"
-                                                                    id="section2_listb_issuing_authority">
-                                                                <option value="n_a">N/A</option>
-                                                            </select>
-                                                        </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_53_document_number"></i></label>
-                                                        <input type="text" name="section2_listb_document_number"
-                                                                value="<?= isset($pre_form['section2_listb_document_number']) && !empty($pre_form['section2_listb_document_number']) ? $pre_form['section2_listb_document_number'] : "";?>"
-                                                                id="section2_listb_document_number" class="form-control">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_53_expiration_date"></i></label>
-                                                        <input type="text" name="section2_listb_expiration_date"
-                                                                id="section2_listb_expiration_date"
-                                                                value="<?= isset($pre_form['section2_listb_expiration_date']) && !empty($pre_form['section2_listb_expiration_date']) && $pre_form['section2_listb_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_listb_expiration_date'])) : "";?>"
-                                                                class="form-control date_picker2" readonly autocomplete="off">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 list-b-fields">
-                                                    <div class="col-header text-center">
-                                                        <strong>List C <br> Employment Authorization</strong>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_54_document_title"></i></label>
-
-                                                        <div class="select">
-                                                            <select class="form-control"
-                                                                    name="section2_listc_document_title"
-                                                                    id="section2_listc_document_title"></select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group" id="listc_extra_field"
-                                                            style="display: none">
-                                                        <label>&nbsp;</label>
-                                                        <input type="text" name="section2_listc_dhs_extra_field"
-                                                                id="section2_listc_extra_field" class="form-control">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_54_issuing_authority"></i></label>
-                                                        <div class="list_c_auth">
-                                                            <label>
-                                                                <input type="radio" name="listc-auth-select-input" value="select" <?= $pre_form['listc_auth_select_input'] == 'select' ? 'checked' : ''?>> Select from List
-                                                            </label> &nbsp;
-                                                            <label>
-                                                                <input type="radio" name="listc-auth-select-input" value="input" <?= $pre_form['listc_auth_select_input'] == 'input' ? 'checked' : ''?>> Text
-                                                            </label>
-                                                            <div id="list_c_auth_text" style="display: none">
-                                                                <input type="text" id="list_c_auth_text_val" placeholder="Write Here" name="section2_listc_issuing_authority_text_val" class="form-control">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_52_issuing_authority"></i></label>
+                                                            <!--                                                    <input type="text" class="form-control">-->
+                                                            <div class="lista_part3_issuing">
+                                                                <label>
+                                                                    <input type="radio" name="lista_part3_issuing_select_input" value="select" <?= $pre_form['lista_part3_issuing_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="lista_part3_issuing_select_input" value="input" <?= $pre_form['lista_part3_issuing_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="lista_part3_issuing_text" style="display: none">
+                                                                    <input type="text" id="lista_part3_issuing_text_val" placeholder="Write Here" name="section2_lista_part3_issuing_authority_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="select lista_part3_issuing" id="lista_part3_issuing_select">
+                                                                <select class="form-control"
+                                                                        name="section2_lista_part3_issuing_authority"
+                                                                        id="section2_lista_part3_issuing_authority">
+                                                                    <option value="n_a">N/A</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-
-                                                        <div class="select list_c_auth" id="list_c_auth_select">
-                                                            <select class="form-control"
-                                                                    name="section2_listc_issuing_authority"
-                                                                    id="section2_listc_issuing_authority">
-                                                                <option value="n_a" selected>N/A</option>
-                                                            </select>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_52_document_number"></i></label>
+                                                            <input type="text" name="section2_lista_part3_document_number"
+                                                                    id="section2_lista_part3_document_number"
+                                                                    value="<?= isset($pre_form['section2_lista_part3_document_number']) && !empty($pre_form['section2_lista_part3_document_number']) ? $pre_form['section2_lista_part3_document_number'] : "";?>"
+                                                                    class="form-control">
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_54_document_number"></i></label>
-                                                        <input type="text" name="section2_listc_document_number"
-                                                                value="<?= isset($pre_form['section2_listc_document_number']) && !empty($pre_form['section2_listc_document_number']) ? $pre_form['section2_listc_document_number'] : "";?>"
-                                                                id="section2_listc_document_number" class="form-control">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_52_expiration_date"></i></label>
+                                                            <input type="text" name="section2_lista_part3_expiration_date"
+                                                                    id="section2_lista_part3_expiration_date"
+                                                                    value="<?= isset($pre_form['section2_lista_part3_expiration_date']) && !empty($pre_form['section2_lista_part3_expiration_date']) && $pre_form['section2_lista_part3_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_lista_part3_expiration_date'])) : "";?>"
+                                                                    class="form-control date_picker2" readonly>
+                                                        </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_54_expiration_date"></i></label>
-                                                        <input type="text" name="section2_listc_expiration_date"
-                                                                id="section2_listc_expiration_date"
-                                                                value="<?= isset($pre_form['section2_listc_expiration_date']) && !empty($pre_form['section2_listc_expiration_date']) && $pre_form['section2_listc_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_listc_expiration_date'])) : "";?>"
-                                                                class="form-control date_picker2" readonly autocomplete="off">
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                        <div class="form-group autoheight">
+                                                            <label>Additional Information <i class="fa fa-question-circle-o modalShow" src="section_52_additional_information"></i></label>
+                                                            <textarea class="form-control textarea" name="section2_additional_information" id="section2_additional_information">
+                                                                <?= isset($pre_form['section2_additional_information']) && !empty($pre_form['section2_additional_information']) && $pre_form['section2_additional_information'] != null ? $pre_form['section2_additional_information'] : "";?>
+                                                            </textarea>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                    <p><strong>Certification: I attest, under penalty of perjury, that (1) I have
-                                            examined the document(s) presented by the above-named employee,
-                                            (2) the above-listed document(s) appear to be genuine and to relate to the
-                                            employee named, and (3) to the best of my knowledge the
-                                            employee is authorized to work in the United States.</strong></p>
-
-                                    <div class="form-group autoheight">
-                                        <div class="row">
-                                            <div class="col-lg-9">
-                                                <p><strong>The employee's first day of employment (mm/dd/yyyy):<i class="fa fa-question-circle-o modalShow" src="section_6_employee_1st_day_of_employment "></i> (See
-                                                        instructions for exemptions) <span class="staric">*</span> </strong></p>
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <input type="text" name="section2_firstday_of_emp_date"
-                                                        id="section2_firstday_of_emp_date"
-                                                        class="form-control date_picker2" readonly autocomplete="off" value="<?= isset($pre_form['section2_firstday_of_emp_date']) && !empty($pre_form['section2_firstday_of_emp_date']) ? date('m-d-Y',strtotime($pre_form['section2_firstday_of_emp_date'])) : "";?>"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="hr-box">
-                                        <div class="hr-innerpadding">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
-                                                        <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
-                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
-                                                        <?php } else { ?>
-                                                            <!-- the below loaded view add e-signature -->
-                                                            <a class="btn btn-success btn-sm sign_of_emp_or_aut_rep" href="javascript:;">Create E-Signature</a>
-                                                            <div class="img-full">
-                                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src=""  id="sign_of_emp_or_aut_rep_img" />
-                                                            </div>
-                                                            <input type="hidden" name="section2_sig_emp_auth_rep" id="section2_emp_sign">
-                                                        <?php } ?> 
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i
-                                                                class="fa fa-question-circle-o modalShow" src="section_6_today_date"></i></label>
-                                                        <input name="section2_today_date" id="section2_today_date" readonly
-                                                                class="form-control date_picker" readonly type="text" autocomplete="off"  value="<?= date('m-d-Y');?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Title of Employer or Authorized Representative <span class="staric">*</span> <i
-                                                                class="fa fa-question-circle-o modalShow" src="section_6_title"></i></label>
-                                                        <input name="section2_title_of_emp" id="section2_title_of_emp"
-                                                                class="form-control" type="text" autocomplete="nope" value="<?= isset($pre_form['section2_title_of_emp']) && !empty($pre_form['section2_title_of_emp']) ? $pre_form['section2_title_of_emp'] : "";?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Last Name of Employer or Authorized Representative <span class="staric">*</span> <i
-                                                                class="fa fa-question-circle-o modalShow" src="section_6_last_name"></i></label>
-                                                        <input name="section2_last_name_of_emp"
-                                                                id="section2_last_name_of_emp" class="form-control"
-                                                                type="text" value="<?= $last_name;?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>First Name of Employer or Authorized Representative <span class="staric">*</span> <i
-                                                                class="fa fa-question-circle-o modalShow" src="section_6_first_name"></i>
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                        <label for="page_status">
+                                                            <input type="checkbox" name="section2_authorized_alternative_procedure" value="yes" <?php echo ($pre_form['section2_alternative_procedure'] == 1 ? 'checked="checked"' : ''); ?>  />
+                                                            Check here if you used an alternative procedure authorized by DHS to examine documents.
                                                         </label>
-                                                        <input name="section2_first_name_of_emp"
-                                                                id="section2_first_name_of_emp" class="form-control"
-                                                                type="text" value="<?= $first_name;?>">
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Employer's Business or Organization Name <span class="staric">*</span> <i
-                                                                class="fa fa-question-circle-o modalShow" src="section_6_organization_name"></i></label>
-                                                        <input name="section2_emp_business_name"
-                                                                id="section2_emp_business_name" class="form-control"
-                                                                type="text" value="<?= isset($pre_form['section2_emp_business_name']) && !empty($pre_form['section2_emp_business_name']) ? $pre_form['section2_emp_business_name'] : "";?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>Employer's Business or Organization Address <span class="staric">*</span> <i
-                                                                class="fa fa-question-circle-o modalShow" src="section_6_organization_address"></i></label>
-                                                        <input name="section2_emp_business_address" disableautocomplete
-                                                                id="section2_emp_business_address" class="form-control"
-                                                                type="text" autocomplete="nope" value="<?= isset($pre_form['section2_emp_business_address']) && !empty($pre_form['section2_emp_business_address']) ? $pre_form['section2_emp_business_address'] : "";?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>City or Town <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_city_or_town"></i></label>
-                                                        <input name="section2_city_town" id="section2_city_town"
-                                                                class="form-control" type="text" autocomplete="nope" value="<?= isset($pre_form['section2_city_town']) && !empty($pre_form['section2_city_town']) ? $pre_form['section2_city_town'] : "";?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>State <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_state"></i></label>
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 list-b-fields">
+                                                        <div class="col-header text-center">
+                                                            <strong>List B <br> Identity</strong>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_53_document_title"></i></label>
 
-                                                        <div class="select">
-                                                            <select class="form-control" name="section2_state"
-                                                                    id="section2_state">
-                                                                <?php foreach ($states as $state) {
-                                                                    echo '<option value="' . $state['state_code'] . '"">' . $state['state_name'] . '</option>';
-                                                                } ?>
-                                                            </select>
+                                                            <div class="select">
+                                                                <select class="form-control"
+                                                                        name="section2_listb_document_title"
+                                                                        id="section2_listb_document_title"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_53_issuing_authority"></i></label>
+                                                            <!--                                                    <input type="text"class="form-control">-->
+                                                            <div class="list_b_auth">
+                                                                <label>
+                                                                    <input type="radio" name="listb-auth-select-input" value="select" <?= $pre_form['listb_auth_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="listb-auth-select-input" value="input" <?= $pre_form['listb_auth_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="list_b_auth_text" style="display: none">
+                                                                    <input type="text" id="list_b_auth_text_val" placeholder="Write Here" name="section2_listb_issuing_authority_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="select list_b_auth" id="list_b_auth_select">
+                                                                <select class="form-control"
+                                                                        name="section2_listb_issuing_authority"
+                                                                        id="section2_listb_issuing_authority">
+                                                                    <option value="n_a">N/A</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_53_document_number"></i></label>
+                                                            <input type="text" name="section2_listb_document_number"
+                                                                    value="<?= isset($pre_form['section2_listb_document_number']) && !empty($pre_form['section2_listb_document_number']) ? $pre_form['section2_listb_document_number'] : "";?>"
+                                                                    id="section2_listb_document_number" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_53_expiration_date"></i></label>
+                                                            <input type="text" name="section2_listb_expiration_date"
+                                                                    id="section2_listb_expiration_date"
+                                                                    value="<?= isset($pre_form['section2_listb_expiration_date']) && !empty($pre_form['section2_listb_expiration_date']) && $pre_form['section2_listb_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_listb_expiration_date'])) : "";?>"
+                                                                    class="form-control date_picker2" readonly autocomplete="off">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 list-b-fields">
+                                                        <div class="col-header text-center">
+                                                            <strong>List C <br> Employment Authorization</strong>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_54_document_title"></i></label>
+
+                                                            <div class="select">
+                                                                <select class="form-control"
+                                                                        name="section2_listc_document_title"
+                                                                        id="section2_listc_document_title"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="listc_extra_field"
+                                                                style="display: none">
+                                                            <label>&nbsp;</label>
+                                                            <input type="text" name="section2_listc_dhs_extra_field"
+                                                                    id="section2_listc_extra_field" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_54_issuing_authority"></i></label>
+                                                            <div class="list_c_auth">
+                                                                <label>
+                                                                    <input type="radio" name="listc-auth-select-input" value="select" <?= $pre_form['listc_auth_select_input'] == 'select' ? 'checked' : ''?>> Select from List
+                                                                </label> &nbsp;
+                                                                <label>
+                                                                    <input type="radio" name="listc-auth-select-input" value="input" <?= $pre_form['listc_auth_select_input'] == 'input' ? 'checked' : ''?>> Text
+                                                                </label>
+                                                                <div id="list_c_auth_text" style="display: none">
+                                                                    <input type="text" id="list_c_auth_text_val" placeholder="Write Here" name="section2_listc_issuing_authority_text_val" class="form-control">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="select list_c_auth" id="list_c_auth_select">
+                                                                <select class="form-control"
+                                                                        name="section2_listc_issuing_authority"
+                                                                        id="section2_listc_issuing_authority">
+                                                                    <option value="n_a" selected>N/A</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_54_document_number"></i></label>
+                                                            <input type="text" name="section2_listc_document_number"
+                                                                    value="<?= isset($pre_form['section2_listc_document_number']) && !empty($pre_form['section2_listc_document_number']) ? $pre_form['section2_listc_document_number'] : "";?>"
+                                                                    id="section2_listc_document_number" class="form-control">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_54_expiration_date"></i></label>
+                                                            <input type="text" name="section2_listc_expiration_date"
+                                                                    id="section2_listc_expiration_date"
+                                                                    value="<?= isset($pre_form['section2_listc_expiration_date']) && !empty($pre_form['section2_listc_expiration_date']) && $pre_form['section2_listc_expiration_date'] != null ? date('m-d-Y',strtotime($pre_form['section2_listc_expiration_date'])) : "";?>"
+                                                                    class="form-control date_picker2" readonly autocomplete="off">
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label>ZIP Code <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_zip_code"></i></label>
-                                                        <input name="section2_zip_code" id="section2_zip_code"
-                                                                value="<?= isset($pre_form['section2_zip_code']) && !empty($pre_form['section2_zip_code']) ? $pre_form['section2_zip_code'] : "";?>" class="form-control" type="text" autocomplete="nope">
+
+
+                                            </div>
+                                        </div>
+                                        <p><strong>Certification: I attest, under penalty of perjury, that (1) I have
+                                                examined the document(s) presented by the above-named employee,
+                                                (2) the above-listed document(s) appear to be genuine and to relate to the
+                                                employee named, and (3) to the best of my knowledge the
+                                                employee is authorized to work in the United States.</strong></p>
+
+                                        <div class="form-group autoheight">
+                                            <div class="row">
+                                                <div class="col-lg-9">
+                                                    <p><strong>The employee's first day of employment (mm/dd/yyyy):<i class="fa fa-question-circle-o modalShow" src="section_6_employee_1st_day_of_employment "></i> (See
+                                                            instructions for exemptions) <span class="staric">*</span> </strong></p>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <input type="text" name="section2_firstday_of_emp_date"
+                                                            id="section2_firstday_of_emp_date"
+                                                            class="form-control date_picker2" readonly autocomplete="off" value="<?= isset($pre_form['section2_firstday_of_emp_date']) && !empty($pre_form['section2_firstday_of_emp_date']) ? date('m-d-Y',strtotime($pre_form['section2_firstday_of_emp_date'])) : "";?>"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="hr-box">
+                                            <div class="hr-innerpadding">
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
+                                                            <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
+                                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
+                                                            <?php } else { ?>
+                                                                <!-- the below loaded view add e-signature -->
+                                                                <a class="btn btn-success btn-sm sign_of_emp_or_aut_rep" href="javascript:;">Create E-Signature</a>
+                                                                <div class="img-full">
+                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src=""  id="sign_of_emp_or_aut_rep_img" />
+                                                                </div>
+                                                                <input type="hidden" name="section2_sig_emp_auth_rep" id="section2_emp_sign">
+                                                            <?php } ?> 
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i
+                                                                    class="fa fa-question-circle-o modalShow" src="section_6_today_date"></i></label>
+                                                            <input name="section2_today_date" id="section2_today_date" readonly
+                                                                    class="form-control date_picker" readonly type="text" autocomplete="off"  value="<?= date('m-d-Y');?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Title of Employer or Authorized Representative <span class="staric">*</span> <i
+                                                                    class="fa fa-question-circle-o modalShow" src="section_6_title"></i></label>
+                                                            <input name="section2_title_of_emp" id="section2_title_of_emp"
+                                                                    class="form-control" type="text" autocomplete="nope" value="<?= isset($pre_form['section2_title_of_emp']) && !empty($pre_form['section2_title_of_emp']) ? $pre_form['section2_title_of_emp'] : "";?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Last Name of Employer or Authorized Representative <span class="staric">*</span> <i
+                                                                    class="fa fa-question-circle-o modalShow" src="section_6_last_name"></i></label>
+                                                            <input name="section2_last_name_of_emp"
+                                                                    id="section2_last_name_of_emp" class="form-control"
+                                                                    type="text" value="<?= $last_name;?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>First Name of Employer or Authorized Representative <span class="staric">*</span> <i
+                                                                    class="fa fa-question-circle-o modalShow" src="section_6_first_name"></i>
+                                                            </label>
+                                                            <input name="section2_first_name_of_emp"
+                                                                    id="section2_first_name_of_emp" class="form-control"
+                                                                    type="text" value="<?= $first_name;?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Employer's Business or Organization Name <span class="staric">*</span> <i
+                                                                    class="fa fa-question-circle-o modalShow" src="section_6_organization_name"></i></label>
+                                                            <input name="section2_emp_business_name"
+                                                                    id="section2_emp_business_name" class="form-control"
+                                                                    type="text" value="<?= isset($pre_form['section2_emp_business_name']) && !empty($pre_form['section2_emp_business_name']) ? $pre_form['section2_emp_business_name'] : "";?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Employer's Business or Organization Address <span class="staric">*</span> <i
+                                                                    class="fa fa-question-circle-o modalShow" src="section_6_organization_address"></i></label>
+                                                            <input name="section2_emp_business_address" disableautocomplete
+                                                                    id="section2_emp_business_address" class="form-control"
+                                                                    type="text" autocomplete="nope" value="<?= isset($pre_form['section2_emp_business_address']) && !empty($pre_form['section2_emp_business_address']) ? $pre_form['section2_emp_business_address'] : "";?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>City or Town <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_city_or_town"></i></label>
+                                                            <input name="section2_city_town" id="section2_city_town"
+                                                                    class="form-control" type="text" autocomplete="nope" value="<?= isset($pre_form['section2_city_town']) && !empty($pre_form['section2_city_town']) ? $pre_form['section2_city_town'] : "";?>">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>State <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_state"></i></label>
+
+                                                            <div class="select">
+                                                                <select class="form-control" name="section2_state"
+                                                                        id="section2_state">
+                                                                    <?php foreach ($states as $state) {
+                                                                        echo '<option value="' . $state['state_code'] . '"">' . $state['state_name'] . '</option>';
+                                                                    } ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>ZIP Code <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_zip_code"></i></label>
+                                                            <input name="section2_zip_code" id="section2_zip_code"
+                                                                    value="<?= isset($pre_form['section2_zip_code']) && !empty($pre_form['section2_zip_code']) ? $pre_form['section2_zip_code'] : "";?>" class="form-control" type="text" autocomplete="nope">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    <?php } ?>    
 
 
                                     <!-- Un Serialize Preparer Options Data -->

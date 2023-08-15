@@ -994,3 +994,69 @@ if (!function_exists('copyPrepareI9Json')) {
         return json_encode($details);
     }
 }
+
+if (!function_exists('copyAuthorizedI9Json')) {
+    /**
+     * copy I9 Authorized json
+     *
+     * @param array  $form
+     * @return array
+     */
+    function copyAuthorizedI9Json(array $form): string
+    {
+        $details = [];
+        //
+        for ($i = 1; $i <= 3; $i++) {
+            if ($i == 1) {
+                $createDate = new DateTime($form['section3_today_date']);
+                $today_date = $createDate->format('Y-m-d');
+                //
+                $details[$i] = [
+                    //
+                    'section3_rehire_date' => $form['section3_rehire_date'],
+                    'section3_last_name' => $form['section3_last_name'],
+                    'section3_first_name' => $form['section3_first_name'],
+                    'section3_middle_initial' => $form['section3_middle_initial'],
+                    'section3_document_title' => $form['section3_document_title'],
+                    'section3_document_number' => $form['section3_document_number'],
+                    'section3_expiration_date' => $form['section1_preparer_signature'],
+                    'section3_name_of_emp' => $form['section3_expiration_date'],
+                    'signature' => $form['section3_emp_sign'],
+                    'section3_signature_date' => $today_date,
+                    'section3_additional_information' => '',
+                    'section3_alternative_procedure' => 0,
+                ];
+                //
+            } else {
+                $details[$i] = [
+                    'section3_rehire_date' => '',
+                    'section3_last_name' => '',
+                    'section3_first_name' => '',
+                    'section3_middle_initial' => '',
+                    'section3_document_title' => '',
+                    'section3_document_number' => '',
+                    'section3_expiration_date' => '',
+                    'section3_name_of_emp' => '',
+                    'signature' => '',
+                    'section3_signature_date' => '',
+                    'section3_additional_information' => '',
+                    'section3_alternative_procedure' => 0,
+                ];
+            }
+         
+        }
+        //
+        //
+        $updateArray = [];
+        $updateArray['section3_authorized_json'] = json_encode($details);
+        
+        //
+        // get CI instance
+        $CI = &get_instance();
+        // update the user in "users" table
+        $CI->db->where(['sid' => $form['sid']])->update('applicant_i9form', $updateArray);
+        //
+        return json_encode($details);
+    }
+}
+

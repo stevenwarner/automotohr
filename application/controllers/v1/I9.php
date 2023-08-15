@@ -354,6 +354,7 @@ class I9 extends Public_Controller
         }
         //
         $updateArray['section1_preparer_json'] = json_encode($translatorArray);
+        unset($updateArray['form_mode']);
         //
         $this->db
             ->where('sid', $post['form_code'])

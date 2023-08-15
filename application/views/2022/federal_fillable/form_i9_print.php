@@ -189,26 +189,18 @@
                     </td>
                 </tr>
             </table>
-            <?php
-            $section1_preparer_or_translator = @unserialize($pre_form['section1_preparer_or_translator']);
-            ?>
+           
             <div class="bg-gray gray-box">
                 <strong>Preparer and/or Translator Certification (check one):</strong>
                 <div class="inline-element-wrp full-width">
                     <div class="element-box">
-                        <input disabled type="checkbox" id="no_preparer_tranlator" name="" <?php echo $section1_preparer_or_translator['section1_preparer_or_translator'] == 'not-used' ? 'checked' : '' ?>>
+                        <input disabled type="checkbox" id="no_preparer_tranlator" name="" <?php echo empty($pre_form['section1_preparer_or_translator']) ? 'checked' : '' ?>>
                         <label for="no_preparer_tranlator">did not use a preparer or translator</label>
                     </div>
                     <div class="element-box">
-                        <input disabled type="checkbox" id="preparer_tranlator" name="" <?php echo $section1_preparer_or_translator['section1_preparer_or_translator'] == 'used' ? 'checked' : '' ?>>
+                        <input disabled type="checkbox" id="preparer_tranlator" name="" <?php echo !empty($pre_form['section1_preparer_or_translator'])  ? 'checked' : '' ?>>
                         <label for="preparer_tranlator">A preparer(s) and/or translator(s) assisted the employee in completing Section 1.</label>
                     </div>
-                    <!-- <div class="element-box">
-                        How many?
-                        <div class="inline-value-box">
-                            <span class="value-box" id=""><?php echo $section1_preparer_or_translator['section1_preparer_or_translator'] == 'used' ? $section1_preparer_or_translator['number-of-preparer'] : '' ?></span>
-                        </div>
-                    </div> -->
                 </div>
                 <strong>(Fields below must be completed and signed when preparers and/or translators assist an employee in completing Section 1.)</strong>
             </div>

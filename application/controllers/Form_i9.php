@@ -178,6 +178,10 @@ class Form_i9 extends Public_Controller
                 $previous_form["section1_preparer_json"] = copyPrepareI9Json($previous_form);
             }
 
+            if (!empty($previous_form["section3_emp_sign"]) && empty($previous_form["section3_authorized_json"])) {
+                $previous_form["section3_authorized_json"] = copyAuthorizedI9Json($previous_form);
+            }
+
             $data['pre_form'] = $previous_form;
 
             if ($employer_access_level == 'Admin' && sizeof($previous_form) > 0 && $previous_form['user_sid'] != $security_sid) {
@@ -220,8 +224,13 @@ class Form_i9 extends Public_Controller
                     }
                 }
                 $this->load->view('main/header', $data);
-                if (!empty($previous_form['s3_filename']) && $previous_form['s3_filename'] != NULL) $this->load->view('form_i9/index_uploaded');
-                else $this->load->view('form_i9/index_new');
+                //
+                if (!empty($previous_form['s3_filename']) && $previous_form['s3_filename'] != NULL) {
+                    $this->load->view('form_i9/index_uploaded');
+                } else {
+                    $this->load->view('form_i9/index_new');
+                }
+                //
                 $this->load->view('main/footer');
             } else {
                 //
@@ -243,9 +252,6 @@ class Form_i9 extends Public_Controller
 
                 $insert_data = array();
 
-                echo $security_sid."<br>";
-                echo $previous_form['emp_app_sid']."<br>";
-                _e($previous_form,true);
                 if (sizeof($previous_form) == 0 || !$previous_form['applicant_flag'] || $security_sid == $previous_form['emp_app_sid']) {
                     // Section 1 Data Array Starts
                     $insert_data['section1_last_name'] = $formpost['section1_last_name'];
@@ -316,14 +322,11 @@ class Form_i9 extends Public_Controller
                     if ($sid == NULL) {
                         $insert_data['user_consent'] = 1;
                     }
-                    // echo '<pre>';
-                    // print_r($insert_data);
-                    // die();
 
                     // Section 1 Ends
 
                 } else if ($security_sid != $previous_form['emp_app_sid']) {
-                    echo "i am in";
+
                     // Portal Form I9 Tracker
                     $mailbody = [];
                     $mailbody['usersid'] = $employer_sid;
@@ -417,9 +420,7 @@ class Form_i9 extends Public_Controller
 
                     // Section 2,3 Ends
                 }
-                echo "dddd<br>";
-                _e($formpost,true);
-                _e($insert_data,true,true);
+
                 // TO be checked and removed
                 if (isset($formpost['section1_last_name'])) {
                     $insert_data['section1_last_name'] = $formpost['section1_last_name'];
@@ -763,9 +764,6 @@ class Form_i9 extends Public_Controller
                     if ($sid == NULL) {
                         $insert_data['user_consent'] = 1;
                     }
-                    // echo '<pre>';
-                    // print_r($insert_data);
-                    // die();
 
                     // Section 1 Ends
 
@@ -1067,7 +1065,11 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "employee_section";
             //
-            $this->load->view('2022/federal_fillable/form_i9_preview_new', $data);
+            if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
+                $this->load->view('2022/federal_fillable/form_i9_preview_new', $data);
+            } else {
+                $this->load->view('2022/federal_fillable/form_i9_preview', $data);
+            }
             //
         } else {
             redirect('login', "refresh");
@@ -1085,7 +1087,11 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "employee_section";
             //
-            $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
+                $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            } else {
+                $this->load->view('2022/federal_fillable/form_i9_download', $data);
+            }
             //
         } else {
             redirect('login', "refresh");
@@ -1103,8 +1109,12 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "complete_pdf";
             //
-            // $this->load->view('2022/federal_fillable/form_i9_print', $data);
-            $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
+            if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
+                $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
+            } else {
+                $this->load->view('2022/federal_fillable/form_i9_print', $data);
+            }
+            //
         } else {
             redirect('login', "refresh");
         }
@@ -1121,7 +1131,12 @@ class Form_i9 extends Public_Controller
             $data['pre_form'] = $previous_form;
             $data['section_access'] = "complete_pdf";
             //
-            $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
+                $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            } else {
+                $this->load->view('2022/federal_fillable/form_i9_download', $data);
+            }
+            //
         } else {
             redirect('login', "refresh");
         }
