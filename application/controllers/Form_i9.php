@@ -252,9 +252,6 @@ class Form_i9 extends Public_Controller
 
                 $insert_data = array();
 
-                echo $security_sid."<br>";
-                echo $previous_form['emp_app_sid']."<br>";
-                _e($previous_form,true);
                 if (sizeof($previous_form) == 0 || !$previous_form['applicant_flag'] || $security_sid == $previous_form['emp_app_sid']) {
                     // Section 1 Data Array Starts
                     $insert_data['section1_last_name'] = $formpost['section1_last_name'];
@@ -325,14 +322,11 @@ class Form_i9 extends Public_Controller
                     if ($sid == NULL) {
                         $insert_data['user_consent'] = 1;
                     }
-                    // echo '<pre>';
-                    // print_r($insert_data);
-                    // die();
 
                     // Section 1 Ends
 
                 } else if ($security_sid != $previous_form['emp_app_sid']) {
-                    echo "i am in";
+
                     // Portal Form I9 Tracker
                     $mailbody = [];
                     $mailbody['usersid'] = $employer_sid;
@@ -426,9 +420,7 @@ class Form_i9 extends Public_Controller
 
                     // Section 2,3 Ends
                 }
-                echo "dddd<br>";
-                _e($formpost,true);
-                _e($insert_data,true,true);
+
                 // TO be checked and removed
                 if (isset($formpost['section1_last_name'])) {
                     $insert_data['section1_last_name'] = $formpost['section1_last_name'];
@@ -772,9 +764,6 @@ class Form_i9 extends Public_Controller
                     if ($sid == NULL) {
                         $insert_data['user_consent'] = 1;
                     }
-                    // echo '<pre>';
-                    // print_r($insert_data);
-                    // die();
 
                     // Section 1 Ends
 
