@@ -214,7 +214,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
 
@@ -256,7 +255,6 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-3 col-sm-12 col-md-3 col-lg-3 text-right" style="padding-right: 0px;">
-
                                                             <button class="btn btn-success csF16 jsshowdetails">
                                                                 <i class="fa fa-eye csF16" aria-hidden="true"></i>
                                                                 &nbsp;Show Details
@@ -265,7 +263,13 @@
                                                     </td>
 
                                                 </tr>
-                                             
+
+                                                <tr style="display: none;">
+                                                    <td class="vam" >Name</td>
+                                                    <td class="vam" > Type <td>
+                                                    <td class="vam"  colspan="2"> # of teams<td>   
+                                                </tr>
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -439,12 +443,6 @@
 
     $(document).on('click', '.jsshowdetails', function(e) {
         e.preventDefault();
-        alert('sdfsd sdfsdfsdf');
-      //  $(this).parent().parent().next('tr').toggle();
-
-
-
+        $(this).closest('tr').next('tr').toggle();
     });
-
-
 </script>
