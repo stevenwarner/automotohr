@@ -493,7 +493,6 @@ foreach ($companies as $company)
                 alertify.alert('ERROR!', 'Please select at least one employee to start the process.');
                 return;
             }
-            console.log(policyObj)
 
             // for policies
             if ($('#jsMoveTimeoff').prop('checked') && policyObj.hasOwnProperty('hasErrors') && doBypass === undefined) {
@@ -734,6 +733,12 @@ foreach ($companies as $company)
 
 
         function callLoader() {
+            // get the employees
+            let selectedEmployees = [];
+            $.each($('input[name="employees_ids[]"]:checked'), function() {
+                selectedEmployees.push(parseInt($(this).val()));
+            });
+            //
             policyObj = {
                 hasErrors: []
             };
@@ -748,9 +753,12 @@ foreach ($companies as $company)
             //Get From and to Company Policies
             var myurl = "<?php echo base_url('manage_admin/copy_employees/getCompaniesPolicies') ?>" + "/" + fromCompanySid + "/" + toCompanySid;
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: myurl,
                 async: false,
+                data: {
+                    employeeIds: selectedEmployees
+                },
                 success: function(data) {
                     if (data.fromCompanyPolicies.length === 0) {
                         return start_copy_process('bypass');

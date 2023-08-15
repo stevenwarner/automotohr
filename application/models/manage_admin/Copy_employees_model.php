@@ -1121,7 +1121,7 @@ class Copy_employees_model extends CI_Model
     }
 
     //
-    public function getPoliciesByCompanyRequests(int $companyId): array
+    public function getPoliciesByCompanyRequests(int $companyId, array $employeeIds): array
     {
         //
         $policyIds = $this->db
@@ -1129,6 +1129,7 @@ class Copy_employees_model extends CI_Model
                 'distinct(timeoff_policy_sid) as timeoff_policy_sid'
             )
             ->where('company_sid', $companyId)
+            ->where_in('employee_sid', $employeeIds)
             ->get('timeoff_requests')
             ->result_array();
         //

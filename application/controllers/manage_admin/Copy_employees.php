@@ -1474,8 +1474,12 @@ class Copy_employees extends Admin_Controller
     public function getCompaniesPolicies($from_company_sid, $to_company_sid)
     {
 
-        $fromCompanyPolicies = $this->copy_employees_model->getPoliciesByCompanyRequests($from_company_sid);
-        $toCompanyPolicies = $this->copy_employees_model->getAllCompanyPolicies($to_company_sid);
+        $fromCompanyPolicies = $this->copy_employees_model->getPoliciesByCompanyRequests($from_company_sid, $this->input->post('employeeIds', true));
+        if (!$fromCompanyPolicies) {
+            $toCompanyPolicies = [];
+        } else {
+            $toCompanyPolicies = $this->copy_employees_model->getAllCompanyPolicies($to_company_sid);
+        }
 
         $data['fromCompanyPolicies'] = $fromCompanyPolicies;
         $data['toCompanyPolicies'] = $toCompanyPolicies;
