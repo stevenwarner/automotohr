@@ -1141,7 +1141,9 @@ class Copy_employees_model extends CI_Model
             $this->db
             ->select('
                 timeoff_policies.sid,
-                timeoff_policies.title
+                timeoff_policies.title,
+                timeoff_policies.policy_category_type,
+                timeoff_policies.is_archived
             ')
             ->where('company_sid', $companyId)
             ->where_in('sid', array_column($policyIds, 'timeoff_policy_sid'))

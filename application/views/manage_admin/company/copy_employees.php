@@ -679,7 +679,7 @@ foreach ($companies as $company)
                 $.each(obj.fromCompanyPolicies, function(key, value) {
                     modal += '<br /> <div class="row csPolicyRow" data-key="' + (key) + '"> ';
                     modal += '       <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
-                    modal += '                         <div > <input type="text"  class="invoice-fields csPolicyRowFrom" data-id="' + value.sid + '" value="' + value.title + '" id="" readonly>'
+                    modal += '                         <div > <input type="text"  class="invoice-fields csPolicyRowFrom" data-id="' + value.sid + '" value="' + (value.title + ' (' + (value.policy_category_type == 1 ? 'Paid' : 'UnPaid') + ') [' + (value.is_archived == 1 ? 'De-activated' : 'Active') + ']') + '" id="" readonly>'
 
                     modal += '                         </div>';
                     modal += '        </div>';
