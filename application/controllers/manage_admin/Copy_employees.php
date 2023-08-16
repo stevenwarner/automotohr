@@ -903,6 +903,9 @@ class Copy_employees extends Admin_Controller
             if ($employeeRequests) {
                 foreach ($employeeRequests as $request) {
                     //
+                    $requestId = $request['sid'];
+                    $approvedBy = $request['approved_by'];
+                    //
                     unset($request['sid']);
                     //
                     $request['company_sid'] = $destinationCompanyId;
@@ -924,6 +927,43 @@ class Copy_employees extends Admin_Controller
                             'timeoff_requests',
                             $request
                         );
+                        //
+                        if ($approvedBy) {
+                            //
+                            $newRequestId = $this->db->insert_id();
+                            //
+                            $comment = $this->timeoff_model
+                                ->getRequestApproverComment(
+                                    $requestId,
+                                    $approvedBy
+                                );
+                            // Insert the time off timeline
+                            $insertTimeline = array();
+                            $insertTimeline['request_sid'] = $newRequestId;
+                            $insertTimeline['employee_sid'] = $adminId;
+                            $insertTimeline['action'] = 'update';
+                            $insertTimeline['note'] = json_encode([
+                                'status' => $request['status'],
+                                'canApprove' => 1,
+                                'details' => [
+                                    'startDate' => $request['request_from_date'],
+                                    'endDate' => $request['request_to_date'],
+                                    'time' => $request['requested_time'],
+                                    'policyId' => $newPolicyId,
+                                    'policyTitle' => $this->db
+                                        ->select('title')
+                                        ->where('sid', $newPolicyId)
+                                        ->get('timeoff_policies')->row_array()['title'],
+                                ],
+                                'comment' => $comment
+                            ]);
+                            $insertTimeline['created_at'] = getSystemDate();
+                            $insertTimeline['updated_at'] = getSystemDate();
+                            $insertTimeline['is_moved'] = 0;
+                            $insertTimeline['comment'] = $comment;
+                            //
+                            $this->db->insert('timeoff_request_timeline', $insertTimeline);
+                        }
                     }
                 }
             }

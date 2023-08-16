@@ -6770,7 +6770,7 @@ class Timeoff_model extends CI_Model
             ->get('timeoff_requests')
             ->result_array();
     }
-    
+
     public function getEmployeeBalances(int $employeeId, int $policyId): array
     {
         //
@@ -6779,5 +6779,18 @@ class Timeoff_model extends CI_Model
             ->where('policy_sid', $policyId)
             ->get('timeoff_balances')
             ->result_array();
+    }
+
+    public function getRequestApproverComment(int $requestId, int $employeeId): string
+    {
+        //
+        $record = $this->db
+            ->where('comment')
+            ->where('request_sid', $requestId)
+            ->where('employee_sid', $employeeId)
+            ->get('timeoff_request_timeline')
+            ->row_array();
+        //
+        return $record ? $record['comment'] : '';
     }
 }
