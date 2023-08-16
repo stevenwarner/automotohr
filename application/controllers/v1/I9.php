@@ -687,6 +687,7 @@ class I9 extends Public_Controller
 
                 $updateArray['section1_alien_registration_number'] = serialize($options);
                 $updateArray['section1_today_date'] = empty($formpost['section1_today_date']) || $formpost['section1_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section1_today_date'])->format('Y-m-d H:i:s');
+                $updateArray['version'] = 2023;
             }
             
 
