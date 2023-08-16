@@ -14,7 +14,7 @@ $(function manageEmployees() {
 	/**
 	 * holds the employee id
 	 */
-	let employeeId = 49256;
+	let employeeId = 15;
 	/**
 	 * holds the modal id
 	 */
@@ -46,7 +46,7 @@ $(function manageEmployees() {
 	 */
 	$(document).on(
 		"click",
-		".jsEmployeeFlowSavePersonalDetailsBtn",
+		".jsEmployeeFlowSavePersonalDetailsBtn",581457
 		function (e) {
 			//
 			e.preventDefault();

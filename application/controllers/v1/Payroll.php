@@ -1168,7 +1168,7 @@ class Payroll extends CI_Controller
         return SendResponse(
             200,
             [
-                'msg' => 'You have successfully updated compensation.'
+                'msg' => 'You have successfully updated home address.'
             ]
         );
     }
@@ -1185,7 +1185,7 @@ class Payroll extends CI_Controller
             return SendResponse(
                 401,
                 [
-                    'errors' => ['Access denied. Please login to access this route']
+                    'errors' => ['Access denied. Please login to access this route.']
                 ]
             );
         }
