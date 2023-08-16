@@ -661,13 +661,13 @@ foreach ($companies as $company)
             modal += '  <div class="row"> ';
             modal += '      <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
             modal += '                         <div class=" page-title">'
-            modal += '                             <h1 class="page-title" style="width: 100%;">From Company</h1>';
+            modal += '                             <h1 class="page-title" style="width: 100%;">' + ($('#js-from-company option[value="' + ($('#js-from-company').val()) + '"]').text()) + '</h1>';
             modal += '                         </div>';
             modal += '        </div>';
 
             modal += '       <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
             modal += '                        <div class="page-title">'
-            modal += '                             <h1 class="page-title" style="width: 100%;">To Company</h1>';
+            modal += '                             <h1 class="page-title" style="width: 100%;">' + ($('#js-to-company option[value="' + ($('#js-to-company').val()) + '"]').text()) + '</h1>';
             modal += '                         </div>';
             modal += '        </div>';
 
@@ -679,7 +679,11 @@ foreach ($companies as $company)
                 $.each(obj.fromCompanyPolicies, function(key, value) {
                     modal += '<br /> <div class="row csPolicyRow" data-key="' + (key) + '"> ';
                     modal += '       <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
-                    modal += '                         <div > <input type="text"  class="invoice-fields csPolicyRowFrom" data-id="' + value.sid + '" value="' + (value.title + ' (' + (value.policy_category_type == 1 ? 'Paid' : 'UnPaid') + ') [' + (value.is_archived == 1 ? 'De-activated' : 'Active') + ']') + '" id="" readonly>'
+                    modal += '                         <div class="csPolicyRowFrom" data-id="' + value.sid + '" >';
+
+                    modal += `<p><strong>${value.title}</strong> (${value.is_paid == 1 ? 'Paid' : 'UnPaid'})</p>`;
+                    modal += `<p>${value.is_archived == 1 ? 'De-Activated' : 'Active'}</p>`;
+                    modal += `<p># of Requests: ${value.requests_count}</p>`;
 
                     modal += '                         </div>';
                     modal += '        </div>';
