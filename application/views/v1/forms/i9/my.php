@@ -296,7 +296,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                                         <strong class="text-danger">*</strong>
                                         &nbsp;<i class="fa fa-question-circle-o modalShow" src="section_2_expiration_date"></i>
                                     </label>
-                                    <input autocomplete="nope" type="text" name="alien_authorized_expiration_date" value="<?= $form['alien_authorized_expiration_date'] ? formatDateToDB($form['alien_authorized_expiration_date'], DB_DATE, SITE_DATE) : ''; ?>" <?= $disabled; ?> id="alien_authorized_expiration_date" class="form-control input-lg date_picker2 input-grey" />
+                                    <input autocomplete="nope" type="text" name="alien_authorized_expiration_date" value="<?= $form['alien_authorized_expiration_date'] ? date('m/d/Y',strtotime($form['alien_authorized_expiration_date'])) : ''; ?>" <?= $disabled; ?> id="alien_authorized_expiration_date" class="form-control input-lg date_picker2 input-grey" />
                                 </div>
                             </div>
                         </div>

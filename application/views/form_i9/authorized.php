@@ -232,19 +232,14 @@ for ($i = 1; $i <= 3; $i++) : ?>
                             <div class="form-group">
                                 <label>Signature of Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
 
-                                <?php if (isset($authorizedArray[$i])) : ?>
-                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>" alt="" src="<?= $authorizedArray[$i]['signature']; ?>" class="authorized_signature_img_<?= $i; ?>" />
-                                <?php endif; ?>
-                                <?php if ($form['user_consent'] != 1) : ?>
-                                    <!-- the below loaded view add e-signature -->
-                                    <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_<?= $i; ?>" data-key="<?= $i; ?>">
-                                        Create E-Signature
-                                    </a>
-                                    <div class=" img-full">
-                                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>" alt="" class="authorized_signature_img_<?= $i; ?>" />
-                                    </div>
-                                    <input type="hidden" id="section3_authorized_signature_<?= $i; ?>" name="section3_authorized_signature_<?= $i; ?>" />
-                                <?php endif; ?>
+                                <!-- the below loaded view add e-signature -->
+                                <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_<?= $i; ?>" data-key="<?= $i; ?>">
+                                    Create E-Signature
+                                </a>
+                                <div class=" img-full">
+                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>" alt="" class="authorized_signature_img_<?= $i; ?>" />
+                                </div>
+                                <input type="hidden" id="section3_authorized_signature_<?= $i; ?>" name="section3_authorized_signature_<?= $i; ?>" />
 
                                
                             </div>
