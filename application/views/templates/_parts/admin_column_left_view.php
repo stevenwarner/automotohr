@@ -22,6 +22,7 @@ $affiliate_program_menu = false;
 $email_template_module = false;
 $job_feed = false;
 $modules = false;
+$cms_menu = false;
 
 if (
     base_url(uri_string()) == site_url('manage_admin/users') ||
@@ -272,6 +273,11 @@ if (
     $this->uri->segment(2) == 'job-feed'
 ) {
     $job_feed = true;
+} else if (
+    base_url(uri_string()) == site_url('cms/pages')||
+    base_url(uri_string()) == site_url('cms/pages/edit_page')
+) {
+    $cms_menu = true;
 }
 
 ?>
@@ -786,6 +792,25 @@ if (
 
                 </li>
             <?php } ?>
+
+
+
+            <?php if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
+                <li>
+                    <a class="<?php echo $cms_menu ? 'hr-opened-menu' : 'hr-closed-menu'; ?>" href="javascript:;">Content Management System</a>
+                    <div class="submenu" <?php echo $cms_menu ? 'style="display:block;"' : ''; ?>>
+                        <div class="menu-item">
+                            <a <?php
+                                if (base_url(uri_string()) == site_url('cms/pages')) {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('cms/pages'); ?>">Pages</a>
+                        </div>
+                    </div>
+                </li>
+            <?php } ?>
+
+
             <?php $functions_names = array('activation_orders', 'accurate_background', 'manage_document'); ?>
             <?php if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
                 <li>
