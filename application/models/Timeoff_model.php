@@ -3500,9 +3500,21 @@ class Timeoff_model extends CI_Model
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return $r;
-        //
         $settings = $this->getSettings($companyId);
+        //
+        if (empty($employee)) {
+            $r['Balance']['Remaining'] = get_array_from_minutes(
+                0,
+                (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']),
+                $settings['slug']
+            );
+            $r['Balance']['Consumed'] = get_array_from_minutes(
+                0,
+                (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']),
+                $settings['slug']
+            );
+            return $r;
+        }
         $policies = $this->getCompanyPoliciesWithAccruals($companyId);
         $balances = $this->getBalances($companyId);
         // Fetch employee policies
@@ -5895,7 +5907,7 @@ class Timeoff_model extends CI_Model
         $filter_policy
     ) {
 
-        
+
         $this->db->select('
         tp.title,
         tr.request_from_date,
@@ -5936,7 +5948,7 @@ class Timeoff_model extends CI_Model
         }
 
         //
-        if ($startDate && $startDate != 'all' && $startDate !='') {
+        if ($startDate && $startDate != 'all' && $startDate != '') {
             $this->db->where('tr.request_from_date >= ', DateTime::createfromformat('m/d/Y', $startDate)->format('Y-m-d'));
         }
         //
