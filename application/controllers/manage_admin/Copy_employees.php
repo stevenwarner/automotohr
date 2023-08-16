@@ -1514,6 +1514,15 @@ class Copy_employees extends Admin_Controller
             }
         }
         //
+        if ($policies) {
+            foreach ($policies as $index => $value) {
+                //
+                if ($value['is_archived'] == 1 && $value['requests_count'] == 0) {
+                    unset($policies[$index]);
+                }
+            }
+        }
+        //
         $toCompanyPolicies = [];
         //
         if ($policies) {
