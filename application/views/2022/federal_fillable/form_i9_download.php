@@ -191,20 +191,30 @@
                     </tr>
                 </table>
                 
+                <?php 
+                    if (isSerializeString($pre_form["section1_preparer_or_translator"])) {
+                        $serializeInfo = @unserialize($pre_form['section1_preparer_or_translator']);
+                        $section1_preparer_or_translator = $serializeInfo['section1_preparer_or_translator'];
+                    } else {
+                        $section1_preparer_or_translator = $pre_form['section1_preparer_or_translator'];
+                    }
+                ?>
+            
                 <div class="bg-gray gray-box">
                     <strong>Preparer and/or Translator Certification (check one):</strong>
                     <div class="inline-element-wrp full-width">
                         <div class="element-box">
-                            <input disabled type="checkbox" id="no_preparer_tranlator" name="" <?php echo empty($pre_form['section1_preparer_or_translator']) ? 'checked' : '' ?>>
+                            <input disabled type="checkbox" id="no_preparer_tranlator" name="" <?php echo $section1_preparer_or_translator == "not-used" ? 'checked' : '' ?>>
                             <label for="no_preparer_tranlator">did not use a preparer or translator</label>
                         </div>
                         <div class="element-box">
-                            <input disabled type="checkbox" id="preparer_tranlator" name="" <?php echo !empty($pre_form['section1_preparer_or_translator'])  ? 'checked' : '' ?>>
+                            <input disabled type="checkbox" id="preparer_tranlator" name="" <?php echo $section1_preparer_or_translator == "used"  ? 'checked' : '' ?>>
                             <label for="preparer_tranlator">A preparer(s) and/or translator(s) assisted the employee in completing Section 1.</label>
                         </div>
                     </div>
                     <strong>(Fields below must be completed and signed when preparers and/or translators assist an employee in completing Section 1.)</strong>
                 </div>
+
                 <strong>I attest, under penalty of perjury, that I have assisted in the completion of Section 1 of this form and that to the best of my knowledge the information is true and correct.</strong>
                 <table class="i9-table">
                     <tbody>

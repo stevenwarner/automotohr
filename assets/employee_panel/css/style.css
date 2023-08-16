@@ -2873,3 +2873,12 @@ input[type='checkbox'].user_checkbox:checked:after {
 .goog-te-gadget-simple .VIpgJd-ZVi9od-xl07Ob-lTBxed {
   color: #fff !important;
 }
+
+.csBG5 {
+  background-color: #C9C9C9;
+  color: #000;
+}
+
+.jsStateDropDown{
+  padding: 0px 20px !important;
+}

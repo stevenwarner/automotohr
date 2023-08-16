@@ -1060,3 +1060,36 @@ if (!function_exists('copyAuthorizedI9Json')) {
     }
 }
 
+
+if (!function_exists('isValidJson')) {
+    /**
+     * checked the valide json
+     *
+     * @param string  $string
+     * @return bool
+     */
+    function isValidJson(string  $string): bool
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+    }    
+}
+
+if (!function_exists('isSerializeString')) {
+    /**
+     * checked the string is Serialize
+     *
+     * @param string  $string
+     * @return bool
+     */
+    function isSerializeString(string  $string): bool
+    {
+        $data = @unserialize($string);
+        //
+        if ($string === 'b:0;' || $data !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }    
+}

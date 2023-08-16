@@ -1806,5 +1806,6 @@
 
     </script>
 <?php }  else if ($load_view == 'new') { ?>
-    <?php $this->load->view('form_i9/index_ems'); ?>
+    <?php //$this->load->view('form_i9/index_ems'); ?>
+    <?php $this->load->view('form_i9/index_ems_new'); ?>
 <?php } ?>
