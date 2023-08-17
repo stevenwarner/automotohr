@@ -53,6 +53,17 @@ class Pages extends Admin_Controller
         $slider_data['button_text'] = $this->input->post('button_text');
         $slider_data['button_link'] = $this->input->post('button_link');
 
+        /*
+        if (isset($_FILES['pictures']) && $_FILES['pictures']['name'] != '') {
+            $file = explode(".", $_FILES['pictures']['name']);
+            $file_name = str_replace(" ", "-", $file[0]);
+            $pictures = $file_name . '-' . generateRandomString(6) . '.' . $file[1];
+            // generate_image_compressed($_FILES['pictures']['tmp_name'], 'images/' . $pictures);
+            $aws = new AwsSdk();
+            $aws->putToBucket($pictures, $_FILES['pictures']['tmp_name'], AWS_S3_BUCKET_NAME);
+        }
+*/
+
         if ($pageaction == 'addslider') {
             $slider_data['page_id'] =  $sid = $this->input->post('pageid');
             $this->pages->add_slider($slider_data);

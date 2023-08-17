@@ -180,7 +180,9 @@
                                     <span class="selected-file" id="name_pictures">No file
                                         selected</span>
                                     <input type="file" name="pictures" id="pictures" onchange="check_slider_picture('pictures')">
-                                    <a href="javascript:;">Choose File</a>
+                                    <a href="javascript:;">Choose File</a> <br><br><br>
+                                    <span id="picture_error" class="text-danger"></span>
+
                                 </div>
                             </li>
                             <input type="hidden" name="sliderid" value="0">
@@ -211,15 +213,20 @@
 
     $("#add_slider_button").click(function() {
         var description_heading = $('#description_heading').val();
+        var picture = $('#pictures').val();
+
+        
         if (description_heading == '') {
-            $('#description_heading_error').html('<strong>Please provide title</strong>');
+            $('#description_heading_error').html('<strong>Please provide description heading</strong>');
+        } else if (picture == '') {
+            $('#picture_error').html('<strong>Please provide background image</strong>');
         } else {
             document.getElementById("addsliderform").submit();
         }
 
     });
 
-
+    
 
     function check_slider_picture(val) {
         var fileName = $("#" + val).val();
@@ -239,5 +246,4 @@
             $('#name_' + val).html('Please Select');
         }
     }
-
 </script>
