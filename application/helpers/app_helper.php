@@ -984,7 +984,7 @@ if (!function_exists('copyPrepareI9Json')) {
         $updateArray = [];
         $updateArray['section1_preparer_json'] = json_encode($details);
         $updateArray['section1_preparer_or_translator'] = "used";
-        
+
         //
         // get CI instance
         $CI = &get_instance();
@@ -1043,13 +1043,12 @@ if (!function_exists('copyAuthorizedI9Json')) {
                     'section3_alternative_procedure' => 0,
                 ];
             }
-         
         }
         //
         //
         $updateArray = [];
         $updateArray['section3_authorized_json'] = json_encode($details);
-        
+
         //
         // get CI instance
         $CI = &get_instance();
@@ -1063,7 +1062,7 @@ if (!function_exists('copyAuthorizedI9Json')) {
 
 if (!function_exists('isValidJson')) {
     /**
-     * checked the valide json
+     * checked the valid json
      *
      * @param string  $string
      * @return bool
@@ -1072,7 +1071,7 @@ if (!function_exists('isValidJson')) {
     {
         json_decode($string);
         return json_last_error() === JSON_ERROR_NONE;
-    }    
+    }
 }
 
 if (!function_exists('isSerializeString')) {
@@ -1082,14 +1081,14 @@ if (!function_exists('isSerializeString')) {
      * @param string  $string
      * @return bool
      */
-    function isSerializeString(string  $string): bool
+    function isSerializeString($string): bool
     {
-        $data = @unserialize($string);
-        //
-        if ($string === 'b:0;' || $data !== false) {
-            return true;
-        } else {
+        if (!$string) {
             return false;
         }
-    }    
+        //
+        $data = @unserialize($string);
+        //
+        return is_array($data) ? true : false;
+    }
 }
