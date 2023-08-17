@@ -67,7 +67,7 @@
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Social security Number (SSN) <strong class="text-danger">*</strong></label>
-                <input type="text" class="form-control input-lg jsEmployeeFlowSSN" placeholder="___-__-____" value="<?= _secret($personalDetails['ssn']); ?>" />
+                <input type="text" class="form-control input-lg jsEmployeeFlowSSN" placeholder="___-__-____" value="<?= $personalDetails['ssn'] ? _secret($personalDetails['ssn']) : ''; ?>" />
             </div>
 
             <!--  -->

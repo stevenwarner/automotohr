@@ -51,10 +51,10 @@
                     </strong>
                 </p>
                 <select class="form-control jsEmployeeFlowFilingStatus">
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Head of Household">Head of Household</option>
-                    <option value="Exempt from withholding">Exempt from withholding</option>
+                    <option <?= $record['filing_status'] && $record['filing_status'] === 'Single' ? 'selected' : ''; ?> value="Single">Single</option>
+                    <option <?= $record['filing_status'] && $record['filing_status'] === 'Married' ? 'selected' : ''; ?> value="Married">Married</option>
+                    <option <?= $record['filing_status'] && $record['filing_status'] === 'Head Of Household' ? 'selected' : ''; ?> value="Head of Household">Head of Household</option>
+                    <option <?= $record['filing_status'] && $record['filing_status'] === 'Exempt from withholding' ? 'selected' : ''; ?> value="Exempt from withholding">Exempt from withholding</option>
                 </select>
             </div>
 
@@ -69,12 +69,12 @@
                     </strong>
                 </p>
                 <label class="control control--radio">
-                    <input type="radio" name="jsEmployeeFlowMultipleJobs" class="jsEmployeeFlowMultipleJobs" value="yes" />Yes
+                    <input type="radio" name="jsEmployeeFlowMultipleJobs" class="jsEmployeeFlowMultipleJobs" value="yes" <?= $record['two_jobs'] == 1 ? 'checked' : ''; ?> />Yes
                     <div class="control__indicator"></div>
                 </label>
                 <br />
                 <label class="control control--radio">
-                    <input type="radio" name="jsEmployeeFlowMultipleJobs" class="jsEmployeeFlowMultipleJobs" value="no" />No
+                    <input type="radio" name="jsEmployeeFlowMultipleJobs" class="jsEmployeeFlowMultipleJobs" value="no" <?= $record['two_jobs'] == 0 ? 'checked' : ''; ?> />No
                     <div class="control__indicator"></div>
                 </label>
             </div>
@@ -89,7 +89,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowDependents" />
+                <input type="text" class="form-control jsEmployeeFlowDependents" value="<?= $record['dependents_amount'] ?? '0.0'; ?>" />
             </div>
 
             <!--  -->
@@ -102,7 +102,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowOtherIncome" />
+                <input type="text" class="form-control jsEmployeeFlowOtherIncome" value="<?= $record['other_income'] ?? '0.0'; ?>" />
             </div>
 
             <!--  -->
@@ -115,7 +115,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowDeductions" />
+                <input type="text" class="form-control jsEmployeeFlowDeductions" value="<?= $record['deductions'] ?? '0.0'; ?>" />
             </div>
 
             <!--  -->
@@ -128,7 +128,7 @@
                         </em>
                     </strong>
                 </p>
-                <input type="text" class="form-control jsEmployeeFlowExtraWithholding" />
+                <input type="text" class="form-control jsEmployeeFlowExtraWithholding" value="<?= $record['extra_withholding'] ?? '0.0'; ?>" />
             </div>
 
         </form>

@@ -1702,7 +1702,7 @@ class Payroll_model extends CI_Model
             ->get('users')
             ->row_array();
     }
-    
+
     /**
      * get employee federal tax
      *
@@ -1713,8 +1713,19 @@ class Payroll_model extends CI_Model
      */
     public function getEmployeeFederalTax(int $employeeId): array
     {
-        // get the company location
-        return [];
+        // get
+        return $this->db
+            ->select('
+                filing_status,
+                extra_withholding,
+                two_jobs,
+                dependents_amount,
+                other_income,
+                deductions
+            ')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_employees_federal_tax')
+            ->row_array();
     }
 
     /**
@@ -2226,6 +2237,134 @@ class Payroll_model extends CI_Model
         $this->db
             ->where(['sid' => $employeeId])
             ->update('users', $upd);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * create employee's federal tax on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function createEmployeeFederalTax(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'createFederalTax',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        // $gustoResponse = json_decode(
+        //     '{"w4_data_type":"rev_2020_w4","filing_status":null,"extra_withholding":null,"two_jobs":null,"dependents_amount":null,"other_income":null,"deductions":null,"version":"d836a841bac092665c3c375268b3b394"}',
+        //     true
+        // );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // set update array
+        $upd = [];
+        $upd['gusto_version'] = $gustoResponse['version'];
+        $upd['employee_sid'] = $employeeId;
+        $upd['filing_status'] = $gustoResponse['filing_status'];
+        $upd['extra_withholding'] = $gustoResponse['extra_withholding'];
+        $upd['two_jobs'] = $gustoResponse['two_jobs'];
+        $upd['dependents_amount'] = $gustoResponse['dependents_amount'];
+        $upd['other_income'] = $gustoResponse['other_income'];
+        $upd['deductions'] = $gustoResponse['deductions'];
+        $upd['w4_data_type'] = $data['w4_data_type'];
+        $upd['created_at'] = $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->insert('gusto_employees_federal_tax', $upd);
+        //
+        return $this->updateEmployeeFederalTax($employeeId, $data);
+    }
+
+    /**
+     * create employee's federal tax on Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeeFederalTax(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // let's make request
+        $request = [];
+        $request['version'] = $this->db
+            ->select('gusto_version')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_employees_federal_tax')
+            ->row_array()['gusto_version'];
+        $request['filing_status'] = $data['filing_status'];
+        $request['extra_withholding'] = $data['extra_withholding'];
+        $request['two_jobs'] = $data['two_jobs'];
+        $request['dependents_amount'] = $data['dependents_amount'];
+        $request['other_income'] = $data['other_income'];
+        $request['deductions'] = $data['deductions'];
+        $request['w4_data_type'] = 'rev_2020_w4';
+        // response
+        $gustoResponse = gustoCall(
+            'createFederalTax',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // set update array
+        $upd = [];
+        $upd['gusto_version'] = $gustoResponse['version'];
+        $upd['filing_status'] = $gustoResponse['filing_status'];
+        $upd['extra_withholding'] = $gustoResponse['extra_withholding'];
+        $upd['two_jobs'] = $gustoResponse['two_jobs'];
+        $upd['dependents_amount'] = $gustoResponse['dependents_amount'];
+        $upd['other_income'] = $gustoResponse['other_income'];
+        $upd['deductions'] = $gustoResponse['deductions'];
+        $upd['w4_data_type'] = $request['w4_data_type'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('employee_sid', $employeeId)
+            ->update('gusto_employees_federal_tax', $upd);
         //
         return ['success' => true];
     }

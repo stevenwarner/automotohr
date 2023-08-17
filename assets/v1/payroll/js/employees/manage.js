@@ -14,7 +14,7 @@ $(function manageEmployees() {
 	/**
 	 * holds the employee id
 	 */
-	let employeeId = 15;
+	let employeeId = 16;
 	/**
 	 * holds the modal id
 	 */
@@ -46,7 +46,7 @@ $(function manageEmployees() {
 	 */
 	$(document).on(
 		"click",
-		".jsEmployeeFlowSavePersonalDetailsBtn",581457
+		".jsEmployeeFlowSavePersonalDetailsBtn",
 		function (e) {
 			//
 			e.preventDefault();
@@ -296,17 +296,8 @@ $(function manageEmployees() {
 		//
 		let errorArray = [];
 		// validation
-		if (!obj.street_1) {
-			errorArray.push('"street 1" is missing.');
-		}
-		if (!obj.city) {
-			errorArray.push('"City" is missing.');
-		}
-		if (!obj.state) {
-			errorArray.push('"State" is missing.');
-		}
-		if (!obj.zip) {
-			errorArray.push('"Zip" is missing.');
+		if (!obj.filing_status) {
+			errorArray.push('"Filing status" is missing.');
 		}
 		//
 		if (errorArray.length) {
@@ -325,7 +316,7 @@ $(function manageEmployees() {
 		//
 		XHR = $.ajax({
 			url: baseUrl(
-				"payrolls/flow/employee/" + employeeId + "/home_address"
+				"payrolls/flow/employee/" + employeeId + "/federal_tax"
 			),
 			method: "POST",
 			data: obj,
@@ -361,7 +352,7 @@ $(function manageEmployees() {
 				Body: `<div id="${modalId}Body"></div>`,
 			},
 			function () {
-				loadView("personal_details");
+				loadView("federal_tax");
 			}
 		);
 	}
@@ -414,4 +405,8 @@ $(function manageEmployees() {
 	}
 
 	employeeOnboardFlow();
+
+	$.ajaxSetup({
+		cache: false,
+	});
 });

@@ -909,7 +909,7 @@ class Payroll extends CI_Controller
                     $employeeId
                 );
         } elseif ($step === 'federal_tax') {
-            //
+            // get federal tax record
             $data['record'] = $this->payroll_model
                 ->getEmployeeFederalTax(
                     $employeeId
@@ -974,7 +974,7 @@ class Payroll extends CI_Controller
         //
         if ($errorsArray) {
             return SendResponse(
-                404,
+                400,
                 ['errors' => $errorsArray]
             );
         }
@@ -989,7 +989,7 @@ class Payroll extends CI_Controller
         //
         if (!$gustoEmployee) {
             return SendResponse(
-                404,
+                400,
                 ['errors' => 'The selected employee is not on payroll.']
             );
         }
@@ -1003,7 +1003,7 @@ class Payroll extends CI_Controller
         //
         if ($response['errors']) {
             return SendResponse(
-                404,
+                400,
                 $response
             );
         }
@@ -1054,7 +1054,7 @@ class Payroll extends CI_Controller
         //
         if ($errorsArray) {
             return SendResponse(
-                404,
+                400,
                 ['errors' => $errorsArray]
             );
         }
@@ -1069,7 +1069,7 @@ class Payroll extends CI_Controller
         //
         if (!$gustoEmployee) {
             return SendResponse(
-                404,
+                400,
                 ['errors' => 'The selected employee is not on payroll.']
             );
         }
@@ -1083,7 +1083,7 @@ class Payroll extends CI_Controller
         //
         if ($response['errors']) {
             return SendResponse(
-                404,
+                400,
                 $response
             );
         }
@@ -1124,7 +1124,7 @@ class Payroll extends CI_Controller
         //
         if ($errorsArray) {
             return SendResponse(
-                404,
+                400,
                 ['errors' => $errorsArray]
             );
         }
@@ -1139,7 +1139,7 @@ class Payroll extends CI_Controller
         //
         if (!$gustoEmployee) {
             return SendResponse(
-                404,
+                400,
                 ['errors' => 'The selected employee is not on payroll.']
             );
         }
@@ -1160,7 +1160,7 @@ class Payroll extends CI_Controller
         //
         if ($response['errors']) {
             return SendResponse(
-                404,
+                400,
                 $response
             );
         }
@@ -1169,6 +1169,72 @@ class Payroll extends CI_Controller
             200,
             [
                 'msg' => 'You have successfully updated home address.'
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow home address
+     *
+     * @param int    $employeeId
+     * @return json
+     */
+    public function updateEmployeeFederalTax(int $employeeId): array
+    {
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        // validation
+        if (!$post['filing_status']) {
+            $errorsArray[] = '"Filing status" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                400,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+        // get the job
+        $gustoFederalTax = $this->db
+            ->where('employee_sid', $employeeId)
+            ->count_all_results('gusto_employees_federal_tax');
+        //
+        $method = !$gustoFederalTax ? 'createEmployeeFederalTax' : 'updateEmployeeFederalTax';
+        // let's update employee's home address
+        $response = $this->payroll_model
+            ->$method(
+                $employeeId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated federal tax.'
             ]
         );
     }

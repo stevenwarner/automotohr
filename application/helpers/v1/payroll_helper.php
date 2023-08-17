@@ -283,6 +283,8 @@ if (!function_exists('getUrl')) {
         // home address urls
         $urls['updateHomeAddress'] = "v1/home_addresses/$key1";
         $urls['createHomeAddress'] = "v1/employees/$key1/home_addresses";
+        // federal tax
+        $urls['createFederalTax'] = "v1/employees/$key1/federal_taxes";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
