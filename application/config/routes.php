@@ -1840,3 +1840,5 @@ $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 $route['cms/pages'] = 'manage_admin/2022/Pages';
 $route['cms/pages/edit_page/(:num)'] = 'manage_admin/2022/Pages/editPage/$1';
 $route['cms/pages/add_slider'] = 'manage_admin/2022/Pages/addSlider';
+$route['cms/pages/handler'] = 'manage_admin/2022/Pages/handler';
+
