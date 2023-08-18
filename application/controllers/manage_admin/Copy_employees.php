@@ -311,7 +311,7 @@ class Copy_employees extends Admin_Controller
                 $this->session->set_flashdata('message', '<b>Success:</b> Employee Merged Successfully!');
                 //
                 //  transfer employee timeoff request
-                if ($formpost['timeoff'] == 1) {
+                if ($formpost['timeoff'] == 1 && is_array($formpost['policyObj'])) {
 
                     $managePolicies = $formpost['policyObj'];
 
@@ -799,7 +799,7 @@ class Copy_employees extends Admin_Controller
                 $this->db->where('sid', $new_employee_sid)->update('users', ['transfer_date' => $transferDate]);
 
                 //  transfer employee timeoff request
-                if ($formpost['timeoff'] == 1) {
+                if ($formpost['timeoff'] == 1 && is_array($formpost['policyObj'])) {
                     $this->transferEmployeeTimeOff($employee_sid, $new_employee_sid, $from_company, $to_company, $formpost['policyObj']);
                 }
 
