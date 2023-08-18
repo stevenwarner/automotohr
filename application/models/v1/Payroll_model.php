@@ -1729,6 +1729,45 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * get employee state tax
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeeStateTax(int $employeeId): array
+    {
+        // get
+        $record = $this->db
+            ->select('state_code, questions_json, file_new_hire_report, is_work_state')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_employees_state_tax')
+            ->row_array();
+        //record not found
+        if (!$record) {
+            $response = $this->syncEmployeeStateTaxFromGusto(
+                $employeeId
+            );
+            //
+            if (!$response['errors']) {
+                // get
+                $record = $this->db
+                    ->select('state_code, questions_json, file_new_hire_report, is_work_state')
+                    ->where('employee_sid', $employeeId)
+                    ->get('gusto_employees_state_tax')
+                    ->row_array();
+            }
+        }
+        //
+        if ($record) {
+            $record['state_name'] = getStateColumn(
+                ['state_code' => $record['state_code']],
+                'state_name'
+            );
+        }
+        return $record;
+    }
+
+    /**
      * update employee's profile details on Gusto
      *
      * @param int   $employeeId
@@ -2271,10 +2310,6 @@ class Payroll_model extends CI_Model
             [],
             'GET'
         );
-        // $gustoResponse = json_decode(
-        //     '{"w4_data_type":"rev_2020_w4","filing_status":null,"extra_withholding":null,"two_jobs":null,"dependents_amount":null,"other_income":null,"deductions":null,"version":"d836a841bac092665c3c375268b3b394"}',
-        //     true
-        // );
         //
         $errors = hasGustoErrors($gustoResponse);
         //
@@ -2365,6 +2400,145 @@ class Payroll_model extends CI_Model
         $this->db
             ->where('employee_sid', $employeeId)
             ->update('gusto_employees_federal_tax', $upd);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * get employee's state tax from Gusto
+     *
+     * @param int   $employeeId
+     */
+    public function syncEmployeeStateTaxFromGusto(
+        int $employeeId
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getStateTax',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$gustoResponse) {
+            return ['success' => true];
+        }
+        //
+        foreach ($gustoResponse as $tax) {
+            //
+            $whereArray = [
+                'employee_sid' => $employeeId,
+                'state_code' => $tax['state']
+            ];
+            //
+            $dataArray = [];
+            $dataArray['state_code'] = $tax['state'];
+            $dataArray['file_new_hire_report'] = $tax['file_new_hire_report'];
+            $dataArray['is_work_state'] = $tax['is_work_state'];
+            $dataArray['questions_json'] = json_encode($tax['questions']);
+            $dataArray['updated_at'] = getSystemDate();
+            //
+            if (!$this->db->where($whereArray)->count_all_results('gusto_employees_state_tax')) {
+                // insert
+                $dataArray['created_at'] = $dataArray['updated_at'];
+                $dataArray['employee_sid'] = $employeeId;
+                //
+                $this->db
+                    ->insert('gusto_employees_state_tax', $dataArray);
+            } else {
+                // update
+                $this->db
+                    ->where($whereArray)
+                    ->update('gusto_employees_state_tax', $dataArray);
+            }
+        }
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * update employee's state tax from Gusto
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeeStateTax(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        //
+        $request = [
+            'states' => [$data]
+        ];
+
+        // response
+        $gustoResponse = gustoCall(
+            'updateStateTax',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$gustoResponse) {
+            return ['success' => true];
+        }
+        //
+        foreach ($gustoResponse as $tax) {
+            //
+            $whereArray = [
+                'employee_sid' => $employeeId,
+                'state_code' => $tax['state']
+            ];
+            //
+            $dataArray = [];
+            $dataArray['state_code'] = $tax['state'];
+            $dataArray['file_new_hire_report'] = $tax['file_new_hire_report'];
+            $dataArray['is_work_state'] = $tax['is_work_state'];
+            $dataArray['questions_json'] = json_encode($tax['questions']);
+            $dataArray['updated_at'] = getSystemDate();
+            // update
+            $this->db
+                ->where($whereArray)
+                ->update('gusto_employees_state_tax', $dataArray);
+        }
         //
         return ['success' => true];
     }

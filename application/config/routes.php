@@ -1740,3 +1740,4 @@ $route['payrolls/flow/employee/(:num)/personal_details']['post'] = 'v1/Payroll/u
 $route['payrolls/flow/employee/(:num)/compensation']['post'] = 'v1/Payroll/updateEmployeeCompensation/$1';
 $route['payrolls/flow/employee/(:num)/home_address']['post'] = 'v1/Payroll/updateEmployeeHomeAddress/$1';
 $route['payrolls/flow/employee/(:num)/federal_tax']['post'] = 'v1/Payroll/updateEmployeeFederalTax/$1';
+$route['payrolls/flow/employee/(:num)/state_tax']['post'] = 'v1/Payroll/updateEmployeeStateTax/$1';

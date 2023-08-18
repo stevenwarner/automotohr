@@ -914,6 +914,18 @@ class Payroll extends CI_Controller
                 ->getEmployeeFederalTax(
                     $employeeId
                 );
+        } elseif ($step === 'state_tax') {
+            // get federal tax record
+            $data['record'] = $this->payroll_model
+                ->getEmployeeStateTax(
+                    $employeeId
+                );
+        } elseif ($step === 'payment_method') {
+            // get payment method
+            $data['record'] = $this->payroll_model
+                ->getEmployeePaymentMethod(
+                    $employeeId
+                );
         }
         //
         return SendResponse(
@@ -1235,6 +1247,104 @@ class Payroll extends CI_Controller
             200,
             [
                 'msg' => 'You have successfully updated federal tax.'
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow state tax
+     *
+     * @param int    $employeeId
+     * @return json
+     */
+    public function updateEmployeeStateTax(int $employeeId): array
+    {
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        //
+        if (!$post) {
+            $errorsArray[] = '"Data fields" are missing.';
+        } else {
+            //
+            $record = $this->db
+                ->select('questions_json, state_code')
+                ->where('employee_sid', $employeeId)
+                ->get('gusto_employees_state_tax')
+                ->row_array();
+            // get the state questions
+            $questionsObj = json_decode($record['questions_json'], true);
+            //
+            $tmp = [];
+            //
+            foreach ($questionsObj as $question) {
+                $tmp[$question['key']] = $question;
+            }
+            //
+            $questionsObj = $tmp;
+            unset($tmp);
+
+            foreach ($post as $index => $value) {
+                //
+                if ($questionsObj[$index]['input_question_format']['type'] !== 'Select' && $value < 0) {
+                    $errorsArray[] = '"' . ($questionsObj[$index]['label']) . '" can not be less than 0.';
+                }
+                //
+                if ($questionsObj[$index]['input_question_format']['type'] !== 'Select' && !$value) {
+                    $value = 0;
+                } elseif ($questionsObj[$index]['input_question_format']['type'] === 'Select') {
+                    $value = $value == 'yes' ? "true" : $value;
+                    $value = $value == 'no' ? "false" : $value;
+                }
+                //
+                if ($questionsObj[$index]['answers'][0]['value']) {
+                    $questionsObj[$index]['answers'][0]['value'] = $value;
+                } else {
+                    $questionsObj[$index]['answers'] = [['value' => $value, 'valid_from' => '2010-01-01']];
+                }
+            }
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                400,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+        // let's update employee's state tax
+        $response = $this->payroll_model
+            ->updateEmployeeStateTax(
+                $employeeId,
+                ['state' => $record['state_code'], 'questions' => array_values($questionsObj)]
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated state tax.'
             ]
         );
     }

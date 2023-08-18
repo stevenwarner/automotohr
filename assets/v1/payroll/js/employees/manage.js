@@ -335,6 +335,86 @@ $(function manageEmployees() {
 	});
 
 	/**
+	 * State tax triggers
+	 */
+	$(document).on("click", ".jsEmployeeFlowSaveStateTaxBtn", function (e) {
+		//
+		e.preventDefault();
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		//
+		let obj = {};
+		//
+		let errorArray = [];
+		//
+		$(".jsEmployeeFlowStateTax").map(function () {
+			//
+			if (
+				$(this).prop("tagName") === "INPUT" &&
+				$(this).prop("type") === "number"
+			) {
+				//
+				obj[$(this).prop("name")] = $(this).val().trim();
+				//
+				if ($(this).val().trim() < 0) {
+					errorArray.push(
+						'"' +
+							$(this).prop("name").replace(/_/gi, " ") +
+							'" can not be less than 0.'
+					);
+				}
+			} else if ($(this).prop("tagName") === "SELECT") {
+				obj[$(this).prop("name")] = $(
+					'select[name="' +
+						$(this).prop("name") +
+						'"] option:selected'
+				).val();
+				//
+				if (!$(this).val()) {
+					errorArray.push(
+						'"' +
+							$(this).prop("name").replace(/_/gi, " ") +
+							'" is missing.'
+					);
+				}
+			}
+		});
+		//
+		if (errorArray.length) {
+			return alertify.alert(
+				"Error!",
+				getErrorsStringFromArray(errorArray),
+				CB
+			);
+		}
+
+		ml(
+			true,
+			`${modalId}Loader`,
+			"Please wait, while we are processing your request."
+		);
+		//
+		XHR = $.ajax({
+			url: baseUrl("payrolls/flow/employee/" + employeeId + "/state_tax"),
+			method: "POST",
+			data: obj,
+		})
+			.success(function (resp) {
+				//
+				return alertify.alert("Success!", resp.msg, CB);
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				//
+				XHR = null;
+				//
+				ml(false, `${modalId}Loader`);
+			});
+	});
+
+	/**
 	 * starts the employee onboard flow
 	 * @returns
 	 */
@@ -352,7 +432,7 @@ $(function manageEmployees() {
 				Body: `<div id="${modalId}Body"></div>`,
 			},
 			function () {
-				loadView("federal_tax");
+				loadView("state_tax");
 			}
 		);
 	}
@@ -399,7 +479,7 @@ $(function manageEmployees() {
 				format: "mm/dd/yyyy",
 				changeYear: true,
 				changeMonth: true,
-				yearRange: "-100:+0",
+				yearRange: "-100:+10",
 			});
 		}
 	}
