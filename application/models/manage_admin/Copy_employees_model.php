@@ -1111,7 +1111,9 @@ class Copy_employees_model extends CI_Model
             ->select('
                 sid,
                 title,
-                is_archived
+                is_archived,
+                is_entitled_employee,
+                assigned_employees
             ')
             ->where('company_sid', $companyId)
             ->order_by('is_archived', 'ASC');
