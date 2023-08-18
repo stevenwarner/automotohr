@@ -191,4 +191,5 @@ $(function LMSEmployeeCourses() {
 	}
 	//
 	getLMSAssignCourses();
+	
 });

@@ -25,6 +25,22 @@ class Course_model extends CI_Model
         }
     }
 
+    public function checkEmployeeCourseCompleted($companyId, $employeeId, $courseId)
+    {
+        $this->db->select('course_status');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('course_sid', $courseId);
+        $this->db->where('lesson_status', 'completed');
+        $result = $this->db->get('lms_employee_course')->row_array();
+        //
+        if (!empty($result) && $result['course_status'] == 'passed') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getCourseInfo($sid)
     {
         $this->db->select('course_title, course_content, course_type, course_questions, Imsmanifist_json');

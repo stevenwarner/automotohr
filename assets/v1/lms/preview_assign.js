@@ -1,6 +1,56 @@
 $(function LMSEmployeeCourses() {
 	// set the xhr
 	let XHR = null;
+
+	/**
+	 * start course
+	 */
+	$(".jsStartCourseButton").click(function (event) {
+		// prevent default event
+		event.preventDefault();
+		//
+		alertify.confirm(
+			"Are you sure you want to start this course?",
+			function () {
+				startCourse();
+			},
+			CB
+		);
+	});
+
+	function startCourse () {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url: apiURL + "lms/trainings/" + employeeId + "/" + courseId + "/start",
+			method: "GET",
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				// set the view
+				$("#jsPreviewCourse").html(response);
+				//
+				if (courseType === "manual") {
+					getCourseQuestions();
+				}
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
+
 	// set the default filter
 	if (courseType === "scorm") {
 		function sendCourseToSave(CMIElements) {
@@ -273,5 +323,9 @@ $(function LMSEmployeeCourses() {
 			});
 	}
 	//
-	getLMSAssignCourse();
+	if (lessonStatus === "not_started") {
+		ml(false, "jsPageLoader");
+	} else if (lessonStatus === "started") {
+		getLMSAssignCourse();
+	}
 });

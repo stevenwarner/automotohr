@@ -26,6 +26,9 @@
                             <div id="jsPreviewCourse"></div>
                         </div>
                     </div>
+                    <div class="section-inner" id="jsStartCourseDiv">
+                        <button class="btn btn-lg btn-orange csRadius5 jsStartCourseButton">Start Course</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -38,4 +41,5 @@
     var scormVersion = "<?php echo $courseInfo['version']; ?>";
     var mode = "<?php echo $viewMode; ?>";
     var CMIElementsObj = <?= json_encode($CMIObject); ?>;
+    var lessonStatus = "<?php echo $lessonStatus; ?>";
 </script>

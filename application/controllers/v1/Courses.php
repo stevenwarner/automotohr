@@ -80,7 +80,20 @@ class Courses extends Public_Controller
         $data['security_details'] = db_get_access_level_details($employeeId);
         //
         // Check if course is already taken then move it to history if needed
-        $this->course_model->moveCourseHistory($sid, $employeeId, $companyId);
+        // $this->course_model->moveCourseHistory($sid, $employeeId, $companyId);
+        //
+        $lessonStatus = '';
+        //
+        if (!$this->course_model->checkEmployeeCourse($companyId, $employeeId, $sid)) {
+            _e("record not found",true);
+            $lessonStatus = 'not_started';
+        } else {
+            if ($this->course_model->checkEmployeeCourseCompleted($companyId, $employeeId, $sid)) {
+                $lessonStatus = 'not_started';
+            } else {
+                $lessonStatus = 'started';
+            }
+        }
         //
         $courseInfo = $this->course_model->getCourseInfo($sid);
         //
@@ -93,6 +106,8 @@ class Courses extends Public_Controller
         $data['load_view'] = 1;
         $data['course_sid'] = $sid;
         $data['courseInfo'] = $courseInfo;
+        $data['lessonStatus'] = $lessonStatus;
+        //
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'

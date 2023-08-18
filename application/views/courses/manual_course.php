@@ -52,4 +52,5 @@
     var courseType = "<?php echo $courseInfo['course_type']; ?>";
     var questions = <?= json_encode($questions); ?>;
     var mode = "<?php echo $viewMode; ?>";
+    var lessonStatus = "<?php echo $lessonStatus; ?>";
 </script>
