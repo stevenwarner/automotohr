@@ -699,7 +699,7 @@ foreach ($companies as $company)
 
                             let employeeCount = value.assigned_employees && value.assigned_employees != null && value.assigned_employees != '0' ? value.assigned_employees.split(',').length : 0;
                             //
-                            if (value.assigned_employees.match(/all/ig) !== null) {
+                            if (value.assigned_employees && value.assigned_employees != null && value.assigned_employees.match(/all/ig) !== null) {
                                 employeeCount = 'All';
                             }
 
