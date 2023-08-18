@@ -34,6 +34,7 @@ class Course_model extends CI_Model
         $this->db->where('lesson_status', 'completed');
         $result = $this->db->get('lms_employee_course')->row_array();
         //
+        // _e($result,true);
         if (!empty($result) && $result['course_status'] == 'passed') {
             return true;
         } else {

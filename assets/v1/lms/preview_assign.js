@@ -33,11 +33,10 @@ $(function LMSEmployeeCourses() {
 			.success(function (response) {
 				// empty the call
 				XHR = null;
-				// set the view
-				$("#jsPreviewCourse").html(response);
 				//
-				if (courseType === "manual") {
-					getCourseQuestions();
+				if (response.status === "course_started") {
+					$("#jsStartCourseDiv").hide();
+					getLMSAssignCourse();
 				}
 				//
 				ml(false, "jsPageLoader");
@@ -325,6 +324,7 @@ $(function LMSEmployeeCourses() {
 	//
 	if (lessonStatus === "not_started") {
 		ml(false, "jsPageLoader");
+		$("#jsStartCourseDiv").show();
 	} else if (lessonStatus === "started") {
 		getLMSAssignCourse();
 	}

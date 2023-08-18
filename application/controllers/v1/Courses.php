@@ -85,12 +85,13 @@ class Courses extends Public_Controller
         $lessonStatus = '';
         //
         if (!$this->course_model->checkEmployeeCourse($companyId, $employeeId, $sid)) {
-            _e("record not found",true);
             $lessonStatus = 'not_started';
         } else {
             if ($this->course_model->checkEmployeeCourseCompleted($companyId, $employeeId, $sid)) {
+                // _e("up herer",true,true);
                 $lessonStatus = 'not_started';
             } else {
+                // _e('down here', true,true);
                 $lessonStatus = 'started';
             }
         }

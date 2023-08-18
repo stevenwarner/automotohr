@@ -32,6 +32,10 @@
                         </div>
                     </div>
 
+                    <div class="section-inner dn" id="jsStartCourseDiv">
+                        <button class="btn btn-lg btn-orange csRadius5 jsStartCourseButton">Start Course</button>
+                    </div>
+
                     <div class="page-footer">
                         <h1 class="section-ttile">
                             <div style="float: right;">
