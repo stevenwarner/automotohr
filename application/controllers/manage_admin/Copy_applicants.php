@@ -123,7 +123,7 @@ class Copy_applicants extends Admin_Controller {
             $this->resp($resp);
         }
         //
-        $jobs = $this->copy_applicants_model->fetchJobsByCompanyId($formpost['fromCompanyId'], $formpost['jobType'], $formpost['page'], $this->limit);
+        $jobs = $this->copy_applicants_model->fetchJobsByCompanyId_new($formpost['fromCompanyId'], $formpost['jobType'],$formpost['applicantKeyword'], $formpost['page'], $this->limit);
         if(!$jobs){
             $resp['Response'] = 'No jobs found.';
             $this->resp($resp);
@@ -153,13 +153,14 @@ class Copy_applicants extends Admin_Controller {
         $resp['Response'] = 'Invalid request';
         // Save post
         $formpost = $this->input->post(NULL, TRUE);
+
         // Check for required indexes
         if(!isset($formpost['fromCompanyId']) || !isset($formpost['jobType'])|| !isset($formpost['page'])){
             $resp['Response'] = 'Indexes are missing from request';
             $this->resp($resp);
         }
         //
-        $applicants = $this->copy_applicants_model->fetchApplicantsByCompanyId($formpost['fromCompanyId'], $formpost['jobType'], $formpost['page'], $this->limit);
+        $applicants = $this->copy_applicants_model->fetchApplicantsByCompanyId_new($formpost['fromCompanyId'], $formpost['jobType'],$formpost['applicantKeyword'], $formpost['page'], $this->limit);
         if(!$applicants){
             $resp['Response'] = 'No jobs found.';
             $this->resp($resp);

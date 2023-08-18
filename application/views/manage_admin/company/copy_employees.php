@@ -697,7 +697,14 @@ foreach ($companies as $company)
                     if (obj.toCompanyPolicies.length > 0) {
                         $.each(obj.toCompanyPolicies, function(key, value) {
 
-                            modal += '<option class="' + (value.is_archived == 1 ? 'bg-danger' : '') + '" value="' + value.sid + '">' + value.title + '' + (value.is_archived == 1 ? ' [Deactivated]' : '') + '</option>';
+                            let employeeCount = value.assigned_employees && value.assigned_employees != null && value.assigned_employees != '0' ? value.assigned_employees.split(',').length : 0;
+                            //
+                            if (value.assigned_employees && value.assigned_employees != null && value.assigned_employees.match(/all/ig) !== null) {
+                                employeeCount = 'All';
+                            }
+
+
+                            modal += '<option class="' + (value.is_archived == 1 ? 'bg-danger' : '') + '" value="' + value.sid + '">' + value.title + '' + (value.is_archived == 1 ? ' [Deactivated]' : '') + '' + (employeeCount ? (value.is_entitled_employee == 1 ? ' - [' + (employeeCount) + ' employees included]' : ' - [' + (employeeCount) + ' employees excluded]') : '') + '</option>';
 
                         });
                     }
