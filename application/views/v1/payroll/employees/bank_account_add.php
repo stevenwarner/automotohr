@@ -17,24 +17,31 @@
         <form action="javascript:void(0)">
             <!--  -->
             <div class="form-group">
+                <label class="csF16">Account title&nbsp;
+                    <strong class="text-danger">*</strong>
+                </label>
+                <input type="number" class="form-control jsEmployeeFlowBankAccountTitle" />
+            </div>
+            <!--  -->
+            <div class="form-group">
                 <label class="csF16">Routing number (9 digits)&nbsp;
                     <strong class="text-danger">*</strong>
                 </label>
-                <input type="number" class="form-control" />
+                <input type="number" class="form-control jsEmployeeFlowBankAccountRoutingNumber" />
             </div>
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Account number&nbsp;
                     <strong class="text-danger">*</strong>
                 </label>
-                <input type="number" class="form-control" />
+                <input type="number" class="form-control jsEmployeeFlowBankAccountAccountNumber" />
             </div>
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Account type&nbsp;
                     <strong class="text-danger">*</strong>
                 </label>
-                <select class="form-control">
+                <select class="form-control jsEmployeeFlowBankAccountType">
                     <option value="Checking">Checking</option>
                     <option value="Savings">Savings</option>
                 </select>

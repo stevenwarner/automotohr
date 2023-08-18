@@ -23,35 +23,61 @@
                 </label>
                 <br>
                 <label class="control control--radio">
-                    <input type="radio" name="jsEmployeeFlowPaymentMethod" class="jsEmployeeFlowPaymentMethod" value="Direct Deposit" /> Direct Deposit
+                    <input type="radio" name="jsEmployeeFlowPaymentMethodType" class="jsEmployeeFlowPaymentMethodType" <?= $record && $record['type'] == 'Direct Deposit' ? 'checked' : ''; ?> value="Direct Deposit" /> Direct Deposit
                     <div class="control__indicator"></div>
                 </label>
                 <br>
                 <label class="control control--radio">
-                    <input type="radio" name="jsEmployeeFlowPaymentMethod" class="jsEmployeeFlowPaymentMethod" value="Check Deposit" /> Check
+                    <input type="radio" name="jsEmployeeFlowPaymentMethodType" class="jsEmployeeFlowPaymentMethodType" <?= $record && $record['type'] == 'Check' ? 'checked' : ''; ?> value="Check" /> Check
                     <div class="control__indicator"></div>
                 </label>
             </div>
         </form>
 
-        <!--  -->
-        <br />
-        <h4>
-            <strong>
-                Employee bank account
-            </strong>
-        </h4>
-        <p class="csF16">
-            Enter the details of the bank account the employee wishes to be paid with. Multiple accounts can be added after continuing this page.
-        </p>
-        <button class="btn csBG4 csW csF16">
-            <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
-            &nbsp;Add a bank account
-        </button>
+        <div class="jsEmployeeFlowPaymentMethodAccountBox <?= $record && $record['type'] === 'Direct Deposit' ? '' : 'hidden'; ?>">
+            <!--  -->
+            <br />
+            <h4>
+                <strong>
+                    Employee bank account
+                </strong>
+            </h4>
+            <p class="csF16">
+                Enter the details of the bank account the employee wishes to be paid with. Multiple accounts can be added after continuing this page.
+            </p>
+
+            <?php if ($record) {
+                $bankAccounts = json_decode($record['splits'], true);
+                //
+                if ($bankAccounts) {
+                    foreach ($bankAccounts as $index => $account) {
+            ?>
+                        <div class="alert alert-<?= $index === 0 ? 'success' : 'info' ?>">>
+                            <p>
+                                <strong><?= $record['name']; ?></strong>
+                                <sup>Account Name</sup>
+                            </p>
+                            <p>
+                                <strong><?= $record['hidden_account_number']; ?></strong>
+                                <sup>Account Number</sup>
+                            </p>
+                        </div>
+            <?php
+                    }
+                }
+            } ?>
+            <?php if ($record && json_decode($record['splits'], true) <= 2) { ?>
+                <button class="btn csBG4 csW csF16 jsEmployeeFlowPaymentMethodAddBankAccountBtn">
+                    <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
+                    &nbsp;Add a bank account
+                </button>
+            <?php } ?>
+        </div>
+
 
     </div>
     <div class="panel-footer text-right">
-        <button class="btn csBG3 csF16 jsEmployeeFlowSavePaymentMethodBtn">
+        <button class="btn csBG3 csF16 jsEmployeeFlowPaymentMethodSaveBtn">
             <i class="fa fa-save csF16"></i>
             <span>Save & continue</span>
         </button>

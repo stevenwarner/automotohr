@@ -926,6 +926,12 @@ class Payroll extends CI_Controller
                 ->getEmployeePaymentMethod(
                     $employeeId
                 );
+        } elseif ($step === 'bank_account_add') {
+            // get payment method
+            $data['record'] = $this->payroll_model
+                ->syncEmployeePaymentMethod(
+                    $employeeId
+                );
         }
         //
         return SendResponse(

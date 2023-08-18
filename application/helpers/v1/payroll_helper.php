@@ -240,9 +240,10 @@ if (!function_exists('getUrl')) {
      * @param string $index
      * @param string $key
      * @param string $key1 Optional
+     * @param string $key2 Optional
      * @return string
      */
-    function getUrl($index, $key = '', $key1 = '')
+    function getUrl($index, $key = '', $key1 = '', $key2 = '')
     {
         // set default URL
         $urls = [];
@@ -288,6 +289,11 @@ if (!function_exists('getUrl')) {
         // state tax
         $urls['getStateTax'] = "v1/employees/$key1/state_taxes";
         $urls['updateStateTax'] = "v1/employees/$key1/state_taxes";
+        // payment method
+        $urls['getPaymentMethod'] = "v1/employees/$key1/payment_method";
+        // bank account
+        $urls['addBankAccount'] = "v1/employees/$key1/bank_accounts";
+        $urls['deleteBankAccount'] = "v1/employees/$key1/bank_accounts/$key2";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
@@ -506,7 +512,8 @@ if (!function_exists('gustoCall')) {
             getUrl(
                 $event,
                 $company['gusto_uuid'],
-                $company['other_uuid'] ?? ''
+                $company['other_uuid'] ?? '',
+                $company['other_uuid_2'] ?? '',
             ),
             $curlOptions
         );

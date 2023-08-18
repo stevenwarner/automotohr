@@ -415,6 +415,18 @@ $(function manageEmployees() {
 	});
 
 	/**
+	 * Toggle between check and direct deposit
+	 */
+	$(document).on("click", ".jsEmployeeFlowPaymentMethodType", function () {
+		//
+		if ($(this).val() === "Check") {
+			$(".jsEmployeeFlowPaymentMethodAccountBox").addClass("hidden");
+		} else {
+			$(".jsEmployeeFlowPaymentMethodAccountBox").removeClass("hidden");
+		}
+	});
+
+	/**
 	 * starts the employee onboard flow
 	 * @returns
 	 */
@@ -432,7 +444,7 @@ $(function manageEmployees() {
 				Body: `<div id="${modalId}Body"></div>`,
 			},
 			function () {
-				loadView("state_tax");
+				loadView("bank_account_add");
 			}
 		);
 	}
