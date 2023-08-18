@@ -51,10 +51,11 @@ class Pages extends Admin_Controller
     {
 
         $pageaction = $this->input->post('pageaction');
-     
+
 
         if ($pageaction == 'addslider') {
-            $slider_data['page_id'] =  $sid = $this->input->post('pageid');
+            $page_id= $this->input->post('pageid');
+            $slider_data['page_id'] =  $page_id ;
             $slider_data['description_heading'] = $this->input->post('description_heading');
             $slider_data['description'] = $this->input->post('description');
             $slider_data['button_text'] = $this->input->post('button_text');
@@ -73,7 +74,10 @@ class Pages extends Admin_Controller
             $this->pages->add_slider($slider_data);
             $this->session->set_flashdata('message', 'Slider addeded successfully');
         }
+
         if ($pageaction == 'updateslider') {
+
+            $page_id= $this->input->post('pageid');
 
             $sid = $this->input->post('sliderid');
             $slider_data['description_heading'] = $this->input->post('description_heading');
@@ -99,11 +103,11 @@ class Pages extends Admin_Controller
 
         //
         if ($pageaction == 'addsection') {
+            $page_id= $this->input->post('pageid');
 
-            $section_data['page_id'] =  $sid = $this->input->post('pageid');
+            $section_data['page_id'] =  $page_id;
             $section_data['heading_1'] = $this->input->post('heading_1');
             $section_data['heading_2'] = $this->input->post('heading_2');
-
             $section_data['description'] = $this->input->post('description');
             $section_data['button_text'] = $this->input->post('button_text');
             $section_data['button_link'] = $this->input->post('button_link');
@@ -123,7 +127,30 @@ class Pages extends Admin_Controller
             $this->session->set_flashdata('message', 'Section addeded successfully');
         }
 
-        return redirect('cms/pages/edit_page/' . $sid);
+        if ($pageaction == 'updatesection') {
+            $page_id= $this->input->post('pageid');
+            $sid = $this->input->post('sectionid');
+            $section_data['heading_1'] = $this->input->post('heading_1');
+            $section_data['heading_2'] = $this->input->post('heading_2');
+            $section_data['description'] = $this->input->post('description');
+            $section_data['button_text'] = $this->input->post('button_text');
+            $section_data['button_link'] = $this->input->post('button_link');
+            $section_data['display_mode'] = $this->input->post('display_mode');
+            $section_data['updated_at'] = date('Y-m-d H:i:s');
+
+            if (isset($_FILES['sectionpictures']) && $_FILES['sectionpictures']['name'] != '') {
+                $file = explode(".", $_FILES['sectionpictures']['name']);
+                $file_name = str_replace(" ", "-", $file[0]);
+                $picture = $file_name . '-' . generateRandomString(6) . '.' . $file[1];
+                $aws = new AwsSdk();
+                $aws->putToBucket($picture, $_FILES['sectionpictures']['tmp_name'], AWS_S3_BUCKET_NAME);
+                $section_data['background_image'] = $picture;
+            }
+            $this->pages->update_section($sid, $section_data);
+            $this->session->set_flashdata('message', 'Section updated successfully');
+        }
+
+        return redirect('cms/pages/edit_page/' . $page_id);
     }
 
 
@@ -152,6 +179,28 @@ class Pages extends Admin_Controller
 
             case 'edit_slider':
                 $records = $this->pages->getSliderById($form_data['slider_sid']);
+
+                if (!$records) {
+                    $resp['Response'] = 'No record found.';
+                    $this->resp($resp);
+                }
+                //
+                $resp['Status'] = TRUE;
+                $resp['Data'] = $records;
+                $this->resp($resp);
+                break;
+
+            case 'delete_section':
+                $update_data['is_deleted'] = '1';
+                $this->pages->delete_section($form_data['section_sid'], $update_data);
+                //
+                $resp['Status'] = TRUE;
+                $resp['Response'] = 'Proceed';
+                $this->resp($resp);
+                break;
+
+            case 'edit_section':
+                $records = $this->pages->getSectionById($form_data['section_sid']);
 
                 if (!$records) {
                     $resp['Response'] = 'No record found.';

@@ -317,16 +317,16 @@
 
                             <li class="form-col-100 ">
                                 <label>Description:</label>
-                                <textarea name="description" class="invoice-fields autoheight" cols="40" rows="4" id="description"></textarea>
+                                <textarea name="description" class="invoice-fields autoheight" cols="40" rows="4" id="section_description"></textarea>
                             </li>
 
                             <li class="form-col-100 ">
                                 <label>Button Text:</label>
-                                <input type="text" name="button_text" id="button_text" class="invoice-fields">
+                                <input type="text" name="button_text" id="section_button_text" class="invoice-fields">
                             </li>
                             <li class="form-col-100 ">
                                 <label>Button Link:</label>
-                                <input type="text" name="button_link" id="button_link" class="invoice-fields">
+                                <input type="text" name="button_link" id="section_button_link" class="invoice-fields">
                             </li>
                             <li class="form-col-100 ">
                                 <label>Display Mode:</label>
@@ -347,9 +347,9 @@
 
                                 </div>
                             </li>
-                            <input type="hidden" name="sliderid" id="sliderid" value="0">
+                            <input type="hidden" name="sectionid" id="sectionid" value="0">
                             <input type="hidden" name="pageid" value="<?php echo $pageData['sid']; ?>">
-                            <input type="hidden" name="pageaction" id="pageaction" value="addsection">
+                            <input type="hidden" name="pageaction" id="sectionpageaction" value="addsection">
                         </ul>
                     </div>
                 </form>
@@ -362,18 +362,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-<div id="js-loader" class="text-center my_loader" style="display: none;">
-    <div id="file_loader" class="file_loader cs-loader-file" style="display: none; height: 1353px;"></div>
-    <div class="loader-icon-box cs-loader-box">
-        <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
-        <div class="loader-text cs-loader-text" id="js-loader-text" style="display:block; margin-top: 35px;">Please wait ...</div>
-    </div>
-</div>
-
 
 
 <!--  -->
@@ -391,7 +379,6 @@
     $("#add_slider_button").click(function() {
         var description_heading = $('#description_heading').val();
         var picture = $('#pictures').val();
-
 
         if (description_heading == '') {
             $('#description_heading_error').html('<strong>Please provide description heading</strong>');
@@ -431,7 +418,6 @@
     });
 
     $(".deleteslider").click(function() {
-
         var sliderId = $(this).data("sid");
         delete_slider(sliderId);
     });
@@ -477,9 +463,8 @@
 
         my_request.success(function(response) {
             //console.log(response.Data);
-
             $('#description_heading').val(response.Data.description_heading);
-            $('#description').val(response.Data.description);
+            $('#description').text(response.Data.description);
             $('#button_text').val(response.Data.button_text);
             $('#button_link').val(response.Data.button_link);
             $('#add_slider_button').text('Update');
@@ -492,12 +477,17 @@
 
     $("#addsection").click(function() {
         $('#add_section_button').text('Save');
-        $('#pageaction').val('addsection');
+        $('#sectionpageaction').val('addsection');
+        $('#heading_1').val('');
+        $('#heading_2').val('');
+        $('#section_description').text('');
+        $('#section_button_text').val('');
+        $('#section_button_link').val('');
         $('#sectionModal').modal('show');
     });
 
     $("#add_section_button").click(function() {
-        
+
         var heading1 = $('#heading_1').val();
         var picture = $('#sectionpictures').val();
 
@@ -514,7 +504,7 @@
 
 
     function check_section_picture(val) {
-       var fileName = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName);
@@ -532,4 +522,68 @@
         }
     }
 
+
+
+    //
+    $(".deletesection").click(function() {
+        var sectionId = $(this).data("sid");
+        delete_section(sectionId);
+    });
+
+    $(".editsection").click(function() {
+        var sectionId = $(this).data("sid");
+        edit_section(sectionId)
+    });
+
+    function delete_section(sectionId) {
+        alertify.confirm(
+            'Are you sure?',
+            'Are you sure you want to delete this section?',
+            function() {
+                var my_request;
+                my_request = $.ajax({
+                    url: '<?php echo base_url('cms/pages/handler'); ?>',
+                    type: 'POST',
+                    data: {
+                        'action': 'delete_section',
+                        'section_sid': sectionId
+                    }
+                });
+
+                my_request.success(function(response) {
+                    alertify.success('Section is Deleted');
+                    $('#' + sectionId).remove();
+                });
+            },
+            function() {
+                alertify.error('Canceled!');
+            });
+    }
+
+    function edit_section(sectionId) {
+
+        var my_request;
+        my_request = $.ajax({
+            url: '<?php echo base_url('cms/pages/handler'); ?>',
+            type: 'POST',
+            data: {
+                'action': 'edit_section',
+                'section_sid': sectionId
+            }
+        });
+
+        my_request.success(function(response) {
+            $('#heading_1').val(response.Data.heading_1);
+            $('#heading_2').val(response.Data.heading_2);
+            $('#section_description').text(response.Data.description);
+            $('#section_button_text').val(response.Data.button_text);
+            $('#section_button_link').val(response.Data.button_link);
+            $('#display_mode').val(response.Data.display_mode);
+
+            $('#add_section_button').text('Update');
+            $('#sectionpageaction').val('updatesection');
+            $('#sectionid').val(response.Data.sid);
+            $('#sectionModal').modal('show');
+        });
+    }
 </script>
