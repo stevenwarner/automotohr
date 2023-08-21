@@ -1182,6 +1182,12 @@ if (
                             </div>
                         <?php } ?>
 
+                        <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/complynetoverview')) !== false || ($this->uri->segment(3) == 'complynetoverview')) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/reports/complynetoverview'); ?>">ComplyNet Overview</a>
+                            </div>
+
                     </div>
                 </li>
             <?php } ?>

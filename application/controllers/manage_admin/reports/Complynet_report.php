@@ -140,4 +140,42 @@ class Complynet_report extends Admin_Controller
         echo json_encode($array);
         exit(0);
     }
+
+
+    public function complynetOverview()
+    {
+        // ** Check Security Permissions Checks - Start ** //
+        $redirect_url       = 'manage_admin';
+        $function_name      = 'applicants_report';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name);
+
+        $this->data['title'] = 'ComplyNet Overview Report';
+
+        $keyword = '';
+        $status = 'all';
+        $companies = '0';
+        
+        if ($this->input->post('keyword')) {
+            $keyword = $this->input->post('keyword');
+        }
+        if ($this->input->post('status')) {
+            $status = $this->input->post('status');
+        }
+        if ($this->input->post('companies')) {
+            $companies = $this->input->post('companies');
+        }
+      
+        // 
+        $this->data['complynet_companies'] =  $this->complynet_model->getComplynetCompanies();
+        $this->data['overview_data'] =  $this->complynet_model->getoverviewData($keyword,$status,$companies);
+
+        $this->data['keyword'] = $keyword;
+        $this->data['status'] = $status;
+        $this->data['companies'] = implode(',',$companies);
+
+        $this->render('manage_admin/reports/complynet_overview');
+    }
 }

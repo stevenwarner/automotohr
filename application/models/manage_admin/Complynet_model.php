@@ -70,4 +70,77 @@ class Complynet_model extends CI_Model
         $result = $this->db->get('complynet_calls')->row_array();
         return $result;
     }
+
+
+    //
+    public function getComplynetCompanies()
+    {
+        $this->db->select('company_sid,company_name');
+        $this->db->where('status', 1);
+        return $this->db->get('complynet_companies')->result_array();
+    }
+
+
+    public function getoverviewData($keyword, $status, $companies)
+    {
+
+        //
+        $overviewData['companiesTotalEmployees'] = 0;
+        $overviewData['companiesTotalEmployeesOnComplynet'] = 0;
+
+
+        if ($companies['0'] == '0' || $companies == '') {
+            $complynetCompanies = $this->getComplynetCompanies();
+            $companies = array_column($complynetCompanies, 'company_sid');
+        }
+
+        // Company employees
+        $this->db->from('users');
+
+        if ($status == 'Active') {
+            $this->db->where('general_status', 'active');
+            $this->db->where('terminated_status', 0);
+        }
+        if ($status == 'Inactive') {
+            $this->db->where('general_status', 'inactive');
+        }
+
+        if ($keyword != '') {
+            if (strpos($keyword, '@') !== false) {
+                $this->db->or_where('email', $keyword);
+            } else {
+                $this->db->where("first_name regexp '$keyword'", null, null);
+                $this->db->or_where("last_name regexp '$keyword'", null, null);
+            }
+        }
+
+
+        $this->db->where_in('parent_sid', $companies);
+        //
+        $companiesTotalEmployees = $this->db->count_all_results();
+
+
+        // ComplyNet Employees
+        $this->db->from('complynet_employees');
+        if ($status != 'all' && $status != '') {
+            $str = 'complynet_json REGEXP \'"Status":' . ($status == 'Active' ? "true" : "false") . '\'';
+            $this->db->where($str, null, null);
+        }
+
+        if ($keyword != '') {
+            $this->db->where("complynet_json regexp '$keyword'", null, null);
+        }
+
+        $this->db->where_in('company_sid', $companies);
+        //
+        $companiesTotalEmployeesOnComplynet = $this->db->count_all_results();
+
+        // echo $this->db->last_query();
+
+        $overviewData['companiesTotalEmployees'] = $companiesTotalEmployees;
+        $overviewData['companiesTotalEmployeesOnComplynet'] = $companiesTotalEmployeesOnComplynet;
+
+        //
+        return $overviewData;
+    }
 }
