@@ -7426,6 +7426,15 @@ class Hr_documents_management extends Public_Controller
                     $document_content = str_replace('{{sign_date}}', $value, $document_content);
                     $document_content = str_replace('{{signature_print_name}}', $value, $document_content);
                     $document_content = str_replace('{{short_text}}', $value, $document_content);
+
+                    //
+                    $document_content = str_replace('{{hourly_rate}}', $value, $document_content);
+                    $document_content = str_replace('{{hourly_technician}}', $value, $document_content);
+                    $document_content = str_replace('{{flat_rate_technician}}', $value, $document_content);
+                    $document_content = str_replace('{{semi_monthly_salary}}', $value, $document_content);
+                    $document_content = str_replace('{{semi_monthly_draw}}', $value, $document_content);
+
+
                     $value = '------/-------/----------------';
                     $document_content = str_replace('{{start_date}}', $value, $document_content);
 
@@ -7457,6 +7466,7 @@ class Hr_documents_management extends Public_Controller
 
                     $value = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
                     $document_content = str_replace('{{text_area}}', $value, $document_content);
+
 
                     $data['print'] = $type;
                     $data['document_file'] = 'no_pdf';
@@ -13955,7 +13965,7 @@ class Hr_documents_management extends Public_Controller
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $html = $this->load->view('2022/federal_fillable/form_i9_preview_new', $data, true);
-            } else { 
+            } else {
                 $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
             }
             //
@@ -14038,11 +14048,11 @@ class Hr_documents_management extends Public_Controller
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
             //
             if (!empty($data["pre_form"]["section1_preparer_or_translator"]) && empty($data["pre_form"]["section1_preparer_json"])) {
-                $data["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $data["pre_form"]);
+                $data["pre_form"]["section1_preparer_json"] = copyPrepareI9Json($data["pre_form"]);
             }
             //
             if (!empty($data["pre_form"]["section3_emp_sign"]) && empty($data["pre_form"]["section3_authorized_json"])) {
-                $data["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json( $data["pre_form"]);
+                $data["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json($data["pre_form"]);
             }
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
