@@ -157,7 +157,7 @@ class Complynet_report extends Admin_Controller
         $keyword = '';
         $status = 'all';
         $companies = '0';
-        
+
         if ($this->input->post('keyword')) {
             $keyword = $this->input->post('keyword');
         }
@@ -167,14 +167,14 @@ class Complynet_report extends Admin_Controller
         if ($this->input->post('companies')) {
             $companies = $this->input->post('companies');
         }
-      
+
         // 
         $this->data['complynet_companies'] =  $this->complynet_model->getComplynetCompanies();
-        $this->data['overview_data'] =  $this->complynet_model->getoverviewData($keyword,$status,$companies);
+        $this->data['overview_data'] =  $this->complynet_model->getoverviewData($keyword, $status, $companies);
 
         $this->data['keyword'] = $keyword;
         $this->data['status'] = $status;
-        $this->data['companies'] = implode(',',$companies);
+        $this->data['companies'] = implode(',', $companies);
 
         $this->render('manage_admin/reports/complynet_overview');
     }

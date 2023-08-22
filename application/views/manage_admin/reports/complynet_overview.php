@@ -122,18 +122,115 @@
                                     </div>
 
                                     <div class="row">
-
-                                        <div class="col-xs-4">
-                                            <canvas id="Chartdonutoverview"></canvas>
-
+                                        <div class="table-responsive">
+                                            <div class="col-xs-12">
+                                                <div class="hr-box">
+                                                    <div class="hr-box-header  bg-header-green">
+                                                        <strong>Overview</strong>
+                                                    </div>
+                                                    <div class="hr-innerpadding">
+                                                        <div class="row">
+                                                            <div class="col-xs-4">
+                                                                <canvas id="Chartdonutoverview"></canvas>
+                                                            </div>
+                                                            <div class="col-xs-8">
+                                                                <canvas id="overviewbarChart"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-xs-8">
-                                            sdfsdf
-                                            Bar
-                                        </div>
-
                                     </div>
 
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            <div class="col-xs-12">
+                                                <div class="hr-box">
+                                                    <div class="hr-box-header  bg-header-green">
+                                                        <strong>Employees With Misssing ALT Id</strong>
+                                                    </div>
+                                                    <div class="hr-innerpadding">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-bordered table-striped table-hover table-condensed" id="example">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Employees</th>
+                                                                                <th>Company</th>
+                                                                                <th>Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="js-data-area">
+                                                                            <?php if (!empty($overview_data['missing_altid_detail'])) {
+                                                                                foreach ($overview_data['missing_altid_detail'] as $altidRow) {
+                                                                                    $complynetJsonDataAlt = json_decode($altidRow['complynet_json'], true);
+                                                                            ?>
+                                                                                    <tr style="background-color: #f2dede;">
+                                                                                        <td class="vam"> <?php echo $complynetJsonDataAlt[0]['FirstName']; ?> <?php echo $complynetJsonDataAlt[0]['LastName']; ?> </td>
+                                                                                        <td class="vam"> <?php echo $complynetJsonDataAlt[0]['Company']; ?> </td>
+                                                                                        <td class="vam"> <a class="btn btn-success" href="javascript:void()">Update</a>
+                                                                                            <a class="btn btn-warning" href="javascript:void()">Re-Sync</a>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                            <?php }
+                                                                            } ?>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            <div class="col-xs-12">
+                                                <div class="hr-box">
+                                                    <div class="hr-box-header  bg-header-green">
+                                                        <strong>Employees With Misssing Status</strong>
+                                                    </div>
+                                                    <div class="hr-innerpadding">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-bordered table-striped table-hover table-condensed" id="example">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Employees</th>
+                                                                                <th>Company</th>
+                                                                                <th>Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="js-data-area">
+                                                                            <?php if (!empty($overview_data['missing_satatus_detail'])) {
+                                                                                foreach ($overview_data['missing_satatus_detail'] as $statusRow) {
+                                                                                    $complynetJsonData = json_decode($statusRow['complynet_json'], true);
+                                                                            ?>
+                                                                                    <tr style="background-color: #f2dede;">
+                                                                                        <td class="vam"> <?php echo $complynetJsonData[0]['FirstName']; ?> <?php echo $complynetJsonData[0]['LastName']; ?> </td>
+                                                                                        <td class="vam"> <?php echo $complynetJsonData[0]['Company']; ?> </td>
+                                                                                        <td class="vam" width='20%'>
+                                                                                            <a class="btn btn-success" href="javascript:void()">Update</a>
+                                                                                            <a class="btn btn-warning" href="javascript:void()">Re-Sync</a>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                            <?php }
+                                                                            } ?>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +248,7 @@
         closeOnSelect: false
     });
 
-    $('#js_companies').select2('val', [<?php echo $companies!=''? $companies:'0'; ?>]);
+    $('#js_companies').select2('val', [<?php echo $companies != '' ? $companies : '0'; ?>]);
 
     //============ doughnut =====
 
@@ -204,5 +301,51 @@
         type: 'doughnut',
         data: data,
         options: options
+    });
+
+
+
+    //horizontalBar
+    var ctx = document.getElementById("overviewbarChart").getContext("2d");
+    var data = {
+        labels: [""],
+        datasets: [{
+            label: "Status",
+            backgroundColor: "blue",
+            data: [<?php echo $overview_data['complynetMissingStatus']; ?>]
+        }, {
+            label: "ALT ID",
+            backgroundColor: "#fd7a2a",
+            data: [<?php echo $overview_data['complynetMissingAltId']; ?>]
+        }]
+    };
+
+    var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            barValueSpacing: 20,
+
+            title: {
+                display: true,
+                position: "top",
+                text: "Missing Status and ALT Id Summary",
+                fontSize: 18,
+                fontColor: "#111"
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                    }
+                }]
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {},
+                    color: '#fff',
+                }
+            }
+        }
     });
 </script>

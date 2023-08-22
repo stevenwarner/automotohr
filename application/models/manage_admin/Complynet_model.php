@@ -135,10 +135,54 @@ class Complynet_model extends CI_Model
         //
         $companiesTotalEmployeesOnComplynet = $this->db->count_all_results();
 
+
+        // ComplyNet Employees  Missing Status
+        $this->db->from('complynet_employees');
+        $strtrue = 'complynet_json NOT REGEXP \'"Status":true\'';
+        $strtfalse = 'complynet_json NOT REGEXP \'"Status":false\'';
+
+        $this->db->where($strtrue, null, null);
+        $this->db->where($strtfalse, null, null);
+        $this->db->where_in('company_sid', $companies);
+        //
+        $complynetMissingStatus = $this->db->count_all_results();
+
+        // ComplyNet Employees  Missing ALTId
+        $this->db->from('complynet_employees');
+        $straltidnull = 'complynet_json  REGEXP \'"AltId":"null"\'';
+        $this->db->where($straltidnull, null, null);
+        $this->db->where_in('company_sid', $companies);
+        //
+        $complynetMissingAltId = $this->db->count_all_results();
+
         // echo $this->db->last_query();
 
         $overviewData['companiesTotalEmployees'] = $companiesTotalEmployees;
         $overviewData['companiesTotalEmployeesOnComplynet'] = $companiesTotalEmployeesOnComplynet;
+        $overviewData['complynetMissingStatus'] = $complynetMissingStatus;
+        $overviewData['complynetMissingAltId'] = $complynetMissingAltId;
+
+        //Status Detail 
+        $strtrue = 'complynet_json NOT REGEXP \'"Status":true\'';
+        $strtfalse = 'complynet_json NOT REGEXP \'"Status":false\'';
+
+        $this->db->where($strtrue, null, null);
+        $this->db->where($strtfalse, null, null);
+        $this->db->where_in('company_sid', $companies);
+        $missing_satatus_detail = $this->db->get('complynet_employees')->result_array();
+
+        $overviewData['missing_satatus_detail'] = $missing_satatus_detail;
+
+
+        //Status Detail
+        $straltidnull = 'complynet_json  REGEXP \'"AltId":"null"\'';
+        $strtfalse = 'complynet_json NOT REGEXP \'"Status":false\'';
+
+        $this->db->where($straltidnull, null, null);
+        $this->db->where_in('company_sid', $companies);
+        $missing_altid_detail = $this->db->get('complynet_employees')->result_array();
+
+        $overviewData['missing_altid_detail'] = $missing_altid_detail;
 
         //
         return $overviewData;
