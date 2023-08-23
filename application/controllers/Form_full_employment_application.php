@@ -1,20 +1,22 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Form_full_employment_application extends CI_Controller {
-    public function __construct() {
+class Form_full_employment_application extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('form_full_employment_application_model');
         $this->load->model('manage_admin/documents_model');
         $this->load->model('dashboard_model');
     }
 
-    public function index($verification_key = null) { 
-      
+    public function index($verification_key = null)
+    {
         if ($verification_key != null) {
 
             $request_details = $this->form_full_employment_application_model->get_form_request($verification_key);
 
-            if (!empty($request_details)&& $request_details['status'] == "sent") {
+            if (!empty($request_details) && $request_details['status'] == "sent") {
                 $data = array();
                 $data['page_title'] = 'Full Employment Application';
                 $data['request_details'] = $request_details;
@@ -22,7 +24,7 @@ class Form_full_employment_application extends CI_Controller {
                 $user_type = $request_details['user_type'];
                 $user_sid = $request_details['user_sid'];
                 $company_details = $this->form_full_employment_application_model->get_company_details($company_sid);
-                
+
                 $user_info = $this->form_full_employment_application_model->get_user_information($company_sid, $user_type, $user_sid);
                 $field_names = array();
 
@@ -48,7 +50,7 @@ class Form_full_employment_application extends CI_Controller {
                 $birthDate = date('Y-m-d', strtotime('now'));
                 //
                 $data['birthDate'] = '';
-                if(!empty($user_info['dob']) && $user_info['dob'] != '0000-00-00'){
+                if (!empty($user_info['dob']) && $user_info['dob'] != '0000-00-00') {
                     $birthDate = $user_info['dob'];
                     $data['birthDate'] = DateTime::createfromformat('Y-m-d', $birthDate)->format('m-d-Y');
                 }
@@ -65,54 +67,54 @@ class Form_full_employment_application extends CI_Controller {
                 $data['drivers_license_details'] = isset($drivers_license['license_details']) ? $drivers_license['license_details'] : array();
 
                 $data['extra_info'] = unserialize($user_info['extra_info']);
-//                if ($user_info['full_employment_application'] == '') {
-//                    $data['user_info'] = $user_info;
-//                } else {
-                    $filtered_user_fields = array();
-                    foreach ($user_info as $key => $value) {
-                        if ($user_type == 'applicant') {
-                            switch ($key) {
-                                case 'address':
-                                    $filtered_user_fields['Location_Address'] = $value;
-                                    break;
-                                case 'city':
-                                    $filtered_user_fields['Location_City'] = $value;
-                                    break;
-                                case 'state':
-                                    $filtered_user_fields['Location_State'] = $value;
-                                    break;
-                                case 'country':
-                                    $filtered_user_fields['Location_Country'] = $value;
-                                    break;
-                                case 'zipcode':
-                                    $filtered_user_fields['Location_ZipCode'] = $value;
-                                    break;
-                                case 'phone_number':
-                                    $filtered_user_fields['PhoneNumber'] = $value;
-                                    break;
-                                default:
-                                    if (in_array($key, $field_names)) {
-                                        $filtered_user_fields[$key] = $value;
-                                    }
-                                    break;
-                            }
-                        } else {
-                            if (in_array($key, $field_names)) {
-                                $filtered_user_fields[$key] = $value;
-                            }
+                //                if ($user_info['full_employment_application'] == '') {
+                //                    $data['user_info'] = $user_info;
+                //                } else {
+                $filtered_user_fields = array();
+                foreach ($user_info as $key => $value) {
+                    if ($user_type == 'applicant') {
+                        switch ($key) {
+                            case 'address':
+                                $filtered_user_fields['Location_Address'] = $value;
+                                break;
+                            case 'city':
+                                $filtered_user_fields['Location_City'] = $value;
+                                break;
+                            case 'state':
+                                $filtered_user_fields['Location_State'] = $value;
+                                break;
+                            case 'country':
+                                $filtered_user_fields['Location_Country'] = $value;
+                                break;
+                            case 'zipcode':
+                                $filtered_user_fields['Location_ZipCode'] = $value;
+                                break;
+                            case 'phone_number':
+                                $filtered_user_fields['PhoneNumber'] = $value;
+                                break;
+                            default:
+                                if (in_array($key, $field_names)) {
+                                    $filtered_user_fields[$key] = $value;
+                                }
+                                break;
+                        }
+                    } else {
+                        if (in_array($key, $field_names)) {
+                            $filtered_user_fields[$key] = $value;
                         }
                     }
+                }
 
-                    $form_data = !empty(unserialize($user_info['full_employment_application'])) ? unserialize($user_info['full_employment_application']) : array();
-                    $user_info = array_merge($filtered_user_fields, $form_data);
+                $form_data = !empty(unserialize($user_info['full_employment_application'])) ? unserialize($user_info['full_employment_application']) : array();
+                $user_info = array_merge($filtered_user_fields, $form_data);
 
-//                echo '<pre>';print_r($user_info);die();
-                    if (!empty($company_details)) {
-                        $data['company_name'] = $company_details['CompanyName'];
-                    }
+                //                echo '<pre>';print_r($user_info);die();
+                if (!empty($company_details)) {
+                    $data['company_name'] = $company_details['CompanyName'];
+                }
 
-                    $data['user_info'] = $user_info;
-//                }
+                $data['user_info'] = $user_info;
+                //                }
 
                 $data['page_title'] = 'Full Employment Application';
                 $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
@@ -124,10 +126,10 @@ class Form_full_employment_application extends CI_Controller {
                 //$this->form_validation->set_rules('email', 'Email Address', 'valid_email|required|trim|xss_clean|is_unique[users.email]');
 
 
-                if (isset($_POST['TextBoxAddressEmailConfirm']) && strpos($_POST['TextBoxAddressEmailConfirm'], '*') == false) { 
-                     $this->form_validation->set_rules('TextBoxAddressEmailConfirm', 'Confirm Email Address', 'valid_email|required|trim|xss_clean');
-                } 
-               
+                if (isset($_POST['TextBoxAddressEmailConfirm']) && strpos($_POST['TextBoxAddressEmailConfirm'], '*') == false) {
+                    $this->form_validation->set_rules('TextBoxAddressEmailConfirm', 'Confirm Email Address', 'valid_email|required|trim|xss_clean');
+                }
+
                 $this->form_validation->set_rules('Location_Address', 'Address', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxAddressLenghtCurrent', 'How Long', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_City', 'City', 'required|trim|xss_clean');
@@ -214,8 +216,8 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1', 'Year Begin', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1', 'Month End', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1', 'Year End', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin1', 'Starting Compensation', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd1', 'Ending Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin1', 'Starting Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd1', 'Ending Compensation', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor1', 'Supervisor', 'trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'May we contact this employer?', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Employer Reason Leave', 'trim|xss_clean');
@@ -229,8 +231,8 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin2', 'Year Begin', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd2', 'Month End', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd2', 'Year End', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin2', 'Starting Compensation', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd2', 'Ending Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin2', 'Starting Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd2', 'Ending Compensation', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor2', 'Supervisor', 'trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact2_0', 'May we contact this employer?', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave2', 'Employer Reason Leave', 'trim|xss_clean');
@@ -244,8 +246,8 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin3', 'Year Begin', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd3', 'Month End', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd3', 'Year End', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin3', 'Starting Compensation', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd3', 'Ending Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin3', 'Starting Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd3', 'Ending Compensation', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor3', 'Supervisor', 'trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact3_0', 'May we contact this employer?', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave3', 'Employer Reason Leave', 'trim|xss_clean');
@@ -261,13 +263,13 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('TextBoxReferenceCity1', 'Reference City', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListReferenceState1', 'Reference State', 'trim|xss_clean');
                 //
-                if (isset($_POST['TextBoxReferenceTelephoneNumber1']) && strpos($_POST['TextBoxReferenceTelephoneNumber1'], '*') == false) { 
+                if (isset($_POST['TextBoxReferenceTelephoneNumber1']) && strpos($_POST['TextBoxReferenceTelephoneNumber1'], '*') == false) {
                     $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber1', 'Telephone Number', 'trim|xss_clean');
                 }
                 //
-                if (isset($_POST['TextBoxReferenceEmail1']) && strpos($_POST['TextBoxReferenceEmail1'], '*') == false) { 
+                if (isset($_POST['TextBoxReferenceEmail1']) && strpos($_POST['TextBoxReferenceEmail1'], '*') == false) {
                     $this->form_validation->set_rules('TextBoxReferenceEmail1', 'Reference Email', 'valid_email|trim|xss_clean');
-                } 
+                }
                 //
                 $this->form_validation->set_rules('TextBoxReferenceName2', 'Reference Name', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceAcquainted2', 'Reference Acquainted', 'trim|xss_clean');
@@ -275,13 +277,13 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('TextBoxReferenceCity2', 'Reference City', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListReferenceState2', 'Reference State', 'trim|xss_clean');
                 //
-                if (isset($_POST['TextBoxReferenceTelephoneNumber2']) && strpos($_POST['TextBoxReferenceTelephoneNumber2'], '*') == false) { 
+                if (isset($_POST['TextBoxReferenceTelephoneNumber2']) && strpos($_POST['TextBoxReferenceTelephoneNumber2'], '*') == false) {
                     $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber2', 'Telephone Number', 'trim|xss_clean');
                 }
                 //
-                if (isset($_POST['TextBoxReferenceEmail2']) && strpos($_POST['TextBoxReferenceEmail2'], '*') == false) { 
+                if (isset($_POST['TextBoxReferenceEmail2']) && strpos($_POST['TextBoxReferenceEmail2'], '*') == false) {
                     $this->form_validation->set_rules('TextBoxReferenceEmail2', 'Reference Email', 'valid_email|trim|xss_clean');
-                } 
+                }
                 //
                 $this->form_validation->set_rules('TextBoxReferenceName3', 'Reference Name', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxReferenceAcquainted3', 'Reference Acquainted', 'trim|xss_clean');
@@ -289,13 +291,13 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('TextBoxReferenceCity3', 'Reference City', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListReferenceState3', 'Reference State', 'trim|xss_clean');
                 //
-                if (isset($_POST['TextBoxReferenceTelephoneNumber3']) && strpos($_POST['TextBoxReferenceTelephoneNumber3'], '*') == false) { 
+                if (isset($_POST['TextBoxReferenceTelephoneNumber3']) && strpos($_POST['TextBoxReferenceTelephoneNumber3'], '*') == false) {
                     $this->form_validation->set_rules('TextBoxReferenceTelephoneNumber3', 'Telephone Number', 'trim|xss_clean');
                 }
                 //
-                if (isset($_POST['TextBoxReferenceEmail3']) && strpos($_POST['TextBoxReferenceEmail3'], '*') == false) { 
+                if (isset($_POST['TextBoxReferenceEmail3']) && strpos($_POST['TextBoxReferenceEmail3'], '*') == false) {
                     $this->form_validation->set_rules('TextBoxReferenceEmail3', 'Reference Email', 'valid_email|trim|xss_clean');
-                } 
+                }
                 //
                 $this->form_validation->set_rules('TextBoxAdditionalInfoWorkExperience', 'Additional Work Experience Information', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxAdditionalInfoWorkTraining', 'Additional Work Training Information', 'trim|xss_clean');
@@ -303,7 +305,7 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('CheckBoxAgreement1786', 'CheckBoxAgreement1786', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('CheckBoxAgree', 'Acknowledge Agree', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('CheckBoxTerms', 'Terms of Acceptance', 'required|trim|xss_clean');
-                
+
                 //
                 $ei = unserialize($company_details['extra_info']);
                 //
@@ -313,45 +315,45 @@ class Form_full_employment_application extends CI_Controller {
                 $data['l_employment'] = 0;
                 $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
                 $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
-                
-                if(isset($ei['affiliate'])){
+
+                if (isset($ei['affiliate'])) {
                     $data['affiliate'] = $ei['affiliate'];
                 }
-                if(isset($ei['18_plus'])){
+                if (isset($ei['18_plus'])) {
                     $data['eight_plus'] = $ei['18_plus'];
                 }
-                if(isset($ei['d_license'])){
+                if (isset($ei['d_license'])) {
                     $data['d_license'] = $ei['d_license'];
                 }
-                if(isset($ei['l_employment'])){
+                if (isset($ei['l_employment'])) {
                     $data['l_employment'] = $ei['l_employment'];
                 }
                 //
-                if($data['ssn_required'] == 1){
+                if ($data['ssn_required'] == 1) {
                     //
                     $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
                 }
                 //
-                if($data['dob_required'] == 1){
+                if ($data['dob_required'] == 1) {
                     //
                     $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
                 }
-                
+
                 //
-                if($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No'){
+                if ($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No') {
                     $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
 
-                    if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
+                    if ($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No') {
                         $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
                     }
                 }
-                
+
                 //
-                if($data['l_employment']){
+                if ($data['l_employment']) {
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerPosition1', 'Position', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerAddress1', 'Address', 'required|trim|xss_clean');
@@ -367,17 +369,17 @@ class Form_full_employment_application extends CI_Controller {
                     $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'Contact', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Reason', 'required|trim|xss_clean');
                 }
-               
+
                 //
-                if($data['eight_plus']){
+                if ($data['eight_plus']) {
                     $this->form_validation->set_rules('RadioButtonListWorkOver18', '18 years', 'required|trim|xss_clean');
                 }
-                
+
                 //
-                if($data['affiliate']){
+                if ($data['affiliate']) {
                     $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
                 }
-                
+
                 if ($this->form_validation->run() == false) {
                     //
                     if (!empty(validation_errors())) {
@@ -387,7 +389,7 @@ class Form_full_employment_application extends CI_Controller {
                             'Form Full Application Validation Error',
                             @json_encode(validation_errors())
                         );
-                    }    
+                    }
                     //
                     $data['states'] = db_get_active_states(227);
                     $data['starting_year_loop'] = 1930;
@@ -468,24 +470,24 @@ class Form_full_employment_application extends CI_Controller {
                         if (!in_array($key, $field_names)) {
                             $full_employment_application[$key] = $value;
                         }
-                        if($key == 'TextBoxDriversLicenseNumber'){
+                        if ($key == 'TextBoxDriversLicenseNumber') {
                             $driving_no = $value;
-                        }elseif($key == 'TextBoxDriversLicenseExpiration'){
+                        } elseif ($key == 'TextBoxDriversLicenseExpiration') {
                             $driving_exp = $value;
                         }
                     }
                     $drive_data = $data['drivers_license_details'];
-                    if(!empty($driving_no)){
+                    if (!empty($driving_no)) {
                         $drive_data['license_number'] = $driving_no;
                     }
-                    if(!empty($driving_exp)){
+                    if (!empty($driving_exp)) {
                         $drive_data['license_expiration_date'] = $driving_exp;
                     }
-                    if(!empty($driving_no) || !empty($driving_exp)){
-                        if(sizeof($drivers_license)){
+                    if (!empty($driving_no) || !empty($driving_exp)) {
+                        if (sizeof($drivers_license)) {
                             $drivers_license_serial_data['license_details'] = serialize($drive_data);
                             $this->dashboard_model->update_license_info($drivers_license['sid'], $drivers_license_serial_data);
-                        }else{
+                        } else {
                             $drivers_license = array();
                             $drivers_license['users_sid'] = $user_sid;
                             $drivers_license['users_type'] = $user_type;
@@ -500,10 +502,10 @@ class Form_full_employment_application extends CI_Controller {
                     $notifications_status = get_notifications_status($company_sid);
                     $company_sms_notification_status = get_company_sms_status($this, $company_sid);
                     $applicant_notifications_status = 0;
-//echo '<pre>'; print_r($full_employment_application); exit;
+                    //echo '<pre>'; print_r($full_employment_application); exit;
                     if (!empty($notifications_status)) {
                         $applicant_notifications_status = $notifications_status['employment_application'];
-//                        $applicant_notifications_status = $notifications_status['new_applicant_notifications'];
+                        //                        $applicant_notifications_status = $notifications_status['new_applicant_notifications'];
                     }
                     $applicant_notification_contacts = array();
 
@@ -515,13 +517,13 @@ class Form_full_employment_application extends CI_Controller {
                         $profile_link = '<a style="background-color: #15c; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_profile/' . $user_sid) . '"> Employee Profile</a>';
                     }
                     //
-                    $folder = APPPATH.'../../applicant/FFA';
+                    $folder = APPPATH . '../../applicant/FFA';
                     //
-                    if(!is_dir($folder)) {
+                    if (!is_dir($folder)) {
                         mkdir($folder, 0777, true);
                     }
                     // 
-                    $categories_file = fopen($folder.'/FFA_'.$user_type . '_' . $user_sid. '_' .date('Y_m_d_H_i_s') . '.json', 'w');
+                    $categories_file = fopen($folder . '/FFA_' . $user_type . '_' . $user_sid . '_' . date('Y_m_d_H_i_s') . '.json', 'w');
                     //
                     fwrite($categories_file, json_encode($full_employment_application));
                     //
@@ -530,7 +532,7 @@ class Form_full_employment_application extends CI_Controller {
                     $data['extra_info']['other_email'] = $formpost['TextBoxAddressStreetFormer3'];
                     $data['extra_info']['other_PhoneNumber'] = $formpost['TextBoxTelephoneOther'];
 
-                    if($user_type == 'employee'){
+                    if ($user_type == 'employee') {
                         $dataToUpdate = array(
                             'first_name' => $formpost['first_name'],
                             'last_name' => $formpost['last_name'],
@@ -544,7 +546,7 @@ class Form_full_employment_application extends CI_Controller {
                             'extra_info' => serialize($data['extra_info']),
                             'full_employment_application' => serialize($full_employment_application)
                         );
-                    }else{
+                    } else {
                         $dataToUpdate = array(
                             'first_name' => $formpost['first_name'],
                             'last_name' => $formpost['last_name'],
@@ -584,46 +586,46 @@ class Form_full_employment_application extends CI_Controller {
                     if ($applicant_notifications_status == 1) {
 
                         $applicant_notification_contacts = get_notification_email_contacts($company_sid, 'employment_application', 0);
-                        
+
                         if (!empty($applicant_notification_contacts)) {
                             foreach ($applicant_notification_contacts as $contact) {
                                 //
                                 $employer_sid = $contact['employer_sid'];
                                 // For applicant
-                                if(
+                                if (
                                     $user_type == 'applicant' && // User type must be applicant
                                     !empty($contact['employer_sid']) && // Has to be an employer
                                     in_array(strtolower(trim($contact['access_level'])), ['hiring manager', 'manager']) && // Role should be hiring manager or manager
                                     !getEmployerAssignJobs($contact['employer_sid'], $user_sid) // Has the job or candidate visibility
-                                ){
+                                ) {
                                     continue;
                                 }
                                 //
                                 $sms_notify = 0;
                                 $contact_no = 0;
-                                if($company_sms_notification_status){
-                                    if($contact['employer_sid'] != 0){
+                                if ($company_sms_notification_status) {
+                                    if ($contact['employer_sid'] != 0) {
                                         $notify_by = get_employee_sms_status($this, $contact['employer_sid']);
-                                        if(strpos($notify_by['notified_by'],'sms') !== false){
+                                        if (strpos($notify_by['notified_by'], 'sms') !== false) {
                                             $contact_no = $notify_by['PhoneNumber'];
                                             $sms_notify = 1;
                                         }
-                                    }else{
-                                        if(!empty($contact['contact_no'])){
+                                    } else {
+                                        if (!empty($contact['contact_no'])) {
                                             $contact_no = $contact['contact_no'];
                                             $sms_notify = 1;
                                         }
                                     }
-                                    if($sms_notify){
+                                    if ($sms_notify) {
                                         $this->load->library('Twilioapp');
                                         // Send SMS
-                                        $sms_template = get_company_sms_template($this,$company_sid,'employment_application');
+                                        $sms_template = get_company_sms_template($this, $company_sid, 'employment_application');
                                         $replacement_sms_array = array(); //Send Payment Notification to admin.
-                                        $replacement_sms_array['applicant_name'] = $applicant_profile['first_name']. ' '. $applicant_profile['last_name'];
+                                        $replacement_sms_array['applicant_name'] = $applicant_profile['first_name'] . ' ' . $applicant_profile['last_name'];
                                         $replacement_sms_array['contact_name'] = ucwords(strtolower($contact['contact_name']));
-                                        $sms_body = 'This sms is to inform you that '.$applicant_profile['first_name']. ' '. $applicant_profile['last_name'].'�has completed and signed their full employment application.';
-                                        if(sizeof($sms_template)>0){
-                                            $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_sms_array);
+                                        $sms_body = 'This sms is to inform you that ' . $applicant_profile['first_name'] . ' ' . $applicant_profile['last_name'] . '�has completed and signed their full employment application.';
+                                        if (sizeof($sms_template) > 0) {
+                                            $sms_body = replace_sms_body($sms_template['sms_body'], $replacement_sms_array);
                                         }
                                         sendSMS(
                                             $contact_no,
@@ -646,7 +648,7 @@ class Form_full_employment_application extends CI_Controller {
                         }
                     }
 
-                    
+
                     $this->session->set_flashdata('message', '"FOR TAKING THE TIME TO COMPLETE THIS DOCUMENT"');
                     redirect('thank_you', 'refresh');
                 }
@@ -658,7 +660,8 @@ class Form_full_employment_application extends CI_Controller {
         }
     }
 
-    public function send_form() {
+    public function send_form()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -690,7 +693,7 @@ class Form_full_employment_application extends CI_Controller {
                         if (empty($request_details)) {
                             $status = 'sent';
                             $this->form_full_employment_application_model->create_form_request($company_sid, $user_type, $user_sid, $verification_key, $status);
-                        } else{
+                        } else {
                             $pre_verification_key = $request_details['verification_key'];
                             $update_arr = array('verification_key' => $verification_key, 'status' => 'sent', 'status_date' => date('Y-m-d H:i:s'));
                             $this->form_full_employment_application_model->update_form($pre_verification_key, $update_arr);
@@ -705,7 +708,7 @@ class Form_full_employment_application extends CI_Controller {
                         log_and_send_templated_email(FULL_EMPLOYMENT_APPLICATION_REQUEST, $user_email, $replacement_array, $company_email_header_footer);
                         $list_sid = $this->input->post('list_sid');
                         $this->session->set_flashdata('message', '<strong>Success: </strong>Full employment Application Successfully Sent!');
-                        redirect('applicant_profile/' . $user_sid.'/'.$list_sid, 'refresh');
+                        redirect('applicant_profile/' . $user_sid . '/' . $list_sid, 'refresh');
                         break;
                     case 'employee':
                         $employee_info = $this->form_full_employment_application_model->get_user_information($company_sid, $user_type, $user_sid);
@@ -740,7 +743,8 @@ class Form_full_employment_application extends CI_Controller {
         }
     }
 
-    public function  applicant_full_employment_application($sid = NULL, $jobs_listing = NULL) {
+    public function  applicant_full_employment_application($sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data = applicant_right_nav($sid);
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -752,13 +756,13 @@ class Form_full_employment_application extends CI_Controller {
             $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
             //
             if ($sid > 0) {
-                
+
                 $applicant_info = $this->form_full_employment_application_model->get_applicants_details($sid);
                 $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
                 //$this->form_validation->set_rules('TextBoxNameMiddle', 'Middle Name', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('suffix', 'Suffix', 'trim|xss_clean');
-               
+
 
                 if (isset($_POST['email']) && $_POST['email'] == $applicant_info['email']) {
                     $this->form_validation->set_rules('email', 'Email Address', 'required|trim|xss_clean');
@@ -857,8 +861,8 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1', 'Year Begin', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1', 'Month End', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1', 'Year End', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin1', 'Starting Compensation', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd1', 'Ending Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin1', 'Starting Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd1', 'Ending Compensation', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor1', 'Supervisor', 'trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'May we contact this employer?', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Employer Reason Leave', 'trim|xss_clean');
@@ -872,8 +876,8 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin2', 'Year Begin', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd2', 'Month End', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd2', 'Year End', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin2', 'Starting Compensation', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd2', 'Ending Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin2', 'Starting Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd2', 'Ending Compensation', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor2', 'Supervisor', 'trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact2_0', 'May we contact this employer?', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave2', 'Employer Reason Leave', 'trim|xss_clean');
@@ -887,8 +891,8 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin3', 'Year Begin', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd3', 'Month End', 'trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd3', 'Year End', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin3', 'Starting Compensation', 'trim|xss_clean');
-//                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd3', 'Ending Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationBegin3', 'Starting Compensation', 'trim|xss_clean');
+                //                $this->form_validation->set_rules('TextBoxEmploymentEmployerCompensationEnd3', 'Ending Compensation', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor3', 'Supervisor', 'trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact3_0', 'May we contact this employer?', 'trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave3', 'Employer Reason Leave', 'trim|xss_clean');
@@ -934,31 +938,31 @@ class Form_full_employment_application extends CI_Controller {
                 $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
                 $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
                 //
-                if($data['ssn_required'] == 1){
+                if ($data['ssn_required'] == 1) {
                     //
                     $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
                 }
                 //
-                if($data['dob_required'] == 1){
+                if ($data['dob_required'] == 1) {
                     //
                     $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
                 }
-                
-                if(isset($ei['affiliate'])){
+
+                if (isset($ei['affiliate'])) {
                     $data['affiliate'] = $ei['affiliate'];
                 }
-                if(isset($ei['18_plus'])){
+                if (isset($ei['18_plus'])) {
                     $data['eight_plus'] = $ei['18_plus'];
                 }
-                if(isset($ei['d_license'])){
+                if (isset($ei['d_license'])) {
                     $data['d_license'] = $ei['d_license'];
                 }
-                if(isset($ei['l_employment'])){
+                if (isset($ei['l_employment'])) {
                     $data['l_employment'] = $ei['l_employment'];
                 }
-        
+
                 //
-                if($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No'){
+                if ($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No') {
 
                     $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
@@ -966,9 +970,9 @@ class Form_full_employment_application extends CI_Controller {
                     $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
                 }
-                
+
                 //
-                if($data['l_employment']){
+                if ($data['l_employment']) {
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerPosition1', 'Position', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerAddress1', 'Address', 'required|trim|xss_clean');
@@ -984,24 +988,24 @@ class Form_full_employment_application extends CI_Controller {
                     $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'Contact', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Reason', 'required|trim|xss_clean');
                 }
-               
+
                 //
-                if($data['eight_plus']){
+                if ($data['eight_plus']) {
                     $this->form_validation->set_rules('RadioButtonListWorkOver18', '18 years', 'required|trim|xss_clean');
                 }
-                
+
                 //
-                if($data['affiliate']){
+                if ($data['affiliate']) {
                     $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
                 }
-                
+
                 $drivers_license = $this->form_full_employment_application_model->get_license_details('applicant', $sid, 'drivers');
                 if (!empty($drivers_license)) {
                     $drivers_license['license_details'] = unserialize($drivers_license['license_details']);
                 }
                 $data['drivers_license_details'] = isset($drivers_license['license_details']) ? $drivers_license['license_details'] : array();
                 //
-                $fullEmployementForm = unserialize($applicant_info ['full_employment_application']);
+                $fullEmployementForm = unserialize($applicant_info['full_employment_application']);
                 $extras = unserialize($applicant_info['extra_info']);
 
                 if ($this->form_validation->run() === FALSE) {
@@ -1013,7 +1017,7 @@ class Form_full_employment_application extends CI_Controller {
                             'Form Full Application Validation Error',
                             @json_encode(validation_errors())
                         );
-                    }    
+                    }
                     //
                     $company_id = $data["session"]["company_detail"]["sid"];
                     $employer_id = $data["session"]["employer_detail"]["sid"];
@@ -1051,7 +1055,7 @@ class Form_full_employment_application extends CI_Controller {
                             if (isset($_POST['action']) && $_POST['action'] == 'true') {
                                 $data['formpost'] = $_POST;
                             } else {
-                                $data['formpost'] = unserialize($applicant_info ['full_employment_application']);
+                                $data['formpost'] = unserialize($applicant_info['full_employment_application']);
                             }
 
                             $data_employer = array(
@@ -1079,7 +1083,7 @@ class Form_full_employment_application extends CI_Controller {
                             //
                             $birthDate = date('Y-m-d', strtotime('now'));
                             //
-                            if(!empty($data["employer"]['dob']) && $data["employer"]['dob'] != '0000-00-00'){
+                            if (!empty($data["employer"]['dob']) && $data["employer"]['dob'] != '0000-00-00') {
                                 $birthDate = $data["employer"]['dob'];
                             }
                             //
@@ -1126,30 +1130,31 @@ class Form_full_employment_application extends CI_Controller {
                     $driving_exp = '';
 
                     foreach ($formpost as $key => $value) {
-                        if ($key != 'action' &&
-                                $key != 'first_name' &&
-                                $key != 'last_name' &&
-                                $key != 'email' &&
-                                $key != 'Location_Address' &&
-                                $key != 'Location_City' &&
-                                $key != 'Location_State' &&
-                                $key != 'Location_Country' &&
-                                $key != 'Location_ZipCode' &&
-                                $key != 'PhoneNumber' &&
-                                $key != 'txt_phonenumber' &&
-                                $key != 'txt_mobilenumber' &&
-                                $key != 'txt_othernumber' &&
-                                $key != 'txt_employeenumber_one' &&
-                                $key != 'txt_employeenumber_two' &&
-                                $key != 'txt_employeenumber_three' &&
-                                $key != 'txt_referencenumber_one' &&
-                                $key != 'txt_referencenumber_two' &&
-                                $key != 'txt_referencenumber_three'
+                        if (
+                            $key != 'action' &&
+                            $key != 'first_name' &&
+                            $key != 'last_name' &&
+                            $key != 'email' &&
+                            $key != 'Location_Address' &&
+                            $key != 'Location_City' &&
+                            $key != 'Location_State' &&
+                            $key != 'Location_Country' &&
+                            $key != 'Location_ZipCode' &&
+                            $key != 'PhoneNumber' &&
+                            $key != 'txt_phonenumber' &&
+                            $key != 'txt_mobilenumber' &&
+                            $key != 'txt_othernumber' &&
+                            $key != 'txt_employeenumber_one' &&
+                            $key != 'txt_employeenumber_two' &&
+                            $key != 'txt_employeenumber_three' &&
+                            $key != 'txt_referencenumber_one' &&
+                            $key != 'txt_referencenumber_two' &&
+                            $key != 'txt_referencenumber_three'
                         ) { // exclude these values from array
                             $full_employment_application[$key] = $value;
-                            if($key == 'TextBoxDriversLicenseNumber'){
+                            if ($key == 'TextBoxDriversLicenseNumber') {
                                 $driving_no = $value;
-                            }elseif($key == 'TextBoxDriversLicenseExpiration'){
+                            } elseif ($key == 'TextBoxDriversLicenseExpiration') {
                                 $driving_exp = $value;
                             }
                         }
@@ -1168,29 +1173,29 @@ class Form_full_employment_application extends CI_Controller {
                     $full_employment_application['TextBoxReferenceTelephoneNumber2'] = isset($formpost['txt_referencenumber_two']) ? $formpost['txt_referencenumber_two'] : $full_employment_application['TextBoxReferenceTelephoneNumber2'];
                     $full_employment_application['TextBoxReferenceTelephoneNumber3'] = isset($formpost['txt_referencenumber_three']) ? $formpost['txt_referencenumber_three'] : $full_employment_application['TextBoxReferenceTelephoneNumber3'];
                     $drive_data = $data['drivers_license_details'];
-                    if(!empty($driving_no)){
+                    if (!empty($driving_no)) {
                         $drive_data['license_number'] = $driving_no;
                     }
-                    if(!empty($driving_exp)){
+                    if (!empty($driving_exp)) {
                         $drive_data['license_expiration_date'] = $driving_exp;
                     }
                     // Only update driver license info if
                     // the logged inuser is PP or ALP
-                    if($_ssv){
-                        if(preg_match(XSYM_PREG, $full_employment_application['TextBoxDriversLicenseNumber'])) $full_employment_application['TextBoxDriversLicenseNumber'] = $fullEmployementForm['TextBoxDriversLicenseNumber'];
-                        if(preg_match(XSYM_PREG, $full_employment_application['TextBoxDriversLicenseExpiration'])) $full_employment_application['TextBoxDriversLicenseExpiration'] = $fullEmployementForm['TextBoxDriversLicenseExpiration'];
-                        if(preg_match(XSYM_PREG, $full_employment_application['TextBoxSSN'])) $full_employment_application['TextBoxSSN'] = $fullEmployementForm['TextBoxSSN'];
-                        if(preg_match(XSYM_PREG, $full_employment_application['TextBoxDOB'])) $full_employment_application['TextBoxDOB'] = $fullEmployementForm['TextBoxDOB'];
+                    if ($_ssv) {
+                        if (preg_match(XSYM_PREG, $full_employment_application['TextBoxDriversLicenseNumber'])) $full_employment_application['TextBoxDriversLicenseNumber'] = $fullEmployementForm['TextBoxDriversLicenseNumber'];
+                        if (preg_match(XSYM_PREG, $full_employment_application['TextBoxDriversLicenseExpiration'])) $full_employment_application['TextBoxDriversLicenseExpiration'] = $fullEmployementForm['TextBoxDriversLicenseExpiration'];
+                        if (preg_match(XSYM_PREG, $full_employment_application['TextBoxSSN'])) $full_employment_application['TextBoxSSN'] = $fullEmployementForm['TextBoxSSN'];
+                        if (preg_match(XSYM_PREG, $full_employment_application['TextBoxDOB'])) $full_employment_application['TextBoxDOB'] = $fullEmployementForm['TextBoxDOB'];
                         //
-                        if(preg_match(XSYM_PREG, $driving_no)) $drive_data['license_number'] =  $data['drivers_license_details']['license_number'];
-                        if(preg_match(XSYM_PREG, $driving_exp)) $drive_data['license_expiration_date'] =  $data['drivers_license_details']['license_expiration_date'];
+                        if (preg_match(XSYM_PREG, $driving_no)) $drive_data['license_number'] =  $data['drivers_license_details']['license_number'];
+                        if (preg_match(XSYM_PREG, $driving_exp)) $drive_data['license_expiration_date'] =  $data['drivers_license_details']['license_expiration_date'];
                     }
                     //
-                    if(!empty($driving_no) || !empty($driving_exp)){
-                        if(sizeof($drivers_license)){
+                    if (!empty($driving_no) || !empty($driving_exp)) {
+                        if (sizeof($drivers_license)) {
                             $drivers_license_serial_data['license_details'] = serialize($drive_data);
                             $this->form_full_employment_application_model->update_license_info($drivers_license['sid'], $drivers_license_serial_data);
-                        }else{
+                        } else {
                             $drivers_license = array();
                             $drivers_license['users_sid'] = $sid;
                             $drivers_license['users_type'] = 'applicant';
@@ -1234,7 +1239,7 @@ class Form_full_employment_application extends CI_Controller {
                     //
 
                     //
-                    if(!$_ssv && !empty($formpost['TextBoxDOB'])) $data['dob'] = DateTime::createFromFormat('m-d-Y', $formpost['TextBoxDOB'])->format('Y-d-m');
+                    if (!$_ssv && !empty($formpost['TextBoxDOB'])) $data['dob'] = DateTime::createFromFormat('m-d-Y', $formpost['TextBoxDOB'])->format('Y-d-m');
 
                     $this->form_full_employment_application_model->update_applicant($id, $data);
                     $this->form_full_employment_application_model->update_applicant_form_status($sid, $company_sid, 'applicant', 'signed');
@@ -1250,16 +1255,16 @@ class Form_full_employment_application extends CI_Controller {
         }
     }
 
-    public function match_confirm_email ($email, $sid, $type) {
+    public function match_confirm_email($email, $sid, $type)
+    {
         $user_email = $this->form_full_employment_application_model->get_user_email_address($sid, $type);
 
         $result = "not_matched";
 
-        if ($user_email == $email) {
+        if (strtolower($user_email) == strtolower($email)) {
             $result = "matched";
         }
         echo $result;
         exit(0);
     }
-
 }
