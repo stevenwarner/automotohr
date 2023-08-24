@@ -171,6 +171,9 @@
             echo GetCss($pageCSS);
         }
         ?>
+        <?php if (isset($appCSS)) {
+            echo $appCSS;
+        } ?>
     </head>
 
     <body>

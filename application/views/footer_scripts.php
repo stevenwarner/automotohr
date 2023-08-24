@@ -23,6 +23,7 @@
     echo '<!-- Dynamic Scripts -->';
     echo GetScripts($PageScripts);
 } ?>
+<?=$appJs ?? ''; ?>
 <?php if (checkIfAppIsEnabled('payroll') && $this->session->userdata('logged_in') && array_intersect($this->uri->segment_array(), ['payroll', 'dashboard'])) : ?>
     <script src="<?= base_url(_m("assets/payroll/js/payroll_company_onboard", 'js', '1.0.1')); ?>"></script>
     <script src="<?= base_url(_m("assets/payroll/js/employee_onboard", 'js', '1.0.1')); ?>"></script>
