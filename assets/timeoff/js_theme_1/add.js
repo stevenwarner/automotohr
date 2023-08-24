@@ -1,5 +1,7 @@
 $(function () {
     let
+        loggedInId = employeeId,
+        loggedInName = employeeName,
         selectedEmployeeId = employeeId,
         selectedEmployeeName = employeeName,
         selectedPolicy = 0,
@@ -163,6 +165,9 @@ $(function () {
             employeeName = '';
         //
         if ($(this).data('id') !== undefined) {
+            //
+            selectedEmployeeId = loggedInId
+            selectedEmployeeName = loggedInName
             employeeId = selectedEmployeeId;
             employeeName = selectedEmployeeName;
         } else {
