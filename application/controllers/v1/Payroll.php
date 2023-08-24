@@ -222,6 +222,48 @@ class Payroll extends CI_Controller
     }
 
     /**
+     * Manage earnings
+     */
+    public function earningTypes()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [
+            'v1/app/css/loader'
+        ];
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/payroll/js/earnings/manage'
+        ];
+        bundleJs([
+            'js/app_helper',
+            'v1/payroll/js/earnings/manage'
+        ]);
+        // get admins
+        $data['earnings'] = $this->payroll_model
+        ->getCompanyEarningTypes(
+            $data['loggedInPersonCompany']['sid']
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/earnings/manage')
+            ->view('main/footer');
+    }
+
+    /**
      * Manage employees
      */
     public function manageEmployees()

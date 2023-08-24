@@ -628,6 +628,8 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/payroll/js/employees/manage'] = ['js' => '1.0.0'];
         // contractor onboard
         $files['v1/payroll/js/contractors'] = ['js' => '1.0.0'];
+        // Earning types
+        $files['v1/payroll/js/earnings/manage'] = ['js' => '1.0.0'];
         // check and return data
         return $files[$file] ?? [];
     }

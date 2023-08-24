@@ -969,6 +969,8 @@ class Payroll_model extends CI_Model
         $this->syncCompanyPayScheduleWithGusto($companyDetails);
         // let's sync the company industry
         $this->syncCompanyPaymentConfigWithGusto($companyDetails);
+        // sync the earning types
+        $this->syncCompanyEarningTypes($companyId);
 
         return SendResponse(
             200,
@@ -3694,5 +3696,121 @@ class Payroll_model extends CI_Model
         $gustoResponse['title'] = $form['title'];
         //
         return ['success' => true, 'response' => $gustoResponse];
+    }
+
+
+    /**
+     * get company earning types
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyEarningTypes(
+        int $companyId
+    ): array {
+        // get earnings
+        $earnings = $this->db
+            ->select('
+                sid,
+                name,
+                is_default,
+                created_at
+            ')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_earning_types')
+            ->result_array();
+        //
+        if (!$earnings) {
+            // fetch them from Gusto
+            $earnings = $this->syncCompanyEarningTypes($companyId, true);
+        }
+        //
+        return $earnings;
+    }
+
+    /**
+     * get company earning types
+     *
+     * @param int $companyId
+     * @param bool $return Optional
+     * @return array
+     */
+    private function syncCompanyEarningTypes(
+        int $companyId,
+        bool $return = false
+    ): array {
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // response
+        $gustoResponse = gustoCall(
+            'getCompanyEarningTypes',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // for default
+        if ($gustoResponse && $gustoResponse['default']) {
+            foreach ($gustoResponse['default'] as $type) {
+                //
+                $ins = [];
+                $ins['name'] = $type['name'];
+                $ins['gusto_uuid'] = $type['uuid'];
+                $ins['is_default'] = 1;
+                $ins['updated_at'] = getSystemDate();
+
+                if ($this->db->where('gusto_uuid', $type['uuid'])->count_all_results('gusto_companies_earning_types')) {
+                    // update
+                    $this->db->where('gusto_uuid', $type['uuid'])->update('gusto_companies_earning_types', $ins);
+                } else {
+                    // insert
+                    $ins['created_at'] = getSystemDate();
+                    $ins['company_sid'] = $companyId;
+                    $this->db->insert('gusto_companies_earning_types', $ins);
+                }
+            }
+        }
+        // for custom
+        if ($gustoResponse && $gustoResponse['custom']) {
+            foreach ($gustoResponse['custom'] as $type) {
+                //
+                $ins = [];
+                $ins['name'] = $type['name'];
+                $ins['gusto_uuid'] = $type['uuid'];
+                $ins['is_default'] = 0;
+                $ins['updated_at'] = getSystemDate();
+
+                if ($this->db->where('gusto_uuid', $type['uuid'])->count_all_results('gusto_companies_earning_types')) {
+                    // update
+                    $this->db->where('gusto_uuid', $type['uuid'])->update('gusto_companies_earning_types', $ins);
+                } else {
+                    // insert
+                    $ins['created_at'] = getSystemDate();
+                    $ins['company_sid'] = $companyId;
+                    $this->db->insert('gusto_companies_earning_types', $ins);
+                }
+            }
+        }
+        //
+        if ($return) {
+            //
+            return $this->db
+                ->select('
+                    sid,
+                    name,
+                    is_default,
+                    created_at
+                ')
+                ->where('company_sid', $companyId)
+                ->get('gusto_companies_earning_types')
+                ->result_array();
+        }
+        //
+        return ['success' => true];
     }
 }

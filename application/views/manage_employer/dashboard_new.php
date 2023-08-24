@@ -854,51 +854,22 @@
                                         </div>
                                     <?php } ?>
 
-                                    <?php if (
-                                        checkIfAppIsEnabled('payroll')
-                                        && isCompanyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])
-                                        && (isPayrollAuthorizePerson(
-                                            $this->session->userdata('logged_in')['employer_detail']['email']
-                                        )
-                                        )
-                                    ) { ?>
+                                    <?php if (checkIfAppIsEnabled('payroll') && isCompanyOnBoard($session['company_detail']['sid']) && hasAcceptedPayrollTerms($session['company_detail']['sid'])) { ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
+                                                    <figure>
+                                                        <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                        <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                    </figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?= base_url('payrolls/dashboard'); ?>">Payroll</a>
+                                                        <a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a>
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
                                                         <small style="font-size: 12px"></small>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?= base_url('payrolls/dashboard'); ?>" class="site-btn">Payroll Dashboard</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-
-                                    <?php if (
-                                        checkIfAppIsEnabled('payroll')
-                                        && isCompanyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])
-                                        && isEmployeeOnPayroll(
-                                            $this->session->userdata('logged_in')['employer_detail']['sid']
-                                        )
-                                    ) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?= base_url('payrolls/pay_stubs'); ?>">Pay Stubs</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <small style="font-size: 12px"></small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?= base_url('payrolls/pay_stubs'); ?>" class="site-btn">View Pay Stubs</a>
+                                                        <a href="<?= base_url('payrolls/dashboard'); ?>" class="site-btn">View Dashboard</a>
                                                     </div>
                                                 </div>
                                             </div>

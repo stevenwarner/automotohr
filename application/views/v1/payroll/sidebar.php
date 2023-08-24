@@ -13,7 +13,10 @@ $sideBarUrls = [
     ],
     'contractors' => [
         'payrolls/contractors',
-    ]
+    ],
+    'earnings' => [
+        'payrolls/earnings/types',
+    ],
 ]
 ?>
 
@@ -48,6 +51,14 @@ $sideBarUrls = [
                 <figure><i class="fa fa-pencil-square"></i></figure>Manage Signatories
             </a>
         </li>
+        <!-- Manage custom earnings -->
+        <li>
+            <a <?php if (in_array(uri_string(), $sideBarUrls['earnings'])) {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/earnings/types'); ?>">
+                <figure><i class="fa fa-list"></i></figure>Manage Earnings Types
+            </a>
+        </li>
         <!-- Manage Employees -->
         <li>
             <a <?php if (in_array(uri_string(), $sideBarUrls['employees'])) {
@@ -57,7 +68,7 @@ $sideBarUrls = [
             </a>
         </li>
 
-        <!-- Manage contractors -->
+        <!-- Manage custom/earnings -->
         <li>
             <a <?php if (in_array(uri_string(), $sideBarUrls['contractors'])) {
                     echo 'class="active"';

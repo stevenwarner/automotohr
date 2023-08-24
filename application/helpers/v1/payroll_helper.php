@@ -271,6 +271,8 @@ if (!function_exists('getUrl')) {
         $urls['getPayrollBlockers'] = "v1/companies/$key/payrolls/blockers";
         //company flow
         $urls['getCompanyOnboardFlow'] = "v1/companies/$key/flows";
+        // get company earning types
+        $urls['getCompanyEarningTypes'] = "v1/companies/$key/earning_types";
         // employee URLs
         $urls['createEmployeeJobOnGusto'] = "v1/employees/$key1/jobs";
         $urls['getEmployeeJobs'] = "v1/employees/$key1/jobs";
