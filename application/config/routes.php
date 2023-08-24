@@ -566,6 +566,9 @@ $route['manage_admin/employers/EditEmployeeStatus/(:num)/(:num)'] = 'manage_admi
 $route['employee_management/employer_transfer_log/(:num)'] = 'employee_management/employerTransferLog/$1';
 $route['employer_transfer_log/(:num)'] = 'manage_admin/employers/employerTransferLog/$1';
 
+//
+$route['manage_admin/employers/fetchemployee_name/(:num)'] = 'manage_admin/employers/fetchEmployeeName/$1';
+
 
 $route['manage_admin/employers/(:num)'] = 'manage_admin/employers/index/$1';
 $route['manage_admin/employers/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2';
@@ -1836,3 +1839,6 @@ $route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
 $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 
 
+//
+$route['cn/companieslocations/(:num)']['get'] = "2022/Complynet/getCompaniesLocations/$1";
+$route['cn/employee/syncnew']['post'] = "2022/Complynet/syncSingleEmployeeNew/$1";

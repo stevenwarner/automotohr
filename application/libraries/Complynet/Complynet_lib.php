@@ -426,4 +426,19 @@ class Complynet_lib
         //
         $this->CI->db->insert('complynet_calls', $ins);
     }
+
+
+//
+    public function getComplyNetCompanyUsers(
+        $companyId
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'CompanyUsers?CompanyId=' . $companyId,
+            'GET'
+        );
+    }
+
 }

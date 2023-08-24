@@ -1858,4 +1858,32 @@ class employers extends Admin_Controller
             res($resp);
         }
     }
+
+
+
+    public function fetchEmployeeName($employee_sid = null)
+    {
+        $redirect_url = 'manage_admin';
+        $function_name = 'edit_employers';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+        if ($employee_sid != null) {
+            $employeeName = getUserNameBySID($employee_sid);
+
+            //
+            $this->db->select('email,CompanyName,sid,parent_sid');
+            $this->db->where('sid', $employee_sid);
+            $employeeData = $this->db->get('users')->row_array();
+            //
+            $resp['Status'] = true;
+            $resp['Msg'] = 'Proceed.';
+            $resp['Data'] = $employeeName;
+            $resp['employeeData'] = $employeeData;
+
+            res($resp);
+        }
+    }
 }

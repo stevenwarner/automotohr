@@ -775,4 +775,53 @@ class Complynet extends Admin_Controller
         //
         return SendResponse(200, ['success' => true]);
     }
+
+
+    //
+    public function getCompaniesLocations(int $companyId)
+    {
+
+        $complyNetcompanyData = $this->db
+            ->select('complynet_company_sid,complynet_location_sid')
+            ->where('company_sid', $companyId)
+            ->get('complynet_companies')
+            ->row_array();
+
+        $this->load->library('Complynet/Complynet_lib', '', 'clib');
+        //
+        $complyCompanyUsersData = [];
+        if (!empty($complyNetcompanyData)) {
+            $complyCompanyUsersData = $this->clib->getComplyNetCompanyUsers(
+                $complyNetcompanyData['complynet_company_sid']
+            );
+        }
+
+        if (!empty($complyCompanyUsersData)) {
+            foreach ($complyCompanyUsersData as $key => $rowData) {
+                if ($rowData['LocationId'] != $complyNetcompanyData['complynet_location_sid']) {
+                    unset($complyCompanyUsersData[$key]);
+                }
+            }
+        }
+
+        $data['employeeData'] = $complyCompanyUsersData;
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('2022/complynet/partials/employee_dropdown', $data, true)
+            ]
+        );
+    }
+
+
+    //
+    public function syncSingleEmployeeNew()
+    {
+        //
+        $companyId = $this->input->post('companyId', true);
+        $employeeId = $this->input->post('employeeId', true);
+        $employeeUserName = $this->input->post('employeeUserName', true);
+        //
+        return $this->complynet_model->syncSingleEmployeeNew($companyId, $employeeId, $employeeUserName);
+    }
 }

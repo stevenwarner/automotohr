@@ -236,10 +236,10 @@
                                                                             <?php   } ?>
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
-                                                                                <?php if (isTranferredEmployee($value['sid'])) { ?>
-                                                                            <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
-                                                                                <i class="fa fa-history" aria-hidden="true"></i>
-                                                                            </button>
+                                                                            <?php if (isTranferredEmployee($value['sid'])) { ?>
+                                                                                <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
+                                                                                    <i class="fa fa-history" aria-hidden="true"></i>
+                                                                                </button>
                                                                             <?php } ?>
                                                                         </td>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
@@ -541,18 +541,23 @@
         //
         let employeeId = $(this).data("id");
         let companyId = $(this).data("cid");
-
         //
         return alertify.confirm(
-            "Are you sure you want to sync this employee with ComplyNet.<br />In case the employee is not found on ComplyNet, the system will add the employee to ComplyNet.",
+            "Are you sure you want to add this employee on ComplyNet.",
             function() {
                 addEmployeeToComplyNet(companyId, employeeId)
             }
         );
     });
 
+
+
+
+
     function addEmployeeToComplyNet(companyId, employeeId) {
         //
+
+        fetchEmployeename(employeeId);
 
         Modal({
                 Id: "jsModelEmployeeToComplyNet",
@@ -562,39 +567,151 @@
             },
             function() {
                 //
-                $.post(window.location.origin + "/cn/" + companyId + "/employee/sync", {
-                        employeeId: employeeId,
-                        companyId: companyId,
-                    })
-                    .success(function(resp) {
-                        //
-                        if (resp.hasOwnProperty("errors")) {
-                            //
-                            let errors = '';
-                            errors += '<strong class="text-danger">';
-                            errors += '<p><em>In order to sync employee with ComplyNet the following details are required.';
-                            errors += ' Please fill these details from employee\'s profile.</em></p><br />';
-                            errors += resp.errors.join("<br />");
-                            errors += '</strong>';
-                            //
-                            $('#jsModelEmployeeToComplyNetBody').html(errors);
-                        } else {
-                            $('#jsModelEmployeeToComplyNet .jsModalCancel').trigger('click');
-                            alertify.alert(
-                                'Success',
-                                'You have successfully synced the employee with ComplyNet',
-                                window.location.reload
-                            );
-                        }
-                    })
-                    .fail(window.location.reload);
-                ml(false, "jsModelEmployeeToComplyNetLoader");
+                let row = '';
+                row += '<div class="row">';
+                row += '<div class="col-sm-12">';
+                row += '<label class=""><strong>Employee Details</strong></label><br>';
+                row += '<span id="employeename"></span>'
+                row += '</div>';
+                row += '</div><br>';
+
+                row += '<div class="row">';
+                row += '<div class="col-sm-12">';
+                row += '<label class=""><strong>ComplyNet Employees</strong></label><br>';
+                row += '<div id="complyNetEmployeeDropdown"></div>'
+                row += '</div>';
+                row += '</div><br>';
+
+                row += '<div class="row">';
+                row += '<div class="col-sm-12 text-right">';
+                row += ' <button class="btn btn-success jsSaveProcess">Save</button>';
+                row += '</div></div>';
+
+                row += '<div class="row">';
+                row += '<div class="col-sm-12">';
+                row += '<span id="complynetError"></span>'
+                row += '</div>';
+                row += '</div><br>';
+
+                //
+                $('#jsModelEmployeeToComplyNetBody').html(row);
+
+                $.get(window.location.origin + "/cn/companieslocations/" + companyId, function(resp) {
+                    //
+                    $("#complyNetEmployeeDropdown").html(resp.view);
+                    ml(false, "jsModelEmployeeToComplyNetLoader");
+                    $('#jsCIComplyNetEmployees').select2();
+                });
+
             }
         );
     }
 
 
+    //
+    function fetchEmployeename(employeeId) {
+        $.get('<?= base_url('manage_admin/employers/fetchemployee_name'); ?>/' + employeeId, function(resp) {
+            //
+            if (resp.Status === false) {
+                alertify.alert('ERROR!', resp.Response);
+                return;
+            }
+            //
+            employeeName = resp.Data;
+            employeeEmail = resp.employeeData.email;
+            employeeCompany = resp.employeeData.CompanyName;
+            var dataRow = '';
+            dataRow += '<input type="hidden" id="companySid" value="' + resp.employeeData.parent_sid + '" />';
+            dataRow += '<input type="hidden" id="employeeSid" value="' + resp.employeeData.sid + '" />';
+            dataRow += '<span><strong>Company Name: </strong>' + employeeCompany + '</span><br>';
+            dataRow += '<span><strong>Name: </strong>' + employeeName + '</span><br>';
+            dataRow += '<span><strong>Email: </strong>' + employeeEmail + '</span>';
 
+            $("#employeename").html(dataRow);
+        });
+    }
+
+    //
+    $(document).on('click', '.jsSaveProcess', function(event) {
+        event.preventDefault();
+        var complyNetEmployeeUsername = $("#jsCIComplyNetEmployees").val();
+        var companyId = $("#companySid").val();
+        var employeeId = $("#employeeSid").val();
+        if (complyNetEmployeeUsername == 0) {
+            //old Process
+            ml(true, "jsModelEmployeeToComplyNetLoader");
+            addEmployeeToComplyNetOld(companyId, employeeId);
+        } else {
+            //Map 
+            ml(true, "jsModelEmployeeToComplyNetLoader");
+            addEmployeeToComplyNetNew(companyId, employeeId, complyNetEmployeeUsername);
+        }
+    });
+
+
+    //
+    function addEmployeeToComplyNetOld(companyId, employeeId) {
+
+        $.post(window.location.origin + "/cn/" + companyId + "/employee/sync", {
+                employeeId: employeeId,
+                companyId: companyId,
+            })
+            .success(function(resp) {
+                //
+                if (resp.hasOwnProperty("errors")) {
+                    //
+                    let errors = '';
+                    errors += '<strong class="text-danger">';
+                    errors += '<p><em>In order to sync employee with ComplyNet the following details are required.';
+                    errors += ' Please fill these details from employee\'s profile.</em></p><br />';
+                    errors += resp.errors.join("<br />");
+                    errors += '</strong>';
+                    //
+                    $('#complynetError').html(errors);
+                    ml(false, "jsModelEmployeeToComplyNetLoader");
+
+                } else {
+                    $('#jsModelEmployeeToComplyNet .jsModalCancel').trigger('click');
+                    alertify.alert(
+                        'Success',
+                        'You have successfully synced the employee with ComplyNet',
+                        window.location.reload
+                    );
+                }
+            })
+    };
+
+    //
+    function addEmployeeToComplyNetNew(companyId, employeeId, complyNetEmployeeUsername) {
+
+        $.post(window.location.origin + "/cn/employee/syncnew", {
+                employeeUserName: complyNetEmployeeUsername,
+                companyId: companyId,
+                employeeId: employeeId
+            })
+            .success(function(resp) {
+                //
+                if (resp.hasOwnProperty("errors")) {
+                    //
+                    let errors = '';
+                    errors += '<strong class="text-danger">';
+                    errors += '<p><em>In order to sync employee with ComplyNet the following details are required.';
+                    errors += ' Please fill these details from employee\'s profile.</em></p><br />';
+                    errors += resp.errors.join("<br />");
+                    errors += '</strong>';
+                    //
+                    $('#complynetError').html(errors);
+                    ml(false, "jsModelEmployeeToComplyNetLoader");
+                } else {
+                    $('#jsModelEmployeeToComplyNet .jsModalCancel').trigger('click');
+                    alertify.alert(
+                        'Success',
+                        'You have successfully synced the employee with ComplyNet',
+                        window.location.reload
+                    );
+                }
+            })
+    };
 
 
     var isXHRInProgress = null;
@@ -622,10 +739,7 @@
         });
     });
 
-
-
     //
-
     function GetSpecificEmployeeDetails(
         employeeId,
         id
