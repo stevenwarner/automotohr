@@ -1962,6 +1962,10 @@ class Timeoff_model extends CI_Model
         //
         if (empty($employee)) return [];
         //
+        if ($employee['is_executive_admin'] == 1) {
+            return [];
+        }
+        //
         $settings = $this->getSettings($companyId);
         $policies = $this->getCompanyPoliciesWithAccruals($companyId, true, [], $includeArchived);
         $balances = $this->getBalances($companyId);
@@ -2090,6 +2094,10 @@ class Timeoff_model extends CI_Model
         $a->free_result();
         //
         if (empty($employee)) return $e;
+        //
+        if ($employee['is_executive_admin'] == 1) {
+            return $e;
+        }
         //
         $settings = $this->getSettings($companyId);
         $policies = $this->getCompanyPoliciesWithAccruals($companyId);
@@ -2819,6 +2827,10 @@ class Timeoff_model extends CI_Model
         //
         if (empty($employee)) return $r;
         //
+        if ($employee['is_executive_admin'] == 1) {
+            return $r;
+        }
+        //
         $settings = $this->getSettings($companyId);
         $policies = $this->getCompanyPoliciesWithAccruals($companyId);
         $balances = $this->getBalances($companyId);
@@ -3498,6 +3510,7 @@ class Timeoff_model extends CI_Model
             user_shift_hours,
             user_shift_minutes,
             employee_status,
+            is_executive_admin,
             employee_type
         ')
             ->order_by('first_name', 'ASC')
@@ -3512,7 +3525,7 @@ class Timeoff_model extends CI_Model
         //
         $settings = $this->getSettings($companyId);
         //
-        if (empty($employee)) {
+        if (empty($employee) || $employee['is_executive_admin']) {
             $r['Balance']['Remaining'] = get_array_from_minutes(
                 0,
                 (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']),
@@ -4040,6 +4053,10 @@ class Timeoff_model extends CI_Model
         $a->free_result();
         //
         if (empty($employee)) return [];
+        //
+        if ($employee['is_executive_admin'] == 1) {
+            return [];
+        }
         //
         $settings = $this->getSettings($companyId);
         $policies = $this->getCompanyPoliciesWithAccruals($companyId);
@@ -4860,6 +4877,10 @@ class Timeoff_model extends CI_Model
         $a->free_result();
         //
         if (empty($employee)) return [];
+        //
+        if ($employee['is_executive_admin'] == 1) {
+            return [];
+        }
         //
         $settings = $this->getSettings($companyId);
         $policies = $this->getCompanyPoliciesWithAccruals($companyId);
