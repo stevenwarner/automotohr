@@ -18,7 +18,7 @@
                             <li <?= $step == 'personal_details' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="personal_details">Personal details</a></li>
                             <li <?= $step == 'home_address' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="home_address">Address</a></li>
                             <li <?= $step == 'payment_method' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="payment_method">Payment Method</a></li>
-                            <li <?= $step == 'documents' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="documents">Documents</a></li>
+                            <li <?= $step == 'documents' || $step == 'single_form' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="documents">Documents</a></li>
                             <li <?= $step == 'summary' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="summary">Summary</a></li>
                         </ul>
                     </div>

@@ -1,23 +1,65 @@
 <div class="panel panel-success">
     <div class="panel-heading">
         <h3 class="csW" style="margin-top: 0; margin-bottom: 0">
-            <strong>Summary</strong>
+            <strong>Documents</strong>
         </h3>
     </div>
     <div class="panel-body">
-        <h4 style="margin: 0;">
-            <strong>Missing Requirements</strong>
-        </h4>
-        <p class="csF16">
-            Please complete the following steps in order to continue.
-        </p>
-        <br>
-        <?php foreach ($onboard['response']['onboarding_steps'] as $step) { ?>
-            <p class="csF16">
-                <i class="fa <?= $step['completed'] ? 'fa-check-circle text-success' : 'fa-circle-o'; ?> csF16"></i>
-                &nbsp;<?= $step['title']; ?>
-                <hr>
-            </p>
-        <?php } ?>
+        <?php if (!$documents) : ?>
+            <div class="alert alert-info text-center">
+                <p class="csF16">
+                    <strong>
+                        No documents found.
+                    </strong>
+                </p>
+            </div>
+        <?php else : ?>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <caption></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Requires <br />Signing</th>
+                            <th scope="col">Draft?</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    <tbody>
+                        <?php foreach ($documents as $document) : ?>
+                            <tr data-id="<?= $document['sid']; ?>">
+                                <td class="vam">
+                                    <p class="csF16">
+                                        <?= $document['title']; ?>
+                                    </p>
+                                </td>
+                                <td class="vam">
+                                    <p class="csF16">
+                                        <?= $document['name']; ?>
+                                    </p>
+                                </td>
+                                <td class="vam">
+                                    <p class="csF16">
+                                        <?= $document['requires_signing'] ? "Yes" : "No"; ?>
+                                    </p>
+                                </td>
+                                <td class="vam">
+                                    <p class="csF16">
+                                        <?= $document['draft'] ? "Yes" : "No"; ?>
+                                    </p>
+                                </td>
+                                <td class="vam">
+                                    <button class="btn csF16 csW csBG3 jsS jsContractorSingleForm">
+                                        <i class="fa fa-arrow-right csF16"></i>
+                                        &nbsp;Sign
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    </thead>
+                </table>
+            </div>
+        <?php endif; ?>
     </div>
 </div>

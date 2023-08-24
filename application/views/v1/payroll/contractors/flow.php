@@ -16,8 +16,10 @@
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                         <ul class="nav navbar-nav">
                             <li <?= $step == 'personal_details' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="personal_details">Personal details</a></li>
-                            <li <?= $step == 'home_address' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="home_address">Home address</a></li>
-                            <li <?= $step == 'payment_method' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="payment_method">Payment Method</a></li>
+                            <li><a href="#" class="csF16 jsMenuTrigger" data-step="home_address">Address</a></li>
+                            <li><a href="#" class="csF16 jsMenuTrigger" data-step="payment_method">Payment Method</a></li>
+                            <li><a href="#" class="csF16 jsMenuTrigger" data-step="payment_method">Documents</a></li>
+                            <li><a href="#" class="csF16 jsMenuTrigger" data-step="payment_method">Summary</a></li>
                         </ul>
                     </div>
                 </div>

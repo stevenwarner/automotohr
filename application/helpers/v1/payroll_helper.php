@@ -304,8 +304,10 @@ if (!function_exists('getUrl')) {
         $urls['updateContractorPaymentMethod'] = "v1/contractors/$key1/payment_method";
         $urls['createContractorBankAccount'] = "v1/contractors/$key1/bank_accounts";
         $urls['getContractorStatus'] = "v1/contractors/$key1/onboarding_status";
+        $urls['updateContractorOnboardingStatus'] = "v1/contractors/$key1/onboarding_status";
         //
         $urls['getContractorDocuments'] = "v1/contractors/$key1/forms";
+        $urls['getContractorFormPdf'] = "v1/contractors/$key1/forms/$key2/pdf";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];

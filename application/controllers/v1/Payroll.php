@@ -1417,9 +1417,10 @@ class Payroll extends CI_Controller
      *
      * @param int    $contractorId
      * @param string $step
+     * @param int    $formId Optional
      * @return json
      */
-    public function contractorFlow(int $contractorId, string $step): array
+    public function contractorFlow(int $contractorId, string $step, int $formId = 0): array
     {
         // get the session
         $session = checkUserSession(false);
@@ -1466,7 +1467,13 @@ class Payroll extends CI_Controller
             $this->payroll_model->syncContractorDocuments($contractorId);
             // get the specific contractor
             $data['documents'] = $this->payroll_model->getContractorDocuments($contractorId);
-           
+        } elseif ($step === 'single_form') {
+            // get the specific contractor
+            $data['document'] = $this->payroll_model
+                ->getContractorDocument(
+                    $contractorId,
+                    $formId
+                );
         }
         //
         return SendResponse(
@@ -1667,6 +1674,9 @@ class Payroll extends CI_Controller
             );
         }
 
+        //
+        $this->payroll_model->checkAndUpdateContractorOnboard($contractorId);
+
         return SendResponse(
             200,
             [
@@ -1735,6 +1745,8 @@ class Payroll extends CI_Controller
                 $response
             );
         }
+        //
+        $this->payroll_model->checkAndUpdateContractorOnboard($contractorId);
 
         return SendResponse(
             200,
@@ -1807,6 +1819,8 @@ class Payroll extends CI_Controller
                 $response
             );
         }
+        //
+        $this->payroll_model->checkAndUpdateContractorOnboard($contractorId);
 
         return SendResponse(
             200,

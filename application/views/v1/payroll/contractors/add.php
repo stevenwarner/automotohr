@@ -163,8 +163,10 @@ $fields = [
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="#" class="csF16">Personal details</a></li>
-                            <li class="disabled"><a href="#" class="csF16">Home address</a></li>
-                            <li class="disabled"><a href="#" class="csF16">Bank accounts</a></li>
+                            <li class="disabled"><a href="#" class="csF16">Address</a></li>
+                            <li class="disabled"><a href="#" class="csF16">Payment method</a></li>
+                            <li class="disabled"><a href="#" class="csF16">Documents</a></li>
+                            <li class="disabled"><a href="#" class="csF16">Summary</a></li>
                         </ul>
                     </div>
                 </div>

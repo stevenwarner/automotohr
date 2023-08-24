@@ -2952,6 +2952,7 @@ class Payroll_model extends CI_Model
         $ins['onboarded'] = $gustoResponse['onboarded'];
         $ins['onboarding_status'] = $gustoResponse['onboarding_status'];
         $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+        $ins['personal_details'] = 1;
         //
         $this->db->insert(
             'gusto_contractors',
@@ -3063,6 +3064,7 @@ class Payroll_model extends CI_Model
         $upd['onboarded'] = $gustoResponse['onboarded'];
         $upd['onboarding_status'] = $gustoResponse['onboarding_status'];
         $upd['updated_at'] = getSystemDate();
+        $upd['personal_details'] = 1;
         //
         $this->db
             ->where('sid', $contractorId)
@@ -3184,6 +3186,7 @@ class Payroll_model extends CI_Model
         $upd['zip'] = $gustoResponse['zip'];
         $upd['country'] = $gustoResponse['country'];
         $upd['updated_at'] = getSystemDate();
+        $upd['address'] = 1;
         //
         $this->db
             ->where('sid', $contractorId)
@@ -3501,6 +3504,7 @@ class Payroll_model extends CI_Model
         $upd['splits_by'] = $gustoResponse['split_by'];
         $upd['splits'] = json_encode($gustoResponse['splits']);
         $upd['updated_at'] = getSystemDate();
+        $upd['payment_method'] = 1;
         //
         $this->db
             ->where('sid', $contractorId)
@@ -3576,5 +3580,119 @@ class Payroll_model extends CI_Model
             ->where('contractor_sid', $contractorId)
             ->get('gusto_contractors_documents')
             ->result_array();
+    }
+
+    /**
+     * check and update contractor onboard status
+     *
+     * @param int $contractorId
+     * @return array
+     */
+    public function checkAndUpdateContractorOnboard(int $contractorId): array
+    {
+        //
+        $whereArray = [
+            'sid' => $contractorId,
+            'personal_details' => 1,
+            'payment_method' => 1,
+            'address' => 1,
+            'onboarded' => 0
+        ];
+        //
+        if (!$this->db->where($whereArray)->count_all_results('gusto_contractors')) {
+            return ['errors' => ['Please see summary to see mandatory steps.']];
+        }
+        // need to onboard the contractor
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'updateContractorOnboardingStatus',
+            $companyDetails,
+            [
+                'onboarding_status' => 'onboarding_completed'
+            ],
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                [
+                    'onboarded' => 1,
+                    'onboarding_status' => 'onboarding_completed'
+                ]
+            );
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * get the contractor document in PDF
+     *
+     * @param int $contractorId
+     * @param int $formId
+     * @return array
+     */
+    public function getContractorDocument(
+        int $contractorId,
+        int $formId
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get the form
+        $form =
+            $this->db
+            ->select('
+            gusto_uuid,
+            title
+        ')
+            ->where('sid', $formId)
+            ->get('gusto_contractors_documents')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        $companyDetails['other_uuid_2'] = $form['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getContractorFormPdf',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        $gustoResponse['title'] = $form['title'];
+        //
+        return ['success' => true, 'response' => $gustoResponse];
     }
 }

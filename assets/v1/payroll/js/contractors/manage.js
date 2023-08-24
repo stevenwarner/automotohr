@@ -12,9 +12,9 @@ $(function manageContractors() {
 	 */
 	let XHR = null;
 	/**
-	 * holds the employee id
+	 * holds the contractor id
 	 */
-	let contractorId = 1;
+	let contractorId = 0;
 	/**
 	 * holds the modal id
 	 */
@@ -36,6 +36,14 @@ $(function manageContractors() {
 		contractorId = $(this).closest("tr").data("id");
 		//
 		loadContractorEditView();
+	});
+
+	//
+	$(document).on("click", ".jsContractorSingleForm", function (event) {
+		//
+		event.preventDefault();
+		//
+		loadEditView("single_form", $(this).closest("tr").data("id"));
 	});
 	/**
 	 * capture the view admin event
@@ -439,7 +447,7 @@ $(function manageContractors() {
 			if (!obj.accountName) {
 				errorArray.push('"Account name" is missing.');
 			}
-            //
+			//
 			if (obj.routingNumber.length !== 9) {
 				errorArray.push('"Routing number" is missing.');
 			}
@@ -520,7 +528,7 @@ $(function manageContractors() {
 				Body: `<div id="${modalId}Body"></div>`,
 			},
 			function () {
-				loadEditView("documents");
+				loadEditView("summary");
 			}
 		);
 	}
@@ -554,15 +562,19 @@ $(function manageContractors() {
 	/**
 	 * Load edit page
 	 * @param {string} step
+	 * @param {int} id
 	 */
-	function loadEditView(step) {
+	function loadEditView(step, id) {
 		//
 		_ml(true, `${modalId}Loader`);
 		//
+		let url = "payrolls/flow/contractors/" + contractorId + "/" + step;
+		if (id) {
+			url += "/" + id;
+		}
+		//
 		XHR = $.ajax({
-			url: baseUrl(
-				"payrolls/flow/contractors/" + contractorId + "/" + step
-			),
+			url: baseUrl(url),
 			method: "GET",
 			caches: false,
 		})
@@ -599,13 +611,11 @@ $(function manageContractors() {
 		} else if (step === "home_address") {
 			//
 			$(".jsContractorPaymentMethod").trigger("click");
-		}else if (step === "payment_method") {
+		} else if (step === "payment_method") {
 			//
 			$(".jsContractorPaymentMethod:checked").trigger("click");
 		}
 	}
-
-	loadContractorEditView();
 
 	$.ajaxSetup({
 		cache: false,

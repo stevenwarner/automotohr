@@ -616,6 +616,18 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/lms/main'] = ['js' => '3.0.0'];
         $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
         $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
+
+        // payroll files
+        // dashboard
+        $files['v1/payroll/js/dashboard'] = ['js' => '1.0.0'];
+        // admins
+        $files['v1/payroll/js/admin/add'] = ['js' => '1.0.0'];
+        // signatory
+        $files['v1/payroll/js/signatories/create'] = ['js' => '1.0.0'];
+        // employee onboard
+        $files['v1/payroll/js/employees/manage'] = ['js' => '1.0.0'];
+        // contractor onboard
+        $files['v1/payroll/js/contractors'] = ['js' => '1.0.0'];
         // check and return data
         return $files[$file] ?? [];
     }

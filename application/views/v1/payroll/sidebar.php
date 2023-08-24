@@ -10,6 +10,9 @@ $sideBarUrls = [
     ],
     'employees' => [
         'payroll/employees',
+    ],
+    'contractors' => [
+        'payrolls/contractors',
     ]
 ]
 ?>
