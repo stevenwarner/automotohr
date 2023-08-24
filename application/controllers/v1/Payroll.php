@@ -261,6 +261,46 @@ class Payroll extends CI_Controller
             ->view('main/footer');
     }
 
+    /**
+     * contractor
+     */
+    public function manageContractors()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        //
+        $companyId = $data['session']['company_detail']['sid'];
+        //
+        $data['title'] = "Manage Payroll Contractors";
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // scripts
+        $data['PageCSS'] = [
+            'v1/plugins/ms_modal/main',
+        ];
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/plugins/ms_modal/main',
+            'v1/payroll/js/contractors/manage'
+        ];
+        // get contractors
+        $data['payrollContractors'] = $this->payroll_model->getPayrollContractors($companyId);
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/contractors/view')
+            ->view('main/footer');
+    }
+
 
     // API routes
     /**
@@ -1351,6 +1391,427 @@ class Payroll extends CI_Controller
             200,
             [
                 'msg' => 'You have successfully updated state tax.'
+            ]
+        );
+    }
+
+    /**
+     * add contractor view
+     */
+    public function addContractor()
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('v1/payroll/contractors/add', [], true)
+            ]
+        );
+    }
+    /**
+     * contractor onboard flow
+     *
+     * @param int    $contractorId
+     * @param string $step
+     * @return json
+     */
+    public function contractorFlow(int $contractorId, string $step): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // set data
+        $data = [];
+        $data['step'] = $step;
+        // check the status
+        $this->payroll_model->syncContractor($contractorId);
+        $data['onboard'] = $this->payroll_model->checkContractorOnboard($contractorId);
+        // for summary page
+        if ($step === 'personal_details') {
+            $this->payroll_model->syncContractor($contractorId);
+            // get the specific contractor
+            $data['contractor'] = $this->payroll_model->getContractorById($contractorId);
+        } elseif ($step === 'home_address') {
+            // get the specific contractor
+            $data['home_address'] = $this->payroll_model->getContractorById($contractorId, [
+                'street_1',
+                'street_2',
+                'city',
+                'state',
+                'zip',
+                'gusto_address_version',
+            ]);
+            //
+            $this->payroll_model->syncContractorHomeAddress($contractorId);
+        } elseif ($step === 'payment_method') {
+            // get the specific contractor
+            $data['payment_method'] = $this->payroll_model->getContractorById($contractorId, [
+                'payment_method_type',
+                'splits_by',
+                'splits',
+                'gusto_payment_method_version'
+            ]);
+            //
+            $this->payroll_model->syncContractorPaymentMethod($contractorId);
+            if ($data['payment_method']['payment_method_type'] === 'Direct Deposit') {
+                $data['bank'] = $this->payroll_model->getContractorBankAccount($contractorId);
+            }
+        } elseif ($step === 'documents') {
+            //
+            $this->payroll_model->syncContractorDocuments($contractorId);
+            // get the specific contractor
+            $data['documents'] = $this->payroll_model->getContractorDocuments($contractorId);
+           
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('v1/payroll/contractors/flow_edit', $data, true)
+            ]
+        );
+    }
+
+    /**
+     * contractor creation
+     *
+     * @return json
+     */
+    public function processAddContractor(): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        //
+        if (!$post) {
+            $errorsArray[] = '"Data fields" are missing.';
+        }
+        //
+        if (!$post['type']) {
+            $errorsArray[] = '"Type" is missing.';
+        }
+        //
+        if (!$post['wageType']) {
+            $errorsArray[] = '"Wage type" is missing.';
+        }
+        //
+        if (!$post['startDate']) {
+            $errorsArray[] = '"Start date" is missing.';
+        }
+        //
+        if ($post['email'] && !filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            $errorsArray[] = '"Email" is invalid.';
+        }
+        //
+        if ($post['type'] && $post['type'] === 'Individual') {
+            //
+            if (!$post['firstName']) {
+                $errorsArray[] = '"First name" is missing.';
+            }
+            //
+            if (!$post['lastName']) {
+                $errorsArray[] = '"Last name" is missing.';
+            }
+            //
+            if ($post['fileNewHireReport'] && !$post['workState']) {
+                $errorsArray[] = '"Work state" is missing.';
+            }
+            //
+            if (!$post['ssn'] || !preg_match('/\d{9}/', preg_replace('/\D/', '', $post['ssn']))) {
+                $errorsArray[] = '"Social Security Number (SSN)" is missing / invalid.';
+            }
+        } elseif ($post['type'] && $post['type'] === 'Business') {
+            //
+            if (!$post['businessName']) {
+                $errorsArray[] = '"Business name" is missing.';
+            }
+            //
+            if (!$post['ein'] || strlen(preg_replace('/\D/', '', $post['ein'])) !== 9) {
+                $errorsArray[] = '"EIN" is missing / invalid.';
+            }
+        }
+        //
+        if ($post['wageType'] === 'Hourly' && !$post['hourlyRate']) {
+            $errorsArray[] = '"Hourly rate" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // let's add contractor
+        $response = $this->payroll_model
+            ->addContractor($session['company_detail']['sid'], $post);
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully added a contractor.'
+            ]
+        );
+    }
+
+    /**
+     * contractor modification
+     *
+     * @param int $contractorId
+     * @return json
+     */
+    public function updateContractorPersonalDetails(int $contractorId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        //
+        if (!$post) {
+            $errorsArray[] = '"Data fields" are missing.';
+        }
+        //
+        if (!$post['type']) {
+            $errorsArray[] = '"Type" is missing.';
+        }
+        //
+        if (!$post['wageType']) {
+            $errorsArray[] = '"Wage type" is missing.';
+        }
+        //
+        if (!$post['startDate']) {
+            $errorsArray[] = '"Start date" is missing.';
+        }
+        //
+        if ($post['email'] && !filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            $errorsArray[] = '"Email" is invalid.';
+        }
+        //
+        if ($post['type'] && $post['type'] === 'Individual') {
+            //
+            if (!$post['firstName']) {
+                $errorsArray[] = '"First name" is missing.';
+            }
+            //
+            if (!$post['lastName']) {
+                $errorsArray[] = '"Last name" is missing.';
+            }
+            //
+            if ($post['fileNewHireReport'] && !$post['workState']) {
+                $errorsArray[] = '"Work state" is missing.';
+            }
+            //
+            if (
+                !$post['ssn'] || (!preg_match(
+                    '/\d{9}/',
+                    preg_replace('/\D/', '', $post['ssn'])
+                ) && !preg_match('/x/i', $post['ssn']))
+            ) {
+                $errorsArray[] = '"Social Security Number (SSN)" is missing / invalid.';
+            }
+        } elseif ($post['type'] && $post['type'] === 'Business') {
+            //
+            if (!$post['businessName']) {
+                $errorsArray[] = '"Business name" is missing.';
+            }
+            //
+            if (
+                !$post['ein'] || (strlen(preg_replace('/\D/', '', $post['ein'])) !== 9 && !preg_match('/x/i', $post['ein']))
+
+            ) {
+                $errorsArray[] = '"EIN" is missing / invalid.';
+            }
+        }
+        //
+        if ($post['wageType'] === 'Hourly' && !$post['hourlyRate']) {
+            $errorsArray[] = '"Hourly rate" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // let's modify contractor
+        $response = $this->payroll_model
+            ->updateContractor(
+                $contractorId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated the contractor.'
+            ]
+        );
+    }
+
+    /**
+     * contractor modification
+     *
+     * @param int $contractorId
+     * @return json
+     */
+    public function updateContractorHomeAddress(int $contractorId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        //
+        if (!$post) {
+            $errorsArray[] = '"Data fields" are missing.';
+        }
+        //
+        if (!$post['street_1']) {
+            $errorsArray[] = '"Street 1" is missing.';
+        }
+        //
+        if (!$post['city']) {
+            $errorsArray[] = '"City" is missing.';
+        }
+        //
+        if (!$post['state']) {
+            $errorsArray[] = '"State" is missing.';
+        }
+        //
+        if (!$post['zip']) {
+            $errorsArray[] = '"Zip" is missing.';
+        }
+        //
+        if (strlen($post['zip']) !== 5) {
+            $errorsArray[] = '"Zip" must be of 9 digits long.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // let's modify contractor
+        $response = $this->payroll_model
+            ->updateContractorHomeAddress(
+                $contractorId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated the contractors address.'
+            ]
+        );
+    }
+
+    /**
+     * contractor modification
+     *
+     * @param int $contractorId
+     * @return json
+     */
+    public function updateContractorPaymentMethod(int $contractorId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        //
+        if (!$post) {
+            $errorsArray[] = '"Data fields" are missing.';
+        }
+        //
+        if (!$post['type']) {
+            $errorsArray[] = '"Type" is missing.';
+        }
+        //
+        if ($post['type'] === 'Direct Deposit') {
+            //
+            if (!$post['accountName']) {
+                $errorsArray[] = '"Account name" is missing.';
+            }
+            //
+            if (strlen($post['routingNumber']) != 9) {
+                $errorsArray[] = '"Routing number" is missing.';
+            }
+            //
+            if (strlen($post['accountNumber']) != 9) {
+                $errorsArray[] = '"Account number" is missing.';
+            }
+            //
+            if (!$post['accountType']) {
+                $errorsArray[] = '"Account type" is missing.';
+            }
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // let's modify contractor
+        $response = $this->payroll_model
+            ->updateContractorPaymentMethod(
+                $contractorId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated the contractors payment method.'
             ]
         );
     }

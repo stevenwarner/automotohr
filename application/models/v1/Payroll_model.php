@@ -2864,4 +2864,717 @@ class Payroll_model extends CI_Model
         //
         return ['success' => true];
     }
+
+    /**
+     * add contractor
+     *
+     * @param int   $companyId
+     * @param array $data
+     */
+    public function addContractor(
+        int $companyId,
+        array $data
+    ): array {
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // ste request
+        $request = [];
+        $request['type'] = $data['type'];
+        $request['wage_type'] = $data['wageType'];
+        $request['email'] = $data['email'];
+        $request['is_active'] = $data['isActive'] ? "true" : "false";
+        $request['self_onboarding'] = "false";
+        $request['start_date'] = formatDateToDB(
+            $data['startDate'],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        if ($request['wage_type'] === 'Hourly') {
+            $request['hourly_rate'] = $data['hourlyRate'];
+        }
+        // for individual
+        if ($request['type'] === 'Individual') {
+            $request['first_name'] = $data['firstName'];
+            $request['last_name'] = $data['lastName'];
+            $request['middle_initial'] = substr($data['middleInitial'], 0, 1);
+            $request['file_new_hire_report'] = $data['fileNewHireReport'] ? "true" : "false";
+            if ($request['file_new_hire_report'] === 'true') {
+                $request['work_state'] = strtoupper($data['workState']);
+            }
+            $request['ssn'] =
+                preg_replace('/\D/', '', $data['ssn']);
+        } elseif ($request['type'] === 'Business') { // for business
+            $request['business_name'] = $data['businessName'];
+            $request['ein'] = preg_replace('/\D/', '', $data['ein']);
+        }
+
+        // response
+        $gustoResponse = gustoCall(
+            'createContractor',
+            $companyDetails,
+            $request,
+            'POST'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $ins = [];
+        $ins['company_sid'] = $companyId;
+        $ins['gusto_uuid'] = $gustoResponse['uuid'];
+        $ins['gusto_version'] = $gustoResponse['version'];
+        $ins['contractor_type'] = $gustoResponse['type'];
+        $ins['wage_type'] = $gustoResponse['wage_type'];
+        $ins['is_active'] = $gustoResponse['is_active'];
+        $ins['first_name'] = $gustoResponse['first_name'];
+        $ins['last_name'] = $gustoResponse['last_name'];
+        $ins['middle_initial'] = $gustoResponse['middle_initial'];
+        $ins['business_name'] = $gustoResponse['business_name'];
+        $ins['ein'] = $request['ein'] ?? $request['ssn'];
+        $ins['email'] = $gustoResponse['email'];
+        $ins['start_date'] = $gustoResponse['start_date'];
+        //
+        if ($gustoResponse['address']) {
+            $ins['street_1'] = $gustoResponse['address']['street_1'];
+            $ins['street_2'] = $gustoResponse['address']['street_2'];
+            $ins['city'] = $gustoResponse['address']['city'];
+            $ins['state'] = $gustoResponse['address']['state'];
+            $ins['zip'] = $gustoResponse['address']['zip'];
+            $ins['country'] = $gustoResponse['address']['country'];
+        }
+        $ins['hourly_rate'] = $gustoResponse['hourly_rate'];
+        $ins['file_new_hire_report'] = $gustoResponse['file_new_hire_report'];
+        $ins['work_state'] = $gustoResponse['work_state'];
+        $ins['onboarded'] = $gustoResponse['onboarded'];
+        $ins['onboarding_status'] = $gustoResponse['onboarding_status'];
+        $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+        //
+        $this->db->insert(
+            'gusto_contractors',
+            $ins
+        );
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * modify contractor
+     *
+     * @param int   $contractorId
+     * @param array $data
+     */
+    public function updateContractor(
+        int $contractorId,
+        array $data
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            gusto_version,
+            company_sid,
+            ein,
+            contractor_type
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        // ste request
+        $request = [];
+        $request['version'] = $contractor['gusto_version'];
+        $request['type'] = $contractor['contractor_type'];
+        $request['wage_type'] = $data['wageType'];
+        $request['email'] = $data['email'];
+        $request['is_active'] = $data['isActive'] ? "true" : "false";
+        $request['self_onboarding'] = "false";
+        $request['start_date'] = formatDateToDB(
+            $data['startDate'],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        if ($request['wage_type'] === 'Hourly') {
+            $request['hourly_rate'] = $data['hourlyRate'];
+        }
+        // for individual
+        if ($request['type'] === 'Individual') {
+            $request['first_name'] = $data['firstName'];
+            $request['last_name'] = $data['lastName'];
+            $request['middle_initial'] = substr($data['middleInitial'], 0, 1);
+            $request['file_new_hire_report'] = $data['fileNewHireReport'] ? "true" : "false";
+            if ($request['file_new_hire_report'] === 'true') {
+                $request['work_state'] = strtoupper($data['workState']);
+            }
+            $request['ssn'] =
+                preg_match('/x/i', $data['ssn']) ? $contractor['ein'] :
+                preg_replace('/\D/', '', $data['ssn']);
+        } elseif ($request['type'] === 'Business') { // for business
+            $request['business_name'] = $data['businessName'];
+            $request['ein'] =
+                preg_match('/x/i', $data['ein']) ? $contractor['ein'] :
+                preg_replace('/\D/', '', $data['ein']);
+        }
+        //
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'updateContractor',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['gusto_version'] = $gustoResponse['version'];
+        $upd['contractor_type'] = $gustoResponse['type'];
+        $upd['wage_type'] = $gustoResponse['wage_type'];
+        $upd['is_active'] = $gustoResponse['is_active'];
+        $upd['first_name'] = $gustoResponse['first_name'];
+        $upd['last_name'] = $gustoResponse['last_name'];
+        $upd['middle_initial'] = $gustoResponse['middle_initial'];
+        $upd['business_name'] = $gustoResponse['business_name'];
+        $upd['ein'] = $request['ein'] ?? $request['ssn'];
+        $upd['email'] = $gustoResponse['email'];
+        $upd['start_date'] = $gustoResponse['start_date'];
+        //
+        if ($gustoResponse['address']) {
+            $upd['street_1'] = $gustoResponse['address']['street_1'];
+            $upd['street_2'] = $gustoResponse['address']['street_2'];
+            $upd['city'] = $gustoResponse['address']['city'];
+            $upd['state'] = $gustoResponse['address']['state'];
+            $upd['zip'] = $gustoResponse['address']['zip'];
+            $upd['country'] = $gustoResponse['address']['country'];
+        }
+        $upd['hourly_rate'] = $gustoResponse['hourly_rate'];
+        $upd['file_new_hire_report'] = $gustoResponse['file_new_hire_report'];
+        $upd['work_state'] = $gustoResponse['work_state'];
+        $upd['onboarded'] = $gustoResponse['onboarded'];
+        $upd['onboarding_status'] = $gustoResponse['onboarding_status'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                $upd
+            );
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * sync contractor home address
+     *
+     * @param int   $contractorId
+     */
+    public function syncContractorHomeAddress(
+        int $contractorId
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getContractorHomeAddress',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['gusto_address_version'] = $gustoResponse['version'];
+        $upd['street_1'] = $gustoResponse['street_1'];
+        $upd['street_2'] = $gustoResponse['street_2'];
+        $upd['city'] = $gustoResponse['city'];
+        $upd['state'] = $gustoResponse['state'];
+        $upd['zip'] = $gustoResponse['zip'];
+        $upd['country'] = $gustoResponse['country'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                $upd
+            );
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * sync contractor home address
+     *
+     * @param int   $contractorId
+     * @param array $data
+     * @return array
+     */
+    public function updateContractorHomeAddress(
+        int $contractorId,
+        array $data
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            gusto_address_version,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        //
+        $request = [];
+        $request['version'] = $contractor['gusto_address_version'];
+        $request['street_1'] = $data['street_1'];
+        $request['street_2'] = $data['street_2'];
+        $request['city'] = $data['city'];
+        $request['state'] = $data['state'];
+        $request['zip'] = $data['zip'];
+        $request['country'] = 'USA';
+        // response
+        $gustoResponse = gustoCall(
+            'updateContractorHomeAddress',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['gusto_address_version'] = $gustoResponse['version'];
+        $upd['street_1'] = $gustoResponse['street_1'];
+        $upd['street_2'] = $gustoResponse['street_2'];
+        $upd['city'] = $gustoResponse['city'];
+        $upd['state'] = $gustoResponse['state'];
+        $upd['zip'] = $gustoResponse['zip'];
+        $upd['country'] = $gustoResponse['country'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                $upd
+            );
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * sync contractor home address
+     *
+     * @param int $contractorId
+     * @return array
+     */
+    public function syncContractorPaymentMethod(
+        int $contractorId
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getContractorPaymentMethod',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['gusto_payment_method_version'] = $gustoResponse['version'];
+        $upd['payment_method_type'] = $gustoResponse['type'];
+        $upd['splits_by'] = $gustoResponse['split_by'];
+        $upd['splits'] = json_encode($gustoResponse['splits']);
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                $upd
+            );
+        //
+        return ['success' => true];
+    }
+
+
+    /**
+     * sync contractor home address
+     *
+     * @param int $contractorId
+     * @return array
+     */
+    public function checkContractorOnboard(
+        int $contractorId
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getContractorStatus',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['onboarding_status'] = $gustoResponse['onboarding_status'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                $upd
+            );
+        //
+        return ['success' => true, 'response' => $gustoResponse];
+    }
+
+    /**
+     * sync contractor home address
+     *
+     * @param int $contractorId
+     * @return array
+     */
+    public function syncContractor(
+        int $contractorId
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getContractor',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['gusto_version'] = $gustoResponse['version'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                $upd
+            );
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * sync contractor home address
+     *
+     * @param int $contractorId
+     * @return array
+     */
+    public function syncContractorDocuments(
+        int $contractorId
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getContractorDocuments',
+            $companyDetails,
+            [],
+            'GET'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if ($gustoResponse) {
+            foreach ($gustoResponse as $form) {
+                //
+                $ins = [];
+                $ins['name'] = $form['name'];
+                $ins['title'] = $form['title'];
+                $ins['description'] = $form['description'];
+                $ins['draft'] = $form['draft'];
+                $ins['requires_signing'] = $form['requires_signing'];
+                $ins['updated_at'] = getSystemDate();
+
+                if ($this->db->where('gusto_uuid', $form['uuid'])->count_all_results('gusto_contractors_documents')) {
+                    // update
+                    $this->db->where('gusto_uuid', $form['uuid'])->update('gusto_contractors_documents', $ins);
+                } else {
+                    // insert
+                    $ins['gusto_uuid'] = $form['uuid'];
+                    $ins['created_at'] = getSystemDate();
+                    $ins['contractor_sid'] = $contractorId;
+                    $this->db->insert('gusto_contractors_documents', $ins);
+                }
+            }
+        }
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * sync contractor home address
+     *
+     * @param int $contractorId
+     * @param array $data
+     * @return array
+     */
+    public function updateContractorPaymentMethod(
+        int $contractorId,
+        array $data
+    ): array {
+        // get details
+        $contractor = $this->db
+            ->select('
+            gusto_uuid,
+            company_sid,
+            gusto_payment_method_version,
+        ')
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($contractor['company_sid']);
+        $companyDetails['other_uuid'] = $contractor['gusto_uuid'];
+        //
+        if ($data['type'] === 'Direct Deposit') {
+            //
+            $request = [];
+            $request['name'] = $data['accountName'];
+            $request['routing_number'] = $data['routingNumber'];
+            $request['account_number'] = $data['accountNumber'];
+            $request['account_type'] = ucwords($data['accountType']);
+            // lets create the bank first
+            $gustoBankResponse = gustoCall(
+                'createContractorBankAccount',
+                $companyDetails,
+                $request,
+                "POST"
+            );
+            //
+            $errors = hasGustoErrors($gustoBankResponse);
+            //
+            if ($errors) {
+                return $errors;
+            }
+            //
+            $this->db
+                ->insert('gusto_contractors_bank_accounts', [
+                    'contractor_sid' => $contractorId,
+                    'name' => $gustoBankResponse['name'],
+                    'account_type' => $gustoBankResponse['account_type'],
+                    'routing_number' => $gustoBankResponse['routing_number'],
+                    'account_number' => $data['accountNumber'],
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate(),
+                ]);
+            //
+            $this->syncContractorPaymentMethod($contractorId);
+            // get details
+            $contractor = $this->db
+                ->select('
+                    gusto_uuid,
+                    company_sid,
+                    gusto_payment_method_version,
+                ')
+                ->where('sid', $contractorId)
+                ->get('gusto_contractors')
+                ->row_array();
+        }
+        //
+        $request = [];
+        $request['version'] = $contractor['gusto_payment_method_version'];
+        $request['type'] = $data['type'];
+        // response
+        $gustoResponse = gustoCall(
+            'updateContractorPaymentMethod',
+            $companyDetails,
+            $request,
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['gusto_payment_method_version'] = $gustoResponse['version'];
+        $upd['payment_method_type'] = $gustoResponse['type'];
+        $upd['splits_by'] = $gustoResponse['split_by'];
+        $upd['splits'] = json_encode($gustoResponse['splits']);
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $contractorId)
+            ->update(
+                'gusto_contractors',
+                $upd
+            );
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * get all contractors
+     */
+    public function getPayrollContractors(int $companyId): array
+    {
+        //
+        return $this->db
+            ->where('company_sid', $companyId)
+            ->get('gusto_contractors')
+            ->result_array();
+    }
+
+    /**
+     * get specific contractors
+     *
+     * @param int $contractorId
+     * @param array $columns Optional
+     * @return array
+     */
+    public function getContractorById(
+        int $contractorId,
+        array $columns = ['*']
+    ): array {
+        //
+        return $this->db
+            ->select($columns)
+            ->where('sid', $contractorId)
+            ->get('gusto_contractors')
+            ->row_array();
+    }
+
+    /**
+     * get contractors bank accounts
+     *
+     * @param int $contractorId
+     * @return array
+     */
+    public function getContractorBankAccount(
+        int $contractorId
+    ): array {
+        //
+        return $this->db
+            ->where('contractor_sid', $contractorId)
+            ->order_by('sid', 'desc')
+            ->limit(1)
+            ->get('gusto_contractors_bank_accounts')
+            ->row_array();
+    }
+
+    /**
+     * get contractors bank accounts
+     *
+     * @param int $contractorId
+     * @return array
+     */
+    public function getContractorDocuments(
+        int $contractorId
+    ): array {
+        //
+        return $this->db
+            ->order_by('sid', 'desc')
+            ->where('contractor_sid', $contractorId)
+            ->get('gusto_contractors_documents')
+            ->result_array();
+    }
 }

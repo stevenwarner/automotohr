@@ -1741,3 +1741,15 @@ $route['payrolls/flow/employee/(:num)/compensation']['post'] = 'v1/Payroll/updat
 $route['payrolls/flow/employee/(:num)/home_address']['post'] = 'v1/Payroll/updateEmployeeHomeAddress/$1';
 $route['payrolls/flow/employee/(:num)/federal_tax']['post'] = 'v1/Payroll/updateEmployeeFederalTax/$1';
 $route['payrolls/flow/employee/(:num)/state_tax']['post'] = 'v1/Payroll/updateEmployeeStateTax/$1';
+
+// contractor
+$route['payrolls/contractors']['get'] = 'v1/Payroll/manageContractors/$1';
+// add view
+$route['payrolls/flow/contractors/add']['get'] = 'v1/Payroll/addContractor/$1';
+$route['payrolls/flow/contractors/add']['post'] = 'v1/Payroll/processAddContractor/$1';
+
+// add view
+$route['payrolls/flow/contractors/(:num)/(:any)']['get'] = 'v1/Payroll/contractorFlow/$1/$2';
+$route['payrolls/flow/contractors/(:num)/personal_details']['post'] = 'v1/Payroll/updateContractorPersonalDetails/$1';
+$route['payrolls/flow/contractors/(:num)/home_address']['post'] = 'v1/Payroll/updateContractorHomeAddress/$1';
+$route['payrolls/flow/contractors/(:num)/payment_method']['post'] = 'v1/Payroll/updateContractorPaymentMethod/$1';

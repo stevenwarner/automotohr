@@ -54,6 +54,15 @@ $sideBarUrls = [
             </a>
         </li>
 
+        <!-- Manage contractors -->
+        <li>
+            <a <?php if (in_array(uri_string(), $sideBarUrls['contractors'])) {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('payrolls/contractors'); ?>">
+                <figure><i class="fa fa-users"></i></figure>Manage Contractors
+            </a>
+        </li>
+
         <!-- Regular -->
         <li>
             <a <?php if (uri_string() === 'payrolls/regular') {
