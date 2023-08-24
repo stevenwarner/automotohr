@@ -311,11 +311,11 @@ class Copy_employees extends Admin_Controller
                 $this->session->set_flashdata('message', '<b>Success:</b> Employee Merged Successfully!');
                 //
                 //  transfer employee timeoff request
-                if ($formpost['timeoff'] == 1) {
+                if ($formpost['timeoff'] == 1 && is_array($formpost['policyObj'])) {
 
                     $managePolicies = $formpost['policyObj'];
 
-                    $this->transferEmployeeTimeoff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company, $managePolicies);
+                    $this->transferEmployeeTimeOff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company, $managePolicies);
                 }
                 //
                 $this->load->model('2022/Complynet_model', 'complynet_model');
@@ -799,8 +799,8 @@ class Copy_employees extends Admin_Controller
                 $this->db->where('sid', $new_employee_sid)->update('users', ['transfer_date' => $transferDate]);
 
                 //  transfer employee timeoff request
-                if ($formpost['timeoff'] == 1) {
-                    $this->transferEmployeeTimeoff($employee_sid, $new_employee_sid, $from_company, $to_company, $formpost['policyObj']);
+                if ($formpost['timeoff'] == 1 && is_array($formpost['policyObj'])) {
+                    $this->transferEmployeeTimeOff($employee_sid, $new_employee_sid, $from_company, $to_company, $formpost['policyObj']);
                 }
 
                 $resp['status'] = TRUE;
@@ -815,203 +815,195 @@ class Copy_employees extends Admin_Controller
         }
     }
 
-    private function transferEmployeeTimeoff(
-        $secondaryEmployeeSid,
-        $primaryEmployeeSid,
-        $secondaryCompanySid,
-        $primaryCompanySid,
-        $managePolicies
-    ) {
+    private function transferEmployeeTimeOff(
+        int $sourceEmployeeId,
+        int $destinationEmployeeId,
+        int $sourceCompanyId,
+        int $destinationCompanyId,
+        array $managePolicies = []
+    ): bool {
+        // load time off model
+        $this->load->model('timeoff_model');
+        // get employee policies
+        $employeePolicies = $this->timeoff_model
+            ->getEmployeePoliciesById(
+                $sourceCompanyId,
+                $sourceEmployeeId,
+                true
+            );
         //
-        $moveCategory = 'no';
-        $moveCategorysIds = array();
-        $movePolicy = 'no';
-        $movePolicysTitle = array();
-        $moveRequest = 'no';
-        $moveRequestsIds = array();
-        $moveBalance = 'no';
-        $moveBalancesIds = array();
-        // get secondary company employee time off requests
-        $employeeRequests = $this->copy_employees_model->getEmployeeRequests($secondaryEmployeeSid, $secondaryCompanySid);
+        if (!$employeePolicies) {
+            return false;
+        }
         //
-        // get primary company admin plus or employee sid
-        $primaryAdminSid = getCompanyAdminSid($primaryCompanySid);
+        $adminId = getCompanyAdminSid($destinationCompanyId);
         //
-        if (!empty($employeeRequests)) {
+        foreach ($employeePolicies as $policy) {
+            // new policy id
+            $newPolicyId = $managePolicies[$policy['PolicyId']] ?? 0;
             //
-            foreach ($employeeRequests as $request) {
+            if ($newPolicyId === 0) {
+                // todo: needs to figure out
+                continue;
+            } elseif ($newPolicyId == -1) {
+                // needs to create a new policy on
+                // destination company
+                // get the policy
+                $policyDetails =
+                    $this->timeoff_model->getPolicyDetailsById($policy['PolicyId']);
                 //
-                $policySid = $managePolicies[$request['timeoff_policy_sid']];
-                // we need to create policy
-                if ($policySid == -1) {
-                    // get policy title and category details
-                    $record = $this->db
-                        ->select('
-                        timeoff_categories.timeoff_category_list_sid,
-                        timeoff_categories.is_archived as category_is_archived,
-                        timeoff_policies.title,
-                        timeoff_policies.is_archived,
-                        timeoff_policies.accruals,
-                        timeoff_policies.policy_category_type
-                    ')
-                        ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
-                        ->where([
-                            'timeoff_policies.sid' => $request['timeoff_policy_sid']
-                        ])
-                        ->get('timeoff_policies')
-                        ->row_array();
-                    // check the policy
-                    $destPolicy = $this->db
-                        ->select('sid')
-                        ->where('company_sid', $primaryCompanySid)
-                        ->where("LOWER(REGEXP_REPLACE(title, '[^a-zA-z0-9]', '')) = '" . (strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $record['title']))) . "'", null, null)
-                        ->get('timeoff_policies')
-                        ->row_array();
-                    //
-                    if ($destPolicy) {
-                        $policySid = $destPolicy['sid'];
-                    } else {
-                        // check if category exists
-                        $destType = $this->db
-                            ->select('sid')
-                            ->where('company_sid', $primaryCompanySid)
-                            ->where('timeoff_category_list_sid', $record['timeoff_category_list_sid'])
-                            ->get('timeoff_categories')
-                            ->row_array();
-                        //
-                        if (!$destType) {
-                            // lets create the type
-                            $this->db
-                                ->insert('timeoff_categories', [
-                                    'company_sid' => $primaryCompanySid,
-                                    'creator_sid' => $primaryAdminSid,
-                                    'status' => 1,
-                                    'category_type' => 0,
-                                    'timeoff_category_list_sid' => $record['timeoff_category_list_sid']
-                                ]);
-                            //
-                            $typeId = $this->db->insert_id();
-                        } else {
-                            $typeId = $destType['sid'];
-                        }
-                        // we need to create policy
-                        $this->db
-                            ->insert('timeoff_policies', [
-                                'company_sid' => $primaryCompanySid,
-                                'type_sid' => $typeId,
-                                'creator_sid' => $primaryAdminSid,
-                                'title' => $record['title'],
-                                'assigned_employees' => $primaryEmployeeSid,
-                                'policy_category_type' => $record['policy_category_type'],
-                                'is_archived' => $record['is_archived'],
-                                'is_entitled_employee' => 1,
-                                'accruals' => $record['accruals'],
-                                'created_at' => getSystemDate(),
-                                'updated_at' => getSystemDate(),
-                            ]);
-                        $policySid = $this->db->insert_id();
-                    }
-                }
-                // check employee request exist in primary company
-                if (!$this->copy_employees_model->checkTimeOffForSpecificEmployee($primaryCompanySid, $primaryEmployeeSid, $policySid,  $request['request_from_date'], $request['request_to_date'])) {
-                    //
-                    // add request
-                    $insertRequest = array();
-                    $insertRequest['company_sid'] = $primaryCompanySid;
-                    $insertRequest['employee_sid'] = $primaryEmployeeSid;
-                    $insertRequest['timeoff_policy_sid'] = $policySid;
-                    $insertRequest['request_from_date'] = $request['request_from_date'];
-                    $insertRequest['requested_time'] = $request['requested_time'];
-                    $insertRequest['request_to_date'] = $request['request_to_date'];
-                    $insertRequest['status'] = $request['status'];
-                    $insertRequest['level_status'] = $request['status'];
-                    $insertRequest['creator_sid'] = $primaryEmployeeSid;
-                    $insertRequest['approved_by'] = $primaryAdminSid;
-                    $insertRequest['reason'] = $request['reason'];
-                    $insertRequest['level_at'] = $request['level_at'];
-                    $insertRequest['created_at'] = $request['created_at'];
-                    $insertRequest['updated_at'] = $request['updated_at'];
-                    $insertRequest['timeoff_days'] = $request['timeoff_days'];
-                    // Insert the main time off request
-                    $insertSid = $this->copy_employees_model->insertTimeOffRequest($insertRequest);
-                    //
-                    if ($insertSid > 0) {
-                        $comment = $this->copy_employees_model->getTimeLineComment($request['sid'], $request['approved_by']);
-                        // Insert the time off timeline
-                        $insertTimeline = array();
-                        $insertTimeline['request_sid'] = $insertSid;
-                        $insertTimeline['employee_sid'] = $primaryAdminSid;
-                        $insertTimeline['action'] = 'update';
-                        $insertTimeline['note'] = json_encode([
-                            'status' => $request['status'],
-                            'canApprove' => 1,
-                            'details' => [
-                                'startDate' => $request['request_from_date'],
-                                'endDate' => $request['request_to_date'],
-                                'time' => $request['requested_time'],
-                                'policyId' => $policySid,
-                                'policyTitle' => $this->db->select('title')->where('sid', $policySid)->get('timeoff_policies')->row_array()['title'],
-                            ],
-                            'comment' => $comment
-                        ]);
-                        $insertTimeline['created_at'] = $request['created_at'];
-                        $insertTimeline['updated_at'] = $request['updated_at'];
-                        $insertTimeline['is_moved'] = 0;
-                        $insertTimeline['comment'] = $comment;
-                        //
-                        $this->copy_employees_model->insertRequestTimeLine($insertTimeline);
-                    }
-                    //
-                    $moveRequest = 'yes';
-                    array_push($moveRequestsIds, $request['sid']);
-                }
-            }
-        }
-        //
-        // get secondary company employee timeoff balances
-        $employeeBalances = $this->copy_employees_model->getEmployeeBalances($secondaryEmployeeSid);
-        //
-        if (!empty($employeeBalances)) {
-            //
-            foreach ($employeeBalances as $balance) {
+                unset($policyDetails['sid']);
                 //
-                $policySid = $managePolicies[$balance['policy_sid']];
-                // check employee request exist in primary company
-                if (!$this->copy_employees_model->checkbalanceForSpecificEmployee($primaryEmployeeSid, $policySid, $balance['is_added'], $balance['added_time'], $balance['effective_at'])) {
-                    //
-                    $insertBalance = array();
-                    $insertBalance['user_sid'] = $primaryEmployeeSid;
-                    $insertBalance['policy_sid'] = $policySid;
-                    $insertBalance['added_by'] = $primaryAdminSid;
-                    $insertBalance['is_added'] = $balance['is_added'];
-                    $insertBalance['added_time'] = $balance['added_time'];
-                    $insertBalance['note'] = $balance['note'];
-                    $insertBalance['effective_at'] = $balance['effective_at'];
-                    // Insert employee balance record
-                    $this->copy_employees_model->insertTimeOffBalance($insertBalance);
-                    //
-                    $moveBalance = 'yes';
-                    array_push($moveBalancesIds, $balance['sid']);
-                }
-            }
-        }
-        //
-        // maintain pto transfer log
-        if ($moveCategory == 'yes' || $movePolicy == 'yes' || $moveRequest == 'yes' || $moveBalance == 'yes') {
-            //
-            $insertLog = array();
-            $insertLog['secondaryEmployeeSid'] = $secondaryEmployeeSid;
-            $insertLog['primaryEmployeeSid'] = $primaryEmployeeSid;
-            $insertLog['secondaryCompanySid'] = $secondaryCompanySid;
-            $insertLog['primaryCompanySid'] = $primaryCompanySid;
-            $insertLog['moved_category'] = implode(',', $moveCategorysIds);
-            $insertLog['moved_policy'] = implode(',', $movePolicysTitle);
-            $insertLog['moved_request'] = implode(',', $moveRequestsIds);
-            $insertLog['moved_balance'] = implode(',', $moveBalancesIds);
-            //
-            $this->copy_employees_model->insertTrasnferLog($insertLog);
-        }
+                $policyDetails['company_sid'] = $destinationCompanyId;
+                $policyDetails['creator_sid'] = $adminId;
+                $policyDetails['type_sid'] = $this->timeoff_model
+                    ->checkAndAddType(
+                        $policyDetails['type_sid'],
+                        $destinationCompanyId
+                    );
+                $policyDetails['is_entitled_employee'] = 1;
+                $policyDetails['assigned_employees'] = $destinationEmployeeId;
 
+                // insert the policy
+                $this->db->insert('timeoff_policies', $policyDetails);
+                $newPolicyId = $this->db->insert_id();
+            }
+            // flow will start here
+            // get the selected policy
+            $policyDetails = $this->timeoff_model->getPolicyDetailsById($newPolicyId, ['is_entitled_employee', 'assigned_employees']);
+            // add this person to existing persons list
+            if ($policyDetails['is_entitled_employee'] == 1) {
+                //
+                $list = [];
+                //
+                if ($policyDetails['assigned_employees'] != 0 && $policyDetails['assigned_employees']) {
+                    $list = explode(',', $policyDetails['assigned_employees']);
+                }
+                //
+                $list[] = $destinationEmployeeId;
+                $list[] = $destinationEmployeeId;
+                $list[] = $destinationEmployeeId;
+                $list[] = $destinationEmployeeId;
+                $list = array_unique($list);
+                $list = implode(',', $list);
+                // update the list
+                $this->db
+                    ->where('sid', $newPolicyId)
+                    ->update('timeoff_policies', [
+                        'assigned_employees' => $list
+                    ]);
+            }
+            // get employee requests against specific policy
+            $employeeRequests = $this->timeoff_model
+                ->getEmployeeRequests(
+                    $sourceEmployeeId,
+                    $policy['PolicyId']
+                );
+            //
+            if ($employeeRequests) {
+                foreach ($employeeRequests as $request) {
+                    //
+                    $requestId = $request['sid'];
+                    $approvedBy = $request['approved_by'];
+                    //
+                    unset($request['sid']);
+                    //
+                    $request['company_sid'] = $destinationCompanyId;
+                    $request['employee_sid'] = $destinationEmployeeId;
+                    $request['timeoff_policy_sid'] = $newPolicyId;
+                    $request['creator_sid'] = $request['creator_sid'] == $sourceEmployeeId ? $destinationEmployeeId : $adminId;
+                    $request['approved_by'] = $request['approved_by'] ? $adminId : $request['approved_by'];
+                    //
+                    $whereArray = [
+                        'employee_sid' => $destinationEmployeeId,
+                        'timeoff_policy_sid' => $newPolicyId,
+                        'request_from_date' => $request['request_from_date'],
+                        'request_to_date' => $request['request_to_date']
+                    ];
+                    //
+                    if (!$this->db->where($whereArray)->count_all_results('timeoff_requests')) {
+                        //
+                        $this->db->insert(
+                            'timeoff_requests',
+                            $request
+                        );
+                        //
+                        if ($approvedBy) {
+                            //
+                            $newRequestId = $this->db->insert_id();
+                            //
+                            $comment = $this->timeoff_model
+                                ->getRequestApproverComment(
+                                    $requestId,
+                                    $approvedBy
+                                );
+                            // Insert the time off timeline
+                            $insertTimeline = array();
+                            $insertTimeline['request_sid'] = $newRequestId;
+                            $insertTimeline['employee_sid'] = $adminId;
+                            $insertTimeline['action'] = 'update';
+                            $insertTimeline['note'] = json_encode([
+                                'status' => $request['status'],
+                                'canApprove' => 1,
+                                'details' => [
+                                    'startDate' => $request['request_from_date'],
+                                    'endDate' => $request['request_to_date'],
+                                    'time' => $request['requested_time'],
+                                    'policyId' => $newPolicyId,
+                                    'policyTitle' => $this->db
+                                        ->select('title')
+                                        ->where('sid', $newPolicyId)
+                                        ->get('timeoff_policies')->row_array()['title'],
+                                ],
+                                'comment' => $comment
+                            ]);
+                            $insertTimeline['created_at'] = getSystemDate();
+                            $insertTimeline['updated_at'] = getSystemDate();
+                            $insertTimeline['is_moved'] = 0;
+                            $insertTimeline['comment'] = $comment;
+                            //
+                            $this->db->insert('timeoff_request_timeline', $insertTimeline);
+                        }
+                    }
+                }
+            }
+
+
+            // get employee balances against specific policy
+            $employeeBalances = $this->timeoff_model
+                ->getEmployeeBalances(
+                    $sourceEmployeeId,
+                    $policy['PolicyId']
+                );
+            //
+            if ($employeeBalances) {
+                foreach ($employeeBalances as $balance) {
+                    //
+                    unset($balance['sid']);
+                    //
+                    $whereArray = [
+                        'user_sid' => $destinationEmployeeId,
+                        'policy_sid' => $newPolicyId,
+                        'effective_at' => $balance['effective_at'],
+                        'is_added' => $balance['is_added'],
+                        'added_time' => $balance['added_time']
+                    ];
+                    //
+                    if (!$this->db->where($whereArray)->count_all_results('timeoff_balances')) {
+                        //
+                        $balance['user_sid'] = $destinationEmployeeId;
+                        $balance['policy_sid'] = $newPolicyId;
+                        //
+                        $this->db
+                            ->insert(
+                                'timeoff_balances',
+                                $balance
+                            );
+                    }
+                }
+            }
+        }
+        // get incoming employee
         return true;
     }
 
@@ -1470,24 +1462,80 @@ class Copy_employees extends Admin_Controller
         die('stop');
     }
 
-
-    public function getCompaniesPolicies($from_company_sid, $to_company_sid)
+    /**
+     *
+     */
+    public function getCompaniesPolicies(int $fromCompanyId, int $toCompanyId): array
     {
+        // load timeoff model
+        $this->load->model('timeoff_model');
+        //
+        $policies = [];
+        //
+        $employeeIds = $this->input->post('employeeIds', true);
 
-        $fromCompanyPolicies = $this->copy_employees_model->getPoliciesByCompanyRequests($from_company_sid, $this->input->post('employeeIds', true));
-        if (!$fromCompanyPolicies) {
-            $toCompanyPolicies = [];
-        } else {
-            $toCompanyPolicies = $this->copy_employees_model->getAllCompanyPolicies($to_company_sid);
+        // get source company policies by employee ids
+        foreach ($employeeIds as $employeeId) {
+
+            $sourceCompanyPolicies = $this->timeoff_model
+                ->getEmployeePoliciesById(
+                    $fromCompanyId,
+                    $employeeId,
+                    true
+                );
+            //
+            if ($sourceCompanyPolicies) {
+                //
+                foreach ($sourceCompanyPolicies as $policy) {
+                    //
+                    if ($sourceCompanyPolicies['Reason']) {
+                        continue;
+                    }
+                    //
+                    if (!$policies[$policy['PolicyId']]) {
+                        //
+                        $policies[$policy['PolicyId']] = [
+                            'sid' => $policy['PolicyId'],
+                            'title' => $policy['Title'],
+                            'is_paid' => $policy['CategoryType'],
+                            'is_archived' => $policy['IsArchived'],
+                            'requests_count' => 0
+                        ];
+                    }
+                    // get requests count
+                    $requestsCount = $this->timeoff_model
+                        ->getEmployeeRequestCountAgainstPolicy(
+                            $policy['PolicyId'],
+                            $employeeId
+                        );
+                    //
+                    $policies[$policy['PolicyId']]['requests_count'] += $requestsCount;
+                }
+            }
         }
-
-        $data['fromCompanyPolicies'] = $fromCompanyPolicies;
-        $data['toCompanyPolicies'] = $toCompanyPolicies;
-
+        //
+        if ($policies) {
+            foreach ($policies as $index => $value) {
+                //
+                if ($value['is_archived'] == 1 && $value['requests_count'] == 0) {
+                    unset($policies[$index]);
+                }
+            }
+        }
+        //
+        $toCompanyPolicies = [];
+        //
+        if ($policies) {
+            //
+            $toCompanyPolicies = $this->copy_employees_model->getAllCompanyPolicies($toCompanyId);
+        }
         //
         return SendResponse(
             200,
-            $data
+            [
+                'fromCompanyPolicies' => array_values($policies),
+                'toCompanyPolicies' => $toCompanyPolicies,
+            ]
         );
     }
 }

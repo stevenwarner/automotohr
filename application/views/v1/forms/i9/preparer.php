@@ -9,7 +9,7 @@ for ($i = 1; $i <= 4; $i++) : ?>
                     &nbsp;<strong class="text-danger">*</strong>
                     <i class="fa fa-question-circle-o modalShow" src="section_41_signature_of_preparer"></i>
                 </label>
-                <?php if (isset($preparerArray[$i])) : ?>
+                <?php if (isset($preparerArray[$i]) && $form['user_consent'] == 1) : ?>
                     <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>" alt="" src="<?= $preparerArray[$i]['signature']; ?>" class="prepare_signature_img_<?= $i; ?>" />
                 <?php endif; ?>
                 <?php if ($form['user_consent'] != 1) : ?>

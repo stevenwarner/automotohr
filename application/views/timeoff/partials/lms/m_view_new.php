@@ -15,7 +15,7 @@
                 </select>
             </div>
             <div class="col-xs-12 col-sm-3">
-                <button class="btn btn-orange form-control jsCreateRequest jsCreateRequestEMP" data-id="1" style="height: 39px;"><i
+                <button class="btn btn-orange form-control jsCreateRequest jsCreateRequestEMP" style="height: 39px;"><i
                         class="fa fa-plus"></i> &nbsp;CREATE A REQUEST</button>
             </div>
         </div>

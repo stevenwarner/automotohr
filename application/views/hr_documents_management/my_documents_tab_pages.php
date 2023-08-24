@@ -9,10 +9,13 @@ if (isset($applicant)) {
     $i9_url = base_url('form_i9');
     $w4_url = base_url('form_w4');
     $w9_url = base_url('form_w9');
+
 }
 
 //
 if (isset($employee) && $i9_form && $i9_form['version']) {
+    $i9_url = base_url('forms/i9/my');
+} else if (isset($employee) && $i9_form && $i9_form['user_consent'] == 0) {
     $i9_url = base_url('forms/i9/my');
 }
 

@@ -92,7 +92,7 @@ class I9 extends Public_Controller
             'section1'
         );
         //
-        // _e($data['form'],true,true);
+        // 
         //
         $data['states'] = $this->db
             ->select('state_code, state_name')
@@ -329,6 +329,9 @@ class I9 extends Public_Controller
         $updateArray[$i9Form['user_type'] === 'employee' ? 'employer_filled_date' : 'applicant_filled_date'] = getSystemDate();
         //
         $updateArray['user_consent'] = 1;
+        $updateArray['version'] = 2023;
+        $updateArray['employer_flag'] = 0;
+        $updateArray['employer_filled_date'] = '';
         //
         $translator = $this->input->post('section1_preparer', false);
         //
@@ -411,7 +414,17 @@ class I9 extends Public_Controller
                 ]
             );
         }
-
+        //
+        if (empty($details[$index]['signature'])) {
+            return SendResponse(
+                200,
+                [
+                    'success' => true,
+                    'data' => []
+                ]
+            );
+        }
+        //
         return SendResponse(
             200,
             [
@@ -547,101 +560,138 @@ class I9 extends Public_Controller
             //
             $formpost = $this->input->post(NULL, TRUE);
             //
-            if ($type != 'applicant' && $formpost['user_consent'] == 1) {
-                // Send document completion alert
-                broadcastAlert(
-                    DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,
-                    'documents_status',
-                    'i9_completed',
-                    $company_sid,
-                    $session['company_detail']['CompanyName'],
-                    $session['employer_detail']['first_name'],
-                    $session['employer_detail']['last_name'],
-                    $session['employer_detail']['sid']
-                );
-            }
-            //
-            $updateArray = array();
-            //
-            $updateArray['section2_last_name'] = $formpost['section2_last_name'];
-            $updateArray['section2_first_name'] = $formpost['section2_first_name'];
-            $updateArray['section2_middle_initial'] = $formpost['section2_middle_initial'];
-            $updateArray['section2_citizenship'] = $formpost['section2_citizenship'];
-
-            $updateArray['section2_lista_part1_document_title'] = $formpost['lista_part1_doc_select_input'] != 'input' ? $formpost['section2_lista_part1_document_title'] : $formpost['section2_lista_part1_document_title_text_val'];
-            $updateArray['section2_lista_part1_issuing_authority'] = isset($formpost['section2_lista_part1_issuing_authority']) && $formpost['lista_part1_issuing_select_input'] != 'input' ? $formpost['section2_lista_part1_issuing_authority'] : $formpost['section2_lista_part1_issuing_authority_text_val'];
-            $updateArray['section2_lista_part1_document_number'] = $formpost['section2_lista_part1_document_number'];
-            $updateArray['section2_lista_part1_expiration_date'] = empty($formpost['section2_lista_part1_expiration_date']) || $formpost['section2_lista_part1_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part1_expiration_date'])->format('Y-m-d H:i:s');
-            $updateArray['section2_lista_part2_document_title'] = $formpost['lista_part2_doc_select_input'] != 'input' ? $formpost['section2_lista_part2_document_title'] : $formpost['section2_lista_part2_document_title_text_val'];
-            $updateArray['section2_lista_part2_issuing_authority'] = isset($formpost['section2_lista_part2_issuing_authority']) && $formpost['lista_part2_issuing_select_input'] != 'input' ? $formpost['section2_lista_part2_issuing_authority'] : $formpost['section2_lista_part2_issuing_authority_text_val'];
-            $updateArray['section2_lista_part2_document_number'] = $formpost['section2_lista_part2_document_number'];
-            $updateArray['section2_lista_part2_expiration_date'] = empty($formpost['section2_lista_part2_expiration_date']) || $formpost['section2_lista_part2_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part2_expiration_date'])->format('Y-m-d H:i:s');
-            $updateArray['section2_lista_part3_document_title'] = $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_document_title'] : $formpost['section2_lista_part3_document_title_text_val'];
-            $updateArray['section2_lista_part3_issuing_authority'] = isset($formpost['section2_lista_part3_issuing_authority']) && $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_issuing_authority'] : $formpost['section2_lista_part3_issuing_authority_text_val'];
-            $updateArray['section2_lista_part3_document_number'] = $formpost['section2_lista_part3_document_number'];
-            $updateArray['section2_lista_part3_expiration_date'] = empty($formpost['section2_lista_part3_expiration_date']) || $formpost['section2_lista_part3_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part3_expiration_date'])->format('Y-m-d H:i:s');
-            $updateArray['section2_additional_information'] = $formpost['section2_additional_information'];
-
-            $updateArray['listb_auth_select_input'] = isset($formpost['listb-auth-select-input']) ? $formpost['listb-auth-select-input'] : '';
-            $updateArray['lista_part1_doc_select_input'] = isset($formpost['lista_part1_doc_select_input']) ? $formpost['lista_part1_doc_select_input'] : '';
-            $updateArray['lista_part1_issuing_select_input'] = isset($formpost['lista_part1_issuing_select_input']) ? $formpost['lista_part1_issuing_select_input'] : '';
-            $updateArray['lista_part2_doc_select_input'] = isset($formpost['lista_part2_doc_select_input']) ? $formpost['lista_part2_doc_select_input'] : '';
-            $updateArray['lista_part2_issuing_select_input'] = isset($formpost['lista_part2_issuing_select_input']) ? $formpost['lista_part2_issuing_select_input'] : '';
-            $updateArray['lista_part3_doc_select_input'] = isset($formpost['lista_part3_doc_select_input']) ? $formpost['lista_part3_doc_select_input'] : '';
-            $updateArray['lista_part3_issuing_select_input'] = isset($formpost['lista_part3_issuing_select_input']) ? $formpost['lista_part3_issuing_select_input'] : '';
-
-            $updateArray['section2_listb_document_title'] = $formpost['section2_listb_document_title'];
-            $updateArray['section2_listb_issuing_authority'] = isset($formpost['section2_listb_issuing_authority']) && $formpost['listb-auth-select-input'] != 'input' ? $formpost['section2_listb_issuing_authority'] : $formpost['section2_listb_issuing_authority_text_val'];
-            $updateArray['section2_listb_document_number'] = $formpost['section2_listb_document_number'];
-            $updateArray['section2_listb_expiration_date'] = empty($formpost['section2_listb_expiration_date']) || $formpost['section2_listb_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listb_expiration_date'])->format('Y-m-d H:i:s');
-
-            $updateArray['section2_listc_document_title'] = $formpost['section2_listc_document_title'];
-            $updateArray['section2_listc_dhs_extra_field'] = $formpost['section2_listc_dhs_extra_field'];
-            $updateArray['listc_auth_select_input'] = isset($formpost['listc-auth-select-input']) ? $formpost['listc-auth-select-input'] : '';
-            $updateArray['section2_listc_issuing_authority'] = isset($formpost['section2_listc_issuing_authority']) && $formpost['listc-auth-select-input'] != 'input' ? $formpost['section2_listc_issuing_authority'] : $formpost['section2_listc_issuing_authority_text_val'];
-            $updateArray['section2_listc_document_number'] = $formpost['section2_listc_document_number'];
-            $updateArray['section2_listc_expiration_date'] = empty($formpost['section2_listc_expiration_date']) || $formpost['section2_listc_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listc_expiration_date'])->format('Y-m-d H:i:s');
-
-            $updateArray['section2_firstday_of_emp_date'] = empty($formpost['section2_firstday_of_emp_date']) || $formpost['section2_firstday_of_emp_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
-            $updateArray['section2_sig_emp_auth_rep'] = $this->input->post('section2_sig_emp_auth_rep', FALSE);
-            
-            $updateArray['section2_today_date'] = empty($formpost['section2_today_date']) || $formpost['section2_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
-            $updateArray['section2_title_of_emp'] = $formpost['section2_title_of_emp'];
-            $updateArray['section2_last_name_of_emp'] = $formpost['section2_last_name_of_emp'];
-            $updateArray['section2_first_name_of_emp'] = $formpost['section2_first_name_of_emp'];
-            $updateArray['section2_emp_business_name'] = $formpost['section2_emp_business_name'];
-            $updateArray['section2_emp_business_address'] = $formpost['section2_emp_business_address'];
-            $updateArray['section2_city_town'] = $formpost['section2_city_town'];
-            $updateArray['section2_state'] = $formpost['section2_state'];
-            $updateArray['section2_zip_code'] = $formpost['section2_zip_code'];
-            $updateArray['section2_alternative_procedure'] = isset($formpost['section2_authorized_alternative_procedure']) ? 1 : 0;
-            //
-            $details = [];
-            // 
-            for ($i = 1; $i <= 3; $i++) {
-                $details[$i] = [
-                    'section3_rehire_date' => $formpost['section3_authorized_rehire_date_'.$i],
-                    'section3_last_name' => $formpost['section3_authorized_last_name_'.$i],
-                    'section3_first_name' => $formpost['section3_authorized_first_name_'.$i],
-                    'section3_middle_initial' => $formpost['section3_authorized_middle_initial_'.$i],
-                    'section3_document_title' => $formpost['section3_authorized_document_title_'.$i],
-                    'section3_document_number' => $formpost['section3_authorized_document_number_'.$i],
-                    'section3_expiration_date' => $formpost['section3_authorized_expiration_date_'.$i],
-                    'section3_name_of_emp' => $formpost['section3_authorized_name_of_emp_'.$i],
-                    'signature' => $this->input->post('section3_authorized_signature_'.$i, FALSE),
-                    'section3_signature_date' => $formpost['section3_authorized_today_date_'.$i],
-                    'section3_additional_information' => $formpost['section3_authorized_additional_information_'.$i],
-                    'section3_alternative_procedure' => isset($formpost['section3_authorized_alternative_procedure_'.$i]) ? 1 : 0,
-                ];
+            if ($previous_form['user_consent'] == 1) {
                 //
-            }
-            //
-            $updateArray['section3_authorized_json'] = json_encode($details);
-            $updateArray['emp_app_sid'] = $employer_sid;
-            $updateArray['employer_flag'] = 1;
-            $updateArray['employer_filled_date'] = date('Y-m-d H:i:s');
+                if ($type != 'applicant' && $formpost['user_consent'] == 1) {
+                    // Send document completion alert
+                    broadcastAlert(
+                        DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,
+                        'documents_status',
+                        'i9_completed',
+                        $company_sid,
+                        $session['company_detail']['CompanyName'],
+                        $session['employer_detail']['first_name'],
+                        $session['employer_detail']['last_name'],
+                        $session['employer_detail']['sid']
+                    );
+                }
+                //
+                $updateArray = array();
+                //
+                $updateArray['section2_last_name'] = $formpost['section2_last_name'];
+                $updateArray['section2_first_name'] = $formpost['section2_first_name'];
+                $updateArray['section2_middle_initial'] = $formpost['section2_middle_initial'];
+                $updateArray['section2_citizenship'] = $formpost['section2_citizenship'];
 
-            // Section 2,3 Ends
+                $updateArray['section2_lista_part1_document_title'] = $formpost['lista_part1_doc_select_input'] != 'input' ? $formpost['section2_lista_part1_document_title'] : $formpost['section2_lista_part1_document_title_text_val'];
+                $updateArray['section2_lista_part1_issuing_authority'] = isset($formpost['section2_lista_part1_issuing_authority']) && $formpost['lista_part1_issuing_select_input'] != 'input' ? $formpost['section2_lista_part1_issuing_authority'] : $formpost['section2_lista_part1_issuing_authority_text_val'];
+                $updateArray['section2_lista_part1_document_number'] = $formpost['section2_lista_part1_document_number'];
+                $updateArray['section2_lista_part1_expiration_date'] = empty($formpost['section2_lista_part1_expiration_date']) || $formpost['section2_lista_part1_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part1_expiration_date'])->format('Y-m-d H:i:s');
+                $updateArray['section2_lista_part2_document_title'] = $formpost['lista_part2_doc_select_input'] != 'input' ? $formpost['section2_lista_part2_document_title'] : $formpost['section2_lista_part2_document_title_text_val'];
+                $updateArray['section2_lista_part2_issuing_authority'] = isset($formpost['section2_lista_part2_issuing_authority']) && $formpost['lista_part2_issuing_select_input'] != 'input' ? $formpost['section2_lista_part2_issuing_authority'] : $formpost['section2_lista_part2_issuing_authority_text_val'];
+                $updateArray['section2_lista_part2_document_number'] = $formpost['section2_lista_part2_document_number'];
+                $updateArray['section2_lista_part2_expiration_date'] = empty($formpost['section2_lista_part2_expiration_date']) || $formpost['section2_lista_part2_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part2_expiration_date'])->format('Y-m-d H:i:s');
+                $updateArray['section2_lista_part3_document_title'] = $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_document_title'] : $formpost['section2_lista_part3_document_title_text_val'];
+                $updateArray['section2_lista_part3_issuing_authority'] = isset($formpost['section2_lista_part3_issuing_authority']) && $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_issuing_authority'] : $formpost['section2_lista_part3_issuing_authority_text_val'];
+                $updateArray['section2_lista_part3_document_number'] = $formpost['section2_lista_part3_document_number'];
+                $updateArray['section2_lista_part3_expiration_date'] = empty($formpost['section2_lista_part3_expiration_date']) || $formpost['section2_lista_part3_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part3_expiration_date'])->format('Y-m-d H:i:s');
+                $updateArray['section2_additional_information'] = $formpost['section2_additional_information'];
+
+                $updateArray['listb_auth_select_input'] = isset($formpost['listb-auth-select-input']) ? $formpost['listb-auth-select-input'] : '';
+                $updateArray['lista_part1_doc_select_input'] = isset($formpost['lista_part1_doc_select_input']) ? $formpost['lista_part1_doc_select_input'] : '';
+                $updateArray['lista_part1_issuing_select_input'] = isset($formpost['lista_part1_issuing_select_input']) ? $formpost['lista_part1_issuing_select_input'] : '';
+                $updateArray['lista_part2_doc_select_input'] = isset($formpost['lista_part2_doc_select_input']) ? $formpost['lista_part2_doc_select_input'] : '';
+                $updateArray['lista_part2_issuing_select_input'] = isset($formpost['lista_part2_issuing_select_input']) ? $formpost['lista_part2_issuing_select_input'] : '';
+                $updateArray['lista_part3_doc_select_input'] = isset($formpost['lista_part3_doc_select_input']) ? $formpost['lista_part3_doc_select_input'] : '';
+                $updateArray['lista_part3_issuing_select_input'] = isset($formpost['lista_part3_issuing_select_input']) ? $formpost['lista_part3_issuing_select_input'] : '';
+
+                $updateArray['section2_listb_document_title'] = $formpost['section2_listb_document_title'];
+                $updateArray['section2_listb_issuing_authority'] = isset($formpost['section2_listb_issuing_authority']) && $formpost['listb-auth-select-input'] != 'input' ? $formpost['section2_listb_issuing_authority'] : $formpost['section2_listb_issuing_authority_text_val'];
+                $updateArray['section2_listb_document_number'] = $formpost['section2_listb_document_number'];
+                $updateArray['section2_listb_expiration_date'] = empty($formpost['section2_listb_expiration_date']) || $formpost['section2_listb_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listb_expiration_date'])->format('Y-m-d H:i:s');
+
+                $updateArray['section2_listc_document_title'] = $formpost['section2_listc_document_title'];
+                $updateArray['section2_listc_dhs_extra_field'] = $formpost['section2_listc_dhs_extra_field'];
+                $updateArray['listc_auth_select_input'] = isset($formpost['listc-auth-select-input']) ? $formpost['listc-auth-select-input'] : '';
+                $updateArray['section2_listc_issuing_authority'] = isset($formpost['section2_listc_issuing_authority']) && $formpost['listc-auth-select-input'] != 'input' ? $formpost['section2_listc_issuing_authority'] : $formpost['section2_listc_issuing_authority_text_val'];
+                $updateArray['section2_listc_document_number'] = $formpost['section2_listc_document_number'];
+                $updateArray['section2_listc_expiration_date'] = empty($formpost['section2_listc_expiration_date']) || $formpost['section2_listc_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listc_expiration_date'])->format('Y-m-d H:i:s');
+
+                $updateArray['section2_firstday_of_emp_date'] = empty($formpost['section2_firstday_of_emp_date']) || $formpost['section2_firstday_of_emp_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
+                $updateArray['section2_sig_emp_auth_rep'] = $this->input->post('section2_sig_emp_auth_rep', FALSE);
+                
+                $updateArray['section2_today_date'] = empty($formpost['section2_today_date']) || $formpost['section2_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
+                $updateArray['section2_title_of_emp'] = $formpost['section2_title_of_emp'];
+                $updateArray['section2_last_name_of_emp'] = $formpost['section2_last_name_of_emp'];
+                $updateArray['section2_first_name_of_emp'] = $formpost['section2_first_name_of_emp'];
+                $updateArray['section2_emp_business_name'] = $formpost['section2_emp_business_name'];
+                $updateArray['section2_emp_business_address'] = $formpost['section2_emp_business_address'];
+                $updateArray['section2_city_town'] = $formpost['section2_city_town'];
+                $updateArray['section2_state'] = $formpost['section2_state'];
+                $updateArray['section2_zip_code'] = $formpost['section2_zip_code'];
+                $updateArray['section2_alternative_procedure'] = isset($formpost['section2_authorized_alternative_procedure']) ? 1 : 0;
+                //
+                $details = [];
+                // 
+                for ($i = 1; $i <= 3; $i++) {
+                    $details[$i] = [
+                        'section3_rehire_date' => $formpost['section3_authorized_rehire_date_'.$i],
+                        'section3_last_name' => $formpost['section3_authorized_last_name_'.$i],
+                        'section3_first_name' => $formpost['section3_authorized_first_name_'.$i],
+                        'section3_middle_initial' => $formpost['section3_authorized_middle_initial_'.$i],
+                        'section3_document_title' => $formpost['section3_authorized_document_title_'.$i],
+                        'section3_document_number' => $formpost['section3_authorized_document_number_'.$i],
+                        'section3_expiration_date' => $formpost['section3_authorized_expiration_date_'.$i],
+                        'section3_name_of_emp' => $formpost['section3_authorized_name_of_emp_'.$i],
+                        'signature' => $this->input->post('section3_authorized_signature_'.$i, FALSE),
+                        'section3_signature_date' => $formpost['section3_authorized_today_date_'.$i],
+                        'section3_additional_information' => $formpost['section3_authorized_additional_information_'.$i],
+                        'section3_alternative_procedure' => isset($formpost['section3_authorized_alternative_procedure_'.$i]) ? 1 : 0,
+                    ];
+                    //
+                }
+                //
+                $updateArray['section3_authorized_json'] = json_encode($details);
+                $updateArray['emp_app_sid'] = $employer_sid;
+                $updateArray['employer_flag'] = 1;
+                $updateArray['employer_filled_date'] = date('Y-m-d H:i:s');
+                // Section 2,3 Ends
+            } else {
+                $updateArray['section1_last_name'] = $formpost['section1_last_name'];
+                $updateArray['section1_first_name'] = $formpost['section1_first_name'];
+                $updateArray['section1_middle_initial'] = $formpost['section1_middle_initial'];
+                $updateArray['section1_other_last_names'] = $formpost['section1_other_last_names'];
+                $updateArray['section1_address'] = $formpost['section1_address'];
+                $updateArray['section1_apt_number'] = $formpost['section1_apt_number'];
+                $updateArray['section1_city_town'] = $formpost['section1_city_town'];
+                $updateArray['section1_state'] = $formpost['section1_state'];
+                $updateArray['section1_zip_code'] = $formpost['section1_zip_code'];
+                $updateArray['section1_date_of_birth'] = empty($formpost['section1_date_of_birth']) || $formpost['section1_date_of_birth'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section1_date_of_birth'])->format('Y-m-d H:i:s');
+                $updateArray['section1_social_security_number'] = $formpost['section1_social_security_number'];
+                $updateArray['section1_emp_email_address'] = $formpost['section1_emp_email_address'];
+                $updateArray['section1_emp_telephone_number'] = $formpost['section1_emp_telephone_number'];
+                $updateArray['section1_penalty_of_perjury'] = $formpost['section1_penalty_of_perjury'];
+                //
+                $options = array();
+                if ($formpost['section1_penalty_of_perjury'] == 'permanent-resident') {
+                    $options['section1_alien_registration_number_one'] = $formpost['section1_alien_registration_number_one'];
+                    $options['section1_alien_registration_number_two'] = $formpost['section1_alien_registration_number_two'];
+                } elseif ($formpost['section1_penalty_of_perjury'] == 'alien-work') {
+                    $options['section1_alien_registration_number_one'] = $formpost['section1_alien_registration_number_one'];
+                    $options['section1_alien_registration_number_two'] = $formpost['section1_alien_registration_number_two'];
+                    $options['alien_authorized_expiration_date'] = empty($formpost['alien_authorized_expiration_date']) || $formpost['alien_authorized_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['alien_authorized_expiration_date'])->format('Y-m-d H:i:s');
+                    $options['form_admission_number'] = $formpost['form_admission_number'];
+                    $options['foreign_passport_number'] = $formpost['foreign_passport_number'];
+                    $options['country_of_issuance'] = $formpost['country_of_issuance'];
+                }
+
+                $updateArray['section1_alien_registration_number'] = serialize($options);
+                $updateArray['section1_today_date'] = empty($formpost['section1_today_date']) || $formpost['section1_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section1_today_date'])->format('Y-m-d H:i:s');
+                $updateArray['version'] = 2023;
+            }
+            
+
+            
             
             // Log i9 form
             $i9TrackerData = [];
@@ -957,6 +1007,9 @@ class I9 extends Public_Controller
         $updateArray[$i9Form['user_type'] === 'employee' ? 'employer_filled_date' : 'applicant_filled_date'] = getSystemDate();
         //
         $updateArray['user_consent'] = 1;
+        $updateArray['version'] = 2023;
+        $updateArray['employer_flag'] = 0;
+        $updateArray['employer_filled_date'] = '';
         //
         $translator = $this->input->post('section1_preparer', false);
         //

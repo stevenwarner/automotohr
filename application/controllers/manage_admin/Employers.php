@@ -889,14 +889,14 @@ class employers extends Admin_Controller
         $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
 
         if ($action == 'deactive') {
-            $data_to_insert['employee_status'] = 6;
+            $data_to_insert['employee_status'] = 6; // inactive
             $this->company_model->terminate_user($employer_id, $data_to_insert);
             $data = array('active' => 0, 'general_status' => 'inactive');
             $this->company_model->update_user_status($employer_id, $data);
         } elseif ($action == 'active') {
-            $data_to_insert['employee_status'] = 5;
+            $data_to_insert['employee_status'] = 5; // active
             $this->company_model->terminate_user($employer_id, $data_to_insert);
-            $data = array('active' => 1, 'general_status' => 'active');
+            $data = array('active' => 1, 'terminated_status' => 0, 'general_status' => 'active');
             $this->company_model->update_user_status($employer_id, $data);
         }
         //

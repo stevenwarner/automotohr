@@ -2561,6 +2561,8 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update["user_consent"] = NULL;
                                 $data_to_update["s3_filename"] = NULL;
                                 $data_to_update["version"] = getSystemDate('Y');
+                                $data_to_update["section1_preparer_json"] = NULL;
+                                $data_to_update["section3_authorized_json"] = NULL;
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                             }
@@ -4083,7 +4085,7 @@ class Hr_documents_management extends Public_Controller
             $data['AllNoActionRequiredDocuments']  = $categorized_docs['no_action_documents'];
             //
             $data['AllCompletedDocuments']  = $categorized_docs['completed_documents'];
-            // _e($data['AllCompletedDocuments'], true, true);
+            // 
             $data['AllNotCompletedDocuments']  = $assigned_documents;
             //
             if (sizeof($data['AllNotCompletedDocuments'])) {
@@ -4217,7 +4219,6 @@ class Hr_documents_management extends Public_Controller
             //     $user_type
             // );
             //
-            // _e($data,true,true);
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
@@ -7644,7 +7645,7 @@ class Hr_documents_management extends Public_Controller
             }
             //
             $url = get_print_document_url($request_type, $document_type, $document_sid);
-            // _e($url,true);
+            //
             echo json_encode($url);
         }
     }
@@ -8455,6 +8456,8 @@ class Hr_documents_management extends Public_Controller
                     $i9_data_to_update["employer_flag"] = 0;
                     $i9_data_to_update["user_consent"] = NULL;
                     $i9_data_to_update["version"] = getSystemDate('Y');
+                    $i9_data_to_update["section1_preparer_json"] = NULL;
+                    $i9_data_to_update["section3_authorized_json"] = NULL;
                     //
                     $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
                 } else {
@@ -11667,7 +11670,6 @@ class Hr_documents_management extends Public_Controller
     function assign_document($document = array())
     {
         //
-        // _e($_POST,true,true);
         //
         $r = [
             'Status' => FALSE,
@@ -12547,7 +12549,7 @@ class Hr_documents_management extends Public_Controller
         //
         if (!is_dir($dir)) mkdir($dir, 0777, true);
 
-        // _e($post, true, true);
+        //
         //
         if (isset($post['typo']) && $post['typo'] == 'document') {
             //
@@ -12867,7 +12869,7 @@ class Hr_documents_management extends Public_Controller
             if (empty($document['submitted_description'])) {
                 $requested_content =  $document['submitted_description'] = $document['document_description'];
                 $is_iframe_preview = 0;
-                // _e($requested_content, true, true);
+                //
             }
         } else {
             if ($request_type == 'assigned') {
@@ -12918,7 +12920,6 @@ class Hr_documents_management extends Public_Controller
         //     );
         // }
 
-        // _e($extractedImages, true, true);
 
         //
         $form_input_data = unserialize($document['form_input_data']);
@@ -13950,7 +13951,14 @@ class Hr_documents_management extends Public_Controller
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form_history");
             $data['section_access'] = "complete_pdf";
-            $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
+            //
+            //
+            if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
+                $html = $this->load->view('2022/federal_fillable/form_i9_preview_new', $data, true);
+            } else { 
+                $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
+            }
+            //
             $name = 'I9 Fillable History';
         }
         //
@@ -15033,7 +15041,6 @@ class Hr_documents_management extends Public_Controller
         $replacement_array['last_name'] = $initiator_info['last_name'];
         $replacement_array['document_title'] = $document_info['document_title'];
         //
-        // _e($replacement_array,true,true);
         //
         if (!empty($document_approvers)) {
             //

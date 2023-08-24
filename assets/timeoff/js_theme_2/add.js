@@ -1,20 +1,21 @@
 $(function () {
-    let
-        selectedEmployeeId = employeeId,
-        selectedEmployeeName = employeeName,
-        selectedPolicy = 0,
-        currentLoader = '',
-        cOBJ = {
-            policyId: 0,
-            startDate: 0,
-            endDate: 0,
-            dateRows: '',
-            status: 0,
-            reason: 0,
-            comment: 0,
-            sendEmailNotification: 0,
-            fromAdmin: 1
-        };
+    let loggedInId = employeeId,
+		loggedInName = employeeName,
+		selectedEmployeeId = employeeId,
+		selectedEmployeeName = employeeName,
+		selectedPolicy = 0,
+		currentLoader = "",
+		cOBJ = {
+			policyId: 0,
+			startDate: 0,
+			endDate: 0,
+			dateRows: "",
+			status: 0,
+			reason: 0,
+			comment: 0,
+			sendEmailNotification: 0,
+			fromAdmin: 1,
+		};
     //
     $(document).on('click', '.jsCreateTimeOffBTN', function (e) {
         //
@@ -165,9 +166,12 @@ $(function () {
             employeeName = '';
         //
         if ($(this).data('id') !== undefined) {
-            employeeId = selectedEmployeeId;
-            employeeName = selectedEmployeeName;
-        } else {
+			//
+			selectedEmployeeId = loggedInId;
+			selectedEmployeeName = loggedInName;
+			employeeId = selectedEmployeeId;
+			employeeName = selectedEmployeeName;
+		} else {
             employeeId = $(this).closest('.jsBox').data('id');
             employeeName = $(this).closest('.jsBox').data('name');
         }

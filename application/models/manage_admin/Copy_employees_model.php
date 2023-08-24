@@ -1111,7 +1111,9 @@ class Copy_employees_model extends CI_Model
             ->select('
                 sid,
                 title,
-                is_archived
+                is_archived,
+                is_entitled_employee,
+                assigned_employees
             ')
             ->where('company_sid', $companyId)
             ->order_by('is_archived', 'ASC');
@@ -1141,7 +1143,9 @@ class Copy_employees_model extends CI_Model
             $this->db
             ->select('
                 timeoff_policies.sid,
-                timeoff_policies.title
+                timeoff_policies.title,
+                timeoff_policies.policy_category_type,
+                timeoff_policies.is_archived
             ')
             ->where('company_sid', $companyId)
             ->where_in('sid', array_column($policyIds, 'timeoff_policy_sid'))

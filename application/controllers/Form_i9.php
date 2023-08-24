@@ -183,6 +183,7 @@ class Form_i9 extends Public_Controller
             }
 
             $data['pre_form'] = $previous_form;
+            $data['form'] = $previous_form;
 
             if ($employer_access_level == 'Admin' && sizeof($previous_form) > 0 && $previous_form['user_sid'] != $security_sid) {
                 $data['section2_flag'] = true;
@@ -436,6 +437,10 @@ class Form_i9 extends Public_Controller
                     $insert_data['section1_social_security_number'] = $formpost['section1_social_security_number'];
                     $insert_data['section1_emp_email_address'] = $formpost['section1_emp_email_address'];
                     $insert_data['section1_emp_telephone_number'] = $formpost['section1_emp_telephone_number'];
+                }
+
+                if ($previous_form['user_consent'] == 0) {
+                    $insert_data['employer_flag'] = 0;
                 }
                 
                 // Log i9 form

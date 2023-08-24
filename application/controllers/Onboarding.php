@@ -5168,6 +5168,8 @@ class Onboarding extends CI_Controller
                             $data_to_update["user_consent"] = NULL;
                             $data_to_update["s3_filename"] = NULL;
                             $data_to_update["version"] = getSystemDate('Y');
+                            $data_to_update["section1_preparer_json"] = NULL;
+                            $data_to_update["section3_authorized_json"] = NULL;
                             //
                             $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                         }

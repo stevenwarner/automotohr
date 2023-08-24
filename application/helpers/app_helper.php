@@ -1135,3 +1135,37 @@ if (!function_exists('copyAuthorizedI9Json')) {
         return json_encode($details);
     }
 }
+
+
+if (!function_exists('isValidJson')) {
+    /**
+     * checked the valid json
+     *
+     * @param string  $string
+     * @return bool
+     */
+    function isValidJson(string  $string): bool
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+}
+
+if (!function_exists('isSerializeString')) {
+    /**
+     * checked the string is Serialize
+     *
+     * @param string  $string
+     * @return bool
+     */
+    function isSerializeString($string): bool
+    {
+        if (!$string) {
+            return false;
+        }
+        //
+        $data = @unserialize($string);
+        //
+        return is_array($data) ? true : false;
+    }
+}

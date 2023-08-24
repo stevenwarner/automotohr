@@ -135,3 +135,78 @@ if (!function_exists('GetCss')) {
         return $html;
     }
 }
+
+if (!function_exists('bundleJs')) {
+    /**
+     * Make a bundle of JS files
+     *
+     * @param array  $files
+     * @param string $destination Optional
+     * @return string
+     */
+    function bundleJs(
+        array $inputs,
+        string $destination = ROOTPATH
+    )
+    {
+        //
+        $file = 'assets/v1/app/js/app'.(MINIFIED).'.js';
+        $destination .= $file;
+        //
+        $handler = fopen($destination, 'w');
+        //
+        if (!$handler) {
+            exit('Failed to set resources');
+        }
+        //
+        foreach ($inputs as $input) {
+            //
+            $input = base_url('assets/' . $input .(MINIFIED).'.js');
+            //
+            fwrite($handler, file_get_contents($input) . "\n\n");
+        }
+        //
+        fclose($handler);
+        //
+        return base_url(
+            $file.'?v='.(MINIFIED === '.min' ? '1.0.0' : time())
+        );
+    }
+}
+
+if (!function_exists('bundleCSS')) {
+    /**
+     * Make a bundle of CSS files
+     *
+     * @param array  $files
+     * @param string $destination Optional
+     * @return string
+     */
+    function bundleCSS(
+        array $inputs,
+        string $destination = ROOTPATH
+    ) {
+        //
+        $file = 'assets/v1/app/css/app' . (MINIFIED) . '.js';
+        $destination .= $file;
+        //
+        $handler = fopen($destination, 'w');
+        //
+        if (!$handler) {
+            exit('Failed to set resources');
+        }
+        //
+        foreach ($inputs as $input) {
+            //
+            $input = base_url('assets/' . $input . (MINIFIED) . '.css');
+            //
+            fwrite($handler, file_get_contents($input) . "\n\n");
+        }
+        //
+        fclose($handler);
+        //
+        return base_url(
+            $file . '?v=' . (MINIFIED === '.min' ? '1.0.0' : time())
+        );
+    }
+}

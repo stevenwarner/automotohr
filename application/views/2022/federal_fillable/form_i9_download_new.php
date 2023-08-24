@@ -799,7 +799,7 @@
                                     <label>Today's Date (mm/dd/yyyy)</label>
                                     <?php if(!empty($authorizedArray) && isset($authorizedArray[$i]['signature']) && !empty($authorizedArray[$i]['signature'])) { ?>
                                         <span class="value-box no-border" id="">
-                                            <?php echo isset($authorizedArray[$i]['section3_signature_date']) && !empty($authorizedArray[$i]['section3_signature_date']) ? date('m/d/Y',strtotime($authorizedArray[$i]['section3_signature_date'])) : "";?>
+                                            <?php echo isset($authorizedArray[$i]['section3_signature_date']) && !empty($authorizedArray[$i]['section3_signature_date']) ? $authorizedArray[$i]['section3_signature_date'] : "";?>
                                         </span>
                                     <?php } ?>
                                 </td>

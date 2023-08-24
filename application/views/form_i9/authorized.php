@@ -9,7 +9,7 @@ for ($i = 1; $i <= 3; $i++) : ?>
             <div class="form-group">
                 <label>Date (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_8_date"></i></label>
                 <input type="text" class="form-control date_picker2" readonly
-                        value="<?= isset($authorizedArray[$i]['section3_rehire_date']) && !empty($authorizedArray[$i]['section3_rehire_date']) ? date('m-d-Y',strtotime($authorizedArray[$i]['section3_rehire_date'])) : "";?>" name="section3_authorized_rehire_date_<?= $i; ?>" autocomplete="off">
+                        value="<?= isset($authorizedArray[$i]['section3_rehire_date']) && !empty($authorizedArray[$i]['section3_rehire_date']) ? date('m-d-Y',strtotime($authorizedArray[$i]['section3_rehire_date'])) : "";?>" id="section3_authorized_rehire_date_<?= $i; ?>" name="section3_authorized_rehire_date_<?= $i; ?>" autocomplete="off">
             </div>
         </div>
 
@@ -22,21 +22,21 @@ for ($i = 1; $i <= 3; $i++) : ?>
                     <div class="form-group">
                         <label>Last Name <i class="fa fa-question-circle-o modalShow" src="section_8_last_name"></i></label>
                         <input type="text" class="form-control"
-                                value="<?= isset($authorizedArray[$i]['section3_last_name']) && !empty($authorizedArray[$i]['section3_last_name']) ? $authorizedArray[$i]['section3_last_name'] : "";?>" name="section3_authorized_last_name_<?= $i; ?>" autocomplete="nope">
+                                value="<?= isset($authorizedArray[$i]['section3_last_name']) && !empty($authorizedArray[$i]['section3_last_name']) ? $authorizedArray[$i]['section3_last_name'] : "";?>" id="section3_authorized_last_name_<?= $i; ?>" name="section3_authorized_last_name_<?= $i; ?>" autocomplete="nope">
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                     <div class="form-group">
                         <label>First Name <i class="fa fa-question-circle-o modalShow" src="section_8_first_name"></i></label>
                         <input type="text" class="form-control"
-                                value="<?= isset($authorizedArray[$i]['section3_first_name']) && !empty($authorizedArray[$i]['section3_first_name']) ? $authorizedArray[$i]['section3_first_name'] : "";?>" name="section3_authorized_first_name_<?= $i; ?>" autocomplete="nope">
+                                value="<?= isset($authorizedArray[$i]['section3_first_name']) && !empty($authorizedArray[$i]['section3_first_name']) ? $authorizedArray[$i]['section3_first_name'] : "";?>" id="section3_authorized_first_name_<?= $i; ?>" name="section3_authorized_first_name_<?= $i; ?>" autocomplete="nope">
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                     <div class="form-group">
                         <label>Middle Initial <i class="fa fa-question-circle-o modalShow" src="section_8_middle_initial"></i></label>
                         <input type="text" class="form-control"
-                                value="<?= isset($authorizedArray[$i]['section3_middle_initial']) && !empty($authorizedArray[$i]['section3_middle_initial']) ? $authorizedArray[$i]['section3_middle_initial'] : "";?>" name="section3_authorized_middle_initial_<?= $i; ?>" autocomplete="nope">
+                                value="<?= isset($authorizedArray[$i]['section3_middle_initial']) && !empty($authorizedArray[$i]['section3_middle_initial']) ? $authorizedArray[$i]['section3_middle_initial'] : "";?>" id="section3_authorized_middle_initial_<?= $i; ?>" name="section3_authorized_middle_initial_<?= $i; ?>" autocomplete="nope">
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@ for ($i = 1; $i <= 3; $i++) : ?>
                                 <?php $selected = isset($authorizedArray[$i]['section3_document_title']) && !empty($authorizedArray[$i]['section3_document_title']) ? $authorizedArray[$i]['section3_document_title'] : "";?>
                                 <div class="select">
                                     <select class="form-control"
-                                            name="section3_authorized_document_title_<?= $i; ?>">
+                                            id="section3_authorized_document_title_<?= $i; ?>" name="section3_authorized_document_title_<?= $i; ?>">
                                         <option value="N/A">N/A</option>
                                         <option value="U.S. Passport" <?= $selected == 'U.S. Passport' ? 'selected' : ''?>>U.S.
                                             Passport
@@ -193,7 +193,7 @@ for ($i = 1; $i <= 3; $i++) : ?>
                                 <label>Document Number <i
                                         class="fa fa-question-circle-o modalShow" src="section_8_document_number"></i></label>
                                 <input type="text" class="form-control"
-                                        value="<?= isset($authorizedArray[$i]['section3_document_number']) && !empty($authorizedArray[$i]['section3_document_number']) ? $authorizedArray[$i]['section3_document_number'] : "";?>" name="section3_authorized_document_number_<?= $i; ?>">
+                                        value="<?= isset($authorizedArray[$i]['section3_document_number']) && !empty($authorizedArray[$i]['section3_document_number']) ? $authorizedArray[$i]['section3_document_number'] : "";?>" id="section3_authorized_document_number_<?= $i; ?>" name="section3_authorized_document_number_<?= $i; ?>">
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12">
@@ -202,7 +202,7 @@ for ($i = 1; $i <= 3; $i++) : ?>
                                         class="fa fa-question-circle-o modalShow" src="section_8_expiration"></i></label>
                                 <input type="text" value="<?= isset($authorizedArray[$i]['section3_expiration_date']) && !empty($authorizedArray[$i]['section3_expiration_date']) ? date('m-d-Y',strtotime($authorizedArray[$i]['section3_expiration_date'])) : "";?>"
                                         class="form-control date_picker2" readonly
-                                        name="section3_authorized_expiration_date_<?= $i; ?>" autocomplete="off">
+                                        name="section3_authorized_expiration_date_<?= $i; ?>" id="section3_authorized_expiration_date_<?= $i; ?>" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -225,26 +225,21 @@ for ($i = 1; $i <= 3; $i++) : ?>
                                 <label>Name of Authorized Representative <span class="staric">*</span> <i
                                         class="fa fa-question-circle-o modalShow" src="section_8_authorized"></i></label>
                                 <input type="text" class="form-control"
-                                        name="section3_authorized_name_of_emp_<?= $i; ?>" value="<?= $first_name.' '.$last_name?>">
+                                        id="section3_authorized_name_of_emp_<?= $i; ?>" name="section3_authorized_name_of_emp_<?= $i; ?>" value="<?= $first_name.' '.$last_name?>">
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 <label>Signature of Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
 
-                                <?php if (isset($authorizedArray[$i])) : ?>
-                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>" alt="" src="<?= $authorizedArray[$i]['signature']; ?>" class="authorized_signature_img_<?= $i; ?>" />
-                                <?php endif; ?>
-                                <?php if ($form['user_consent'] != 1) : ?>
-                                    <!-- the below loaded view add e-signature -->
-                                    <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_<?= $i; ?>" data-key="<?= $i; ?>">
-                                        Create E-Signature
-                                    </a>
-                                    <div class=" img-full">
-                                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>" alt="" class="authorized_signature_img_<?= $i; ?>" />
-                                    </div>
-                                    <input type="hidden" id="section3_authorized_signature_<?= $i; ?>" name="section3_authorized_signature_<?= $i; ?>" />
-                                <?php endif; ?>
+                                <!-- the below loaded view add e-signature -->
+                                <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_<?= $i; ?>" data-key="<?= $i; ?>">
+                                    Create E-Signature
+                                </a>
+                                <div class=" img-full">
+                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>" alt="" class="authorized_signature_img_<?= $i; ?>" />
+                                </div>
+                                <input type="hidden" id="section3_authorized_signature_<?= $i; ?>" id="section3_authorized_signature_<?= $i; ?>" name="section3_authorized_signature_<?= $i; ?>" />
 
                                
                             </div>
@@ -255,18 +250,18 @@ for ($i = 1; $i <= 3; $i++) : ?>
                                         class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>
                                 <input type="text" readonly value="<?= isset($authorizedArray[$i]['section3_signature_date']) && !empty($authorizedArray[$i]['section3_signature_date']) ? date('m-d-Y',strtotime($authorizedArray[$i]['section3_signature_date'])) : date('m-d-Y');?>"
                                         class="form-control date_picker" readonly
-                                        name="section3_authorized_today_date_<?= $i; ?>" autocomplete="off">
+                                        id="section3_authorized_today_date_<?= $i; ?>" name="section3_authorized_today_date_<?= $i; ?>" autocomplete="off">
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-9 col-md-12 col-xs-12 col-sm-12">
                             <label>Additional Information (Initial and date each notation.) </label>
-                            <textarea name="section3_authorized_additional_information_<?= $i; ?>" class="invoice-fields-textarea" rows="8"><?php echo $authorizedArray[$i]['section3_additional_information'] ?></textarea>
+                            <textarea id="section3_authorized_additional_information_<?= $i; ?>" name="section3_authorized_additional_information_<?= $i; ?>" class="invoice-fields-textarea" rows="8"><?php echo $authorizedArray[$i]['section3_additional_information'] ?></textarea>
                         </div>
                         <div class="col-lg-3 col-md-12 col-xs-12 col-sm-12">
                             <label for="page_status">
-                                <input type="checkbox" name="section3_authorized_alternative_procedure_<?= $i; ?>" value="yes" <?php echo ($authorizedArray[$i]['section3_alternative_procedure'] == 1 ? 'checked="checked"' : ''); ?>  />
+                                <input type="checkbox" id="section3_authorized_alternative_procedure_<?= $i; ?>" name="section3_authorized_alternative_procedure_<?= $i; ?>" value="yes" <?php echo ($authorizedArray[$i]['section3_alternative_procedure'] == 1 ? 'checked="checked"' : ''); ?>  />
                                 Check here if you used an alternative procedure authorized by DHS to examine documents.
                             </label>
                         </div>

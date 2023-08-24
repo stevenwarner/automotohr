@@ -661,13 +661,13 @@ foreach ($companies as $company)
             modal += '  <div class="row"> ';
             modal += '      <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
             modal += '                         <div class=" page-title">'
-            modal += '                             <h1 class="page-title" style="width: 100%;">From Company</h1>';
+            modal += '                             <h1 class="page-title" style="width: 100%;">' + ($('#js-from-company option[value="' + ($('#js-from-company').val()) + '"]').text()) + '</h1>';
             modal += '                         </div>';
             modal += '        </div>';
 
             modal += '       <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
             modal += '                        <div class="page-title">'
-            modal += '                             <h1 class="page-title" style="width: 100%;">To Company</h1>';
+            modal += '                             <h1 class="page-title" style="width: 100%;">' + ($('#js-to-company option[value="' + ($('#js-to-company').val()) + '"]').text()) + '</h1>';
             modal += '                         </div>';
             modal += '        </div>';
 
@@ -679,7 +679,11 @@ foreach ($companies as $company)
                 $.each(obj.fromCompanyPolicies, function(key, value) {
                     modal += '<br /> <div class="row csPolicyRow" data-key="' + (key) + '"> ';
                     modal += '       <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
-                    modal += '                         <div > <input type="text"  class="invoice-fields csPolicyRowFrom" data-id="' + value.sid + '" value="' + value.title + '" id="" readonly>'
+                    modal += '                         <div class="csPolicyRowFrom" data-id="' + value.sid + '" >';
+
+                    modal += `<p><strong>${value.title}</strong> (${value.is_paid == 1 ? 'Paid' : 'UnPaid'})</p>`;
+                    modal += `<p>${value.is_archived == 1 ? 'De-Activated' : 'Active'}</p>`;
+                    modal += `<p># of Requests: ${value.requests_count}</p>`;
 
                     modal += '                         </div>';
                     modal += '        </div>';
@@ -693,7 +697,14 @@ foreach ($companies as $company)
                     if (obj.toCompanyPolicies.length > 0) {
                         $.each(obj.toCompanyPolicies, function(key, value) {
 
-                            modal += '<option class="' + (value.is_archived == 1 ? 'bg-danger' : '') + '" value="' + value.sid + '">' + value.title + '' + (value.is_archived == 1 ? ' [Deactivated]' : '') + '</option>';
+                            let employeeCount = value.assigned_employees && value.assigned_employees != null && value.assigned_employees != '0' ? value.assigned_employees.split(',').length : 0;
+                            //
+                            if (value.assigned_employees && value.assigned_employees != null && value.assigned_employees.match(/all/ig) !== null) {
+                                employeeCount = 'All';
+                            }
+
+
+                            modal += '<option class="' + (value.is_archived == 1 ? 'bg-danger' : '') + '" value="' + value.sid + '">' + value.title + '' + (value.is_archived == 1 ? ' [Deactivated]' : '') + '' + (employeeCount ? (value.is_entitled_employee == 1 ? ' - [' + (employeeCount) + ' employees included]' : ' - [' + (employeeCount) + ' employees excluded]') : '') + '</option>';
 
                         });
                     }

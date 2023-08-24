@@ -1699,6 +1699,87 @@
                 return false;
             }
 
+            if (
+				$("#section3_authorized_name_of_emp_1").val().trim() == "" ||
+				$("#section3_authorized_signature_1").val().trim() == "" ||
+				$("#section3_authorized_today_date_1").val().trim() == ""
+			) {
+				let errorsArray = [];
+				//
+				if ($("#section3_authorized_signature_1").val().trim() == "") {
+					errorsArray.push("(1) Authorized signature is required.");
+				}
+				//
+				if ($("#section3_authorized_today_date_1").val().trim() == "") {
+					errorsArray.push("(1) Authorized today date is required.");
+				}
+				//
+				if ($("#section3_authorized_name_of_emp_1").val().trim() == "") {
+					errorsArray.push("(1) Authorized Representative name is required.");
+				}
+				//
+				if (errorsArray.length) {
+                    return alertify.alert(
+						"Error",
+						getErrorsStringFromArray(errorsArray)
+					);
+				}
+			}
+			//
+            if (
+				$("#section3_authorized_name_of_emp_2").val().trim() == "" ||
+				$("#section3_authorized_signature_2").val().trim() == "" ||
+				$("#section3_authorized_today_date_2").val().trim() == ""
+			) {
+				let errorsArray = [];
+				//
+				if ($("#section3_authorized_signature_2").val().trim() == "") {
+					errorsArray.push("(2) Authorized signature is required.");
+				}
+				//
+				if ($("#section3_authorized_today_date_2").val().trim() == "") {
+					errorsArray.push("(2) Authorized today date is required.");
+				}
+				//
+				if ($("#section3_authorized_name_of_emp_2").val().trim() == "") {
+					errorsArray.push("(2) Authorized Representative name is required.");
+				}
+				//
+				if (errorsArray.length) {
+                    return alertify.alert(
+						"Error",
+						getErrorsStringFromArray(errorsArray)
+					);
+				}
+			}
+            //
+            if (
+				$("#section3_authorized_name_of_emp_3").val().trim() == "" ||
+				$("#section3_authorized_signature_3").val().trim() == "" ||
+				$("#section3_authorized_today_date_3").val().trim() == ""
+			) {
+				let errorsArray = [];
+				//
+				if ($("#section3_authorized_signature_3").val().trim() == "") {
+					errorsArray.push("(3) Authorized signature is required.");
+				}
+				//
+				if ($("#section3_authorized_today_date_3").val().trim() == "") {
+					errorsArray.push("(3) Authorized today date is required.");
+				}
+				//
+				if ($("#section3_authorized_name_of_emp_3").val().trim() == "") {
+					errorsArray.push("(3) Authorized Representative name is required.");
+				}
+				//
+				if (errorsArray.length) {
+                    return alertify.alert(
+						"Error",
+						getErrorsStringFromArray(errorsArray)
+					);
+				}
+			}
+
             if ($('#i9-form').valid()) {
                 alertify.confirm(
                     'Are you Sure?',
@@ -1710,6 +1791,17 @@
                         alertify.alert("Warning", 'Cancelled!');
                     }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
             }
+        }
+
+        function getErrorsStringFromArray(errorArray, errorMessage) {
+            return (
+                "<strong><p>" +
+                (errorMessage
+                    ? errorMessage
+                    : "Please, resolve the following errors") +
+                "</p></strong><br >" +
+                errorArray.join("<br />")
+            );
         }
 
         $('#section2_lista_part1_document_title').on('change', function() {
@@ -1806,5 +1898,6 @@
 
     </script>
 <?php }  else if ($load_view == 'new') { ?>
-    <?php $this->load->view('form_i9/index_ems'); ?>
+    <?php //$this->load->view('form_i9/index_ems'); ?>
+    <?php $this->load->view('form_i9/index_ems_new'); ?>
 <?php } ?>
