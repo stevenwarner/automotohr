@@ -92,7 +92,7 @@ if (!function_exists('GetScripts')) {
             } else {
                 //
                 if (strpos($script, 'http') !== false) {
-                    $html .= '<script type="text/javascript" src="' . ($script) . '"></script>'."\n\t";
+                    $html .= '<script type="text/javascript" src="' . ($script) . '"></script>' . "\n\t";
                 } else {
                     $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script))) . '"></script>' . "\n\t";
                 }
@@ -146,31 +146,41 @@ if (!function_exists('bundleJs')) {
      */
     function bundleJs(
         array $inputs,
-        string $destination = ROOTPATH
-    )
-    {
-        //
-        $file = 'assets/v1/app/js/app'.(MINIFIED).'.js';
-        $destination .= $file;
-        //
-        $handler = fopen($destination, 'w');
-        //
+        string $destination = 'assets/v1/app/js/'
+    ) {
+        // reset the destination path
+        $absolutePath = ROOTPATH . $destination;
+        // check if served over production
+        if (MINIFIED === '.min') {
+            return base_url(
+                $destination . 'app.min.js?v=1.0.0'
+            );
+        }
+        // add file to destination
+        $absolutePath .= 'app.js';
+        // creates a new file
+        $handler = fopen($absolutePath, 'w');
+        // if failed throw an error
         if (!$handler) {
             exit('Failed to set resources');
         }
         //
         foreach ($inputs as $input) {
             //
-            $input = base_url('assets/' . $input .(MINIFIED).'.js');
+            $input = base_url('assets/' . $input . '.js');
             //
             fwrite($handler, file_get_contents($input) . "\n\n");
         }
         //
         fclose($handler);
         //
-        return base_url(
-            $file.'?v='.(MINIFIED === '.min' ? '1.0.0' : time())
+        $scripts = '';
+        //
+        $scripts = base_url(
+            $destination . 'app.js?v=' . time()
         );
+        //
+        return $scripts;
     }
 }
 
@@ -184,29 +194,40 @@ if (!function_exists('bundleCSS')) {
      */
     function bundleCSS(
         array $inputs,
-        string $destination = ROOTPATH
+        string $destination = 'assets/v1/app/css/'
     ) {
-        //
-        $file = 'assets/v1/app/css/app' . (MINIFIED) . '.js';
-        $destination .= $file;
-        //
-        $handler = fopen($destination, 'w');
-        //
+        // reset the destination path
+        $absolutePath = ROOTPATH . $destination;
+        // check if served over production
+        if (MINIFIED === '.min') {
+            return base_url(
+                $destination . 'app.min.css?v=1.0.0'
+            );
+        }
+        // add file to destination
+        $absolutePath .= 'app.css';
+        // creates a new file
+        $handler = fopen($absolutePath, 'w');
+        // if failed throw an error
         if (!$handler) {
             exit('Failed to set resources');
         }
         //
         foreach ($inputs as $input) {
             //
-            $input = base_url('assets/' . $input . (MINIFIED) . '.css');
+            $input = base_url('assets/' . $input . '.css');
             //
             fwrite($handler, file_get_contents($input) . "\n\n");
         }
         //
         fclose($handler);
         //
-        return base_url(
-            $file . '?v=' . (MINIFIED === '.min' ? '1.0.0' : time())
+        $scripts = '';
+        //
+        $scripts = base_url(
+            $destination . 'app.css?v=' . time()
         );
+        //
+        return $scripts;
     }
 }
