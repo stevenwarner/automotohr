@@ -30,7 +30,7 @@ let
 <?php if (isset($theme) && $theme == 1) { ?>
     <!-- Common functions -->
     <script src="<?=base_url('assets/timeoff/js_theme_1/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0.5';?>"></script>
-    <script src="<?=base_url('assets/timeoff/js_theme_1/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0.5';?>"></script>
+    <script src="<?=base_url('assets/timeoff/js_theme_1/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '2.0.5';?>"></script>
 
     <?php if(in_array('policies', $this->uri->segment_array())): ?>
         <!-- For policies -->
@@ -120,7 +120,7 @@ let
 <?php } else if (isset($theme) && $theme == 2) { ?>
     <!-- Common functions -->
     <script src="<?=base_url('assets/timeoff/js_theme_2/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0.5';?>"></script>
-    <script src="<?=base_url('assets/timeoff/js_theme_2/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0.5';?>"></script>
+    <script src="<?=base_url('assets/timeoff/js_theme_2/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '2.0.5';?>"></script>
 
     <?php if(in_array('policies', $this->uri->segment_array())): ?>
         <!-- For policies -->
