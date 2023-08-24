@@ -2,6 +2,8 @@
 
 class Payroll extends CI_Controller
 {
+    private $js;
+    private $css;
     /**
      * main entry point to controller
      */
@@ -16,6 +18,9 @@ class Payroll extends CI_Controller
         $this->load->model("v1/Payroll_model", "payroll_model");
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
+        //
+        $this->css = 'assets/v1/payroll/css/';
+        $this->js = 'assets/v1/payroll/js/';
     }
 
     public function dashboard()
@@ -239,23 +244,21 @@ class Payroll extends CI_Controller
             null,
             $data['session']
         );
-        // scripts
-        $data['PageCSS'] = [
+        // css
+        $data['appCSS'] = bundleCSS([
             'v1/app/css/loader'
-        ];
-        $data['PageScripts'] = [
-            'js/app_helper',
-            'v1/payroll/js/earnings/manage'
-        ];
-        bundleJs([
-            'js/app_helper',
-            'v1/payroll/js/earnings/manage'
-        ]);
+        ], $this->css);
+        // js
+        $data['appJs'] =
+            bundleJs([
+                'js/app_helper',
+                'v1/payroll/js/earnings/manage'
+            ], $this->js);
         // get admins
         $data['earnings'] = $this->payroll_model
-        ->getCompanyEarningTypes(
-            $data['loggedInPersonCompany']['sid']
-        );
+            ->getCompanyEarningTypes(
+                $data['loggedInPersonCompany']['sid']
+            );
         //
         $this->load
             ->view('main/header', $data)

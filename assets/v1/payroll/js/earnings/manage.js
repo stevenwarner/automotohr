@@ -227,5 +227,5 @@ $(function manageEarningTypes() {
 	});
 
 	//
-	// ml(false, 'jsPageLoader');
+	ml(false, 'jsPageLoader');
 });

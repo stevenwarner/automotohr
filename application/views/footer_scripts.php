@@ -21,4 +21,7 @@
     echo '<!-- Dynamic Scripts -->';
     echo GetScripts($PageScripts);
 } ?>
-<?= $appJs ?? ''; ?>
+<?=$appJs ?? ''; ?>
+<?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) : ?>
+    <script src="<?= base_url(_m("assets/attendance/js/main", 'js', '1.0.1')); ?>"></script>
+<?php endif; ?>
