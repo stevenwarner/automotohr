@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/responsive.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/jquery-ui-datepicker-custom.css'); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/css/jquery.datetimepicker.css'); ?>">
-    <?php if(!isset($loadUp)) { ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/star-rating.css'); ?>">
-    <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <?php if (!isset($loadUp)) { ?>
+        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/star-rating.css'); ?>">
+        <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <?php } ?>
 
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
@@ -47,28 +47,31 @@
         }
     }
     ?>
-    
-    <?php if(!isset($loadUp)) { ?>
-    <!-- Include MultiSelect -->
-    <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>">
-    <script src="<?php echo site_url('assets/manage_admin/js/chosen.jquery.js'); ?>"></script>
 
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/manage_admin/css') ?>/selectize.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/manage_admin/css') ?>/selectize.bootstrap3.css">
-    <script src="<?php echo base_url('assets/manage_admin/js') ?>/selectize.min.js"></script>
+    <?php if (!isset($loadUp)) { ?>
+        <!-- Include MultiSelect -->
+        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>">
+        <script src="<?php echo site_url('assets/manage_admin/js/chosen.jquery.js'); ?>"></script>
 
-    <!-- Include Jquery Validate -->
-    <script src="<?php echo site_url('assets/manage_admin/js/jquery.validate.js'); ?>"></script>
-    <script src="<?php echo site_url('assets/manage_admin/js/additional-methods.js'); ?>"></script>
-    <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/tableHeadFixer.js'); ?>"></script>
-    <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/star-rating.js'); ?>"></script>
-    <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/Chart.bundle.min.js'); ?>"></script>
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/manage_admin/css') ?>/selectize.css">
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/manage_admin/css') ?>/selectize.bootstrap3.css">
+        <script src="<?php echo base_url('assets/manage_admin/js') ?>/selectize.min.js"></script>
+
+        <!-- Include Jquery Validate -->
+        <script src="<?php echo site_url('assets/manage_admin/js/jquery.validate.js'); ?>"></script>
+        <script src="<?php echo site_url('assets/manage_admin/js/additional-methods.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/tableHeadFixer.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/star-rating.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/Chart.bundle.min.js'); ?>"></script>
     <?php } ?>
 
     <?php if (isset($PageCSS)) : ?>
         <!-- Stylesheets -->
         <?= GetCss($PageCSS); ?>
     <?php endif; ?>
+    <?php if (isset($appCSS)) {
+        echo $appCSS;
+    } ?>
 
 
     <title><?php echo $page_title; ?></title>

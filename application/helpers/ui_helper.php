@@ -152,12 +152,13 @@ if (!function_exists('bundleJs')) {
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
         if (MINIFIED === '.min') {
-            return base_url(
-                $destination . 'app.min.js?v=1.0.0'
-            );
+            return
+                '<script src="' . (base_url(
+                    $destination . 'main.min.js?v=1.0.0'
+                )) . '"></script>';
         }
         // add file to destination
-        $absolutePath .= 'app.js';
+        $absolutePath .= 'main.js';
         // creates a new file
         $handler = fopen($absolutePath, 'w');
         // if failed throw an error
@@ -176,9 +177,9 @@ if (!function_exists('bundleJs')) {
         //
         $scripts = '';
         //
-        $scripts = base_url(
-            $destination . 'app.js?v=' . time()
-        );
+        $scripts = '<script src="' . (base_url(
+            $destination . 'main.js?v=' . time()
+        )) . '"></script>';
         //
         return $scripts;
     }
@@ -200,12 +201,12 @@ if (!function_exists('bundleCSS')) {
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
         if (MINIFIED === '.min') {
-            return base_url(
-                $destination . 'app.min.css?v=1.0.0'
-            );
+            return '<link rel="stylesheet" href="' . (base_url(
+                $destination . 'main.min.css?v=1.0.0'
+            )) . '" />';
         }
         // add file to destination
-        $absolutePath .= 'app.css';
+        $absolutePath .= 'main.css';
         // creates a new file
         $handler = fopen($absolutePath, 'w');
         // if failed throw an error
@@ -224,9 +225,9 @@ if (!function_exists('bundleCSS')) {
         //
         $scripts = '';
         //
-        $scripts = base_url(
-            $destination . 'app.css?v=' . time()
-        );
+        $scripts = '<link rel="stylesheet" href="' . (base_url(
+            $destination . 'main.css?v=' . time()
+        )) . '" />';
         //
         return $scripts;
     }

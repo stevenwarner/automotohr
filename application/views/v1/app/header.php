@@ -18,6 +18,9 @@
         echo GetCss($pageCSS);
     endif;
     ?>
+    <?php if (isset($appCSS)) {
+        echo $appCSS;
+    } ?>
 </head>
 
 <body>

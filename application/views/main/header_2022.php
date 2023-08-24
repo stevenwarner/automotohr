@@ -55,6 +55,9 @@
         <!-- Stylesheets -->
         <?= GetCss($PageCSS); ?>
     <?php endif; ?>
+    <?php if (isset($appCSS)) {
+        echo $appCSS;
+    } ?>
 </head>
 
 <body>

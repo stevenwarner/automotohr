@@ -38,20 +38,21 @@
     var baseURI = "<?= rtrim(base_url(), '/'); ?>/"
 
     <?php if (isset($apiURL)) { ?>
-        apiURL = "<?=$apiURL;?>";
+        apiURL = "<?= $apiURL; ?>";
     <?php } ?>
     <?php if (isset($apiAccessToken)) { ?>
-        apiAccessToken = "<?=$apiAccessToken;?>";
+        apiAccessToken = "<?= $apiAccessToken; ?>";
     <?php } ?>
     <?php if (isset($apiAccessTokenStore)) { ?>
-        apiAccessTokenStore = "<?=$apiAccessTokenStore;?>";
-        companySid = "<?=$companyId;?>";
+        apiAccessTokenStore = "<?= $apiAccessTokenStore; ?>";
+        companySid = "<?= $companyId; ?>";
     <?php } ?>
 </script>
 <?php if (isset($PageScripts)) : ?>
     <!-- Scripts -->
     <?= GetScripts($PageScripts); ?>
 <?php endif; ?>
+<?= $appJs ?? ''; ?>
 </body>
 
 </html>
