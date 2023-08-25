@@ -67,6 +67,12 @@ if (!function_exists('makeCall')) {
                 ]
             ];
         }
+        // Check for auth error
+        if ($info['http_code'] == 204) {
+            return [
+                'success' => true
+            ];
+        }
         //
         if ($info['content_type'] === 'application/pdf') {
             //
@@ -273,6 +279,7 @@ if (!function_exists('getUrl')) {
         $urls['getCompanyOnboardFlow'] = "v1/companies/$key/flows";
         // get company earning types
         $urls['getCompanyEarningTypes'] = "v1/companies/$key/earning_types";
+        $urls['deactivateCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
         // employee URLs
         $urls['createEmployeeJobOnGusto'] = "v1/employees/$key1/jobs";
         $urls['getEmployeeJobs'] = "v1/employees/$key1/jobs";

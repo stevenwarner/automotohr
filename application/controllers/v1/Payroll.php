@@ -1876,6 +1876,52 @@ class Payroll extends CI_Controller
     }
 
     /**
+     * Custom earning type
+     *
+     * @param int $earningId
+     * @return json
+     */
+    public function deactivateCustomEarningType(int $earningId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        $errorsArray = [];
+        // verify the earning type
+        if (!$this->payroll_model->checkCompanyEarningType($earningId, $session['company_detail']['sid'])) {
+            $errorsArray[] = '"Earning type" doesn\'t belong to this company.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // let's deactivate company
+        $response = $this->payroll_model
+            ->deactivateCompanyEarningType(
+                $earningId
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully deactivated the earning type.'
+            ]
+        );
+    }
+
+    /**
      * generate error based on session
      *
      * @param mixed $session

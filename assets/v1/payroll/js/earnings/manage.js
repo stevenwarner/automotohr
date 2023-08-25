@@ -15,6 +15,10 @@ $(function manageEarningTypes() {
 	 * holds the modal id
 	 */
 	let modalId = "jsEarningTypesFlowModal";
+	/**
+	 * holds the page loader
+	 */
+	let pageLoader = "jsPageLoader";
 
 	/**
 	 * capture the view admin event
@@ -35,12 +39,14 @@ $(function manageEarningTypes() {
 		//
 		const earningTypeId = $(this).closest("tr").data("id");
 		//
-		return alertify.confirm(
-			"Do you really want to deactivate this earning type?<br /> This action is not revertible.",
-			function () {
-				startDeactivateLink(earningTypeId);
-			}
-		).setHeader('Confirm!');
+		return alertify
+			.confirm(
+				"Do you really want to deactivate this earning type?<br /> This action is not revertible.",
+				function () {
+					startDeactivateLink(earningTypeId);
+				}
+			)
+			.setHeader("Confirm!");
 	});
 
 	/**
@@ -157,11 +163,29 @@ $(function manageEarningTypes() {
 
 	/**
 	 * deactivates an earning type
+	 *
 	 * @param {number} earningTypeId The id of the earning type
 	 */
-	function startDeactivateLink(earningTypeId)
-	{
-
+	function startDeactivateLink(earningTypeId) {
+		// show the loader
+		ml(true, pageLoader);
+		//
+		XHR = $.ajax({
+			url: baseUrl("payrolls/earnings/deactivate/" + earningTypeId),
+			method: "DELETE",
+		})
+			.success(function () {
+				return alertify.alert(
+					"Success!",
+					"You have successfully deactivated the earning type.",
+					CB
+				);
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				XHR = null;
+				ml(false, pageLoader);
+			});
 	}
 
 	/**
@@ -227,5 +251,5 @@ $(function manageEarningTypes() {
 	});
 
 	//
-	ml(false, 'jsPageLoader');
+	ml(false, pageLoader);
 });

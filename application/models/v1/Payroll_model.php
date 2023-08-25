@@ -3813,4 +3813,61 @@ class Payroll_model extends CI_Model
         //
         return ['success' => true];
     }
+
+    /**
+     * deactivate company earning types
+     *
+     * @param int $earningId
+     * @return array
+     */
+    public function checkCompanyEarningType(
+        int $earningId,
+        int $companyId
+    ): int {
+        // get earning
+        return $this->db
+            ->where('sid', $earningId)
+            ->where('company_sid', $companyId)
+            ->where('is_default', 0)
+            ->count_all_results('gusto_companies_earning_types');
+    }
+
+    /**
+     * deactivate company earning types
+     *
+     * @param int $earningId
+     * @return array
+     */
+    public function deactivateCompanyEarningType(
+        int $earningId
+    ): array {
+        // get earning
+        $earning = $this->db
+            ->select('
+                gusto_uuid,
+                company_sid
+            ')
+            ->where('sid', $earningId)
+            ->get('gusto_companies_earning_types')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($earning['company_sid']);
+        $companyDetails['other_uuid'] = $earning['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'deactivateCompanyEarningTypes',
+            $companyDetails,
+            [],
+            'DELETE'
+        );
+        _e($gustoResponse, true);
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        return ['success' => true];
+    }
 }

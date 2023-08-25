@@ -1756,3 +1756,5 @@ $route['payrolls/flow/contractors/(:num)/single_form/(:num)']['get'] = 'v1/Payro
 $route['payrolls/flow/contractors/(:num)/personal_details']['post'] = 'v1/Payroll/updateContractorPersonalDetails/$1';
 $route['payrolls/flow/contractors/(:num)/home_address']['post'] = 'v1/Payroll/updateContractorHomeAddress/$1';
 $route['payrolls/flow/contractors/(:num)/payment_method']['post'] = 'v1/Payroll/updateContractorPaymentMethod/$1';
+// Custom Earning Types
+$route['payrolls/earnings/deactivate/(:num)']['delete'] = 'v1/Payroll/deactivateCustomEarningType/$1';

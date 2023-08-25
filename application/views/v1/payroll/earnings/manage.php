@@ -27,10 +27,10 @@
                     <!--  -->
                     <div class="panel panel-success">
                         <div class="panel-heading text-right">
-                            <a href="<?= base_url('payrolls/admins/add'); ?>" class="btn csBG3 csBR5  csW  csF16" title="Add and admin" placement="top">
+                            <button class="btn csBG3 csBR5 csW csF16 jsAddEarningType" title="Add an Earning Type" placement="top">
                                 <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>&nbsp;
                                 Add an Earning Type
-                            </a>
+                            </button>
                         </div>
                         <div class="panel-body">
                             <div class="table-responsive">
@@ -58,10 +58,12 @@
                                                         ); ?>
                                                     </td>
                                                     <td class="vam text-right">
-                                                        <button class="btn btn-danger csF16 jsDeactivateEarningType" title="Deactivate the earning type" placement="top">
-                                                            <i class="fa fa-ban csF16" aria-hidden="true"></i>
-                                                            &nbsp;Deactivate
-                                                        </button>
+                                                        <?php if (!$earning['is_default']) { ?>
+                                                            <button class="btn btn-danger csF16 jsDeactivateEarningType" title="Deactivate the earning type" placement="top">
+                                                                <i class="fa fa-ban csF16" aria-hidden="true"></i>
+                                                                &nbsp;Deactivate
+                                                            </button>
+                                                        <?php } ?>
                                                     </td>
                                                 </tr>
                                             <?php
