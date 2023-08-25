@@ -152,13 +152,19 @@ if (!function_exists('bundleJs')) {
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
         if (MINIFIED === '.min') {
+            //
+            $fileName = $destination . 'main';
+            //
             return
                 '<script src="' . (base_url(
-                    $destination . 'main.min.js?v=1.0.0'
+                    $destination . 'main.min.js?v=' . (getStaticFileVersion($fileName, 'js'))
                 )) . '"></script>';
         }
         // add file to destination
+        $absolutePathMin = $absolutePath;
+        // add file to destination
         $absolutePath .= 'main.js';
+        $absolutePathMin .= 'main.min.js';
         // creates a new file
         $handler = fopen($absolutePath, 'w');
         // if failed throw an error
@@ -175,10 +181,14 @@ if (!function_exists('bundleJs')) {
         //
         fclose($handler);
         //
+        shell_exec(
+            "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
+        );
+        //
         $scripts = '';
         //
         $scripts = '<script src="' . (base_url(
-            $destination . 'main.js?v=' . time()
+            $destination . 'main.min.js?v=' . time()
         )) . '"></script>';
         //
         return $scripts;
@@ -201,12 +211,18 @@ if (!function_exists('bundleCSS')) {
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
         if (MINIFIED === '.min') {
+            //
+            $fileName = $destination . 'main';
+            //
             return '<link rel="stylesheet" href="' . (base_url(
-                $destination . 'main.min.css?v=1.0.0'
+                $destination .
+                    'main.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
             )) . '" />';
         }
         // add file to destination
+        $absolutePathMin = $absolutePath;
         $absolutePath .= 'main.css';
+        $absolutePathMin .= 'main.min.css';
         // creates a new file
         $handler = fopen($absolutePath, 'w');
         // if failed throw an error
@@ -223,10 +239,14 @@ if (!function_exists('bundleCSS')) {
         //
         fclose($handler);
         //
+        shell_exec(
+            "uglifycss {$absolutePath} > {$absolutePathMin}"
+        );
+        //
         $scripts = '';
         //
         $scripts = '<link rel="stylesheet" href="' . (base_url(
-            $destination . 'main.css?v=' . time()
+            $destination . 'main.min.css?v=' . time()
         )) . '" />';
         //
         return $scripts;

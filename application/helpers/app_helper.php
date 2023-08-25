@@ -590,10 +590,12 @@ if (!function_exists('getStaticFileVersion')) {
      * set and get the version of the minified file
      *
      * @param string $file The URI of the asset
+     * @param string   $newFlow
      * @returns string
      */
     function getStaticFileVersion(
-        string $file
+        string $file,
+        string $newFlow = ''
     ) {
         // set files
         $files = [];
@@ -607,7 +609,7 @@ if (!function_exists('getStaticFileVersion')) {
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files
-        $files['assets/app_helper'] = ['js' => '3.0.0'];
+        $files['js/app_helper'] = ['js' => '3.0.0'];
         $files['v1/common'] = ['js' => '3.0.0'];
         $files['v1/lms/add_question'] = ['js' => '3.0.0'];
         $files['v1/lms/edit_question'] = ['js' => '3.0.0'];
@@ -631,7 +633,7 @@ if (!function_exists('getStaticFileVersion')) {
         // Earning types
         $files['v1/payroll/js/earnings/manage'] = ['js' => '1.0.0'];
         // check and return data
-        return $files[$file] ?? [];
+        return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0'): ($files[$file] ?? []);
     }
 }
 
