@@ -282,6 +282,9 @@ if (!function_exists('getUrl')) {
         $urls['deactivateCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
         $urls['addCompanyEarningTypes'] = "v1/companies/$key/earning_types";
         $urls['editCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
+        // webhooks
+        $urls['createCompanyWebHook'] = "v1/webhook_subscriptions";
+        $urls['verifyCompanyWebHook'] = "v1/webhook_subscriptions/$key/verify";
         // employee URLs
         $urls['createEmployeeJobOnGusto'] = "v1/employees/$key1/jobs";
         $urls['getEmployeeJobs'] = "v1/employees/$key1/jobs";
@@ -339,6 +342,54 @@ if (!function_exists('createPartnerCompany')) {
             getUrl('createPartnerCompany'),
             [
                 CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+    }
+}
+
+if (!function_exists('createCompanyWebHook')) {
+    /**
+     * create webhook
+     *
+     * @param array $request
+     * @return array
+     */
+    function createCompanyWebHook(array $request): array
+    {
+        return makeCall(
+            getUrl('createCompanyWebHook'),
+            [
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+    }
+}
+
+if (!function_exists('callWebHook')) {
+    /**
+     * verify webhook
+     *
+     * @param array $request
+     * @return array
+     */
+    function callWebHook(string $id, array $request): array
+    {
+        return makeCall(
+            getUrl('verifyCompanyWebHook', $id),
+            [
+                CURLOPT_CUSTOMREQUEST => "PUT",
                 CURLOPT_POSTFIELDS => json_encode($request),
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (GUSTO_KEY_TEST) . '',

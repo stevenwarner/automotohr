@@ -960,17 +960,21 @@ class Payroll_model extends CI_Model
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
         $companyDetails['company_sid'] = $companyId;
         // let's sync the company federal tax
-        $this->syncCompanyFederalTaxWithGusto($companyDetails);
-        // let's sync the company industry
-        $this->syncCompanyIndustryWithGusto($companyDetails);
-        // let's sync the company bank accounts
-        $this->syncCompanyBankAccountsWithGusto($companyDetails);
-        // let's sync the company pay schedule
-        $this->syncCompanyPayScheduleWithGusto($companyDetails);
-        // let's sync the company industry
-        $this->syncCompanyPaymentConfigWithGusto($companyDetails);
-        // sync the earning types
-        $this->syncCompanyEarningTypes($companyId);
+        // $this->syncCompanyFederalTaxWithGusto($companyDetails);
+        // // let's sync the company industry
+        // $this->syncCompanyIndustryWithGusto($companyDetails);
+        // // let's sync the company bank accounts
+        // $this->syncCompanyBankAccountsWithGusto($companyDetails);
+        // // let's sync the company pay schedule
+        // $this->syncCompanyPayScheduleWithGusto($companyDetails);
+        // // let's sync the company industry
+        // $this->syncCompanyPaymentConfigWithGusto($companyDetails);
+        // // sync the earning types
+        // $this->syncCompanyEarningTypes($companyId);
+        // // create earning types
+        // $this->createCompanyEarningTypes($companyId);
+        // create company webhook
+        $this->createCompanyWebHook($companyId);
 
         return SendResponse(
             200,
@@ -3978,6 +3982,137 @@ class Payroll_model extends CI_Model
         $this->db
             ->where('sid', $earningId)
             ->update('gusto_companies_earning_types', $upd);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * create company webhook
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function createCompanyWebHook(
+        int $companyId
+    ): array {
+        //
+        if ($this->db->where('webhook_type', 'company')->count_all_results('gusto_companies_webhooks')) {
+            return ['success' => true];
+        }
+        // response
+        $gustoResponse = createCompanyWebHook(
+            [
+                'url' => base_url('gusto/company/subscriber'),
+                'subscription_types' => [
+                    'Company'
+                ]
+            ]
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $ins = [];
+        $ins['webhook_type'] = 'company';
+        $ins['gusto_uuid'] = $gustoResponse['uuid'];
+        $ins['status'] = $gustoResponse['status'];
+        $ins['url'] = $gustoResponse['url'];
+        $ins['subscription_types'] = json_encode($gustoResponse['subscription_types']);
+        $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->insert('gusto_companies_webhooks', $ins);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * update company webhook
+     *
+     * @param array $data
+     * @return array
+     */
+    public function callWebHook(
+        array $data
+    ): array {
+        // get webhook
+        $webhook = $this->db
+            ->select('gusto_uuid, sid')
+            ->where([
+                'webhook_type' => 'company',
+            ])
+            ->get('gusto_companies_webhooks')
+            ->row_array();
+        //
+        $gustoResponse = callWebHook(
+            $webhook['gusto_uuid'],
+            [
+                'verification_token' => $data['verification_token']
+            ]
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['status'] = $gustoResponse['status'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $webhook['sid'])
+            ->insert('gusto_companies_webhooks', $upd);
+        //
+        return $gustoResponse;
+    }
+
+    /*
+     * push the paid time off policies
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function createCompanyEarningTypes(
+        int $companyId
+    ): array {
+        // get the paid time offs
+        $paidPolicies = $this->db
+            ->select('sid, title')
+            ->where([
+                'company_sid' => $companyId,
+                'policy_category_type' => 1
+            ])
+            ->get('timeoff_policies')
+            ->result_array();
+
+        if (!$paidPolicies) {
+            //
+            return $this->addCompanyEarningType(
+                $companyId,
+                [
+                    'name' => "Paid Time Off"
+                ]
+            );
+        }
+        // loop through data
+        foreach ($paidPolicies as $policy) {
+            //
+            if ($this->db->where('name', $policy['title'])->count_all_result('gusto_companies_earning_types')) {
+                continue;
+            }
+            //
+            $this->addCompanyEarningType(
+                $companyId,
+                [
+                    'name' => $policy['title']
+                ]
+            );
+        }
         //
         return ['success' => true];
     }

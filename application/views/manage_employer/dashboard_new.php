@@ -860,7 +860,6 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure>
                                                         <i class="fa fa-dollar" aria-hidden="true"></i>
-                                                        <i class="fa fa-dollar" aria-hidden="true"></i>
                                                     </figure>
                                                     <h2 class="post-title">
                                                         <a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a>
