@@ -960,21 +960,21 @@ class Payroll_model extends CI_Model
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
         $companyDetails['company_sid'] = $companyId;
         // let's sync the company federal tax
-        // $this->syncCompanyFederalTaxWithGusto($companyDetails);
-        // // let's sync the company industry
-        // $this->syncCompanyIndustryWithGusto($companyDetails);
-        // // let's sync the company bank accounts
-        // $this->syncCompanyBankAccountsWithGusto($companyDetails);
-        // // let's sync the company pay schedule
-        // $this->syncCompanyPayScheduleWithGusto($companyDetails);
-        // // let's sync the company industry
-        // $this->syncCompanyPaymentConfigWithGusto($companyDetails);
-        // // sync the earning types
-        // $this->syncCompanyEarningTypes($companyId);
-        // // create earning types
-        // $this->createCompanyEarningTypes($companyId);
+        $this->syncCompanyFederalTaxWithGusto($companyDetails);
+        // let's sync the company industry
+        $this->syncCompanyIndustryWithGusto($companyDetails);
+        // let's sync the company bank accounts
+        $this->syncCompanyBankAccountsWithGusto($companyDetails);
+        // let's sync the company pay schedule
+        $this->syncCompanyPayScheduleWithGusto($companyDetails);
+        // let's sync the company industry
+        $this->syncCompanyPaymentConfigWithGusto($companyDetails);
+        // sync the earning types
+        $this->syncCompanyEarningTypes($companyId);
+        // create earning types
+        $this->createCompanyEarningTypes($companyId);
         // create company webhook
-        $this->createCompanyWebHook($companyId);
+        $this->createCompanyWebHook();
 
         return SendResponse(
             200,
@@ -3989,12 +3989,9 @@ class Payroll_model extends CI_Model
     /**
      * create company webhook
      *
-     * @param int $companyId
      * @return array
      */
-    public function createCompanyWebHook(
-        int $companyId
-    ): array {
+    public function createCompanyWebHook(): array {
         //
         if ($this->db->where('webhook_type', 'company')->count_all_results('gusto_companies_webhooks')) {
             return ['success' => true];
