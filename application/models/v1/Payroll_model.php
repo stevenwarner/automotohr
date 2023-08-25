@@ -3833,6 +3833,27 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * get company earning type
+     *
+     * @param int $earningId
+     * @param int $companyId
+     * @return array
+     */
+    public function getSingleEarning(
+        int $earningId,
+        int $companyId
+    ): array {
+        // get earning
+        return $this->db
+            ->select('sid, name')
+            ->where('sid', $earningId)
+            ->where('company_sid', $companyId)
+            ->where('is_default', 0)
+            ->get('gusto_companies_earning_types')
+            ->row_array();
+    }
+
+    /**
      * deactivate company earning types
      *
      * @param int $earningId
@@ -3860,13 +3881,103 @@ class Payroll_model extends CI_Model
             [],
             'DELETE'
         );
-        _e($gustoResponse, true);
         //
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
             return $errors;
         }
+        //
+        $this->db
+            ->where('sid', $earningId)
+            ->delete('gusto_companies_earning_types');
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * add company earning types
+     *
+     * @param int   $companyId
+     * @param array $data
+     * @return array
+     */
+    public function addCompanyEarningType(
+        int $companyId,
+        array $data
+    ): array {
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // response
+        $gustoResponse = gustoCall(
+            'addCompanyEarningTypes',
+            $companyDetails,
+            [
+                'name' => $data['name']
+            ],
+            'POST'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $ins = [];
+        $ins['name'] = $gustoResponse['name'];
+        $ins['gusto_uuid'] = $gustoResponse['uuid'];
+        $ins['is_default'] = 0;
+        $ins['updated_at'] = $ins['created_at'] = getSystemDate();
+        $ins['company_sid'] = $companyId;
+        $this->db->insert('gusto_companies_earning_types', $ins);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * edit company earning types
+     *
+     * @param int   $earningId
+     * @param array $data
+     * @return array
+     */
+    public function editCompanyEarningType(
+        int $earningId,
+        array $data
+    ): array {
+        //
+        $earning = $this->db
+            ->select('gusto_uuid, company_sid')
+            ->where('sid', $earningId)
+            ->get('gusto_companies_earning_types')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($earning['company_sid']);
+        $companyDetails['other_uuid'] = $earning['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'editCompanyEarningTypes',
+            $companyDetails,
+            [
+                'name' => $data['name']
+            ],
+            'PUT'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['name'] = $gustoResponse['name'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $earningId)
+            ->update('gusto_companies_earning_types', $upd);
         //
         return ['success' => true];
     }

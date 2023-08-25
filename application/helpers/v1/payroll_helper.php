@@ -280,6 +280,8 @@ if (!function_exists('getUrl')) {
         // get company earning types
         $urls['getCompanyEarningTypes'] = "v1/companies/$key/earning_types";
         $urls['deactivateCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
+        $urls['addCompanyEarningTypes'] = "v1/companies/$key/earning_types";
+        $urls['editCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
         // employee URLs
         $urls['createEmployeeJobOnGusto'] = "v1/employees/$key1/jobs";
         $urls['getEmployeeJobs'] = "v1/employees/$key1/jobs";

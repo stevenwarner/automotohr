@@ -63,6 +63,10 @@
                                                                 <i class="fa fa-ban csF16" aria-hidden="true"></i>
                                                                 &nbsp;Deactivate
                                                             </button>
+                                                            <button class="btn btn-success csF16 jsUpdateEarningType" title="Update the earning type" placement="top">
+                                                                <i class="fa fa-edit csF16" aria-hidden="true"></i>
+                                                                &nbsp;Update
+                                                            </button>
                                                         <?php } ?>
                                                     </td>
                                                 </tr>

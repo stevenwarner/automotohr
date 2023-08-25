@@ -246,11 +246,13 @@ class Payroll extends CI_Controller
         );
         // css
         $data['appCSS'] = bundleCSS([
+            'v1/plugins/ms_modal/main',
             'v1/app/css/loader'
         ], $this->css);
         // js
         $data['appJs'] =
             bundleJs([
+                'v1/plugins/ms_modal/main',
                 'js/app_helper',
                 'v1/payroll/js/earnings/manage'
             ], $this->js);
@@ -1917,6 +1919,159 @@ class Payroll extends CI_Controller
             200,
             [
                 'msg' => 'You have successfully deactivated the earning type.'
+            ]
+        );
+    }
+
+    /**
+     * Custom earning type
+     *
+     * @return json
+     */
+    public function addCustomEarningType(): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'v1/payroll/earnings/add',
+                    [],
+                    true
+                )
+            ]
+        );
+    }
+
+    /**
+     * Custom earning type
+     *
+     * @param int $earningId
+     * @return json
+     */
+    public function editCustomEarningType(int $earningId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        $data = [];
+        // get the earning type
+        $data['earning'] = $this->payroll_model
+            ->getSingleEarning(
+                $earningId,
+                $session['company_detail']['sid']
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'v1/payroll/earnings/edit',
+                    $data,
+                    true
+                )
+            ]
+        );
+    }
+    /**
+     * Custom earning type
+     *
+     * @return json
+     */
+    public function processAddCustomEarningType(): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        $post = $this->input->post(null, true);
+        //
+        $errorsArray = [];
+        //
+        if (!$post['name']) {
+            $errorsArray[] = '"Name" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // let's deactivate company
+        $response = $this->payroll_model
+            ->addCompanyEarningType(
+                $session['company_detail']['sid'],
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully add an earning type.'
+            ]
+        );
+    }
+
+    /**
+     * Custom earning type
+     *
+     * @param int $earningId
+     * @return json
+     */
+    public function processEditCustomEarningType(int $earningId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        $post = $this->input->post(null, true);
+        //
+        $errorsArray = [];
+        //
+        if (!$post['name']) {
+            $errorsArray[] = '"Name" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // let's update earning
+        $response = $this->payroll_model
+            ->editCompanyEarningType(
+                $earningId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated earning type.'
             ]
         );
     }
