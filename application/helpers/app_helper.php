@@ -1092,3 +1092,247 @@ if (!function_exists('isSerializeString')) {
         return is_array($data) ? true : false;
     }
 }
+
+if (!function_exists('getEmployeeDepartmentAndTeams')) {
+    /**
+     * get employee teams and departments
+     *
+     * @param int $employeeId
+     */
+    function getEmployeeDepartmentAndTeams(int $employeeId): array
+    {
+        // set default
+        $r = [
+            'departments' => [],
+            'teams' => []
+        ];
+        // get the data
+        $records = get_instance()->db
+            ->select("
+                departments_management.sid as department_sid,
+                departments_management.name as department_name,
+                departments_team_management.sid,
+                departments_team_management.name
+            ")
+            ->join(
+                "departments_team_management",
+                "departments_team_management.sid = departments_employee_2_team.team_sid",
+                "inner"
+            )
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0)
+            ->where("departments_employee_2_team.employee_sid", $employeeId)
+            ->get("departments_employee_2_team")
+            ->result_array();
+        //
+        if (!$records) {
+            return $r;
+        }
+        //
+        foreach ($records as $record) {
+            // set department
+            $r['departments'][$record['department_sid']] = [
+                'sid' => $record['department_sid'],
+                'name' => $record['department_name'],
+            ];
+            // set teams
+            $r['teams'][$record['sid']] = [
+                'department_sid' => $record['department_sid'],
+                'department_name' => $record['department_name'],
+                'sid' => $record['sid'],
+                'name' => $record['name'],
+            ];
+        }
+        //
+        $r['teams'] = array_values($r['teams']);
+        //
+        return $r;
+    }
+}
+
+
+if (!function_exists('getMyDepartmentAndTeams')) {
+    /**
+     * get employee teams and departments
+     *
+     * @param int $employeeId
+     * @param string $flag
+     * @param string $method
+     */
+    function getMyDepartmentAndTeams(int $employeeId, string $flag = "", string $method = "get"): array
+    {
+        // set default
+        $r = [
+            'departments' => [],
+            'teams' => [],
+            'employees' => []
+        ];
+        //
+        $CI = get_instance();
+        //
+        $CI->db->select("
+                    departments_team_management.sid as team_sid, 
+                    departments_team_management.name as team_name,
+                    departments_management.sid,
+                    departments_management.name,
+                    departments_management.supervisor
+                    ")
+                    ->join(
+                        "departments_management",
+                        "departments_management.sid = departments_team_management.department_sid",
+                        "inner"
+                    )
+                    ->where("departments_management.is_deleted", 0)
+                    ->where("departments_team_management.is_deleted", 0)
+                    ->group_start()
+                    ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", NULL, NULL)
+                    ->or_where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", NULL, NULL)
+                    ->group_end();
+        if ($method == "count_all_results") {
+            $CI->db->limit(1);
+        }            
+        $departmentAndTeams = $CI->db->$method('departments_team_management');
+                    
+        //
+        if ($method == "count_all_results") {
+            return $departmentAndTeams  ? [1] : [];
+        }  
+        $departmentAndTeams = $departmentAndTeams->result_array();                              
+        //
+        if (!empty($departmentAndTeams)) {
+            //
+            foreach ($departmentAndTeams as $team) {
+                $r['teams'][$team["team_sid"]] = array(
+                    "department_sid" => $team["sid"],
+                    "department_name" => $team["name"],
+                    "sid" => $team["team_sid"],
+                    "name" => $team["team_name"], 
+                    "employees_ids" => []
+                );
+                //
+                if (in_array($employeeId, explode(",", $team["supervisor"]))) {
+                    $r['departments'][$team["sid"]] = array(
+                        "sid" => $team["sid"],
+                        "name" =>  $team["name"],
+                        "employees_ids" => []
+                    );
+                }
+            }
+            //
+            $teamSids = array_column($departmentAndTeams,"team_sid");
+            //
+            $TeamEmployees = get_instance()->db->select("
+                            department_sid, 
+                            team_sid, 
+                            employee_sid
+                        ")
+                        ->where_in('team_sid', $teamSids)
+                        ->get('departments_employee_2_team')
+                        ->result_array();    
+            //
+            $alreadyExist = [];
+            $employees = [];
+            //
+            foreach ($TeamEmployees as $employee) {
+                //
+                if (!in_array($employee['employee_sid'], $alreadyExist)) {
+                    array_push($alreadyExist, $employee['employee_sid']);
+                    $jobTitleInfo = get_instance()->db->select("
+                        users.job_title,
+                        users.first_name,
+                        users.last_name,
+                        users.access_level,
+                        users.timezone,
+                        users.access_level_plus,
+                        users.is_executive_admin,
+                        users.pay_plan_flag,
+                        portal_job_title_templates.sid as job_title_sid
+                    ")
+                    ->join(
+                        "portal_job_title_templates",
+                        "portal_job_title_templates.title = users.job_title",
+                        "left"
+                    )
+                    ->where('users.sid', $employee['employee_sid'])
+                    ->get('users')
+                    ->row_array();
+                    //
+                    $jobTitleId = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;  
+                    //  
+                    $employeeName = remakeEmployeeName([
+                        'first_name' => $jobTitleInfo['first_name'],
+                        'last_name' => $jobTitleInfo['last_name'],
+                        'access_level' => $jobTitleInfo['access_level'],
+                        'timezone' => isset($jobTitleInfo['timezone']) ? $jobTitleInfo['timezone'] : '',
+                        'access_level_plus' => $jobTitleInfo['access_level_plus'],
+                        'is_executive_admin' => $jobTitleInfo['is_executive_admin'],
+                        'pay_plan_flag' => $jobTitleInfo['pay_plan_flag'],
+                        'job_title' => $jobTitleInfo['job_title'],
+                    ]);
+                    //
+                    $employees[$employee['employee_sid']]["job_title_sid"] =  !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    $employees[$employee['employee_sid']]["full_name"] = $employeeName;
+                    $employees[$employee['employee_sid']]["employee_sid"] = $employee['employee_sid'];
+                    $employees[$employee['employee_sid']]["department_sid"] = $employee['department_sid'];
+                    $employees[$employee['employee_sid']]["team_sid"] = $employee['team_sid'];
+                    //
+                    $employeeData = [];
+                    $employeeData["employee_sid"] = $employee['employee_sid'];
+                    $employeeData["job_title_sid"] =  $jobTitleId;
+                    $employeeData["employee_name"] =  $employeeName;
+                    //
+                    if ($flag == 'courses') { 
+                        if ($jobTitleId > 0) {
+                            $companyId = getEmployeeUserParent_sid($employee['employee_sid']);
+                            //
+                            $companyCourses = get_instance()->db->select("
+                                    lms_default_courses.sid
+                                ")
+                                ->join(
+                                    "lms_default_courses_job_titles",
+                                    "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
+                                    "right"
+                                )
+                                ->where('lms_default_courses.company_sid', $companyId)
+                                ->where('lms_default_courses.is_active', 1)
+                                ->group_start()
+                                ->where('lms_default_courses_job_titles.job_title_id', -1)
+                                ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+                                ->group_end()
+                                ->get('lms_default_courses')
+                                ->result_array();
+                            //
+                            $assignCourses = !empty($companyCourses) ? implode(',',array_column($companyCourses, "sid")) : "";
+                            //
+                            $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses;
+                            $employeeData["assign_courses"] =  $assignCourses;
+                        } else {
+                            $employees[$employee['employee_sid']]["assign_courses"] = "";
+                            $employeeData["assign_courses"] =  "";
+                        }
+                    }
+                    
+                    //
+                    if (isset($r['departments'][$employee['department_sid']])) {
+                        $r['departments'][$employee['department_sid']]['employees_ids'][] = $employeeData;
+                    }
+                    //
+                    if (isset($r['teams'][$employee['team_sid']])) {
+                        $r['teams'][$employee['team_sid']]['employees_ids'][] = $employeeData;
+                    }
+                    //
+                }
+               
+            }
+            //
+            $r['employees'] = $employees;
+        }
+        //
+        return $r;
+    }
+}

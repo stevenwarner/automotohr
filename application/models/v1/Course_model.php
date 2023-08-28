@@ -165,4 +165,40 @@ class Course_model extends CI_Model
 
         return $returnCount;
     }
+
+    public function insertEmployeeSubordinate(
+        int $companyId,
+        int $employeeId,
+        array $subordinateInfo
+    )
+    {
+        $dataToInsert = array();
+        $dataToInsert['unique_key'] = generateRandomString(32);
+        $dataToInsert['department_team_json'] = json_encode($subordinateInfo);
+        //
+        if (
+            $this->db
+            ->where('company_sid', $companyId)
+            ->where('employee_sid', $employeeId)
+            ->count_all_results('lms_employee_subordinate')
+        ) {
+            //
+            $dataToInsert['created_at'] = date('Y-m-d H:i:s');
+            $dataToInsert['updated_at'] = date('Y-m-d H:i:s');
+            //
+            $this->db->where('company_sid', $companyId);
+            $this->db->where('employee_sid', $employeeId);
+            $this->db->update('lms_employee_subordinate', $dataToInsert);
+        } else {
+            //
+            $dataToInsert['company_sid'] = $companyId;
+            $dataToInsert['employee_sid'] = $employeeId;
+            $dataToInsert['created_at'] = date('Y-m-d H:i:s');
+            $dataToInsert['updated_at'] = date('Y-m-d H:i:s');
+            //
+            $this->db->insert('lms_employee_subordinate', $dataToInsert);
+        }
+        //
+        return $dataToInsert['unique_key'];
+    }
 }

@@ -13,10 +13,22 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="page-header">
-                        <h1 class="section-ttile">Trainings</h1>
+                        <h1 class="section-ttile">
+                            Trainings
+                            <div style="float: right;">
+                                <?php if (!empty($haveSubordinate)) { ?>
+                                    <?php if ($page == "my_courses") { ?>
+                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
+                                    <?php } else { ?>
+                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                    <?php } ?>
+                                <?php } ?>     
+                            </div>
+                        </h1>
                     </div>
                 </div>
             </div>
+            <!--  -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-inner">
@@ -100,5 +112,9 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<script>
+    var page = "<?php echo $page; ?>";
+    var subordinateId = "<?php echo $subordinate_sid; ?>";
+</script>

@@ -15,7 +15,7 @@ $(function LMSEmployeeCourses() {
 				startCourse();
 			},
 			CB
-		);
+		).setHeader("Confirm");
 	});
 
 	function startCourse () {
@@ -36,6 +36,7 @@ $(function LMSEmployeeCourses() {
 				//
 				if (response.status === "course_started") {
 					$("#jsStartCourseDiv").hide();
+					$(".jsSaveQuestionResult").show();
 					getLMSAssignCourse();
 				}
 				//
@@ -325,6 +326,7 @@ $(function LMSEmployeeCourses() {
 	if (lessonStatus === "not_started") {
 		ml(false, "jsPageLoader");
 		$("#jsStartCourseDiv").show();
+		$(".jsSaveQuestionResult").hide();
 	} else if (lessonStatus === "started") {
 		getLMSAssignCourse();
 	}
