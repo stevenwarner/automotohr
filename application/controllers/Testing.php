@@ -203,8 +203,6 @@ class Testing extends CI_Controller
 
         fclose($handler);
         exit(0);
-
-
         _e($userData, true);
     }
 }
