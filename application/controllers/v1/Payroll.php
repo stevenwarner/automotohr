@@ -2,29 +2,38 @@
 
 class Payroll extends CI_Controller
 {
+    /**
+     * for js
+     */
     private $js;
+    /**
+     * for css
+     */
     private $css;
     /**
      * main entry point to controller
      */
     public function __construct()
     {
-        //
+        // inherit
         parent::__construct();
+        // set default form messages
         $this->form_validation->set_message('required', '"{field}" is required.');
         $this->form_validation->set_message('valid_email', '"{field}" is invalid.');
-        //
         // Call the model
         $this->load->model("v1/Payroll_model", "payroll_model");
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
-        //
+        // set path to CSS file
         $this->css = 'assets/v1/payroll/css/';
+        // set path to JS file
         $this->js = 'assets/v1/payroll/js/';
     }
 
     public function dashboard()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -44,12 +53,14 @@ class Payroll extends CI_Controller
         );
         // scripts
         $data['PageCSS'] = [];
-        $data['PageScripts'] = [
+        $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/dashboard'
-        ];
+        ]);
         //
-        $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId);
+        $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status']);
+        //
+        $data['companyStatus'] = $companyGustoDetails['status'];
         // get the company onboard flow
         $data['flow'] = gustoCall(
             'getCompanyOnboardFlow',
@@ -76,7 +87,10 @@ class Payroll extends CI_Controller
             $companyGustoDetails
         );
         //
-        $this->payroll_model->handleInitialEmployeeOnboard($data['session']['company_detail']['sid']);
+        $this->payroll_model
+            ->handleInitialEmployeeOnboard(
+                $data['session']['company_detail']['sid']
+            );
         //
         $this->load
             ->view('main/header', $data)
@@ -89,6 +103,8 @@ class Payroll extends CI_Controller
      */
     public function manageAdmins()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -125,6 +141,8 @@ class Payroll extends CI_Controller
      */
     public function manageAddAdmin()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -156,6 +174,8 @@ class Payroll extends CI_Controller
      */
     public function manageSignatories()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -191,6 +211,8 @@ class Payroll extends CI_Controller
      */
     public function createSignatoriesPage()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -231,6 +253,8 @@ class Payroll extends CI_Controller
      */
     public function earningTypes()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -273,6 +297,8 @@ class Payroll extends CI_Controller
      */
     public function manageEmployees()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -313,6 +339,8 @@ class Payroll extends CI_Controller
      */
     public function manageContractors()
     {
+        // check for linked company
+        $this->checkForLinkedCompany();
         //
         $data = [];
         // check and set user session
@@ -357,6 +385,8 @@ class Payroll extends CI_Controller
      */
     public function createAdmin(): array
     {
+        // check for linked company
+        $this->checkForLinkedCompany(true);
         // get the session
         $session = checkUserSession(false);
         // check for session out
@@ -455,6 +485,8 @@ class Payroll extends CI_Controller
      */
     public function createSignatory(): array
     {
+        // check for linked company
+        $this->checkForLinkedCompany(true);
         // get the session
         $session = checkUserSession(false);
         // check for session out
@@ -608,6 +640,8 @@ class Payroll extends CI_Controller
      */
     public function syncCompanyWithGusto(): array
     {
+        // check for linked company
+        $this->checkForLinkedCompany(true);
         // get the session
         $session = checkUserSession(false);
         // check for session out
@@ -626,6 +660,8 @@ class Payroll extends CI_Controller
      */
     public function verifyCompanyBankAccount(): array
     {
+        // check for linked company
+        $this->checkForLinkedCompany(true);
         // get the session
         $session = checkUserSession(false);
         // check for session out
@@ -858,6 +894,8 @@ class Payroll extends CI_Controller
      */
     public function getCompanyAgreement(int $companyId): array
     {
+        // check for linked company
+        $this->checkForLinkedCompany(true);
         // set
         $data = [];
         // check if the contract is signed
@@ -1008,18 +1046,20 @@ class Payroll extends CI_Controller
                     $employeeId
                 );
         } elseif ($step === 'payment_method') {
+            //
+            $this->payroll_model->syncEmployeePaymentMethodFromGusto($employeeId);
             // get payment method
             $data['record'] = $this->payroll_model
                 ->getEmployeePaymentMethod(
                     $employeeId
                 );
-        } elseif ($step === 'bank_account_add') {
-            // get payment method
-            $data['record'] = $this->payroll_model
-                ->syncEmployeePaymentMethod(
-                    $employeeId
+            //
+            $data['bankAccounts'] = $this->payroll_model
+                ->getEmployeeBankAccountsById(
+                    $employeeId,
+                    false
                 );
-        }
+        } elseif ($step === 'bank_account_add') {}
         //
         return SendResponse(
             200,
@@ -1438,6 +1478,306 @@ class Payroll extends CI_Controller
             200,
             [
                 'msg' => 'You have successfully updated state tax.'
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow bank account
+     *
+     * @param int    $employeeId
+     * @return json
+     */
+    public function addEmployeeBankAccount(int $employeeId): array
+    {
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        //
+        if (!$post) {
+            $errorsArray[] = '"Data fields" are missing.';
+        }
+        if (!$post['accountTitle']) {
+            $errorsArray[] = '"Account title" is missing.';
+        }
+        if (!$post['routingNumber']) {
+            $errorsArray[] = '"Routing number" is missing.';
+        }
+        if (strlen($post['routingNumber']) != 9) {
+            $errorsArray[] = '"Routing number" must be 9 digits long.';
+        }
+        if (!$post['accountNumber']) {
+            $errorsArray[] = '"Account number" is missing.';
+        }
+        if (!$post['accountType']) {
+            $errorsArray[] = '"Account type" is missing.';
+        }
+        if (!in_array($post['accountType'], ['Checking', 'Savings'])) {
+            $errorsArray[] = '"Account type" can either be "Checking" or "Savings".';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                    'company_sid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                400,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+        // get account id
+        $post['sid']  = $this->payroll_model
+            ->getEmployeeBankAccountId(
+                $employeeId,
+                $gustoEmployee['company_sid'],
+                $post
+            );
+        //
+        if ($post['sid'] == 0) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => [
+                        'You can add a maximum of two bank accounts.'
+                    ]
+                ]
+            );
+        }
+        // let's add employee's bank account
+        $response = $this->payroll_model
+            ->addEmployeeBankAccountToGusto(
+                $employeeId,
+                [
+                    'account_title' => $post['accountTitle'],
+                    'routing_transaction_number' => $post['routingNumber'],
+                    'account_number' => $post['accountNumber'],
+                    'account_type' => $post['accountType'],
+                    'sid' => $post['sid'],
+                ]
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully added a bank account.'
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow payment method
+     *
+     * @param int    $employeeId
+     * @return json
+     */
+    public function updateEmployeePaymentMethod(int $employeeId): array
+    {
+        // get post
+        $post = $this->input->post(null, true);
+        // set error array
+        $errorsArray = [];
+        //
+        if (!$post) {
+            $errorsArray[] = '"Data fields" are missing.';
+        }
+        if (!$post['paymentType']) {
+            $errorsArray[] = '"Payment method" is missing.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                    'company_sid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                400,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+        //
+        $accounts = [];
+        //
+        if ($post['paymentType'] == 'Direct Deposit') {
+            // get account id
+            $accounts = $this->payroll_model
+                ->getEmployeeBankAccountsById(
+                    $employeeId
+                );
+            //
+            if (!$accounts) {
+                return SendResponse(
+                    400,
+                    [
+                        'errors' => ['Please add a bank account before changing the payment method to "Direct deposit".']
+                    ]
+                );
+            }
+        }
+        //
+        $post['accounts'] = $accounts;
+        // let's update employee's payment method
+        $response = $this->payroll_model
+            ->updateEmployeePaymentMethodToGusto(
+                $employeeId,
+                $post
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated the payment method.'
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow payment method
+     *
+     * @param int $employeeId
+     * @param int $bankId
+     * @return json
+     */
+    public function deleteBankAccount(int $employeeId, int $bankId): array
+    {
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                    'company_sid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                400,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+        // get employee bank accounts
+        $bankAccount = $this->db
+            ->select('
+            gusto_uuid
+        ')
+            ->where([
+                'sid' => $bankId
+            ])
+            ->get('bank_account_details')
+            ->row_array();
+        // let's update employee's payment method
+        $response = $this->payroll_model
+            ->deleteEmployeeBankAccountToGusto(
+                $employeeId,
+                [
+                    'gusto_uuid' => $bankAccount['gusto_uuid']
+                ]
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+        //
+        $this->db
+            ->where([
+                'sid' => $bankId
+            ])
+            ->update('bank_account_details', ['gusto_uuid' => null]);
+        //
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully deleted a bank account.'
+            ]
+        );
+    }
+
+    /**
+     * employee onboard flow payment method
+     *
+     * @param int $employeeId
+     * @param int $bankId
+     * @return json
+     */
+    public function useBankAccount(int $employeeId, int $bankId): array
+    {
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                    'company_sid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                400,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+        // let's update employee's payment method
+        $response = $this->payroll_model
+            ->useEmployeeSingleBankAccount(
+                $employeeId,
+                $bankId
+            );
+        //
+        if ($response['errors']) {
+            return SendResponse(
+                400,
+                $response
+            );
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully linked the bank account.'
             ]
         );
     }
@@ -2091,6 +2431,29 @@ class Payroll extends CI_Controller
                     'errors' => ['Access denied. Please login to access this route.']
                 ]
             );
+        }
+    }
+
+    /**
+     * check if company is synced with Gusto
+     */
+    private function checkForLinkedCompany($isAJAX = false)
+    {
+        // check if module is active
+        if (!isCompanyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])) {
+            //
+            if ($isAJAX) {
+                return SendResponse(
+                    400,
+                    [
+                        'errors' => ['Company is not set-up for payroll.']
+                    ]
+                );
+            }
+            // set message
+            $this->session->set_flashdata('message', 'Access denied!');
+            // redirect
+            return redirect('dashboard');
         }
     }
 }

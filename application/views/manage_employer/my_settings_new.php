@@ -245,12 +245,18 @@
                                         <?php } ?>
 
                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
-                                            <?php if (!isCompanyOnBoard($session['company_detail']['sid'])) { ?>
+                                            <?php
+                                            $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                            $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
+                                            ?>
+                                            <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
                                                 <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</a></li>
-                                            <?php } elseif (!hasAcceptedPayrollTerms($session['company_detail']['sid'])) { ?>
+                                            <?php } ?>
+                                            <?php if ($isCompanyOnPayroll && !$isTermsAgreed) { ?>
                                                 <li><a href="javascript:void(0)" class="jsServiceAgreement" data-cid="<?= $session['company_detail']['sid']; ?>">Payroll Service Agreement</a></li>
-                                            <?php } else { ?>
-                                                <li><a href="<?=base_url('payrolls/dashboard');?>" >Payroll Dashboard</a></li>
+                                            <?php } ?>
+                                            <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+                                                <li><a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a></li>
                                             <?php } ?>
                                         <?php } ?>
                                     </ul>

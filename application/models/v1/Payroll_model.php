@@ -42,7 +42,10 @@ class Payroll_model extends CI_Model
             ->row_array();
         //
         if (!$record['ssn']) {
-            $r[] = 'Social Security Number (SSN) is missing.';
+            $r[] = 'Employer Identification Number (EIN) is missing.';
+        }
+        if (strlen(preg_replace('/\D/', '', $record['ssn'])) != 9) {
+            $r[] = 'Employer Identification Number (EIN) must be 9 digits long.';
         }
         //
         if (!$record['Location_Address']) {
@@ -59,11 +62,15 @@ class Payroll_model extends CI_Model
         //
         if (!$record['Location_ZipCode']) {
             $r[] = 'Company zip code is missing.';
-        } //
+        }
+        //
         if (!$record['PhoneNumber']) {
             $r[] = 'Company phone number code is missing.';
         }
-        //
+        if (!phonenumber_validate($record['PhoneNumber'])) {
+            $r[] = 'Company phone number is invalid.';
+        }
+
         return $r;
     }
 
@@ -216,6 +223,7 @@ class Payroll_model extends CI_Model
         ], [
             'users.active' => 1,
             'users.is_executive_admin' => 0,
+            'users.employee_type != ' => 'contractual',
             'users.terminated_status' => 0
         ]);
         //
@@ -239,9 +247,9 @@ class Payroll_model extends CI_Model
                     $missingFields[] = 'Last Name';
                 }
                 //
-                $employee['ssn'] = preg_replace('/[^0-9]/', '', $employee['ssn']);
+                $employee['ssn'] = preg_replace('/\D/', '', $employee['ssn']);
                 //
-                if (!preg_match('/[0-9]{9}/', $employee['ssn'])) {
+                if (strlen($employee['ssn']) != 9) {
                     $missingFields[] = 'Social Security Number';
                 }
                 //
@@ -867,12 +875,26 @@ class Payroll_model extends CI_Model
         //
         $employeeIds = explode(',', $companyDetails['employee_ids']);
         //
+        $newIds = [];
+        //
         foreach ($employeeIds as $employeeId) {
-            $this->onboardEmployee(
+            $response = $this->onboardEmployee(
                 $employeeId,
                 $companyId
             );
+            //
+            if ($response['errors']) {
+                $newIds[] = $employeeId;
+            }
         }
+        //
+        $newIds = $newIds ? implode(',', $newIds) : null;
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->update('gusto_companies', [
+                'employee_ids' => $newIds
+            ]);
         //
         return true;
     }
@@ -969,10 +991,10 @@ class Payroll_model extends CI_Model
         $this->syncCompanyPayScheduleWithGusto($companyDetails);
         // let's sync the company industry
         $this->syncCompanyPaymentConfigWithGusto($companyDetails);
-        // sync the earning types
-        $this->syncCompanyEarningTypes($companyId);
         // create earning types
         $this->createCompanyEarningTypes($companyId);
+        // sync the earning types
+        $this->syncCompanyEarningTypes($companyId);
         // create company webhook
         $this->createCompanyWebHook();
 
@@ -1406,7 +1428,6 @@ class Payroll_model extends CI_Model
             ->get('users')
             ->row_array()['payment_method'];
         //
-        $paymentMethod = 'check';
         if ($paymentMethod === 'direct_deposit') {
             // handle bank accounts
             $this->syncEmployeeBankAccountsToGusto(
@@ -1479,7 +1500,7 @@ class Payroll_model extends CI_Model
      * @param int   $employeeId
      * @param array $data
      */
-    private function addEmployeeBankAccountToGusto(int $employeeId, array $data): array
+    public function addEmployeeBankAccountToGusto(int $employeeId, array $data): array
     {
         // get gusto employee details
         $gustoEmployee = $this
@@ -1515,16 +1536,16 @@ class Payroll_model extends CI_Model
         }
         //
         $this->db
+            ->reset_query()
             ->where('sid', $data['sid'])
             ->update(
                 'bank_account_details',
                 [
-                    'gusto_uuid' => $gustoResponse['uuid']
+                    'gusto_uuid' => $gustoResponse['uuid'],
                 ]
             );
-
         //
-        return ['success' => true];
+        return ['success' => true, 'gusto_uuid' => $gustoResponse['uuid']];
     }
 
     /**
@@ -1533,7 +1554,7 @@ class Payroll_model extends CI_Model
      * @param int   $employeeId
      * @param array $data
      */
-    private function deleteEmployeeBankAccountToGusto(int $employeeId, array $data): array
+    public function deleteEmployeeBankAccountToGusto(int $employeeId, array $data): array
     {
         //
         if (!$data['gusto_uuid']) {
@@ -2799,6 +2820,19 @@ class Payroll_model extends CI_Model
                 ->where($whereArray)
                 ->update('gusto_employees_payment_method', $dataArray);
         }
+        if ($gustoResponse['type'] == 'Check') {
+            //
+            $this->db
+                ->where('users_sid', $employeeId)
+                ->where('users_type', 'employee')
+                ->update('bank_account_details', [
+                    'gusto_uuid' => null
+                ]);
+        }
+        //
+        updateUserById([
+            'payment_method' => stringToSlug($gustoResponse['type'], '_')
+        ], $employeeId);
         //
         return ['success' => true, 'version' => $gustoResponse['version']];
     }
@@ -2869,6 +2903,195 @@ class Payroll_model extends CI_Model
         }
         //
         return ['success' => true];
+    }
+
+    /**
+     * get employee bank account
+     *
+     * @param int   $employeeId
+     * @param int   $companyId
+     * @param array $data
+     */
+    public function getEmployeeBankAccountId(
+        int $employeeId,
+        int $companyId,
+        array $data
+    ): int {
+        // get employee bank accounts
+        $bankAccounts = $this->db
+            ->select('
+            sid,
+            gusto_uuid
+        ')
+            ->where([
+                'users_sid' => $employeeId,
+                'users_type' => 'employee'
+            ])
+            ->order_by('sid', 'desc')
+            ->get('bank_account_details')
+            ->result_array();
+        // if none found than create a new one
+        if (!$bankAccounts) {
+            // we need to add a new one
+            $this->db
+                ->insert(
+                    'bank_account_details',
+                    [
+                        'company_sid' => $companyId,
+                        'users_type' => 'employee',
+                        'users_sid' => $employeeId,
+                        'account_title' => strtolower($data['accountTitle']),
+                        'routing_transaction_number' => $data['routingNumber'],
+                        'account_number' => $data['accountNumber'],
+                        'account_type' => $data['accountType'],
+                        'account_status' => 'primary',
+                        'deposit_type' => 'percentage',
+                        'account_percentage' => 100,
+                        'employee_number' => $employeeId,
+                    ]
+                );
+            //
+            return $this->db->insert_id();
+        }
+        // already account exists needs to link it
+        if (count($bankAccounts) == 2) {
+            return 0;
+        }
+        // we need to add a new one
+        $this->db
+            ->insert(
+                'bank_account_details',
+                [
+                    'company_sid' => $companyId,
+                    'users_type' => 'employee',
+                    'users_sid' => $employeeId,
+                    'account_title' => strtolower($data['accountTitle']),
+                    'routing_transaction_number' => $data['routingNumber'],
+                    'account_number' => $data['accountNumber'],
+                    'account_type' => $data['accountType'],
+                    'account_status' => 'primary',
+                    'deposit_type' => 'secondary',
+                    'account_percentage' => 100,
+                    'employee_number' => $employeeId,
+                ]
+            );
+        //
+        return $this->db->insert_id();
+    }
+
+
+    /**
+     * get employee bank accounts
+     *
+     * @param int   $employeeId
+     */
+    public function getEmployeeBankAccountsById(
+        int $employeeId,
+        bool $doMoveToGusto = false
+    ): array {
+        // get employee bank accounts
+        $bankAccounts = $this->db
+            ->select('
+                sid,
+                account_title,
+                account_number,
+                routing_transaction_number,
+                account_type,
+                deposit_type,
+                account_percentage,
+                gusto_uuid
+            ')
+            ->where([
+                'users_sid' => $employeeId,
+                'users_type' => 'employee'
+            ])
+            ->order_by('sid', 'asc')
+            ->limit(2)
+            ->get('bank_account_details')
+            ->result_array();
+        //
+        if (!$bankAccounts) {
+            return [];
+        }
+        if (!$doMoveToGusto) {
+            return $bankAccounts;
+        }
+        //
+        $didIt = false;
+        //
+        foreach ($bankAccounts as $index => $bankAccount) {
+            //
+            if (!$bankAccount['gusto_uuid']) {
+                //
+                $response = $this->addEmployeeBankAccountToGusto($employeeId, [
+                    'account_title' => $bankAccount['account_title'],
+                    'account_number' => $bankAccount['account_number'],
+                    'routing_transaction_number' => $bankAccount['routing_transaction_number'],
+                    'account_type' => $bankAccount['account_type'],
+                    'sid' => $bankAccount['sid'],
+                ]);
+                //
+                if ($response['errors']) {
+                    unset($bankAccounts[$index]);
+                } else {
+                    $didIt = true;
+                    $bankAccounts[$index]['gusto_uuid'] = $response['gusto_uuid'];
+                }
+            }
+        }
+        //
+        if ($didIt) {
+            $this->syncEmployeePaymentMethodFromGusto($employeeId);
+        }
+        //
+        return $bankAccounts;
+    }
+
+    /**
+     * get employee bank accounts
+     *
+     * @param int   $employeeId
+     */
+    public function useEmployeeSingleBankAccount(
+        int $employeeId,
+        int $bankId
+    ): array {
+        // get employee bank accounts
+        $bankAccount = $this->db
+            ->select('
+                sid,
+                account_title,
+                account_number,
+                routing_transaction_number,
+                account_type
+            ')
+            ->where('sid', $bankId)
+            ->get('bank_account_details')
+            ->row_array();
+        //
+        if (!$bankAccount) {
+            return [
+                'error' => 'Failed to verify bank account.'
+            ];
+        }
+        //
+        $gustoResponse = $this->addEmployeeBankAccountToGusto($employeeId, [
+            'account_title' => $bankAccount['account_title'],
+            'account_number' => $bankAccount['account_number'],
+            'routing_transaction_number' => $bankAccount['routing_transaction_number'],
+            'account_type' => $bankAccount['account_type'],
+            'sid' => $bankAccount['sid'],
+        ]);
+        //
+        if ($gustoResponse['errors']) {
+            return $gustoResponse;
+        }
+        //
+        $this->syncEmployeePaymentMethodFromGusto($employeeId);
+        //
+        return [
+            'success' => true
+        ];
     }
 
     /**
@@ -3991,7 +4214,8 @@ class Payroll_model extends CI_Model
      *
      * @return array
      */
-    public function createCompanyWebHook(): array {
+    public function createCompanyWebHook(): array
+    {
         //
         if ($this->db->where('webhook_type', 'company')->count_all_results('gusto_companies_webhooks')) {
             return ['success' => true];
@@ -4086,7 +4310,6 @@ class Payroll_model extends CI_Model
             ])
             ->get('timeoff_policies')
             ->result_array();
-
         if (!$paidPolicies) {
             //
             return $this->addCompanyEarningType(
@@ -4099,7 +4322,7 @@ class Payroll_model extends CI_Model
         // loop through data
         foreach ($paidPolicies as $policy) {
             //
-            if ($this->db->where('name', $policy['title'])->count_all_result('gusto_companies_earning_types')) {
+            if ($this->db->where('name', $policy['title'])->count_all_results('gusto_companies_earning_types')) {
                 continue;
             }
             //
@@ -4112,5 +4335,87 @@ class Payroll_model extends CI_Model
         }
         //
         return ['success' => true];
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int   $employeeId
+     * @param array $data
+     */
+    public function updateEmployeePaymentMethodToGusto(
+        int $employeeId,
+        array $data
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get gusto employee details
+        $gustoPaymentMethod = $this
+            ->db
+            ->select('sid, gusto_version')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_employees_payment_method')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        //
+        $request = [];
+        $request['version'] = $gustoPaymentMethod['gusto_version'];
+        $request['type'] = $data['paymentType'];
+        //
+        if ($data['paymentType'] === 'Direct Deposit') {
+            // set bank account array for Gusto
+            $split = getBankAccountForGusto($data['accounts']);
+            $request['split_by'] = $split['split_by'];
+            $request['splits'] = $split['splits'];
+        }
+        // response
+        $gustoResponse = gustoCall(
+            'updatePaymentMethod',
+            $companyDetails,
+            $request,
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $dataArray = [];
+        $dataArray['gusto_version'] = $gustoResponse['version'];
+        $dataArray['type'] = $gustoResponse['type'];
+        $dataArray['split_by'] = $gustoResponse['split_by'];
+        $dataArray['splits'] = json_encode($gustoResponse['splits']);
+        $dataArray['updated_at'] = getSystemDate();
+
+        // update
+        $this->db
+            ->where('sid', $gustoPaymentMethod['sid'])
+            ->update('gusto_employees_payment_method', $dataArray);
+        // bank accounts
+        $this->db
+            ->where('users_sid', $employeeId)
+            ->where('users_type', 'employee')
+            ->update('bank_account_details', [
+                'gusto_uuid' => null
+            ]);
+        //
+        updateUserById([
+            'payment_method' => stringToSlug($data['paymentType'], '_')
+        ], $employeeId);
+
+        //
+        return ['success' => true, 'version' => $gustoResponse['version']];
     }
 }

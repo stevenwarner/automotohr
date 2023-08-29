@@ -1743,6 +1743,10 @@ $route['payrolls/flow/employee/(:num)/compensation']['post'] = 'v1/Payroll/updat
 $route['payrolls/flow/employee/(:num)/home_address']['post'] = 'v1/Payroll/updateEmployeeHomeAddress/$1';
 $route['payrolls/flow/employee/(:num)/federal_tax']['post'] = 'v1/Payroll/updateEmployeeFederalTax/$1';
 $route['payrolls/flow/employee/(:num)/state_tax']['post'] = 'v1/Payroll/updateEmployeeStateTax/$1';
+$route['payrolls/flow/employee/(:num)/bank_account']['post'] = 'v1/Payroll/addEmployeeBankAccount/$1';
+$route['payrolls/flow/employee/(:num)/payment_method']['post'] = 'v1/Payroll/updateEmployeePaymentMethod/$1';
+$route['payrolls/flow/employee/(:num)/bank_account/(:num)']['delete'] = 'v1/Payroll/deleteBankAccount/$1/$2';
+$route['payrolls/flow/employee/(:num)/bank_account/(:num)']['put'] = 'v1/Payroll/useBankAccount/$1/$2';
 
 // contractor
 $route['payrolls/contractors']['get'] = 'v1/Payroll/manageContractors/$1';

@@ -415,6 +415,200 @@ $(function manageEmployees() {
 	});
 
 	/**
+	 * Add bank account
+	 */
+	$(document).on("click", ".jsEmployeeFlowSaveBankAccountBtn", function (e) {
+		//
+		e.preventDefault();
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		//
+		let obj = {
+			accountTitle: $(".jsEmployeeFlowBankAccountTitle").val().trim(),
+			routingNumber: $(".jsEmployeeFlowBankAccountRoutingNumber")
+				.val()
+				.replace(/[^0-9]/gi, ""),
+			accountNumber: $(".jsEmployeeFlowBankAccountAccountNumber").val(),
+			accountType: $(
+				".jsEmployeeFlowBankAccountType option:selected"
+			).val(),
+		};
+		//
+		let errorArray = [];
+		// validation
+		if (!obj.accountTitle) {
+			errorArray.push('"Account title" is missing.');
+		}
+		if (!obj.routingNumber) {
+			errorArray.push('"Routing number" is missing.');
+		}
+		if (obj.routingNumber.length != 9) {
+			errorArray.push('"Routing number" must be 9 digits long.');
+		}
+		if (!obj.accountNumber) {
+			errorArray.push('"Routing number" is missing.');
+		}
+		if (!obj.accountType) {
+			errorArray.push('"Account type" is missing.');
+		}
+		//
+		if (errorArray.length) {
+			return alertify.alert(
+				"Error!",
+				getErrorsStringFromArray(errorArray),
+				CB
+			);
+		}
+		//
+		ml(
+			true,
+			`${modalId}Loader`,
+			"Please wait, while we are processing your request."
+		);
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"payrolls/flow/employee/" + employeeId + "/bank_account"
+			),
+			method: "POST",
+			data: obj,
+		})
+			.success(function (resp) {
+				//
+				return alertify.alert("Success!", resp.msg, function () {
+					loadView("payment_method");
+				});
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				//
+				XHR = null;
+				//
+				ml(false, `${modalId}Loader`);
+			});
+	});
+
+	/**
+	 * Payment method
+	 */
+	$(document).on(
+		"click",
+		".jsEmployeeFlowPaymentMethodSaveBtn",
+		function (e) {
+			//
+			e.preventDefault();
+			//
+			if (XHR !== null) {
+				return false;
+			}
+			//
+			let obj = {
+				paymentType: $(
+					".jsEmployeeFlowPaymentMethodType:checked"
+				).val(),
+			};
+			//
+			let errorArray = [];
+			// validation
+			if (!obj.paymentType) {
+				errorArray.push('"Payment type" is missing.');
+			}
+			//
+			if (errorArray.length) {
+				return alertify.alert(
+					"Error!",
+					getErrorsStringFromArray(errorArray),
+					CB
+				);
+			}
+			//
+			ml(
+				true,
+				`${modalId}Loader`,
+				"Please wait, while we are processing your request."
+			);
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"payrolls/flow/employee/" + employeeId + "/payment_method"
+				),
+				method: "POST",
+				data: obj,
+			})
+				.success(function (resp) {
+					//
+					return alertify.alert("Success!", resp.msg, function () {
+						loadView("payment_method");
+					});
+				})
+				.fail(handleErrorResponse)
+				.always(function () {
+					//
+					XHR = null;
+					//
+					ml(false, `${modalId}Loader`);
+				});
+		}
+	);
+
+	/**
+	 * load add bank page
+	 */
+	$(document).on(
+		"click",
+		".jsEmployeeFlowPaymentMethodAddBankAccountBtn",
+		function (e) {
+			//
+			e.preventDefault();
+			loadView("bank_account_add");
+		}
+	);
+
+	/**
+	 * load add bank page
+	 */
+	$(document).on("click", ".jsEmployeeFlowPaymentMethodToBtn", function (e) {
+		//
+		e.preventDefault();
+		loadView("payment_method");
+	});
+
+	/**
+	 * load add bank page
+	 */
+	$(document).on("click", ".jsEmployeeFlowDeleteBankAccount", function (e) {
+		//
+		e.preventDefault();
+		//
+		const id = $(this)
+			.closest(".jsEmployeeFlowDeleteBankAccountRow")
+			.data("id");
+		//
+		return alertify.confirm(
+			"Do you really want to delete the bank account?",
+			function () {
+				deleteBankAccount(id);
+			}
+		);
+	});
+
+	/**
+	 * load add bank page
+	 */
+	$(document).on("click", ".jsEmployeeFlowUseBankAccount", function (e) {
+		//
+		e.preventDefault();
+		//
+		const id = $(this)
+			.closest(".jsEmployeeFlowDeleteBankAccountRow")
+			.data("id");
+		//
+		useBankAccount(id);
+	});
+
+	/**
 	 * Toggle between check and direct deposit
 	 */
 	$(document).on("click", ".jsEmployeeFlowPaymentMethodType", function () {
@@ -444,7 +638,7 @@ $(function manageEmployees() {
 				Body: `<div id="${modalId}Body"></div>`,
 			},
 			function () {
-				loadView("bank_account_add");
+				loadView("payment_method");
 			}
 		);
 	}
@@ -467,6 +661,62 @@ $(function manageEmployees() {
 				$(`#${modalId}Body`).html(response.view);
 				//
 				loadEvents(step);
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				XHR = null;
+				_ml(false, `${modalId}Loader`);
+			});
+	}
+
+	/**
+	 * Load page
+	 * @param {string} step
+	 */
+	function deleteBankAccount(bankAccountId) {
+		//
+		_ml(true, `${modalId}Loader`);
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"payrolls/flow/employee/" +
+					employeeId +
+					"/bank_account/" +
+					bankAccountId
+			),
+			method: "DELETE",
+			caches: false,
+		})
+			.success(function () {
+				loadView("payment_method");
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				XHR = null;
+				_ml(false, `${modalId}Loader`);
+			});
+	}
+
+	/**
+	 * Load page
+	 * @param {string} step
+	 */
+	function useBankAccount(bankAccountId) {
+		//
+		_ml(true, `${modalId}Loader`);
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"payrolls/flow/employee/" +
+					employeeId +
+					"/bank_account/" +
+					bankAccountId
+			),
+			method: "PUT",
+			caches: false,
+		})
+			.success(function () {
+				loadView("payment_method");
 			})
 			.fail(handleErrorResponse)
 			.always(function () {

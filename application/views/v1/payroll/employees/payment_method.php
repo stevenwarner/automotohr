@@ -47,26 +47,40 @@
             </p>
 
             <?php if ($record) {
-                $bankAccounts = json_decode($record['splits'], true);
                 //
                 if ($bankAccounts) {
                     foreach ($bankAccounts as $index => $account) {
             ?>
-                        <div class="alert alert-<?= $index === 0 ? 'success' : 'info' ?>">>
+                        <div class="jsEmployeeFlowDeleteBankAccountRow alert alert-<?= $index === 0 ? 'success' : 'info' ?>" data-id="<?= $account['sid']; ?>">
                             <p>
-                                <strong><?= $record['name']; ?></strong>
+                                <strong class="csF16"><?= $account['account_title']; ?></strong>
+                                <br>
                                 <sup>Account Name</sup>
                             </p>
                             <p>
-                                <strong><?= $record['hidden_account_number']; ?></strong>
+                                <strong class="csF16"><?= $account['account_number']; ?></strong>
+                                <br>
                                 <sup>Account Number</sup>
                             </p>
+                            <?php if ($account['gusto_uuid']) { ?>
+                                <hr />
+                                <button class="btn btn-danger csF16 jsEmployeeFlowDeleteBankAccount">
+                                    <i class="fa fa-times-circle csF16"></i>
+                                    &nbsp;Delete
+                                </button>
+                            <?php } else { ?>
+                                <hr />
+                                <button class="btn csW csBG3 csF16 jsEmployeeFlowUseBankAccount">
+                                    <i class="fa fa-check-circle csF16"></i>
+                                    &nbsp;Use for payroll
+                                </button>
+                            <?php } ?>
                         </div>
             <?php
                     }
                 }
             } ?>
-            <?php if ($record && json_decode($record['splits'], true) <= 2) { ?>
+            <?php if ($record && count($bankAccounts) < 2) { ?>
                 <button class="btn csBG4 csW csF16 jsEmployeeFlowPaymentMethodAddBankAccountBtn">
                     <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
                     &nbsp;Add a bank account

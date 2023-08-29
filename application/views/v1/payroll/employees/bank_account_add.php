@@ -20,7 +20,7 @@
                 <label class="csF16">Account title&nbsp;
                     <strong class="text-danger">*</strong>
                 </label>
-                <input type="number" class="form-control jsEmployeeFlowBankAccountTitle" />
+                <input type="text" class="form-control jsEmployeeFlowBankAccountTitle" />
             </div>
             <!--  -->
             <div class="form-group">
@@ -34,7 +34,7 @@
                 <label class="csF16">Account number&nbsp;
                     <strong class="text-danger">*</strong>
                 </label>
-                <input type="number" class="form-control jsEmployeeFlowBankAccountAccountNumber" />
+                <input type="text" class="form-control jsEmployeeFlowBankAccountAccountNumber" />
             </div>
             <!--  -->
             <div class="form-group">
@@ -49,11 +49,11 @@
         </form>
     </div>
     <div class="panel-footer text-right">
-        <button class="btn csBG4 csF16 jsEmployeeFlowSavePaymentMethodBtn">
-            <i class="fa fa-save csF16"></i>
+        <button class="btn csBG4 csF16 jsEmployeeFlowPaymentMethodToBtn">
+            <i class="fa fa-times-circle csF16"></i>
             <span>Cancel</span>
         </button>
-        <button class="btn csBG3 csF16 jsEmployeeFlowSavePaymentMethodBtn">
+        <button class="btn csBG3 csF16 jsEmployeeFlowSaveBankAccountBtn">
             <i class="fa fa-save csF16"></i>
             <span>Save & continue</span>
         </button>

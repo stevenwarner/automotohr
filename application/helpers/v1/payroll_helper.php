@@ -305,6 +305,7 @@ if (!function_exists('getUrl')) {
         $urls['updateStateTax'] = "v1/employees/$key1/state_taxes";
         // payment method
         $urls['getPaymentMethod'] = "v1/employees/$key1/payment_method";
+        $urls['updatePaymentMethod'] = "v1/employees/$key1/payment_method";
         // bank account
         $urls['addBankAccount'] = "v1/employees/$key1/bank_accounts";
         $urls['deleteBankAccount'] = "v1/employees/$key1/bank_accounts/$key2";
@@ -616,5 +617,48 @@ if (!function_exists('gustoCall')) {
             // pass actual response
             return $response;
         }
+    }
+}
+
+
+if (!function_exists('getBankAccountForGusto')) {
+    /**
+     * converts bank array to Gusto
+     *
+     * @param array $bankAccounts
+     * @return array
+     */
+    function getBankAccountForGusto(array $bankAccounts): array
+    {
+        // set return
+        $return = [
+            'split_by' => 'Percentage',
+            'splits' => []
+        ];
+        //
+        foreach ($bankAccounts as $index => $account) {
+            //
+            if ($index == 0 && $account['deposit_type'] == 'amount') {
+                $return['split_by'] = 'Amount';
+            }
+            //
+            $splitAmount = $return['split_by'] === 'Amount'
+                ? ($account['account_percentage'] * 500)
+                : $account['account_percentage'] / count($bankAccounts);
+            //
+            $return['splits'][] = [
+                'uuid' => $account['gusto_uuid'],
+                'name' => $account['account_title'],
+                'priority' => ($index + 1),
+                'split_amount' => $splitAmount
+            ];
+        }
+        //
+        if (count($bankAccounts) == 1) {
+            $return['splits'][0]['split_amount'] = 100;
+            $return['split_by'] = 'Percentage';
+        }
+        //
+        return $return;
     }
 }

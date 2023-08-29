@@ -31,10 +31,4 @@ class Testing extends CI_Controller
         }
         redirect($complyLink);
     }
-
-    function test($companyId)
-    {
-        $this->load->model('v1/payroll_model');
-        $this->payroll_model->syncCompanyWithGusto($companyId);
-    }
 }
