@@ -1835,4 +1835,7 @@ $route['forms/i9/applicant/save']['post'] = 'v1/I9/saveUserSection';
 $route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
 $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 
+// Scheduling
+$route['schedule']['get'] = 'Schedule';
+
 

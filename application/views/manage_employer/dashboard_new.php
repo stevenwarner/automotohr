@@ -996,6 +996,31 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    
+                                    <!-- Scheduling -->
+
+                                    <?php if (checkIfAppIsEnabled('Schedule')) { ?>
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-pencil-square-o <?php echo $review['Reviews'] || $review['Feedbacks'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i></figure>
+                                                    <h2 class="post-title" style="margin: 2px 0;">
+                                                        <a href="<?php echo base_url('schedule'); ?>">Schedule Management</a>
+                                                    </h2>
+                                                
+                                                    <div class="button-panel">
+                                                        <a href="<?= base_url("schedule"); ?>" class="site-btn">Show</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
+
+
+
+
                                 </div>
                             </div>
                         </div>

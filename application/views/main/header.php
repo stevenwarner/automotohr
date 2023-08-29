@@ -424,6 +424,7 @@
                                                                                                                 $class == 'paid_time_off' ||
                                                                                                                 $class == 'performance_management' ||
                                                                                                                 $class == 'goals' ||
+                                                                                                                $class == 'schedule' ||
                                                                                                                 $class == 'govt_user' ||
                                                                                                                 $class == 'terminate_employee' ||
                                                                                                                 ($class == 'home' && $method == 'resource_page') ||

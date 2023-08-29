@@ -212,6 +212,7 @@ if ($company_sid != 'logout') {
             $class != 'performance' &&
             $class != 'performance_review' &&
             $class != 'goals' &&
+            $class != 'schedule' &&
             $class != 'onboarding_block' &&
             $class != 'terminate_employee' &&
             ($class != 'video_interview_system' && $method != 'resource_page') &&

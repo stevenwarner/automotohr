@@ -22,6 +22,7 @@ $('.csMobile span i').click(function(e) { $('.csVertical').toggle(); });
 $('.jsCalendarView').click(function(e) {
     //
     e.preventDefault();
+
     // 
     Modal({
         Id: 'calendarModal',

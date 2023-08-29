@@ -33,7 +33,6 @@ class Calendar extends Public_Controller {
             $this->my_events_new($event_sid);
             return false;
         }
-
         $this->my_events_old();
     }
 
