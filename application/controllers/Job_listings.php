@@ -2346,6 +2346,7 @@ class Job_listings extends Public_Controller
         }
 
         if ($_POST) {
+           // _e($_POST,true,true);
             $performAction = $this->input->post('perform_action');
 
             if ($performAction == 'email_job_info_to_users') {
@@ -2371,6 +2372,8 @@ class Job_listings extends Public_Controller
             $this->load->view('manage_employer/add_listing_share');
             $this->load->view('main/footer');
         } else {
+
+            
             $performAction = $this->input->post('perform_action');
             //
             $selectedUsers = array();
@@ -2401,7 +2404,7 @@ class Job_listings extends Public_Controller
             }
 
             //
-            if(empty($selectedUsers)){
+            if(empty($selectedUsers) && $performAction == 'email_job_info_to_users'){
                 $this->session->set_flashdata('message', '<b>Error:</b> Please select at least one employee.');
                 redirect('add_listing_share/' . $jobId);
             }
@@ -2409,8 +2412,7 @@ class Job_listings extends Public_Controller
             $selectedUsers = array_unique($selectedUsers);
             $usersInformation = array();
 
-            if (!empty($selectedUsers)) {
-
+            if (!empty($selectedUsers) && $performAction == 'email_job_info_to_users') {
                 foreach ($selectedUsers as $selectedUser) {
                     $userInfo = $this->dashboard_model->GetSingleActiveUser($company_id, $selectedUser);
                     if (!empty($userInfo)) {
@@ -2446,6 +2448,7 @@ class Job_listings extends Public_Controller
                 $this->session->set_flashdata('message', '<b>Notification: ' . $jobDetail['Title'] . ' - ' . 'has been shared with ' . count($selectedUsers) . ' users!' . ' </b>');
                 redirect('my_listings', 'refresh');
             } elseif ($performAction == 'email_job') {
+              // die('emailsfsdf');
                 $email = $this->input->post('email_address');
                 $userFullName = $this->input->post('full_name');
                 $replacement_array = array();
