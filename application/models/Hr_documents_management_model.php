@@ -1852,7 +1852,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_type', 'employee');
         $this->db->group_by('user_sid');
         //
-       // _e($employeeList);
+        // _e($employeeList);
         if ($employeeList != 'all') $this->db->where_in('user_sid', explode(':', $employeeList));
         //
         if ($documentList != 'all') $this->db->where_in('document_sid', explode(':', $documentList));
@@ -1861,7 +1861,7 @@ class Hr_documents_management_model extends CI_Model
 
         $r = [];
 
-      //  _e($employee_sids);
+        //  _e($employee_sids);
 
         foreach ($employee_sids as $emp_key => $employee) {
 
@@ -1869,7 +1869,7 @@ class Hr_documents_management_model extends CI_Model
 
             $employee_sids[$emp_key]['Documents'] = array();
             $assigned_documents = $this->get_employee_assigned_documents($company_sid, 'employee', $employee_sid);
-           // _e($assigned_documents);
+            // _e($assigned_documents);
 
             foreach ($assigned_documents as $document_key => $assigned_document) {
                 //
@@ -2117,7 +2117,7 @@ class Hr_documents_management_model extends CI_Model
                         $generalDocuments
                     );
 
-                    
+
                     if ($pending_w4 == 0 && $pending_w9 == 0 && $pending_i9 == 0 && count($generalDocuments) == 0) {
                         unset($employee_sids[$emp_key]);
                     } else {
@@ -9198,7 +9198,11 @@ class Hr_documents_management_model extends CI_Model
             //
             $this->db->insert('applicant_i9form', $ins);
             //
-            return $this->db->insert_id();
+            $inserSid = $this->db->insert_id();
+
+            keepTrackVerificationDocument($userId, $userType, 'assign', $inserSid, 'i9', 'Document Library');
+            return $inserSid ;
+
         }
         // Means the user has completed and the document is assigned
         if ($form['status'] == 1 && $form['user_consent']) {
@@ -9274,7 +9278,10 @@ class Hr_documents_management_model extends CI_Model
             //
             $this->db->insert('applicant_w9form', $ins);
             //
-            return $this->db->insert_id();
+            $inserSid = $this->db->insert_id();
+
+            keepTrackVerificationDocument($userId, $userType, 'assign', $inserSid, 'w9', 'Document Library');
+            return $inserSid;
         }
         // Means the user has completed and the document is assigned
         if ($form['status'] == 1 && $form['user_consent']) {
@@ -9348,8 +9355,11 @@ class Hr_documents_management_model extends CI_Model
             $ins['sent_date'] = $dateTime;
             //
             $this->db->insert('form_w4_original', $ins);
+            $inserSid = $this->db->insert_id();
+
+            keepTrackVerificationDocument($userId, $userType, 'assign', $inserSid, 'w4', 'Document Library');
             //
-            return $this->db->insert_id();
+            return $inserSid;
         }
         // Means the user has completed and the document is assigned
         if ($form['status'] == 1 && $form['user_consent']) {
@@ -9710,7 +9720,4 @@ class Hr_documents_management_model extends CI_Model
         $records_obj->free_result();
         return $records_arr;
     }
-
-
-
 }
