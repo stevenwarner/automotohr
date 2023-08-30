@@ -20,4 +20,21 @@ class Expirations_autoresponder_model extends CI_Model
             return array();
         }
     }
+
+
+    //
+
+    function GetAllActiveCompanies(){
+        $this->db->select('*');
+        $this->db->where('parent_sid', '');
+        $this->db->where('active', 1);
+        $this->db->where('career_page_type', 'standard_career_site');
+        $result = $this->db->get('users')->result_array();
+
+        if(!empty($result)){
+            return $result;
+        }else{
+            return array();
+        }
+    }
 }
