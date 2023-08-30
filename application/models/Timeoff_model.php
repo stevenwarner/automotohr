@@ -2008,16 +2008,16 @@ class Timeoff_model extends CI_Model
             //
             if ($policy['is_entitled_employee'] == 1) {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
 
                 if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             } else {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
                 // Not-Entitled
                 if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             }
@@ -2160,16 +2160,16 @@ class Timeoff_model extends CI_Model
             ];
             if ($policy['is_entitled_employee'] == 1) {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
 
                 if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             } else {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
                 // Not-Entitled
                 if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             }
@@ -2257,15 +2257,15 @@ class Timeoff_model extends CI_Model
             // Entitled
             if ($policy['is_entitled_employee'] == 1) {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
                 //
                 if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             } else {
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
                 // Not-Entitled
                 if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             }
@@ -2908,16 +2908,16 @@ class Timeoff_model extends CI_Model
             // Entitled
             if ($policy['is_entitled_employee'] == 1) {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
 
                 if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             } else {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
                 // Not-Entitled
                 if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             }
@@ -4117,20 +4117,20 @@ class Timeoff_model extends CI_Model
             // Entitled
             if ($policy['is_entitled_employee'] == 1) {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    $balance['Implements'] = false;
-                } else{
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     $balance['Implements'] = false;
+                // } else{
                     if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;;
-                }
+                // }
 
             } else {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    $balance['Implements'] = false;
-                } else {
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     $balance['Implements'] = false;
+                // } else {
                     // Not-Entitled
                     if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;;
-                }
+                // }
             }
             //
             $accruals = json_decode($policy['accruals'], true);
@@ -4956,16 +4956,16 @@ class Timeoff_model extends CI_Model
             ];
             if ($policy['is_entitled_employee'] == 1) {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
 
                 if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             } else {
                 //
-                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                    continue;
-                }
+                // if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                //     continue;
+                // }
                 // Not-Entitled
                 if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             }
