@@ -142,29 +142,31 @@ if (!function_exists('bundleJs')) {
      *
      * @param array  $files
      * @param string $destination Optional
+     * @param string $file Optional
      * @return string
      */
     function bundleJs(
         array $inputs,
-        string $destination = 'assets/v1/app/js/'
+        string $destination = 'assets/v1/app/js/',
+        string $file = 'main'
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
         if (MINIFIED === '.min') {
             //
-            $fileName = $destination . 'main';
+            $fileName = $destination . $file;
             //
             return
                 '<script src="' . (base_url(
-                    $destination . 'main.min.js?v=' . (getStaticFileVersion($fileName, 'js'))
+                    $destination . $file . '.min.js?v=' . (getStaticFileVersion($fileName, 'js'))
                 )) . '"></script>';
         }
         // add file to destination
         $absolutePathMin = $absolutePath;
         // add file to destination
-        $absolutePath .= 'main.js';
-        $absolutePathMin .= 'main.min.js';
+        $absolutePath .= $file . '.js';
+        $absolutePathMin .= $file . '.min.js';
         // creates a new file
         $handler = fopen($absolutePath, 'w');
         // if failed throw an error
@@ -185,13 +187,9 @@ if (!function_exists('bundleJs')) {
             "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
         );
         //
-        $scripts = '';
-        //
-        $scripts = '<script src="' . (base_url(
-            $destination . 'main.min.js?v=' . time()
+        return '<script src="' . (base_url(
+            $destination . $file . '.min.js?v=' . time()
         )) . '"></script>';
-        //
-        return $scripts;
     }
 }
 
@@ -201,28 +199,30 @@ if (!function_exists('bundleCSS')) {
      *
      * @param array  $files
      * @param string $destination Optional
+     * @param string $file Optional
      * @return string
      */
     function bundleCSS(
         array $inputs,
-        string $destination = 'assets/v1/app/css/'
+        string $destination = 'assets/v1/app/css/',
+        string $file = 'main'
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
         if (MINIFIED === '.min') {
             //
-            $fileName = $destination . 'main';
+            $fileName = $destination . $file;
             //
             return '<link rel="stylesheet" href="' . (base_url(
                 $destination .
-                    'main.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
+                    $file . '.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
             )) . '" />';
         }
         // add file to destination
         $absolutePathMin = $absolutePath;
-        $absolutePath .= 'main.css';
-        $absolutePathMin .= 'main.min.css';
+        $absolutePath .= $file . '.css';
+        $absolutePathMin .= $file . '.min.css';
         // creates a new file
         $handler = fopen($absolutePath, 'w');
         // if failed throw an error
@@ -243,12 +243,8 @@ if (!function_exists('bundleCSS')) {
             "uglifycss {$absolutePath} > {$absolutePathMin}"
         );
         //
-        $scripts = '';
-        //
-        $scripts = '<link rel="stylesheet" href="' . (base_url(
-            $destination . 'main.min.css?v=' . time()
+        return '<link rel="stylesheet" href="' . (base_url(
+            $destination . $file . '.min.css?v=' . time()
         )) . '" />';
-        //
-        return $scripts;
     }
 }
