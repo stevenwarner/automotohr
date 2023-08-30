@@ -4,12 +4,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Home extends CI_Controller
 {
+    private $assetPath;
 
     public function __construct()
     {
         parent::__construct();
         $data['title'] = "Home";
         $this->load->model('home_model');
+
+        $this->header = "v1/app/header";
+        $this->footer = "v1/app/footer";
+        $this->assetPath = "assets/v1/app/";
     }
 
     public function index()
@@ -21,8 +26,11 @@ class Home extends CI_Controller
             $data['security_details'] = $security_details;
             $data['session'] = $this->session->userdata('logged_in');
         }
-
-        $data['title'] = 'Home';
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = 'Home | AutomotoHR.com';
+        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
+        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
 
         if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
             $this->load->model('users_model');
@@ -43,11 +51,55 @@ class Home extends CI_Controller
                 $this->session->set_userdata('logged_in', $sess_array);
             }
         }
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all'
+        ];
+        $data['pageJs'] = [
+            'https://code.jquery.com/jquery-3.2.1.slim.min',
+            'https://code.jquery.com/jquery-3.2.1.slim.min',
+        ];
+
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/app',
+            'v1/app/stylesheets/main'
+        ], $this->assetPath);
+
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle'
+        ], $this->assetPath);
+
+
+
+        $data['slider'] = [
+            [
+                'title' => 'Effortlessly Manage HR, Benefits & Payroll!',
+                'sub_title' => 'Say goodbye to administrative hassles by embracing a simplified solution that serves all your HR needs –',
+                'link' => 'product-1',
+                'link_text' => 'product-1',
+                'image' => 'assets/v1/app/images/banner_1.webp'
+            ],
+            [
+                'title' => 'Smart Onboarding with AutomotoHR!',
+                'sub_title' => 'Leave behind inefficient onboarding methods and embrace <span class="anchar_tag">AutomotoHR</span> to optimize data management, expedite paperwork, & elevate orientation.',
+                'link' => 'product-2',
+                'link_text' => 'product-2',
+                'image' => 'assets/v1/app/images/banner_2.webp'
+            ],
+            [
+                'title' => 'One-Stop Shop for HR & Hiring!',
+                'sub_title' => 'Efficiently handle job postings, targeted advertising, candidate management, and assessment checks in one place.',
+                'link' => 'product-3',
+                'link_text' => 'product-3',
+                'image' => 'assets/v1/app/images/banner_3.webp'
+            ]
+        ];
 
         $data['home_page'] = $this->home_model->get_home_page_data();
-        $this->load->view('main/header', $data);
-        $this->load->view('static-pages/home');
-        $this->load->view('main/footer');
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/homepage');
+        $this->load->view($this->footer);
     }
 
     public function decryptCookie($value)
@@ -2094,7 +2146,6 @@ class Home extends CI_Controller
                 $action = 'updated';
             }
             $employee_sid = $employeeId;
-
         } else {
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;
