@@ -949,7 +949,16 @@
                                                         <span class="green"><?= $pendingTrainings ?? 0; ?> Pending</span><br>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">View Trainings</a>
+                                                        <?php if ($session['employer_detail']['access_level_plus'] == 1) { ?>
+                                                            <div class="col-lg-6 col-xs-12">
+                                                                <a href="<?= base_url('lms/courses/my'); ?>" class="btn btn-success form-control">View Trainings</a>
+                                                            </div>
+                                                            <div class="col-lg-6 col-xs-12 pl0">
+                                                                <a href="<?= base_url('lms/courses/company_report'); ?>" class="btn btn-success form-control">View Report</a>
+                                                            </div>
+                                                        <?php } else { ?> 
+                                                            <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">View Trainings</a>  
+                                                        <?php } ?> 
                                                     </div>
                                                 </div>
                                             </div>

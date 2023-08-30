@@ -1790,6 +1790,8 @@ $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 $route['lms/courses/report'] = 'v1/Courses/report';
 $route['lms/subordinate/courses/(:num)'] = 'v1/Courses/subordinateCourses/$1';
 $route['lms/subordinate/course/(:num)/(:num)'] = 'v1/Courses/subordinateCourse/$1/$2';
+$route['lms/courses/company_report'] = 'v1/Courses/companyReport';
+
 
 $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridDocument';
 $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/downloadHybridDocument/$1';

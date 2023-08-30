@@ -201,4 +201,138 @@ class Course_model extends CI_Model
         //
         return $dataToInsert['unique_key'];
     }
+
+    // Fetch all active employees
+    function getAllActiveEmployees(
+        $companySid,
+        $withExec = true
+    ) {
+        $this->db
+            ->select('
+            users.sid,
+            users.job_title,
+            users.first_name,
+            users.last_name,
+            users.access_level,
+            users.timezone,
+            users.access_level_plus,
+            users.is_executive_admin,
+            users.pay_plan_flag,
+            portal_job_title_templates.sid as job_title_sid
+        ')
+            ->join(
+                "portal_job_title_templates",
+                "portal_job_title_templates.title = users.job_title",
+                "left"
+            )
+            ->where('users.parent_sid', $companySid)
+            ->where('users.active', 1)
+            ->where('users.terminated_status', 0)
+            ->order_by('users.first_name', 'ASC');
+        //
+        if (!$withExec) {
+            $this->db->where('users.is_executive_admin', 0);
+        }
+        $a = $this->db->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    } 
+    
+    public function fetchDepartmentTeams($employeeId)
+    {
+        //
+        $a = $this->db
+            ->select('department_sid, team_sid')
+            ->where('employee_sid', $employeeId)
+            ->get('departments_employee_2_team');
+        //
+        $records = $a->result_array();
+        $a->free_result();
+        //
+        $result = [
+          "departmentIds" => 0,
+          "teamIds" => 0  
+        ];
+        if ($records) {
+            //
+            if (count($records) > 1) {
+                $departmentIds = [];
+                $teamIds = [];
+                foreach ($records as $record) {
+                    if (!in_array($record['department_sid'], $departmentIds)) {
+                        array_push($departmentIds, $record['department_sid']);
+                        array_push($teamIds, $record['team_sid']);
+                    }
+                }
+                //
+                $result['departmentIds'] = implode(',',$departmentIds);
+                $result['teamIds'] = implode(',', $teamIds);
+            } else {
+                $result['departmentIds'] = $records[0]['department_sid'];
+                $result['teamIds'] = $records[0]['team_sid'];
+            }
+            
+        } 
+        //
+        return $result;
+    }
+
+    public function fetchCourses ($jobTitlesIds, $companyId) {
+        //
+        $result = [];
+        //
+        if (!empty($jobTitlesIds)) {
+            foreach ($jobTitlesIds as $jkey => $jobTitleId) {
+                $companyCourses = $this->db->select("
+                    lms_default_courses.sid
+                ")
+                ->join(
+                    "lms_default_courses_job_titles",
+                    "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
+                    "right"
+                )
+                ->where('lms_default_courses.company_sid', $companyId)
+                ->where('lms_default_courses.is_active', 1)
+                ->group_start()
+                ->where('lms_default_courses_job_titles.job_title_id', -1)
+                ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+                ->group_end()
+                ->get('lms_default_courses')
+                ->result_array();
+                //
+                $result[$jobTitleId] = implode(',',array_column($companyCourses, "sid"));
+            }
+        }
+        //
+        return $result;
+    }
+
+    public function checkEmployeeCoursesReport ($companyId, $employeeId, $employeeAssignCourses) {
+        $employeeAssignCoursesList = explode(",", $employeeAssignCourses);
+        //
+        if (!empty($employeeAssignCoursesList)) {
+            foreach ($employeeAssignCoursesList as $courseId) {
+
+                $this->db->where('company_sid', $companyId);
+                $this->db->where('employee_sid', $employeeId);
+                $this->db->where('course_sid', $courseId);
+                $this->db->where('course_status', "passed");
+                //
+                $this->db->from('lms_employee_course');
+                //
+                $count = $this->db->count_all_results();
+                //
+                if ($count > 0) {
+                    return true;
+                } else {
+                    return false;
+                }      
+            }
+            
+
+        }
+    }
 }

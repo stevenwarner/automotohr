@@ -515,4 +515,67 @@ class Courses extends Public_Controller
             ->view('courses/' . $viewName)
             ->view('main/footer');
     }
+
+    public function companyReport () {
+        if ($this->session->userdata('logged_in')) { 
+            // Added on: 28-08-2023
+            $session = $this->session->userdata('logged_in');
+            //
+            if (!$session['employer_detail']['access_level_plus']) {
+                $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
+                redirect('dashboard', 'refresh');
+            }
+            //
+            $security_sid = $session['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            //
+            check_access_permissions($security_details, 'dashboard', 'companyReport'); // Param2: Redirect URL, Param3: Function Name
+            //
+            $data['session'] = $session;
+            $data['security_details'] = $security_details;
+            $data['title'] = "LMS Company Report";
+            $data['employer_sid'] = $security_sid;
+            $data['company_sid'] = $session['company_detail']['sid'];
+            $data['logged_in_view'] = true;
+            $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            $data['employer_detail'] = $data['session']['employer_detail'];
+            $data['company_detail'] = $data['session']['company_detail'];
+            //
+            $employeesList = $this->course_model->getAllActiveEmployees($data['company_sid'], false);
+            //
+            if (!empty($employeesList)) {
+                //
+                $jobTitleIds = array_filter(array_column($employeesList, "job_title_sid"));
+                $jobRoleCourses = $this->course_model->fetchCourses($jobTitleIds, $data['company_sid']);
+                //
+                foreach ($employeesList as $ekey => $employee) {
+                    //
+                    if (!empty($employee['job_title_sid'])) {
+                        $employeesList[$ekey]["courses_sid"]  = $jobRoleCourses[$employee['job_title_sid']];
+                        //
+                        $this->course_model->checkEmployeeCoursesReport(
+                            $data['company_sid'], 
+                            $employee['sid'],
+                            $jobRoleCourses[$employee['job_title_sid']]
+                        );
+                    } else {
+                        $employeesList[$ekey]["courses_sid"]  = 0;
+                    }
+                    //
+                    $departmentAndTeams = $this->course_model->fetchDepartmentTeams($employee['sid']);
+                    $employeesList[$ekey]["departments"]  = $departmentAndTeams['departmentIds'];
+                    $employeesList[$ekey]["teams"]  = $departmentAndTeams['teamIds'];
+                }
+            }    
+            //
+            _e($employeesList,true,true);
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('courses/company_report');
+            $this->load->view('main/footer');
+            
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
 }
