@@ -4418,4 +4418,194 @@ class Payroll_model extends CI_Model
         //
         return ['success' => true, 'version' => $gustoResponse['version']];
     }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int   $employeeId
+     */
+    public function getEmployeeSummary(
+        int $employeeId
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getEmployeeSummary',
+            $companyDetails,
+            [],
+            "GET"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        return ['success' => true, 'response' => $gustoResponse];
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int   $employeeId
+     */
+    public function syncEmployeeDocuments(
+        int $employeeId
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'getEmployeeForms',
+            $companyDetails,
+            [],
+            "GET"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$gustoResponse) {
+            return ['success' => true];
+        }
+        //
+        foreach ($gustoResponse as $form) {
+            //
+            $ins = [];
+            $ins['form_name'] = $form['name'];
+            $ins['form_title'] = $form['title'];
+            $ins['description'] = $form['description'];
+            $ins['requires_signing'] = $form['requires_signing'];
+            $ins['draft'] = $form['draft'];
+            $ins['updated_at'] = getSystemDate();
+            // we need to check the current status of w4
+            if ($form['name'] == 'US_W-4') {
+                $ins['status'] = $this->getEmployeeW4AssignStatus($employeeId);
+            } elseif ($form['name'] == 'employee_direct_deposit') {
+                $ins['status'] = $this->getEmployeeDirectDepositAssignStatus($employeeId);
+            }
+            //
+            if ($this->db->where(['employee_sid' => $employeeId, 'gusto_uuid' => $form['uuid']])->count_all_results('gusto_employees_forms')) {
+                $this->db
+                    ->where(['employee_sid' => $employeeId, 'gusto_uuid' => $form['uuid']])
+                    ->update('gusto_employees_forms', $ins);
+            } else {
+                //
+                $ins['company_sid'] = $gustoEmployee['company_sid'];
+                $ins['employee_sid'] = $employeeId;
+                $ins['gusto_uuid'] = $form['uuid'];
+                $ins['created_at'] = getSystemDate();
+                //
+                $this->db
+                    ->insert('gusto_employees_forms', $ins);
+            }
+        }
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int   $employeeId
+     */
+    public function getEmployeeDocuments(
+        int $employeeId
+    ): array {
+        return $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->get('gusto_employees_forms')
+            ->result_array();
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int   $employeeId
+     */
+    public function getEmployeeW4AssignStatus(
+        int $employeeId
+    ): string {
+        //
+        $record = $this->db
+            ->select('status')
+            ->where(['employer_sid' => $employeeId, 'user_type' => 'employee'])
+            ->get('form_w4_original')
+            ->row_array();
+        //
+        if (!$record) {
+            return 'pending';
+        }
+        //
+        if ($record['status'] == 1) {
+            return 'assign';
+        }
+        //
+        return 'revoke';
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int   $employeeId
+     */
+    public function getEmployeeDirectDepositAssignStatus(
+        int $employeeId
+    ): array {
+        //
+        $record = $this->db
+            ->select('status')
+            ->where([
+                'user_sid' => $employeeId,
+                'user_type' => 'employee',
+                'document_type' => 'direct_deposit'
+            ])
+            ->get('documents_assigned_general')
+            ->row_array();
+        //
+        if (!$record) {
+            return [
+                'status' => 'pending',
+                'documentId' => 0
+            ];
+        }
+        //
+        if ($record['status'] == 1) {
+            return [
+                'status' => 'assign',
+                'documentId' => 0
+            ];
+        }
+        return [
+            'status' => 'revoke',
+            'documentId' => 0
+        ];
+    }
 }

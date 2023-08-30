@@ -1003,15 +1003,8 @@ class Payroll extends CI_Controller
         $data['step'] = $step;
         // for summary page
         if ($step === 'summary') {
-            $data['summary'] = [
-                ['Personal details', $gustoEmployee['personal_details']],
-                ['Enter compensation details', $gustoEmployee['compensation_details']],
-                ['Add work address', $gustoEmployee['work_address']],
-                ['Add home address', $gustoEmployee['home_address']],
-                ['Enter federal tax withholdings', $gustoEmployee['federal_tax']],
-                ['Enter state tax information', $gustoEmployee['state_tax']],
-                ['File new hire report', $gustoEmployee['new_hire_report']],
-            ];
+            // get employee summary
+            $data['summary'] = $this->payroll_model->getEmployeeSummary($employeeId);
         } elseif ($step === 'personal_details') {
             //
             $data['locations'] = $this->payroll_model->getCompanyLocations(
@@ -1059,7 +1052,12 @@ class Payroll extends CI_Controller
                     $employeeId,
                     false
                 );
-        } elseif ($step === 'bank_account_add') {}
+        } elseif ($step === 'documents') {
+            //
+            $this->payroll_model->syncEmployeeDocuments($employeeId);
+            //
+            $data['documents'] = $this->payroll_model->getEmployeeDocuments($employeeId);
+        }
         //
         return SendResponse(
             200,
@@ -1538,7 +1536,7 @@ class Payroll extends CI_Controller
                 400,
                 ['errors' => 'The selected employee is not on payroll.']
             );
-        }
+    }
         // get account id
         $post['sid']  = $this->payroll_model
             ->getEmployeeBankAccountId(

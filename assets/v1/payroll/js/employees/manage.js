@@ -620,6 +620,167 @@ $(function manageEmployees() {
 		}
 	});
 
+	$(document).on("click", ".jsGeneralDocumentAssign", function (e) {
+		//
+		e.preventDefault();
+		//
+		switch ($(this).data("type").toLowerCase()) {
+			//
+			case "assign":
+				alertify
+					.confirm(
+						`Do you really want to assign this document?`,
+						() => {
+							handleAssignDocument($(this));
+						},
+						() => {}
+					)
+					.set("labels", {
+						ok: "YES",
+						cancel: "No",
+					})
+					.set("title", "CONFIRM!");
+				break;
+			//
+			case "revoke":
+				alertify
+					.confirm(
+						`Do you really want to revoke this document?`,
+						() => {
+							handleRevokeDocument($(this));
+						},
+						() => {}
+					)
+					.set("labels", {
+						ok: "YES",
+						cancel: "No",
+					})
+					.set("title", "CONFIRM!");
+				break;
+		}
+	});
+
+
+        //
+        function handleAssignDocument(target){
+            //
+            let obj = {};
+            obj.action = "assign_document";
+            obj.documentType = target.closest('tr').data('id');
+            obj.companySid = companyId;
+            obj.companyName =  window.company.Name;
+            obj.sid = target.closest('tr').data('key');
+            obj.userSid = employeeId;
+            obj.userType = "employee";
+            //
+            $.post(
+                baseUrl("hr_documents_management/handler"),
+                obj,
+                (resp) => {
+                    //
+                    nl(false);
+                    //
+                    if(resp.Status === false){
+                        alertify.alert(
+                            'WARNING!',
+                            resp.Response,
+                            () => {}
+                        );
+                        return;
+                    }
+                    //
+                    alertify.alert(
+                        'SUCCESS!',
+                        resp.Response,
+                        () => {}
+                    );
+                }
+            );
+        }
+		
+        //
+        function handleRevokeDocument(target){
+            //
+            nl();
+            //
+            let obj = {};
+            obj.action = "revoke_document";
+            obj.companySid = <?=$company_sid;?>;
+            obj.companyName = "<?=$company_name;?>";
+            obj.documentType = target.closest('tr').data('id');
+            obj.sid = target.closest('tr').data('key');
+            obj.userSid = <?=$user_sid;?>;
+            obj.userType = "<?=$user_type;?>";
+            //
+            $.post(
+                "<?=base_url("hr_documents_management/handler");?>",
+                obj,
+                (resp) => {
+                    //
+                    nl(false);
+                    //
+                    if(resp.Status === false){
+                        alertify.alert(
+                            'WARNING!',
+                            resp.Response,
+                            () => {}
+                        );
+                        return;
+                    }
+                    //
+                    alertify.alert(
+                        'SUCCESS!',
+                        resp.Response,
+                        () => {}
+                    );
+                    //
+                    target
+                    .text('Reassign')
+                    .prop('title', 'Assign this document')
+                    .data('type', 'assign')
+                    .removeClass('btn-danger')
+                    .addClass('btn-warning');
+                    //
+                    target
+                    .closest('tr')
+                    .find('img')
+                    .prop('src', "<?=base_url('assets/manage_admin/images');?>/off.gif")
+                    .prop('title', 'Pending');
+                    //
+                    target
+                    .closest('tr')
+                    .find('img')
+                    .parent()
+                    .find('span')
+                    .remove();
+                    //
+                    target
+                    .closest('tr')
+                    .find('.jsAssignedOn')
+                    .html(`<i class="fa fa-close fa-2x text-danger"></i>`);
+                    //
+                    let o = {
+                        c: $(`.jsGeneralRowCompleted${obj.documentType}`).length,
+                        n: $(`.jsGeneralRowNotCompleted${obj.documentType}`).length
+                    };
+                    //
+                    $('.js-ncd').text( parseInt($('.js-ncd').text()) - o.n );
+                    $('.js-cd').text( parseInt($('.js-cd').text()) - o.c );
+                    //
+                    $(`tr.jsGeneralRowCompleted${obj.documentType}`).remove();
+                    $(`tr.jsGeneralRowNotCompleted${obj.documentType}`).remove();
+                    //
+                    if( $('#collapse_general_documents_notcompleted tbody tr').length == 0 ){
+                        $('#collapse_general_documents_notcompleted').closest('.jsGDR').remove();
+                    }
+                    //
+                    if( $('#collapse_general_documents_completed tbody tr').length == 0 ){
+                        $('#collapse_general_documents_completed').closest('.jsGDR').remove();
+                    }
+                }
+            );
+        }
+
 	/**
 	 * starts the employee onboard flow
 	 * @returns

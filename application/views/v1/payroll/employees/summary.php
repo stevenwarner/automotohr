@@ -12,18 +12,12 @@
             Please complete the following steps in order to continue.
         </p>
         <br>
-        <?php foreach ($summary as $point) { ?>
+        <?php foreach ($summary['response']['onboarding_steps'] as $step) { ?>
             <p class="csF16">
-                <i class="fa <?= $point[1] ? 'fa-check-circle text-success' : 'fa-circle-o'; ?> csF16"></i>
-                &nbsp;<?= $point[0]; ?>
+                <i class="fa <?= $step['completed'] ? 'fa-check-circle text-success' : 'fa-circle-o'; ?> csF16"></i>
+                &nbsp;<?= $step['title']; ?>
                 <hr>
             </p>
         <?php } ?>
-    </div>
-    <div class="panel-footer text-right">
-        <button class="btn csBG3 csF16 jsEmployeeFlowSavePaymentMethodBtn">
-            <i class="fa fa-save csF16"></i>
-            <span>Save & continue</span>
-        </button>
     </div>
 </div>

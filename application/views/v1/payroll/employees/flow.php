@@ -21,8 +21,7 @@
                             <li <?= $step == 'federal_tax' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="federal_tax">Federal Tax</a></li>
                             <li <?= $step == 'state_tax' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="state_tax">State Tax</a></li>
                             <li <?= $step == 'payment_method' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="payment_method">Payment Method</a></li>
-                            <li <?= $step == 'documents' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="documents">Documents</a></li>
-                            <li <?= $step == 'deductions' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="deductions">Deductions</a></li>
+                            <li <?= $step == 'documents' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="documents">Forms</a></li>
                             <li <?= $step == 'summary' ? 'class="active"' : ''; ?>><a href="#" class="csF16 jsMenuTrigger" data-step="summary">Summary</a></li>
                         </ul>
                     </div>

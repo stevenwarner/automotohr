@@ -309,6 +309,10 @@ if (!function_exists('getUrl')) {
         // bank account
         $urls['addBankAccount'] = "v1/employees/$key1/bank_accounts";
         $urls['deleteBankAccount'] = "v1/employees/$key1/bank_accounts/$key2";
+        // forms
+        $urls['getEmployeeForms'] = "v1/employees/$key1/forms";
+        // summary
+        $urls['getEmployeeSummary'] = "v1/employees/$key1/onboarding_status";
         // Contractors
         $urls['createContractor'] = "v1/companies/$key/contractors";
         $urls['getContractor'] = "v1/contractors/$key1";
