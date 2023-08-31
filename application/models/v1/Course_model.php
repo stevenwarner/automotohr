@@ -313,6 +313,12 @@ class Course_model extends CI_Model
     public function checkEmployeeCoursesReport ($companyId, $employeeId, $employeeAssignCourses) {
         $employeeAssignCoursesList = explode(",", $employeeAssignCourses);
         //
+        $result = [
+            "completedCount" => 0,
+            "courseCount" => count($employeeAssignCoursesList),
+            "percentage" => 0
+        ];
+        //
         if (!empty($employeeAssignCoursesList)) {
             foreach ($employeeAssignCoursesList as $courseId) {
 
@@ -326,13 +332,17 @@ class Course_model extends CI_Model
                 $count = $this->db->count_all_results();
                 //
                 if ($count > 0) {
-                    return true;
-                } else {
-                    return false;
+                    $result["completedCount"]++;
                 }      
             }
-            
-
+            //
+            if ($result["completedCount"]> 0) {
+                echo $result["completedCount"];
+                echo $result["courseCount"];
+                $result["percentage"] = ($result["completedCount"] / $result["courseCount"]) * 100;
+            }
         }
+        //
+        return $result;
     }
 }

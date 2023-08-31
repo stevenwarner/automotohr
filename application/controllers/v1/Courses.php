@@ -553,7 +553,7 @@ class Courses extends Public_Controller
                     if (!empty($employee['job_title_sid'])) {
                         $employeesList[$ekey]["courses_sid"]  = $jobRoleCourses[$employee['job_title_sid']];
                         //
-                        $this->course_model->checkEmployeeCoursesReport(
+                        $employeesList[$ekey]["courses_stato"] = $this->course_model->checkEmployeeCoursesReport(
                             $data['company_sid'], 
                             $employee['sid'],
                             $jobRoleCourses[$employee['job_title_sid']]
