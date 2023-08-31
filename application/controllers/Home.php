@@ -54,12 +54,18 @@ class Home extends CI_Controller
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all'
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/alertifyjs/css/alertify.min'
         ];
+
         $data['pageJs'] = [
-            'https://code.jquery.com/jquery-3.2.1.slim.min',
-            'https://code.jquery.com/jquery-3.2.1.slim.min',
+            'v1/app/js/jquery-1.11.3.min',
+            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js',
+            'v1/app/alertifyjs/alertify.min',
+            'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js',
+            'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js',
         ];
+
 
         $data['appCSS'] = bundleCSS([
             'v1/app/css/app',
@@ -67,9 +73,9 @@ class Home extends CI_Controller
         ], $this->assetPath);
 
         $data['appJs'] = bundleJs([
-            'plugins/bootstrap5/js/bootstrap.bundle'
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
         ], $this->assetPath);
-
 
 
         $data['slider'] = [

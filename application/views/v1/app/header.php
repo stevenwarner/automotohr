@@ -21,6 +21,13 @@
     <?php if (isset($appCSS)) {
         echo $appCSS;
     } ?>
+
+    <?php
+    if (isset($pageJs)) :
+        echo GetScripts($pageJs);
+    endif;
+    ?>
+
 </head>
 
 <body>
@@ -114,7 +121,7 @@
                     </ul>
 
                     <div class="d-flex flex-direction-coloumn-on-mobile">
-                        <a class="btn schedule-btn" href="<?= base_url('/schedule_your_free_demo'); ?>">
+                        <a class="btn schedule-btn" href="#freedemo">
 
                             Schedule Your No Obligation Consultation</a>
                         <a class="btn login-btn" href="<?= base_url('login') ?>"> Login </a>

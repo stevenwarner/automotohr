@@ -78,7 +78,7 @@
                 </div>
 
                 <div class="book-demo-btn">
-                    <a href="<?= base_url('/schedule_your_free_demo'); ?>"> Book A Free Demo</a>
+                    <a href="#freedemo"> Book A Free Demo</a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-2">
