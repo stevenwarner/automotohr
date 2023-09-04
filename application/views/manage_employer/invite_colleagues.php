@@ -126,6 +126,7 @@
                                                     <select class="invoice-fields" name="employee-type" id="employee-type">
                                                         <option value="fulltime">Full-time</option>
                                                         <option value="parttime">Part-time</option>
+                                                        <option value="contractual">Contractual</option>
                                                         <!-- <option value="casual">Casual</option>
                                                         <option value="fixedterm">Fixed term</option>
                                                         <option value="apprentices-and-trainees">Apprentices and trainees</option>
@@ -144,7 +145,7 @@
 
                                                 <li class="form-col-100 autoheight">
                                                     <label>Payment Method:</label>
-                                                    <select class="invoice-fields" name="payment_method">                                                                
+                                                    <select class="invoice-fields" name="payment_method">
                                                         <option <?= $formpost["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
                                                         <option <?= $formpost["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
                                                     </select>

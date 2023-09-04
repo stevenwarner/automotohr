@@ -117,6 +117,7 @@
                         <option value="all">All</option>
                         <option value="fulltime">Full-time</option>
                         <option value="parttime">Part-time</option>
+                        <option value="contractual">Contractual</option>
                     </select>
                 </div>
             </div>
@@ -719,6 +720,7 @@
                         <option value="all">All</option>
                         <option value="fulltime">Full-time</option>
                         <option value="parttime">Part-time</option>
+                        <option value="contractual">Contractual</option>
                     </select>
                 </div>
             </div>

@@ -14,14 +14,14 @@
         </div>
     </div>
     <div class="panel-body jsPageBody" data-page="basic">
-        
+
         <!-- Info -->
         <div class="row">
             <div class="col-xs-12">
                 <p class="csF16 pl10"><i class="fa fa-info-circle csF18 csB7" aria-hidden="true"></i>&nbsp;<em class="csInfo">Use the Rule Settings to define which workers are included (or excluded) from this review</em>.</p>
             </div>
         </div>
-        
+
         <!-- Main -->
         <div class="row">
             <br />
@@ -48,13 +48,13 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterRoles" multiple>
-                                    <?php   foreach(getRoles() as $index => $role): ?>
-                                        <option value="<?=$index;?>"><?=$role;?></option>
-                                    <?php   endforeach; ?>
+                                    <?php foreach (getRoles() as $index => $role) : ?>
+                                        <option value="<?= $index; ?>"><?= $role; ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
-                        
+
                         <!--  -->
                         <div class="row">
                             <br>
@@ -63,11 +63,11 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterDepartments" multiple>
-                                    <?=$efj['DepartmentRows'];?>
+                                    <?= $efj['DepartmentRows']; ?>
                                 </select>
                             </div>
                         </div>
-                        
+
                         <!--  -->
                         <div class="row">
                             <br>
@@ -76,7 +76,7 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterTeams" multiple>
-                                    <?=$efj['TeamRows'];?>
+                                    <?= $efj['TeamRows']; ?>
                                 </select>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterEmployees" multiple>
-                                    <?=$efj['EmployeeRows'];?>
+                                    <?= $efj['EmployeeRows']; ?>
                                 </select>
                             </div>
                         </div>
@@ -102,10 +102,10 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterJob" multiple>
-                                    <?php if(!empty($job_titles)): ?>
-                                    <?php   foreach($job_titles as $job_title): ?>
-                                        <option value="<?=stringToSlug($job_title);?>"><?=$job_title;?></option>
-                                    <?php   endforeach; ?>
+                                    <?php if (!empty($job_titles)) : ?>
+                                        <?php foreach ($job_titles as $job_title) : ?>
+                                            <option value="<?= stringToSlug($job_title); ?>"><?= $job_title; ?></option>
+                                        <?php endforeach; ?>
                                     <?php endif; ?>
                                 </select>
                             </div>
@@ -121,6 +121,7 @@
                                 <select id="jsReviewRevieweeFilterType" multiple>
                                     <option value="fulltime">Full time</option>
                                     <option value="parttime">Part time</option>
+                                    <option value="contractual">Contractual</option>
                                 </select>
                             </div>
                         </div>
@@ -141,11 +142,11 @@
                             </div>
                             <div class="col-md-12 col-xs-12">
                                 <select id="jsReviewRevieweeFilterExcludeEmployees" multiple>
-                                    <?=$efj['EmployeeRows'];?>
+                                    <?= $efj['EmployeeRows']; ?>
                                 </select>
                             </div>
                         </div>
-                        
+
                         <!--  -->
                         <div class="row">
                             <br>
@@ -190,7 +191,7 @@
                 <div class="panel panel-theme">
                     <div class="panel-heading">
                         <p class="csF16 csB7 csW mb0">
-                            Selected Reviewee(s): <span id="jsReviewRevieweesCount"><?=count($company_employees);?></span>
+                            Selected Reviewee(s): <span id="jsReviewRevieweesCount"><?= count($company_employees); ?></span>
                         </p>
                     </div>
                     <div class="panel-body">
@@ -204,58 +205,49 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php if(!empty($company_employees)): ?>
-                                <?php   foreach($company_employees as $employee): ?>
-                                    <?php
+                                <?php if (!empty($company_employees)) : ?>
+                                    <?php foreach ($company_employees as $employee) : ?>
+                                        <?php
                                         //
-                                        $departmentNames = 
-                                        $teamNames = 'N/A';
+                                        $departmentNames =
+                                            $teamNames = 'N/A';
                                         //
-                                        if(!empty($employee['Departments'])){
+                                        if (!empty($employee['Departments'])) {
                                             //
                                             $departmentNames = '';
                                             //
-                                            foreach($employee['Departments'] as $t){
+                                            foreach ($employee['Departments'] as $t) {
                                                 //
-                                                $departmentNames .= $company_dt['Departments'][$t]['Name'].',';
+                                                $departmentNames .= $company_dt['Departments'][$t]['Name'] . ',';
                                             }
                                             //
                                             $departmentNames = rtrim($departmentNames, ',');
                                         }
                                         //
-                                        if(!empty($employee['Teams'])){
+                                        if (!empty($employee['Teams'])) {
                                             //
                                             $teamNames = '';
                                             //
-                                            foreach($employee['Teams'] as $t){
+                                            foreach ($employee['Teams'] as $t) {
                                                 //
-                                                $teamNames .= $company_dt['Teams'][$t]['Name'].',';
+                                                $teamNames .= $company_dt['Teams'][$t]['Name'] . ',';
                                             }
                                             //
                                             $teamNames = rtrim($teamNames, ',');
                                         }
-                                    ?>
-                                    <tr 
-                                        class="jsReviewRevieweesRow" 
-                                        data-id="<?=$employee['Id'];?>"
-                                        data-role="<?=stringToSlug($employee['BasicRole']);?>"
-                                        data-job="<?=stringToSlug($employee['JobTitle']);?>"
-                                        data-join="<?=$employee['JoinedDate'];?>"
-                                        data-departments="<?=implode(',',$employee['Departments']);?>"
-                                        data-teams="<?=implode(',',$employee['Teams']);?>"
-                                        data-type="<?=$employee['EmploymentType'];?>"
-                                    >
-                                        <td style="vertical-align: middle;">
-                                            <h6 class="csF14 csB7 mb0"><?=$employee['Name'];?></h6>
-                                            <p class="csF14"><?=$employee['Role'];?></p>
-                                            <p class="csF14">Joined On: <?=formatDate($employee['JoinedDate']);?></p>
-                                        </td>
-                                        <td class="text-center csF14" style="vertical-align: middle;"><?=$departmentNames;?></td>
-                                        <td class="text-center csF14" style="vertical-align: middle;"><?=$teamNames;?></td>
-                                    </tr>
-                                <?php   endforeach; ?>
+                                        ?>
+                                        <tr class="jsReviewRevieweesRow" data-id="<?= $employee['Id']; ?>" data-role="<?= stringToSlug($employee['BasicRole']); ?>" data-job="<?= stringToSlug($employee['JobTitle']); ?>" data-join="<?= $employee['JoinedDate']; ?>" data-departments="<?= implode(',', $employee['Departments']); ?>" data-teams="<?= implode(',', $employee['Teams']); ?>" data-type="<?= $employee['EmploymentType']; ?>">
+                                            <td style="vertical-align: middle;">
+                                                <h6 class="csF14 csB7 mb0"><?= $employee['Name']; ?></h6>
+                                                <p class="csF14"><?= $employee['Role']; ?></p>
+                                                <p class="csF14">Joined On: <?= formatDate($employee['JoinedDate']); ?></p>
+                                            </td>
+                                            <td class="text-center csF14" style="vertical-align: middle;"><?= $departmentNames; ?></td>
+                                            <td class="text-center csF14" style="vertical-align: middle;"><?= $teamNames; ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 <?php endif; ?>
-                            </select>
+                                </select>
                             </tbody>
                         </table>
                     </div>

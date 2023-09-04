@@ -62,6 +62,7 @@
                                                             <select name="employee_type" id="employee_type" class="invoice-fields">
                                                                 <option <?= $data["employee_type"] == 'fulltime' ? 'selected' : ''; ?> value="fulltime">Full-Time</option>
                                                                 <option <?= $data["employee_type"] == 'parttime' ? 'selected' : ''; ?> value="parttime">Part-Time</option>
+                                                                <option <?= $data["employee_type"] == 'contractual' ? 'selected' : ''; ?> value="contractual">Contractual</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -304,7 +305,7 @@
                                                             <select class="invoice-fields" name="payment_method">
                                                                 <option <?= $user_information["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
                                                                 <option <?= $user_information["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
-                                                            </select>    
+                                                            </select>
                                                         </div>
                                                     </div>
 

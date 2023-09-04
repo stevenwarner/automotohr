@@ -664,6 +664,7 @@ class Import_csv extends Public_Controller
                     // Manage employment type
                     if (isset($v0['employment_type']) && !empty($v0['employment_type'])) {
                         $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
+                        $insertArray['employee_status'] = preg_match('/contractual/i', $v0['employment_type']) ? 'contractual' : $insertArray['employee_status'];
                     }
                     //New Fields End
                     // Insert employee
@@ -919,6 +920,7 @@ class Import_csv extends Public_Controller
         // Manage employment type
         if (empty($pre_emp['employee_status']) && isset($v0['employment_type']) && !empty($v0['employment_type'])) {
             $insertArray['employee_status'] = preg_match('/full/i', $v0['employment_type']) ? 'fulltime' : 'parttime';
+            $insertArray['employee_status'] = preg_match('/contractual/i', $v0['employment_type']) ? 'contractual' : $insertArray['employee_status'];
         }
 
 

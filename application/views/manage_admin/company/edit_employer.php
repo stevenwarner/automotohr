@@ -126,6 +126,7 @@
                                                             <select name="employee_type" id="employee_type" class="invoice-fields">
                                                                 <option <?= $data["employee_type"] == 'fulltime' ? 'selected' : ''; ?> value="fulltime">Full-Time</option>
                                                                 <option <?= $data["employee_type"] == 'parttime' ? 'selected' : ''; ?> value="parttime">Part-Time</option>
+                                                                <option <?= $data["employee_type"] == 'contractual' ? 'selected' : ''; ?> value="contractual">Contractual</option>
                                                             </select>
                                                         </div>
                                                         <?php echo form_error('employee_type'); ?>
@@ -369,14 +370,14 @@
                                                     <label>Payment Method</label>
                                                     <div class="hr-fields-wrap">
                                                         <div class="hr-select-dropdown">
-                                                            <select class="invoice-fields" name="payment_method">                                                                
+                                                            <select class="invoice-fields" name="payment_method">
                                                                 <option <?= $data["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
                                                                 <option <?= $data["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
-                                                            </select> 
+                                                            </select>
                                                         </div>
                                                         <?php echo form_error('payment_method'); ?>
                                                     </div>
-                                                </li>                                               
+                                                </li>
                                                 <li>
                                                     <label>Marital Status</label>
                                                     <div class="hr-fields-wrap">
@@ -882,7 +883,7 @@
             }
 
         <?php } ?>
-        
+
 
         var min_flag = 0,
             hrs_flag = 0,

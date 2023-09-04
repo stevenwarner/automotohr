@@ -172,6 +172,7 @@ if (!empty($DT['Teams'])) {
                                                 <select id="jsEmploymentTypes" multiple="true">
                                                     <option value="fulltime">Full-time</option>
                                                     <option value="parttime">Part-time</option>
+                                                    <option value="contractual">Contractual</option>
                                                 </select>
                                             </div>
 
@@ -203,20 +204,20 @@ if (!empty($DT['Teams'])) {
                                                 <input type="text" readonly="true" class="form-control" name="endDate" id="jsReportEndDate" value="<?php echo $efd; ?>" />
                                             </div>
 
-                                                <div class="form-group">
-                                                    <label class="control control--checkbox">
-                                                        Include start & end date
-                                                        <?php
-                                                        if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate']) ) {
-                                                            $includeStartandEndDateChecked = '';
-                                                        } else {
-                                                            $includeStartandEndDateChecked = 'checked';
-                                                        } ?>
+                                            <div class="form-group">
+                                                <label class="control control--checkbox">
+                                                    Include start & end date
+                                                    <?php
+                                                    if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate'])) {
+                                                        $includeStartandEndDateChecked = '';
+                                                    } else {
+                                                        $includeStartandEndDateChecked = 'checked';
+                                                    } ?>
 
-                                                        <input class="select-domain" type="checkbox" name="includeStartandEndDate" id="includeStartandEndDate" value="1" <?php echo $includeStartandEndDateChecked;?>>
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
+                                                    <input class="select-domain" type="checkbox" name="includeStartandEndDate" id="includeStartandEndDate" value="1" <?php echo $includeStartandEndDateChecked; ?>>
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
 
 
                                             <input type="hidden" name="token" id="session_key" value="<?php echo $_GET['token']; ?>">

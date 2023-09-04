@@ -3509,6 +3509,7 @@ class Application_tracking_system_model extends CI_Model
         return [
             'fulltime' => 'Full-time',
             'parttime' => 'Part-time',
+            'contractual' => 'Contractual',
             //'casual' => 'Casual',
             //            'fixedterm' => 'Fixed term',
             //            'apprentices-and-trainees' => 'Apprentices and trainees',

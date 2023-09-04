@@ -1148,6 +1148,7 @@ $(function () {
                                     <select id="jsEmploymentTypes" multiple="true">
                                         <option value="fulltime">Full-time</option>
                                         <option value="parttime">Part-time</option>
+                                        <option value="contractual">Contractual</option>
                                     </select>
                                 </div>
                                 <!--  -->

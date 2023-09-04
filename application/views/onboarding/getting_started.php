@@ -939,7 +939,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <h2>Training(s)</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?= $pendingTrainings;?><sub>Pending</sub></span>
+                                                <span><?= $pendingTrainings; ?><sub>Pending</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>Trainings</h3>
@@ -1297,6 +1297,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                     <select id="jsEmploymentTypes" multiple="true">
                                         <option value="fulltime">Full-time</option>
                                         <option value="parttime">Part-time</option>
+                                        <option value="contractual">Contractual</option>
                                     </select>
                                 </div>
                                 <!--  -->
