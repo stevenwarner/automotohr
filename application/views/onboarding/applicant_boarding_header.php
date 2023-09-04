@@ -247,7 +247,7 @@
                         <!--                                </a>-->
                         <!--                            </li>-->
 
-                        <?php if ($company_eeoc_form_status == 1 && $eeo_form_status == 1) {?>
+                        <?php if ($company_eeoc_form_status == 1) {?>
                         <li class="<?php echo $url_segment == 'eeoc_form' ? 'active' : ''; ?> <?php echo $complete_steps['eeoc_form'] > 0 ? 'done1' : ''; ?>"
                             style="width: <?php echo $width ?>%;">
                             <a href="<?php echo base_url('onboarding/eeoc_form/' . $unique_sid); ?>">

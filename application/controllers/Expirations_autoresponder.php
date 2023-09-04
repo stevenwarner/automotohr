@@ -7,7 +7,7 @@ class Expirations_autoresponder extends CI_Controller {
     }
 
     public function index() {
-        $companies = $this->expirations_autoresponder_model->GetAllCompanies();
+        $companies = $this->expirations_autoresponder_model->GetAllActiveCompanies();
         $currentDateTimestamp = strtotime(date('Y-m-d H:i:s'));
 
         if($this->input->is_cli_request()) {
