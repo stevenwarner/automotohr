@@ -14,6 +14,12 @@ class Application_tracking_system extends Public_Controller
         $this->load->model('manage_admin/remarket_model');
         // $this->load->model('manage_admin/interview_questionnaires_model');
         $this->load->model('portal_email_templates_model');
+        // check and add status
+        $this->load->model('Application_status_model', 'application_status_model');
+        $this->application_status_model
+            ->replaceStatusCheck(
+                $this->session->userdata('logged_in')['company_detail']['sid'] ?? 0
+            );
     }
 
     public function index($archive = 'active', $searchKeyword = NULL, $job_sid = NULL, $status = NULL, $job_fit_category_sid = 0, $app_type = 'all', $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
