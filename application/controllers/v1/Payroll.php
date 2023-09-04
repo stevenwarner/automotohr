@@ -269,17 +269,21 @@ class Payroll extends CI_Controller
             $data['session']
         );
         // css
-        $data['appCSS'] = bundleCSS([
-            'v1/plugins/ms_modal/main',
-            'v1/app/css/loader'
-        ], $this->css);
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'earning-types'
+        );
         // js
         $data['appJs'] =
             bundleJs([
                 'v1/plugins/ms_modal/main',
                 'js/app_helper',
                 'v1/payroll/js/earnings/manage'
-            ], $this->js);
+            ], $this->js, 'earning-types');
         // get admins
         $data['earnings'] = $this->payroll_model
             ->getCompanyEarningTypes(
@@ -305,6 +309,7 @@ class Payroll extends CI_Controller
         $data['session'] = checkUserSession();
         //
         $companyId = $data['session']['company_detail']['sid'];
+        $data['company_sid'] = $companyId;
         //
         $data['title'] = "Manage Payroll Employees";
         // set
@@ -317,14 +322,15 @@ class Payroll extends CI_Controller
             $data['session']
         );
         // scripts
-        $data['PageCSS'] = [
+        $data['appCSS'] = bundleCSS([
             'v1/plugins/ms_modal/main',
-        ];
-        $data['PageScripts'] = [
+            'v1/app/css/loader',
+        ], $this->css, 'employee-onboard');
+        $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/plugins/ms_modal/main',
             'v1/payroll/js/employees/manage'
-        ];
+        ], $this->js, 'employee-onboard');
         // get employees
         $data['payrollEmployees'] = $this->payroll_model->getPayrollEmployees($companyId);
         //
@@ -1536,7 +1542,7 @@ class Payroll extends CI_Controller
                 400,
                 ['errors' => 'The selected employee is not on payroll.']
             );
-    }
+        }
         // get account id
         $post['sid']  = $this->payroll_model
             ->getEmployeeBankAccountId(
@@ -1777,6 +1783,66 @@ class Payroll extends CI_Controller
             [
                 'msg' => 'You have successfully linked the bank account.'
             ]
+        );
+    }
+
+    /**
+     * employee onboard flow payment method
+     *
+     * @param int $employeeId
+     * @return json
+     */
+    public function finishOnboard(int $employeeId): array
+    {
+        // get gusto employee details
+        $gustoEmployee = $this->payroll_model
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'gusto_uuid',
+                    'company_sid',
+                ]
+            );
+        //
+        if (!$gustoEmployee) {
+            return SendResponse(
+                400,
+                ['errors' => 'The selected employee is not on payroll.']
+            );
+        }
+        $summary = $this->payroll_model->getEmployeeSummary($employeeId);
+        //
+        if ($summary['response']['onboarding_status'] == 'onboarding_completed') {
+            //
+            $this->db
+                ->where('employee_sid', $employeeId)
+                ->update(
+                    'gusto_companies_employees',
+                    [
+                        'is_onboarded' => 1,
+                        'personal_details' => 1,
+                        'compensation_details' => 1,
+                        'work_address' => 1,
+                        'home_address' => 1,
+                        'federal_tax' => 1,
+                        'state_tax' => 1,
+                        'updated_at' => getSystemDate()
+                    ]
+                );
+            return SendResponse(
+                200,
+                ['msg' => 'You have successfully onboard an employee for payroll.']
+            );
+        }
+        // let's update employee's payment method
+        $response = $this->payroll_model
+            ->finishEmployeeOnboard(
+                $employeeId
+            );
+        //
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
         );
     }
 
@@ -2410,6 +2476,32 @@ class Payroll extends CI_Controller
             200,
             [
                 'msg' => 'You have successfully updated earning type.'
+            ]
+        );
+    }
+
+    /**
+     * Get employees for payroll
+     *
+     * @param int $companyId
+     * @return json
+     */
+    public function getEmployeesForPayroll(int $companyId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get all employees
+        $employees = $this->payroll_model->getEmployeesForPayroll(
+            $companyId
+        );
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('v1/payroll/employees/employees_list', [
+                    'employees' => $employees
+                ], true)
             ]
         );
     }

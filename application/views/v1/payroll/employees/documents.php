@@ -27,7 +27,7 @@
                 <tbody>
                     <?php if ($documents) {
                         foreach ($documents as $form) { ?>
-                            <tr data-id="<?= $form['sid']; ?>">
+                            <tr data-id="<?= $form['sid']; ?>" data-did="<?= $form['document_sid']; ?>" data-type="<?= $form['form_name'] === 'employee_direct_deposit' ? 'direct_deposit' : 'w4' ?>">
                                 <td class="vam">
                                     <strong>
                                         <?= $form['form_title']; ?>
@@ -44,15 +44,15 @@
                                 </td>
                                 <td class="vam">
                                     <?php if ($form['status'] == 'pending') { ?>
-                                        <button class="btn csBG3 csW csF16">
+                                        <button class="btn csBG3 csW csF16 jsAssignDocument">
                                             Assign
                                         </button>
                                     <?php } elseif ($form['status'] == 'assign') { ?>
-                                        <button class="btn btn-danger csF16">
+                                        <button class="btn btn-danger csF16 jsRevokeDocument">
                                             Revoke
                                         </button>
                                     <?php } elseif ($form['status'] == 'revoke') { ?>
-                                        <button class="btn btn-warning csF16">
+                                        <button class="btn btn-warning csF16 jsAssignDocument">
                                             Re-Assign
                                         </button>
                                     <?php } ?>

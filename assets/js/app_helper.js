@@ -284,3 +284,30 @@ if (typeof baseUrl === "undefined") {
 		return window.location.origin + "/" + appendUrl;
 	}
 }
+
+if (typeof callButtonHook === "undefined") {
+	/**
+	 * button hook
+	 *
+	 * @param {object} appendUrl
+	 * @param {bool}   doShow
+	 * @return
+	 */
+	function callButtonHook(reference, doShow = true) {
+		//
+		if (doShow) {
+			const obj = {
+				pointer: reference,
+				html: reference.html(),
+			};
+			reference.html(
+				'<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
+			);
+			//
+			reference.off('click');
+			return obj;
+		}
+		//
+		reference.pointer.html(reference.html);
+	}
+}

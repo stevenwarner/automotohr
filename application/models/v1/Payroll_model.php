@@ -114,15 +114,17 @@ class Payroll_model extends CI_Model
             $columns[] = "users.pay_plan_flag";
             $columns[] = "users.full_employment_application";
             $columns[] = "users.on_payroll";
-            $columns[] = "payroll_employees.onboard_completed";
+            $columns[] = "gusto_companies_employees.gusto_uuid";
+            $columns[] = "gusto_companies_employees.is_onboarded";
         }
         //
         $query =
             $this->db
             ->select($columns)
             ->join("users as company", "users.parent_sid = company.sid", 'inner')
-            ->join("payroll_employees", "payroll_employees.employee_sid = users.sid", 'left')
+            ->join("gusto_companies_employees", "gusto_companies_employees.employee_sid = users.sid", 'left')
             ->where("users.parent_sid", $companyId)
+            ->where("gusto_companies_employees.gusto_uuid is null", null, null)
             ->where($whereArray)
             ->order_by("users.first_name", 'asc')
             ->get('users');
@@ -155,6 +157,7 @@ class Payroll_model extends CI_Model
                     'shift_hours' => $record['user_shift_hours'],
                     'shift_minutes' => $record['user_shift_minutes'],
                     'on_payroll' => $record['on_payroll'],
+                    'gusto_uuid' => $record['gusto_uuid'],
                     'onboard_completed' => $record['onboard_completed'],
                 ];
                 //
@@ -219,7 +222,7 @@ class Payroll_model extends CI_Model
             "users.pay_plan_flag",
             "users.on_payroll",
             'users.PhoneNumber',
-            'payroll_employees.payroll_employee_uuid',
+            'gusto_companies_employees.gusto_uuid',
         ], [
             'users.active' => 1,
             'users.is_executive_admin' => 0,
@@ -3005,6 +3008,8 @@ class Payroll_model extends CI_Model
                 'users_sid' => $employeeId,
                 'users_type' => 'employee'
             ])
+            ->where('gusto_uuid <> ', '')
+            ->where('gusto_uuid is not null', null, null)
             ->order_by('sid', 'asc')
             ->limit(2)
             ->get('bank_account_details')
@@ -4507,9 +4512,13 @@ class Payroll_model extends CI_Model
             $ins['updated_at'] = getSystemDate();
             // we need to check the current status of w4
             if ($form['name'] == 'US_W-4') {
-                $ins['status'] = $this->getEmployeeW4AssignStatus($employeeId);
+                $document = $this->getEmployeeW4AssignStatus($employeeId);
+                $ins['status'] = $document['status'];
+                $ins['document_sid'] = $document['documentId'];
             } elseif ($form['name'] == 'employee_direct_deposit') {
-                $ins['status'] = $this->getEmployeeDirectDepositAssignStatus($employeeId);
+                $document = $this->getEmployeeDirectDepositAssignStatus($employeeId);
+                $ins['status'] = $document['status'];
+                $ins['document_sid'] = $document['documentId'];
             }
             //
             if ($this->db->where(['employee_sid' => $employeeId, 'gusto_uuid' => $form['uuid']])->count_all_results('gusto_employees_forms')) {
@@ -4552,23 +4561,35 @@ class Payroll_model extends CI_Model
      */
     public function getEmployeeW4AssignStatus(
         int $employeeId
-    ): string {
+    ): array {
         //
         $record = $this->db
-            ->select('status')
+            ->select('status, sid')
             ->where(['employer_sid' => $employeeId, 'user_type' => 'employee'])
             ->get('form_w4_original')
             ->row_array();
         //
         if (!$record) {
-            return 'pending';
+            return [
+                'status' => 'pending',
+                'documentId' => 0,
+                'documentType' => 'w4_form'
+            ];
         }
         //
         if ($record['status'] == 1) {
-            return 'assign';
+            return [
+                'status' => 'assign',
+                'documentId' => $record['sid'],
+                'documentType' => 'w4_form'
+            ];
         }
         //
-        return 'revoke';
+        return [
+            'status' => 'revoke',
+            'documentId' => $record['sid'],
+            'documentType' => 'w4_form'
+        ];
     }
 
     /**
@@ -4581,7 +4602,7 @@ class Payroll_model extends CI_Model
     ): array {
         //
         $record = $this->db
-            ->select('status')
+            ->select('status, sid')
             ->where([
                 'user_sid' => $employeeId,
                 'user_type' => 'employee',
@@ -4593,19 +4614,149 @@ class Payroll_model extends CI_Model
         if (!$record) {
             return [
                 'status' => 'pending',
-                'documentId' => 0
+                'documentId' => 0,
+                'documentType' => 'direct_deposit'
             ];
         }
         //
         if ($record['status'] == 1) {
             return [
                 'status' => 'assign',
-                'documentId' => 0
+                'documentId' => $record['sid'],
+                'documentType' => 'direct_deposit'
             ];
         }
         return [
             'status' => 'revoke',
-            'documentId' => 0
+            'documentId' => $record['sid'],
+            'documentType' => 'direct_deposit'
         ];
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int    $employeeId
+     * @param string $gustoUUID
+     */
+    public function signEmployeeForm(
+        int $employeeId,
+        string $gustoUUID
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get employee name
+        $userInfo = $this->db
+            ->select('first_name, last_name')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        $companyDetails['other_uuid_2'] = $gustoUUID;
+        // response
+        $gustoResponse = gustoCall(
+            'signEmployeeForm',
+            $companyDetails,
+            [
+                'signature_text' => (ucwords(trim($userInfo['first_name'] . ' ' . $userInfo['last_name']))),
+                'agree' => "true",
+                'signed_by_ip_address' => getUserIP(),
+            ],
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db
+            ->where('gusto_uuid', $gustoUUID)
+            ->update(
+                'gusto_employees_forms',
+                [
+                    'requires_signing' => $gustoResponse['requires_signing'],
+                    'draft' => $gustoResponse['draft'],
+                    'updated_at' => getSystemDate()
+                ]
+            );
+        //
+        return ['success' => true, 'response' => $gustoResponse];
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int    $employeeId
+     */
+    public function finishEmployeeOnboard(
+        int $employeeId
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'finishEmployeeOnboard',
+            $companyDetails,
+            [
+                'onboarding_status' => "onboarding_completed"
+            ],
+            "PUT"
+        );
+        
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if ($gustoResponse['onboarding_status'] !== 'onboarding_completed') {
+            return [
+                'view' =>
+                $this->load->view('v1/payroll/employees/flow', $gustoResponse, true)
+            ];
+        } else {
+            //
+            $this->db
+                ->where('employee_sid', $employeeId)
+                ->update(
+                    'gusto_companies_employees',
+                    [
+                        'is_onboarded' => 1,
+                        'personal_details' => 1,
+                        'compensation_details' => 1,
+                        'work_address' => 1,
+                        'home_address' => 1,
+                        'federal_tax' => 1,
+                        'state_tax' => 1,
+                        'updated_at' => getSystemDate()
+                    ]
+                );
+        }
+        //
+        return ['msg' => 'You have successfully onboard an employee for payroll.'];
     }
 }

@@ -311,8 +311,11 @@ if (!function_exists('getUrl')) {
         $urls['deleteBankAccount'] = "v1/employees/$key1/bank_accounts/$key2";
         // forms
         $urls['getEmployeeForms'] = "v1/employees/$key1/forms";
+        $urls['signEmployeeForm'] = "v1/employees/$key1/forms/$key2/sign";
         // summary
         $urls['getEmployeeSummary'] = "v1/employees/$key1/onboarding_status";
+        // finish onboard
+        $urls['finishEmployeeOnboard'] = "v1/employees/$key1/onboarding_status";
         // Contractors
         $urls['createContractor'] = "v1/companies/$key/contractors";
         $urls['getContractor'] = "v1/contractors/$key1";

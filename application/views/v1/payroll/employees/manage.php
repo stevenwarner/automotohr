@@ -17,21 +17,21 @@
                                     <a href="<?php echo base_url('dashboard'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Dashboard
                                     </a>
-                                    Manage Admins
+                                    Manage Payroll Employees
                                 </span>
                             </div>
                         </div>
                     </div>
-
                     <!--  -->
                     <div class="panel panel-success">
                         <div class="panel-heading text-right">
-                            <button class="btn csF16 csBG4">
+                            <button class="btn csF16 csBG4 jsPayrollAddEmployees">
                                 <i class="fa fa-plus-circle csF16"></i>
                                 <span>Add Employee for Payroll</span>
                             </button>
                         </div>
                         <div class="panel-body">
+                            <?php $this->load->view('v1/loader', ['id' => 'pageLoader']); ?>
                             <?php if (!$payrollEmployees) : ?>
                                 <div class="alert alert-info text-center">
                                     <p><strong>There are no records available..</strong></p>
@@ -77,6 +77,10 @@
                                                             <span>Edit</span>
                                                         </button>
                                                         <?php if ($cl === 'warning') : ?>
+                                                            <button class="btn csBG3 csF16 jsPayrollEmployeeFinishOnboard">
+                                                                <i class="fa fa-times-circle csF16" aria-hidden="true"></i>&nbsp;
+                                                                <span>Finish Onboard</span>
+                                                            </button>
                                                             <button class="btn btn-danger csF16 jsPayrollEmployeeDelete">
                                                                 <i class="fa fa-times-circle csF16" aria-hidden="true"></i>&nbsp;
                                                                 <span>Delete</span>

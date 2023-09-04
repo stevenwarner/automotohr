@@ -1735,6 +1735,7 @@ $route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAcc
 $route['payrolls/earnings/types']['get'] = 'v1/Payroll/earningTypes';
 // employees
 $route['payrolls/employees']['get'] = 'v1/Payroll/manageEmployees';
+$route['payrolls/(:num)/employees/get']['get'] = 'v1/Payroll/getEmployeesForPayroll/$1';
 // employee onboard flow
 $route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';
 $route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';
@@ -1747,6 +1748,7 @@ $route['payrolls/flow/employee/(:num)/bank_account']['post'] = 'v1/Payroll/addEm
 $route['payrolls/flow/employee/(:num)/payment_method']['post'] = 'v1/Payroll/updateEmployeePaymentMethod/$1';
 $route['payrolls/flow/employee/(:num)/bank_account/(:num)']['delete'] = 'v1/Payroll/deleteBankAccount/$1/$2';
 $route['payrolls/flow/employee/(:num)/bank_account/(:num)']['put'] = 'v1/Payroll/useBankAccount/$1/$2';
+$route['payrolls/flow/employee/(:num)/finish_onboard']['post'] = 'v1/Payroll/finishOnboard/$1';
 
 // contractor
 $route['payrolls/contractors']['get'] = 'v1/Payroll/manageContractors/$1';
@@ -1768,3 +1770,10 @@ $route['payrolls/earnings/edit/(:num)']['get'] = 'v1/Payroll/editCustomEarningTy
 $route['payrolls/earnings/edit/(:num)']['post'] = 'v1/Payroll/processEditCustomEarningType/$1';
 // Company approval webhook
 $route['gusto/subscriber'] = 'v1/App/gustoCompanyVerification';
+
+
+/**
+ * form routes
+ */
+$route['forms/w4/(:any)/(:num)/assign']['post'] = 'v1/Documents_management/assignW4Form/$2/$1';
+$route['forms/w4/(:any)/(:num)/revoke']['delete'] = 'v1/Documents_management/revokeW4Form/$2/$1';

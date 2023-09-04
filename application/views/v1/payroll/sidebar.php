@@ -9,7 +9,7 @@ $sideBarUrls = [
         'payrolls/signatories/add',
     ],
     'employees' => [
-        'payroll/employees',
+        'payrolls/employees',
     ],
     'contractors' => [
         'payrolls/contractors',
