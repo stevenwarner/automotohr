@@ -14,9 +14,7 @@
          * @type {string}
          */
         var baseURI = "<?php echo rtrim(base_url(), '/'); ?>/";
-
-        //Set google map key
-        var googleMapKey = '<?php echo GOOGLE_API_KEY?>';
+        var googleMapKey = '<?php echo GOOGLE_API_KEY ?>';
     </script>
 <?php endif; ?>
 <?php if (isset($PageScripts)) {
@@ -24,18 +22,6 @@
     echo GetScripts($PageScripts);
 } ?>
 <?=$appJs ?? ''; ?>
-<?php if (checkIfAppIsEnabled('payroll') && $this->session->userdata('logged_in') && array_intersect($this->uri->segment_array(), ['payroll', 'dashboard'])) : ?>
-    <script src="<?= base_url(_m("assets/payroll/js/payroll_company_onboard", 'js', '1.0.1')); ?>"></script>
-    <script src="<?= base_url(_m("assets/payroll/js/employee_onboard", 'js', '1.0.1')); ?>"></script>
-
-
-    <script>
-        String.prototype.verifyEmail = function() {
-            return this.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g) === null ? false : true;
-        }
-    </script>
-
-<?php endif; ?>
 <?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) : ?>
     <script src="<?= base_url(_m("assets/attendance/js/main", 'js', '1.0.1')); ?>"></script>
 <?php endif; ?>

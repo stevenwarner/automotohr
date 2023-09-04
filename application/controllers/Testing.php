@@ -31,5 +31,4 @@ class Testing extends CI_Controller
         }
         redirect($complyLink);
     }
-
 }

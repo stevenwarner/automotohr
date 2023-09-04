@@ -352,7 +352,7 @@ if (!function_exists('isEmployeeOnPayroll')) {
             ->where([
                 'employee_sid' => $employeeId
             ])
-            ->count_all_results('payroll_employees');
+            ->count_all_results('gusto_companies_employees');
     }
 }
 
@@ -453,7 +453,7 @@ if (!function_exists('getEmployeeAnniversary')) {
         $joiningDateWithCurrentYear = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         // check if month and day is in future
         if ($currentDate < $joiningDateWithCurrentYear) {
-            //
+            // 
             $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear - 1, $effectiveDate);
             $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
         } else {
@@ -528,55 +528,37 @@ if (!function_exists('isCompanyOnBoard')) {
     /**
      * Check company already onboard
      *
-     * @return
+     * @param int $companyId
+     * @return bool
      */
-    function isCompanyOnBoard()
+    function isCompanyOnBoard(int $companyId): bool
     {
-        // Get instance
-        $CI = &get_instance();
-        // Get the session
-        $ses = $CI->session->userdata('logged_in');
         //
-        $has = $CI->db
+        return (bool)get_instance()->db
             ->where([
-                'company_sid' => $ses['company_detail']['sid']
+                'company_sid' => $companyId
             ])
-            ->count_all_results('payroll_companies');
-        //
-        if ($has) {
-            return true;
-        }
-        // Don't created yet
-        return false;
+            ->count_all_results('gusto_companies');
     }
 }
 
-if (!function_exists('isCompanyTermsAccpeted')) {
+if (!function_exists('hasAcceptedPayrollTerms')) {
     /**
      * Check company already onboard
      *
-     * @return
+     * @param int $companyId
+     * @return bool
      */
-    function isCompanyTermsAccpeted()
+    function hasAcceptedPayrollTerms(int $companyId): bool
     {
-        // Get instance
-        $CI = &get_instance();
-        // Get the session
-        $ses = $CI->session->userdata('logged_in');
         //
-        $has = $CI->db
+        return (bool) get_instance()->db
+            ->where('is_ts_accepted is not null', null, null)
+            ->where('is_ts_accepted', 1)
             ->where([
-                'company_sid' => $ses['company_detail']['sid'],
-                'terms_accepted' => 1
-
+                'company_sid' => $companyId
             ])
-            ->count_all_results('payroll_companies');
-        //
-        if ($has) {
-            return true;
-        }
-        // Don't created yet
-        return false;
+            ->count_all_results('gusto_companies');
     }
 }
 
@@ -586,7 +568,7 @@ if (!function_exists('isLoggedInPersonIsSignatory')) {
      *
      * @return bool
      */
-    function isLoggedInPersonIsSignatory()
+    function isLoggedInPersonIsSignatory(): bool
     {
         // Get instance
         $CI = &get_instance();
@@ -599,7 +581,7 @@ if (!function_exists('isLoggedInPersonIsSignatory')) {
                 'email' => $ses['employer_detail']['email']
 
             ])
-            ->count_all_results('payroll_signatories');
+            ->count_all_results('gusto_companies_signatories');
     }
 }
 
@@ -618,16 +600,12 @@ if (!function_exists('getStaticFileVersion')) {
         // set files
         $files = [];
         // plugins
-        $files['v1/plugins/ms_uploader/main'] = ['css' => '3.0.0', 'js' => '3.0.0'];
-        $files['v1/plugins/ms_modal/main'] = ['css' => '3.0.0', 'js' => '3.0.0'];
-        $files['v1/plugins/ms_recorder/main'] = ['js' => '3.0.0'];
-        // common files
-        $files['2022/js/jquery.datetimepicker'] = ['css' => '3.0.0', 'js' => '3.0.0'];
-        // 
-        $files['v1/plugins/ms_scorm/main'] = ['js' => '3.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '3.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '3.0.0'];
-        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '3.0.0'];
+        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        //
+        $files['js/app_helper'] = ['js' => '1.0.0'];
+        // Gusto
+        $files['v1/payroll/js/company_onboard'] = ['js' => '1.0.0'];
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files
@@ -640,8 +618,22 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/lms/main'] = ['js' => '3.0.0'];
         $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
         $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
+
+        // payroll files
+        // dashboard
+        $files['v1/payroll/js/dashboard'] = ['js' => '1.0.0'];
+        // admins
+        $files['v1/payroll/js/admin/add'] = ['js' => '1.0.0'];
+        // signatory
+        $files['v1/payroll/js/signatories/create'] = ['js' => '1.0.0'];
+        // employee onboard
+        $files['v1/payroll/js/employees/manage'] = ['js' => '1.0.0'];
+        // contractor onboard
+        $files['v1/payroll/js/contractors'] = ['js' => '1.0.0'];
+        // Earning types
+        $files['v1/payroll/js/earnings/manage'] = ['js' => '1.0.0'];
         // check and return data
-        return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0'): ($files[$file] ?? []);
+        return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
     }
 }
 
@@ -936,6 +928,91 @@ if (!function_exists('getStateColumnById')) {
     }
 }
 
+if (!function_exists('covertArrayToObject')) {
+    /**
+     * convert array to associate array
+     *
+     * @param array $data
+     * @param string $index
+     * @return array
+     */
+    function covertArrayToObject(array $data, string $index): array
+    {
+        // check fro empty
+        if (!$data) {
+            return $data;
+        }
+        // set temporary array
+        $tmp = [];
+        // loop through data
+        foreach ($data as $k => $v) {
+            $tmp[$v[$index]] = $v;
+        }
+        // return converted data
+        return $tmp;
+    }
+}
+
+/**
+ * check the user session
+ *
+ * @param bool $redirect
+ * @return
+ */
+if (!function_exists('checkUserSession')) {
+    function checkUserSession(bool $redirect = true)
+    {
+        // get instance
+        $CI = &get_instance();
+        // check the session
+        if (!$CI->session->userdata('logged_in')) {
+            //
+            if ($redirect) {
+                return redirect('login', 'refresh');
+            }
+            //
+            return false;
+        }
+        //
+        return $CI->session->userdata('logged_in');
+    }
+}
+
+
+if (!function_exists('makeLocation')) {
+    /**
+     * converts location array to string
+     *
+     * @param array $location
+     */
+    function makeLocation(array $location): string
+    {
+        //
+        $str = '';
+        //
+        $str .= $location['Location_Address'];
+        $str .= $location['Location_Address_2'] ? ', ' . $location['Location_Address_2'] : '';
+        $str .= $location['Location_City'] ? ', ' . $location['Location_City'] : '';
+        $str .= $location['state_code'] ? ', ' . $location['state_code'] : '';
+        $str .= $location['Location_ZipCode'] ? ', ' . $location['Location_ZipCode'] : '';
+        //
+        return trim($str);
+    }
+}
+
+if (!function_exists('getStateByCol')) {
+
+    function getStateColumn(array $where, string $column): string
+    {
+        $CI = &get_instance();
+        return $CI->db
+            ->select($column)
+            ->where($where)
+            ->get('states')
+            ->row_array()[$column];
+    }
+}
+
 if (!function_exists('copyPrepareI9Json')) {
     /**
      * copy I9 Prepare json
@@ -1092,5 +1169,130 @@ if (!function_exists('isSerializeString')) {
         $data = @unserialize($string);
         //
         return is_array($data) ? true : false;
+    }
+}
+
+if (!function_exists('prefillFormData')) {
+    /**
+     * Prefill he form data
+     * 
+     * @param int $userId,
+     * @param string $userType,
+     * @param string $formType,
+     * @param array $form
+     * @return array
+     */
+    function prefillFormData(
+        int $userId,
+        string $userType,
+        string $formType,
+        array $form
+    ): array {
+        // set table
+        $table = $userType === 'applicant' ?  'portal_job_applications' : 'users';
+        // set columns
+        $columns = [
+            'first_name',
+            'last_name',
+            'middle_name',
+            'ssn',
+            'Location_Address',
+            'Location_Address_2',
+            'Location_City',
+            'Location_State',
+            'Location_ZipCode'
+        ];
+        //
+        if ($userType === 'applicant') {
+            // set columns
+            $columns = [
+                'first_name',
+                'last_name',
+                'middle_name',
+                'ssn',
+                'address',
+                'city',
+                'state',
+                'zipcode'
+            ];
+        }
+        // get the user details
+        $userInfo = get_instance()
+            ->db
+            ->select($columns)
+            ->where('sid', $userId)
+            ->get($table)
+            ->row_array();
+        //
+        if (!$userInfo) {
+            return $form;
+        }
+        //
+        if ($userType === 'applicant') {
+            $userInfo['Location_Address'] = $userInfo['address'];
+            $userInfo['Location_Address_2'] = '';
+            $userInfo['Location_City'] = $userInfo['city'];
+            $userInfo['Location_State'] = $userInfo['state'];
+            $userInfo['Location_ZipCode'] = $userInfo['zipcode'];
+        } else {
+            $userInfo['Location_State'] = $userInfo['Location_State'] ? getStateColumnById(
+                $userInfo['Location_State'],
+                'state_name'
+            ) : '';
+        }
+        //
+        $method = 'prefill' . (ucwords($formType)) . 'Form';
+        //
+        return $method($userInfo, $form);
+    }
+}
+
+if (!function_exists('prefillW4Form')) {
+    /**
+     * Prefill W4 form data
+     * 
+     * @param array $userInfo
+     * @param array $form
+     * @return array
+     */
+    function prefillW4Form(
+        array $userInfo,
+        array $form
+    ): array {
+        
+        //
+        if (!$form['first_name']) {
+            $form['first_name'] = $userInfo['first_name'];
+        }
+        //
+        if (!$form['middle_name']) {
+            $form['middle_name'] = $userInfo['middle_name'];
+        }
+        //
+        if (!$form['last_name']) {
+            $form['last_name'] = $userInfo['last_name'];
+        }
+        //
+        if (!$form['ss_number']) {
+            $form['ss_number'] = $userInfo['ssn'];
+        }
+        //
+        if (!$form['home_address']) {
+            $form['home_address'] = trim($userInfo['Location_Address'] . ' ' . $userInfo['Location_Address_2']);
+        }
+        //
+        if (!$form['city']) {
+            $form['city'] = $userInfo['Location_City'];
+        }
+        //
+        if (!$form['state']) {
+            $form['state'] = $userInfo['Location_State'];
+        }
+        //
+        if (!$form['zip']) {
+            $form['zip'] = $userInfo['Location_ZipCode'];
+        }
+        //
+        return $form;
     }
 }

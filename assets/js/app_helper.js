@@ -266,5 +266,48 @@ if (typeof getQuestionsFromArray === "undefined") {
 			"</p></strong><br >" +
 			errorArray.join("<br />")
 		);
+		let json = response.responseJSON || JSON.parse(response.responseText);
+		// when error object came in
+		return alertify.alert("Errors!", json.errors.join("<br />"), CB);
+	}
+}
+
+if (typeof baseUrl === "undefined") {
+	/**
+	 * get the base url
+	 *
+	 * @param {string} appendUrl
+	 * @returns
+	 */
+	function baseUrl(appendUrl = "") {
+		// return the url
+		return window.location.origin + "/" + appendUrl;
+	}
+}
+
+if (typeof callButtonHook === "undefined") {
+	/**
+	 * button hook
+	 *
+	 * @param {object} appendUrl
+	 * @param {bool}   doShow
+	 * @return
+	 */
+	function callButtonHook(reference, doShow = true) {
+		//
+		if (doShow) {
+			const obj = {
+				pointer: reference,
+				html: reference.html(),
+			};
+			reference.html(
+				'<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
+			);
+			//
+			reference.off('click');
+			return obj;
+		}
+		//
+		reference.pointer.html(reference.html);
 	}
 }

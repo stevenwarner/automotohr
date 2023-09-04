@@ -322,7 +322,25 @@ class Companies extends Admin_Controller
             $this->company_model->update_user($sid, $data, 'Company'); //Add Company Portal Templates Information - End
             $company_details = $data;
             $company_details['sid'] = $sid;
-            $this->company_model->sync_company_details_to_remarket($company_details);
+            // $this->company_model->sync_company_details_to_remarket($company_details);
+
+            // if the company is on payroll
+            if (isCompanyOnBoard($company_sid)) {
+
+                if (!$this->db->where('company_sid', $company_sid)->count_all_results('gusto_companies_locations')) {
+                    // load the model
+                    $this->load->model('v1/payroll_model');
+                    // get the company details
+                    $response = $this->payroll_model->checkAndPushCompanyLocationToGusto($company_sid);
+                    //
+                    if ($response['errors']) {
+                        $this->session->set_flashdata('message', "Company is updated sucessfully. " . implode('<br />', $response['errors']));
+                    } else {
+                        $this->payroll_model->handleInitialEmployeeOnboard($company_sid);
+                    }
+                }
+            }
+
             if ($action == 'Save') {
 
                 redirect('manage_admin/companies/manage_company/' . $sid, 'refresh');
