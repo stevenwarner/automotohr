@@ -998,8 +998,9 @@ class Payroll_model extends CI_Model
         $this->createCompanyEarningTypes($companyId);
         // sync the earning types
         $this->syncCompanyEarningTypes($companyId);
-        // create company webhook
+        // sync web hooks
         $this->syncCompanyWebHook();
+        // create company webhook
         $this->createCompanyWebHook();
 
         return SendResponse(
@@ -4853,5 +4854,45 @@ class Payroll_model extends CI_Model
 
         //
         return ['msg' => 'You have successfully removed selected employee from payroll.'];
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int   $companyId
+     * @param array $data
+     */
+    public function updatePaymentConfig(
+        int $companyId,
+        array $data
+    ): array {
+
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        $companyDetails['other_uuid'] = $companyDetails['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'updatePaymentConfig',
+            $companyDetails,
+            $data,
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->update('companies_payment_configs', [
+                'payment_speed' => $gustoResponse['payment_speed'],
+                'fast_payment_limit' => $gustoResponse['fast_payment_limit'],
+                'updated_at' => getSystemDate()
+            ]);
+        //
+        return ['msg' => 'You have successfully updated settings.'];
     }
 }

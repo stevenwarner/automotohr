@@ -59,7 +59,7 @@ class Payroll extends CI_Controller
             'v1/payroll/js/dashboard'
         ], $this->js, 'dashboard');
         //
-        $data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added-historical_payrolls']);
+        $data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls']);
         //
         $data['companyStatus'] = $companyGustoDetails['status'];
         // get the company onboard flow
@@ -381,6 +381,59 @@ class Payroll extends CI_Controller
         $this->load
             ->view('main/header', $data)
             ->view('v1/payroll/contractors/view')
+            ->view('main/footer');
+    }
+
+
+    /**
+     * Settings
+     */
+    public function settings()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        //
+        $data['title'] = "Payroll Settings";
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // get payment config
+        $data['settings'] = $this->db
+            ->select('payment_speed')
+            ->where([
+                'company_sid' => $data['loggedInPersonCompany']['sid'],
+            ])
+            ->get('companies_payment_configs')
+            ->row_array();
+        // css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'settings'
+        );
+        //
+        $data['appJs'] = bundleJs(
+            [
+                'js/app_helper',
+                'v1/payroll/js/settings/main'
+            ],
+            $this->js,
+            'settings'
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/settings/manage')
             ->view('main/footer');
     }
 
@@ -2596,6 +2649,35 @@ class Payroll extends CI_Controller
         $this->checkSessionStatus($session);
         // verify employee and get the employee companyId
         $response = $this->payroll_model->removeEmployee($employeeId, $session['company_detail']['sid']);
+        //
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
+     * Get employees for payroll
+     *
+     * @return json
+     */
+    public function updateSettings(): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        $paymentSpeed = $this->input->post('paymentSpeed', true);
+        //
+        $response = $this->payroll_model
+            ->updatePaymentConfig(
+                $session['company_detail']['sid'],
+                [
+                    'payment_speed' => $paymentSpeed,
+                    'fast_payment_limit' => FAST_PAYMENT_LIMIT
+                ]
+            );
         //
         return SendResponse(
             $response['errors'] ? 400 : 200,

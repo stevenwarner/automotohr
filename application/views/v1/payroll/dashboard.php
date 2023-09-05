@@ -43,7 +43,7 @@
                         </div>
                     </div>
                     <hr />
-                    <?php if (!$payrollBlockers && !$companyGustoDetails['added-historical_payrolls']) {
+                    <?php if (!$payrollBlockers && !$companyGustoDetails['added_historical_payrolls']) {
                         $this->load->view('v1/payroll/historical_info');
                     } ?>
 

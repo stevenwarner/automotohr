@@ -1726,6 +1726,9 @@ $route['payrolls/admin/create']['post'] = 'v1/Payroll/createAdmin';
 $route['payrolls/signatories']['get'] = 'v1/Payroll/manageSignatories';
 $route['payrolls/signatories/create']['get'] = 'v1/Payroll/createSignatoriesPage';
 $route['payrolls/signatories/create']['post'] = 'v1/Payroll/createSignatory';
+// payroll settings
+$route['payrolls/settings']['get'] = 'v1/Payroll/settings';
+$route['payrolls/settings']['post'] = 'v1/Payroll/updateSettings';
 // sync with Gusto
 $route['payrolls/company/sync']['get'] = 'v1/Payroll/syncCompanyWithGusto';
 // verify company bank account
