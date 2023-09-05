@@ -162,6 +162,10 @@ if (!function_exists('bundleJs')) {
                     $destination . $file . '.min.js?v=' . (getStaticFileVersion($fileName, 'js'))
                 )) . '"></script>';
         }
+        //
+        if (!is_dir($absolutePath)) {
+            mkdir($absolutePath, true, 0777) || exit('Failed to create path "'.($absolutePath).'"');
+        }
         // add file to destination
         $absolutePathMin = $absolutePath;
         // add file to destination
@@ -218,6 +222,10 @@ if (!function_exists('bundleCSS')) {
                 $destination .
                     $file . '.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
             )) . '" />';
+        }
+        //
+        if (!is_dir($absolutePath)) {
+            mkdir($absolutePath, true) || exit('Failed to create path "'.($absolutePath).'"');
         }
         // add file to destination
         $absolutePathMin = $absolutePath;
