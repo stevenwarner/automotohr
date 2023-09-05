@@ -1736,6 +1736,10 @@ $route['payrolls/earnings/types']['get'] = 'v1/Payroll/earningTypes';
 // employees
 $route['payrolls/employees']['get'] = 'v1/Payroll/manageEmployees';
 $route['payrolls/(:num)/employees/get']['get'] = 'v1/Payroll/getEmployeesForPayroll/$1';
+// employee onboard
+$route['payrolls/onboard/employee/(:num)']['post'] = 'v1/Payroll/onboardEmployee/$1';
+// employee remove from payroll
+$route['payrolls/flow/employee/(:num)/delete']['delete'] = 'v1/Payroll/removeEmployee/$1';
 // employee onboard flow
 $route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';
 $route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';

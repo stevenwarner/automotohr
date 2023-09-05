@@ -4725,7 +4725,7 @@ class Payroll_model extends CI_Model
             ],
             "PUT"
         );
-        
+
         //
         $errors = hasGustoErrors($gustoResponse);
         //
@@ -4758,5 +4758,56 @@ class Payroll_model extends CI_Model
         }
         //
         return ['msg' => 'You have successfully onboard an employee for payroll.'];
+    }
+
+    /**
+     * update employee's payment method
+     *
+     * @param int    $employeeId
+     */
+    public function removeEmployee(
+        int $employeeId
+    ): array {
+        // get gusto employee details
+        $gustoEmployee = $this
+            ->getEmployeeDetailsForGusto(
+                $employeeId,
+                [
+                    'company_sid',
+                    'gusto_uuid',
+                ]
+            );
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
+        //
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        // response
+        $gustoResponse = gustoCall(
+            'removeOnboardEmployee',
+            $companyDetails,
+            [],
+            "DELETE"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db->where('employee_sid', $employeeId)->delete('gusto_companies_employees');
+        $this->db->where('employee_sid', $employeeId)->delete('gusto_companies_employees_work_addresses');
+        $this->db->where('employee_sid', $employeeId)->delete('gusto_employees_federal_tax');
+        $this->db->where('employee_sid', $employeeId)->delete('gusto_employees_forms');
+        $this->db->where('employee_sid', $employeeId)->delete('gusto_employees_jobs');
+        $this->db->where('employee_sid', $employeeId)->delete('gusto_employees_payment_method');
+        $this->db->where('employee_sid', $employeeId)->delete('gusto_employees_state_tax');
+        $this->db
+            ->where('users_sid', $employeeId)
+            ->where('users_type', 'employee')
+            ->update('bank_account_details', ['gusto_uuid' => null]);
+
+        //
+        return ['msg' => 'You have successfully removed selected employee from payroll.'];
     }
 }

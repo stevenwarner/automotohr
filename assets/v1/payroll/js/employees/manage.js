@@ -690,40 +690,6 @@ $(function manageEmployees() {
 			)
 			.setHeader("Confirm");
 	});
-
-	//
-	$(document).on("click", ".jsPayrollAddEmployees", function (e) {
-		//
-		e.preventDefault();
-		//
-		Modal(
-			{
-				Id: "jsPayrollAddEmployeesModal",
-				Loader: "jsPayrollAddEmployeesModalLoader",
-				Title: "Employees List",
-				Body: '<div id="jsPayrollAddEmployeesModalBody"></div>',
-			},
-			loadEmployees
-		);
-	});
-
-	//
-	function loadEmployees() {
-		//
-		$.ajax({
-			url: baseUrl("payrolls/" + companyId + "/employees/get"),
-			method: "GET",
-		})
-			.success(function (resp) {
-				$("#jsPayrollAddEmployeesModalBody").html(resp.view);
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				//
-				_ml(false, "jsPayrollAddEmployeesModalLoader");
-			});
-	}
-
 	//
 	function finishEmployeeOnboard(employeeCode) {
 		//
@@ -756,6 +722,43 @@ $(function manageEmployees() {
 				}
 				//
 				alertify.alert("Success!", resp.msg, function () {
+					window.location.reload();
+				});
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				//
+				_ml(false, "pageLoader");
+			});
+	}
+
+	//
+	$(document).on("click", ".jsPayrollEmployeeDelete", function (e) {
+		//
+		e.preventDefault();
+		//
+		const employeeCode = $(this).closest("tr").data("id");
+		//
+		return _confirm(
+			"Do you really want to remove the selected employee from Payroll?<br /> This action is not-revertible. However, you can re-add the selected employee for payroll.",
+			function () {
+				deleteEmployeeFromPayroll(employeeCode);
+			}
+		);
+	});
+
+	//
+	function deleteEmployeeFromPayroll(employeeCode) {
+		//
+		_ml(true, "pageLoader");
+		//
+		$.ajax({
+			url: baseUrl("payrolls/flow/employee/" + employeeCode + "/delete"),
+			method: "DELETE",
+		})
+			.success(function (resp) {
+				//
+				_success(resp.msg, function () {
 					window.location.reload();
 				});
 			})

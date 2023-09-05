@@ -35,6 +35,32 @@ if (!function_exists('makeCall')) {
         $info = curl_getinfo($curl);
         //
         curl_close($curl);
+        // network issue
+        if ($info['http_code'] == '0') {
+            $response = json_encode([
+                'errors' => [
+                    [
+                        'message' => 'Network issue: failed to reach payroll provider.'
+                    ]
+                ]
+            ]);
+        }
+        // Check for auth error
+        if ($info['http_code'] == 401) {
+            $response = json_encode([
+                'errors' => [
+                    'auth' => [
+                        $info['http_code']
+                    ]
+                ]
+            ]);
+        }
+        // Check for auth error
+        if ($info['http_code'] == '204') {
+            $response = json_encode([
+                'success' => true
+            ]);
+        }
         // Save the request and response to database
         saveCall([
             'request_method' => $options[CURLOPT_CUSTOMREQUEST],
@@ -47,32 +73,7 @@ if (!function_exists('makeCall')) {
             'response_code' => $info['http_code'],
             'response_headers' => json_encode($info)
         ]);
-        // network issue
-        if ($info['http_code'] == '0') {
-            return [
-                'errors' => [
-                    [
-                        'message' => 'Network issue: failed to reach payroll provider.'
-                    ]
-                ]
-            ];
-        }
-        // Check for auth error
-        if ($info['http_code'] == 401) {
-            return [
-                'errors' => [
-                    'auth' => [
-                        $info['http_code']
-                    ]
-                ]
-            ];
-        }
-        // Check for auth error
-        if ($info['http_code'] == 204) {
-            return [
-                'success' => true
-            ];
-        }
+
         //
         if ($info['content_type'] === 'application/pdf') {
             //
@@ -316,6 +317,8 @@ if (!function_exists('getUrl')) {
         $urls['getEmployeeSummary'] = "v1/employees/$key1/onboarding_status";
         // finish onboard
         $urls['finishEmployeeOnboard'] = "v1/employees/$key1/onboarding_status";
+        // remove employee from onboarding
+        $urls['removeOnboardEmployee'] = "v1/employees/$key1";
         // Contractors
         $urls['createContractor'] = "v1/companies/$key/contractors";
         $urls['getContractor'] = "v1/contractors/$key1";

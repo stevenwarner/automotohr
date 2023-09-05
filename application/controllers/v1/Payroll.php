@@ -25,9 +25,9 @@ class Payroll extends CI_Controller
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
         // set path to CSS file
-        $this->css = 'assets/v1/payroll/css/';
+        $this->css = 'public/v1/css/payroll/';
         // set path to JS file
-        $this->js = 'assets/v1/payroll/js/';
+        $this->js = 'public/v1/js/payroll/';
     }
 
     public function dashboard()
@@ -56,7 +56,7 @@ class Payroll extends CI_Controller
         $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/dashboard'
-        ]);
+        ], $this->js, 'dashboard');
         //
         $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status']);
         //
@@ -321,14 +321,16 @@ class Payroll extends CI_Controller
             null,
             $data['session']
         );
-        // scripts
+        // styles
         $data['appCSS'] = bundleCSS([
             'v1/plugins/ms_modal/main',
             'v1/app/css/loader',
         ], $this->css, 'employee-onboard');
+        // scripts
         $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/plugins/ms_modal/main',
+            'v1/payroll/js/employees/add',
             'v1/payroll/js/employees/manage'
         ], $this->js, 'employee-onboard');
         // get employees
@@ -1011,6 +1013,25 @@ class Payroll extends CI_Controller
         if ($step === 'summary') {
             // get employee summary
             $data['summary'] = $this->payroll_model->getEmployeeSummary($employeeId);
+            //
+            if ($data['summary']['response']['onboarding_status'] == 'onboarding_completed') {
+                //
+                $this->db
+                    ->where('employee_sid', $employeeId)
+                    ->update(
+                        'gusto_companies_employees',
+                        [
+                            'is_onboarded' => 1,
+                            'personal_details' => 1,
+                            'compensation_details' => 1,
+                            'work_address' => 1,
+                            'home_address' => 1,
+                            'federal_tax' => 1,
+                            'state_tax' => 1,
+                            'updated_at' => getSystemDate()
+                        ]
+                    );
+            }
         } elseif ($step === 'personal_details') {
             //
             $data['locations'] = $this->payroll_model->getCompanyLocations(
@@ -1833,17 +1854,14 @@ class Payroll extends CI_Controller
                 200,
                 ['msg' => 'You have successfully onboard an employee for payroll.']
             );
-        }
-        // let's update employee's payment method
-        $response = $this->payroll_model
-            ->finishEmployeeOnboard(
-                $employeeId
+        } else {
+            return SendResponse(
+                200,
+                [
+                    'view' => $this->load->view('v1/payroll/', $summary, true)
+                ]
             );
-        //
-        return SendResponse(
-            $response['errors'] ? 400 : 200,
-            $response
-        );
+        }
     }
 
     /**
@@ -2503,6 +2521,48 @@ class Payroll extends CI_Controller
                     'employees' => $employees
                 ], true)
             ]
+        );
+    }
+
+    /**
+     * Get employees for payroll
+     *
+     * @param int $employeeId
+     * @return json
+     */
+    public function onboardEmployee(int $employeeId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // verify employee and get the employee companyId
+        $response = $this->payroll_model->onboardEmployee($employeeId, $session['company_detail']['sid']);
+        //
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
+     * Get employees for payroll
+     *
+     * @param int $employeeId
+     * @return json
+     */
+    public function removeEmployee(int $employeeId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // verify employee and get the employee companyId
+        $response = $this->payroll_model->removeEmployee($employeeId, $session['company_detail']['sid']);
+        //
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
         );
     }
 

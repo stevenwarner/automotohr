@@ -77,10 +77,6 @@
                                                             <span>Edit</span>
                                                         </button>
                                                         <?php if ($cl === 'warning') : ?>
-                                                            <button class="btn csBG3 csF16 jsPayrollEmployeeFinishOnboard">
-                                                                <i class="fa fa-times-circle csF16" aria-hidden="true"></i>&nbsp;
-                                                                <span>Finish Onboard</span>
-                                                            </button>
                                                             <button class="btn btn-danger csF16 jsPayrollEmployeeDelete">
                                                                 <i class="fa fa-times-circle csF16" aria-hidden="true"></i>&nbsp;
                                                                 <span>Delete</span>

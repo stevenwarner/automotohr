@@ -241,6 +241,11 @@ if (typeof handleErrorResponse === "undefined") {
 				CB
 			);
 		}
+		// Page not found
+		if (response.status == 404) {
+			//
+			return _error("The requested route doesn't exists.");
+		}
 		//
 		const parsedJSON =
 			response.responseJSON || JSON.parse(response.responseText);
@@ -262,13 +267,10 @@ if (typeof getQuestionsFromArray === "undefined") {
 			"<strong><p>" +
 			(errorMessage
 				? errorMessage
-				: "Please, provide the following question answer") +
+				: "Please, provide the following question answer.") +
 			"</p></strong><br >" +
 			errorArray.join("<br />")
 		);
-		let json = response.responseJSON || JSON.parse(response.responseText);
-		// when error object came in
-		return alertify.alert("Errors!", json.errors.join("<br />"), CB);
 	}
 }
 
@@ -304,10 +306,55 @@ if (typeof callButtonHook === "undefined") {
 				'<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
 			);
 			//
-			reference.off('click');
+			reference.off("click");
 			return obj;
 		}
 		//
 		reference.pointer.html(reference.html);
+	}
+}
+
+if (typeof _error === "undefined") {
+	/**
+	 * shows the error
+	 *
+	 * @param {string} msg
+	 */
+	function _error(msg) {
+		alertify.alert("Error!", msg, CB).setHeader("Error!").set("labels", {
+			ok: "Ok",
+			cancel: "cancel",
+		});
+	}
+}
+
+if (typeof _success === "undefined") {
+	/**
+	 * shows the success
+	 *
+	 * @param {string} msg
+	 */
+	function _success(msg, callback = CB) {
+		alertify
+			.alert("Success!", msg, callback)
+			.setHeader("Success!")
+			.set("labels", {
+				ok: "Ok",
+				cancel: "cancel",
+			});
+	}
+}
+
+if (typeof _confirm === "undefined") {
+	/**
+	 * confirm message
+	 *
+	 * @param {string} msg
+	 */
+	function _confirm(msg, callback) {
+		alertify.confirm(msg, callback, CB).setHeader("Confirm").set("labels", {
+			ok: "Yes",
+			cancel: "No",
+		});
 	}
 }

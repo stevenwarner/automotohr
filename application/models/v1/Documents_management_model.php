@@ -254,6 +254,7 @@ class Documents_management_model extends CI_Model
             // check if user is active
             if ($this->isActiveUser($userId, $userType)) {
                 //
+                $this->load->model('hr_documents_management_model');
                 if ($this->hr_documents_management_model->doSendEmail($userId, $userType, "HREMS4")) {
                     log_and_send_templated_email(
                         HR_DOCUMENTS_NOTIFICATION_EMS,
