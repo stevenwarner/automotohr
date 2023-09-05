@@ -582,12 +582,6 @@ class Dashboard extends Public_Controller
             ];
             // set default js
             $data['PageScripts'] = [];
-            // check and add payroll scripts
-            if (checkIfAppIsEnabled('payroll')) {
-                $data['PageScripts'][] = [
-                    '1.0.1', 'assets/gusto/js/company_onboard'
-                ];
-            }
             $data['incident_count'] = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
 
             // LMS - Trainings
@@ -596,14 +590,32 @@ class Dashboard extends Public_Controller
                 $this->load->model('v1/course_model');
                 // get pending course count
                 $data['pendingTrainings'] =
-                $this->course_model->getEmployeePendingCourseCount(
-                    $data['session']['company_detail']['sid'],
-                    $data['session']['employer_detail']['sid']
-                );
+                    $this->course_model->getEmployeePendingCourseCount(
+                        $data['session']['company_detail']['sid'],
+                        $data['session']['employer_detail']['sid']
+                    );
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
 
+            $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/v1/css/', 'dashboard');
+            $bundleJS = bundleJs([
+                'v1/plugins/ms_modal/main',
+                'js/app_helper',
+            ], 'public/v1/js/', 'dashboard');
+
+            // check and add payroll scripts
+            if (checkIfAppIsEnabled(PAYROLL)) {
+                if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
+                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement');
+                }
+                if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
+                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company');
+                }
+            }
+            //
+            $data['appJs'] = $bundleJS;
+            $data['appCSS'] = $bundleCSS;
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');

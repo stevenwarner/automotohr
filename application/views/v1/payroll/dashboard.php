@@ -26,10 +26,16 @@
                     <!-- Content area -->
                     <div class="row">
                         <div class="col-sm-12 col-md-12 text-right">
-                            <button class="btn btn-success jsVerifyBankAccount csF16" title="Verify bank account" placement="top">
-                                <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
-                                <span>Verify</span>
-                            </button>
+                            <?php if ($payrollBlockers) { ?>
+                                <button class="btn btn-success jsVerifyCompany csF16" title="Verify Company" placement="top">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                    <span>Verify Company</span>
+                                </button>
+                                <button class="btn btn-success jsVerifyBankAccount csF16" title="Verify bank account" placement="top">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                    <span>Verify Bank Account</span>
+                                </button>
+                            <?php } ?>
                             <button class="btn btn-success jsSyncCompanyData csF16" title="Sync data" placement="top">
                                 <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
                                 <span>Sync</span>
@@ -37,6 +43,9 @@
                         </div>
                     </div>
                     <hr />
+                    <?php if (!$payrollBlockers && !$companyGustoDetails['added-historical_payrolls']) {
+                        $this->load->view('v1/payroll/historical_info');
+                    } ?>
 
                     <?php if ($payrollBlockers) { ?>
 

@@ -256,6 +256,7 @@ if (!function_exists('getUrl')) {
         $urls = [];
         $urls['me'] = 'v1/me';
         $urls['refreshToken'] = 'oauth/token?' . ($key);
+        $urls['getWebHooks'] = 'v1/webhook_subscriptions';
 
         // company URLs
         $urls['createPartnerCompany'] = "v1/partner_managed_companies";
@@ -274,6 +275,7 @@ if (!function_exists('getUrl')) {
         $urls['getBankAccounts'] = "v1/companies/$key/bank_accounts";
         $urls['sendDeposits'] = "v1/companies/$key/bank_accounts/$key1/send_test_deposits";
         $urls['verifyBankAccount'] = "v1/companies/$key/bank_accounts/$key1/verify";
+        $urls['verifyCompany'] = "v1/companies/$key/approve";
         // payroll blocker
         $urls['getPayrollBlockers'] = "v1/companies/$key/payrolls/blockers";
         //company flow
@@ -378,6 +380,28 @@ if (!function_exists('createCompanyWebHook')) {
             [
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+    }
+}
+
+if (!function_exists('getWebHooks')) {
+    /**
+     * create webhook
+     *
+     * @return array
+     */
+    function getWebHooks(): array
+    {
+        return makeCall(
+            getUrl('getWebHooks'),
+            [
+                CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
                     'Content-Type: application/json',

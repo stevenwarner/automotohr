@@ -38,6 +38,7 @@ class Payroll extends CI_Controller
         $data = [];
         // check and set user session
         $data['session'] = checkUserSession();
+        $data['title'] = "Payroll Dashboard";
         // set
         $data['loggedInPerson'] = $data['session']['employer_detail'];
         $data['companyId'] = $data['session']['company_detail']['sid'];
@@ -58,7 +59,7 @@ class Payroll extends CI_Controller
             'v1/payroll/js/dashboard'
         ], $this->js, 'dashboard');
         //
-        $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status']);
+        $data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added-historical_payrolls']);
         //
         $data['companyStatus'] = $companyGustoDetails['status'];
         // get the company onboard flow
@@ -72,7 +73,6 @@ class Payroll extends CI_Controller
                     verify_bank_info,
                     payroll_schedule,
                     federal_tax_setup,
-                    add_employees,
                     state_setup,
                     " . (isLoggedInPersonIsSignatory() ? 'sign_all_forms' : '') . "
                 ",
@@ -118,15 +118,14 @@ class Payroll extends CI_Controller
             null,
             $data['session']
         );
-        // scripts
-        $data['PageCSS'] = [];
-        $data['PageScripts'] = [];
+        $data['title'] = "Payroll Admins";
         // get admins
         $data['admins'] = $this->db
             ->where([
                 'company_sid' => $data['loggedInPersonCompany']['sid'],
                 'is_store_admin' => 0
             ])
+            ->order_by('sid', 'DESC')
             ->get('gusto_companies_admin')
             ->result_array();
         //
@@ -156,12 +155,12 @@ class Payroll extends CI_Controller
             null,
             $data['session']
         );
+        $data['title'] = "Add Payroll Admin";
         // scripts
-        $data['PageCSS'] = [];
-        $data['PageScripts'] = [
+        $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/admin/add'
-        ];
+        ], $this->js, 'add-admin');
         //
         $this->load
             ->view('main/header', $data)
@@ -189,6 +188,7 @@ class Payroll extends CI_Controller
             null,
             $data['session']
         );
+        $data['title'] = "Payroll Signatories";
         // scripts
         $data['PageCSS'] = [];
         $data['PageScripts'] = [];
@@ -235,12 +235,12 @@ class Payroll extends CI_Controller
             null,
             $data['session']
         );
+        $data['title'] = "Add Payroll Signatory";
         // scripts
-        $data['PageCSS'] = [];
-        $data['PageScripts'] = [
+        $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/signatories/create'
-        ];
+        ], $this->js, 'add-signatory');
         //
         $this->load
             ->view('main/header', $data)
@@ -756,6 +756,43 @@ class Payroll extends CI_Controller
             [
                 'success' => true
             ]
+        );
+    }
+
+    /**
+     * Verify bank account
+     * Only available on demo mode
+     *
+     * @return
+     */
+    public function verifyCompany(): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get the company
+        $companyDetails = $this->payroll_model
+            ->getCompanyDetailsForGusto($session['company_detail']['sid']);
+        // verify call
+        $gustoResponse = gustoCall(
+            'verifyCompany',
+            $companyDetails,
+            [],
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($gustoResponse['company_status'] === 'Approved') {
+            $this->db
+                ->where('company_sid', $session['company_detail']['sid'])
+                ->update('gusto_companies', ['status' => 'approved']);
+        }
+        //
+        return SendResponse(
+            $errors ? 400 : 200,
+            $errors ?? ['msg' => 'Company is successfully verified']
         );
     }
 

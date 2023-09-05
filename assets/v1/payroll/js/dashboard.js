@@ -12,6 +12,7 @@ $(function dashboard() {
 	 */
 	let XHR = null;
 	let XHR2 = null;
+	let XHR3 = null;
 	/**
 	 * capture the view admin event
 	 */
@@ -29,6 +30,16 @@ $(function dashboard() {
 		event.preventDefault();
 		//
 		verifyCompanyBankAccount();
+	});
+
+	/**
+	 * capture the view admin event
+	 */
+	$(".jsVerifyCompany").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		verifyCompany();
 	});
 
 	/**
@@ -110,6 +121,47 @@ $(function dashboard() {
 				XHR2 = null;
 				ml(false, "jsDashboard");
 				$(".jsVerifyBankAccount span").html("Verify");
+			});
+	}
+	
+	/**
+	 *
+	 * @returns
+	 */
+	function verifyCompany() {
+		//
+		if (XHR3 !== null) {
+			return false;
+		}
+		//
+		$(".jsVerifyCompany span").html("Verifying...");
+		//
+		XHR3 = $.ajax({
+			url: baseUrl("payrolls/company/verify"),
+			method: "POST",
+		})
+			.success(function () {
+				return alertify.alert(
+					"Success!",
+					"Company is verified.",
+					CB
+				);
+			})
+			.fail(function (response) {
+				return alertify.alert(
+					"Error!",
+					getErrorsStringFromArray(
+						(
+							response.responseJSON ||
+							JSON.parse(response.responseText)
+						).errors
+					)
+				);
+			})
+			.always(function () {
+				XHR3 = null;
+				ml(false, "jsDashboard");
+				$(".jsVerifyCompany span").html("Verify");
 			});
 	}
 

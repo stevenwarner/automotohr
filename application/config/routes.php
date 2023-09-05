@@ -1731,6 +1731,7 @@ $route['payrolls/company/sync']['get'] = 'v1/Payroll/syncCompanyWithGusto';
 // verify company bank account
 // only on demo mode
 $route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAccount';
+$route['payrolls/company/verify']['post'] = 'v1/Payroll/verifyCompany';
 // admin routes
 $route['payrolls/earnings/types']['get'] = 'v1/Payroll/earningTypes';
 // employees

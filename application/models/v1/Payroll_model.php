@@ -999,6 +999,7 @@ class Payroll_model extends CI_Model
         // sync the earning types
         $this->syncCompanyEarningTypes($companyId);
         // create company webhook
+        $this->syncCompanyWebHook();
         $this->createCompanyWebHook();
 
         return SendResponse(
@@ -4251,6 +4252,49 @@ class Payroll_model extends CI_Model
         //
         $this->db
             ->insert('gusto_companies_webhooks', $ins);
+        //
+        return ['success' => true];
+    }
+
+    /**
+     * create company webhook
+     *
+     * @return array
+     */
+    public function syncCompanyWebHook(): array
+    {
+        // response
+        $gustoResponse = getWebHooks();
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+
+        if ($gustoResponse) {
+            //
+            foreach ($gustoResponse as $hook) {
+                //
+                $ins = [];
+                $ins['webhook_type'] = 'company';
+                $ins['url'] = $hook['url'];
+                $ins['status'] = $hook['status'];
+                $ins['subscription_types'] = json_encode($hook['subscription_types']);
+                $ins['updated_at'] = getSystemDate();
+                //
+                if ($this->db->where('gusto_uuid', $hook['uuid'])->count_all_results('gusto_companies_webhooks')) {
+                    $this->db
+                        ->where('gusto_uuid', $hook['uuid'])
+                        ->update('gusto_companies_webhooks', $ins);
+                } else {
+                    //
+                    $ins['created_at'] = $ins['updated_at'];
+                    $ins['gusto_uuid'] = $hook['uuid'];
+                    $this->db->insert('gusto_companies_webhooks', $ins);
+                }
+            }
+        }
         //
         return ['success' => true];
     }
