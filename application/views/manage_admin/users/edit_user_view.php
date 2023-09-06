@@ -1,7 +1,7 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
-        <div class="row">		
+        <div class="row">
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
@@ -55,14 +55,15 @@
                                                     <li>
                                                         <?php echo form_label('Username <span class="hr-required">*</span>', 'username'); ?>
                                                         <div class="hr-fields-wrap">
-                                                            <?php echo form_input('username', set_value('username', $user->username), array('id'=>'disabledTextInput','class'=>'hr-form-fileds form-control', 'disabled'=>'disabled'));
-                                                            //echo form_error('username'); ?>
+                                                            <?php echo form_input('username', set_value('username', $user->username), array('id' => 'disabledTextInput', 'class' => 'hr-form-fileds form-control', 'disabled' => 'disabled'));
+                                                            //echo form_error('username'); 
+                                                            ?>
                                                         </div>
                                                     </li>
                                                     <li>
                                                         <?php echo form_label('email <span class="hr-required">*</span>', 'Email'); ?>
                                                         <div class="hr-fields-wrap">
-                                                            <?php echo form_input('email', set_value('email', $user->email), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_input('email', set_value('email', $user->email), 'class="hr-form-fileds" id="jsemail"'); ?>
                                                             <?php echo form_error('email'); ?>
                                                         </div>
                                                     </li>
@@ -70,19 +71,19 @@
                                                     <li class="form-col-100 auto-height">
                                                         <?php echo form_label('Change password', 'password'); ?>
                                                         <div class="hr-fields-wrap">
-                                                            <input class="invoice-fields"  autocomplete="new-password" type="password" name="password" id="password" onkeyup="passwordStrength(this.value)">
+                                                            <input class="invoice-fields" autocomplete="new-password" type="password" name="password" id="password" onkeyup="passwordStrength(this.value)">
                                                         </div>
-                                                        <div class="password-trength-wrp">                          
-                                                            <div id="passwordStrength" >
+                                                        <div class="password-trength-wrp">
+                                                            <div id="passwordStrength">
                                                                 <div class='pass0 strength0'></div>
                                                                 <div class='pass1 strength0'></div>
                                                                 <div class='pass1 strength0'></div>
                                                                 <div class='pass1 strength0'></div>
-                                                            </div>    
-                                                            <div class="hr-fields-wrap">                              
+                                                            </div>
+                                                            <div class="hr-fields-wrap">
                                                                 <div class="passwordDescription" id="passwordDescription">Password not entered</div>
                                                             </div>
-                                                        </div>  
+                                                        </div>
                                                         <?php echo form_error('password'); ?>
                                                     </li>
                                                     <li class="form-col-100 auto-height">
@@ -91,40 +92,40 @@
                                                             <input class="invoice-fields" autocomplete="new-password" type="password" name="password_confirm" id="password_confirm">
                                                         </div>
                                                     </li>
-                                                    
-                                                    <?php if(IS_TIMEZONE_ACTIVE) { ?>
-                                                    <!-- Timezone -->
-                                                    <li class="js-timezone-row">
-                                                        <?php echo form_label('Timezone <span class="hr-required">*</span>', 'Timezone'); ?>
-                                                        <div class="hr-fields-wrap">
-                                                            <?=timezone_dropdown(
-                                                                $user->timezone,
-                                                                array(
-                                                                    'name' => 'timezone',
-                                                                    'id' => 'timezone',
-                                                                    'class' => 'hr-form-fileds js-timezone',
-                                                                    'style' => 'padding: 0;'
-                                                                )
-                                                            );  ?>
-                                                            <?php echo form_error('email'); ?>
-                                                        </div>
-                                                    </li>
-                                                    <?php } ?>    
 
-                                                    <?php if($profile_type=='team'){ ?>
+                                                    <?php if (IS_TIMEZONE_ACTIVE) { ?>
+                                                        <!-- Timezone -->
+                                                        <li class="js-timezone-row">
+                                                            <?php echo form_label('Timezone <span class="hr-required">*</span>', 'Timezone'); ?>
+                                                            <div class="hr-fields-wrap">
+                                                                <?= timezone_dropdown(
+                                                                    $user->timezone,
+                                                                    array(
+                                                                        'name' => 'timezone',
+                                                                        'id' => 'timezone',
+                                                                        'class' => 'hr-form-fileds js-timezone',
+                                                                        'style' => 'padding: 0;'
+                                                                    )
+                                                                );  ?>
+                                                                <?php echo form_error('email'); ?>
+                                                            </div>
+                                                        </li>
+                                                    <?php } ?>
+
+                                                    <?php if ($profile_type == 'team') { ?>
                                                         <li>
                                                             <label><?php echo form_label('Groups', 'groups[]'); ?></label>
                                                             <div class="hr-fields-wrap">
                                                                 <?php if (isset($groups)) {
-                                                                            foreach ($groups as $group) {
-                                                                                echo '<div class="checkbox">';
-                                                                                echo '<label>';
-                                                                                echo form_radio('groups[]', $group->id, set_checkbox('groups[]', $group->id, in_array($group->id, $usergroups)));
-                                                                                echo ' ' . $group->name;
-                                                                                echo '</label>';
-                                                                                echo '</div>';
-                                                                            }
-                                                                        } ?>
+                                                                    foreach ($groups as $group) {
+                                                                        echo '<div class="checkbox">';
+                                                                        echo '<label>';
+                                                                        echo form_radio('groups[]', $group->id, set_checkbox('groups[]', $group->id, in_array($group->id, $usergroups)));
+                                                                        echo ' ' . $group->name;
+                                                                        echo '</label>';
+                                                                        echo '</div>';
+                                                                    }
+                                                                } ?>
                                                             </div>
                                                         </li>
                                                     <?php } ?>
@@ -137,7 +138,7 @@
                                                 <?php echo form_close(); ?>
                                             </div>
                                         </div>
-                                    </div>                                    
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -148,10 +149,10 @@
     </div>
 </div>
 
-<?php if(IS_TIMEZONE_ACTIVE) { ?>
-<script>
-    $('.js-timezone').select2();
-</script>
+<?php if (IS_TIMEZONE_ACTIVE) { ?>
+    <script>
+        $('.js-timezone').select2();
+    </script>
 <?php } ?>
 
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
@@ -203,8 +204,10 @@
 
     $('.js-form').submit(function(event) {
         // Check for phone number
-        if($('#PhoneNumber').val() != '' && $('#PhoneNumber').val().trim() != '(___) ___-____' && !fpn($('#PhoneNumber').val(), '', true)){
-            alertify.alert('Error!', 'Invalid phone number.', function(){ return; });
+        if ($('#PhoneNumber').val() != '' && $('#PhoneNumber').val().trim() != '(___) ___-____' && !fpn($('#PhoneNumber').val(), '', true)) {
+            alertify.alert('Error!', 'Invalid phone number.', function() {
+                return;
+            });
             event.preventDefault();
             return;
         }
@@ -212,27 +215,27 @@
         // Remove and set phone extension
         $('#js-phonenumber').remove();
         // Check the fields
-        if($('#PhoneNumber').val().trim() == '(___) ___-____') $('#PhoneNumber').val('');
-        else $(this).append('<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1'+($('#PhoneNumber').val().replace(/\D/g, ''))+'" />');
+        if ($('#PhoneNumber').val().trim() == '(___) ___-____') $('#PhoneNumber').val('');
+        else $(this).append('<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + ($('#PhoneNumber').val().replace(/\D/g, '')) + '" />');
     });
 
     $.each($('.js-phone'), function() {
         var v = fpn($(this).val().trim());
-        
-        if(typeof(v) === 'object'){
-            $(this).val( v.number );
+
+        if (typeof(v) === 'object') {
+            $(this).val(v.number);
             setCaretPosition(this, v.cur);
-        } else $(this).val( v );
+        } else $(this).val(v);
     });
 
 
-    $('.js-phone').keyup(function(e){
+    $('.js-phone').keyup(function(e) {
         var val = fpn($(this).val().trim());
-        
-        if(typeof(val) === 'object'){
-            $(this).val( val.number );
+
+        if (typeof(val) === 'object') {
+            $(this).val(val.number);
             setCaretPosition(this, val.cur);
-        } else $(this).val( val );
+        } else $(this).val(val);
     })
 
 
@@ -247,53 +250,107 @@
     function fpn(phone_number, format, is_return) {
         var default_number = '(___) ___-____';
         var cleaned = phone_number.replace(/\D/g, '');
-        if(cleaned.length > 10) cleaned = cleaned.substring(0, 10);
+        if (cleaned.length > 10) cleaned = cleaned.substring(0, 10);
         match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
 
         if (match) {
             var intlCode = '';
-            if( format == 'e164') intlCode = (match[1] ? '+1 ' : '');
+            if (format == 'e164') intlCode = (match[1] ? '+1 ' : '');
             return is_return === undefined ? [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('') : true;
         } else {
-            var af = '', an = '', cur = 1;
-            if(cleaned.substring(0,1) != '') { af += "(_"; an += '('+cleaned.substring(0,1); cur++; }
-            if(cleaned.substring(1,2) != '') { af += "_";  an += cleaned.substring(1,2); cur++; }
-            if(cleaned.substring(2,3) != '') { af += "_) "; an += cleaned.substring(2,3)+') '; cur = cur + 3; }
-            if(cleaned.substring(3,4) != '') { af += "_"; an += cleaned.substring(3,4);  cur++;}
-            if(cleaned.substring(4,5) != '') { af += "_"; an += cleaned.substring(4,5);  cur++;}
-            if(cleaned.substring(5,6) != '') { af += "_-"; an += cleaned.substring(5,6)+'-';  cur = cur + 2;}
-            if(cleaned.substring(6,7) != '') { af += "_"; an += cleaned.substring(6,7);  cur++;}
-            if(cleaned.substring(7,8) != '') { af += "_"; an += cleaned.substring(7,8);  cur++;}
-            if(cleaned.substring(8,9) != '') { af += "_"; an += cleaned.substring(8,9);  cur++;}
-            if(cleaned.substring(9,10) != '') { af += "_"; an += cleaned.substring(9,10);  cur++;}
+            var af = '',
+                an = '',
+                cur = 1;
+            if (cleaned.substring(0, 1) != '') {
+                af += "(_";
+                an += '(' + cleaned.substring(0, 1);
+                cur++;
+            }
+            if (cleaned.substring(1, 2) != '') {
+                af += "_";
+                an += cleaned.substring(1, 2);
+                cur++;
+            }
+            if (cleaned.substring(2, 3) != '') {
+                af += "_) ";
+                an += cleaned.substring(2, 3) + ') ';
+                cur = cur + 3;
+            }
+            if (cleaned.substring(3, 4) != '') {
+                af += "_";
+                an += cleaned.substring(3, 4);
+                cur++;
+            }
+            if (cleaned.substring(4, 5) != '') {
+                af += "_";
+                an += cleaned.substring(4, 5);
+                cur++;
+            }
+            if (cleaned.substring(5, 6) != '') {
+                af += "_-";
+                an += cleaned.substring(5, 6) + '-';
+                cur = cur + 2;
+            }
+            if (cleaned.substring(6, 7) != '') {
+                af += "_";
+                an += cleaned.substring(6, 7);
+                cur++;
+            }
+            if (cleaned.substring(7, 8) != '') {
+                af += "_";
+                an += cleaned.substring(7, 8);
+                cur++;
+            }
+            if (cleaned.substring(8, 9) != '') {
+                af += "_";
+                an += cleaned.substring(8, 9);
+                cur++;
+            }
+            if (cleaned.substring(9, 10) != '') {
+                af += "_";
+                an += cleaned.substring(9, 10);
+                cur++;
+            }
 
-            if(is_return) return match === null ? false : true;
+            if (is_return) return match === null ? false : true;
 
-            return { number: default_number.replace(af, an), cur: cur };
+            return {
+                number: default_number.replace(af, an),
+                cur: cur
+            };
         }
     }
 
     // Change cursor position in input
     function setCaretPosition(elem, caretPos) {
-        if(elem != null) {
-            if(elem.createTextRange) {
+        if (elem != null) {
+            if (elem.createTextRange) {
                 var range = elem.createTextRange();
                 range.move('character', caretPos);
                 range.select();
             } else {
-                if(elem.selectionStart) {
+                if (elem.selectionStart) {
                     elem.focus();
                     elem.setSelectionRange(caretPos, caretPos);
                 } else elem.focus();
             }
         }
     }
+
+    //
+    $("#jsemail").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
+    });
 </script>
 
 <style>
-  /* Remove the radius from left fro phone field*/
-  .input-group input{ border-top-left-radius: 0; border-bottom-left-radius: 0; }
-  
+    /* Remove the radius from left fro phone field*/
+    .input-group input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
     .passwordDescription {
         float: right;
         font-size: 12px;
@@ -303,18 +360,22 @@
         font-weight: 600;
         text-transform: capitalize;
     }
+
     #passwordStrength {
         height: 8px;
         float: right;
         width: 75%;
         margin-right: 30px;
     }
+
     .password-trength-wrp {
         float: left;
         width: 100%;
         margin: 0 0 10px 0;
     }
-    .pass0, .pass1 {
+
+    .pass0,
+    .pass1 {
         float: left;
         width: 20%;
         height: 8px;
@@ -323,51 +384,51 @@
     }
 
 
-        .strength0 {
-            width: 250px;
-            background: #e6e6e6;
-        }
+    .strength0 {
+        width: 250px;
+        background: #e6e6e6;
+    }
 
-        .strength1 {
-            width: 50px;
-            background: #ff0000;
-        }
+    .strength1 {
+        width: 50px;
+        background: #ff0000;
+    }
 
-        .strength2 {
-            width: 100px;
-            background: #ff5f5f;
-        }
+    .strength2 {
+        width: 100px;
+        background: #ff5f5f;
+    }
 
-        .strength3 {
-            width: 150px;
-            background: #56e500;
-        }
+    .strength3 {
+        width: 150px;
+        background: #56e500;
+    }
 
-        .strength4 {
-            background: #4dcd00;
-            width: 200px;
-        }
+    .strength4 {
+        background: #4dcd00;
+        width: 200px;
+    }
 
-        .strength5 {
-            background: #399800;
-            width: 250px;
-        }
+    .strength5 {
+        background: #399800;
+        width: 250px;
+    }
 
-        .pass0,
-        .pass1 {
-            float: left;
-            width: 20%;
-            height: 8px;
-            margin: 0 5px;
-        }
+    .pass0,
+    .pass1 {
+        float: left;
+        width: 20%;
+        height: 8px;
+        margin: 0 5px;
+    }
 
-        .passwordDescription {
-            float: right;
-            font-size: 12px;
-            position: relative;
-            top: -5px;
-            color: #000;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
+    .passwordDescription {
+        float: right;
+        font-size: 12px;
+        position: relative;
+        top: -5px;
+        color: #000;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
 </style>

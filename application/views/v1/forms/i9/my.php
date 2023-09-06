@@ -6,7 +6,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
     <div class="container-fluid">
         <!-- Header menu -->
         <div class="row">
-            <?php if ($user_type == "employee") { ?> 
+            <?php if ($user_type == "employee") { ?>
                 <div class="col-sm-12 text-left">
                     <!-- Dashboard button -->
                     <a href="<?= base_url('employee_management_system') ?>" class="btn csBG2 csW csF16 csRadius5">
@@ -29,16 +29,16 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                         </a>
                     <?php endif; ?>
                 </div>
-            <?php } else if ($user_type == "applicant" && $formMode == "applicant_onboarding") { ?>  
+            <?php } else if ($user_type == "applicant" && $formMode == "applicant_onboarding") { ?>
                 <div class="col-sm-12 text-left">
                     <!-- My documents button -->
-                    <a href="<?= base_url('onboarding/hr_documents/'.$unique_sid) ?>" class="btn csBG2 csF16 csRadius5">
+                    <a href="<?= base_url('onboarding/hr_documents/' . $unique_sid) ?>" class="btn csBG2 csF16 csRadius5">
 
                         &nbsp;<i class="fa fa-files-o csF16"></i>
                         &nbsp;Documents
                     </a>
                 </div>
-            <?php } ?>        
+            <?php } ?>
         </div>
         <!-- Header menu ends -->
 
@@ -77,7 +77,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <strong><?= $this->lang->line('i9_form_text_line_3'); ?></strong>
-                    </div> 
+                    </div>
                     <div class="panel-body">
                         <!-- 1 -->
                         <div class="row">
@@ -210,7 +210,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                                         &nbsp;<strong class="text-danger">*</strong>
                                         &nbsp;<i class="fa fa-question-circle-o modalShow" src="section_1_employees_email_address"></i>
                                     </label>
-                                    <input autocomplete="nope" type="email" value="<?= $form['section1_emp_email_address']; ?>" name="section1_emp_email_address" class="form-control input-lg input-grey" <?= $disabled; ?> />
+                                    <input autocomplete="nope" type="email" value="<?= $form['section1_emp_email_address']; ?>" name="section1_emp_email_address" class="form-control input-lg input-grey" <?= $disabled; ?> id="jssection1_emp_email_address" />
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -296,7 +296,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                                         <strong class="text-danger">*</strong>
                                         &nbsp;<i class="fa fa-question-circle-o modalShow" src="section_2_expiration_date"></i>
                                     </label>
-                                    <input autocomplete="nope" type="text" name="alien_authorized_expiration_date" value="<?= $form['alien_authorized_expiration_date'] ? date('m/d/Y',strtotime($form['alien_authorized_expiration_date'])) : ''; ?>" <?= $disabled; ?> id="alien_authorized_expiration_date" class="form-control input-lg date_picker2 input-grey" />
+                                    <input autocomplete="nope" type="text" name="alien_authorized_expiration_date" value="<?= $form['alien_authorized_expiration_date'] ? date('m/d/Y', strtotime($form['alien_authorized_expiration_date'])) : ''; ?>" <?= $disabled; ?> id="alien_authorized_expiration_date" class="form-control input-lg date_picker2 input-grey" />
                                 </div>
                             </div>
                         </div>
@@ -524,3 +524,11 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
 <!-- I9 helping popups -->
 <?php $this->load->view('form_i9/pop_up_info'); ?>
 <?php $this->load->view('static-pages/e_signature_popup'); ?>
+
+<script>
+    //
+    $("#jssection1_emp_email_address").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
+    });
+</script>

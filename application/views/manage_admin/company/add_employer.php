@@ -495,4 +495,17 @@
             $('#name_' + val).html('No file selected');
         }
     }
+
+
+    //
+    $("#alternative_email").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
+    });
+
+    //
+    $("#email").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
+    });
 </script>

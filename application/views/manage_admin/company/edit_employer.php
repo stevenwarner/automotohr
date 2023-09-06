@@ -103,7 +103,7 @@
                                                     <div class="hr-fields-wrap">
                                                         <button class="btn btn-xs btn-success jsToLowerCase" style="margin-bottom: 5px;" title="Convert the email address to lower case" placement="top">To Lower Case</button>
                                                         <?php
-                                                        echo form_input('email', set_value('email', $data['email']), 'class="hr-form-fileds"');
+                                                        echo form_input('email', set_value('email', $data['email']), 'class="hr-form-fileds" id="email"');
                                                         echo form_error('email');
                                                         ?>
                                                     </div>
@@ -113,7 +113,7 @@
                                                     <?php echo form_label('Secondary Email Address', 'alternative_email'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <?php
-                                                        echo form_input('alternative_email', set_value('alternative_email', $data['alternative_email']), 'class="hr-form-fileds"');
+                                                        echo form_input('alternative_email', set_value('alternative_email', $data['alternative_email']), 'class="hr-form-fileds" id="alternative_email"');
                                                         echo form_error('alternative_email');
                                                         ?>
                                                     </div>
@@ -1217,5 +1217,17 @@
             $('#job_title').show();
         }
 
+    });
+
+     //
+     $("#alternative_email").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
+    });
+
+    //
+    $("#email").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
     });
 </script>

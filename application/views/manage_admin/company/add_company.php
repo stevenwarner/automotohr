@@ -231,7 +231,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row">
                                                         <label>Email<span class="hr-required">*</span></label>
-                                                        <?php echo form_input('email', set_value('email'), 'class="hr-form-fileds"'); ?>
+                                                        <?php echo form_input('email', set_value('email'), 'class="hr-form-fileds" id="jsemail"'); ?>
                                                         <?php echo form_error('email'); ?>
                                                     </div>
                                                 </div>
@@ -560,6 +560,12 @@
             }
         }
     }
+
+    //
+    $("#jsemail").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
+    });
 </script>
 
 <style>

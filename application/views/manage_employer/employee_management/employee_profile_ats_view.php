@@ -123,7 +123,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>email:
                                                     </label>
-                                                    <input class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('email', $employer["email"]); ?>" type="email" name="email">
+                                                    <input class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('email', $employer["email"]); ?>" type="email" name="email" id="jsemail">
                                                     <?php echo form_error('email'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -2673,6 +2673,12 @@ if (checkIfAppIsEnabled('timeoff')) {
 
         });
     <?php } ?>
+
+      //
+      $("#jsemail").focusout(function() {
+        var email = $(this).val();
+        $(this).val(email.toLowerCase());
+    });
 </script>
 
 <style>
