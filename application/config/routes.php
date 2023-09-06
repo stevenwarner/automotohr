@@ -1788,9 +1788,11 @@ $route['lms/courses/(:num)/certificate']['get'] = 'v1/Courses/viewCertificate/$1
 $route['lms/course/preview/(:num)']['get'] = 'v1/Courses/previewResult/$1';
 $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 $route['lms/courses/report'] = 'v1/Courses/report';
-$route['lms/subordinate/courses/(:num)'] = 'v1/Courses/subordinateCourses/$1';
+$route['lms/subordinate/courses/(:num)'] = 'v1/Courses/subordinateCourses/non_plus/$1';
+$route['lms/employee/courses/(:num)'] = 'v1/Courses/subordinateCourses/plus/$1';
 $route['lms/subordinate/course/(:num)/(:num)'] = 'v1/Courses/subordinateCourse/$1/$2';
 $route['lms/courses/company_report'] = 'v1/Courses/companyReport';
+$route['lms/courses/company_report/(:any)/(:any)/(:any)'] = 'v1/Courses/companyReport/$1/$2/$3';
 
 
 $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridDocument';

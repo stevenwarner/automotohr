@@ -149,7 +149,7 @@ $(function () {
                
                 //
                 if (index == 'action') {
-                    innerRows += '       <td class="bg-danger text-center" colspan="2">Deleted</td>';
+                    innerRows += '       <td class="danger text-center" colspan="2">Deleted</td>';
                 } else if (index == 'union_member') {
                     //  innerRows += '       <td class="bg-danger">' + (oldData == 1 ? 'Yes' :'No') + '</td>';
                     //   innerRows += '       <td class="bg-success">' + (newData == 1 ?'Yes':'No') + '</td>';

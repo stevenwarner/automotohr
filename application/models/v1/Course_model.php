@@ -204,7 +204,7 @@ class Course_model extends CI_Model
 
     // Fetch all active employees
     function getAllActiveEmployees(
-        $companySid,
+        $companyId,
         $withExec = true
     ) {
         $this->db
@@ -225,7 +225,7 @@ class Course_model extends CI_Model
                 "portal_job_title_templates.title = users.job_title",
                 "left"
             )
-            ->where('users.parent_sid', $companySid)
+            ->where('users.parent_sid', $companyId)
             ->where('users.active', 1)
             ->where('users.terminated_status', 0)
             ->order_by('users.first_name', 'ASC');
@@ -240,6 +240,49 @@ class Course_model extends CI_Model
         //
         return $b;
     } 
+
+    public function getActiveCourseList ($companyId, $filter) {
+        $this->db->select('
+            sid,
+            course_title,
+            course_start_period,
+            course_end_period
+        ');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('is_active', 1);
+        //
+        if ($filter != "all" && $filter != "0") {
+            $this->db->where_in('sid', explode(",", $filter));
+        }
+        //
+        //
+        $a = $this->db->get('lms_default_courses');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    public function getCompanyActiveDepartment ($companyId, $filter) {
+        $this->db->select('
+            sid,
+            name
+        ');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('is_deleted', 0);
+        //
+        if ($filter != "all" && $filter != "0") {
+            $this->db->where_in('sid', explode(",", $filter));
+        }
+        //
+        $a = $this->db->get('departments_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
     
     public function fetchDepartmentTeams($employeeId)
     {
@@ -315,8 +358,10 @@ class Course_model extends CI_Model
         //
         $result = [
             "completedCount" => 0,
+            "pendingCount" => 0,
             "courseCount" => count($employeeAssignCoursesList),
-            "percentage" => 0
+            "percentage" => 0,
+            "coursesInfo" => []
         ];
         //
         if (!empty($employeeAssignCoursesList)) {
@@ -333,16 +378,48 @@ class Course_model extends CI_Model
                 //
                 if ($count > 0) {
                     $result["completedCount"]++;
-                }      
+                } else {
+                    $result["pendingCount"]++;
+                }  
+                //
+                $result["coursesInfo"][$courseId] = $count;   
             }
             //
             if ($result["completedCount"]> 0) {
-                echo $result["completedCount"];
-                echo $result["courseCount"];
-                $result["percentage"] = ($result["completedCount"] / $result["courseCount"]) * 100;
+                $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
             }
         }
         //
         return $result;
+    }
+
+    public function getemployeeDepartmentIds ($courseId, $employeeIds) {
+        $this->db->select('department_sid');
+        $this->db->where_in('employee_sid', explode(",", $employeeIds));
+        $a = $this->db->get('departments_employee_2_team');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        if (!empty($b)) {
+            return array_column($b, "department_sid");
+        } else {
+            return [];
+        }
+    }
+
+    public function getAllDepartmentEmployees ($courseId, $departmentId) {
+        $this->db->select('employee_sid');
+        $this->db->where('department_sid', $departmentId);
+        $a = $this->db->get('departments_employee_2_team');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        if (!empty($b)) {
+            return array_column($b, "employee_sid");
+        } else {
+            return [];
+        }
     }
 }

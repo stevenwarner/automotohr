@@ -70,12 +70,12 @@
                                                 </select>
                                             <?php } ?>     
                                         </div>
-                                        <!-- filters buttons -->
                                     </div>    
                                     <div class="row">    
                                         <div class="col-xs-12 col-md-3" style="float: right;">
                                             <label><strong>&nbsp;</strong></label>
                                             <div class="row">
+                                                <!-- filters buttons -->
                                                 <div class="col-lg-6">
                                                     <a href="javascript:;" class="btn btn-info btn-block csRadius5 jsSearchEmployees">Search</a>
                                                 </div>    

@@ -20,7 +20,11 @@
                                     <?php if ($page == "my_courses") { ?>
                                         <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
                                     <?php } else { ?>
-                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                        <?php if ($type == "non_plus") { ?>
+                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                        <?php } else if ($type == "plus") { ?>
+                                            <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                        <?php } ?>    
                                     <?php } ?>
                                 <?php } ?>     
                             </div>
