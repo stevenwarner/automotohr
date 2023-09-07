@@ -1989,6 +1989,8 @@ class Timeoff_model extends CI_Model
                 'IsArchived' => $policy['is_archived'],
                 'Title' => $policy['title'],
                 'CategoryType' => $policy['category_type'],
+                'IsEntitledEmployee' => $policy['is_entitled_employee'],
+                'AssignedEmployees' => $policy['assigned_employees'],
                 'AllowedTime' => 0,
                 'ConsumedTime' => 0,
                 'CarryOverTime' => 0,

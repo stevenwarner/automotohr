@@ -120,15 +120,12 @@ class Copy_employees extends Admin_Controller
             exit(0);
         }
 
-
-
-
         $resp = array();
         $resp['status'] = FALSE;
         $resp['response'] = 'Invalid request';
-
+        //
         $formpost = $this->input->post(NULL, TRUE);
-
+        //
         if (!isset($formpost['employee_sid']) || !isset($formpost['employee_name']) || !isset($formpost['from_company']) || !isset($formpost['to_company'])) {
             $resp['response'] = 'Indexes are missing from request';
             echo json_encode($resp);
@@ -874,25 +871,35 @@ class Copy_employees extends Admin_Controller
             // add this person to existing persons list
             if ($policyDetails['is_entitled_employee'] == 1) {
                 //
-                $list = [];
-                //
-                if ($policyDetails['assigned_employees'] != 0 && $policyDetails['assigned_employees']) {
-                    $list = explode(',', $policyDetails['assigned_employees']);
+                if ($policyDetails['assigned_employees'] != 'all') {
+                    $list = [];
+                    //
+                    if ($policyDetails['assigned_employees'] != 0 && $policyDetails['assigned_employees']) {
+                        $list = explode(',', $policyDetails['assigned_employees']);
+                    }
+                    //
+                    $list[] = $destinationEmployeeId;
+                    $list = array_unique($list);
+                    $list = implode(',', $list);
+            
+                    // update the list
+                    $this->db
+                        ->where('sid', $newPolicyId)
+                        ->update('timeoff_policies', [
+                            'assigned_employees' => $list
+                        ]);
                 }
-                //
-                $list[] = $destinationEmployeeId;
-                $list[] = $destinationEmployeeId;
-                $list[] = $destinationEmployeeId;
-                $list[] = $destinationEmployeeId;
-                $list = array_unique($list);
-                $list = implode(',', $list);
-                // update the list
-                $this->db
-                    ->where('sid', $newPolicyId)
-                    ->update('timeoff_policies', [
-                        'assigned_employees' => $list
-                    ]);
+            } else if ($policyDetails['is_entitled_employee'] == 0) {
+                if ($policyDetails['assigned_employees'] == 0) {
+                    $this->db
+                        ->where('sid', $newPolicyId)
+                        ->update('timeoff_policies', [
+                            'is_entitled_employee' => 1,
+                            'assigned_employees' => $destinationEmployeeId,
+                        ]);
+                }
             }
+
             // get employee requests against specific policy
             $employeeRequests = $this->timeoff_model
                 ->getEmployeeRequests(
@@ -1499,6 +1506,8 @@ class Copy_employees extends Admin_Controller
                             'title' => $policy['Title'],
                             'is_paid' => $policy['CategoryType'],
                             'is_archived' => $policy['IsArchived'],
+                            'is_entitled_employee' => $policy['IsEntitledEmployee'],
+                            'assigned_employees' => $policy['AssignedEmployees'],
                             'requests_count' => 0
                         ];
                     }

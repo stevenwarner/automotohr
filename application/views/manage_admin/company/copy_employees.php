@@ -682,6 +682,14 @@ foreach ($companies as $company)
                     modal += '                         <div class="csPolicyRowFrom" data-id="' + value.sid + '" >';
 
                     modal += `<p><strong>${value.title}</strong> (${value.is_paid == 1 ? 'Paid' : 'UnPaid'})</p>`;
+                    //
+                    let toEmployeeCount = value.assigned_employees && value.assigned_employees != null && value.assigned_employees != '0' ? value.assigned_employees.split(',').length : 0;
+                    //
+                    if (value.assigned_employees && value.assigned_employees != null && value.assigned_employees.match(/all/ig) !== null) {
+                        toEmployeeCount = 'All';
+                    }
+                    //
+                    modal += `<p><strong>${toEmployeeCount ? (value.is_entitled_employee == 1 ? ' ' + (toEmployeeCount) + ' employees included' : ' ' + (toEmployeeCount) + ' employees excluded') : ' All employees excluded'}</strong></p>`;
                     modal += `<p>${value.is_archived == 1 ? 'De-Activated' : 'Active'}</p>`;
                     modal += `<p># of Requests: ${value.requests_count}</p>`;
 
@@ -704,7 +712,7 @@ foreach ($companies as $company)
                             }
 
 
-                            modal += '<option class="' + (value.is_archived == 1 ? 'bg-danger' : '') + '" value="' + value.sid + '">' + value.title + '' + (value.is_archived == 1 ? ' [Deactivated]' : '') + '' + (employeeCount ? (value.is_entitled_employee == 1 ? ' - [' + (employeeCount) + ' employees included]' : ' - [' + (employeeCount) + ' employees excluded]') : '') + '</option>';
+                            modal += '<option class="' + (value.is_archived == 1 ? 'bg-danger' : '') + '" value="' + value.sid + '">' + value.title + '' + (value.is_archived == 1 ? ' [Deactivated]' : '') + '' + (employeeCount ? (value.is_entitled_employee == 1 ? ' - [' + (employeeCount) + ' employees included]' : ' - [' + (employeeCount) + ' employees excluded]') : ' - [All employees excluded]') + '</option>';
 
                         });
                     }
