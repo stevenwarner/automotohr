@@ -340,6 +340,7 @@
         <div id="wrapper">
             <header class="<?= in_array('iframe', $this->uri->segment_array()) ? 'hidden' : ''; ?> header<?php
                                                                                                             if (
+                                                                                                                isset($isLoggedInView) ||
                                                                                                                 $class == 'dashboard' ||
                                                                                                                 $class == 'time_off' ||
                                                                                                                 $class == 'job_listings' ||

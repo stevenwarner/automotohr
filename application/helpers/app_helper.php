@@ -356,6 +356,26 @@ if (!function_exists('isEmployeeOnPayroll')) {
     }
 }
 
+if (!function_exists('isCompanyApprovedForPayroll')) {
+    /**
+     * Check employee on payroll
+     * 
+     * @return bool
+     */
+    function isCompanyApprovedForPayroll(): bool
+    {
+        // get CI instance
+        $CI = &get_instance();
+        // check
+        return (bool) $CI->db
+            ->where([
+                'company_sid' => $CI->session->userdata('logged_in')['company_detail']['sid'],
+                'status' => 'approved'
+            ])
+            ->count_all_results('gusto_companies');
+    }
+}
+
 if (!function_exists('hasPayrollDocuments')) {
     /**
      * Check employee on payroll
@@ -1259,7 +1279,7 @@ if (!function_exists('prefillW4Form')) {
         array $userInfo,
         array $form
     ): array {
-        
+
         //
         if (!$form['first_name']) {
             $form['first_name'] = $userInfo['first_name'];

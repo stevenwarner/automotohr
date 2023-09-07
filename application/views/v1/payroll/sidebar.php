@@ -17,11 +17,12 @@ $sideBarUrls = [
     'earnings' => [
         'payrolls/earnings/types',
     ],
-    'historical_payrolls' => [
-        'payrolls/historical/',
+    'external_payrolls' => [
+        'payrolls/external',
+        'payrolls/external/add',
     ],
     'settings' => [
-        'payrolls/settings/',
+        'payrolls/settings',
     ],
 ]
 ?>
@@ -85,7 +86,7 @@ $sideBarUrls = [
                 </a>
             </li>
 
-            <?php if ($companyStatus === 'approved') : ?>
+            <?php if (isCompanyApprovedForPayroll()) : ?>
 
                 <!-- Manage historical payrolls -->
                 <li>

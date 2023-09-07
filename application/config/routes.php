@@ -1779,6 +1779,9 @@ $route['payrolls/earnings/edit/(:num)']['post'] = 'v1/Payroll/processEditCustomE
 // Company approval webhook
 $route['gusto/subscriber'] = 'v1/App/gustoCompanyVerification';
 
+// External payroll routes
+$route['payrolls/external']['get'] = 'v1/payrolls/External/index';
+$route['payrolls/external/add']['get'] = 'v1/payrolls/External/add';
 
 /**
  * form routes
