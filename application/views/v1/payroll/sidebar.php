@@ -20,6 +20,7 @@ $sideBarUrls = [
     'external_payrolls' => [
         'payrolls/external',
         'payrolls/external/add',
+        'payrolls/external/(:num)',
     ],
     'settings' => [
         'payrolls/settings',
@@ -87,10 +88,9 @@ $sideBarUrls = [
             </li>
 
             <?php if (isCompanyApprovedForPayroll()) : ?>
-
                 <!-- Manage historical payrolls -->
                 <li>
-                    <a <?php if (in_array(uri_string(), $sideBarUrls['external_payrolls'])) {
+                    <a <?php if (in_array(uri_string(), $sideBarUrls['external_payrolls']) || preg_match('/payrolls\/external/im', uri_string())) {
                             echo 'class="active"';
                         } ?> href="<?php echo base_url('payrolls/external'); ?>">
                         <figure><i class="fa fa-external-link-square"></i></figure>External Payroll

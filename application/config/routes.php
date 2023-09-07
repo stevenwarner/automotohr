@@ -1781,7 +1781,15 @@ $route['gusto/subscriber'] = 'v1/App/gustoCompanyVerification';
 
 // External payroll routes
 $route['payrolls/external']['get'] = 'v1/payrolls/External/index';
-$route['payrolls/external/add']['get'] = 'v1/payrolls/External/add';
+// creation
+$route['payrolls/external/create']['get'] = 'v1/payrolls/External/create';
+$route['payrolls/external/create']['post'] = 'v1/payrolls/External/createProcess';
+// deletion
+$route['payrolls/external/(:num)']['delete'] = 'v1/payrolls/External/deleteProcess/$1';
+// manage single
+$route['payrolls/external/(:num)']['get'] = 'v1/payrolls/External/manageSingle/$1';
+// edit single employee
+$route['payrolls/external/(:num)/(:num)']['get'] = 'v1/payrolls/External/manageSingleEmployee/$1/$2';
 
 /**
  * form routes

@@ -36,58 +36,71 @@
                                     <p class="csF16">To make sure we file your taxes properly, we need to collect some info from your employees' previous payrolls.</p>
                                 </div>
                                 <div class="col-sm-4 col-xs-12 text-right">
-                                    <a href="<?= base_url('payrolls/external/add'); ?>" class="btn csW csBG3 csF16">
+                                    <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csBG3 csF16">
                                         <i class="fa fa-plus-circle csF16"></i>
-                                        &nbsp;Add external payroll
+                                        &nbsp;Create an external payroll
                                     </a>
                                 </div>
                             </div>
                             <hr />
                             <?php $this->load->view('v1/payroll/historical_info'); ?>
-
-                            <!--  -->
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <caption></caption>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" class="csBG4">Check date</th>
-                                            <th scope="col" class="csBG4">Pay periods</th>
-                                            <th scope="col" class="text-right csBG4">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="vam">
-                                                <p class="csF16">2022-07-01</p>
-                                            </td>
-                                            <td class="vam">
-                                                <p class="csF16">2022-06-15 to 2022-06-30</p>
-                                            </td>
-                                            <td class="vam text-right">
-                                                <button class="btn btn-danger csF16">
-                                                    <i class="fa fa-times-circle csF16"></i>
-                                                    &nbsp;Delete
-                                                </button>
-                                                <button class="btn btn-warning csF16">
-                                                    <i class="fa fa-edit csF16"></i>
-                                                    &nbsp;Update
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td class="vam text-right" colspan="3">
-                                                <a href="<?= base_url("payrolls/external/confirm-tax-liabilities"); ?>" class="btn csW csBG3 csF16">
-                                                    <i class="fa fa-check-circle csF16"></i>
-                                                    &nbsp;Confirm tax liability
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                            <?php if (!$externalPayrolls) { ?>
+                                <?php $this->load->view('v1/no_data', [
+                                    'message' => 'Once added, your external payrolls will be listed here'
+                                ]); ?>
+                            <?php } else { ?>
+                                <!--  -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <caption></caption>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="csBG4">Check date</th>
+                                                <th scope="col" class="csBG4">Pay periods</th>
+                                                <th scope="col" class="text-right csBG4">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($externalPayrolls as $value) { ?>
+                                                <tr data-id="<?= $value['sid']; ?>">
+                                                    <td class="vam">
+                                                        <p class="csF16">
+                                                            <?= formatDateToDB($value['check_date'], DB_DATE, DATE); ?>
+                                                        </p>
+                                                    </td>
+                                                    <td class="vam">
+                                                        <p class="csF16">
+                                                            <?= formatDateToDB($value['payment_period_start_date'], DB_DATE, DATE); ?>
+                                                            -
+                                                            <?= formatDateToDB($value['payment_period_end_date'], DB_DATE, DATE); ?>
+                                                        </p>
+                                                    </td>
+                                                    <td class="vam text-right">
+                                                        <button class="btn btn-danger csF16 jsExternalPayrollDelete">
+                                                            <i class="fa fa-times-circle csF16"></i>
+                                                            &nbsp;Delete
+                                                        </button>
+                                                        <a href="<?= base_url('payrolls/external/' . ($value['sid']) . ''); ?>" class="btn btn-warning csF16">
+                                                            <i class="fa fa-edit csF16"></i>
+                                                            &nbsp;Update
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td class="vam text-right" colspan="3">
+                                                    <a href="<?= base_url("payrolls/external/confirm-tax-liabilities"); ?>" class="btn csW csBG3 csF16">
+                                                        <i class="fa fa-check-circle csF16"></i>
+                                                        &nbsp;Confirm tax liability
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>

@@ -1316,3 +1316,28 @@ if (!function_exists('prefillW4Form')) {
         return $form;
     }
 }
+
+if (!function_exists('getFormErrors')) {
+    /**
+     * get the form errors
+     *
+     * @method validate_errors
+     * @return array
+     */
+    function getFormErrors(): array
+    {
+        //
+        $errors = explode("\n", validation_errors(' ', ' '));
+        //
+        unset($errors[count($errors) - 1]);
+        //
+        return [
+            'errors' => array_map(
+                function ($error) {
+                    return trim($error);
+                },
+                $errors
+            )
+        ];
+    }
+}

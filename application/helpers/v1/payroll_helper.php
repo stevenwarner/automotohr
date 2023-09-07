@@ -337,6 +337,16 @@ if (!function_exists('getUrl')) {
         $urls['getContractorDocuments'] = "v1/contractors/$key1/forms";
         $urls['getContractorFormPdf'] = "v1/contractors/$key1/forms/$key2/pdf";
 
+        // External payroll calls
+        // create external payroll
+        $urls['createExternalPayroll'] = "v1/companies/$key/external_payrolls";
+        // get external payroll
+        $urls['getExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
+        // delete external payroll
+        $urls['deleteExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
+        // get tax suggestions
+        $urls['getExternalPayrollTaxSuggestions'] = "v1/companies/$key/external_payrolls/$key1/calculate_taxes";
+
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }

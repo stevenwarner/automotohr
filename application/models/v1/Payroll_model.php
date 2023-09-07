@@ -4895,4 +4895,89 @@ class Payroll_model extends CI_Model
         //
         return ['msg' => 'You have successfully updated settings.'];
     }
+
+
+    /**
+     * get onboard payroll employees
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getPayrollOnboardEmployees(int $companyId): array
+    {
+        // fetch
+        $records = $this->db
+            ->select(
+                getUserFields()
+                    . '
+                    joined_at,
+                    registration_date,
+                    rehire_date
+                '
+            )
+            ->join('users', 'users.sid = gusto_companies_employees.employee_sid', 'inner')
+            ->where('gusto_companies_employees.company_sid', $companyId)
+            ->where('gusto_companies_employees.is_onboarded', 1)
+            ->get('gusto_companies_employees')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $employee) {
+            $tmp[] = [
+                'name' => remakeEmployeeName($employee),
+                'hired_date' => get_employee_latest_joined_date(
+                    $employee['registration_date'],
+                    $employee['joined_at'],
+                    ''
+                ),
+                'id' => $employee['userId'],
+            ];
+        }
+        //
+        return $tmp;
+    }
+
+    /**
+     * get single onboard payroll employees
+     *
+     * @param int $companyId
+     * @param int $employeeId
+     * @return array
+     */
+    public function getPayrollEmployeeById(int $companyId, int $employeeId): array
+    {
+        // fetch
+        $employee = $this->db
+            ->select(
+                getUserFields()
+                    . '
+                    joined_at,
+                    registration_date,
+                    rehire_date
+                '
+            )
+            ->join('users', 'users.sid = gusto_companies_employees.employee_sid', 'inner')
+            ->where('gusto_companies_employees.company_sid', $companyId)
+            ->where('gusto_companies_employees.employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
+        //
+        if (!$employee) {
+            return [];
+        }
+        return  [
+            'name' => remakeEmployeeName($employee),
+            'hired_date' => get_employee_latest_joined_date(
+                $employee['registration_date'],
+                $employee['joined_at'],
+                ''
+            ),
+            'id' => $employee['userId'],
+        ];
+    }
 }

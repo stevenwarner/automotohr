@@ -358,3 +358,22 @@ if (typeof _confirm === "undefined") {
 		});
 	}
 }
+
+if (typeof getSegment === "undefined") {
+	/**
+	 * Get the segment from the URL
+	 * @param {int} segment
+	 * @returns
+	 */
+	function getSegment(segment) {
+		// get the segments
+		let segmentArray = window.location.pathname.split("/");
+		// clean the array
+		segmentArray = segmentArray?.filter(function (single_segment) {
+			//
+			return single_segment?.trim();
+		});
+		// check if found
+		return segmentArray[segment];
+	}
+}
