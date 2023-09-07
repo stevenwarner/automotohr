@@ -287,6 +287,7 @@ $(function () {
         //
         if (resp.Data.length == 0) return;
         //
+       
         $.each(resp.Data, function (i, v) {
             oldState[v.policy_id] = i;
             //
@@ -321,7 +322,9 @@ $(function () {
             rows += `    <td>`;
             if (v.default_policy == 0) {
                 rows += `        <div class="action-employee">`;
+                if (resp.CompanyTimeoffPoliciesStatus==1){
                 rows += `            <a href="javascript:void(0)" class="action-edit js-edit-row-btn"><i class="fa fa-pencil-square-o fa-fw icon_blue" data-toggle="tooltip" title="Edit policy"></i></a>`;
+                }
                 rows += `            <a href="javascript:void(0)" class="action-activate custom-tooltip jsPolicyHistory"><i class="fa fa-history fa-fw" data-toggle="tooltip" title="View history"></i></a>`;
                 rows += `            <a href="javascript:void(0)" class="action-activate custom-tooltip ${cl}"><i class="fa ${icon} fa-fw" data-toggle="tooltip" title="${title}"></i></a>`;
                 rows += `        </div>`;

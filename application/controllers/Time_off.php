@@ -1155,19 +1155,19 @@ class Time_off extends Public_Controller
             $filter_policy = "all";
         }
 
-       
+
         //
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
-      
 
-         if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate']) ) {
+
+        if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate'])) {
             $start_date = '';
             $end_date  = '';
-         }
+        }
 
 
-         //
+        //
         $data['page'] = 'view';
         $data['title'] = 'Report::time-off';
         //
@@ -1227,7 +1227,7 @@ class Time_off extends Public_Controller
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
-        
+
         $data['filter_employees'] = $filter_employees;
         $data['filter_departments'] = $filter_departments;
         $data['filter_teams'] = $filter_teams;
@@ -2503,6 +2503,7 @@ class Time_off extends Public_Controller
                     $this->res['Response'] = 'We are unable to find policies. Please, add a policy from \"Policies\" section.';
                     $this->resp();
                 }
+                $this->res['CompanyTimeoffPoliciesStatus'] = 1;
                 $this->res['Data'] = $policies;
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed.';
@@ -2531,6 +2532,7 @@ class Time_off extends Public_Controller
                     $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
                 }
                 //
+                $this->res['CompanyTimeoffPoliciesStatus'] = $this->timeoff_model->getTimeoffPoliciesStatus($post['companyId']);
                 $this->res['Data'] = $policies['Policies'];
                 $this->res['Status'] = true;
                 $this->res['Code'] = 'SUCCESS';

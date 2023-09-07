@@ -1486,6 +1486,8 @@ class Companies extends Admin_Controller
                 //
                 $this->data['CompanyIndeedDetails'] = $this->company_model->GetCompanyIndeedDetails($company_sid);
 
+                $this->data['timeoff_policies_status'] = $this->company_model->GetTimeoffPoliciesStatus($company_sid);
+                                
                 // Get dynamic modules
                 $this->data['dynamicModules'] = $this->company_model->getDynamicModulesByCompany($company_sid);
                 $this->data['configured_companies'] = $this->company_model->get_reassign_configured_companies($company_sid);
@@ -3443,5 +3445,33 @@ class Companies extends Admin_Controller
         $this->data['company_sid'] = $companyId;
         //
         $this->render('manage_admin/company/company_secure_documents');
+    }
+
+
+    //
+
+    function change_timeoff_policies_status()
+    {
+        
+        $sid = $this->input->post("sid");
+        $status = $this->input->post("status");
+        if ($status) {
+            $data = array('timeoff_policies_status' => 0);
+            $return_data = array(
+                'btnValue' => 'Disabled',
+                'label'     => 'Enable',
+                'value'     =>  0
+            );
+        } else {
+            $data = array('timeoff_policies_status' => 1);
+            $return_data = array(
+                'btnValue' => 'Enabled',
+                'label'     => 'Disable',
+                'value'     =>  1
+            );
+        }
+        $this->company_model->updateTimeoffPoliciesStatus($sid, $data);
+
+        print_r(json_encode($return_data));
     }
 }

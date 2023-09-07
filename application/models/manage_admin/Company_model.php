@@ -3392,4 +3392,29 @@ class Company_model extends CI_Model
         $this->db->from('applicant_i9form');
         return $this->db->count_all_results();
     }
+
+
+    //
+    function GetTimeoffPoliciesStatus($company_sid)
+    {
+        $this->db->select('timeoff_policies_status');
+        $this->db->where('user_sid', $company_sid);
+        $data = $this->db->get('portal_employer')->row_array();
+
+        if (!empty($data)) {
+            return $data['timeoff_policies_status'];
+        } else {
+            return 0;
+        }
+
+    }
+
+
+    //
+    function updateTimeoffPoliciesStatus($sid, $data)
+    {
+        $this->db->where('user_sid', $sid);
+        $result = $this->db->update('portal_employer', $data);
+    }
+
 }

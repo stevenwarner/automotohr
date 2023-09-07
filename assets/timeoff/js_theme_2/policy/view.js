@@ -429,6 +429,7 @@ $(function () {
 	//
 	function setTable(resp) {
 		//
+		console.log(resp.CompanyTimeoffPoliciesStatus);
 		oldState = {};
 		//
 		let rows = "";
@@ -437,7 +438,7 @@ $(function () {
 		//
 		$.each(resp.Data, function (i, v) {
 			oldState[v.policy_id] = i;
-			rows += getPolicyBox(v);
+			rows += getPolicyBox(v, resp.CompanyTimeoffPoliciesStatus);
 		});
 
 		//
@@ -614,7 +615,7 @@ $(function () {
 		$("#jsPolicyHistoryTable").html("");
 		//
 
-    	xhr = $.post(
+		xhr = $.post(
 			handlerURL,
 			Object.assign(callOBJ.ManagePolicy.Main, {
 				policyId: policyId,
@@ -704,7 +705,7 @@ $(function () {
 		);
 	}
 	//
-	function getPolicyBox(v) {
+	function getPolicyBox(v, CompanyTimeOffPolicesStatus) {
 		let title =
 			callOBJ.CompanyPolicies.Main.filter.archived != 0
 				? "Activate Policy"
@@ -731,7 +732,9 @@ $(function () {
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsAllowedPolicyEmployees" title="Policy applicable employee(s)" placement="top"><i class="fa fa-users"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsManagePolicy" title="Manage Policy" placement="top"><i class="fa fa-cog"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistoryBtn" title="History" placement="top"><i class="fa fa-history"></i></span>`;
-		rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
+		if (CompanyTimeOffPolicesStatus == 1) {
+			rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
+		}
 		rows += `            </span>`;
 		rows += `            <div class="clearfix"></div>`;
 		rows += `        </div>`;
@@ -752,10 +755,10 @@ $(function () {
 		rows += `            <div class="csBoxBalanceSection">`;
 		rows += `                <div class="col-sm-12">`;
 		rows += `                    <p><strong>${accruals.applicableDate === null ||
-				accruals.applicableDate == "" ||
-				accruals.applicableDate == 0
-				? "Joining Date"
-				: moment(accruals.applicableDate, "").format(timeoffDateFormat)
+			accruals.applicableDate == "" ||
+			accruals.applicableDate == 0
+			? "Joining Date"
+			: moment(accruals.applicableDate, "").format(timeoffDateFormat)
 			}</strong></p>`;
 		rows += `                    <p>Applicable Date</p>`;
 		rows += `                </div>`;

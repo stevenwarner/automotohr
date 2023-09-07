@@ -1386,6 +1386,38 @@
 
                                         <div class="row">
                                             <article class="col-sm-6 information-box">
+                                                <header class="hr-box-header">
+                                                    Timeoff policies
+                                                </header>
+                                                <div class="table-outer">
+                                                    <div class="info-row">
+                                                        <ul>
+                                                            <?php if ($timeoff_policies_status) {
+                                                                $status = 'Enabled';
+                                                                $btn_value = 'Disable';
+                                                            } else {
+                                                                $status = 'Disabled';
+                                                                $btn_value = 'Enable';
+                                                            } ?>
+                                                            <li class="<?php echo ($timeoff_policies_status == 1 ? 'inclueded-state' : 'exclueded-state'); ?>">
+                                                                <label>Status</label>
+                                                                <div style="<?php echo ($timeoff_policies_status ? 'color:green;' : 'color:red;'); ?>" class="text" id="status-label-pocicies">
+                                                                    <?php echo $status; ?>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="text">
+                                                                    <a href="javascript:;" id="change-status-timeoff-policies" data-status="<?= $timeoff_policies_status ?>" data-attr="<?= $company_info['sid'] ?>" class="site-btn pull-right <?php echo ($timeoff_policies_status == 1 ? 'btn-danger' : ''); ?>"><?= $btn_value ?></a>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <header class="hr-box-header hr-box-footer"></header>
+                                            </article>
+
+
+                                            <article class="col-sm-6 information-box">
                                                 <header class="hr-box-header"> Company Secure Documents</header>
                                                 <div class="table-outer">
                                                     <div class="info-row">
@@ -2076,5 +2108,54 @@
                 return alertify.alert('Success!', resp.success, function() {});
             });
         }
+    });
+
+
+
+    //
+    $(document).on('click', '#change-status-timeoff-policies', function() {
+        var status = $('#change-status-timeoff-policies').attr('data-status');
+        var id = $('#change-status-timeoff-policies').attr('data-attr');
+        var msg = "";
+        if (status == 1) {
+            msg = 'Disabel timeoff policies';
+        } else {
+            msg = 'Enable timeoff policies';
+        }
+
+        alertify.confirm('Confirmation', "Are you sure you want to " + msg,
+            function() {
+                $.ajax({
+                    url: "<?= base_url() ?>manage_admin/companies/change_timeoff_policies_status",
+                    type: 'POST',
+                    data: {
+                        status: status,
+                        sid: id
+                    },
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        alertify.success('Policies has been ' + data.btnValue);
+
+                        if (data.value == 1) {
+                            $('#change-status-timeoff-policies').addClass("btn-danger");
+                            $('#status-label-pocicies').css('color', 'green');
+                        } else {
+                            $('#change-status-timeoff-policies').removeClass("btn-danger");
+                            $('#status-label-pocicies').css('color', 'red');
+                        }
+
+                        $('#change-status-timeoff-policies').attr('data-status', data.value);
+                        $('#status-label-pocicies').html(data.btnValue);
+                        $('#change-status-timeoff-policies').html(data.label);
+
+                    },
+                    error: function() {
+
+                    }
+                });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
     });
 </script>

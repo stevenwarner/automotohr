@@ -6860,4 +6860,22 @@ class Timeoff_model extends CI_Model
         //
         return $record ? $record['comment'] : '';
     }
+
+
+    function getTimeoffPoliciesStatus($company_sid)
+    {
+        $this->db->select('timeoff_policies_status');
+        $this->db->where('user_sid', $company_sid);
+        $data = $this->db->get('portal_employer')->row_array();
+
+        if (!empty($data)) {
+            return $data['timeoff_policies_status'];
+        } else {
+            return 0;
+        }
+
+    }
+
+
+
 }
