@@ -39,8 +39,8 @@ class Schedule extends Public_Controller
         $data['employers_details'] = $data['session']['employer_detail'];
         $data['load_view'] = false;
 
-
         //
+
         $this->load->view('main/header', $data);
         $this->load->view('schedule/scheduling');
         $this->load->view('main/footer');
