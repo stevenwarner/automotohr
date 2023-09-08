@@ -868,6 +868,9 @@ class Copy_employees extends Admin_Controller
             // flow will start here
             // get the selected policy
             $policyDetails = $this->timeoff_model->getPolicyDetailsById($newPolicyId, ['is_entitled_employee', 'assigned_employees']);
+            $oldPolicy = $this->timeoff_model->getSinglePolicyById($newPolicyId);
+            // is added history flag
+            $isAddedHistory = "no";
             // add this person to existing persons list
             if ($policyDetails['is_entitled_employee'] == 1) {
                 //
@@ -888,6 +891,8 @@ class Copy_employees extends Admin_Controller
                         ->update('timeoff_policies', [
                             'assigned_employees' => $list
                         ]);
+                    //
+                    $isAddedHistory = "yes";    
                 }
             } else if ($policyDetails['is_entitled_employee'] == 0) {
                 if ($policyDetails['assigned_employees'] == 0) {
@@ -897,7 +902,20 @@ class Copy_employees extends Admin_Controller
                             'is_entitled_employee' => 1,
                             'assigned_employees' => $destinationEmployeeId,
                         ]);
+                    //
+                    $isAddedHistory = "yes";      
                 }
+            }
+            // 
+            if ($isAddedHistory == "yes") {
+                // Lets save who created the policy
+                $in = [];
+                $in['policy_sid'] = $newPolicyId;
+                $in['employee_sid'] = $adminId;
+                $in['action'] = 'update';
+                $in['note'] = json_encode($oldPolicy);
+                //
+                $this->timeoff_model->insertPolicyHistory($in);
             }
 
             // get employee requests against specific policy
