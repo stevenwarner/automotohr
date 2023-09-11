@@ -61,6 +61,12 @@ if (!function_exists('makeCall')) {
                 'success' => true
             ]);
         }
+        // Check for auth error
+        if ($info['http_code'] == '202') {
+            $response = json_encode([
+                'success' => true
+            ]);
+        }
         // Save the request and response to database
         saveCall([
             'request_method' => $options[CURLOPT_CUSTOMREQUEST],
@@ -350,6 +356,12 @@ if (!function_exists('getUrl')) {
         $urls['updateExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
         // calculate
         $urls['calculateExternalPayrollTaxes'] = "v1/companies/$key/external_payrolls/$key1/calculate_taxes";
+        // get tax liabilities
+        $urls['getExternalPayrollTaxLiabilities'] = "v1/companies/$key/external_payrolls/tax_liabilities";
+        // update tax liabilities
+        $urls['updateExternalPayrollTaxLiabilities'] = "v1/companies/$key/external_payrolls/tax_liabilities";
+        // confirm tax liabilities
+        $urls['confirmExternalPayrollTaxLiabilities'] = "v1/companies/$key/external_payrolls/tax_liabilities/finish";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];

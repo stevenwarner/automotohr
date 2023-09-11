@@ -1794,8 +1794,19 @@ $route['payrolls/external/(:num)/(:num)']['get'] = 'v1/payrolls/External/manageS
 $route['payrolls/external/(:num)/(:num)']['post'] = 'v1/payrolls/External/processEmployeeExternalPayroll/$1/$2';
 // calculate employee external payroll taxes
 $route['payrolls/external/(:num)/(:num)/calculates_taxes']['get'] =
-'v1/payrolls/External/calculateEmployeeExternalPayroll/$1/$2';
-
+  'v1/payrolls/External/calculateEmployeeExternalPayroll/$1/$2';
+// tax liabilities
+$route['payrolls/external/confirm-tax-liabilities']['get'] =
+  'v1/payrolls/External/taxLiabilities';
+// update tax liabilities
+$route['payrolls/external/tax-liabilities']['post'] =
+  'v1/payrolls/External/updateTaxLiabilities';
+// confirm tax liabilities
+$route['payrolls/external/tax-liabilities/confirm']['get'] =
+  'v1/payrolls/External/confirmTaxLiabilities';  
+// confirm tax liabilities
+$route['payrolls/external/tax-liabilities/confirm']['put'] =
+  'v1/payrolls/External/finishTaxLiabilities';
 /**
  * form routes
  */

@@ -35,12 +35,14 @@
                                 <div class="col-sm-8 col-xs-12">
                                     <p class="csF16">To make sure we file your taxes properly, we need to collect some info from your employees' previous payrolls.</p>
                                 </div>
+                                <?php if ($hasUnProcessedExternalPayroll) { ?>
                                 <div class="col-sm-4 col-xs-12 text-right">
                                     <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csBG3 csF16">
                                         <i class="fa fa-plus-circle csF16"></i>
                                         &nbsp;Create an external payroll
                                     </a>
                                 </div>
+                                <?php } ?>
                             </div>
                             <hr />
                             <?php $this->load->view('v1/payroll/historical_info'); ?>
@@ -76,10 +78,12 @@
                                                         </p>
                                                     </td>
                                                     <td class="vam text-right">
-                                                        <button class="btn btn-danger csF16 jsExternalPayrollDelete">
-                                                            <i class="fa fa-times-circle csF16"></i>
-                                                            &nbsp;Delete
-                                                        </button>
+                                                        <?php if ($value['is_processed'] == 0) { ?>
+                                                            <button class="btn btn-danger csF16 jsExternalPayrollDelete">
+                                                                <i class="fa fa-times-circle csF16"></i>
+                                                                &nbsp;Delete
+                                                            </button>
+                                                        <?php } ?>
                                                         <a href="<?= base_url('payrolls/external/' . ($value['sid']) . ''); ?>" class="btn btn-warning csF16">
                                                             <i class="fa fa-edit csF16"></i>
                                                             &nbsp;Update
@@ -88,16 +92,18 @@
                                                 </tr>
                                             <?php } ?>
                                         </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td class="vam text-right" colspan="3">
-                                                    <a href="<?= base_url("payrolls/external/confirm-tax-liabilities"); ?>" class="btn csW csBG3 csF16">
-                                                        <i class="fa fa-check-circle csF16"></i>
-                                                        &nbsp;Confirm tax liability
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </tfoot>
+                                        <?php if ($hasUnProcessedExternalPayroll) { ?>
+                                            <tfoot>
+                                                <tr>
+                                                    <td class="vam text-right" colspan="3">
+                                                        <a href="<?= base_url("payrolls/external/confirm-tax-liabilities"); ?>" class="btn csW csBG3 csF16">
+                                                            <i class="fa fa-check-circle csF16"></i>
+                                                            &nbsp;Confirm tax liability
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        <?php } ?>
                                     </table>
                                 </div>
                             <?php } ?>

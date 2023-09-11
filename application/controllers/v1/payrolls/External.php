@@ -74,6 +74,13 @@ class External extends Public_controller
                 $data['loggedInPersonCompany']['sid']
             );
 
+        // get all external payrolls
+        $data['hasUnProcessedExternalPayroll'] =
+            $this->external_payroll_model
+            ->hasAnyUnprocessedExternalPayrolls(
+                $data['loggedInPersonCompany']['sid']
+            );
+
         //
         $this->load
             ->view('main/header', $data)
@@ -162,6 +169,7 @@ class External extends Public_controller
                     'company_sid' => $data['loggedInPersonCompany']['sid']
                 ],
                 [
+                    'is_processed',
                     'check_date',
                     'payment_period_start_date',
                     'payment_period_end_date'
@@ -220,7 +228,7 @@ class External extends Public_controller
             null,
             $data['session']
         );
-        // check  external payroll
+        // check external payroll
         if (!$this
             ->external_payroll_model
             ->checkExternalPayrollById(
@@ -267,6 +275,7 @@ class External extends Public_controller
                     'company_sid' => $data['loggedInPersonCompany']['sid']
                 ],
                 [
+                    'is_processed',
                     'applicable_earnings',
                     'applicable_benefits',
                     'applicable_taxes',
@@ -300,11 +309,123 @@ class External extends Public_controller
                 $employeeExternalPayrollDetails
             );
         }
-        _e($data['externalPayrollDetails'], true, true);
         //
         $this->load
             ->view('main/header', $data)
             ->view('v1/payroll/external/employee')
+            ->view('main/footer');
+    }
+
+    /**
+     * confirm tax liabilities
+     *
+     * @return void
+     */
+    public function taxLiabilities()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        //
+        $data['title'] = "Single Employee External Payroll";
+        //
+        $data['isLoggedInView'] = 1;
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        // sync tax liabilities
+        $this->external_payroll_model
+            ->syncTaxLiabilitiesForExternalPayroll(
+                $data['loggedInPersonCompany']['sid'],
+                $data['loggedInPerson']['sid']
+            );
+        $data['taxLiabilities'] = $this->external_payroll_model
+            ->getExternalPayrollTaxLiabilities(
+                $data['loggedInPersonCompany']['sid']
+            );
+        // add css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'tax-liabilities'
+        );
+        // add js
+        $data['appJs'] = bundleJs(
+            [
+                'js/app_helper',
+                'v1/payroll/js/external/tax_liabilities'
+            ],
+            $this->js,
+            'tax-liabilities'
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/external/tax_liabilities')
+            ->view('main/footer');
+    }
+
+    /** 
+     * confirm tax liabilities
+     *
+     * @return void
+     */
+    public function confirmTaxLiabilities()
+    {
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        //
+        $data['title'] = "Confirm Tax Liabilities External Payroll";
+        //
+        $data['isLoggedInView'] = 1;
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
+        $data['taxLiabilities'] = $this->external_payroll_model
+            ->getExternalPayrollTaxLiabilities(
+                $data['loggedInPersonCompany']['sid']
+            );
+        if (!$data['taxLiabilities']) {
+            return redirect('payrolls/external');
+        }
+        // add css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'confirm-tax-liabilities'
+        );
+        // add js
+        $data['appJs'] = bundleJs(
+            [
+                'js/app_helper',
+                'v1/payroll/js/external/confirm_tax_liabilities'
+            ],
+            $this->js,
+            'confirm-tax-liabilities'
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/external/confirm_tax_liabilities')
             ->view('main/footer');
     }
 
@@ -483,6 +604,65 @@ class External extends Public_controller
     }
 
     /**
+     * update employee external payroll tax liabilities
+     *
+     * @return json
+     */
+    public function updateTaxLiabilities(): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        //
+        $post = $this->input->post('tax_liabilities', true);
+        //
+        $response = $this
+            ->external_payroll_model
+            ->updateTaxLiabilities(
+                $session['company_detail']['sid'],
+                $session['employer_detail']['sid'],
+                $post
+            );
+
+        // send response
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
+     * confirm and finish employee external payroll tax liabilities
+     *
+     * @return json
+     */
+    public function finishTaxLiabilities(): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        //
+        $response = $this
+            ->external_payroll_model
+            ->finishTaxLiabilities(
+                $session['company_detail']['sid'],
+                $session['employer_detail']['sid']
+            );
+
+        // send response
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
      * callback event for validation to check date format
      *
      * @param string $date
@@ -554,7 +734,14 @@ class External extends Public_controller
             $tmp = [];
             //
             foreach ($employeeExternalPayroll['earnings'] as $value) {
-                $tmp[$value['earning_id']] = $value;
+                //
+                if (!$tmp[$value['earning_id']]) {
+                    $tmp[$value['earning_id']] = $value;
+                }
+                //
+                $tmp[$value['earning_id']]['amount'] = $value['amount'] != 0.0 ? $value['amount'] : $tmp[$value['earning_id']]['amount'];
+                $tmp[$value['earning_id']]['hours'] =
+                    $value['hours'] != 0.0 ? $value['hours'] : $tmp[$value['earning_id']]['hours'];
             }
             //
             $employeeExternalPayroll['earnings'] = $tmp;
@@ -581,7 +768,6 @@ class External extends Public_controller
             //
             $employeeExternalPayroll['taxes'] = $tmp;
         }
-        _e($employeeExternalPayroll['earnings'], true, true);
         // merge
         if ($externalPayroll['applicable_earnings']) {
             foreach ($externalPayroll['applicable_earnings'] as $key => $value) {
@@ -589,7 +775,6 @@ class External extends Public_controller
                     $employeeExternalPayroll['earnings'][$value['earning_id']]['amount'];
                 $externalPayroll['applicable_earnings'][$key]['hours'] =
                     $employeeExternalPayroll['earnings'][$value['earning_id']]['hours'];
-                
             }
         }
 

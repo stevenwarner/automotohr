@@ -43,10 +43,12 @@
                                         <i class="fa fa-long-arrow-left csF16" aria-hidden="true"></i>
                                         &nbsp;Back to list
                                     </a>
-                                    <button class="btn csW csF16 csBG3 jsExternalPayrollSaveBtn">
-                                        <i class="fa fa-save csF16" aria-hidden="true"></i>
-                                        &nbsp;Save
-                                    </button>
+                                    <?php if ($externalPayrollDetails['is_processed'] == 0) { ?>
+                                        <button class="btn csW csF16 csBG3 jsExternalPayrollSaveBtn">
+                                            <i class="fa fa-save csF16" aria-hidden="true"></i>
+                                            &nbsp;Save
+                                        </button>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <hr />
@@ -96,12 +98,14 @@
                                                 </strong>
                                             </h3>
                                         </div>
-                                        <div class="col-sm-6 text-right">
-                                            <button class="btn csW csF16 csBG3 jsExternalPayrollCalculateTaxesBtn">
-                                                <i class="fa fa-calculator csF16" aria-hidden="true"></i>
-                                                &nbsp;Calculate taxes
-                                            </button>
-                                        </div>
+                                        <?php if ($externalPayrollDetails['is_processed'] == 0) { ?>
+                                            <div class="col-sm-6 text-right">
+                                                <button class="btn csW csF16 csBG3 jsExternalPayrollCalculateTaxesBtn">
+                                                    <i class="fa fa-calculator csF16" aria-hidden="true"></i>
+                                                    &nbsp;Calculate taxes
+                                                </button>
+                                            </div>
+                                        <?php } ?>
                                         <br>
                                         <br>
                                     </div>
@@ -129,10 +133,12 @@
                                         <i class="fa fa-long-arrow-left csF16" aria-hidden="true"></i>
                                         &nbsp;Back to list
                                     </a>
-                                    <button class="btn csW csF16 csBG3 jsExternalPayrollSaveBtn">
-                                        <i class="fa fa-save csF16" aria-hidden="true"></i>
-                                        &nbsp;Save
-                                    </button>
+                                    <?php if ($externalPayrollDetails['is_processed'] == 0) { ?>
+                                        <button class="btn csW csF16 csBG3 jsExternalPayrollSaveBtn">
+                                            <i class="fa fa-save csF16" aria-hidden="true"></i>
+                                            &nbsp;Save
+                                        </button>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <!-- loader -->

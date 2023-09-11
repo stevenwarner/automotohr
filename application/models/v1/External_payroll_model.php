@@ -37,6 +37,7 @@ class External_payroll_model extends Payroll_model
             ->select('
                 sid,
                 check_date,
+                is_processed,
                 payment_period_start_date,
                 payment_period_end_date
             ')
@@ -45,6 +46,21 @@ class External_payroll_model extends Payroll_model
             ->order_by('sid', 'DESC')
             ->get('payrolls.external_payrolls')
             ->result_array();
+    }
+
+    /**
+     * check if any unprocessed payrolls
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    public function hasAnyUnprocessedExternalPayrolls(int $companyId): bool
+    {
+        return (bool)$this->db
+            ->where('company_sid', $companyId)
+            ->where('is_deleted', 0)
+            ->where('is_processed', 0)
+            ->count_all_results('payrolls.external_payrolls');
     }
 
     /**
@@ -448,7 +464,7 @@ class External_payroll_model extends Payroll_model
         $request = [];
         $request['replace_fields'] = true;
         $request['external_payroll_items'] = $items;
-        //
+        //z
         $gustoResponse = gustoCall(
             "updateExternalPayroll",
             $companyDetails,
@@ -563,6 +579,210 @@ class External_payroll_model extends Payroll_model
     }
 
     /**
+     * sync external payroll tax liabilities
+     *
+     * @param int $companyId
+     * @param int $loggedInPersonId
+     * @return array
+     */
+    public function syncTaxLiabilitiesForExternalPayroll(
+        int $companyId,
+        int $loggedInPersonId
+    ): array {
+        // get company
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        $gustoResponse = gustoCall(
+            "getExternalPayrollTaxLiabilities",
+            $companyDetails,
+            [],
+            "GET"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if ($gustoResponse) {
+            //
+            $ins = [];
+            $ins['last_changed_by'] = $loggedInPersonId;
+            $ins['liabilities_json'] = json_encode($gustoResponse);
+            $ins['updated_at'] = getSystemDate();
+            $ins['is_processed'] = 0;
+            // check it
+            if (!$this->db->where('company_sid', $companyId)->count_all_results('payrolls.external_payrolls_tax_liabilities')) {
+                //
+                $ins['company_sid'] = $companyId;
+                $ins['created_at'] = $ins['updated_at'];
+                // insert
+                $this->db
+                    ->insert(
+                        'payrolls.external_payrolls_tax_liabilities',
+                        $ins
+                    );
+            } else {
+                $this->db
+                    ->where('company_sid', $companyId)
+                    ->where('is_processed', 0)
+                    ->update(
+                        'payrolls.external_payrolls_tax_liabilities',
+                        $ins
+                    );
+            }
+        }
+        //
+        return [
+            'success' => true,
+            'message' => "You have successfully synced external payroll tax liabilities."
+        ];
+    }
+
+    /**
+     * update external payroll tax liabilities
+     *
+     * @param int $companyId
+     * @param int $loggedInPersonId
+     * @param array $data
+     * @return array
+     */
+    public function updateTaxLiabilities(
+        int $companyId,
+        int $loggedInPersonId,
+        array $data
+    ): array {
+        // get company
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        $request = [];
+        $request['liability_selections'] = $data;
+        //
+        $gustoResponse = gustoCall(
+            "updateExternalPayrollTaxLiabilities",
+            $companyDetails,
+            $request,
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $saveTax = [];
+        foreach ($data as $tax) {
+            $saveTax[$taxis_processed['tax_id']] = $tax;
+        }
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->where('is_processed', 0)
+            ->update(
+                'payrolls.external_payrolls_tax_liabilities',
+                [
+                    'liabilities_save_json' => json_encode($saveTax),
+                    'liabilities_json' => json_encode($gustoResponse)
+                ]
+            );
+        //
+        return [
+            'success' => true,
+            'message' => "You have successfully updated external payroll tax liabilities."
+        ];
+    }
+
+    /**
+     * confirm and finish external payroll tax liabilities
+     *
+     * @param int $companyId
+     * @param int $loggedInPersonId
+     * @return array
+     */
+    public function finishTaxLiabilities(
+        int $companyId,
+        int $loggedInPersonId
+    ): array {
+        // get company
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        $gustoResponse = gustoCall(
+            "confirmExternalPayrollTaxLiabilities",
+            $companyDetails,
+            [],
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->where('is_processed', 0)
+            ->update(
+                'payrolls.external_payrolls_tax_liabilities',
+                [
+                    'is_processed' => 1
+                ]
+            );
+
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->where('is_processed', 0)
+            ->update(
+                'payrolls.external_payrolls',
+                [
+                    'is_processed' => 1
+                ]
+            );
+        //
+        $this->db
+            ->where('company_sid', $companyId)
+            ->update(
+                'gusto_companies',
+                [
+                    'added_historical_payrolls' => 1
+                ]
+            );
+        //
+        return [
+            'success' => true,
+            'message' => "You have successfully confirmed external payroll tax liabilities."
+        ];
+    }
+
+    /**
+     * get external payroll tax liabilities
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getExternalPayrollTaxLiabilities(
+        int $companyId
+    ): array {
+        //
+        $record = $this->db
+            ->select('liabilities_json, liabilities_save_json')
+            ->where('company_sid', $companyId)
+            ->where('is_processed', 0)
+            ->get('payrolls.external_payrolls_tax_liabilities')
+            ->row_array();
+        //
+        if ($record) {
+            $record['liabilities_json'] = json_decode($record['liabilities_json'], true);
+            $record['liabilities_save_json'] = json_decode($record['liabilities_save_json'], true);
+        }
+        //
+        return $record;
+    }
+
+    /**
      * get the external payroll
      *
      * @param int $externalPayrollId
@@ -640,12 +860,18 @@ class External_payroll_model extends Payroll_model
             //
             foreach ($employeeExternalPayroll['applicable_earnings'] as $value) {
                 //
-                $newPayroll['earnings'][$value['id']] = [
-                    'earning_id' => $value['id'],
-                    'earning_type' => $value['type'],
-                    'amount' => $value['inputType'] == 'amount' ? $value['value'] : 0.0,
-                    'hours' => $value['inputType'] == 'hours' ? $value['value'] : 0.0
-                ];
+                if (!$newPayroll['earnings'][$value['id']]) {
+                    //
+                    $newPayroll['earnings'][$value['id']] = [
+                        'earning_id' => $value['id'],
+                        'earning_type' => $value['type'],
+                        'amount' => 0.0,
+                        'hours' => 0.0
+                    ];
+                }
+                //
+                $newPayroll['earnings'][$value['id']]['amount'] = $value['inputType'] == 'amount' ? $value['value'] : $newPayroll['earnings'][$value['id']]['amount'];
+                $newPayroll['earnings'][$value['id']]['hours'] = $value['inputType'] == 'hours' ? $value['value'] : $newPayroll['earnings'][$value['id']]['hours'];
             }
         }
         // todo benefits

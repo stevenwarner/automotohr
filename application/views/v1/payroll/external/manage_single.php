@@ -107,13 +107,15 @@
                             <div class="row">
                                 <div class="col-sm-12 text-right">
                                     <a href="<?= base_url('payrolls/external'); ?>" class="btn csW csF16 csBG4">
-                                        <i class="fa fa-times-circle csF16" aria-hidden="true"></i>
+                                        <i class="fa fa-long-arrow-left csF16" aria-hidden="true"></i>
                                         &nbsp;Back
                                     </a>
+                                    <?php if($externalPayroll['is_processed'] == 0) {?>
                                     <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csF16 csBG3">
                                         <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
                                         &nbsp;Create an external payroll
                                     </a>
+                                    <?php } ?>
                                 </div>
                             </div>
 
