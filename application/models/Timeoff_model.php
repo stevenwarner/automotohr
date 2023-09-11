@@ -6945,6 +6945,8 @@ class Timeoff_model extends CI_Model
                         $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
                             'assigned_employees' => $assignedEmployeesNew
                         ]);
+                        //
+                        $isAddedHistory = "yes";
                     }
                 }
             }
