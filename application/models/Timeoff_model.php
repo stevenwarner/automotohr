@@ -6932,35 +6932,55 @@ class Timeoff_model extends CI_Model
             
                 }
             } else {
-                if ($policy['assigned_employees'] == 'all') {
-                    //
-                    $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
-                        'assigned_employees' => $employerId,
-                        'is_entitled_employee' => 0
-                    ]);
-                    //
-                    $isAddedHistory = "yes";
-                } else {
-                    $assignedEmployeesArry = [];
-                    //
-                    if ($policy['assigned_employees'] != 0) {
-                        $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
-                    }
-                    //
-                    if (in_array($employerId, $assignedEmployeesArry)) {
+                if ($policy['is_entitled_employee'] == 1) {
+                    if ($policy['assigned_employees'] == 'all') {
                         //
-                        if (($key = array_search($employerId, $assignedEmployeesArry)) !== false) {
-                            unset($assignedEmployeesArry[$key]);
-                            $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
-                            //Update 
-                            $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
-                                'assigned_employees' => $assignedEmployeesNew
-                            ]);
+                        $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                            'assigned_employees' => $employerId,
+                            'is_entitled_employee' => 0
+                        ]);
+                        //
+                        $isAddedHistory = "yes";
+                    } else {
+                        $assignedEmployeesArry = [];
+                        //
+                        if ($policy['assigned_employees'] != 0) {
+                            $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                        }
+                        //
+                        if (in_array($employerId, $assignedEmployeesArry)) {
                             //
-                            $isAddedHistory = "yes";
+                            if (($key = array_search($employerId, $assignedEmployeesArry)) !== false) {
+                                unset($assignedEmployeesArry[$key]);
+                                $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
+                                //Update 
+                                $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                                    'assigned_employees' => $assignedEmployeesNew
+                                ]);
+                                //
+                                $isAddedHistory = "yes";
+                            }
                         }
                     }
-                }
+                } else {
+                    if ($policy['assigned_employees'] != 'all') {
+                        $assignedEmployeesArry = [];
+                        //
+                        if ($policy['assigned_employees'] != 0 && $policy['assigned_employees']) {
+                            $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                        }
+                        //
+                        $assignedEmployeesArry[] = $employerId;
+                        $assignedEmployeesArry = array_unique($assignedEmployeesArry);
+                        $assignedEmployeesArry = implode(',', $assignedEmployeesArry);
+                        //
+                        $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                            'assigned_employees' => $assignedEmployeesArry
+                        ]);
+                        //
+                        $isAddedHistory = "yes";
+                    }
+                }    
             }
             //
             if ($isAddedHistory == "yes") {
