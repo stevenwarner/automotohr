@@ -6921,7 +6921,6 @@ class Timeoff_model extends CI_Model
                 } else {
                     //is_entitled_employee==0
                     if ($policy['assigned_employees'] == 'all' || $policy['assigned_employees'] == '0') {
-                        //SkipUpdate
                         //
                         $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
                             'assigned_employees' => $employerId,
@@ -6933,20 +6932,33 @@ class Timeoff_model extends CI_Model
             
                 }
             } else {
-                //
-                $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
-                //
-                if (in_array($employerId, $assignedEmployeesArry)) {
+                if ($policy['assigned_employees'] == 'all') {
                     //
-                    if (($key = array_search($employerId, $assignedEmployeesArry)) !== false) {
-                        unset($assignedEmployeesArry[$key]);
-                        $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
-                        //Update 
-                        $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
-                            'assigned_employees' => $assignedEmployeesNew
-                        ]);
+                    $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                        'assigned_employees' => $employerId,
+                        'is_entitled_employee' => 0
+                    ]);
+                    //
+                    $isAddedHistory = "yes";
+                } else {
+                    $assignedEmployeesArry = [];
+                    //
+                    if ($policy['assigned_employees'] != 0) {
+                        $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                    }
+                    //
+                    if (in_array($employerId, $assignedEmployeesArry)) {
                         //
-                        $isAddedHistory = "yes";
+                        if (($key = array_search($employerId, $assignedEmployeesArry)) !== false) {
+                            unset($assignedEmployeesArry[$key]);
+                            $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
+                            //Update 
+                            $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                                'assigned_employees' => $assignedEmployeesNew
+                            ]);
+                            //
+                            $isAddedHistory = "yes";
+                        }
                     }
                 }
             }
