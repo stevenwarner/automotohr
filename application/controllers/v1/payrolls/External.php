@@ -180,6 +180,11 @@ class External extends Public_controller
                 $data['loggedInPersonCompany']['sid']
             );
         //
+        $data['linkedEmployeeIds'] = $this->external_payroll_model
+            ->getLinkEmployeeIds(
+                $externalPayrollId
+            );
+        //
         $this->load
             ->view('main/header', $data)
             ->view('v1/payroll/external/manage_single')
@@ -228,6 +233,12 @@ class External extends Public_controller
 
             return redirect(base_url('payrolls/external'));
         }
+        // check and push the employee to Gusto
+        $this->external_payroll_model
+            ->checkAndLinkEmployeeToExternalPayroll(
+                $externalPayrollId,
+                $employeeId
+            );
         // add css
         $data['appCSS'] = bundleCSS(
             [
@@ -256,21 +267,18 @@ class External extends Public_controller
                     'company_sid' => $data['loggedInPersonCompany']['sid']
                 ],
                 [
-                    'external_payroll_items',
                     'applicable_earnings',
                     'applicable_benefits',
                     'applicable_taxes',
                 ]
             );
         // decode json
-        $externalPayrollDetails['external_payroll_items'] = json_decode($externalPayrollDetails['external_payroll_items'], true);
         $externalPayrollDetails['applicable_earnings'] = json_decode($externalPayrollDetails['applicable_earnings'], true);
         $externalPayrollDetails['applicable_benefits'] = json_decode($externalPayrollDetails['applicable_benefits'], true);
         $externalPayrollDetails['applicable_taxes'] = json_decode($externalPayrollDetails['applicable_taxes'], true);
         //
         $data['externalPayrollDetails'] = $externalPayrollDetails;
         $data['externalPayrollId'] = $externalPayrollId;
-
         // get single employee details
         $data['employeeDetails'] =
             $this->external_payroll_model
@@ -278,6 +286,21 @@ class External extends Public_controller
                 $data['loggedInPersonCompany']['sid'],
                 $employeeId
             );
+        // get employee external payroll details
+        $employeeExternalPayrollDetails =
+            $this->external_payroll_model
+            ->getEmployeeExternalPayroll(
+                $externalPayrollId,
+                $employeeId
+            );
+        //
+        if ($employeeExternalPayrollDetails) {
+            $data['externalPayrollDetails'] = $this->mergeEarnings(
+                $data['externalPayrollDetails'],
+                $employeeExternalPayrollDetails
+            );
+        }
+        _e($data['externalPayrollDetails'], true, true);
         //
         $this->load
             ->view('main/header', $data)
@@ -372,6 +395,94 @@ class External extends Public_controller
     }
 
     /**
+     * handles employee external payroll update
+     *
+     * @param int $externalPayrollId
+     * @param int $employeeId
+     * @return json
+     */
+    public function processEmployeeExternalPayroll(
+        int $externalPayrollId,
+        int $employeeId
+    ): array {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        // get the post
+        $post = $this->input->post(null, true);
+        //
+        $errorsArray = [];
+        //
+        if (!$post['applicable_earnings']) {
+            $errorsArray[] = '"Applicable earnings" are required.';
+        }
+        //
+        if (!$post['applicable_taxes']) {
+            $errorsArray[] = '"Applicable taxes" are required.';
+        }
+        // run the validator
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                ['errors' => $errorsArray]
+            );
+        }
+        //
+        $response = $this
+            ->external_payroll_model
+            ->updateEmployeeExternalPayroll(
+                $session['company_detail']['sid'],
+                $session['employer_detail']['sid'],
+                $externalPayrollId,
+                $employeeId,
+                $post
+            );
+
+        // send response
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
+     * calculate employee external payroll taxes
+     *
+     * @param int $externalPayrollId
+     * @param int $employeeId
+     * @return json
+     */
+    public function calculateEmployeeExternalPayroll(
+        int $externalPayrollId,
+        int $employeeId
+    ): array {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        //
+        $response = $this
+            ->external_payroll_model
+            ->calculateEmployeeExternalPayroll(
+                $session['company_detail']['sid'],
+                $session['employer_detail']['sid'],
+                $externalPayrollId,
+                $employeeId
+            );
+
+        // send response
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
      * callback event for validation to check date format
      *
      * @param string $date
@@ -424,5 +535,78 @@ class External extends Public_controller
             // redirect
             return redirect('dashboard');
         }
+    }
+
+    /**
+     * merge the external and employee external payroll
+     *
+     * @param array $externalPayroll
+     * @param array $employeeExternalPayroll
+     * @return array
+     */
+    private function mergeEarnings(
+        array $externalPayroll,
+        array $employeeExternalPayroll
+    ): array {
+        // convert the array to associate
+        if ($employeeExternalPayroll['earnings']) {
+            //
+            $tmp = [];
+            //
+            foreach ($employeeExternalPayroll['earnings'] as $value) {
+                $tmp[$value['earning_id']] = $value;
+            }
+            //
+            $employeeExternalPayroll['earnings'] = $tmp;
+        }
+        // convert the array to associate
+        if ($employeeExternalPayroll['benefits']) {
+            //
+            $tmp = [];
+            //
+            foreach ($employeeExternalPayroll['benefits'] as $value) {
+                $tmp[$value['id']] = $value;
+            }
+            //
+            $employeeExternalPayroll['benefits'] = $tmp;
+        }
+        // convert the array to associate
+        if ($employeeExternalPayroll['taxes']) {
+            //
+            $tmp = [];
+            //
+            foreach ($employeeExternalPayroll['taxes'] as $value) {
+                $tmp[$value['tax_id']] = $value;
+            }
+            //
+            $employeeExternalPayroll['taxes'] = $tmp;
+        }
+        _e($employeeExternalPayroll['earnings'], true, true);
+        // merge
+        if ($externalPayroll['applicable_earnings']) {
+            foreach ($externalPayroll['applicable_earnings'] as $key => $value) {
+                $externalPayroll['applicable_earnings'][$key]['amount'] =
+                    $employeeExternalPayroll['earnings'][$value['earning_id']]['amount'];
+                $externalPayroll['applicable_earnings'][$key]['hours'] =
+                    $employeeExternalPayroll['earnings'][$value['earning_id']]['hours'];
+                
+            }
+        }
+
+        if ($externalPayroll['applicable_benefits']) {
+            foreach ($externalPayroll['applicable_benefits'] as $key => $value) {
+                $externalPayroll['applicable_benefits'][$key]['amount'] = $employeeExternalPayroll['benefits'][$value['id']]['amount'];
+                $externalPayroll['applicable_benefits'][$key]['hours'] = $employeeExternalPayroll['benefits'][$value['id']]['hours'];
+            }
+        }
+
+        if ($externalPayroll['applicable_taxes']) {
+            foreach ($externalPayroll['applicable_taxes'] as $key => $value) {
+                $externalPayroll['applicable_taxes'][$key]['amount'] = $employeeExternalPayroll['taxes'][$value['id']]['amount'];
+                $externalPayroll['applicable_taxes'][$key]['hours'] = $employeeExternalPayroll['taxes'][$value['id']]['hours'];
+            }
+        }
+        //
+        return $externalPayroll;
     }
 }

@@ -1790,6 +1790,11 @@ $route['payrolls/external/(:num)']['delete'] = 'v1/payrolls/External/deleteProce
 $route['payrolls/external/(:num)']['get'] = 'v1/payrolls/External/manageSingle/$1';
 // edit single employee
 $route['payrolls/external/(:num)/(:num)']['get'] = 'v1/payrolls/External/manageSingleEmployee/$1/$2';
+// update employee external payroll
+$route['payrolls/external/(:num)/(:num)']['post'] = 'v1/payrolls/External/processEmployeeExternalPayroll/$1/$2';
+// calculate employee external payroll taxes
+$route['payrolls/external/(:num)/(:num)/calculates_taxes']['get'] =
+'v1/payrolls/External/calculateEmployeeExternalPayroll/$1/$2';
 
 /**
  * form routes

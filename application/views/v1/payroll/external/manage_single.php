@@ -76,9 +76,14 @@
                                                         </p>
                                                     </td>
                                                     <td class="vam text-right">
-                                                        <a href="<?= base_url('payrolls/external/' . ($externalPayrollId) . '/' . ($value['id']) . ''); ?>" class="btn csW csBG4 csF16">
-                                                            <i class="fa fa-play-circle csF16" aria-hidden="true"></i>
-                                                            &nbsp;Start
+                                                        <a href="<?= base_url('payrolls/external/' . ($externalPayrollId) . '/' . ($value['id']) . ''); ?>" class="btn csW csBG3 csF16">
+                                                            <?php if (in_array($value['id'], $linkedEmployeeIds)) { ?>
+                                                                <i class="fa fa-edit csF16" aria-hidden="true"></i>
+                                                                &nbsp;Edit
+                                                            <?php } else { ?>
+                                                                <i class="fa fa-play-circle csF16" aria-hidden="true"></i>
+                                                                &nbsp;Start
+                                                            <?php } ?>
                                                         </a>
                                                     </td>
                                                 </tr>

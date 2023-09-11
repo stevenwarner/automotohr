@@ -12,9 +12,30 @@ $(function externalPayrollsEmployee() {
 	 */
 	const employeeId = parseInt(getSegment(3));
 	//
+	$(".jsExternalPayrollCalculateTaxesBtn").click(function (event) {
+		//
+		event.preventDefault();
+		saveExternalPayroll(true);
+	});
+
+	//
 	$(".jsExternalPayrollSaveBtn").click(function (event) {
 		//
 		event.preventDefault();
+		//
+		saveExternalPayroll();
+	});
+
+	/**
+	 * save employee external payroll
+	 * @param {bool} doCalculate
+	 * @returns
+	 */
+	function saveExternalPayroll(doCalculate = false) {
+		// check if XHR is already in progress
+		if (XHR !== null) {
+			return false;
+		}
 		// lets create array
 		const dataOBJ = {
 			applicable_earnings: [],
@@ -22,30 +43,59 @@ $(function externalPayrollsEmployee() {
 			applicable_taxes: [],
 		};
 		// get the earnings
-        $(".jsExternalPayrollApplicableInputs").map(function(){
-            dataOBJ["applicable_earnings"].push(
-                {
-                    id: $(this).data('id'),
-                    value: $(this).val().trim() || 0.0
-                }
-            );
-        });
-        // get the taxes
-        $(".jsExternalPayrollTaxInputs").map(function () {
+		$(".jsExternalPayrollApplicableInputs").map(function () {
+			dataOBJ["applicable_earnings"].push({
+				id: $(this).data("id"),
+				inputType: $(this).data("input"),
+				type: $(this).data("type"),
+				value: $(this).val().trim() || 0.0,
+			});
+		});
+		// get the taxes
+		$(".jsExternalPayrollTaxInputs").map(function () {
 			dataOBJ["applicable_taxes"].push({
 				id: $(this).data("id"),
 				value: $(this).val().trim() || 0.0,
 			});
 		});
-
-        console.log(dataOBJ)
-		// startProcessOfExternalPayrollEmployeeUpdate();
-	});
+		//
+		ml(true, "jsPageLoader");
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"payrolls/external/" + externalPayrollId + "/" + employeeId
+			),
+			method: "POST",
+			data: dataOBJ,
+			cache: false,
+		})
+			.success(function (resp) {
+				//
+				if (doCalculate) {
+					ml(true, "jsPageLoader");
+					setTimeout(function () {
+						calculateEmployeeExternalPayrollTaxes();
+					}, 1000);
+				} else {
+					return _success(resp.message, function () {
+						window.location.reload();
+					});
+				}
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				//
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+			});
+	}
 
 	/**
-	 * start the process of external payroll deletion
+	 * calculate employee external payroll taxes
+	 * @returns
 	 */
-	function startProcessOfExternalPayrollEmployeeUpdate() {
+	function calculateEmployeeExternalPayrollTaxes() {
 		// check if XHR is already in progress
 		if (XHR !== null) {
 			return false;
@@ -55,14 +105,25 @@ $(function externalPayrollsEmployee() {
 		//
 		XHR = $.ajax({
 			url: baseUrl(
-				"payrolls/external/" + externalPayrollId + "/" + employeeId
+				"payrolls/external/" +
+					externalPayrollId +
+					"/" +
+					employeeId +
+					"/calculates_taxes"
 			),
-			method: "POST",
+			method: "GET",
+			cache: false,
 		})
 			.success(function (resp) {
-				return _success(resp.message, function () {
-					window.location.reload();
+				//
+				resp.data.map(function (taxSuggestion) {
+					$(
+						'.jsExternalPayrollTaxInputs[data-id="' +
+							taxSuggestion.tax_id +
+							'"]'
+					).val(taxSuggestion.amount);
 				});
+				return _success(resp.message);
 			})
 			.fail(handleErrorResponse)
 			.always(function () {

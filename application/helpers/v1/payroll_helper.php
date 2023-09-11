@@ -346,6 +346,10 @@ if (!function_exists('getUrl')) {
         $urls['deleteExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
         // get tax suggestions
         $urls['getExternalPayrollTaxSuggestions'] = "v1/companies/$key/external_payrolls/$key1/calculate_taxes";
+        // update
+        $urls['updateExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
+        // calculate
+        $urls['calculateExternalPayrollTaxes'] = "v1/companies/$key/external_payrolls/$key1/calculate_taxes";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];

@@ -75,11 +75,11 @@
 
                                                 <div class="input-group">
                                                     <div class="input-group-addon csF16">$</div>
-                                                    <input type="number" class="form-control jsExternalPayrollApplicableInputs input-lg" data-id="<?= $value['earning_id']; ?>" value="<?= $value['value'] ?? "0.0" ?>" />
+                                                    <input type="number" class="form-control jsExternalPayrollApplicableInputs input-lg" data-id="<?= $value['earning_id']; ?>" data-type="<?= $value['earning_type']; ?>" data-input="<?= $value['input_type']; ?>" value="<?= $value['amount'] ?? "0.0" ?>" />
                                                 </div>
 
                                             <?php } elseif ($value['input_type'] === 'hours') { ?>
-                                                <input type="number" class="form-control jsExternalPayrollApplicableInputs input-lg" data-id="<?= $value['earning_id']; ?>" value="<?= $value['value'] ?? "0.0" ?>" />
+                                                <input type="number" class="form-control jsExternalPayrollApplicableInputs input-lg" data-id="<?= $value['earning_id']; ?>" data-type="<?= $value['earning_type']; ?>" data-input="<?= $value['input_type']; ?>" value="<?= $value['hours'] ?? "0.0" ?>" />
                                             <?php } ?>
                                         </div>
                                     <?php } ?>
@@ -114,7 +114,7 @@
 
                                             <div class="input-group">
                                                 <div class="input-group-addon csF16">$</div>
-                                                <input type="number" class="form-control jsExternalPayrollTaxInputs input-lg" data-id="<?= $value['id']; ?>" value="<?= $value['value'] ?? "0.0" ?>" />
+                                                <input type="number" class="form-control jsExternalPayrollTaxInputs input-lg" data-id="<?= $value['id']; ?>" value="<?= $value['amount'] ?? "0.0" ?>" />
                                             </div>
                                         </div>
                                     <?php } ?>
@@ -135,7 +135,8 @@
                                     </button>
                                 </div>
                             </div>
-
+                            <!-- loader -->
+                            <?php $this->load->view('v1/loader', ['id' => 'jsPageLoader']); ?>
                         </div>
                     </div>
                 </div>

@@ -1341,3 +1341,19 @@ if (!function_exists('getFormErrors')) {
         ];
     }
 }
+
+if(!function_exists('loadUpModel')) {
+    /**
+     * loads up a model
+     *
+     * @method get_instance
+     * @param string $modelPath
+     * @param string $name
+     * @return object
+     */
+    function loadUpModel(string $modelPath, string $name): object
+    {
+        // load the model
+        return get_instance()->load->model($modelPath, $name);
+    }
+}
