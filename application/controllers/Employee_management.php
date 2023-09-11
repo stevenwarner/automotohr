@@ -1865,11 +1865,12 @@ class Employee_management extends Public_Controller
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
                         $this->load->model('timeoff_model');
-                        // $this->timeoff_model->updateEmployeePolicies(
-                        //     $company_id,
-                        //     $employer_id,
-                        //     $this->input->post('policies')
-                        // );
+                        //
+                         $this->timeoff_model->updateEmployeePoliciesNew(
+                             $company_id,
+                             $employer_id,
+                             $this->input->post('policies')
+                         );
                     }
                     // Profile save intercept
                     $this->handleProfileChange(

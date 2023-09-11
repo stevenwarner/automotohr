@@ -2913,7 +2913,7 @@ class Timeoff_model extends CI_Model
             }
             // Entitled
             if ($policy['is_entitled_employee'] == 1) {
-            
+
                 if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             } else {
                 // Not-Entitled
@@ -4117,10 +4117,9 @@ class Timeoff_model extends CI_Model
                 //
                 if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
                     $balance['Implements'] = false;
-                } else{
+                } else {
                     if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;;
                 }
-
             } else {
                 //
                 if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
@@ -6861,5 +6860,114 @@ class Timeoff_model extends CI_Model
             ->row_array();
         //
         return $record ? $record['comment'] : '';
+    }
+
+
+    //
+    function updateEmployeePoliciesNew(
+        $companyId,
+        $employerId,
+        $policyIds
+    ) {
+        //
+        $this->db
+            ->select('
+        timeoff_policies.sid,
+        timeoff_policies.title,
+        timeoff_policies.assigned_employees,
+        timeoff_policies.is_entitled_employee
+        ')
+            ->where('timeoff_policies.company_sid', $companyId)
+            ->order_by('timeoff_policies.sort_order', 'ASC');
+        //
+        $policies = $this->db->get('timeoff_policies')
+            ->result_array();
+
+        //
+        if (empty($policies)) return false;
+        //
+
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $employer_id = $data["session"]["employer_detail"]["sid"];
+
+        foreach ($policies as $policy) {
+            //
+            $oldPolicy = $this->timeoff_model->getSinglePolicyById($policy['sid']);
+            $isAddedHistory = "no";
+            //
+            if (in_array($policy['sid'], $policyIds)) {
+                //
+                if ($policy['is_entitled_employee'] == 1) {
+                    //
+                    if ($policy['assigned_employees'] != 'all') {
+                        //
+                        $assignedEmployeesArry = [];
+                        //
+                        if ($policy['assigned_employees'] != 0) {
+                            $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                        }
+                        //check if employee already assigned
+                        array_push($assignedEmployeesArry, $employerId);
+                        $assignedEmployeesArry = array_unique($assignedEmployeesArry);
+                        $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
+                        // Update Recorde
+                        $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                            'assigned_employees' => $assignedEmployeesNew
+                        ]);
+                        //
+                        $isAddedHistory = "yes";
+                    }
+                } else {
+                    //is_entitled_employee==0
+                    if ($policy['assigned_employees'] == 'all' || $policy['assigned_employees'] == '0') {
+                        //SkipUpdate
+                        //
+                        $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                            'assigned_employees' => $employerId,
+                            'is_entitled_employee' => 1
+                        ]);
+                        //
+                        $isAddedHistory = "yes";
+                    }
+            
+                }
+            } else {
+                //
+                $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                //
+                if (in_array($employerId, $assignedEmployeesArry)) {
+                    //
+                    if (($key = array_search($employerId, $assignedEmployeesArry)) !== false) {
+                        unset($assignedEmployeesArry[$key]);
+                        $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
+                        //Update 
+                        $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                            'assigned_employees' => $assignedEmployeesNew
+                        ]);
+                    }
+                }
+            }
+            //
+            if ($isAddedHistory == "yes") {
+                // Lets save who history of the policy
+                $in = [];
+                $in['policy_sid'] = $policy['sid'];
+                $in['employee_sid'] = $employer_id;
+                $in['action'] = 'update';
+                $in['note'] = json_encode($oldPolicy);
+                //
+                $this->timeoff_model->insertPolicyHistory($in);
+            }
+        }
+    }
+
+
+    // 
+    function updateTimeoffAssignedEmployees($ploicyID, $companyId, $data)
+    {
+        $this->db->where('sid', $ploicyID);
+        $this->db->where('company_sid', $companyId);
+        $this->db->update('timeoff_policies', $data);
     }
 }
