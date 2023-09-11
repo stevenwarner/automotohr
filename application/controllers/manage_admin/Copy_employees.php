@@ -913,6 +913,7 @@ class Copy_employees extends Admin_Controller
                 $in['policy_sid'] = $newPolicyId;
                 $in['employee_sid'] = $adminId;
                 $in['action'] = 'update';
+                $in['is_transfer'] = 1;
                 $in['note'] = json_encode($oldPolicy);
                 //
                 $this->timeoff_model->insertPolicyHistory($in);
