@@ -6893,15 +6893,15 @@ class Timeoff_model extends CI_Model
             //
             $oldPolicy = $this->timeoff_model->getSinglePolicyById($policy['sid']);
             $isAddedHistory = "no";
-
+            //
             if (in_array($policy['sid'], $policyIds)) {
                 //
                 if ($policy['is_entitled_employee'] == 1) {
-
+                    //
                     if ($policy['assigned_employees'] != 'all') {
-
+                        //
                         $assignedEmployeesArry = [];
-
+                        //
                         if ($policy['assigned_employees'] != 0) {
                             $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
                         }
@@ -6913,28 +6913,29 @@ class Timeoff_model extends CI_Model
                         $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
                             'assigned_employees' => $assignedEmployeesNew
                         ]);
-
+                        //
                         $isAddedHistory = "yes";
                     }
                 } else {
                     //is_entitled_employee==0
                     if ($policy['assigned_employees'] == 'all' || $policy['assigned_employees'] == '0') {
                         //SkipUpdate
-
+                        //
                         $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
                             'assigned_employees' => $employerId,
                             'is_entitled_employee' => 1
                         ]);
-
+                        //
                         $isAddedHistory = "yes";
                     }
             
                 }
             } else {
-
+                //
                 $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                //
                 if (in_array($employerId, $assignedEmployeesArry)) {
-
+                    //
                     if (($key = array_search($employerId, $assignedEmployeesArry)) !== false) {
                         unset($assignedEmployeesArry[$key]);
                         $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
@@ -6945,10 +6946,9 @@ class Timeoff_model extends CI_Model
                     }
                 }
             }
-
             //
             if ($isAddedHistory == "yes") {
-                // Lets save who created the policy
+                // Lets save who history of the policy
                 $in = [];
                 $in['policy_sid'] = $policy['sid'];
                 $in['employee_sid'] = $employer_id;
