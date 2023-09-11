@@ -6884,45 +6884,51 @@ class Timeoff_model extends CI_Model
         //
         if (empty($policies)) return false;
         //
+
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $employer_id = $data["session"]["employer_detail"]["sid"];
+
         foreach ($policies as $policy) {
             //
+            $oldPolicy = $this->timeoff_model->getSinglePolicyById($policy['sid']);
+            $isAddedHistory = "no";
 
             if (in_array($policy['sid'], $policyIds)) {
                 //
                 if ($policy['is_entitled_employee'] == 1) {
 
-                    $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
-                    //check if employee already assigned
-                    if (in_array($employerId, $assignedEmployeesArry) || in_array('all', $assignedEmployeesArry)) {
-                        // "Already Skip";
-                    } else {
+                    if ($policy['assigned_employees'] != 'all') {
+
+                        $assignedEmployeesArry = [];
+
+                        if ($policy['assigned_employees'] != 0) {
+                            $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                        }
+                        //check if employee already assigned
                         array_push($assignedEmployeesArry, $employerId);
+                        $assignedEmployeesArry = array_unique($assignedEmployeesArry);
                         $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
                         // Update Recorde
                         $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
                             'assigned_employees' => $assignedEmployeesNew
                         ]);
+
+                        $isAddedHistory = "yes";
                     }
                 } else {
                     //is_entitled_employee==0
                     if ($policy['assigned_employees'] == 'all' || $policy['assigned_employees'] == '0') {
                         //SkipUpdate
-                    } else {
 
-                        $assignedEmployeesArry = explode(',', $policy['assigned_employees']);
+                        $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
+                            'assigned_employees' => $employerId,
+                            'is_entitled_employee' => 1
+                        ]);
 
-                        if (in_array($employerId, $assignedEmployeesArry) || in_array('all', $assignedEmployeesArry)) {
-                            // "Already Skip";
-                        } else {
-
-                            array_push($assignedEmployeesArry, $employerId);
-                            $assignedEmployeesNew = implode(',', $assignedEmployeesArry);
-                            // Update Recorde
-                            $this->updateTimeoffAssignedEmployees($policy['sid'], $companyId, [
-                                'assigned_employees' => $assignedEmployeesNew
-                            ]);
-                        }
+                        $isAddedHistory = "yes";
                     }
+            
                 }
             } else {
 
@@ -6939,9 +6945,20 @@ class Timeoff_model extends CI_Model
                     }
                 }
             }
+
+            //
+            if ($isAddedHistory == "yes") {
+                // Lets save who created the policy
+                $in = [];
+                $in['policy_sid'] = $policy['sid'];
+                $in['employee_sid'] = $employer_id;
+                $in['action'] = 'update';
+                $in['note'] = json_encode($oldPolicy);
+                //
+                $this->timeoff_model->insertPolicyHistory($in);
+            }
         }
     }
-
 
 
     // 
