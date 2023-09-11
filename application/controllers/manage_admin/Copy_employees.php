@@ -895,7 +895,7 @@ class Copy_employees extends Admin_Controller
                     $isAddedHistory = "yes";    
                 }
             } else if ($policyDetails['is_entitled_employee'] == 0) {
-                if ($policyDetails['assigned_employees'] == 0) {
+                if ($policyDetails['assigned_employees'] == 0 || $policyDetails['assigned_employees'] == 'all') {
                     $this->db
                         ->where('sid', $newPolicyId)
                         ->update('timeoff_policies', [
