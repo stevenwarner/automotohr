@@ -1218,6 +1218,8 @@ class Reports_model extends CI_Model
         $this->db->select('portal_job_applications.phone_number');
         $this->db->select('portal_applicant_jobs_list.applicant_source');
         $this->db->select('portal_applicant_jobs_list.ip_address');
+        $this->db->select('portal_applicant_jobs_list.status_change_date');
+        $this->db->select('portal_applicant_jobs_list.status_change_by');
         $this->db->select('application_status.css_class');
         $this->db->select('portal_job_listings.Location_City');
         $this->db->select('portal_job_listings.Location_State');
@@ -1315,6 +1317,7 @@ class Reports_model extends CI_Model
                 $applications[$key]['Title'] = $this->get_job_title_by_type($application['job_sid'], $application['applicant_type'], $application['desired_job_title']);
                 $review_count = $this->getApplicantReviewsCount($application['applicant_sid']);
                 $review_score = $this->getApplicantAverageRating($application['applicant_sid']);
+                $review_comment = $this->getApplicantReviewsComments($application['applicant_sid']);
 
                 if ($review_score == '' || $review_score == NULL) {
                     $review_score = 0;
@@ -1322,13 +1325,16 @@ class Reports_model extends CI_Model
 
                 $applications[$key]['review_count'] = $review_count;
                 $applications[$key]['review_score'] = $review_score;
+                $applications[$key]['review_comment'] = $review_comment;
+
                 $this->db->select('interview_questionnaire_score.candidate_score, interview_questionnaire_score.job_relevancy_score, interview_questionnaire_score.employer_sid');
                 $this->db->select('users.first_name, users.last_name');
-                $this->db->where('interview_questionnaire_score.job_sid', $application['job_sid']);
+              //  $this->db->where('interview_questionnaire_score.job_sid', $application['job_sid']);
                 $this->db->where('interview_questionnaire_score.candidate_sid', $application['applicant_sid']);
                 $this->db->where('interview_questionnaire_score.company_sid', $company_sid);
                 $this->db->join('users', 'users.sid = interview_questionnaire_score.employer_sid');
                 $applications[$key]['scores'] = $this->db->get('interview_questionnaire_score')->result_array();
+                
             }
 
             return $applications;
@@ -2692,5 +2698,18 @@ class Reports_model extends CI_Model
         $a->free_result();
         //
         return $b;
+    }
+
+    function getApplicantReviewsComments($applicant_sid)
+    {
+        //
+        $this->db->select('comment,employer_sid,rating');
+        $this->db
+            ->from('portal_applicant_rating')
+            ->where('applicant_job_sid', $applicant_sid);
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
     }
 }

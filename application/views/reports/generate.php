@@ -257,8 +257,11 @@
                                                                         <th>Applicant Type</th>
                                                                         <th>Applicant Source</th>
                                                                         <th>Applicant Status</th>
+                                                                        <th>Status Changed Date</th>
+                                                                        <th>Status Changed By</th>
                                                                         <th class="text-center">Questionnaire Score</th>
                                                                         <th class="text-center">Reviews Score</th>
+                                                                        <th class="text-center">Reviews Info</th>
                                                                         <th class="col-lg-2">Interview Scores</th>
                                                                     </tr>
                                                                 </thead>
@@ -285,7 +288,17 @@
                                                                                 <td class="text-center"><?= reset_datetime(array('datetime' => $applicant['date_applied'], '_this' => $this)); ?></td>
                                                                                 <td><?php echo ucwords($applicant['applicant_type']); ?></td>
                                                                                 <td><?php echo ucwords($applicant['applicant_source']); ?></td>
-                                                                                <td><?php echo ucwords($applicant['status']); ?></td>
+                                                                                <td class="text-center">
+                                                                                    <div class="contacts_label auto-height  <?php echo $applicant['css_class'] ?>">
+                                                                                        <?php echo ucwords($applicant['status']); ?>
+                                                                                    </div>
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php echo $applicant['status_change_date'] != null ? date_with_time($applicant['status_change_date']) : 'N/A'; ?>
+                                                                                </td>
+                                                                                <td><?php echo  $applicant['status_change_by'] != null ? getUserNameBySID($applicant['status_change_by']) : 'N/A' ?></td>
+
                                                                                 <td class="text-center">
                                                                                     <?php
                                                                                     if ($applicant['questionnaire'] == '' || $applicant['questionnaire'] == NULL) {
@@ -305,6 +318,15 @@
                                                                                     with
                                                                                     <?php echo $applicant['review_count']; ?>
                                                                                     Review(s)
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    if (!empty($applicant['review_comment'])) {
+                                                                                        foreach ($applicant['review_comment'] as $commentRow) {
+                                                                                            echo  "Employer: " . getUserNameBySID($commentRow['employer_sid']) . "<br><br> Rating : ".$commentRow['rating'] ."<br><br>". $commentRow['comment'] ." <hr>";
+                                                                                        }
+                                                                                    }
+                                                                                    ?>
                                                                                 </td>
                                                                                 <td>
                                                                                     <?php

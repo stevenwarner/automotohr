@@ -862,6 +862,7 @@ class Interview_questionnaire extends Public_Controller {
             $data['candidate_type'] = 'applicant';
             $data['candidate_sid'] = $applicant_sid;
 
+
             $job_sid = 0;
 
             $questionnaire_score_data = $this->interview_questionnaires_model->get_questionnaire_score_data($company_sid, $employer_sid, $applicant_sid, 'applicant', $job_sid, $questionnaire_sid);
@@ -937,6 +938,7 @@ class Interview_questionnaire extends Public_Controller {
             $data['logged_in_employer_sid'] = $logged_in_employer_sid;
             $data['job_sid'] = $job_sid;
 
+           //die($data['job_sid'].'s');
 
             $data['questionnaire'] = $questionnaire;
             $this->load->view('main/header', $data);

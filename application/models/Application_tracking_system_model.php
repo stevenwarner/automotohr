@@ -2106,6 +2106,14 @@ class Application_tracking_system_model extends CI_Model
         $data_to_update = array();
         $data_to_update['status'] = $status_name;
         $data_to_update['status_sid'] = $status_sid;
+        $data_to_update['status_change_date'] = date('Y-m-d H:i:s');
+
+        //
+        $dataSession['session'] = $this->session->userdata('logged_in');
+        $employers_details  = $dataSession['session']['employer_detail'];
+        $employer_sid       = $employers_details['sid'];
+        $data_to_update['status_change_by'] = $employer_sid;
+
 
         $this->db->where('company_sid', $company_sid);
         $this->db->where('sid', $applicant_job_list_sid);
@@ -2134,6 +2142,15 @@ class Application_tracking_system_model extends CI_Model
             }
 
             $data['status_sid'] = $status_sid;
+        }
+
+        if ($table == 'portal_applicant_jobs_list') {
+            $data['status_change_date'] = date('Y-m-d H:i:s');
+
+            $dataSession['session'] = $this->session->userdata('logged_in');
+            $employers_details  = $dataSession['session']['employer_detail'];
+            $employer_sid       = $employers_details['sid'];
+            $data['status_change_by'] = $employer_sid;
         }
 
         $this->db->where('sid', $id);

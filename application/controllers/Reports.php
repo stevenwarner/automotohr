@@ -196,6 +196,8 @@ class Reports extends Public_Controller
             //-----------------------------------Pagination Ends-----------------------------//
             //$applicants = $this->Reports_model->get_applicants($company_sid, $search_string, $search_string2, $start_date_applied, $end_date_applied, false, $per_page, $offset);
             $applicants = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, false, $per_page, $offset, $source);
+
+
             $data['applicants'] = $applicants;
             $data['applicants_count'] = $total_records;
 
@@ -205,7 +207,6 @@ class Reports extends Public_Controller
 
             // ** export file sheet ** //
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
-
 
                 $myRecords = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, false, true, null, null, $source);
                 if (isset($myRecords) && sizeof($myRecords) > 0) {
@@ -227,7 +228,11 @@ class Reports extends Public_Controller
                             'questionnaire',
                             'score',
                             'passing_score',
-                            'status'
+                            'status',
+                            'status_change_date',
+                            'status_changed_by',
+                            'reviews_info'
+
                         );
                     } else {
                         $myColumns = array(
@@ -242,7 +247,10 @@ class Reports extends Public_Controller
                             'questionnaire',
                             'score',
                             'passing_score',
-                            'status'
+                            'status',
+                            'status_change_date',
+                            'status_changed_by',
+                            'reviews_info'
                         );
                     }
                     $cols = array();
@@ -256,6 +264,7 @@ class Reports extends Public_Controller
                             }
                         }
                     }
+
                     $cols[] = 'Questionnaire Score';
                     $cols[] = 'Reviews Score';
                     $cols[] = 'Interview Scores';
@@ -274,6 +283,21 @@ class Reports extends Public_Controller
                                     $columnType = $columnDetail['type'];
                                     if ($columnType == 'datetime') {
                                         $input[$myColumn] = reset_datetime(array('datetime' => $applicant[$myColumn], '_this' => $this));
+                                    } else if ($myColumn == 'status_change_date') {
+
+                                        $input[$myColumn] = $applicant['status_change_date'] != null ? reset_datetime(array('datetime' => $applicant['status_change_date'], '_this' => $this)) : 'N/A';
+                                    } else if ($myColumn == 'status_changed_by') {
+
+                                        $input[$myColumn] = $applicant['status_change_by'] != null ? getUserNameBySID($applicant['status_change_by']) : 'N/A';
+                                    } else if ($myColumn == 'reviews_info') {
+
+                                        $reviewNote = '';
+                                        if (!empty($applicant['review_comment'])) {
+                                            foreach ($applicant['review_comment'] as $commentRow) {
+                                                $reviewNote .=  "\n Employer: " . getUserNameBySID($commentRow['employer_sid']) . "\n\n"." Rating: ".$commentRow['rating']."\n\n".strip_tags($commentRow['comment']);
+                                            }
+                                            $input[$myColumn] = $reviewNote;
+                                        }
                                     } else {
                                         $input[$myColumn] = $applicant[$myColumn];
                                     }
