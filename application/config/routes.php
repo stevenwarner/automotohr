@@ -1836,3 +1836,11 @@ $route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
 $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 
 
+
+//
+$route['manage_admin/cms'] = 'manage_admin/Cms/index';
+$route['manage_admin/edit_page/(:num)'] = 'manage_admin/Cms/edit_page/$1';
+
+
+
+

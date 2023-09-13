@@ -149,6 +149,7 @@ if (
     $this->uri->segment(2) == 'turnover_cost_calculator_logs' ||
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
+    $this->uri->segment(2) == 'cms' ||
     base_url(uri_string()) == site_url('sa/lms/courses') ||
     $this->uri->segment(2) == 'job_title_templates' ||
     (
@@ -782,6 +783,17 @@ if (
                                     ?> href="<?php echo site_url('sa/lms/courses'); ?>">LMS Courses</a>
                             </div>
                         <?php } ?>
+
+                        
+                        <div class="menu-item">
+                                <a <?php
+                                    if (base_url(uri_string()) == site_url('manage_admin/cms') || $this->uri->segment(2) == 'cms') {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('manage_admin/cms'); ?>">Content Management System</a>
+                            </div>
+
+
                     </div>
 
                 </li>
