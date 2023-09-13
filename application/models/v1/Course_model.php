@@ -148,7 +148,7 @@ class Course_model extends CI_Model
             $courseStatus = $this->db
                 ->select('course_status')
                 ->from('lms_employee_course')
-                ->where('lms_employee_course.course_sid', $course['course_sid'])
+                ->where('lms_employee_course.course_sid', $course['sid'])
                 ->where('lms_employee_course.employee_sid', $employeeId)
                 ->get()
                 ->row_array();
@@ -164,6 +164,64 @@ class Course_model extends CI_Model
         }
 
         return $returnCount;
+    }
+
+    /***
+     * get employee pending course count
+     *
+     * @param int    $companyId
+     * @return array
+     */
+    public function getCompanyCoursesInfo(
+        int $companyId
+    ): array {
+        // 
+        // get the company courses
+        $companyCourses = $this->db
+            ->select('sid, course_start_period, course_end_period')
+            ->from('lms_default_courses')
+            ->where('company_sid', $companyId)
+            ->where('is_active', 1)
+            ->get()
+            ->result_array();
+        //
+        $result = [
+            'total_course' => count($companyCourses),
+            'expire_soon' => 0,
+            'upcoming' => 0,
+            'expired' => 0,
+            'started' => 0
+        ];
+        // if no courses are found
+        if (!$companyCourses) {
+            return $result;
+        }
+        //
+        $now = new DateTime(date("Y-m-d"));
+        // loop through courses
+        foreach ($companyCourses as $course) {
+            //
+            $start_period = new DateTime($course['course_start_period']);
+            $end_period = new DateTime($course['course_end_period']);
+            //
+            $start_diff = $now->diff($start_period)->format("%r%a");
+            $end_diff = $now->diff($end_period)->format("%r%a");
+            //
+            if ($start_diff > 0) {
+                $result['upcoming']++;
+            } else if ($start_diff < 0 && $end_diff > 0) {
+                if ($end_diff < 15) {
+                    $result['expire_soon']++;
+                } 
+                //
+                $result['started']++;
+            } else if ($start_diff < 0 && $end_diff < 0) {
+                $result['expired']++;
+            }
+            
+        }
+        //
+        return $result;
     }
 
     public function insertEmployeeSubordinate(

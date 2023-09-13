@@ -756,96 +756,54 @@ class Courses extends Public_Controller
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
-
-                    
-                    $myColumns = array(
-                        'sid',
-                        'Title',
-                        'first_name',
-                        'last_name',
-                        'email',
-                        'phone_number',
-                        'date_applied',
-                        'applicant_type',
-                        'questionnaire',
-                        'score',
-                        'passing_score',
-                        'status'
-                    );
+                    //
+                    fputcsv($output, array('Company Name',$session['company_detail']['CompanyName'], '', '', '', ''));
+                    fputcsv($output, array('Exported By',getUserNameBySID($security_sid), '', '', '', ''));
+                    fputcsv($output, array('Export Date', date(DATE_WITH_TIME, strtotime('now')), '', '', '', ''));
+                    //
+                    fputcsv($output, array('', '', '', '', '', ''));
+                    fputcsv($output, array('', '', '', '', '', ''));
+                    //
+                    fputcsv($output, array('Employee have courses', $companyReport['employee_have_courses'], '', '', '', ''));
+                    fputcsv($output, array('Employee not have courses', $companyReport['employee_not_have_courses'], '', '', '', ''));
+                    //
+                    fputcsv($output, array('Expired courses', $companyReport['courses_report']['expired'], '', '', '', ''));
+                    fputcsv($output, array('Start courses', $companyReport['courses_report']['started'], '', '', '', ''));
+                    fputcsv($output, array('Coming courses', $companyReport['courses_report']['coming'], '', '', '', ''));
+                    //
+                    fputcsv($output, array('', '', '', '', '', ''));
+                    fputcsv($output, array('', '', '', '', '', ''));
+                    //
                     $cols = array();
-
-                    // foreach ($myColumns as $col) {
-                    //     if ($col != 'questionnaire' && $col != 'score' && $col != 'passing_score' && $col != 'sid') {
-                    //         if ($col == 'Title') {
-                    //             $cols[] = 'Job Title';
-                    //         } else {
-                    //             $cols[] = ucwords(str_replace('_', ' ', $col));
-                    //         }
-                    //     }
-                    // }
-                    $cols[] = 'Questionnaire Score';
-                    $cols[] = 'Reviews Score';
-                    $cols[] = 'Interview Scores';
-
-                    fputcsv($output, array($companyinfo['company_name']));
-
+                    $cols[] = 'Employee Name';
+                    $cols[] = 'Department';
+                    $cols[] = 'Assign Course(s)';
+                    $cols[] = 'Pending Course(s)';
+                    $cols[] = 'Completed Course(s)';
+                    $cols[] = 'Completion Percentage';
+                    //
                     fputcsv($output, $cols);
-
-                    foreach ($myRecords as $applicant) {
-                        $input = array();
-
-                        foreach ($myColumns as $myColumn) {
-                            if ($myColumn != 'questionnaire' && $myColumn != 'score' && $myColumn != 'passing_score' && $myColumn != 'sid') {
-                                if ($myColumn != 'Title' && $myColumn != 'applicant_type') {
-                                    $columnDetail = $column_info[$myColumn];
-                                    $columnType = $columnDetail['type'];
-                                    if ($columnType == 'datetime') {
-                                        $input[$myColumn] = reset_datetime(array('datetime' => $applicant[$myColumn], '_this' => $this));
-                                    } else {
-                                        $input[$myColumn] = $applicant[$myColumn];
-                                    }
-                                } else {
-                                    $city = '';
-                                    $state = '';
-                                    if (isset($applicant['Location_City']) && $applicant['Location_City'] != NULL) {
-                                        $city = ' - ' . ucfirst($applicant['Location_City']);
-                                    }
-                                    if (isset($applicant['Location_State']) && $applicant['Location_State'] != NULL) {
-                                        $state = ', ' . db_get_state_name($applicant['Location_State'])['state_name'];
-                                    }
-                                    $input[$myColumn] = ($applicant[$myColumn] == '' ? 'Job Removed From System' : $applicant[$myColumn] . $city . $state);
-                                }
+                    //
+                    foreach ($companyReport['departments_report'] as $department) {
+                        if (!empty($department["employees"])) { 
+                            foreach ($department['employees'] as $employee) { 
+                                $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
+                                $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
+                                $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
+                                $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
+                                //
+                                fputcsv($output, array(
+                                    $companyReport["EmployeeList"][$employee]["full_name"],
+                                    $department["name"], 
+                                    $assignCourses, 
+                                    $pendingCourses, 
+                                    $completedCourses,
+                                    $completedCoursesPercentage." %"
+                                ));
                             }
                         }
-
-                        if ($applicant['questionnaire'] == '' || $applicant['questionnaire'] == NULL) {
-                            $input['questionnaire_score'] = 'N/A';
-                        } else {
-                            $result = $applicant['score'];
-                            if ($applicant['score'] >= $applicant['passing_score']) {
-                                $result .= ' (Pass)';
-                            } else {
-                                $result .= ' (Fail)';
-                            }
-                            $input['questionnaire_score'] = $result;
-                        }
-
-                        $input['reviews_score'] = $applicant['review_score'] . ' with ' . $applicant['review_count'] . ' Review(s)';
-
-                        if (sizeof($applicant['scores']) > 0) {
-                            $score_text = '';
-                            foreach ($applicant['scores'] as $score) {
-                                $score_text .= 'Employer : ' . ucwords($score['first_name'] . ' ' . $score['last_name']) . ' ';
-                                $score_text .= 'Candidate Score : ' . $score['candidate_score'] . ' out of 100 ';
-                                $score_text .= 'Job Relevancy Score : ' . $score['job_relevancy_score'] . ' out of 100; ';
-                            }
-                        } else {
-                            $score_text = 'No interview scores';
-                        }
-
-                        $input['scores'] = $score_text;
-                        fputcsv($output, $input);
                     }
+
                     fclose($output);
                     exit;
                 }    
@@ -859,4 +817,52 @@ class Courses extends Public_Controller
             redirect(base_url('login'), "refresh");
         }
     }
+
+    public function companyCourses () {
+        if ($this->session->userdata('logged_in')) { 
+            // Added on: 28-08-2023
+            $session = $this->session->userdata('logged_in');
+            //
+            if (!$session['employer_detail']['access_level_plus']) {
+                $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
+                redirect('dashboard', 'refresh');
+            }
+            //
+            $security_sid = $session['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            //
+            check_access_permissions($security_details, 'dashboard', 'companyReport'); // Param2: Redirect URL, Param3: Function Name
+            //
+            $data['session'] = $session;
+            $data['security_details'] = $security_details;
+            $data['title'] = "LMS Company Courses";
+            $data['employer_sid'] = $security_sid;
+            $data['company_sid'] = $session['company_detail']['sid'];
+            $data['logged_in_view'] = true;
+            $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            $data['employer_detail'] = $data['session']['employer_detail'];
+            $data['company_detail'] = $data['session']['company_detail'];
+            //
+            // load JS
+            $data['PageScripts'] = [
+                'js/app_helper',
+                'v1/common',
+                'v1/lms/company_courses'
+            ];
+            $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+            // get access token
+            $data['apiAccessToken'] = getApiAccessToken(
+                $data['company_sid'],
+                $data['employer_sid']
+            );
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('courses/company_courses');
+            $this->load->view('main/footer');
+            
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
 }

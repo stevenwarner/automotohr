@@ -1793,6 +1793,8 @@ $route['lms/employee/courses/(:num)'] = 'v1/Courses/subordinateCourses/plus/$1';
 $route['lms/subordinate/course/(:num)/(:num)'] = 'v1/Courses/subordinateCourse/$1/$2';
 $route['lms/courses/company_report'] = 'v1/Courses/companyReport';
 $route['lms/courses/company_report/(:any)/(:any)/(:any)'] = 'v1/Courses/companyReport/$1/$2/$3';
+$route['lms/courses/company_courses'] = 'v1/Courses/companyCourses';
+
 
 
 $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridDocument';

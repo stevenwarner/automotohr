@@ -11,9 +11,9 @@
         <!--3-->
         <?php if (isPayrollOrPlus(true)) { ?>
             <li>
-                <a <?php if (strpos(base_url(uri_string()), 'my') !== false || strpos(base_url(uri_string()), site_url('edit_listing')) !== false || strpos(base_url(uri_string()), site_url('clone_listing')) !== false) {
+                <a <?php if (strpos(base_url(uri_string()), 'company_courses') !== false) {
                         echo 'class="active"';
-                    } ?> href="<?php echo base_url('lms/courses/my') ?>">
+                    } ?> href="<?php echo base_url('lms/courses/company_courses') ?>">
                     <figure><i class="fa fa-list-alt"></i></figure>Courses
                 </a>
             </li>
@@ -28,6 +28,13 @@
                 </a>
             </li>
         <?php } ?>
+        <li>
+            <a <?php if (strpos(base_url(uri_string()), 'my') !== false) {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('lms/courses/my') ?>">
+                <figure><i class="fa fa-list-alt"></i></figure>My Courses
+            </a>
+        </li>
     </ul>
 </div>
 

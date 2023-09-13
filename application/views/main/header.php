@@ -1971,3 +1971,7 @@
                                 .error();
                         }
                     </script>
+                    <?php if (isset($PageScripts)) : ?>
+                        <!-- Scripts -->
+                        <?= GetScripts($PageScripts); ?>
+                    <?php endif; ?>
