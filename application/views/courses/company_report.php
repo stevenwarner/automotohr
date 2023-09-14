@@ -74,10 +74,16 @@
                                             <div class="report-btns">
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                        <button type="button" class="form-btn btn-black" onclick="jsClearDateFilters();">Clear Filter</button>
+                                                        <button type="button" class="form-btn btn-black" onclick="jsClearDateFilters();">
+                                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                                            Clear Filter
+                                                        </button>
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                        <button type="button" class="form-btn-orange" onclick="jsApplyDateFilters();">Apply Filter</button>
+                                                        <button type="button" class="form-btn-orange" onclick="jsApplyDateFilters();">
+                                                            <i class="fa fa-filter" aria-hidden="true"></i>
+                                                            Apply Filter
+                                                        </button>
                                                     </div>
                                                     <button type="submit" id="jsFetchCSVReport" class="dn"></button>
                                                 </div>
@@ -226,7 +232,10 @@
                                     </div>
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                       <button type="button" class="form-btn" onclick="excel_export()">Export CSV</button>
+                                        <button type="button" class="form-btn" onclick="excel_export()">
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                            Export CSV
+                                        </button>
                                     </div>
                                 </div>
 
@@ -276,7 +285,12 @@
                                                                     <td class="_csVm"><?php echo $pendingText; ?></td>
                                                                     <td class="_csVm"><?php echo $completedText; ?></td>
                                                                     <td class="_csVm stepText2"><?php echo $completedCoursesPercentage." %"; ?></td>
-                                                                    <td class="_csVm"><a href="<?php echo base_url('lms/employee/courses/'.$employee); ?>" class="btn btn-info btn-block csRadius5">View</a></td>
+                                                                    <td class="_csVm">
+                                                                        <a href="<?php echo base_url('lms/employee/courses/'.$employee); ?>" class="btn btn-info btn-block csRadius5">
+                                                                            <i class="fa fa-eye"></i>
+                                                                            View
+                                                                        </a>
+                                                                    </td>
                                                                 </tr>
                                                             <?php } ?> 
                                                         </tbody>
@@ -400,7 +414,7 @@
     $percentageNotHaveCourses = ($NotHaveCourses / $TotalEmployees) * 100;
 ?>
 <script>
-    //
+    // //
     Highcharts.chart('jsCompanyEmployees', {
         chart: {
             plotBackgroundColor: null,
@@ -448,7 +462,7 @@
         }],
         colors: ['#64E572', '#FF9655']
     });
-    //
+    // //
     Highcharts.chart('jsDepartmentsGraph', {
         data: {
             table: 'datatable'
@@ -474,7 +488,7 @@
         },
         colors: ['#64E572', '#FF9655']
     });
-    //
+    // //
     Highcharts.chart('jsDepartmentsCoursesProgressGraph', {
         data: {
             table: 'jsDepartmentsCoursesProgressGraphTable'
@@ -500,7 +514,7 @@
         },
         colors: ['#64E572', '#FF9655']
     });
-    //
+    // //
     Highcharts.chart('jsCoursesProgressGraph', {
         data: {
             table: 'jsCoursesProgressGraphTable'

@@ -24,6 +24,54 @@
     </div>
 </div>
 
+<style>
+    .csRP {
+        padding: 0px;
+    }
+
+    .csQuestionBox:nth-child(even) {
+        background-color: #f1f1f1 !important;
+    }
+
+    .csQuestionBox {
+        display: block;
+        padding: 20px 10px;
+    }
+
+    .text-white {
+        color: #fff;
+    }
+
+    .csQuestionBox:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    h3,h4 {
+        color: #fff;
+    }
+
+    strong {
+        color: #000;
+    }
+
+    thead {
+        background: #000;
+    }
+
+    .success-block {
+        background: #28a745 !important;
+    }
+
+    .error-block {
+        background: #dc3545 !important;
+    }
+
+    .post-block {
+        background: #007bff !important;
+    }
+</style> 
+
+
 <script>
     var apiURL = "<?php echo $apiURL; ?>";
     var companySid = "<?php echo $company_sid; ?>";

@@ -246,10 +246,10 @@ $(function LMSEmployeeCourses() {
 						coursesHTML += `            <p>&nbsp;</p>`;
 						coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${
 							baseURI + "lms/employee/course/" + course.sid
-						}" >${
+						}" ><i class="fa fa-play"></i>${
 							course.course_status == "passed"
-								? "Retake Course"
-								: "Launch Content"
+								? " Retake Course"
+								: " Launch Content"
 						}</a>`;
 						coursesHTML += `        </div>`;
 						coursesHTML += `    </div>`;

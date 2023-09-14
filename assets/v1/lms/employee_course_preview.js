@@ -245,7 +245,7 @@ $(function LMSEmployeeCourses() {
 						coursesHTML += `            <p>&nbsp;</p>`;
 						coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${
 							baseURI + "lms/subordinate/course/" + course.sid + "/" + subordinateId
-						}" >${
+						}" ><i class="fa fa-play"></i>&nbsp${
 							course.course_status == "passed"
 								? "Retake Course"
 								: "Launch Content"

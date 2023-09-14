@@ -77,10 +77,16 @@
                                             <div class="row">
                                                 <!-- filters buttons -->
                                                 <div class="col-lg-6">
-                                                    <a href="javascript:;" class="btn btn-info btn-block csRadius5 jsSearchEmployees">Search</a>
+                                                    <a href="javascript:;" class="btn btn-info btn-block csRadius5 jsSearchEmployees">
+                                                        <i class="fa fa-filter" aria-hidden="true"></i>
+                                                        Search
+                                                    </a>
                                                 </div>    
                                                 <div class="col-lg-6">
-                                                    <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black btn-block csRadius5">Clear</a>
+                                                    <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black btn-block csRadius5">
+                                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                                        Clear
+                                                    </a>
                                                 </div> 
                                             </div>    
                                         </div>
@@ -125,7 +131,12 @@
                                                                     <td class="_csVm"><?php echo $departmentName; ?></td>
                                                                     <td class="_csVm"><?php echo $teamName; ?></td>
                                                                     <td class="_csVm"><?php echo $courseCountText; ?></td>
-                                                                    <td class="_csVm"><a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5">View</a></td>
+                                                                    <td class="_csVm">
+                                                                        <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5">
+                                                                            <i class="fa fa-eye"></i>
+                                                                            View
+                                                                        </a>
+                                                                    </td>
                                                                 </tr>
                                                             <?php } ?>    
                                                         <?php } ?>
