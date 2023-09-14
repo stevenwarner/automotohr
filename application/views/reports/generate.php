@@ -347,6 +347,8 @@
                                                                                         foreach ($applicant['review_comment'] as $commentRow) {
                                                                                             echo  "Employer: " . getUserNameBySID($commentRow['employer_sid']) . "<br><br> Rating : " . $commentRow['rating'] . "<br><br>Note: " . $commentRow['comment'] . "<br> Date: ".date_with_time($commentRow['date_added'])." <hr>";
                                                                                         }
+                                                                                    }else{
+                                                                                        echo '<span style="color:red;">N/A </span>';
                                                                                     }
                                                                                     ?>
                                                                                 </td>

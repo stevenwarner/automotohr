@@ -298,6 +298,8 @@ class Reports extends Public_Controller
                                                 $reviewNote .=  "\n Employer: " . getUserNameBySID($commentRow['employer_sid']) . "\n\n" . " Rating: " . $commentRow['rating'] . "\n\n Note: " . strip_tags($commentRow['comment']). "\n\n Date: " . date_with_time($commentRow['date_added'])."\n\n";
                                             }
                                             $input[$myColumn] = $reviewNote;
+                                        }else{
+                                            $input[$myColumn] ="N/A";
                                         }
                                     } else {
                                         $input[$myColumn] = $applicant[$myColumn];
