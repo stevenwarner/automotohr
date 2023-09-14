@@ -1200,8 +1200,27 @@ class Reports_model extends CI_Model
         }
     }
 
-    function get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null, $source = 'all')
+    function get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date = null, $end_date = null, $count_only = false, $limit = null, $offset = null, $source = 'all', $managerId = 'all')
     {
+        $managersIds = [];
+        if ($managerId != 'all') {
+            $this->db->select('job_sid');
+            $this->db
+                ->from('portal_job_listings_visibility')
+                ->where('employer_sid', $managerId)
+                ->where('company_sid', $company_sid);
+            //
+            $result = $this->db->get();
+            //
+            $result = $result->result_array();
+
+            if (!empty($result)) {
+                $managersIds = array_column($result, 'job_sid');
+            }
+        }
+
+        // _e($managersIds,true);
+
         $this->db->select('portal_applicant_jobs_list.sid as application_sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.status');
@@ -1251,6 +1270,14 @@ class Reports_model extends CI_Model
         }
 
         $check_jobs_exists = explode(',', $job_sid);
+
+        if ($managerId != 'all') {
+            if (!empty($managersIds)) {
+                $check_jobs_exists =  $managersIds;
+            } else {
+                $check_jobs_exists = array('no');
+            }
+        }
 
         if (!in_array('all', $check_jobs_exists)) {
             if (is_array($check_jobs_exists)) {
@@ -1329,12 +1356,11 @@ class Reports_model extends CI_Model
 
                 $this->db->select('interview_questionnaire_score.candidate_score, interview_questionnaire_score.job_relevancy_score, interview_questionnaire_score.employer_sid');
                 $this->db->select('users.first_name, users.last_name');
-              //  $this->db->where('interview_questionnaire_score.job_sid', $application['job_sid']);
+                //  $this->db->where('interview_questionnaire_score.job_sid', $application['job_sid']);
                 $this->db->where('interview_questionnaire_score.candidate_sid', $application['applicant_sid']);
                 $this->db->where('interview_questionnaire_score.company_sid', $company_sid);
                 $this->db->join('users', 'users.sid = interview_questionnaire_score.employer_sid');
                 $applications[$key]['scores'] = $this->db->get('interview_questionnaire_score')->result_array();
-                
             }
 
             return $applications;
@@ -2703,7 +2729,7 @@ class Reports_model extends CI_Model
     function getApplicantReviewsComments($applicant_sid)
     {
         //
-        $this->db->select('comment,employer_sid,rating');
+        $this->db->select('comment,employer_sid,rating,date_added');
         $this->db
             ->from('portal_applicant_rating')
             ->where('applicant_job_sid', $applicant_sid);
@@ -2711,5 +2737,27 @@ class Reports_model extends CI_Model
         $result = $this->db->get();
         //
         return $result ? $result->result_array() : [];
+    }
+
+
+    function get_managers($companySid)
+    {
+        $a = $this->db
+            ->select("
+        sid as employeeId,
+        CONCAT(first_name,' ', last_name) as full_name,
+        " . (getUserFields()) . "
+    ")
+            ->where('parent_sid', $companySid)
+            ->where('users.terminated_status', 0)
+            ->where('users.active', 1)
+            ->where('users.access_level!=', 'Employee')
+            ->order_by('full_name', 'ASC')
+            ->get('users');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
     }
 }

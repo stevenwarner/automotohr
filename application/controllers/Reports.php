@@ -41,8 +41,9 @@ class Reports extends Public_Controller
         }
     }
 
-    public function generate($type = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $source = 'all', $page_number = 1)
+    public function generate($type = null, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $source = 'all', $manager = 'all',  $page_number = 1)
     {
+
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -158,9 +159,9 @@ class Reports extends Public_Controller
                 $offset = ($page_number - 1) * $per_page;
             }
 
-            $total_records = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, true, null, null, $source);
+            $total_records = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, true, null, null, $source, $manager);
             $this->load->library('pagination');
-            $pagination_base = base_url('reports/generate/applicants') . '/' . urlencode($keyword) . '/' . $job_sid . '/' . urlencode($applicant_type) . '/' . urlencode($applicant_status) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($source);
+            $pagination_base = base_url('reports/generate/applicants') . '/' . urlencode($keyword) . '/' . $job_sid . '/' . urlencode($applicant_type) . '/' . urlencode($applicant_status) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($source) . '/' . urlencode($manager);
             //echo $pagination_base;
             $config = array();
             $config["base_url"] = $pagination_base;
@@ -195,7 +196,7 @@ class Reports extends Public_Controller
 
             //-----------------------------------Pagination Ends-----------------------------//
             //$applicants = $this->Reports_model->get_applicants($company_sid, $search_string, $search_string2, $start_date_applied, $end_date_applied, false, $per_page, $offset);
-            $applicants = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, false, $per_page, $offset, $source);
+            $applicants = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, false, $per_page, $offset, $source, $manager);
 
 
             $data['applicants'] = $applicants;
@@ -208,7 +209,7 @@ class Reports extends Public_Controller
             // ** export file sheet ** //
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
 
-                $myRecords = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, false, true, null, null, $source);
+                $myRecords = $this->reports_model->get_applicants($company_sid, $keyword, $job_sid, $applicant_type, $applicant_status, $start_date_applied, $end_date_applied, false, true, null, null, $source, $manager);
                 if (isset($myRecords) && sizeof($myRecords) > 0) {
                     header('Content-Type: text/csv; charset=utf-8');
                     header('Content-Disposition: attachment; filename=data.csv');
@@ -294,7 +295,7 @@ class Reports extends Public_Controller
                                         $reviewNote = '';
                                         if (!empty($applicant['review_comment'])) {
                                             foreach ($applicant['review_comment'] as $commentRow) {
-                                                $reviewNote .=  "\n Employer: " . getUserNameBySID($commentRow['employer_sid']) . "\n\n"." Rating: ".$commentRow['rating']."\n\n".strip_tags($commentRow['comment']);
+                                                $reviewNote .=  "\n Employer: " . getUserNameBySID($commentRow['employer_sid']) . "\n\n" . " Rating: " . $commentRow['rating'] . "\n\n Note: " . strip_tags($commentRow['comment']). "\n\n Date: " . date_with_time($commentRow['date_added'])."\n\n";
                                             }
                                             $input[$myColumn] = $reviewNote;
                                         }
@@ -350,6 +351,12 @@ class Reports extends Public_Controller
                 }
             }
 
+            //
+            $managers = $this->reports_model->get_managers($company_sid);
+
+            $data['managers'] = $managers;
+
+            //  _e($data['managers'],true,true);
             $this->load->view('main/header', $data);
             $this->load->view('reports/generate');
             $this->load->view('main/footer');

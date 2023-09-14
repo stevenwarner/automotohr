@@ -86,7 +86,7 @@
 
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-3">
                                                                         <div class="field-row">
                                                                             <label>Applicant Status</label>
                                                                             <?php $applicant_status = $this->uri->segment(7) != 'all' ? urldecode($this->uri->segment(7)) : ''; ?>
@@ -117,14 +117,36 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
+
+
+
                                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                        <div class="field-row">
+                                                                            <label>Managers</label>
+                                                                            <?php $manager_id = $this->uri->segment(11) != 'all' ? urldecode($this->uri->segment(11)) : ''; ?>
+                                                                            <div class="hr-select-dropdown">
+                                                                                <select class="invoice-fields" name="managers" id="managers">
+                                                                                    <?php if (!empty($managers)) { ?>
+                                                                                        <option value="all">All</option>
+                                                                                        <?php foreach ($managers as $managerRow) { ?>
+                                                                                            <option value="<?php echo $managerRow['employeeId']; ?>"><?php echo getUserNameBySID($managerRow['employeeId']) ?></option>
+                                                                                        <?php } ?>
+                                                                                    <?php } ?>
+
+                                                                                </select>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-3">
                                                                         <div class="field-row">
                                                                             <label class="">Start Date</label>
                                                                             <?php $start_date = $this->uri->segment(8) != 'all' && $this->uri->segment(8) != '' ? urldecode($this->uri->segment(8)) : date('m-d-Y'); ?>
                                                                             <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-3">
                                                                         <div class="field-row">
                                                                             <label class="">End Date</label>
                                                                             <?php $end_date = $this->uri->segment(9) != 'all' && $this->uri->segment(9) != '' ? urldecode($this->uri->segment(9)) : date('m-d-Y'); ?>
@@ -261,7 +283,7 @@
                                                                         <th>Status Changed By</th>
                                                                         <th class="text-center">Questionnaire Score</th>
                                                                         <th class="text-center">Reviews Score</th>
-                                                                        <th class="text-center">Reviews Info</th>
+                                                                        <th class="col-lg-2 text-center">Reviews Info</th>
                                                                         <th class="col-lg-2">Interview Scores</th>
                                                                     </tr>
                                                                 </thead>
@@ -323,7 +345,7 @@
                                                                                     <?php
                                                                                     if (!empty($applicant['review_comment'])) {
                                                                                         foreach ($applicant['review_comment'] as $commentRow) {
-                                                                                            echo  "Employer: " . getUserNameBySID($commentRow['employer_sid']) . "<br><br> Rating : ".$commentRow['rating'] ."<br><br>". $commentRow['comment'] ." <hr>";
+                                                                                            echo  "Employer: " . getUserNameBySID($commentRow['employer_sid']) . "<br><br> Rating : " . $commentRow['rating'] . "<br><br>Note: " . $commentRow['comment'] . "<br> Date: ".date_with_time($commentRow['date_added'])." <hr>";
                                                                                         }
                                                                                     }
                                                                                     ?>
@@ -351,7 +373,7 @@
                                                                         <?php } ?>
                                                                     <?php } else { ?>
                                                                         <tr>
-                                                                            <td class="text-center" colspan="12">
+                                                                            <td class="text-center" colspan="15">
                                                                                 <div class="no-data">No applicants found.</div>
                                                                             </td>
                                                                         </tr>
@@ -406,6 +428,9 @@
         var start_date_applied = $('#start_date_applied').val();
         var end_date_applied = $('#end_date_applied').val();
         var source = $('#source').val();
+        var managers = $('#managers').val();
+
+
 
         keyword = keyword != '' && keyword != null && keyword != undefined && keyword != 0 ? encodeURIComponent(keyword) : 'all';
         job_sid = job_sid != '' && job_sid != null && job_sid != undefined && job_sid != 0 ? encodeURIComponent(job_sid) : 'all';
@@ -414,9 +439,11 @@
         start_date_applied = start_date_applied != '' && start_date_applied != null && start_date_applied != undefined && start_date_applied != 0 ? encodeURIComponent(start_date_applied) : 'all';
         end_date_applied = end_date_applied != '' && end_date_applied != null && end_date_applied != undefined && end_date_applied != 0 ? encodeURIComponent(end_date_applied) : 'all';
         source = source != '' && source != null && source != undefined && source != 0 ? encodeURIComponent(source) : 'all';
+        managers = managers != '' && managers != null && managers != undefined && managers != 0 ? encodeURIComponent(managers) : 'all';
 
 
-        var url = '<?php echo base_url('reports/generate/applicants'); ?>' + '/' + keyword + '/' + job_sid + '/' + applicant_type + '/' + applicant_status + '/' + start_date_applied + '/' + end_date_applied + '/' + source;
+
+        var url = '<?php echo base_url('reports/generate/applicants'); ?>' + '/' + keyword + '/' + job_sid + '/' + applicant_type + '/' + applicant_status + '/' + start_date_applied + '/' + end_date_applied + '/' + source + '/' + managers;
 
         $('#btn_apply_filters').attr('href', url);
     }
@@ -436,6 +463,8 @@
             }
         });
 
+        //
+        $('#managers').val('<?php echo $this->uri->segment(11);?>');
 
         $('#btn_apply_filters').on('click', function(e) {
             e.preventDefault();
