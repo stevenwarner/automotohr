@@ -86,11 +86,12 @@ class Cms extends Admin_Controller
         $this->data['page_title'] = 'Page';
         $this->data['groups'] = $this->ion_auth->groups()->result();
         $page_data = $this->cms_model->get_page_data($sid);
+
+      //  _e($page_data,true);
+
         $this->data['page_data'] = $page_data;
         $this->render('manage_admin/cms/' . $page_data['page']);
     }
-
-
 
     //
     public function update_page()
