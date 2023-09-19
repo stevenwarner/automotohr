@@ -130,9 +130,12 @@
                                                 <td class="text-center" colspan="4">No Company is linked with your account.</td>
                                             </tr>
                                         <?php   } else { ?>
-                                            <?php foreach ($executive_user_companies as $user_company) {?>
+                                            <?php foreach ($executive_user_companies as $user_company) { ?>
                                                 <tr>
-                                                    <td><a><?php echo $user_company['company_name']; ?> <?php if($user_company['company_status']==0){?> <br><span class="btn-danger" style="padding-left: 10px;padding-right: 10px;padding-bottom: 1px; margin-top: 10px; pointer-events: none;"><strong>Closed</strong></span> <?php }?></a></td>
+                                                    <td><a><?php echo $user_company['company_name']; ?> <?php if ($user_company['company_status'] == 0) { ?>
+                                                                <label class="label label-danger" title="The store is closed." placement="top">
+                                                                    Closed
+                                                                </label> <?php } ?></a></td>
                                                     <td><?php echo $user_company['company_website']; ?></td>
                                                     <td class="text-center">
                                                         <div class="btn-msg-actions display-block">

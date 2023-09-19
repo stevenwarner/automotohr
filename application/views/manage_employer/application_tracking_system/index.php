@@ -13,7 +13,11 @@
                             <?php } ?>
                             <?php if (!empty($session['company_detail']['CompanyName'])) { ?>
                                 <br><?php echo $session['company_detail']['CompanyName']; ?>
-                                <?php if($companyData['company_status']==0 && $session["employer_detail"]["access_level_plus"]==1){?> &nbsp;<span class="btn-danger" style="padding-left: 10px;padding-right: 10px;padding-bottom: 1px; margin-top: 10px; pointer-events: none;" >Closed</span> <?php }?>
+                                <?php if ($companyData['company_status'] == 0 && isPayrollOrPlus(true)) { ?>
+                                    <label class="label label-danger" title="The store is closed." placement="top">
+                                        Closed
+                                    </label>
+                                <?php } ?>
                             <?php } ?><br>
                             <?php echo $title; ?>
                         </span>
