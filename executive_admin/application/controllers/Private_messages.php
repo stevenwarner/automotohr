@@ -404,6 +404,8 @@ class Private_messages extends CI_Controller {
                 $this->message_model->mark_read($edit_id);
                 $data['total_messages']                                         = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
                 $data['company_name']                                           = $company_name;
+
+                $data['employer_id'] = $employer_id;
                 
                 $this->load->view('main/header', $data);
                 $this->load->view('private_messages/message_detail_new');
