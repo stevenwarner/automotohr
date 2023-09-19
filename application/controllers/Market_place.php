@@ -110,7 +110,6 @@ class Market_place extends Public_Controller {
                 $this->market_place_model->$function($data, $redirecturl, $sid); // add this product to Database
             }
 
-_e($productType, true, false, true);
 
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/marketplace');
