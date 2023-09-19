@@ -13,7 +13,7 @@
                             <?php } ?>
                             <?php if (!empty($session['company_detail']['CompanyName'])) { ?>
                                 <br><?php echo $session['company_detail']['CompanyName']; ?>
-                                <?php if ($companyData['company_status'] == 0 && isPayrollOrPlus(true)) { ?>
+                                <?php if (isCompanyClosed() && isPayrollOrPlus(true)) { ?>
                                     <label class="label label-danger" title="The store is closed." placement="top">
                                         Closed
                                     </label>

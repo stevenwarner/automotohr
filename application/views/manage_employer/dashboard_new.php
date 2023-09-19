@@ -101,7 +101,7 @@
                                                 <figure><img width="100" height="80" src="<?php echo AWS_S3_BUCKET_URL . $companyData['Logo']; ?>" alt="" /></figure>
                                             <?php } ?>
                                             <span class="registered-company-name"><?php echo $companyData['CompanyName']; ?>
-                                                <?php if ($companyData['company_status'] == 0 && isPayrollOrPlus(true)) { ?>
+                                                <?php if (isCompanyClosed() && isPayrollOrPlus(true)) { ?>
                                                     <label class="label label-danger" title="The store is closed." placement="top">
                                                         Closed
                                                     </label> <?php } ?></span>
