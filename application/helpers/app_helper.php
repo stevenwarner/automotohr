@@ -1342,7 +1342,7 @@ if (!function_exists('getFormErrors')) {
     }
 }
 
-if(!function_exists('loadUpModel')) {
+if (!function_exists('loadUpModel')) {
     /**
      * loads up a model
      *
@@ -1355,5 +1355,24 @@ if(!function_exists('loadUpModel')) {
     {
         // load the model
         return get_instance()->load->model($modelPath, $name);
+    }
+}
+
+if (!function_exists('getDueDate')) {
+    /**
+     * get the due date from a date
+     *
+     * @param string $date
+     * @return string
+     */
+    function getDueDate(string $date): string
+    {
+        //
+        $dateTimeObj = new DateTime($date);
+        $currentDateObj = new DateTime();
+        //
+        $diff = $currentDateObj->diff($dateTimeObj);
+        //
+        return $diff->format('%d days');
     }
 }

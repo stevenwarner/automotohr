@@ -22,6 +22,11 @@ $sideBarUrls = [
         'payrolls/external/add',
         'payrolls/external/(:num)',
     ],
+    'regular_payrolls' => [
+        'payrolls/regular',
+        'payrolls/regular/add',
+        'payrolls/regular/(:num)',
+    ],
     'settings' => [
         'payrolls/settings',
     ],

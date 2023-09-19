@@ -363,6 +363,14 @@ if (!function_exists('getUrl')) {
         // confirm tax liabilities
         $urls['confirmExternalPayrollTaxLiabilities'] = "v1/companies/$key/external_payrolls/tax_liabilities/finish";
 
+        // Regular payroll calls
+        // blockers
+        $urls["getPayrollBlockers"] =
+            "v1/companies/$key/payrolls/blockers";
+        // unprocessed payroll by start date
+        $urls["getUnprocessedPayrollsByStartDate"] =
+            "v1/companies/$key/payrolls?processing_statuses=unprocessed&start_date=$key1&payroll_types=regular&include=totals";
+
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }

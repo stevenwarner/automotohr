@@ -1803,10 +1803,17 @@ $route['payrolls/external/tax-liabilities']['post'] =
   'v1/payrolls/External/updateTaxLiabilities';
 // confirm tax liabilities
 $route['payrolls/external/tax-liabilities/confirm']['get'] =
-  'v1/payrolls/External/confirmTaxLiabilities';  
+  'v1/payrolls/External/confirmTaxLiabilities';
 // confirm tax liabilities
 $route['payrolls/external/tax-liabilities/confirm']['put'] =
   'v1/payrolls/External/finishTaxLiabilities';
+
+// Regular payroll routes
+$route['payrolls/regular']['get'] =
+  'v1/payrolls/regular/index';
+// Regular single payroll routes
+$route['payrolls/regular/(:num)']['get'] =
+  'v1/payrolls/regular/single/$1';
 /**
  * form routes
  */

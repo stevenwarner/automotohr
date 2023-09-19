@@ -1,8 +1,4 @@
-<?php
-
-use Twilio\Rest\Api\V2010\Account\NewKeyPage;
-
-defined('BASEPATH') || exit('No direct script access allowed');
+<?php defined('BASEPATH') || exit('No direct script access allowed');
 // load the payroll model
 loadUpModel('v1/Payroll_model', 'Payroll_model');
 /**
