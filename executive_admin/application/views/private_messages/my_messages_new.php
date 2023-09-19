@@ -85,7 +85,7 @@
                         </div>
                     </div>
                 </div>
-                <?php if ($messages) { ?>
+                <?php if ($messages) {?>
                     <div class="panel panel-default full-width">
                         <div class="panel-heading"><strong><?php echo $company_name; ?> (<?= $page ?>)</strong></div>
                         <div class="panel-body">
@@ -157,7 +157,7 @@
                                     <tr>
                                         <th>
                                             <?php if ($page == 'inbox') { ?>
-                                                From
+                                                From 
                                             <?php } else { ?>
                                                 To
                                             <?php } ?>

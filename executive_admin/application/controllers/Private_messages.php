@@ -97,7 +97,8 @@ class Private_messages extends CI_Controller {
         
                 $employer_id                                                    = $this->message_model->get_employer_id($username, $employer_email, $company_id);
                 $data['messages']                                               = $this->message_model->get_employer_messages($employer_id, $employer_email, $between, $company_id);
-                $this->load->helper('email');
+               
+               $this->load->helper('email');
                 
                 foreach ($data['messages'] as $myKey => $message) {
                     if (is_numeric($message['username'])) {
@@ -367,12 +368,13 @@ class Private_messages extends CI_Controller {
     public function inbox_message_detail($company_id = NULL, $edit_id = NULL) {
         if ($this->session->userdata('executive_loggedin')) {
             $data                                                               = $this->session->userdata('executive_loggedin');
+          
+         
             $data['company_id']                                                 = $company_id;
             $username                                                           = $data['executive_user']['username'].'_executive_admin_'.$company_id;
             $employer_email                                                     = $data['executive_user']['email'];
             $employer_id                                                        = $this->message_model->get_employer_id($username, $employer_email, $company_id);
             $company_name                                                       = '';
-            
             if ($company_id = NULL || $edit_id == NULL) { //If parameter not exist
                 redirect(base_url('private_messages'), 'refresh');
             } else {
@@ -392,7 +394,7 @@ class Private_messages extends CI_Controller {
                 $to_type                                                        = $message_data[0]['to_type'];
                 $this->load->helper('email');
                 $contact_details                                                = $this->message_model->get_contact_name($msg_id, $to_id, $from_id, $from_type, $to_type);
-//                echo '<pre>'; print_r($contact_details); echo '</pre>';
+                //                echo '<pre>'; print_r($contact_details); echo '</pre>';
                 if (valid_email(trim($from_id))) {
                     $name_only                                                  = $this->message_model->fetch_name($from_id, $company_id);
                     $contact_details['from_email']                              = $from_id;
@@ -404,7 +406,7 @@ class Private_messages extends CI_Controller {
                 $this->message_model->mark_read($edit_id);
                 $data['total_messages']                                         = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
                 $data['company_name']                                           = $company_name;
-                
+                $data['loginAs']=$employer_id;
                 $this->load->view('main/header', $data);
                 $this->load->view('private_messages/message_detail_new');
                 $this->load->view('main/footer');
