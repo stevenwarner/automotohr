@@ -100,7 +100,7 @@
                                             <?php if ($companyData['Logo'] != '' && get_company_logo_status($session['company_detail']['sid']) == 1) { ?>
                                                 <figure><img width="100" height="80" src="<?php echo AWS_S3_BUCKET_URL . $companyData['Logo']; ?>" alt="" /></figure>
                                             <?php } ?>
-                                            <span class="registered-company-name"><?php echo $companyData['CompanyName']; ?></span>
+                                            <span class="registered-company-name"><?php echo $companyData['CompanyName']; ?> <?php if($companyData['company_status']==0 && $session["employer_detail"]["access_level_plus"]==1){?> &nbsp;<span class="btn-danger" style="padding-left: 10px;padding-right: 10px;padding-bottom: 1px; margin-top: 10px; pointer-events: none;" >Closed</span> <?php }?></span>
                                         </div>
                                         <?php if ($employerData['is_executive_admin'] == 1) { ?>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">

@@ -120,12 +120,14 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <?php foreach ($companies as $key => $value) { ?>
+                                                        <?php foreach ($companies as $key => $value) {?>
                                                             <tr>
                                                                 <td><input type="checkbox" name="checkit[]" value="<?php echo $value['sid']; ?>" class="my_checkbox"></td>
                                                                 <td><a><b><?php echo $value['sid']; ?></b></a></td>
                                                                 <td><a><?php echo $value['ContactName']; ?></a></td>
-                                                                <td><?php echo $value['CompanyName']; ?></td>
+                                                                <td><?php echo $value['CompanyName']; ?>
+                                                                <?php if($value['company_status']==0){?> <br><span class="btn-danger" style="padding-left: 10px;padding-right: 10px;padding-bottom: 1px; margin-top: 10px; pointer-events: none;"><strong>Closed</strong></span> <?php }?>
+                                                            </td>
                                                                 <td><?= phonenumber_format($value['PhoneNumber']); ?></td>
                                                                 <td><?php echo date_with_time($value['registration_date']); ?></td>
                                                                 <td><?php if (!empty($value['expiry_date'])) {

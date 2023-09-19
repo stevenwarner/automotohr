@@ -192,7 +192,6 @@ class Employee_management extends Public_Controller
             $order = '';
             $employee_type = 'all';
 
-
             if (isset($_GET['keyword'])) {
                 $keyword = $_GET['keyword'];
             } else {
