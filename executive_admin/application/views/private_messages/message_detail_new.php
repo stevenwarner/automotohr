@@ -37,7 +37,7 @@
                                     <td><?php   echo $contact_details["from_name"]; ?>&nbsp;
 
                                         <?php   if ($page == 'Inbox' && $contact_details['message_type'] == 'applicant') {
-                                            echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (STORE_FULL_URL.'/'.($contact_details["from_profile_link"])) . '" target="_blank">View Profile</a>';
+                                            echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" target="_blank">View Profile</a>';
                                         } ?></td>
                                 </tr>
                                 <?php if ($page == 'Inbox') { ?>
@@ -51,7 +51,7 @@
                                     <td><?php   echo $contact_details["to_name"]; ?>&nbsp;
 
                                         <?php   if ($page != 'Inbox' && $contact_details['message_type'] == 'applicant') {
-                                            echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (STORE_FULL_URL.'/'.($contact_details["to_profile_link"])) . '" target="_blank" class="text-success pull-right">View Profile</a>';
+                                            echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["to_profile_link"])) . '" target="_blank" class="text-success pull-right">View Profile</a>';
                                         } ?></td>
                                 </tr>
                                 <?php if ($page != 'Inbox') { ?>
