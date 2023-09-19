@@ -36,12 +36,27 @@
                                                                     <label>Company Name</label>
                                                                     <div class="text">
                                                                         <?php echo ucwords($company_info['CompanyName']); ?>
+
                                                                     </div>
                                                                 </li>
                                                                 <li>
                                                                     <label>Company Type</label>
                                                                     <div class="text">
                                                                         <?php echo ($company_info['is_paid'] == 1) ? 'Main' : 'Secondary'; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Company Status</label>
+                                                                    <div class="text">
+                                                                        <?php if ($company_info['company_status'] == 0) { ?>
+                                                                            <button class="btn btn-danger btn-xs" title="The store is closed." placement="top">
+                                                                                Closed
+                                                                            </button>
+                                                                        <?php } else { ?>
+                                                                            <button class="btn btn-success btn-xs" title="The store is open." placement="top">
+                                                                                Open
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     </div>
                                                                 </li>
                                                                 <li>
