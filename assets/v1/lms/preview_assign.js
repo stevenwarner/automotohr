@@ -54,46 +54,48 @@ $(function LMSEmployeeCourses() {
 	// set the default filter
 	if (courseType === "scorm") {
 		function sendCourseToSave(CMIElements) {
-			// make the call
-			XHR = $.ajax({
-				url: apiURL + "lms/trainings/save_scorm/" + employeeId,
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				data: JSON.stringify({
-					courseId: courseId,
-					cmiElement: CMIElements,
-					type: "scorm",
-					version: scormVersion,
-				}),
-			})
-				.success(function (response) {
-					if (response.status === "failed") {
-						return alertify.alert(
-							"WARNING!",
-							"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
-							function () {
-								window.location =
-									baseURI + "lms/courses/" + courseId;
-							}
-						);
-					} else if (response.status === "passed") {
-						return alertify.alert(
-							"SUCCESS!",
-							"Congratulations on successfully passing this course!",
-							function () {
-								window.location = baseURI + "lms/courses/my";
-							}
-						);
-					}
+			if (lessonStatus != "completed") {
+				// make the call
+				XHR = $.ajax({
+					url: apiURL + "lms/trainings/save_scorm/" + employeeId,
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					data: JSON.stringify({
+						courseId: courseId,
+						cmiElement: CMIElements,
+						type: "scorm",
+						version: scormVersion,
+					}),
 				})
-				.fail(handleErrorResponse)
-				.done(function (response) {
-					// empty the call
-					XHR = null;
-				});
-			//
+					.success(function (response) {
+						if (response.status === "failed") {
+							return alertify.alert(
+								"WARNING!",
+								"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
+								function () {
+									window.location =
+										baseURI + "lms/courses/" + courseId;
+								}
+							);
+						} else if (response.status === "passed") {
+							return alertify.alert(
+								"SUCCESS!",
+								"Congratulations on successfully passing this course!",
+								function () {
+									window.location = baseURI + "lms/courses/my";
+								}
+							);
+						}
+					})
+					.fail(handleErrorResponse)
+					.done(function (response) {
+						// empty the call
+						XHR = null;
+					});
+				//
+			}	
 		}
 		//
 		window.sendCourseToSave = sendCourseToSave;
@@ -323,11 +325,17 @@ $(function LMSEmployeeCourses() {
 			});
 	}
 	//
+	
+	//
 	if (lessonStatus === "not_started") {
 		ml(false, "jsPageLoader");
 		$("#jsStartCourseDiv").show();
 		$(".jsSaveQuestionResult").hide();
-	} else if (lessonStatus === "started") {
+	} else if (lessonStatus === "started" || lessonStatus === "completed") {
 		getLMSAssignCourse();
+		//
+		if (lessonStatus === "completed") {
+			$(".jsSaveQuestionResult").hide();
+		}
 	}
 });

@@ -173,86 +173,147 @@ $(function LMSEmployeeCourses() {
 				$("#jsAssignedCount").html(count.assigned);
 				$("#jsPendingCount").html(count.pending);
 				$("#jsCompletedCount").html(count.completed);
-				$("#jsFailedCount").html(count.failed);
+				$("#jsExpiredSoonCount").html(count.expire_soon);
 				//
 				if (courses.length) {
 					courses.map(function (course) {
-						coursesHTML += `<article class="article-sec">`;
+						if (course["employee_sid"] == null || course["employee_sid"] == employeeId) {
+							if (response.data.assignedIds.includes(course["sid"])) {
+								if (response.data.expiredSoonIds.includes(course["sid"])) {
+									coursesHTML += `<article class="article-sec" style="background: #fcf8e3 !important">`;
+								} else if (response.data.expiredIds.includes(course["sid"])) {
+									coursesHTML += `<article class="article-sec" style="background: #f2dede !important">`;
+								} else {
+									coursesHTML += `<article class="article-sec">`;
+								}
 
-						if (course.course_status == "passed") {
-							coursesHTML += `    <div class="row">`;
-							coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
-							coursesHTML += `        	<a href="${window.location.origin}/lms/courses/${course.sid}/certificate" class="btn btn-success btn-xs csRadius5 csF14" title="View Certificate" placement="top">
-															<i class="fa fa-certificate csF14" aria-hidden="true"></i>
-															&nbsp;Certificate
-														</a>`;
-							coursesHTML += `        </div>`;
-							coursesHTML += `    </div>`;
+								if (response.data.expiredSoonIds.includes(course["sid"])) {
+									const end = moment(course["course_end_period"],"YYYY-MM-DD");
+									const now = moment();
+									const end_diff = end.diff(now, 'days');
+									//
+									var expiredSoonText = '';
+									//
+									if (end_diff == 0) {
+										expiredSoonText = `Expire Day`;
+									} else if (end_diff == 1) {
+										expiredSoonText = `Expired in ${end_diff} day`;
+									} else {
+										expiredSoonText = `Expired in ${end_diff} days`;
+									}
+									//
+									//
+									coursesHTML += `    <div class="row">`;
+									coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
+									coursesHTML += `        	<a href="javascript:;" class="btn btn-warning btn-xs csRadius5 csF14" title="This course is expired in ${end_diff} days" placement="top">
+																	<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
+																	&nbsp;${expiredSoonText}
+																</a>`;
+									coursesHTML += `        </div>`;
+									coursesHTML += `    </div>`;
+								}
+
+								if (response.data.expiredIds.includes(course["sid"])) {
+									const end = moment(course["course_end_period"],"YYYY-MM-DD");
+									const now = moment();
+									const end_diff = Math.abs(end.diff(now, 'days'));
+									//
+									var expiredText = '';
+									//
+									if (end_diff == 0) {
+										expiredText = `Expire Day`;
+									} else if (end_diff == 1) {
+										expiredText = `Expired ${end_diff} day ago`;
+									} else {
+										expiredText = `Expired ${end_diff} days ago`;
+									}
+									//
+									coursesHTML += `    <div class="row">`;
+									coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
+									coursesHTML += `        	<a href="javascript:;" class="btn btn-danger btn-xs csRadius5 csF14" title="This course expired ${end_diff} days ago." placement="top">
+																	<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
+																	&nbsp;${expiredText}
+																</a>`;
+									coursesHTML += `        </div>`;
+									coursesHTML += `    </div>`;
+								}
+
+								coursesHTML += `    <h1>`;
+								coursesHTML += course.course_title;
+								coursesHTML += `    </h1>`;
+								coursesHTML += `    <br>`;
+								coursesHTML += `    <div class="row">`;
+								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+								coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>`;
+								coursesHTML += `            <p>${moment(
+									course.course_start_period
+								).format(timeOffDateFormatWithTime)}</p>`;
+								coursesHTML += `        </div>`;
+								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+								coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
+								coursesHTML += `            <p>${moment(
+									course.course_end_period
+								).format(timeOffDateFormatWithTime)}</p>`;
+								coursesHTML += `        </div>`;
+								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+								coursesHTML += `            <p class="csColumSection"><strong>STATUS</strong></p>`;
+								coursesHTML += `            <p>${
+									course.course_status == "passed"
+										? "COMPLETED"
+										: "PENDING"
+								}</p>`;
+								coursesHTML += `        </div>`;
+								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+								coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED TO</strong></p>`;
+								coursesHTML += `            <p>${response.data.employeeName}</p>`;
+								coursesHTML += `        </div>`;
+								coursesHTML += `    </div>`;
+								coursesHTML += `    <div class="row">`;
+								coursesHTML += `        <div class="col-md-3 col-xs-12 hidden">`;
+								coursesHTML += `            <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>`;
+								coursesHTML += `            <p>15 min / 15 min</p>`;
+								coursesHTML += `        </div>`;
+								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+								coursesHTML += `            <p class="csColumSection"><strong>STARTED DATE </strong></p>`;
+								coursesHTML += `            <p>${
+									course.created_at
+										? moment(course.created_at).format(
+												timeOffDateFormatWithTime
+										)
+										: "-"
+								}</p>`;
+								coursesHTML += `        </div>`;
+								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+								coursesHTML += `            <p class="csColumSection"><strong>LANGUAGE</strong></p>`;
+								coursesHTML += `            <select class="form-control">`;
+								coursesHTML += `                <option value="eng">English</option>`;
+								coursesHTML += `            </select>`;
+								coursesHTML += `        </div>`;
+								coursesHTML += `        <div class="col-md-6 col-xs-12 text-right">`;
+								coursesHTML += `            <p>&nbsp;</p>`;
+							
+								if (course.course_status == "passed") {
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}">
+																<i class="fa fa-eye"></i>
+																View Content
+															</a>`;
+															
+									coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/courses/${course.sid}/${subordinateId}/subordinate/certificate}">
+																<i class="fa fa-eye"></i>
+																View Certificate
+															</a>`;
+								} else {
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}">
+																<i class="fa fa-play"></i>
+																Launch Content
+															</a>`;
+								}		
+
+								coursesHTML += `        </div>`;
+								coursesHTML += `    </div>`;
+								coursesHTML += `</article>`;
+							}	
 						}
-
-						coursesHTML += `    <h1>`;
-						coursesHTML += course.course_title;
-						coursesHTML += `    </h1>`;
-						coursesHTML += `    <br>`;
-						coursesHTML += `    <div class="row">`;
-						coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-						coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>`;
-						coursesHTML += `            <p>${moment(
-							course.course_start_period
-						).format(timeOffDateFormatWithTime)}</p>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-						coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
-						coursesHTML += `            <p>${moment(
-							course.course_end_period
-						).format(timeOffDateFormatWithTime)}</p>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-						coursesHTML += `            <p class="csColumSection"><strong>STATUS</strong></p>`;
-						coursesHTML += `            <p>${
-							course.course_status == "passed"
-								? "COMPLETED"
-								: "PENDING"
-						}</p>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-						coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED TO</strong></p>`;
-						coursesHTML += `            <p>${response.data.employeeName}</p>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `    </div>`;
-						coursesHTML += `    <div class="row">`;
-						coursesHTML += `        <div class="col-md-3 col-xs-12 hidden">`;
-						coursesHTML += `            <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>`;
-						coursesHTML += `            <p>15 min / 15 min</p>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-						coursesHTML += `            <p class="csColumSection"><strong>STARTED DATE </strong></p>`;
-						coursesHTML += `            <p>${
-							course.created_at
-								? moment(course.created_at).format(
-										timeOffDateFormatWithTime
-								  )
-								: "-"
-						}</p>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-						coursesHTML += `            <p class="csColumSection"><strong>LANGUAGE</strong></p>`;
-						coursesHTML += `            <select class="form-control">`;
-						coursesHTML += `                <option value="eng">English</option>`;
-						coursesHTML += `            </select>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `        <div class="col-md-6 col-xs-12 text-right">`;
-						coursesHTML += `            <p>&nbsp;</p>`;
-						coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${
-							baseURI + "lms/subordinate/course/" + course.sid + "/" + subordinateId
-						}" ><i class="fa fa-play"></i>&nbsp${
-							course.course_status == "passed"
-								? "Retake Course"
-								: "Launch Content"
-						}</a>`;
-						coursesHTML += `        </div>`;
-						coursesHTML += `    </div>`;
-						coursesHTML += `</article>`;
 					});
 				} else {
 					coursesHTML =
@@ -281,5 +342,78 @@ $(function LMSEmployeeCourses() {
         $(".jsSaveQuestionResult").hide();
         getLMSAssignCourse();
     }
+
+
+	function getEmployeeInfo() {
+		var tmp = [];
+		var obj = {};
+		//
+		obj.employee_sid = subordinateId;
+		obj.employee_name = subordinateName;
+		//
+		tmp.push(obj);
+		return tmp;
+	}
+
+	$(document).on('click', '.jsSendReminderEmail', function(e) {
+		e.preventDefault();
+		//
+		
+		//
+		alertify.prompt('Please Enter a Note', '', '', function(evt, value) {
+
+				if (value.trim() == '') {
+					alertify.alert('ERROR!', 'Please Enter a Note.');
+					return;
+				}
+				//
+				alertify.confirm('Do you really want to send email reminder to <b>'+subordinateName+'</b>?', function(){
+					//
+					employeeInfo = getEmployeeInfo();
+					sendEmailToEmployees(employeeInfo, value);
+				});
+
+			}, function() {
+				alertify.error('Cancel')
+			}
+
+		);
+		
+	});
+
+	function sendEmailToEmployees(employeeInfo, employeeNote) {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		//
+		XHR = $.ajax({
+			url: baseURI + "lms/courses/emailReminder/single",
+			method: "POST",
+			data: {
+				employeeList: employeeInfo,
+				note: employeeNote
+			},
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+				//
+				return alertify.alert(
+					"SUCCESS!",
+					"You have successfully sent an email reminder to <b>"+subordinateName+"</b>."
+				);
+			})
+			.fail(handleErrorResponse)
+			.done(function (response) {
+				// empty the call
+				XHR = null;
+			});
+	}
     
 });

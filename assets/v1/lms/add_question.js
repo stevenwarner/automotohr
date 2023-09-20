@@ -248,7 +248,7 @@ $(function addQuestion() {
 		) {
 			//
 			$(".csChoiceRow").map(function (i) {
-				console.log($(this).find(".jsAddQuestionChoiceAnswer").val());
+				//
 				const obj = {
 					answer_choice: $(this)
 						.find(".jsAddQuestionChoiceAnswer")

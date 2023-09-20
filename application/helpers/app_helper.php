@@ -1288,6 +1288,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     //
                     if ($flag == 'courses') { 
                         if ($jobTitleId > 0) {
+                            $today = date('Y-m-d');
+                            //
                             $companyId = getEmployeeUserParent_sid($employee['employee_sid']);
                             //
                             $companyCourses = get_instance()->db->select("
@@ -1300,6 +1302,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                                 )
                                 ->where('lms_default_courses.company_sid', $companyId)
                                 ->where('lms_default_courses.is_active', 1)
+                                ->where('course_start_period <=', $today)
                                 ->group_start()
                                 ->where('lms_default_courses_job_titles.job_title_id', -1)
                                 ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)

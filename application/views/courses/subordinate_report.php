@@ -97,68 +97,91 @@
                         </div>
                     </div>
 
-                    <div class="section-inner">
-                        <div class="heading-sec">
-                            <?php  if ($haveSubordinate == "yes") { ?>
-                                <div class="hr-box">
-                                    <div class="hr-innerpadding">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-hover table-striped">
-                                                <thead style="background-color: #fd7a2a;">
-                                                    <tr>
-                                                        <th>Employee Name</th>
-                                                        <th>Department</th>
-                                                        <th>Team</th>
-                                                        <th>Course Count</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="jsSubordinateList">
-                                                    <?php if (!empty($subordinateInfo["employees"])) { ?>
-                                                        <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
-                                                            <?php if ($employee['job_title_sid'] > 0) { ?>
-                                                                <?php 
-                                                                    $teamId = $employee['team_sid'];
-                                                                    $departmentId = $employee['department_sid'];
-                                                                    $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
-                                                                    $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
-                                                                    $courseCountText = $courseCount > 1 ? $courseCount." courses assign" : $courseCount." course assign";
-                                                                    $departmentName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
-                                                                    $teamName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
-                                                                ?>
-                                                                <tr>
-                                                                    <td class="_csVm"><b><?php echo $employee['full_name']; ?></b></td>
-                                                                    <td class="_csVm"><?php echo $departmentName; ?></td>
-                                                                    <td class="_csVm"><?php echo $teamName; ?></td>
-                                                                    <td class="_csVm"><?php echo $courseCountText; ?></td>
-                                                                    <td class="_csVm">
-                                                                        <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5">
-                                                                            <i class="fa fa-eye"></i>
-                                                                            View
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
-                                                            <?php } ?>    
-                                                        <?php } ?>
-                                                    <?php } else { ?> 
-                                                        <tr>
-                                                        <td colspan="5">
-                                                            <p class="alert alert-info text-center">
-                                                                No employee(s) found.
-                                                            </p>
-                                                        </td>
-                                                        </tr>    
-                                                    <?php } ?>    
-                                                </tbody>
-                                            </table>
-                                        </div>
+                    <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>Report</strong>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row" style="margin-bottom:10px;">
+                                    <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                                        
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                        <button type="button" class="btn btn-success btn-block csRadius5 jsSendReminderEmail">
+                                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                            Send Reminder Email                                        
+                                        </button>
                                     </div>
                                 </div>
-                            <?php  } else { ?>
-                                <?php echo "No record found!"; ?>
-                            <?php  } ?> 
+
+                                <div class="section-inner">
+                                    <div class="heading-sec">
+                                        <?php  if ($haveSubordinate == "yes") { ?>
+                                            <div class="hr-box">
+                                                <div class="hr-innerpadding">
+
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-hover table-striped">
+                                                            <thead style="background-color: #fd7a2a;">
+                                                                <tr>
+                                                                    <th><input type="checkbox" class="js-check-all" /></th>
+                                                                    <th>Employee Name</th>
+                                                                    <th>Department</th>
+                                                                    <th>Team</th>
+                                                                    <th>Course Count</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="jsSubordinateList">
+                                                                <?php if (!empty($subordinateInfo["employees"])) { ?>
+                                                                    <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
+                                                                        <?php if ($employee['job_title_sid'] > 0) { ?>
+                                                                            <?php 
+                                                                                $teamId = $employee['team_sid'];
+                                                                                $departmentId = $employee['department_sid'];
+                                                                                $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
+                                                                                $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
+                                                                                $courseCountText = $courseCount > 1 ? $courseCount." courses assign" : $courseCount." course assign";
+                                                                                $departmentName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                                                                                $teamName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                                                                            ?>
+                                                                            <tr class="js-tr">
+                                                                                <td><input type="checkbox" name="employees_ids[]" value="<?php echo $employee['employee_sid']; ?>" /></td>
+                                                                                <td class="_csVm js-employee-name"><b><?php echo $employee['full_name']; ?></b></td>
+                                                                                <td class="_csVm"><?php echo $departmentName; ?></td>
+                                                                                <td class="_csVm"><?php echo $teamName; ?></td>
+                                                                                <td class="_csVm"><?php echo $courseCountText; ?></td>
+                                                                                <td class="_csVm">
+                                                                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5">
+                                                                                        <i class="fa fa-eye"></i>
+                                                                                        View
+                                                                                    </a>
+                                                                                </td>
+                                                                            </tr>
+                                                                        <?php } ?>    
+                                                                    <?php } ?>
+                                                                <?php } else { ?> 
+                                                                    <tr>
+                                                                    <td colspan="5">
+                                                                        <p class="alert alert-info text-center">
+                                                                            No employee(s) found.
+                                                                        </p>
+                                                                    </td>
+                                                                    </tr>    
+                                                                <?php } ?>    
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php  } else { ?>
+                                            <?php echo "No record found!"; ?>
+                                        <?php  } ?> 
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
                 </div> 
             </div>
         </div>

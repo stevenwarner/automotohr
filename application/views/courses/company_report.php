@@ -227,7 +227,7 @@
                                         
                                         <div class="row" style="margin: 5px 5px;">
                                             <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
-                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has either not started their assigned courses or has not been assigned any courses yet..</div>
+                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has either not started their assigned courses or has not been assigned any courses yet.</div>
                                         </div>
                                     </div>
 

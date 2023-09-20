@@ -95,7 +95,7 @@ class Courses extends Public_Controller
         } else {
             if ($this->course_model->checkEmployeeCourseCompleted($companyId, $employeeId, $sid)) {
                 //
-                $lessonStatus = 'not_started';
+                $lessonStatus = 'completed';
             } else {
                 // 
                 $lessonStatus = 'started';
@@ -168,7 +168,7 @@ class Courses extends Public_Controller
     /**
      *
      */
-    public function viewCertificate(int $sid)
+    public function viewCertificate(int $courseId, int $studentId, string $type)
     {
         //
         $data = [];
@@ -183,8 +183,31 @@ class Courses extends Public_Controller
         $data['title'] = "Certificate :: " . STORE_NAME;
         $data['session'] = $session;
         $data['employer_sid'] = $employeeId;
+        $data['student_sid'] = $studentId;
+        $data['type'] = $type;
         $data['employee'] = $session['employer_detail'];
+        $data['employeeName'] = getUserNameBySID($studentId);
+        $data['company_info'] = $session['company_detail'];
+        $data['companyName'] = getCompanyNameBySid($companyId);
         $data['load_view'] = 1;
+        $data['courseInfo'] = $this->course_model->getCourseInfo($courseId);
+        $EmployeeCourseProgress = $this->course_model->getEmployeeCourseProgressInfo($courseId, $studentId, $companyId);
+        $studentInfo = $this->course_model->getStudentInfo($studentId);
+        //
+        $data['completedOn'] = convertDateTimeToTimeZone(
+            $EmployeeCourseProgress['updated_at'],
+            DB_DATE_WITH_TIME,
+            DATE
+        );
+        //
+        $data['studentSSN'] = substr($studentInfo['ssn'], -4);
+        //
+        $data['studentDOB'] = convertDateTimeToTimeZone(
+            $studentInfo['dob'],
+            DB_DATE,
+            DATE
+        );
+        //
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'
@@ -203,7 +226,9 @@ class Courses extends Public_Controller
         $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         //
         $this->load
-            ->view('courses/certificate', $data);
+            ->view('main/header_2022', $data)
+            ->view('courses/certificate')
+            ->view('main/footer');    
     }
 
     /**
@@ -258,7 +283,7 @@ class Courses extends Public_Controller
     /**
      *
      */
-    public function report($departments = "all", $teams = "all", $employees = "all")
+    public function subordinatesReport($departments = "all", $teams = "all", $employees = "all")
     {
         //
         $data = [];
@@ -362,7 +387,7 @@ class Courses extends Public_Controller
         $data['PageScripts'] = [
             'js/app_helper',
             'v1/common',
-            'v1/lms/reporting'
+            'v1/lms/subordinate_reporting'
         ];
         //
         // get access token
@@ -375,7 +400,7 @@ class Courses extends Public_Controller
         //
         $this->load
             ->view('main/header_2022', $data)
-            ->view('courses/report')
+            ->view('courses/subordinate_report')
             ->view('main/footer');
     }
 
@@ -403,9 +428,10 @@ class Courses extends Public_Controller
             $haveSubordinate = 'yes';
         }
         //
-        $data['title'] = "My Trainings | " . STORE_NAME;
+        $data['title'] = "Subordinate Courses | " . STORE_NAME;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = $subordinateId;
+        $data['subordinateName'] = getUserNameBySID($subordinateId);
         $data['viewMode'] = "subordinate";
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;
@@ -866,6 +892,52 @@ class Courses extends Public_Controller
         } else {
             redirect(base_url('login'), "refresh");
         }
+    }
+
+    public function emailReminder ($type) {
+        //
+        $res = [
+            'Status' => false,
+            'Message' => 'Invalid Request.'
+        ];
+        //
+        if(
+            !$this->input->is_ajax_request() || 
+            !$this->input->post(NULL, TRUE) || 
+            $this->input->method() != 'post' 
+        ){
+            res($res);
+        }
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        foreach ($post['employeeList'] as $employee) {
+            $employeeInfo = db_get_employee_profile($employee['employee_sid'])[0];
+            $companyName = getCompanyName($employee['employee_sid'], 'employee');
+            //
+            $replaceArray = [];
+            $replaceArray['username'] = $employee['employee_name'];
+            $replaceArray['first_name'] = ucwords($employeeInfo['first_name']);
+            $replaceArray['last_name'] = ucwords($employeeInfo['last_name']);
+            $replaceArray['baseurl'] = base_url();
+            $replaceArray['company_name'] = $companyName;
+            //
+            if ($type == 'single') {
+                $replaceArray['employee_note'] = $post['note'];
+            }
+            //
+            log_and_send_templated_email(
+                COURSES_REMINDER_NOTIFICATION,
+                $employeeInfo['email'],
+                $replaceArray,
+                message_header_footer(getEmployeeUserParent_sid($employee['employee_sid']), $companyName)
+            );
+        }
+        //
+        $res['Status'] = true;
+        $res['Message'] = 'You have successfully sent an email reminder to selected employees.';
+        //
+        res($res);
     }
 
 }

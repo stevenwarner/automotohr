@@ -34,7 +34,6 @@ class Course_model extends CI_Model
         $this->db->where('lesson_status', 'completed');
         $result = $this->db->get('lms_employee_course')->row_array();
         //
-        // _e($result,true);
         if (!empty($result) && $result['course_status'] == 'passed') {
             return true;
         } else {
@@ -64,6 +63,31 @@ class Course_model extends CI_Model
             return array();
         }
     }
+
+    public function getEmployeeCourseProgressInfo($courseId, $employeeId, $companyId)
+    {
+        //
+        $this->db->select('*');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('course_sid', $courseId);
+        //
+        $result = $this->db->get('lms_employee_course')->row_array();
+        //
+        return $result;
+    }
+
+    public function getStudentInfo($employeeId)
+    {
+        //
+        $this->db->select('dob, ssn');
+        $this->db->where('sid', $employeeId);
+        //
+        $result = $this->db->get('users')->row_array();
+        //
+        return $result;
+    }
+
 
     public function moveCourseHistory($courseId, $employeeId, $companyId)
     {
@@ -384,9 +408,11 @@ class Course_model extends CI_Model
     public function fetchCourses ($jobTitlesIds, $companyId) {
         //
         $result = [];
+        $today = date('Y-m-d');
         //
         if (!empty($jobTitlesIds)) {
             foreach ($jobTitlesIds as $jkey => $jobTitleId) {
+                
                 $companyCourses = $this->db->select("
                     lms_default_courses.sid
                 ")
@@ -397,6 +423,7 @@ class Course_model extends CI_Model
                 )
                 ->where('lms_default_courses.company_sid', $companyId)
                 ->where('lms_default_courses.is_active', 1)
+                ->where('course_start_period <=', $today)
                 ->group_start()
                 ->where('lms_default_courses_job_titles.job_title_id', -1)
                 ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
