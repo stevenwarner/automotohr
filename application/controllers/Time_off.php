@@ -7195,7 +7195,7 @@ class Time_off extends Public_Controller
                                 'employerSid' => $approver['userId'],
                                 'typeSid' => 'approve'
                             ]),
-                            '{{color}}' => '#28a745',
+                            '{{color}}' => '#4CBB17',
                             '{{text}}' => 'Approve Request'
                         ]
                     );
@@ -7255,7 +7255,7 @@ class Time_off extends Public_Controller
                                 'employerSid' => $approver['userId'],
                                 'typeSid' => 'approve'
                             ]),
-                            '{{color}}' => '#28a745',
+                            '{{color}}' => '#4CBB17',
                             '{{text}}' => 'Approve Request'
                         ]
                     );
