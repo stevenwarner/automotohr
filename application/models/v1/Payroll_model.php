@@ -281,7 +281,7 @@ class Payroll_model extends CI_Model
     /**
      * get payroll employees
      */
-    public function getPayrollEmployees(int $companyId): array
+    public function getPayrollEmployees(int $companyId, bool $useIndex = false): array
     {
         //
         $records = $this->db
@@ -300,11 +300,15 @@ class Payroll_model extends CI_Model
         $tmp = [];
         //
         foreach ($records as $employee) {
-            $tmp[] = [
+            $tmp[$employee['userId']] = [
                 'name' => remakeEmployeeName($employee),
                 'is_onboard' => $employee['is_onboarded'],
                 'id' => $employee['userId'],
             ];
+        }
+        //
+        if (!$useIndex) {
+            $tmp = array_values($tmp);
         }
         //
         return $tmp;

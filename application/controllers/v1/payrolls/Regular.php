@@ -74,8 +74,8 @@ class Regular extends Public_controller
         // let's check and sync payrolls
         $this->regular_payroll_model
             ->syncRegularPayrolls(
-                $data['loggedInPersonId'],
                 $data['loggedInPersonCompanyId'],
+                $data['loggedInPersonId']
             );
 
         // get the payrolls
@@ -99,26 +99,36 @@ class Regular extends Public_controller
     {
         //
         $data = $this->getData();
-        // get the single payroll
-        $data['regularPayroll'] = $this->regular_payroll_model
-            ->getRegularPayrollById(
-                $data['loggedInPersonCompanyId'],
-                $payrollId
+        // check and set for prepare payroll
+        $payrollStatus = $this->regular_payroll_model
+            ->checkAndGetPayrollStatus(
+                $payrollId,
+                $data['loggedInPersonCompanyId']
             );
         //
         $data['title'] = "Regular Payrolls";
-        //
-        if (!$data['regularPayroll']) {
-            $this->load->view(
+        // mismatch
+        if ($payrollStatus === 'not_found') {
+            return $this->load->view(
                 'main/header',
                 $data
             )
                 ->view('v1/payroll/regular/error')
                 ->view('main/footer');
         }
+        // if needs to be prepared
+        if ($payrollStatus === 'prepare') {
+            // prepare data
+            $this->regular_payroll_model
+                ->preparePayrollForUpdate(
+                    $payrollId
+                );
+        }
+
         // css
         $data['appCSS'] = bundleCSS(
             [
+                'v1/plugins/ms_modal/main',
                 'v1/app/css/loader'
             ],
             $this->css
@@ -126,10 +136,12 @@ class Regular extends Public_controller
         //
         $data['appJs'] = bundleJs(
             [
+                'v1/plugins/ms_modal/main',
                 'js/app_helper',
                 'v1/payroll/js/regular/single'
             ],
-            $this->js
+            $this->js,
+            'single'
         );
         //
         $this->load
@@ -191,6 +203,89 @@ class Regular extends Public_controller
         return SendResponse(
             $response['errors'] ? 400 : 200,
             $response
+        );
+    }
+
+    /**
+     * prepares the payroll for update
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function preparePayrollForUpdate(int $payrollId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        // get he post
+        $post = $this->input->post(null, true);
+
+        _e($post, true, true);
+        //
+        $response = $this
+            ->external_payroll_model
+            ->createExternalPayroll(
+                $session['company_detail']['sid'],
+                $session['employer_detail']['sid'],
+                $post
+            );
+
+        // send response
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
+     * get the regular payroll view
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function getRegularPayrollStep1(int $payrollId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        //
+        $passData = [
+            'payrollEmployees' => []
+        ];
+        // get the single payroll
+        $regularPayroll = $this->regular_payroll_model
+            ->getRegularPayrollById(
+                $session['company_detail']['sid'],
+                $payrollId
+            );
+        if ($regularPayroll['employees']) {
+            $payrollEmployees = $this->regular_payroll_model
+                ->getPayrollEmployeesWithCompensation(
+                    $session['company_detail']['sid'],
+                    true
+                );
+            $passData['payrollEmployees'] = $payrollEmployees;
+        }
+        //
+        $passData['regularPayroll'] = $regularPayroll;
+        // send response
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'v1/payroll/regular/hours_and_earnings',
+                    $passData,
+                    true
+                ),
+                'employees' => $passData['payrollEmployees'],
+                'payroll' => $passData['regularPayroll']
+            ]
         );
     }
 

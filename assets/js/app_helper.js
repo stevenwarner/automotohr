@@ -34,13 +34,22 @@ if (typeof ml === "undefined") {
 	 *
 	 * @param {bool}   action
 	 * @param {string} id
+	 * @param {string} msg
 	 */
-	function ml(action, id) {
+	function ml(action, id, msg) {
 		//
 		if (action) {
 			$(".jsIPLoader[data-page='" + id + "']").show();
+			$(".jsIPLoader[data-page='" + id + "']")
+				.find(".jsIPLoaderText")
+				.html(
+					msg || "Please wait, while we are processing your request."
+				);
 		} else {
 			$(".jsIPLoader[data-page='" + id + "']").hide();
+			$(".jsIPLoader[data-page='" + id + "']")
+				.find(".jsIPLoaderText")
+				.html("Please wait, while we are processing your request.");
 		}
 	}
 }
@@ -375,5 +384,18 @@ if (typeof getSegment === "undefined") {
 		});
 		// check if found
 		return segmentArray[segment];
+	}
+}
+
+if (typeof getRandomCode === "undefined") {
+	/**
+	 * Generates a random number
+	 * @returns
+	 */
+	function getRandomCode() {
+		// create a new date object
+		const dt = new Date();
+		// get the segments
+		return dt.getTime() + Math.floor(Math.random() * 5000000);
 	}
 }

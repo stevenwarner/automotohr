@@ -115,7 +115,7 @@ $sideBarUrls = [
 
                         <!-- Regular -->
                         <li>
-                            <a <?php if (in_array(uri_string(), $sideBarUrls['regular_payrolls'])) {
+                            <a <?php if (in_array(uri_string(), $sideBarUrls['regular_payroll']) || preg_match('/payrolls\/regular/im', uri_string())) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo base_url('payrolls/regular'); ?>">
                                 <figure><i class="fa fa-calendar"></i></figure>Regular Payroll

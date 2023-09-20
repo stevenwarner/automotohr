@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') || exit('No direct script access allowed');
+<?php
+
+use function PHPSTORM_META\map;
+
+defined('BASEPATH') || exit('No direct script access allowed');
 // load the payroll model
 loadUpModel('v1/Payroll_model', 'Payroll_model');
 /**
@@ -28,7 +32,6 @@ class Regular_payroll_model extends Payroll_model
      */
     public function getRegularPayrollBlocker(int $companyId): array
     {
-        return ['data' => []];
         // get company details
         $companyDetails = $this->getCompanyDetailsForGusto(
             $companyId
@@ -203,6 +206,35 @@ class Regular_payroll_model extends Payroll_model
     }
 
     /**
+     * check and get regular payroll
+     *
+     * @param int $payrollId
+     * @param int $companyId
+     * @return string
+     */
+    public function checkAndGetPayrollStatus(
+        int $payrollId,
+        int $companyId
+    ): string {
+        // get single payroll
+        $record = $this->db
+            ->select('
+                version
+            ')
+            ->where('company_sid', $companyId)
+            ->where('sid', $payrollId)
+            ->where('processed', 0)
+            ->get('payrolls.regular_payrolls')
+            ->row_array();
+        //
+        if (!$record) {
+            return 'not_found';
+        }
+        //
+        return !$record['version'] ? 'prepare' : 'success';
+    }
+
+    /**
      * get regular payroll
      *
      * @param int $companyId
@@ -222,6 +254,7 @@ class Regular_payroll_model extends Payroll_model
                 end_date,
                 check_date,
                 payroll_deadline,
+                totals,
                 is_late_payroll
             ')
             ->where('company_sid', $companyId)
@@ -233,15 +266,226 @@ class Regular_payroll_model extends Payroll_model
         if (!$record) {
             return [];
         }
+        $record['totals'] = json_decode($record['totals'], true);
         // get the employees
         $employees = $this->db
-            ->select('employee_sid, data_json')
+            ->select('
+                employee_sid,
+                data_json,
+                additional_earnings,
+                reimbursement_json,
+                deductions_json
+            ')
             ->where('regular_payroll_sid', $payrollId)
             ->get('payrolls.regular_payrolls_employees')
             ->result_array();
         //
-        $record['employees'] = $employees ?? [];
+        $record['employees'] = [];
+        //
+        if ($employees) {
+            foreach ($employees as $value) {
+                //
+                $value['data_json'] = json_decode($value['data_json'], true);
+                //
+                $dataArray = $value['data_json'];
+                // add indexes
+                if ($dataArray['fixed_compensations']) {
+                    //
+                    $tmp = [];
+                    //
+                    foreach ($dataArray['fixed_compensations'] as $v0) {
+                        $tmp[stringToSlug($v0['name'], '_')] = $v0;
+                    }
+                    $dataArray['fixed_compensations'] = $tmp;
+                }
+                //
+                if ($dataArray['hourly_compensations']) {
+                    //
+                    $tmp = [];
+                    //
+                    foreach ($dataArray['hourly_compensations'] as $v1) {
+                        $tmp[stringToSlug($v1['name'], '_')] = $v1;
+                    }
+                    $dataArray['hourly_compensations'] = $tmp;
+                }
+                //
+                $dataArray['v1'] = [];
+                $dataArray['v1']['reimbursements'] = $value['reimbursement_json'] ? json_decode($value['reimbursement_json'], true) : [];
+                $dataArray['v1']['additional_earnings'] = $value['additional_earnings'] ? json_decode($value['additional_earnings'], true) : [];
+                $dataArray['v1']['deductions'] = $value['deductions_json'] ? json_decode($value['deductions_json'], true) : [];
+                //
+                $record['employees'][$value['employee_sid']] = $dataArray;
+            }
+        }
         //
         return $record;
+    }
+
+    /**
+     * get payroll employees
+     *
+     * @method getEmployeeCompensation
+     * @param int $companyId
+     * @return array
+     */
+    public function getPayrollEmployeesWithCompensation(
+        int $companyId
+    ): array {
+        //
+        $records = $this->db
+            ->select(getUserFields())
+            ->join('users', 'users.sid = gusto_companies_employees.employee_sid', 'inner')
+            ->where('gusto_companies_employees.company_sid', $companyId)
+            ->where('gusto_companies_employees.is_onboarded', 1)
+            ->get('gusto_companies_employees')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $employee) {
+            $tmp[$employee['userId']] = [
+                'id' => $employee['userId'],
+                'name' => remakeEmployeeName($employee),
+                'compensation' => $this->getEmployeeCompensation($employee['userId'])
+            ];
+        }
+        //
+        return $tmp;
+    }
+
+    /**
+     * get employee compensation
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    private function getEmployeeCompensation(
+        int $employeeId
+    ): array {
+        //
+        $returnArray = [
+            'rate' => 0,
+            'payment_unit' => 'hour',
+            'text' => '$0.00 /hour'
+        ];
+        //
+        $record = $this->db
+            ->select('current_compensation_uuid')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_employees_jobs')
+            ->row_array();
+        //
+        if (!$record) {
+            return $returnArray;
+        }
+        //
+        $compensation = $this->db
+            ->select('rate, payment_unit, flsa_status')
+            ->where('gusto_uuid', $record['current_compensation_uuid'])
+            ->get('gusto_employees_jobs_compensations')
+            ->row_array();
+        //
+        if ($compensation) {
+            $returnArray['rate'] = $compensation['rate'];
+            $returnArray['payment_unit'] = $compensation['payment_unit'];
+            $returnArray['text'] = '$' . $returnArray['rate'] . '/' . (strtolower($returnArray['payment_unit']));
+        }
+        //
+        return $returnArray;
+    }
+
+
+    // Gusto Calls
+
+    /**
+     * prepare payroll
+     *
+     * @param int $payrollId
+     * @return array
+     */
+    public function preparePayrollForUpdate(int $payrollId): array
+    {
+        // get single payroll
+        $payroll = $this->db
+            ->select('
+                gusto_uuid,
+                company_sid
+            ')
+            ->where('sid', $payrollId)
+            ->get('payrolls.regular_payrolls')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($payroll['company_sid']);
+        // add payroll uuid
+        $companyDetails['other_uuid'] = $payroll['gusto_uuid'];
+        //
+        $gustoResponse = gustoCall(
+            'preparePayrollForUpdate',
+            $companyDetails,
+            [],
+            "PUT"
+        );
+        // check for errors
+        $errors = hasGustoErrors($gustoResponse);
+        // errors found
+        if ($errors) {
+            return $errors;
+        }
+        // update the payroll details
+        $upd = [];
+        $upd['version'] = $gustoResponse['version'];
+        $upd['gusto_uuid'] = $gustoResponse['payroll_uuid'];
+        $upd['check_date'] = $gustoResponse['check_date'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $payrollId)
+            ->update(
+                'payrolls.regular_payrolls',
+                $upd
+            );
+        // sync the employees
+        if ($gustoResponse['employee_compensations']) {
+            foreach ($gustoResponse['employee_compensations'] as $value) {
+                // set where array
+                $whereArray = [
+                    'regular_payroll_sid' => $payrollId,
+                    'employee_sid' => $this->db->select('employee_sid')->where('gusto_uuid', $value['employee_uuid'])->get('gusto_companies_employees')->row_array()['employee_sid']
+                ];
+                //
+                $dataArray = [];
+                $dataArray['data_json'] = json_encode($value);
+                $dataArray['is_skipped'] = $value['excluded'];
+                $dataArray['payment_method'] = $value['payment_method'];
+                $dataArray['updated_at'] = getSystemDate();
+                //
+                if (!$this->db->where($whereArray)->count_all_results('payrolls.regular_payrolls_employees')) {
+                    // insert
+                    $dataArray['regular_payroll_sid'] = $payrollId;
+                    $dataArray['employee_sid'] = $whereArray['employee_sid'];
+                    $dataArray['created_at'] = $dataArray['updated_at'];
+                    //
+                    $this->db
+                        ->insert(
+                            'payrolls.regular_payrolls_employees',
+                            $dataArray
+                        );
+                } else {
+                    // update
+                    $this->db
+                        ->where($whereArray)
+                        ->update(
+                            'payrolls.regular_payrolls_employees',
+                            $dataArray
+                        );
+                }
+            }
+        }
+        //
+        return $gustoResponse;
     }
 }

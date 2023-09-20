@@ -74,6 +74,7 @@ $route['manage_admin/companies/edit_approver/(:num)/(:num)'] = 'manage_admin/Com
 $route['manage_admin/companies/deactivate_approver'] = 'manage_admin/Companies/deactivate_approver';
 $route['manage_admin/companies/activate_approver'] = 'manage_admin/Companies/activate_approver';
 $route['manage_admin/companies/timeoff_approvers/(:num)'] = 'manage_admin/Companies/timeoff_approvers/$1';
+payrolls / regular / employees /
 $route['manage_admin/companies/timeoff_approvers/(:any)/(:any)/(:any)'] = 'manage_admin/Companies/timeoff_approvers/$1/$2/$3';
 // Added on 03-20-2020
 $route['notifications/get_notifications'] = 'Notifications/get_notifications';
@@ -90,6 +91,7 @@ $route['job_feeds/(:any)'] = 'job_feeds/index/$1';
 $route['manage_admin/indeed_settings'] = 'manage_admin/indeed_settings/index';
 // Added on 11-14-2019
 $route['manage-admin/job-feed'] = 'manage_admin/job_feed_iframe';
+payrolls / regular / employees /
 // Added on: 11-08-2019
 $route['manage_admin/copy_documents/handler'] = 'manage_admin/Copy_documents/handler';
 $route['manage_admin/copy_documents'] = 'manage_admin/Copy_documents/index';
@@ -1814,6 +1816,12 @@ $route['payrolls/regular']['get'] =
 // Regular single payroll routes
 $route['payrolls/regular/(:num)']['get'] =
   'v1/payrolls/regular/single/$1';
+// Regular single payroll update employees routes
+$route['payrolls/regular/(:num)/prepare']['post'] =
+  'v1/payrolls/regular/preparePayrollForUpdate/$1';
+// get regular payroll step 1 view
+$route['payrolls/regular/(:num)/view/1']['get'] =
+  'v1/payrolls/regular/getRegularPayrollStep1/$1';
 /**
  * form routes
  */

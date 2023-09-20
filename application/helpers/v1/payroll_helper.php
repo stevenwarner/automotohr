@@ -370,6 +370,12 @@ if (!function_exists('getUrl')) {
         // unprocessed payroll by start date
         $urls["getUnprocessedPayrollsByStartDate"] =
             "v1/companies/$key/payrolls?processing_statuses=unprocessed&start_date=$key1&payroll_types=regular&include=totals";
+        // payroll by id
+        $urls["getSinglePayrollById"] =
+            "v1/companies/$key/payrolls/$key1?include=benefits,deductions,taxes,payroll_status_meta";
+        // prepare by id
+        $urls["preparePayrollForUpdate"] =
+            "v1/companies/$key/payrolls/$key1/prepare?include=benefits,deductions,taxes,payroll_status_meta";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
