@@ -13,10 +13,26 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="page-header">
-                        <h1 class="section-ttile">Trainings</h1>
+                        <h1 class="section-ttile">
+                            Trainings
+                            <div style="float: right;">
+                                <?php if (!empty($haveSubordinate)) { ?>
+                                    <?php if ($page == "my_courses") { ?>
+                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csFC20"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
+                                    <?php } else { ?>
+                                        <?php if ($type == "non_plus") { ?>
+                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                        <?php } else if ($type == "plus") { ?>
+                                            <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                        <?php } ?>    
+                                    <?php } ?>
+                                <?php } ?>     
+                            </div>
+                        </h1>
                     </div>
                 </div>
             </div>
+            <!--  -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="section-inner">
@@ -66,11 +82,11 @@
                                     </div>
                                 </div>
                                 <!-- Failed courses -->
-                                <div class="col-xs-12 col-md-3 hidden">
+                                <div class="col-xs-12 col-md-3">
                                     <div class="thumbnail error-block">
                                         <div class="caption">
-                                            <h3 id="jsFailedCount">0</h3>
-                                            <h4><strong>Failed</strong></h4>
+                                            <h3 id="jsExpiredSoonCount">0</h3>
+                                            <h4><strong>Expired Soon</strong></h4>
                                         </div>
                                     </div>
                                 </div>
@@ -95,10 +111,43 @@
             <div class="row">
                 <br>
                 <div class="col-sm-12">
-                    <div id="jsMyAssignedCourses"></div>
+                    <div class="row" style="margin-bottom:10px;">
+                        <div class="col-xs-9">
+                            <div class="row" style="margin: 5px 5px;">
+                                <div class="col-lg-2 bg-warning" style="padding: 16px;"></div>
+                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">
+                                    The course will soon expire, with less than 15 days remaining.
+                                </div>
+                            </div>
+                            
+                            <div class="row" style="margin: 5px 5px;">
+                                <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
+                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">
+                                    The course has not been completed and has now expired.
+                                </div>
+                            </div>
+                        </div>
+                        <?php if ($viewMode == 'subordinate') { ?>
+                            <div class="col-xs-3">
+                                <button type="button" class="btn btn-success btn-block csRadius5 jsSendReminderEmail">
+                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                    Send Reminder Email                                        
+                                </button>
+                            </div>
+                        <?php } ?>
+                            
+                    </div>
+                    <div id="jsMyAssignedCourses">
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
+
+<script>
+    var page = "<?php echo $page; ?>";
+    var subordinateId = "<?php echo $subordinate_sid; ?>";
+    var subordinateName = "<?php echo $subordinateName; ?>";
+</script>

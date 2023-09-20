@@ -248,3 +248,16 @@ pre {
 .jsMyFilterSection {
 	margin-top: 70px;
 }
+
+#jsStartCourseDiv {
+	background: #c2c2c2;
+    height: 380px;
+}
+
+.jsStartCourseButton {
+	color: #fff;
+	margin: -20px -50px; 
+	position:relative;
+	top:50%; 
+	left:50%;
+}

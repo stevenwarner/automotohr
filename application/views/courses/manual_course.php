@@ -20,7 +20,11 @@
                             <?php echo $courseInfo["course_title"]; ?> 
                             <div style="float: right;">
                                 <button class="btn btn-info btn-orange csRadius5 jsSaveQuestionResult"><i class="fa fa-floppy-o"></i> Save</button>
-                                <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                <?php if ($viewMode == "preview_only") { ?>
+                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                <?php } else { ?> 
+                                    <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                <?php } ?>
                             </div>
                         </h1>
                     </div>
@@ -30,6 +34,10 @@
                             <div id="jsPreviewCourse"></div> 
                             <div id="jsPreviewCourseQuestion"></div> 
                         </div>
+                    </div>
+
+                    <div class="section-inner dn" id="jsStartCourseDiv">
+                        <button class="btn btn-lg btn-orange csRadius5 jsStartCourseButton"><i class="fa fa-play"></i> Start Course</button>
                     </div>
 
                     <div class="page-footer">
@@ -52,4 +60,7 @@
     var courseType = "<?php echo $courseInfo['course_type']; ?>";
     var questions = <?= json_encode($questions); ?>;
     var mode = "<?php echo $viewMode; ?>";
+    var lessonStatus = "<?php echo $lessonStatus; ?>";
+    var page = "<?php echo $page; ?>";
+    var subordinateId = "<?php echo $subordinate_sid; ?>";
 </script>

@@ -519,7 +519,6 @@ $(function editQuestion() {
 		// clear the file
 		$("#jsEditQuestionUploadVideo").msFileUploader("clear");
 		// pass the question to callback
-		console.log(questionObj);
 		callbackReference(questionObj);
 	}
 

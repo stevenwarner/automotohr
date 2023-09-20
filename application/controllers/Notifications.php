@@ -125,6 +125,22 @@ class Notifications extends Public_Controller {
         }
 
         //
+        $this->load->model('v1/course_model');
+        $pendingTrainings =
+                $this->course_model->getEmployeePendingCourseCount(
+                    $ses['company_detail']['sid'],
+                    $ses['employer_detail']['sid']
+                );
+        //
+        if ($pendingTrainings > 0) {
+            $data[] = [
+                'count' => $pendingTrainings,
+                'link' => base_url('lms/courses/my'),
+                'title' => 'Pending Courses'
+            ];
+        }        
+
+        //
         if(!sizeof($data)){
             $this->res['Response'] = 'No notifications found.';
             $this->resp();

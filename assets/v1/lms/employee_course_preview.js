@@ -1,14 +1,14 @@
 $(function LMSEmployeeCourses() {
 	// set the xhr
 	let XHR = null;
-	// set the default filter
+    //
+    let timeOffDateFormatWithTime = "MMM DD YYYY, ddd";
+	//
 	let filterObj = {
 		title: "",
 		status: "all",
 	};
 	//
-	let timeOffDateFormatWithTime = "MMM DD YYYY, ddd";
-
 	/**
 	 * Apply box filter
 	 */
@@ -25,7 +25,7 @@ $(function LMSEmployeeCourses() {
 		filterObj.title = $(".jsCourseTitleMyCourse").val() || "";
 		filterObj.status = $(".jsCourseStatus").val();
 		//
-		getLMSAssignCourses();
+		getLMSAssignCourses(subordinateId);
 	});
 
 	/**
@@ -38,7 +38,7 @@ $(function LMSEmployeeCourses() {
 		filterObj.title = $(".jsCourseTitleMyCourse").val() || "";
 		filterObj.status = $(".jsCourseStatus").val();
 		//
-		getLMSAssignCourses();
+		getLMSAssignCourses(subordinateId);
 	});
 
 	/**
@@ -54,13 +54,58 @@ $(function LMSEmployeeCourses() {
 		filterObj.title = $(".jsCourseTitleMyCourse").val() || "";
 		filterObj.status = $(".jsCourseStatus").val();
 		//
-		getLMSAssignCourses();
+		getLMSAssignCourses(subordinateId);
 	});
+	// set the default filter
+    if (page === "subordinate_course") {
+        if (courseType === "scorm") {
+            function sendCourseToSave(CMIElements) {
+            }
+            //
+            window.sendCourseToSave = sendCourseToSave;
+        }
+    }    
 
 	/**
-	 * get LMS default courses
+	 * get LMS Specific course
 	 */
-	function getLMSAssignCourses() {
+	function getLMSAssignCourse() {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url: apiURL + "lms/report/" + subordinateId + "/" + courseId,
+			method: "GET",
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				// set the view
+				$("#jsPreviewCourse").html(response);
+				//
+				if (courseType === "manual") {
+					getCourseQuestions();
+				}
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
+
+	/**
+	 * get LMS course questions
+	 */
+	function getCourseQuestions() {
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
@@ -71,8 +116,45 @@ $(function LMSEmployeeCourses() {
 		XHR = $.ajax({
 			url:
 				apiURL +
-				"lms/trainings/" +
-				employeeId +
+				"lms/report/" +
+				subordinateId +
+				"/" +
+				courseId +
+				"/questions/attempt",
+			method: "GET",
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				// set the view
+				$("#jsPreviewCourseQuestion").html(response);
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
+
+    //
+    function getLMSAssignCourses(subordinateId) {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url:
+				apiURL +
+				"lms/report/" +
+				subordinateId +
+				"/courses" +
 				"?title=" +
 				filterObj.title +
 				"&status=" +
@@ -211,27 +293,27 @@ $(function LMSEmployeeCourses() {
 								coursesHTML += `            <p>&nbsp;</p>`;
 							
 								if (course.course_status == "passed") {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI + "lms/courses/" + course.sid}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}">
 																<i class="fa fa-eye"></i>
 																View Content
 															</a>`;
 															
-									coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${window.location.origin}/lms/courses/${course.sid}/${employeeId}/my/certificate">
+									coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/courses/${course.sid}/${subordinateId}/subordinate/certificate}">
 																<i class="fa fa-eye"></i>
 																View Certificate
 															</a>`;
 								} else {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI + "lms/courses/" + course.sid}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}">
 																<i class="fa fa-play"></i>
 																Launch Content
 															</a>`;
-								}	
+								}		
 
 								coursesHTML += `        </div>`;
 								coursesHTML += `    </div>`;
 								coursesHTML += `</article>`;
 							}	
-						}	
+						}
 					});
 				} else {
 					coursesHTML =
@@ -239,6 +321,9 @@ $(function LMSEmployeeCourses() {
 				}
 				//
 				$("#jsMyAssignedCourses").html(coursesHTML);
+				//
+				$("#jsEmployeeListing").hide();
+				$("#jsEmployeeCourses").show();
 				// hide the loader
 				ml(false, "jsPageLoader");
 			})
@@ -250,7 +335,85 @@ $(function LMSEmployeeCourses() {
 				ml(false, "jsPageLoader");
 			});
 	}
-	//
-	getLMSAssignCourses();
-	
+    //
+    if (page === "subordinate_courses") {
+        getLMSAssignCourses(subordinateId);
+    } else {
+        $(".jsSaveQuestionResult").hide();
+        getLMSAssignCourse();
+    }
+
+
+	function getEmployeeInfo() {
+		var tmp = [];
+		var obj = {};
+		//
+		obj.employee_sid = subordinateId;
+		obj.employee_name = subordinateName;
+		//
+		tmp.push(obj);
+		return tmp;
+	}
+
+	$(document).on('click', '.jsSendReminderEmail', function(e) {
+		e.preventDefault();
+		//
+		
+		//
+		alertify.prompt('Please Enter a Note', '', '', function(evt, value) {
+
+				if (value.trim() == '') {
+					alertify.alert('ERROR!', 'Please Enter a Note.');
+					return;
+				}
+				//
+				alertify.confirm('Do you really want to send email reminder to <b>'+subordinateName+'</b>?', function(){
+					//
+					employeeInfo = getEmployeeInfo();
+					sendEmailToEmployees(employeeInfo, value);
+				});
+
+			}, function() {
+				alertify.error('Cancel')
+			}
+
+		);
+		
+	});
+
+	function sendEmailToEmployees(employeeInfo, employeeNote) {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		//
+		XHR = $.ajax({
+			url: baseURI + "lms/courses/emailReminder/single",
+			method: "POST",
+			data: {
+				employeeList: employeeInfo,
+				note: employeeNote
+			},
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+				//
+				return alertify.alert(
+					"SUCCESS!",
+					"You have successfully sent an email reminder to <b>"+subordinateName+"</b>."
+				);
+			})
+			.fail(handleErrorResponse)
+			.done(function (response) {
+				// empty the call
+				XHR = null;
+			});
+	}
+    
 });

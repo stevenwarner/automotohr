@@ -32,4 +32,10 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
+    public function testScript () {
+        $info = getMyDepartmentAndTeams(15717, "courses");
+        // $info = getMyDepartmentAndTeams(15717);
+        _e($info,true,true);
+    }
+
 }

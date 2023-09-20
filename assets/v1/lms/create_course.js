@@ -372,7 +372,7 @@ $(function createCourse() {
 					"ERROR",
 					"Failed to upload the file.",
 					function () {
-						console.log("close the modal "+modalId)
+						//
 						ml(false, modalLoaderId);
 					}
 				);

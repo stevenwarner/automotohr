@@ -941,23 +941,49 @@
                                     </div>
                                     <?php if ($isLMSModuleEnabled) : ?>
                                         <!--  -->
+                                        <?php if ($session['employer_detail']['access_level_plus'] == 1) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <i class="fa fa-file" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title" style="margin: 2px 0;">
+                                                            <a href="<?= base_url('lms/courses/company_report'); ?>">
+                                                                Courses
+                                                            </a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <span class="green">Expire soon <?= $coursesInfo['expire_soon']; ?> course(s)</span><br>
+                                                            <small style="font-size: 12px">Upcoming <?= $coursesInfo['upcoming']; ?> course(s)</small><br>
+                                                            <small style="font-size: 12px">Expired <?= $coursesInfo['expired']; ?> course(s)</small><br>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?= base_url('lms/courses/company_report'); ?>" class="site-btn">View Report</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?> 
+                                        <!--  -->
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-file <?= $pendingTrainings != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
                                                     </figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?= base_url('lms/courses/my'); ?>">Trainings</a>
+                                                        <a href="<?= base_url('lms/courses/my'); ?>">My Courses</a>
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
                                                         <span class="green"><?= $pendingTrainings ?? 0; ?> Pending</span><br>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">View Trainings</a>
+                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">Show</a>  
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!--  -->
                                     <?php endif; ?>
 
                                     <!-- Account Activity -->
