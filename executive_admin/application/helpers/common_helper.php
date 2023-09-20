@@ -1037,13 +1037,20 @@ if (!function_exists('_e')) {
 if (!function_exists('remakeAccessLevel')) {
     function remakeAccessLevel($obj)
     {
+        $access = '';
         if (isset($obj['is_executive_admin']) && $obj['is_executive_admin'] != 0) {
-            $obj['access_level'] = 'Executive ' . $obj['access_level'];
+            $access = $obj['access_level'];
+            $obj['access_level'] = ' ( Executive ' . $obj['access_level'] . ' )';
         }
-        if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' Plus / Payroll';
-        if ($obj['access_level_plus'] == 1) return $obj['access_level'] . ' Plus';
-        if ($obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' Payroll';
-        return $obj['access_level'];
+        if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( '.$access.' Plus / Payroll )';
+        if ($obj['access_level_plus'] == 1) return $obj['access_level'] . ' ( ' . $access . ' Plus )';
+        if ($obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( '.$access.' Payroll )';
+
+        if (isset($obj['is_executive_admin']) && $obj['is_executive_admin'] != 0) {
+            return $obj['access_level'];
+        }
+
+        return ' ( ' . $obj['access_level'] . ' ) ';
     }
 }
 
@@ -1063,7 +1070,7 @@ if (!function_exists('remakeEmployeeName')) {
         //
         if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
         //
-        $r .= ' [' . remakeAccessLevel($o) . ']';
+        $r .= ' ' . remakeAccessLevel($o) . '';
         //
         if (isset($o['timezone'])) {
             //
