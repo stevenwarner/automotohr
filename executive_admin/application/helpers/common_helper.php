@@ -1041,7 +1041,11 @@ if (!function_exists('remakeAccessLevel')) {
         if (isset($obj['is_executive_admin']) && $obj['is_executive_admin'] != 0) {
             $access = $obj['access_level'];
             $obj['access_level'] = ' ( Executive ' . $obj['access_level'] . ' )';
+        }else{
+            $obj['access_level'] = ' ( ' . $obj['access_level'] . ' )';
         }
+
+        
         if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( '.$access.' Plus / Payroll )';
         if ($obj['access_level_plus'] == 1) return $obj['access_level'] . ' ( ' . $access . ' Plus )';
         if ($obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( '.$access.' Payroll )';
@@ -1050,7 +1054,7 @@ if (!function_exists('remakeAccessLevel')) {
             return $obj['access_level'];
         }
 
-        return ' ( ' . $obj['access_level'] . ' ) ';
+        return  $obj['access_level'];
     }
 }
 
