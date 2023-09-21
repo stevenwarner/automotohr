@@ -11,18 +11,21 @@ $(function LMSStoreCourses() {
 	let copy_course_count = 0;
 	let coped_course = 0;
 	let current_course = 0;
+	//
+	$(".jsCourseJobTitleStoreCourse").select2();
 
 	/**
 	 * Apply filter
 	 */
-	$(".jsApplyFilterDefaultCourse").click(function (event) {
+	$(".jsApplyFilterStoreCourse").click(function (event) {
 		// prevent default event
 		event.preventDefault();
 		//
-		filterObj.title = $(".jsCourseTitleDefaultCourse").val() || "";
-		filterObj.jobTitleIds = $(".jsCourseJobTitleDefaultCourse").select2(
+		filterObj.title = $(".jsCourseTitleStoreCourse").val() || "";
+		filterObj.jobTitleIds = $(".jsCourseJobTitleStoreCourse").select2(
 			"val"
 		);
+		console.log(filterObj)
 		//
 		getLMSStoreCourses();
 	});
@@ -30,9 +33,9 @@ $(function LMSStoreCourses() {
 	/**
 	 * Toggle view
 	 */
-	$(document).on("click", ".jsToggleViewDefaultCourse", function (event) {
+	$(document).on("click", ".jsToggleViewAssignCompanyCourse", function (event) {
 		// prevent default event
-		event.preventDefault();
+		event.preventDefault();""
 		//
 		$(
 			'[data-key="jsView' + $(this).closest("tr").data("id") + '"]'
@@ -40,7 +43,7 @@ $(function LMSStoreCourses() {
 	});
 
 	$(document).on("click", ".jsCheckAll", selectAllInputs);
-	$(document).on("click", ".jsStoreCourseRow", selectSingleInput);
+	$(document).on("click", ".jsAssignCourses", selectSingleInput);
 	$(document).on("click", ".jsCopyCoursesBtn", start_copy_process);
 
 	// Select all input: checkbox
@@ -52,11 +55,10 @@ $(function LMSStoreCourses() {
 
 	// Select single input: checkbox
 	function selectSingleInput() {
-		$(this)
-			.find('input[name="courses_ids[]"]')
+		$(".jsCheckAll")
 			.prop(
 				"checked",
-				!$(this).find('input[name="courses_ids[]"]').prop("checked")
+				$(".jsAssignCourses").length == $(".jsAssignCourses:checked").length
 			);
 	}
 
@@ -179,6 +181,7 @@ $(function LMSStoreCourses() {
 	 * get LMS default courses
 	 */
 	function getLMSStoreCourses() {
+		console.log("get courses")
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();

@@ -27,6 +27,7 @@ $(function LMSCompanyCourses() {
 	 * Toggle view
 	 */
 	$(document).on("click", ".jsToggleViewCompanyCourse", function (event) {
+		console.log($(this).closest("tr").data("id"))
 		// prevent default event
 		event.preventDefault();
 		//

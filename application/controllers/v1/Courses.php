@@ -35,7 +35,13 @@ class Courses extends Public_Controller
         //
         $data['security_details'] = db_get_access_level_details($employeeId);
         //
-        $haveSubordinate = getMyDepartmentAndTeams($employeeId, "", "count_all_results");
+        $myDepartmentAndTeams = getMyDepartmentAndTeams($employeeId, "", "count_all_results");
+        //
+        if (!empty($myDepartmentAndTeams)) {
+            $haveSubordinate = 'yes';
+        } else {
+            $haveSubordinate = 'no';
+        }
         //
         $data['title'] = "My Trainings | " . STORE_NAME;
         $data['employer_sid'] = $employeeId;
@@ -415,8 +421,7 @@ class Courses extends Public_Controller
         //
         $data['security_details'] = db_get_access_level_details($employeeId);
         //
-        // $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
-        $subordinateInfo = [];
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
         //
         $haveSubordinate = 'no';
         //
@@ -769,8 +774,6 @@ class Courses extends Public_Controller
                 $companyReport["EmployeeList"] = $employeesList;
                 $companyReport["CoursesList"] = $coursesList;
             } 
-            // _e($filters,true,true);   
-            // _e($companyReport,true,true);
             //
             $data["companyReport"] = $companyReport;
             $data["filters"] = $filters;

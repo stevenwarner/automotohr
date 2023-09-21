@@ -93,6 +93,11 @@ $(function LMSEmployeeCourses() {
 				$("#jsCompletedCount").html(count.completed);
 				$("#jsExpiredSoonCount").html(count.expire_soon);
 				//
+				if (!response.data.assignedIds.length) {
+					$(".jsFilterSectionBtn").hide();
+					$(".jsSendReminderEmail").hide();
+				}
+				//
 				if (courses.length) {
 					courses.map(function (course) {
 						if (course["employee_sid"] == null || course["employee_sid"] == employeeId) {

@@ -50,7 +50,7 @@
             <br>
             <div class="row">
                 <div class="col-xs-12 col-md-12 text-right">
-                    <a href="<?= base_url('sa/lms/courses'); ?>" class="btn btn-black  form-control">Clear Search</a>
+                    <a href="<?= base_url('sa/lms/courses/'.$companyId); ?>" class="btn btn-black  form-control">Clear Search</a>
                 </div>
             </div>
         </div>

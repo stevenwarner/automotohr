@@ -15,200 +15,203 @@
                         <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                     </div>
 
-                    <div class="row">
-                        <div class="applicant-reg-date">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="row">
-                                    <form id="form-filters" method="post" enctype="multipart/form-data" action="">
-                                        <!-- Department Filter  -->
-                                        <div class="col-xs-12 col-md-4">
-                                            <label><strong>Department(s)</strong></label>
-                                            <select id="jsCompanyDepartments" multiple style="width: 100%">
-                                                <option value="all">All</option>
-                                                <?php if (!empty($filterData['departments'])) { ?>
-                                                    <?php foreach ($filterData['departments'] as $departments) { ?>
-                                                        <option value="<?php echo $departments["sid"]; ?>"><?php echo $departments["name"]; ?></option>
-                                                    <?php } ?> 
-                                                <?php } ?>     
-                                            </select>
-                                        </div>
-                                        <!-- Courses Filter -->
-                                        <div class="col-xs-12 col-md-4">
-                                            <label><strong>Courses(s)</strong></label>
-                                            <select id="jsCompanyCourses" multiple style="width: 100%">
-                                                <option value="all">All</option>
-                                                <?php if (!empty($filterData['courses'])) { ?>
-                                                    <?php foreach ($filterData['courses'] as $course) { ?>
-                                                        <option value="<?php echo $course["sid"]; ?>"><?php echo $course["course_title"]; ?></option>
-                                                    <?php } ?> 
-                                                <?php } ?> 
-                                            </select>
-                                        </div>
-                                        <!-- Employee Filter  -->
-                                        <div class="col-xs-12 col-md-4">
-                                            <label><strong>Employee(s)</strong></label>
-                                            <select id="jsSubordinateEmployees" multiple style="width: 100%">
-                                                <option value="all">All</option>
-                                                <?php if (!empty($filterData["employees"])) { ?>
-                                                    <?php foreach ($filterData["employees"] as $employee) { ?>
-                                                        <option value="<?php echo $employee['sid']; ?>">
-                                                            <?php echo remakeEmployeeName([
-                                                                'first_name' => $employee['first_name'],
-                                                                'last_name' => $employee['last_name'],
-                                                                'access_level' => $employee['access_level'],
-                                                                'timezone' => isset($employee['timezone']) ? $employee['timezone'] : '',
-                                                                'access_level_plus' => $employee['access_level_plus'],
-                                                                'is_executive_admin' => $employee['is_executive_admin'],
-                                                                'pay_plan_flag' => $employee['pay_plan_flag'],
-                                                                'job_title' => $employee['job_title'],
-                                                            ]); ?>
-                                                        </option>
-                                                    <?php } ?>  
-                                                <?php } ?>    
-                                            </select>
-                                        </div>    
-                                        <!-- Filter Buttons  -->
-                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+                    <?php if (!empty($companyReport["departments_report"]) || !empty($companyReport["CoursesList"])) { ?>
 
-                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                            <div class="report-btns">
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                        <button type="button" class="form-btn btn-black" onclick="jsClearDateFilters();">
-                                                            <i class="fa fa-times" aria-hidden="true"></i>
-                                                            Clear Filter
-                                                        </button>
+                        <div class="row">
+                            <div class="applicant-reg-date">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="row">
+                                        <form id="form-filters" method="post" enctype="multipart/form-data" action="">
+                                            <!-- Department Filter  -->
+                                            <div class="col-xs-12 col-md-4">
+                                                <label><strong>Department(s)</strong></label>
+                                                <select id="jsCompanyDepartments" multiple style="width: 100%">
+                                                    <option value="all">All</option>
+                                                    <?php if (!empty($filterData['departments'])) { ?>
+                                                        <?php foreach ($filterData['departments'] as $departments) { ?>
+                                                            <option value="<?php echo $departments["sid"]; ?>"><?php echo $departments["name"]; ?></option>
+                                                        <?php } ?> 
+                                                    <?php } ?>     
+                                                </select>
+                                            </div>
+                                            <!-- Courses Filter -->
+                                            <div class="col-xs-12 col-md-4">
+                                                <label><strong>Courses(s)</strong></label>
+                                                <select id="jsCompanyCourses" multiple style="width: 100%">
+                                                    <option value="all">All</option>
+                                                    <?php if (!empty($filterData['courses'])) { ?>
+                                                        <?php foreach ($filterData['courses'] as $course) { ?>
+                                                            <option value="<?php echo $course["sid"]; ?>"><?php echo $course["course_title"]; ?></option>
+                                                        <?php } ?> 
+                                                    <?php } ?> 
+                                                </select>
+                                            </div>
+                                            <!-- Employee Filter  -->
+                                            <div class="col-xs-12 col-md-4">
+                                                <label><strong>Employee(s)</strong></label>
+                                                <select id="jsSubordinateEmployees" multiple style="width: 100%">
+                                                    <option value="all">All</option>
+                                                    <?php if (!empty($filterData["employees"])) { ?>
+                                                        <?php foreach ($filterData["employees"] as $employee) { ?>
+                                                            <option value="<?php echo $employee['sid']; ?>">
+                                                                <?php echo remakeEmployeeName([
+                                                                    'first_name' => $employee['first_name'],
+                                                                    'last_name' => $employee['last_name'],
+                                                                    'access_level' => $employee['access_level'],
+                                                                    'timezone' => isset($employee['timezone']) ? $employee['timezone'] : '',
+                                                                    'access_level_plus' => $employee['access_level_plus'],
+                                                                    'is_executive_admin' => $employee['is_executive_admin'],
+                                                                    'pay_plan_flag' => $employee['pay_plan_flag'],
+                                                                    'job_title' => $employee['job_title'],
+                                                                ]); ?>
+                                                            </option>
+                                                        <?php } ?>  
+                                                    <?php } ?>    
+                                                </select>
+                                            </div>    
+                                            <!-- Filter Buttons  -->
+                                            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8"></div>
+
+                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4s">
+                                                <div class="report-btns">
+                                                    <div class="row">
+                                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                            <button type="button" class="form-btn-orange" onclick="jsApplyDateFilters();">
+                                                                <i class="fa fa-filter" aria-hidden="true"></i>
+                                                                &nbsp;
+                                                                Apply Filter
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                            <button type="button" class="form-btn btn-black" onclick="jsClearDateFilters();">
+                                                                <i class="fa fa-times" aria-hidden="true"></i>
+                                                                &nbsp;
+                                                                Clear Filter
+                                                            </button>
+                                                        </div>
+                                                        <button type="submit" id="jsFetchCSVReport" class="dn"></button>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                        <button type="button" class="form-btn-orange" onclick="jsApplyDateFilters();">
-                                                            <i class="fa fa-filter" aria-hidden="true"></i>
-                                                            Apply Filter
-                                                        </button>
-                                                    </div>
-                                                    <button type="submit" id="jsFetchCSVReport" class="dn"></button>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong>Overview</strong>
-                        </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <figure class="highcharts-figure">
-                                        <div id="jsCompanyEmployees"></div>
-                                        <p class="highcharts-description">
-                                            This graph shows the distribution of employees who have been assigned courses versus those who have not been assigned courses yet.
-                                        </p>
-                                    </figure>
-                                </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>Overview</strong>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <figure class="highcharts-figure">
+                                            <div id="jsCompanyEmployees"></div>
+                                            <p class="highcharts-description">
+                                                This graph shows the distribution of employees who have been assigned courses versus those who have not been assigned courses yet.
+                                            </p>
+                                        </figure>
+                                    </div>
 
-                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <figure class="highcharts-figure">
-                                        <div id="jsDepartmentsGraph"></div>
-                                        <p class="highcharts-description">
-                                        This graph illustrates the distribution of employees in different departments who have been assigned courses versus those who have not been assigned courses yet.
-                                        </p>
-                                        <table class="dn" id="datatable">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Employee(s) Have Courses</th>
-                                                    <th>Employee(s) Not Have Courses</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <? if (!empty($companyReport["departments_report"])) { ?>
-                                                    <?php foreach ($companyReport["departments_report"] as $department) { ?>
-                                                        <tr>
-                                                            <th><?php echo $department['name']; ?></th>
-                                                            <td><?php echo $department['employee_have_courses']; ?></td>
-                                                            <td><?php echo $department['employee_not_have_courses']; ?></td>
-                                                        </tr>
-                                                    <?php } ?>    
-                                                <? } ?>
-                                            </tbody>
-                                        </table>
-                                    </figure>    
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <figure class="highcharts-figure">
+                                            <div id="jsDepartmentsGraph"></div>
+                                            <p class="highcharts-description">
+                                            This graph illustrates the distribution of employees in different departments who have been assigned courses versus those who have not been assigned courses yet.
+                                            </p>
+                                            <table class="dn" id="datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Employee(s) Have Courses</th>
+                                                        <th>Employee(s) Not Have Courses</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <? if (!empty($companyReport["departments_report"])) { ?>
+                                                        <?php foreach ($companyReport["departments_report"] as $department) { ?>
+                                                            <tr>
+                                                                <th><?php echo $department['name']; ?></th>
+                                                                <td><?php echo $department['employee_have_courses']; ?></td>
+                                                                <td><?php echo $department['employee_not_have_courses']; ?></td>
+                                                            </tr>
+                                                        <?php } ?>    
+                                                    <? } ?>
+                                                </tbody>
+                                            </table>
+                                        </figure>    
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <strong>Progress</strong>
-                        </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <figure class="highcharts-figure">
-                                        <div id="jsDepartmentsCoursesProgressGraph"></div>
-                                        <p class="highcharts-description">
-                                            This graph illustrates the count of completed and pending courses for employees across different departments.
-                                        </p>
-                                        <table class="dn" id="jsDepartmentsCoursesProgressGraphTable">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Completed</th>
-                                                    <th>Pending</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <? if (!empty($companyReport["departments_report"])) { ?>
-                                                    <?php foreach ($companyReport["departments_report"] as $department) { ?>
-                                                        <tr>
-                                                            <th><?php echo $department['name']; ?></th>
-                                                            <td><?php echo $department['completed_courses'] > 0 ? (($department['completed_courses'] / $department['total_courses']) * 100) : 0; ?></td>
-                                                            <td><?php echo $department['pending_courses'] > 0 ? (($department['pending_courses'] / $department['total_courses']) * 100) : 0; ?></td>
-                                                        </tr>
-                                                    <?php } ?>    
-                                                <? } ?>
-                                            </tbody>
-                                        </table>
-                                    </figure>    
-                                </div>
-                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                    <figure class="highcharts-figure">
-                                        <div id="jsCoursesProgressGraph"></div>
-                                        <p class="highcharts-description">
-                                            This graph illustrates the count of employees who have completed and have pending courses across the entire company.
-                                        </p>
-                                        <table class="dn" id="jsCoursesProgressGraphTable">
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Employee(s) with Completed Course</th>
-                                                    <th>Employee(s) with Pending Course</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <? if (!empty($companyReport["CoursesList"])) { ?>
-                                                    <?php foreach ($companyReport["CoursesList"] as $course) { ?>
-                                                        <tr>
-                                                            <th><?php echo $course['course_title']; ?></th>
-                                                            <td><?php echo $course['assign_employee_completed_count']; ?></td>
-                                                            <td><?php echo $course['assign_employee_pending_count']; ?></td>
-                                                        </tr>
-                                                    <?php } ?>    
-                                                <? } ?>
-                                            </tbody>
-                                        </table>
-                                    </figure>    
+                        
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>Progress</strong>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <figure class="highcharts-figure">
+                                            <div id="jsDepartmentsCoursesProgressGraph"></div>
+                                            <p class="highcharts-description">
+                                                This graph illustrates the count of completed and pending courses for employees across different departments.
+                                            </p>
+                                            <table class="dn" id="jsDepartmentsCoursesProgressGraphTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Completed</th>
+                                                        <th>Pending</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <? if (!empty($companyReport["departments_report"])) { ?>
+                                                        <?php foreach ($companyReport["departments_report"] as $department) { ?>
+                                                            <tr>
+                                                                <th><?php echo $department['name']; ?></th>
+                                                                <td><?php echo $department['completed_courses'] > 0 ? (($department['completed_courses'] / $department['total_courses']) * 100) : 0; ?></td>
+                                                                <td><?php echo $department['pending_courses'] > 0 ? (($department['pending_courses'] / $department['total_courses']) * 100) : 0; ?></td>
+                                                            </tr>
+                                                        <?php } ?>    
+                                                    <? } ?>
+                                                </tbody>
+                                            </table>
+                                        </figure>    
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <figure class="highcharts-figure">
+                                            <div id="jsCoursesProgressGraph"></div>
+                                            <p class="highcharts-description">
+                                                This graph illustrates the count of employees who have completed and have pending courses across the entire company.
+                                            </p>
+                                            <table class="dn" id="jsCoursesProgressGraphTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Employee(s) with Completed Course</th>
+                                                        <th>Employee(s) with Pending Course</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <? if (!empty($companyReport["CoursesList"])) { ?>
+                                                        <?php foreach ($companyReport["CoursesList"] as $course) { ?>
+                                                            <tr>
+                                                                <th><?php echo $course['course_title']; ?></th>
+                                                                <td><?php echo $course['assign_employee_completed_count']; ?></td>
+                                                                <td><?php echo $course['assign_employee_pending_count']; ?></td>
+                                                            </tr>
+                                                        <?php } ?>    
+                                                    <? } ?>
+                                                </tbody>
+                                            </table>
+                                        </figure>    
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <?php if (!empty($companyReport["departments_report"])) { ?>
+                        
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <strong>Report</strong>
@@ -302,8 +305,18 @@
                                 <?php } ?>          
                             </div>
                         </div>
+
+                    <?php } else { ?>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p class="alert alert-info text-center">
+                                    No course(s) found.
+                                </p>
+                            </div>
+                        </div>
                         
-                    <?php } ?>
+                    <?php } ?>    
 
                 </div>
             </div>

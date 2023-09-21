@@ -17,7 +17,10 @@ $(function LMSEmployeeCourses() {
 	});
 	//
 	if (departments) {
-		$('#jsSubordinateDepartments').select2('val', departments.split(','));
+		if ($('#jsSubordinateDepartments').length) {
+			$('#jsSubordinateDepartments').select2('val', departments.split(','));
+		}	
+		
 	}
 	// load select2 on teams
 	$("#jsSubordinateTeams").select2({
@@ -25,7 +28,9 @@ $(function LMSEmployeeCourses() {
 	});
 	//
 	if (teams) {
-		$('#jsSubordinateTeams').select2('val', teams.split(','));
+		if ($('#jsSubordinateTeams').length) {
+			$('#jsSubordinateTeams').select2('val', teams.split(','));
+		}
 	}
 	// load select2 on employees
 	$("#jsSubordinateEmployees").select2({
@@ -33,7 +38,9 @@ $(function LMSEmployeeCourses() {
 	});
 	//
 	if (employees) {
-		$('#jsSubordinateEmployees').select2('val', employees.split(','));
+		if ($('#jsSubordinateEmployees').length) {
+			$('#jsSubordinateEmployees').select2('val', employees.split(','));
+		}		
 	}
 	//
 	/**
@@ -78,12 +85,17 @@ $(function LMSEmployeeCourses() {
 						var teamName =  "N/A";
 					
 						html += `<tr class="js-tr">`;
-						html += `<td><input type="checkbox" name="employees_ids[]" value="${employee['employee_sid']}" /></td>`;
+						html += `<td>`;
+						html += `	<label class="control control--checkbox">`;
+						html += `		<input type="checkbox" name="employees_ids[]" value="${employee['employee_sid']}" />`;
+						html += `		<div class="control__indicator"></div>`;
+						html += `	</label>`;
+						html += `</td>`;
 						html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
 						html += `<td class="_csVm">${employee.department_name}</td>`;
 						html += `<td class="_csVm">${employee.team_name}</td>`;
 						html += `<td class="_csVm">${courseCountText}</td>`;
-						html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee['employee_sid']}" class="btn btn-info btn-block csRadius5">View</a></td>`;
+						html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee['employee_sid']}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
 						html += `</tr>`;
 				});
 				//

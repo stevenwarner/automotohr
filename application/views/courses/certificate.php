@@ -206,9 +206,9 @@
                             <div class="col-xs-8"><!-- LEAVE EMPTY --></div>
                             <div class="col-xs-2">
                                 <?php if ($type == "subordinate") { ?>
-                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$student_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$student_sid); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                 <?php } else { ?> 
-                                    <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                 <?php } ?> 
                             </div>    
                             <div class="col-xs-2">    
