@@ -1376,3 +1376,17 @@ if (!function_exists('getDueDate')) {
         return $diff->format('%d days');
     }
 }
+
+if (!function_exists('_a')) {
+    /**
+     * amount formatter
+     *
+     * @param int $amount
+     * @param bool $doAdd Optional
+     * @return string
+     */
+    function _a(int $amount, $doAdd = true): string
+    {
+        return ($doAdd ? '$' : '').number_format($amount, 2);
+    }
+}

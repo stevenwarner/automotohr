@@ -376,6 +376,12 @@ if (!function_exists('getUrl')) {
         // prepare by id
         $urls["preparePayrollForUpdate"] =
             "v1/companies/$key/payrolls/$key1/prepare?include=benefits,deductions,taxes,payroll_status_meta";
+        // update payroll by id
+        $urls["updateRegularPayrollById"] =
+            "v1/companies/$key/payrolls/$key1";
+        // calculate payroll by id
+        $urls["calculateSinglePayroll"] =
+            "v1/companies/$key/payrolls/$key1/calculate";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
@@ -735,5 +741,133 @@ if (!function_exists('getBankAccountForGusto')) {
         }
         //
         return $return;
+    }
+}
+
+
+if (!function_exists('calculateTax')) {
+    /**
+     * calculate employee taxes
+     *
+     * @param array $taxes
+     * @return array
+     */
+    function calculateTax(array $taxes): array
+    {
+        //
+        $returnArray = [
+            'employee_tax_total' => 0,
+            'employer_tax_total' => 0,
+            'employee_taxes' => [],
+            'employer_taxes' => [],
+        ];
+
+        //
+        if ($taxes) {
+            foreach ($taxes as $tax) {
+                //
+                $returnArray[$tax['employer'] ? 'employer_tax_total' : 'employee_tax_total'] += $tax['amount'];
+                $returnArray[$tax['employer'] ? 'employer_taxes' : 'employee_taxes'][stringToSlug($tax['name'], '_')] = $tax;
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+}
+
+if (!function_exists('extractTaxes')) {
+    /**
+     * extract taxes
+     *
+     * @param array $employees
+     * @return array
+     */
+    function extractTaxes(array $employees): array
+    {
+        //
+        $returnArray = [];
+        //
+        if ($employees) {
+            foreach ($employees as $value) {
+                //
+                if ($value['taxes']) {
+                    foreach ($value['taxes'] as $v1) {
+                        //
+                        $taxSlug = stringToSlug($v1['name'], '_');
+                        //
+                        if (!isset($returnArray[$taxSlug])) {
+                            $returnArray[$taxSlug] = [
+                                'name' => $v1['name'],
+                                'employee_tax_total' => 0,
+                                'employer_tax_total' => 0,
+                            ];
+                        }
+                        //
+                        $returnArray[$taxSlug][$v1['employer'] ? 'employer_tax_total' : 'employee_tax_total'] += $v1['amount'];
+                    }
+                }
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+}
+
+
+if (!function_exists('calculateBenefits')) {
+    /**
+     * calculate employee taxes
+     *
+     * @param array $benefits
+     * @return array
+     */
+    function calculateBenefits(array $benefits): array
+    {
+        //
+        $returnArray = [
+            'employee_tax_total' => 0,
+            'employer_tax_total' => 0,
+            'employee_taxes' => [],
+            'employer_taxes' => [],
+        ];
+
+        //
+        if ($benefits) {
+            foreach ($benefits as $tax) {
+                //
+                $returnArray['employer_tax_total'] += $tax['company_contribution'];
+                $returnArray['employee_tax_total'] += $tax['employee_deduction'];
+                $returnArray[$tax['employee_deduction'] ? 'employee_taxes' : 'employer_taxes'][stringToSlug($tax['name'], '_')] = $tax;
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+}
+
+
+if (!function_exists('getPaymentUnitType')) {
+    /**
+     * get job compensation text
+     *
+     * @param string $paymentUnit
+     * @return string
+     */
+    function getPaymentUnitType(string $paymentUnit): string
+    {
+        //
+        $flsaStatus = 'Paid by the hour';
+        //
+        if ($paymentUnit === 'Exempt') {
+            $flsaStatus = 'Salary/No overtime';
+        } elseif ($paymentUnit === 'Salaried Nonexempt') {
+            $flsaStatus = 'Salary/with overtime';
+        }
+
+
+        return $flsaStatus;
     }
 }

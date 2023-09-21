@@ -93,9 +93,14 @@ class Regular extends Public_controller
     /**
      * Run regular payroll
      *
-     * @param int @payrollId
+     * @param int $payrollId
+     * @param string $step
+     *               hours_and_earnings
+     *               timeoff
+     *               review
+     *               confirmation
      */
-    public function single(int $payrollId)
+    public function single(int $payrollId, string $step = 'hours_and_earnings')
     {
         //
         $data = $this->getData();
@@ -117,36 +122,133 @@ class Regular extends Public_controller
                 ->view('main/footer');
         }
         // if needs to be prepared
-        if ($payrollStatus === 'prepare') {
+        if ($payrollStatus === 'prepare' && in_array($step, ['hours_and_earnings', 'timeoff'])) {
             // prepare data
             $this->regular_payroll_model
                 ->preparePayrollForUpdate(
                     $payrollId
                 );
         }
+        // get data
+        $data['regularPayroll'] = $this->regular_payroll_model
+            ->getRegularPayrollByIdColumns(
+                $payrollId,
+                [
+                    'start_date',
+                    'end_date',
+                    'payroll_deadline'
+                ]
+            );
 
+        return $this->$step($payrollId, $data);
+    }
+
+
+    /**
+     * regular payroll hours and earnings
+     *
+     * @param int $payrollId
+     * @param array $data
+     */
+    private function hours_and_earnings(int $payrollId, array $data)
+    {
         // css
         $data['appCSS'] = bundleCSS(
             [
                 'v1/plugins/ms_modal/main',
                 'v1/app/css/loader'
             ],
-            $this->css
+            $this->css,
+            'hours_and_earnings'
         );
         //
         $data['appJs'] = bundleJs(
             [
                 'v1/plugins/ms_modal/main',
                 'js/app_helper',
-                'v1/payroll/js/regular/single'
+                'v1/payroll/js/regular/hours_and_earnings'
             ],
             $this->js,
-            'single'
+            'hours_and_earnings'
         );
         //
         $this->load
             ->view('main/header', $data)
-            ->view('v1/payroll/regular/single')
+            ->view("v1/payroll/regular/hours_and_earnings")
+            ->view('main/footer');
+    }
+
+    /**
+     * regular payroll time off
+     *
+     * @param int $payrollId
+     * @param array $data
+     */
+    private function timeoff(int $payrollId, array $data)
+    {
+        // css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'timeoff'
+        );
+        //
+        $data['appJs'] = bundleJs(
+            [
+                'v1/plugins/ms_modal/main',
+                'js/app_helper',
+                'v1/payroll/js/regular/timeoff'
+            ],
+            $this->js,
+            'timeoff'
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view("v1/payroll/regular/timeoff")
+            ->view('main/footer');
+    }
+
+    /**
+     * regular payroll review
+     *
+     * @param int $payrollId
+     * @param array $data
+     */
+    private function review(int $payrollId, array $data)
+    {
+        // time to calculate payroll
+        // $gustoResponse = $this->regular_payroll_model->calculatePayrollById($payrollId);
+        // //
+        // if (!$gustoResponse['success']) {
+        //     return redirect('payrolls/regular');
+        // }
+        // css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'review'
+        );
+        //
+        $data['appJs'] = bundleJs(
+            [
+                'v1/plugins/ms_modal/main',
+                'js/app_helper',
+                'v1/payroll/js/regular/review'
+            ],
+            $this->js,
+            'review'
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view("v1/payroll/regular/review")
             ->view('main/footer');
     }
 
@@ -279,7 +381,7 @@ class Regular extends Public_controller
             200,
             [
                 'view' => $this->load->view(
-                    'v1/payroll/regular/hours_and_earnings',
+                    'v1/payroll/regular/partials/hours_and_earnings',
                     $passData,
                     true
                 ),
@@ -287,6 +389,176 @@ class Regular extends Public_controller
                 'payroll' => $passData['regularPayroll']
             ]
         );
+    }
+
+    /**
+     * get the regular payroll view - review
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function getRegularPayrollStep3(int $payrollId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        // get payroll one more time
+        $this->regular_payroll_model
+            ->getPayrollById($payrollId);
+
+        //
+        $passData = [
+            'payrollEmployees' => []
+        ];
+        // get the single payroll
+        $regularPayroll = $this->regular_payroll_model
+        ->getRegularPayrollById(
+            $session['company_detail']['sid'],
+            $payrollId
+        );
+        if ($regularPayroll['employees']) {
+            $payrollEmployees = $this->regular_payroll_model
+            ->getPayrollEmployeesWithCompensation(
+                $session['company_detail']['sid'],
+                true
+            );
+            $passData['payrollEmployees'] = $payrollEmployees;
+        }
+        //
+        $passData['payroll'] = $regularPayroll;
+
+        // send response
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'v1/payroll/regular/partials/review',
+                    $passData,
+                    true
+                )
+            ]
+        );
+    }
+
+    /**
+     * get the regular payroll view - time off
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function getRegularPayrollStep2(int $payrollId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        //
+        $passData = [
+            'payrollEmployees' => []
+        ];
+        // get the single payroll
+        $regularPayroll = $this->regular_payroll_model
+            ->getRegularPayrollById(
+                $session['company_detail']['sid'],
+                $payrollId
+            );
+        if ($regularPayroll['employees']) {
+            $payrollEmployees = $this->regular_payroll_model
+                ->getPayrollEmployeesWithCompensation(
+                    $session['company_detail']['sid'],
+                    true
+                );
+            $passData['payrollEmployees'] = $payrollEmployees;
+        }
+        //
+        $passData['regularPayroll'] = $regularPayroll;
+        // send response
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'v1/payroll/regular/partials/timeoff',
+                    $passData,
+                    true
+                ),
+                'payroll' => $passData['regularPayroll']
+            ]
+        );
+    }
+
+    /**
+     * save the regular payroll hours and earnings
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function saveRegularPayrollStep1(int $payrollId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        //
+        $post = $this->input->post(null, true);
+        // set errors array
+        $errorsArray = [];
+        // validation
+        if (!$post) {
+            $errorsArray[] = '"Data" is required.';
+        }
+        //
+        if (!$post['payrollId']) {
+            $errorsArray[] = '"Payroll id" is required.';
+        }
+        //
+        if (!$post['employees']) {
+            $errorsArray[] = '"Payroll employees" are required.';
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(400, ['errors' => $errorsArray]);
+        }
+        // make request
+        $payrollEmployees = $post['employees'];
+        //
+        foreach ($payrollEmployees as $key => $value) {
+            //
+            $payrollEmployees[$key]['fixed_compensations'] = array_values($value['fixed_compensations']);
+            $payrollEmployees[$key]['hourly_compensations'] = array_values($value['hourly_compensations']);
+            unset($payrollEmployees[$key]['v1']);
+        }
+        //
+        $payrollEmployees = array_values($payrollEmployees);
+        // update on Gusto
+        $gustoResponse = $this->regular_payroll_model
+            ->updatePayrollById(
+                $payrollId,
+                $payrollEmployees
+            );
+        //
+        if ($gustoResponse['errors']) {
+            return SendResponse(400, $gustoResponse['errors']);
+        }
+
+        // save entries
+        foreach ($post['employees'] as $key => $value) {
+            //
+            $this->db
+                ->where('employee_sid', $key)
+                ->where('regular_payroll_sid', $payrollId)
+                ->update('payrolls.regular_payrolls_employees', [
+                    'reimbursement_json' => json_encode($value['v1']['reimbursements'])
+                ]);
+        }
+        //
+        return SendResponse(200, ['success' => true, 'msg' => 'You have successfully saved the "' . ($post['action'] ?? 'Hours and earnings') . '".']);
     }
 
 

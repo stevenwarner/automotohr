@@ -57,22 +57,22 @@
                                 <!-- 2 -->
                                 <div class="col-sm-3 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
-                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
                                         </div>
                                     </div>
                                     <p class="csF16" style="margin-top: 10px;">
-                                        2. Time off
+                                        <strong>2. Time off </strong>
                                     </p>
                                 </div>
 
                                 <!-- 3 -->
                                 <div class="col-sm-3 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
-                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
                                         </div>
                                     </div>
                                     <p class="csF16" style="margin-top: 10px;">
-                                        3. Review and submit
+                                        <strong>3. Review and submit</strong>
                                     </p>
                                 </div>
 
@@ -88,53 +88,7 @@
                                 </div>
                             </div>
                             <br />
-                            <!-- Text -->
-                            <h1 class="csF16">
-                                <strong>
-                                    Hours and additional earnings
-                                </strong>
-                            </h1>
-                            <p class="csF16">Update your employees' hours, reimbursements, and additional earnings below.</p>
-                            <p class="csF16">To pay your employees with direct deposit on <strong><?= formatDateToDB($regularPayroll['check_date'], DB_DATE, DATE); ?></strong>, you'll need to run payroll by <strong>4:00pm PDT</strong> on <strong><?= formatDateToDB($regularPayroll['payroll_deadline'], DB_DATE_WITH_TIME, DATE); ?></strong>. If you miss this deadline, your employees' direct deposit will be delayed.</p>
-
-                            <hr />
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <caption></caption>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" class="csW csBG4">
-                                                <label class="control control--checkbox">
-                                                    <input type="checkbox" name="jsSelectAll" class="jsSelectAll" value="all" />
-                                                    <div class="control__indicator" style="margin-top: -11px;"></div>
-                                                </label>
-                                            </th>
-                                            <th scope="col" class="csW csBG4">
-                                                Employees (2)
-                                            </th>
-                                            <th scope="col" class="csW csBG4">
-                                                Regular Hours (RH)<br />
-                                                Overtime (OT/DOT)
-                                            </th>
-                                            <th scope="col" class="csW csBG4">
-                                                Additional<br />
-                                                Earnings
-                                            </th>
-                                            <th scope="col" class="csW csBG4">
-                                                Gross Pay (GP)<br />
-                                                Reimbursement (R)<br />
-                                                Payment Method
-                                            </th>
-                                            <th scope="col" class="csW csBG4">
-                                                Actions
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                    <tfoot></tfoot>
-                                </table>
-                            </div>
-
+                            <div class="jsContentArea"></div>
                         </div>
                     </div>
                     <!-- loader -->
