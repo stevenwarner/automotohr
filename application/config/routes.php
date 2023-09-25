@@ -1847,7 +1847,9 @@ $route['manage_admin/resources/(:num)'] = 'manage_admin/Resources/index/$1';
 
 $route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resource/$1';
 $route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
-$route['manage_admin/view_resource/(:num)'] = 'manage_admin/Resources/view_resource/$1';
+$route['resource/(:any)'] = 'manage_admin/Resources/view_resource/$1';
+$route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
+
 
 
 

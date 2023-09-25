@@ -10,17 +10,22 @@
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
-                                        <h1 class="page-title"><i class="fa fa-envelope-o"></i>Edit Resource</h1>
+                                        <h1 class="page-title"><i class="fa fa-envelope-o"></i>View Resource</h1>
+                                        <a class="black-btn pull-right" href="<?php echo base_url('manage_admin/resources/') ?>"><i class="fa fa-long-arrow-left"></i> Back to Resources</a>
                                     </div>
 
                                     <div class="hr-search-main" style="display: block;">
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <div class="hr-search-main" style="display: block;">
-                                                    <label>Meta Details</label>
+
+                                                <div class="hr-box" style="margin: 15px 0 0;">
+                                                    <div class="hr-box-header">
+                                                        <h1 class="hr-registered pull-left">Resource Details</h1>
+                                                    </div>
+
                                                     <div class="col-xs-12 form-group">
                                                         <label>Meta Title:</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $page_data['meta_title']; ?>" readonly/>
+                                                        <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $page_data['meta_title']; ?>" readonly />
                                                     </div>
 
                                                     <div class="col-xs-12 form-group">
@@ -34,22 +39,24 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <div class="row">
                                             <div class="col-xs-12">
 
-                                                <div class="hr-search-main" style="display: block;">
-                                                    <label>Resource Details</label>
+                                                <div class="hr-box" style="margin: 15px 0 0;">
+                                                    <div class="hr-box-header">
+                                                        <h1 class="hr-registered pull-left">Resource Details</h1>
+                                                    </div>
+
                                                     <div class="col-xs-12 form-group">
                                                         <label>Title:</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="title" id="title" value="<?php echo $page_data['title']; ?>" readonly/>
+                                                        <input type="text" class="invoice-fields" name="title" id="title" value="<?php echo $page_data['title']; ?>" readonly />
                                                     </div>
 
                                                     <div class="col-xs-12 form-group">
                                                         <label>Slug:</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slug" id="slug" value="<?php echo $page_data['slug']; ?>"  readonly/>
+                                                        <input type="text" class="invoice-fields" name="slug" id="slug" value="<?php echo $page_data['slug']; ?>" readonly />
                                                     </div>
 
                                                     <div class="col-xs-12 form-group">
@@ -91,7 +98,7 @@
 
 
                                                         <label class="control control--checkbox">
-                                                            <input type="checkbox" name="resourcetype[]" value="Case Studies" <?php echo in_array("Case Studies", $resourceTypeArray) ? 'checked' : '' ?> disabled="true" > Case Studies
+                                                            <input type="checkbox" name="resourcetype[]" value="Case Studies" <?php echo in_array("Case Studies", $resourceTypeArray) ? 'checked' : '' ?> disabled="true"> Case Studies
                                                             <div class="control__indicator"></div>
                                                         </label>
 
@@ -110,9 +117,9 @@
                                                     <div class="col-xs-12 form-group">
                                                         <label>Resources </label>
                                                         <?php
-                                                       $t = explode('.', $page_data['resources']);
+                                                        $t = explode('.', $page_data['resources']);
                                                         $document_extension = $t[sizeof($t) - 1];
-                                                        $video_url=base_url("assets/uploaded_videos/resourses/");
+                                                        $video_url = base_url("assets/uploaded_videos/resourses/");
                                                         ?>
 
                                                         <?php if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif'])) { ?>
@@ -121,36 +128,25 @@
                                                             <iframe src="<?php echo 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $page_data['resources']); ?>" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>
                                                         <?php } else if (in_array($document_extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) { ?>
                                                             <video controls style="width:100%; height:auto;">
-                                                                <source src="<?php echo $video_url.$page_data['resources'];?>" type='video/mp4'>
+                                                                <source src="<?php echo $video_url . $page_data['resources']; ?>" type='video/mp4'>
                                                             </video>
                                                         <?php } else { ?>
                                                             <iframe src="<?php echo 'https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $page_data['resources']); ?>&embedded=true" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>
                                                         <?php } ?>
 
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <hr />
-                            <div class="row">
-                                <div class="col-lg-12 text-right">
-                                    <a class="btn btn-default" href='<?php echo base_url('manage_admin/resources') ?>'>Cancel</a>
-                                </div>
-
-                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 </div>
 </div>

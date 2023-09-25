@@ -14,12 +14,17 @@
                                             <h1 class="page-title"><i class="fa fa-envelope-o"></i>Edit Resource</h1>
                                         </div>
 
-                                        <div class="hr-search-main" style="display: block;">
+                                        <div class="hr-search-main " style="display: block;">
                                             <div class="row">
                                                 <div class="col-xs-12">
 
-                                                    <div class="hr-search-main" style="display: block;">
-                                                        <label>Meta Details</label>
+                                                    <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                        <div class="hr-box-header bg-header-green">
+                                                            <h1 class="hr-registered pull-left">Meta Details</h1>
+                                                        </div>
+
+
                                                         <div class="col-xs-12 form-group">
                                                             <label>Meta Title:</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $page_data['meta_title']; ?>" />
@@ -41,9 +46,12 @@
 
                                             <div class="row">
                                                 <div class="col-xs-12">
+                                                    <div class="hr-box" style="margin: 15px 0 0;">
+                                                        <div class="hr-box-header bg-header-green">
+                                                            <h1 class="hr-registered pull-left">Resource Details</h1>
+                                                        </div>
 
-                                                    <div class="hr-search-main" style="display: block;">
-                                                        <label>Resource Details</label>
+
                                                         <div class="col-xs-12 form-group">
                                                             <label>Title:</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="title" id="title" value="<?php echo $page_data['title']; ?>" />
@@ -56,7 +64,7 @@
 
                                                         <div class="col-xs-12 form-group">
                                                             <label>Description:</label><b class="text-danger"> *</b>
-                                                            <textarea class="invoice-fields" name="description" id="description" rows="4" cols="60"><?php echo $page_data['description']; ?></textarea>
+                                                            <textarea class="ckeditor" name="description" id="description" rows="4" cols="60"><?php echo $page_data['description']; ?></textarea>
                                                         </div>
 
                                                         <div class="col-xs-12 form-group">
@@ -320,9 +328,11 @@
 
 
     //
-    $("#title").change(function() {
+    let regexPattern = /[^A-Za-z-]/g;
+    $("#title").keyup(function() {
         let newSlug = $("#title").val();
-        $("#slug").val(newSlug.replace(" ", "_"));
+        newSlug = newSlug.trim().replaceAll(" ", "-").toLowerCase();
+        $("#slug").val(newSlug.replace(regexPattern, ""));
     });
 
 

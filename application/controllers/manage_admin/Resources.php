@@ -124,11 +124,18 @@ class Resources extends Admin_Controller
 
             if ($sid == 0) {
 
-                $this->resources_model->add_resources($dataInsert);
+                $newSid = $this->resources_model->add_resources($dataInsert);
+                $dataInsert['slug'] = $dataInsert['slug'] . '-' . $newSid;
+                $this->resources_model->update_resources($newSid, $dataInsert);
+
                 $this->session->set_flashdata('message', '<strong>Success:</strong> Resource added successfully.');
                 redirect('manage_admin/edit_resource/0', 'refresh');
             } else {
 
+                if (strpos($dataInsert['slug'], '-' . $sid) !== false) {
+                } else {
+                    $dataInsert['slug'] = $dataInsert['slug'] . '-' . $sid;
+                }
                 $this->resources_model->update_resources($sid, $dataInsert);
                 $this->session->set_flashdata('message', '<strong>Success:</strong> Resource Updated successfully.');
                 redirect('manage_admin/edit_resource/' . $sid, 'refresh');
@@ -152,10 +159,6 @@ class Resources extends Admin_Controller
         $this->data['page_data'] = $page_data;
         $this->render('manage_admin/resources/view_resource');
     }
-
-
-
-
 
 
     public function upload_file_ajax_handler()
@@ -255,5 +258,61 @@ class Resources extends Admin_Controller
         } else {
             return 'error';
         }
+    }
+
+
+    public function subscribers_list()
+    {
+        $this->load->library('pagination');
+        $redirect_url = 'manage_admin';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $this->data['page_title'] = 'Resources';
+        $page_number = ($this->uri->segment(3)) ? $this->uri->segment(3) : 1;
+
+        $offset           = 0;
+        $records_per_page = 50;
+        if ($page_number > 1) {
+            $offset = ($page_number - 1) * $records_per_page;
+        }
+        $pagination_base = base_url('manage_admin/resources');
+        $pages_data = $this->resources_model->get_subscribers($records_per_page, $offset);
+        $total_records = $this->resources_model->get_subscribers(null, null, true);
+
+        $config = array();
+        $config["base_url"] = $pagination_base;
+        $config["total_rows"] = $total_records;
+        $config["per_page"] = $records_per_page;
+        $config["uri_segment"] = $this->uri->total_segments();
+        $config["num_links"] = 8;
+        $config["use_page_numbers"] = true;
+        $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+        $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+        $config['first_link'] = '<i class="fa fa-angle-double-left"></i>';
+        $config['first_tag_open'] = '<li class="prev page">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '<i class="fa fa-angle-double-right"></i>';
+        $config['last_tag_open'] = '<li class="next page">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+        $config['next_tag_open'] = '<li class="next page">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+        $config['prev_tag_open'] = '<li class="prev page">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+        $this->data["links"] = $this->pagination->create_links();
+        $this->data['total_records'] = $total_records;
+        $this->data['current_page'] = $page_number;
+        $this->data['from_records'] = $offset == 0 ? 1 : $offset;
+        $this->data['to_records'] = $total_records < $records_per_page ? $total_records : $offset + $records_per_page;
+        $this->data['groups'] = $this->ion_auth->groups()->result();
+
+        $this->data['pages_data'] = $pages_data;
+        $this->render('manage_admin/resources/subscribers_list');
     }
 }
