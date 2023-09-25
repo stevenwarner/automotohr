@@ -17,7 +17,12 @@
                         <!--  -->
                         <div class="row">
                             <div class="col-sm-12">
-                                <input type="number" name="<?=$key;?>" class="form-control jsTimeOffField" value="<?=$v1['amount'];?>" placeholder="0.0" />
+                                
+                                <div class="input-group">
+                                    <div class="input-group-addon">$</div>
+                                    <input type="number" name="<?=$key;?>" class="form-control jsTimeOffField" value="<?=$v1['amount'];?>" placeholder="0.0" />
+                                </div>
+                                
                             </div>
                         </div>
                     <?php } ?>

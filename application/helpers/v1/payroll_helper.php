@@ -382,6 +382,15 @@ if (!function_exists('getUrl')) {
         // calculate payroll by id
         $urls["calculateSinglePayroll"] =
             "v1/companies/$key/payrolls/$key1/calculate";
+        // submit payroll by id
+        $urls["submitSinglePayrollById"] =
+            "v1/companies/$key/payrolls/$key1/submit";
+        // get payroll receipt by id
+        $urls["getSinglePayrollReceipt"] =
+            "v1/payrolls/$key1/receipt";
+        // get payroll employee pay stubs
+        $urls["getSinglePayrollEmployeePayStubs"] =
+            "v1/payrolls/$key1/employees/$key2/pay_stub";
 
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
@@ -840,6 +849,35 @@ if (!function_exists('calculateBenefits')) {
                 $returnArray['employer_tax_total'] += $tax['company_contribution'];
                 $returnArray['employee_tax_total'] += $tax['employee_deduction'];
                 $returnArray[$tax['employee_deduction'] ? 'employee_taxes' : 'employer_taxes'][stringToSlug($tax['name'], '_')] = $tax;
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+}
+
+if (!function_exists('calculateDeductions')) {
+    /**
+     * calculate employee deductions
+     *
+     * @param array $deductions
+     * @return array
+     */
+    function calculateDeductions(array $deductions): array
+    {
+        //
+        $returnArray = [
+            'employee_tax_total' => 0,
+            'employee_taxes' => [],
+        ];
+
+        //
+        if ($deductions) {
+            foreach ($deductions as $tax) {
+                //
+                $returnArray['employee_tax_total'] += $tax['amount'];
+                $returnArray['employee_taxes'][stringToSlug($tax['name'], '_')] = $tax;
             }
         }
 

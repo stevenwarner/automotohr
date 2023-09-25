@@ -136,6 +136,7 @@ class Regular extends Public_controller
                 [
                     'start_date',
                     'end_date',
+                    'check_date',
                     'payroll_deadline'
                 ]
             );
@@ -221,11 +222,11 @@ class Regular extends Public_controller
     private function review(int $payrollId, array $data)
     {
         // time to calculate payroll
-        // $gustoResponse = $this->regular_payroll_model->calculatePayrollById($payrollId);
-        // //
-        // if (!$gustoResponse['success']) {
-        //     return redirect('payrolls/regular');
-        // }
+        $gustoResponse = $this->regular_payroll_model->calculatePayrollById($payrollId);
+        //
+        if (!$gustoResponse['success']) {
+            return redirect('payrolls/regular');
+        }
         // css
         $data['appCSS'] = bundleCSS(
             [
@@ -415,16 +416,16 @@ class Regular extends Public_controller
         ];
         // get the single payroll
         $regularPayroll = $this->regular_payroll_model
-        ->getRegularPayrollById(
-            $session['company_detail']['sid'],
-            $payrollId
-        );
+            ->getRegularPayrollById(
+                $session['company_detail']['sid'],
+                $payrollId
+            );
         if ($regularPayroll['employees']) {
             $payrollEmployees = $this->regular_payroll_model
-            ->getPayrollEmployeesWithCompensation(
-                $session['company_detail']['sid'],
-                true
-            );
+                ->getPayrollEmployeesWithCompensation(
+                    $session['company_detail']['sid'],
+                    true
+                );
             $passData['payrollEmployees'] = $payrollEmployees;
         }
         //
@@ -440,6 +441,30 @@ class Regular extends Public_controller
                     true
                 )
             ]
+        );
+    }
+
+    /**
+     * submit regular payroll
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function submitPayroll(int $payrollId)
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        // get payroll one more time
+        $gustoResponse = $this->regular_payroll_model
+            ->submitPayroll($payrollId);
+
+        return SendResponse(
+            $gustoResponse['errors'] ? 400 : 200,
+            $gustoResponse['errors'] ?? ['msg' => "You have successfully submitted the payroll. The receipt of the payroll is shown on \"Payroll history\"."]
         );
     }
 

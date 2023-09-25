@@ -1382,11 +1382,38 @@ if (!function_exists('_a')) {
      * amount formatter
      *
      * @param int $amount
-     * @param bool $doAdd Optional
+     * @param string $symbol Optional
      * @return string
      */
-    function _a(int $amount, $doAdd = true): string
+    function _a(int $amount, string $symbol = '$'): string
     {
-        return ($doAdd ? '$' : '').number_format($amount, 2);
+        return $symbol . number_format($amount, 2);
+    }
+}
+
+if (!function_exists('getRatePerHour')) {
+    /**
+     * get employee rate per hour
+     *
+     * @param int $rate
+     * @param string $paymentUnit
+     * @returns
+     */
+    function getRatePerHour(int $rate, string $paymentUnit)
+    {
+        //
+        $newRate = $rate;
+        //
+        $paymentUnit = strtolower($paymentUnit);
+        //
+        if ($paymentUnit == "year") {
+            $newRate = $rate / 52 / 40;
+        } elseif ($paymentUnit == "month") {
+            $newRate = ($rate * 12) / 52 / 40;
+        } elseif ($paymentUnit == "week") {
+            $newRate = $rate / 40;
+        }
+        //
+        return $newRate;
     }
 }

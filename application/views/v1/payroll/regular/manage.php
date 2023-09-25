@@ -30,6 +30,15 @@
                             </h1>
                         </div>
                         <div class="panel-body">
+                            <!--  -->
+                            <div class="row">
+                                <div class="col-sm-12 text-right">
+                                    <a href="<?= base_url('payrolls/regular/history'); ?>" class="btn csW csBG3 csF16">
+                                        <i class="fa fa-history csF16" aria-hidden="true"></i>
+                                        &nbsp;Payroll history
+                                    </a>
+                                </div>
+                            </div>
                             <?php if (!$regularPayrolls['current'] && !$regularPayrolls['late']) { ?>
                                 <?php $this->load->view('v1/no_data', [
                                     'message' => 'No payroll found.'
@@ -98,7 +107,7 @@
                                                     <div class="row">
                                                         <br>
                                                         <div class="col-sm-12">
-                                                        <a href="<?= base_url('payrolls/regular/' . $regularPayrolls['current']['sid']); ?>" class="btn csW csBG3 csF16">
+                                                            <a href="<?= base_url('payrolls/regular/' . $regularPayrolls['current']['sid']); ?>" class="btn csW csBG3 csF16">
                                                                 Run Payroll
                                                             </a>
                                                         </div>

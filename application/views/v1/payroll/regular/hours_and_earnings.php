@@ -95,7 +95,7 @@
                                 </strong>
                             </h1>
                             <p class="csF16">Update your employees' hours, reimbursements, and additional earnings below.</p>
-                            <p class="csF16">To pay your employees with direct deposit on <strong><?= formatDateToDB($regularPayroll['check_date'], DB_DATE, DATE); ?></strong>, you'll need to run payroll by <strong>4:00pm PDT</strong> on <strong><?= formatDateToDB($regularPayroll['payroll_deadline'], DB_DATE_WITH_TIME, DATE); ?></strong>. If you miss this deadline, your employees' direct deposit will be delayed.</p>
+                            <p class="csF16">To pay your employees with direct deposit on <strong><?= formatDateToDB($regularPayroll['check_date'], DB_DATE, DATE); ?></strong>, you'll need to run payroll by <strong>4:00pm PDT</strong> on <strong><?= formatDateToDB($regularPayroll['payroll_deadline'], 'Y-m-d\TH:i:sZ', DATE); ?></strong>. If you miss this deadline, your employees' direct deposit will be delayed.</p>
 
                             <hr />
                             <div class="table-responsive">

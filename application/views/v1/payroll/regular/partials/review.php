@@ -7,7 +7,7 @@
             </strong>
         </h3>
         <p class="csF16">
-            Here's a quick summary to review—we'll debit funds after you submit payroll. We saved your progress so you can submit this later. To pay your team on the pay date below, submit payroll by <strong><?= formatDateToDB($payroll['payroll_deadline'], DB_DATE_WITH_TIME, DATE); ?></strong> at <strong>4pm PDT</strong>.
+            Here's a quick summary to review—we'll debit funds after you submit payroll. We saved your progress so you can submit this later. To pay your team on the pay date below, submit payroll by <strong><?= formatDateToDB($payroll['payroll_deadline'], 'Y-m-d\TH:i:sZ', DATE); ?></strong> at <strong>4pm PDT</strong>.
         </p>
     </div>
 </div>
@@ -63,4 +63,15 @@
 <?php $this->load->view('v1/payroll/regular/partials/company_costs'); ?>
 
 
-<?php _e($payroll, true); ?>
+<div class="row">
+    <div class="col-sm-12 text-right">
+        <a href="<?= base_url('payrolls/regular/' . ($payroll['sid']) . '/timeoff'); ?>" class="btn csW csBG4 csF16">
+            <i class="fa fa-long-arrow-left csF16" aria-hidden="true"></i>
+            &nbsp;Back
+        </a>
+        <button class="btn csW csBG3 csF16 jsSubmitPayroll">
+            <i class="fa fa-save csF16" aria-hidden="true"></i>
+            &nbsp;Submit payroll
+        </button>
+    </div>
+</div>

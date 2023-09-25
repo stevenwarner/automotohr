@@ -1814,6 +1814,11 @@ $route['payrolls/regular']['get'] =
 // Regular single payroll routes
 $route['payrolls/regular/(:num)']['get'] =
   'v1/payrolls/regular/single/$1';
+// Submit
+// submit regular payroll
+$route['payrolls/regular/(:num)/submit']['put'] =
+  'v1/payrolls/regular/submitPayroll/$1';
+
 // Regular single payroll routes
 $route['payrolls/regular/(:num)/(:any)']['get'] =
   'v1/payrolls/regular/single/$1/$2';
