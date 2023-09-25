@@ -612,6 +612,15 @@ class Dashboard extends Public_Controller
                 if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
                     $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company');
                 }
+
+                // for payroll
+                if (isCompanyOnBoard($company_id) && isEmployeeOnPayroll($employer_id)) {
+                    // load up the model
+                    $this->load->model('v1/Pay_stubs_model', 'pay_stubs_model');
+                    //
+                    $data['employeePayStubsCount'] = $this->pay_stubs_model
+                        ->getMyPayStubsCount($employer_id);
+                }
             }
             //
             $data['appJs'] = $bundleJS;
@@ -1045,6 +1054,15 @@ class Dashboard extends Public_Controller
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
+
+            // for payroll
+            if (checkIfAppIsEnabled(PAYROLL) && isCompanyOnBoard($company_id) && isEmployeeOnPayroll($employer_id)) {
+                // load up the model
+                $this->load->model('v1/Pay_stubs_model', 'pay_stubs_model');
+                //
+                $data['employeePayStubsCount'] = $this->pay_stubs_model
+                    ->getMyPayStubsCount($employer_id);
+            }
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

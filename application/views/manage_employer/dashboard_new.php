@@ -904,12 +904,12 @@
                                             </div>
                                         <?php } ?>
 
-                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">
                                                         <figure>
-                                                            <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                            <i class="fa fa-calendar-o" aria-hidden="true"></i>
                                                         </figure>
                                                         <h2 class="post-title">
                                                             <a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a>
@@ -919,6 +919,27 @@
                                                         </div>
                                                         <div class="button-panel">
                                                             <a href="<?= base_url('payrolls/dashboard'); ?>" class="site-btn">View Dashboard</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?= base_url('payrolls/pay-stubs'); ?>">Pay Stubs</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <small style="font-size: 12px"><?= $employeePayStubsCount; ?> pay stubs</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?= base_url('payrolls/pay-stubs'); ?>" class="site-btn">View Pay stubs</a>
                                                         </div>
                                                     </div>
                                                 </div>

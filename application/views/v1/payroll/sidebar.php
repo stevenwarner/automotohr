@@ -34,6 +34,9 @@ $sideBarUrls = [
     'settings' => [
         'payrolls/settings',
     ],
+    'paystubs' => [
+        'payrolls/pay-stubs',
+    ],
 ]
 ?>
 
@@ -144,14 +147,7 @@ $sideBarUrls = [
                             </a>
                         </li>
 
-                        <!-- Pay stubs -->
-                        <li>
-                            <a <?php if (in_array(uri_string(), $sideBarUrls['paystubs'])) {
-                                    echo 'class="active"';
-                                } ?> href="<?php echo base_url('payrolls/paystubs'); ?>">
-                                <figure><i class="fa fa-money"></i></figure>My Pay Stubs
-                            </a>
-                        </li>
+                      
                     <?php endif; ?>
 
                     <!-- Manage custom/earnings -->
@@ -163,6 +159,14 @@ $sideBarUrls = [
                         </a>
                     </li>
                 <?php endif; ?>
+                  <!-- Pay stubs -->
+                <li>
+                    <a <?php if (in_array(uri_string(), $sideBarUrls['paystubs'])) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('payrolls/pay-stubs'); ?>">
+                        <figure><i class="fa fa-money"></i></figure>My Pay Stubs
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

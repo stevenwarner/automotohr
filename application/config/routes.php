@@ -1849,6 +1849,10 @@ $route['payrolls/regular/(:num)/view/3']['get'] =
 $route['payrolls/history']['get'] = 'v1/payrolls/History/index';
 $route['payrolls/history/(:num)']['get'] = 'v1/payrolls/History/single/$1';
 
+// pay stubs
+$route['payrolls/pay-stubs']['get'] = 'v1/payrolls/Pay_stub/index';
+$route['payrolls/pay-stubs/(:num)/view']['get'] = 'v1/payrolls/Pay_stub/generateView/$1';
+$route['payrolls/pay-stubs/(:num)/download']['get'] = 'v1/payrolls/Pay_stub/downalod/$1';
 
 /**
  * form routes

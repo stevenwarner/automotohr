@@ -1417,3 +1417,76 @@ if (!function_exists('getRatePerHour')) {
         return $newRate;
     }
 }
+
+if (!function_exists('splitPathAndFileName')) {
+    /**
+     * splits file name and path
+     *
+     * @param string $file
+     * @return array
+     */
+    function splitPathAndFileName(string $file): array
+    {
+        //
+        $returnArray = [
+            'path' => '', 
+            'name' => '', 
+            'orig_name' => $file,
+            'ext' => '',
+            'mime' => ''
+        ];
+        //
+        $splits = explode('/', $file);
+        //
+        $index = count($splits) - 1;
+        //
+        $returnArray['name'] = $splits[$index];
+        //
+        unset($splits[$index]);
+        // for extension
+        $returnArray['path'] = implode('/', $splits);
+        //
+        $splits = explode('.', $returnArray['name']);
+        //
+        $index = count($splits) - 1;
+        //
+        $returnArray['ext'] = $splits[$index];
+        $returnArray['mime'] = getMimeType($returnArray['ext']);
+        //
+        return $returnArray;
+    }
+}
+
+if (!function_exists('getAWSSecureFile')) {
+    /**
+     * get the secure AWS path
+     *
+     * @param string $file
+     * @return object
+     */
+    function getAWSSecureFile(string $file): object
+    {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $bucket = AWS_S3_BUCKET_NAME;
+        //
+        if (in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])) {
+            $bucket = str_replace('https', 'http', $bucket);
+        }
+        $parsedFile = splitPathAndFileName($file);
+        // prepaere config
+        $config = [];
+        $config['Bucket'] = $bucket;
+        $config['Key'] = $file;
+        // secure params
+        $config['ResponseContentLanguage'] = 'en-US';
+        $config['ResponseContentType'] = $parsedFile['mime'];
+        $config['ResponseContentDisposition'] = 'attachment; filename="'.($parsedFile['name']).'"';
+        $config['ResponseCacheControl'] = 'No-cache';
+        $config['ResponseExpires'] = gmdate(DATE_RFC2822, time() + 3600); // 1 hour
+        // Load AWS library
+        $CI->load->library('aws_lib');
+        return $CI->aws_lib->get_secure_object($config);
+    }
+}
