@@ -378,7 +378,6 @@ $(function LMSEmployeeCourses() {
 	});
 
 	function sendEmailToEmployees(employeeInfo, employeeNote) {
-		console.log(employeeNote)
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
