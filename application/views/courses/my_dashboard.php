@@ -14,16 +14,16 @@
                 <div class="col-lg-12">
                     <div class="page-header">
                         <h1 class="section-ttile">
-                            Trainings
+                            Courses
                             <div style="float: right;">
                                 <?php if (!empty($haveSubordinate)) { ?>
                                     <?php if ($page == "my_courses") { ?>
                                         <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
                                     <?php } else { ?>
                                         <?php if ($type == "non_plus") { ?>
-                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Subordinate Report</a>
                                         <?php } else if ($type == "plus") { ?>
-                                            <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Report</a>
+                                            <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Company Report</a>
                                         <?php } ?>    
                                     <?php } ?>
                                 <?php } ?>     
@@ -132,7 +132,7 @@
                                 </div>
                             </div>
                             <?php if ($viewMode == 'subordinate') { ?>
-                                <div class="col-xs-3">
+                                <div class="col-xs-3 text-right">
                                     <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
                                         <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                         Send Reminder Email                                        

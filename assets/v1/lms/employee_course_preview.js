@@ -168,7 +168,6 @@ $(function LMSEmployeeCourses() {
 				let coursesHTML = "";
 				let count = response.data.count;
 				let courses = response.data.courses;
-				let completedCourses = response.data.completedIds;
 				//
 				$("#jsAssignedCount").html(count.assigned);
 				$("#jsPendingCount").html(count.pending);
@@ -363,30 +362,23 @@ $(function LMSEmployeeCourses() {
 	$(document).on('click', '.jsSendReminderEmail', function(e) {
 		e.preventDefault();
 		//
-		
 		//
-		alertify.prompt('Please Enter a Note', '', '', function(evt, value) {
-
-				if (value.trim() == '') {
-					alertify.alert('ERROR!', 'Please Enter a Note.');
-					return;
-				}
+		alertify.confirm('Do you really want to send email reminder to <b>'+subordinateName+'</b>?', function(){
+			//
+			alertify.prompt('Please Enter a Note', '', '', function(evt, value) {
 				//
-				alertify.confirm('Do you really want to send email reminder to <b>'+subordinateName+'</b>?', function(){
-					//
-					employeeInfo = getEmployeeInfo();
-					sendEmailToEmployees(employeeInfo, value);
-				});
-
 			}, function() {
 				alertify.error('Cancel')
-			}
-
-		);
-		
+			}).setContent('<textarea style="resize: none;" rows="5" cols="50"> </textarea>').set('onok', function(closeEvent) {
+				employeeInfo = getEmployeeInfo();
+				sendEmailToEmployees(employeeInfo, this.elements.content.querySelector('textarea').value);
+			});
+		})
+		//
 	});
 
 	function sendEmailToEmployees(employeeInfo, employeeNote) {
+		console.log(employeeNote)
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();

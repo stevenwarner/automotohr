@@ -926,7 +926,7 @@ class Courses extends Public_Controller
             $replaceArray['company_name'] = $companyName;
             //
             if ($type == 'single') {
-                $replaceArray['employee_note'] = $post['note'];
+                $replaceArray['employee_note'] = '<strong>Employer Note</strong></br>'.$post['note'];
             }
             //
             log_and_send_templated_email(

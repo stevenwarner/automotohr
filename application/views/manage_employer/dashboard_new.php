@@ -954,7 +954,7 @@
                                                             </a>
                                                         </h2>
                                                         <div class="count-box" style="font-size: 12px">
-                                                            <span class="green">Expire soon <?= $coursesInfo['expire_soon']; ?> course(s)</span><br>
+                                                            <span class="red">Due soon <?= $coursesInfo['expire_soon']; ?> course(s)</span><br>
                                                             <small style="font-size: 12px">Upcoming <?= $coursesInfo['upcoming']; ?> course(s)</small><br>
                                                             <small style="font-size: 12px">Expired <?= $coursesInfo['expired']; ?> course(s)</small><br>
                                                         </div>
@@ -975,7 +975,7 @@
                                                         <a href="<?= base_url('lms/courses/my'); ?>">My Courses</a>
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
-                                                        <span class="green"><?= $pendingTrainings ?? 0; ?> Pending</span><br>
+                                                        <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
                                                     </div>
                                                     <div class="button-panel">
                                                         <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">Show</a>  

@@ -86,7 +86,6 @@ $(function LMSEmployeeCourses() {
 				let coursesHTML = "";
 				let count = response.data.count;
 				let courses = response.data.courses;
-				let completedCourses = response.data.completedIds;
 				//
 				$("#jsAssignedCount").html(count.assigned);
 				$("#jsPendingCount").html(count.pending);

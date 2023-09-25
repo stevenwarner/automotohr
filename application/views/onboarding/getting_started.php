@@ -936,13 +936,13 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('lms/courses/my'); ?>">
                                         <div class="link-box bg-redish full-width">
-                                            <h2>Training(s)</h2>
+                                            <h2>Courses</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?= $pendingTrainings; ?><sub>Pending</sub></span>
+                                                <span><?= $pendingTrainings?? 0; ?><sub>Pending</sub></span>
                                             </div>
                                             <div class="status-panel">
-                                                <h3>Trainings</h3>
+                                                <h3>Courses</h3>
                                                 <span>Assigned to You</span>
                                             </div>
                                         </div>

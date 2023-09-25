@@ -455,7 +455,8 @@
                     distance: -50,
                     style: {
                         fontWeight: 'bold',
-                        color: 'white'
+                        color: 'white',
+                        fontSize: "10"
                     }
                 },
                 startAngle: -90,
@@ -499,7 +500,10 @@
                 text: 'Employee(s)'
             }
         },
-        colors: ['#64E572', '#FF9655']
+        colors: ['#64E572', '#FF9655'],
+        style: {
+            fontSize: '15'
+        }
     });
     // //
     Highcharts.chart('jsDepartmentsCoursesProgressGraph', {
