@@ -6,7 +6,7 @@ $totals = [
 ];
 ?>
 <br>
-<div class="panel">
+<div class="panel panel-success">
     <div class="panel-heading">
         <h3 class="csF16 m0 csW">
             <strong>Tax breakdown</strong>
@@ -33,7 +33,7 @@ $totals = [
                         <?php
                         //
                         $totals['company_taxes'] += $value['employer_tax_total'];
-                        $totals['employee_taxes'] += $value['employer_tax_total'];
+                        $totals['employee_taxes'] += $value['employee_tax_total'];
                         ?>
                         <tr>
                             <td class="vam">
@@ -41,10 +41,10 @@ $totals = [
                             </td>
 
                             <td class="vam text-right">
-                                <?= _a($value['employer_tax_total']); ?>
+                                <?= _a($value['employee_tax_total']); ?>
                             </td>
                             <td class="vam text-right">
-                                <?= _a($value['employee_tax_total']); ?>
+                                <?= _a($value['employer_tax_total']); ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -53,10 +53,10 @@ $totals = [
                             Totals
                         </th>
                         <th scope="col" class="vam text-right">
-                            <?= _a($totals['company_taxes']); ?>
+                            <?= _a($totals['employee_taxes']); ?>
                         </th>
                         <th scope="col" class="vam text-right">
-                            <?= _a($totals['employee_taxes']); ?>
+                            <?= _a($totals['company_taxes']); ?>
                         </th>
                     </tr>
                 </tbody>

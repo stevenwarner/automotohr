@@ -138,7 +138,7 @@ $(function regularPayrollsTimeOff() {
 			.success(function (resp) {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
-						"payrolls/regular/history/" + payrollId
+						"payrolls/history/" + payrollId
 					);
 				});
 			})

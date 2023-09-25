@@ -824,7 +824,6 @@ class Regular_payroll_model extends Payroll_model
             [],
             "PUT"
         );
-        $gustoResponse = ['success' => true];
         // check for errors
         $errors = hasGustoErrors($gustoResponse);
         // errors found
@@ -837,6 +836,59 @@ class Regular_payroll_model extends Payroll_model
         $this->syncPayrollRecept($payrollId, $companyDetails);
         // sync employee pay stubs
         $this->syncPayrollEmployeePayStubs($payrollId, $companyDetails);
+        //
+        return $gustoResponse;
+    }
+
+    /**
+     * cancel single payroll
+     *
+     * @param int $payrollId
+     * @return array
+     */
+    public function cancelPayroll(int $payrollId): array
+    {
+        // get single payroll
+        $payroll = $this->db
+            ->select('
+                gusto_uuid,
+                company_sid
+            ')
+            ->where('sid', $payrollId)
+            ->get('payrolls.regular_payrolls')
+            ->row_array();
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($payroll['company_sid']);
+        // add payroll uuid
+        $companyDetails['other_uuid'] = $payroll['gusto_uuid'];
+        //
+        $gustoResponse = gustoCall(
+            'cancelSinglePayrollById',
+            $companyDetails,
+            [],
+            "PUT"
+        );
+        // check for errors
+        $errors = hasGustoErrors($gustoResponse);
+        // errors found
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $upd = [];
+        $upd['off_cycle'] = $gustoResponse['off_cycle'];
+        $upd['processed'] = $gustoResponse['processed'];
+        $upd['processed_date'] = $gustoResponse['processed_date'];
+        $upd['calculated_at'] = $gustoResponse['calculated_at'];
+        $upd['payroll_deadline'] = $gustoResponse['payroll_deadline'];
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $payrollId)
+            ->update(
+                'payrolls.regular_payrolls',
+                $upd
+            );
         //
         return $gustoResponse;
     }

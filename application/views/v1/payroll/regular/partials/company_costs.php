@@ -6,7 +6,7 @@
     'subtotal' => 0,
 ]; ?>
 <br>
-<div class="panel">
+<div class="panel panel-success">
     <div class="panel-heading">
         <h3 class="csF16 m0 csW">
             <strong>Company costs</strong>

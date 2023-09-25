@@ -144,7 +144,6 @@ class Regular extends Public_controller
         return $this->$step($payrollId, $data);
     }
 
-
     /**
      * regular payroll hours and earnings
      *
@@ -465,6 +464,30 @@ class Regular extends Public_controller
         return SendResponse(
             $gustoResponse['errors'] ? 400 : 200,
             $gustoResponse['errors'] ?? ['msg' => "You have successfully submitted the payroll. The receipt of the payroll is shown on \"Payroll history\"."]
+        );
+    }
+
+    /**
+     * cancel regular payroll
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function cancelPayroll(int $payrollId)
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        // get payroll one more time
+        $gustoResponse = $this->regular_payroll_model
+            ->cancelPayroll($payrollId);
+
+        return SendResponse(
+            $gustoResponse['errors'] ? 400 : 200,
+            $gustoResponse['errors'] ?? ['msg' => "You have successfully cancelled the payroll."]
         );
     }
 

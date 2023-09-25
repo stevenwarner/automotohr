@@ -27,6 +27,10 @@ $sideBarUrls = [
         'payrolls/regular/add',
         'payrolls/regular/(:num)',
     ],
+    'payrolls_history' => [
+        'payrolls/history',
+        'payrolls/history/(:num)',
+    ],
     'settings' => [
         'payrolls/settings',
     ],
@@ -133,7 +137,7 @@ $sideBarUrls = [
 
                         <!-- Payroll history -->
                         <li>
-                            <a <?php if (in_array(uri_string(), $sideBarUrls['payrolls_history'])) {
+                            <a <?php if (in_array(uri_string(), $sideBarUrls['payrolls_history'])|| preg_match('/payrolls\/history/im', uri_string())) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo base_url('payrolls/history'); ?>">
                                 <figure><i class="fa fa-history"></i></figure>Payroll History

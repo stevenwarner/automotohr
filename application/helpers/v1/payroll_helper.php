@@ -385,6 +385,9 @@ if (!function_exists('getUrl')) {
         // submit payroll by id
         $urls["submitSinglePayrollById"] =
             "v1/companies/$key/payrolls/$key1/submit";
+        // cancel payroll by id
+        $urls["cancelSinglePayrollById"] =
+            "v1/companies/$key/payrolls/$key1/cancel";
         // get payroll receipt by id
         $urls["getSinglePayrollReceipt"] =
             "v1/payrolls/$key1/receipt";

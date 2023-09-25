@@ -33,7 +33,7 @@
                             <!--  -->
                             <div class="row">
                                 <div class="col-sm-12 text-right">
-                                    <a href="<?= base_url('payrolls/regular/history'); ?>" class="btn csW csBG3 csF16">
+                                    <a href="<?= base_url('payrolls/history'); ?>" class="btn csW csBG3 csF16">
                                         <i class="fa fa-history csF16" aria-hidden="true"></i>
                                         &nbsp;Payroll history
                                     </a>
