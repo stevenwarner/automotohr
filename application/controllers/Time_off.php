@@ -6422,7 +6422,7 @@ class Time_off extends Public_Controller
                 $eRP['{{approver_last_name}}'] = $approver['last_name'];
                 $eRP['{{approver_name}}'] = $approver_name;
 
-                $eRP['{{reason}}'] = $request['reason'];
+                $eRP['{{reason}}'] = '<p style="font-style: italic;font-size: 20px;"><strong>'.strip_tags($request['reason']).'</strong></p>';
                 $eRP['{{policy_name}}'] = $request['title'];
                 $eRP['{{requested_date}}'] =  $request['request_from_date'] == $request['request_to_date'] ?
                     DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D') :
@@ -7115,7 +7115,7 @@ class Time_off extends Public_Controller
         $eRP = [];
         $eRP['{{company_name}}'] = $request['CompanyName'];
         $eRP['{{policy_name}}'] = $request['title'];
-        $eRP['{{reason}}'] = $request['reason'];
+        $eRP['{{reason}}'] = '<p style="font-style: italic;font-size: 20px;"><strong>'.strip_tags($request['reason']).'</strong></p>';
         $eRP['{{requester_first_name}}'] = $request['first_name'];
         $eRP['{{requester_last_name}}'] = $request['last_name'];
         $eRP['{{requested_date}}'] =  $request['request_from_date'] == $request['request_to_date'] ?
