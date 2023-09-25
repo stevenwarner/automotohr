@@ -100,64 +100,51 @@
                 </div>
             </div>
             
-            <?php if ($haveSubordinate == 'yes') { ?>
 
-                <!--  -->
-                <div class="row">
-                    <div class="col-xs-12 col-md-12 text-right">
-                        <button class="btn btn-black csRadius5 jsFilterSectionBtn csF16" data-key="jsPageLoader">
-                            <i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Filter
-                        </button>
-                    </div>
+            <!--  -->
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-right">
+                    <button class="btn btn-black csRadius5 jsFilterSectionBtn csF16" data-key="jsPageLoader">
+                        <i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Filter
+                    </button>
                 </div>
-                <!--  -->
+            </div>
+            <!--  -->
 
-                <div class="row">
-                    <br>
-                    <div class="col-sm-12">
-                        <div class="row" style="margin-bottom:10px;">
-                            <div class="col-xs-9">
-                                <div class="row" style="margin: 5px 5px;">
-                                    <div class="col-lg-2 bg-warning" style="padding: 16px;"></div>
-                                    <div class="col-lg-10" style="padding: 6px; font-weight: 700;">
-                                        The course will soon expire, with less than 15 days remaining.
-                                    </div>
-                                </div>
-                                
-                                <div class="row" style="margin: 5px 5px;">
-                                    <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
-                                    <div class="col-lg-10" style="padding: 6px; font-weight: 700;">
-                                        The course has not been completed and has now expired.
-                                    </div>
+            <div class="row">
+                <br>
+                <div class="col-sm-12">
+                    <div class="row" style="margin-bottom:10px;">
+                        <div class="col-xs-9">
+                            <div class="row" style="margin: 5px 5px;">
+                                <div class="col-lg-2 bg-warning" style="padding: 16px;"></div>
+                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">
+                                    The course will soon expire, with less than 15 days remaining.
                                 </div>
                             </div>
-                            <?php if ($viewMode == 'subordinate') { ?>
-                                <div class="col-xs-3 text-right">
-                                    <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
-                                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                        Send Reminder Email                                        
-                                    </button>
-                                </div>
-                            <?php } ?>
-                                
-                        </div>
-                        <div id="jsMyAssignedCourses">
                             
+                            <div class="row" style="margin: 5px 5px;">
+                                <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
+                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">
+                                    The course has not been completed and has now expired.
+                                </div>
+                            </div>
                         </div>
+                        <?php if ($viewMode == 'subordinate') { ?>
+                            <div class="col-xs-3 text-right">
+                                <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
+                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                    Send Reminder Email                                        
+                                </button>
+                            </div>
+                        <?php } ?>
+                            
+                    </div>
+                    <div id="jsMyAssignedCourses">
+                        
                     </div>
                 </div>
-
-            <?php } else { ?>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <p class="alert alert-info text-center">
-                            No course assign yet.
-                        </p>
-                    </div>
-                </div>
-
-            <?php } ?>     
+            </div>   
         </div>
     </div>
 </div>
