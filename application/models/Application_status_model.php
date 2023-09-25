@@ -109,7 +109,9 @@ class Application_status_model extends CI_Model
         $do_update = $this->check_company_status($companyId); // insert records if not already present
 
         if ($do_update) {
-            $statuses = $this->Application_status_model->get_status_by_company($companyId); // get all statuses for this company
+            //$statuses = $this->Application_status_model->get_status_by_company($companyId); // get all statuses for this company
+            $statuses = $this->get_status_by_company($companyId); // get all statuses for this company
+
             // update status_sid in both these tables for this particular company
             //**** for portal_job_applications table *****//
             $this->db->where('company_sid', $companyId);

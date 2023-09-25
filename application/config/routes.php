@@ -1841,6 +1841,17 @@ $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 $route['manage_admin/cms'] = 'manage_admin/Cms/index';
 $route['manage_admin/edit_page/(:num)'] = 'manage_admin/Cms/edit_page/$1';
 
+//
+$route['manage_admin/resources'] = 'manage_admin/Resources/index';
+$route['manage_admin/resources/(:num)'] = 'manage_admin/Resources/index/$1';
+
+$route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resource/$1';
+$route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
+$route['manage_admin/view_resource/(:num)'] = 'manage_admin/Resources/view_resource/$1';
+
+
+
+
 
 
 
