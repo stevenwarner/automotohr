@@ -16,7 +16,7 @@
                         <h1 class="section-ttile">
                             Courses
                             <div style="float: right;">
-                                <?php if (!empty($haveSubordinate)) { ?>
+                                <?php if ($haveSubordinate == "yes") { ?>
                                     <?php if ($page == "my_courses") { ?>
                                         <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
                                     <?php } else { ?>
