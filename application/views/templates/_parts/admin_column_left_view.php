@@ -150,6 +150,7 @@ if (
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
     base_url(uri_string()) == site_url('sa/lms/courses') ||
+    $this->uri->segment(2) == 'benefits' ||
     $this->uri->segment(2) == 'job_title_templates' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
@@ -780,6 +781,15 @@ if (
                                         echo 'class="active"';
                                     }
                                     ?> href="<?php echo site_url('sa/lms/courses'); ?>">LMS Courses</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'benefits')) { ?>
+                            <div class="menu-item">
+                                <a <?php
+                                    if ($this->uri->segment(2) == 'benefits') {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('sa/benefits'); ?>">Benefits</a>
                             </div>
                         <?php } ?>
                     </div>

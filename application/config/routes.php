@@ -1863,6 +1863,23 @@ $route['payrolls/employees/(:num)/garnishment']['post'] = 'v1/payrolls/Garnishme
 $route['payrolls/employees/(:num)/garnishments/(:num)']['get'] = 'v1/payrolls/Garnishments/generateEditView/$1/$2';
 $route['payrolls/employees/(:num)/garnishments/(:num)']['post'] = 'v1/payrolls/Garnishments/updateGarnishment/$1/$2';
 
+
+// Benefits routes
+$route['sa/benefits']['get'] = "manage_admin/Benefits/index";
+$route['sa/benefits/view']['get'] = "manage_admin/Benefits/generateView";
+// save
+$route['sa/benefits/category/add/view']['get'] = "manage_admin/Benefits/generateAddBenefitCategoryView";
+$route['sa/benefits/category']['post'] = "manage_admin/Benefits/saveBenefitCategory";
+// update
+$route['sa/benefits/category/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitCategoryView/$1";
+$route['sa/benefits/category/(:num)']['post'] = "manage_admin/Benefits/updateBenefitCategory/$1";
+// add benefit
+$route['sa/benefits/add']['get'] = "manage_admin/Benefits/generateAddBenefitView";
+$route['sa/benefits/add']['post'] = "manage_admin/Benefits/saveBenefit";
+// edit benefit
+$route['sa/benefits/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitView/$1";
+$route['sa/benefits/(:num)']['post'] = "manage_admin/Benefits/updateBenefit/$1";
+
 /**
  * form routes
  */
