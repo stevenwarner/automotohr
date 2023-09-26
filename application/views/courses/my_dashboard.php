@@ -153,4 +153,5 @@
     var page = "<?php echo $page; ?>";
     var subordinateId = "<?php echo $subordinate_sid; ?>";
     var subordinateName = "<?php echo $subordinateName; ?>";
+    var reviewAs = "<?php echo $type; ?>";
 </script>

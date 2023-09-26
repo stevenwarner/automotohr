@@ -53,6 +53,7 @@ class Courses extends Public_Controller
         $data['employee'] = $session['employer_detail'];
         $data['haveSubordinate'] = $haveSubordinate;
         $data['load_view'] = 1;
+        $data['type'] = "self";
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'
@@ -435,7 +436,12 @@ class Courses extends Public_Controller
             $haveSubordinate = 'yes';
         }
         //
-        $data['title'] = "Subordinate Courses | " . STORE_NAME;
+        if ($type == "plus") {
+            $data['title'] = "Employee Courses | " . STORE_NAME;
+        } else {
+            $data['title'] = "Subordinate Courses | " . STORE_NAME;
+        }
+        //
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = $subordinateId;
         $data['subordinateName'] = getUserNameBySID($subordinateId);
@@ -471,7 +477,7 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function subordinateCourse ($courseId, $subordinateId) {
+    public function previewSubordinateCourse ($courseId, $subordinateId, $reviewAs) {
         //
         $data = [];
         //
@@ -493,7 +499,13 @@ class Courses extends Public_Controller
         //
         $questions = $courseInfo['course_questions'];
         //
-        $data['title'] = "My Courses :: " . STORE_NAME;
+        if ($reviewAs == "plus") {
+            $data['title'] = "Employee Course Preview | " . STORE_NAME;
+        } else {
+            $data['title'] = "Subordinate Course Preview | " . STORE_NAME;
+        }
+        //
+        $data["reviewAs"] = $reviewAs;
         $data['session'] = $session;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];

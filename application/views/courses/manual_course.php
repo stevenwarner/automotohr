@@ -21,7 +21,12 @@
                             <div style="float: right;">
                                 <button class="btn btn-info btn-orange csRadius5 jsSaveQuestionResult"><i class="fa fa-floppy-o"></i> Save</button>
                                 <?php if ($viewMode == "preview_only") { ?>
-                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <?php if ($reviewAs == "plus") { ?>
+                                        <a href="<?php echo base_url('lms/employee/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <?php } else { ?>
+                                        <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <?php } ?>
+                                   
                                 <?php } else { ?> 
                                     <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                 <?php } ?>

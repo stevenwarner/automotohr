@@ -297,7 +297,7 @@ $(function LMSEmployeeCourses() {
 								coursesHTML += `            <p>&nbsp;</p>`;
 							
 								if (course.course_status == "passed") {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
 																<i class="fa fa-eye"></i>
 																View Content
 															</a>`;
@@ -307,7 +307,7 @@ $(function LMSEmployeeCourses() {
 																View Certificate
 															</a>`;
 								} else {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
 																<i class="fa fa-play"></i>
 																Launch Content
 															</a>`;
