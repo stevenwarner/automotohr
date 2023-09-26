@@ -474,7 +474,7 @@
                 ['Not Have Courses', <?php echo $percentageNotHaveCourses; ?>]
             ]
         }],
-        colors: ['#64E572', '#FF9655']
+        colors: ['#4CBB17', '#fd7a2a']
     });
     // //
     Highcharts.chart('jsDepartmentsGraph', {
@@ -500,7 +500,7 @@
                 text: 'Employee(s)'
             }
         },
-        colors: ['#64E572', '#FF9655'],
+        colors: ['#4CBB17', '#fd7a2a'],
         style: {
             fontSize: '15'
         }
@@ -529,7 +529,7 @@
                 text: 'Employee(s)'
             }
         },
-        colors: ['#64E572', '#FF9655']
+        colors: ['#4CBB17', '#fd7a2a']
     });
     // //
     Highcharts.chart('jsCoursesProgressGraph', {
@@ -555,6 +555,6 @@
                 text: 'Employee(s)'
             }
         },
-        colors: ['#64E572', '#FF9655']
+        colors: ['#4CBB17', '#fd7a2a']
     });
 </script>
