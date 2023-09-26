@@ -331,7 +331,8 @@ class Payroll extends CI_Controller
             'js/app_helper',
             'v1/plugins/ms_modal/main',
             'v1/payroll/js/employees/add',
-            'v1/payroll/js/employees/manage'
+            'v1/payroll/js/employees/manage',
+            'v1/payroll/js/employees/garnishments',
         ], $this->js, 'employee-onboard');
         // get employees
         $data['payrollEmployees'] = $this->payroll_model->getPayrollEmployees($companyId);

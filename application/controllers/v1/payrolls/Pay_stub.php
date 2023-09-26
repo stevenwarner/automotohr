@@ -74,7 +74,7 @@ class Pay_stub extends Public_controller
      * @param int $payStubId
      * @return JSON
      */
-    public function downalod(int $payStubId): array
+    public function download(int $payStubId)
     {
         // get the session
         $data = $this->getData();

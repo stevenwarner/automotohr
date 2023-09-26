@@ -76,6 +76,10 @@
                                                             <i class="fa fa-edit csF16" aria-hidden="true"></i>&nbsp;
                                                             <span>Edit</span>
                                                         </button>
+                                                        <button class="btn csW csBG3 csF16 jsPayrollEmployeeGarnishments" data-key="<?= $payrollEmployee['id']; ?>">
+                                                            <i class="fa fa-eye csF16" aria-hidden="true"></i>&nbsp;
+                                                            <span>Garnishments</span>
+                                                        </button>
                                                         <?php if ($cl === 'warning') : ?>
                                                             <button class="btn btn-danger csF16 jsPayrollEmployeeDelete">
                                                                 <i class="fa fa-times-circle csF16" aria-hidden="true"></i>&nbsp;

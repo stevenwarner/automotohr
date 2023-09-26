@@ -1852,7 +1852,16 @@ $route['payrolls/history/(:num)']['get'] = 'v1/payrolls/History/single/$1';
 // pay stubs
 $route['payrolls/pay-stubs']['get'] = 'v1/payrolls/Pay_stub/index';
 $route['payrolls/pay-stubs/(:num)/view']['get'] = 'v1/payrolls/Pay_stub/generateView/$1';
-$route['payrolls/pay-stubs/(:num)/download']['get'] = 'v1/payrolls/Pay_stub/downalod/$1';
+$route['payrolls/pay-stubs/(:num)/download']['get'] = 'v1/payrolls/Pay_stub/download/$1';
+
+// employee garnishments
+$route['payrolls/employees/(:num)/garnishments']['get'] = 'v1/payrolls/Garnishments/generateView/$1';
+$route['payrolls/employees/(:num)/garnishments/add']['get'] = 'v1/payrolls/Garnishments/generateAddView/$1';
+// save garnishment
+$route['payrolls/employees/(:num)/garnishment']['post'] = 'v1/payrolls/Garnishments/save/$1';
+// edit
+$route['payrolls/employees/(:num)/garnishments/(:num)']['get'] = 'v1/payrolls/Garnishments/generateEditView/$1/$2';
+$route['payrolls/employees/(:num)/garnishments/(:num)']['post'] = 'v1/payrolls/Garnishments/updateGarnishment/$1/$2';
 
 /**
  * form routes

@@ -14,7 +14,7 @@ $(function manageEmployees() {
 	/**
 	 * holds the employee id
 	 */
-	let employeeId = 16;
+	let employeeId = 0;
 
 	//
 	let callQueue = {};

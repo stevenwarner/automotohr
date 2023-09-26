@@ -395,6 +395,14 @@ if (!function_exists('getUrl')) {
         $urls["getSinglePayrollEmployeePayStubs"] =
             "v1/payrolls/$key1/employees/$key2/pay_stub";
 
+        // Garnishment
+        // create
+        $urls["createGarnishment"] =
+            "v1/employees/$key1/garnishments";
+        // update
+        $urls["updateGarnishment"] =
+            "v1/garnishments/$key1";
+
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
