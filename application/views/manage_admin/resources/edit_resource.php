@@ -12,6 +12,7 @@
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="heading-title page-title">
                                             <h1 class="page-title"><i class="fa fa-envelope-o"></i>Edit Resource</h1>
+                                            <a class="black-btn pull-right" href="<?php echo base_url('manage_admin/resources/') ?>"><i class="fa fa-long-arrow-left"></i> Back to resources</a>
                                         </div>
 
                                         <div class="hr-search-main " style="display: block;">
@@ -25,7 +26,7 @@
                                                         </div>
 
                                                         <div class="col-xs-12 form-group">
-                                                            <label>Meta Title:</label><b class="text-danger"> *</b>
+                                                            <br> <label>Meta Title:</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $page_data['meta_title']; ?>" />
                                                         </div>
 
@@ -49,7 +50,7 @@
                                                             <h1 class="hr-registered pull-left">Resource Details</h1>
                                                         </div>
                                                         <div class="col-xs-12 form-group">
-                                                            <label>Title:</label><b class="text-danger"> *</b>
+                                                            <br> <label>Title:</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="title" id="title" value="<?php echo $page_data['title']; ?>" />
                                                         </div>
 
@@ -117,7 +118,7 @@
                                                         </div>
 
                                                         <div class="col-xs-12 form-group">
-                                                            <label>Resources </label>
+                                                            <label>Resource: </label>
                                                             <input type="file" style="display: none;" id="jsFileUpload" name="resources" />
                                                             <input type="hidden" id="jsFileUploadInput" name="resourcesfile" />
                                                         </div>
@@ -131,7 +132,7 @@
                             <hr />
                             <div class="row">
                                 <div class="col-lg-12 text-right">
-                                    <input onclick="saveFormInto()" name="submit_button" class="btn btn-success" value="Save">
+                                    <a class="btn btn-success" href='javascript:' onclick="saveFormInto()">Save</a>
                                     <a class="btn btn-default" href='<?php echo base_url('manage_admin/resources') ?>'>Cancel</a>
                                 </div>
                             </div>
@@ -315,10 +316,16 @@
     }
 
     //
-    let regexPattern = /[^A-Za-z-]/g;
+    let regexPattern = /[^A-Za-z 0-9-]/g;
     $("#title").keyup(function() {
         let newSlug = $("#title").val();
+
+        newSlug = newSlug.trim().replaceAll("-", " ").toLowerCase();
+        //
+        newSlug = removeSpaces(newSlug);
         newSlug = newSlug.trim().replaceAll(" ", "-").toLowerCase();
+
+        //
         $("#slug").val(newSlug.replace(regexPattern, ""));
     });
 
@@ -326,5 +333,51 @@
     function loader(is_show) {
         if (is_show == true) loaderTarget.fadeIn(500);
         else loaderTarget.fadeOut(500);
+    }
+
+    //
+    function removeSpaces(str) {
+        let n = str.length;
+        // in the original string
+        let i = 0,
+            j = -1;
+
+        let spaceFound = false;
+
+        // Handles leading spaces
+        while (++j < n && str[j] == ' ');
+
+        while (j < n) {
+            // if current characters is non-space
+            if (str[j] != ' ') {
+                // comma & question mark
+                if ((str[j] == '.' || str[j] == ',' ||
+                        str[j] == '?') && i - 1 >= 0 &&
+                    str[i - 1] == ' ')
+                    str = str.substr(0, i - 1) + str[j++] + str.substr(i);
+
+                else
+                    // and increment both i and j
+                    str = str.substr(0, i++) + str[j++] + str.substr(i);
+
+                // non-space character is found
+                spaceFound = false;
+            }
+            // if current character is a space
+            else if (str[j++] == ' ') {
+                if (!spaceFound) {
+                    str = str.substr(0, i++) + ' ' + str.substr(i);
+                    spaceFound = true;
+                }
+            }
+        }
+
+        // Remove trailing spaces
+        if (i <= 1)
+            str = str.substr(0, i);
+        else
+            str = str.substr(0, i - 1);
+
+        return str;
     }
 </script>

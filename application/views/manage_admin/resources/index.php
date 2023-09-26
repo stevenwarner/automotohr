@@ -16,7 +16,7 @@
                                     <div class="hr-box">
                                         <div class="hr-box-header">
                                             <span class="pull-right">
-                                                <a class="btn btn btn-success" href = "<?php echo base_url('manage_admin/edit_resource/0') ?>">Add</a>
+                                                <a class="btn btn btn-success" href = "<?php echo base_url('manage_admin/edit_resource/0') ?>">Add Resource</a>
                                                 <a class="btn btn btn-success" href = "<?php echo base_url('manage_admin/subscribers_list/' . $page['sid']) ?>">View Subscribers</a>
 
                                             </span>
@@ -57,7 +57,7 @@
                                                                             <?php echo  date_with_time($dataRow['created_at']); ?>
                                                                         </td>
                                                                         <td class=" <?php echo  $dataRow['status'] ==1 ? ' text-success' :' text-danger' ?> "> <strong><?php echo  strtoupper($dataRow['status'] ==1 ? "Published" :"Unpublished"); ?></strong></td>
-                                                                        <td><a class="btn btn btn-success btn-sm" href = "<?php echo base_url('resource/' . $dataRow['slug']) ?>">View</a></td>
+                                                                        <td><a class="btn btn btn-success btn-sm" href = "<?php echo base_url('resources/' . $dataRow['slug']) ?>">View</a></td>
                                                                         <td>
                                                                         <a class="btn btn-success btn-sm" href = "<?php echo base_url('manage_admin/edit_resource/' . $dataRow['sid']) ?> "><i class="fa fa-pencil"></i></a>
                                                                         </td>
