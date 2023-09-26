@@ -321,7 +321,7 @@ $(function LMSEmployeeCourses() {
 					});
 				} else {
 					coursesHTML =
-						'<p class="alert alert-info text-center">No trainings found.</p>';
+						'<p class="alert alert-info text-center">No course(s) found.</p>';
 				}
 				//
 				$("#jsMyAssignedCourses").html(coursesHTML);

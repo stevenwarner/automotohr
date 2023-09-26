@@ -13,10 +13,12 @@ class Courses extends Public_Controller
         //
         $this->load->model('v1/course_model');
         // call the company event
-        $this->api_auth->checkAndLogin(
-            $this->session->userdata('logged_in')['company_detail']['sid'],
-            $this->session->userdata('logged_in')['employer_detail']['sid']
-        );
+        if ($this->session->userdata('logged_in')) {
+            $this->api_auth->checkAndLogin(
+                $this->session->userdata('logged_in')['company_detail']['sid'],
+                $this->session->userdata('logged_in')['employer_detail']['sid']
+            );
+        }    
         //
     }
 
