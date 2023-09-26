@@ -24,7 +24,6 @@
                                                             <h1 class="hr-registered pull-left">Meta Details</h1>
                                                         </div>
 
-
                                                         <div class="col-xs-12 form-group">
                                                             <label>Meta Title:</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $page_data['meta_title']; ?>" />
@@ -41,7 +40,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
 
                                             <div class="row">
@@ -50,8 +48,6 @@
                                                         <div class="hr-box-header bg-header-green">
                                                             <h1 class="hr-registered pull-left">Resource Details</h1>
                                                         </div>
-
-
                                                         <div class="col-xs-12 form-group">
                                                             <label>Title:</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="title" id="title" value="<?php echo $page_data['title']; ?>" />
@@ -59,7 +55,14 @@
 
                                                         <div class="col-xs-12 form-group">
                                                             <label>Slug:</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slug" id="slug" value="<?php echo $page_data['slug']; ?>" />
+
+                                                            <?php
+                                                            $newslugarray = explode('-', $page_data['slug']);
+                                                            unset($newslugarray[(sizeof($newslugarray) - 1)]);
+                                                            $newSlug = implode('-', $newslugarray);
+                                                            ?>
+
+                                                            <input type="text" class="invoice-fields" name="slug" id="slug" value="<?php echo $newSlug; ?>" />
                                                         </div>
 
                                                         <div class="col-xs-12 form-group">
@@ -77,7 +80,6 @@
                                                             </div>
                                                         </div>
 
-
                                                         <div class="col-xs-12 form-group">
                                                             <label for="feature_image">Feature Image:</label>
                                                             <input type="file" style="display: none;" id="jsFeatureImage" name="feature_image" />
@@ -87,9 +89,7 @@
 
                                                         <div class="col-xs-12 form-group">
                                                             <label>Resource Type:</label>
-
                                                             <?php $resourceTypeArray = explode(',', $page_data['resource_type']) ?>
-
                                                             <label class="control control--checkbox">
                                                                 <input type="checkbox" name="resourcetype[]" value="Videos" <?php echo in_array("Videos", $resourceTypeArray) ? 'checked' : '' ?>> Videos
                                                                 <div class="control__indicator"></div>
@@ -99,7 +99,6 @@
                                                                 <input type="checkbox" name="resourcetype[]" value="Webinars" <?php echo in_array("Webinars", $resourceTypeArray) ? 'checked' : '' ?>> Webinars
                                                                 <div class="control__indicator"></div>
                                                             </label>
-
 
                                                             <label class="control control--checkbox">
                                                                 <input type="checkbox" name="resourcetype[]" value="Case Studies" <?php echo in_array("Case Studies", $resourceTypeArray) ? 'checked' : '' ?>> Case Studies
@@ -115,17 +114,13 @@
                                                                 <input type="checkbox" name="resourcetype[]" value="Other" <?php echo in_array("Other", $resourceTypeArray) ? 'checked' : '' ?>> Other
                                                                 <div class="control__indicator"></div>
                                                             </label>
-
                                                         </div>
-
 
                                                         <div class="col-xs-12 form-group">
                                                             <label>Resources </label>
                                                             <input type="file" style="display: none;" id="jsFileUpload" name="resources" />
                                                             <input type="hidden" id="jsFileUploadInput" name="resourcesfile" />
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -139,11 +134,9 @@
                                     <input onclick="saveFormInto()" name="submit_button" class="btn btn-success" value="Save">
                                     <a class="btn btn-default" href='<?php echo base_url('manage_admin/resources') ?>'>Cancel</a>
                                 </div>
-
                             </div>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -166,11 +159,8 @@
     </div>
 </div>
 
-
-
 <link rel="stylesheet" href="<?= base_url('assets/mFileUploader/index.css'); ?>" />
 <script src="<?= base_url('assets/mFileUploader/index.js'); ?>"></script>
-
 
 <script type="text/javascript">
     var totalFiles = 2;
@@ -182,9 +172,7 @@
 
     loaderTarget = $('#my_loader');
     loader(false);
-
     //
-
     function saveFormInto() {
         //
         let meta_title = $("#meta_title").val().trim();
@@ -193,7 +181,7 @@
         let title = $("#title").val();
         let slug = $("#slug").val();
         let status = $("#status").val();
-        let description = $("#description").val().trim();
+        let description = CKEDITOR.instances['description'].getData().trim();
         let upload_file_1 = $('#jsFeatureImage').mFileUploader('get');
         let upload_file_2 = $('#jsFileUpload').mFileUploader('get');
         let old_upload_file_1 = '<?= $page_data['feature_image']; ?>';
@@ -325,7 +313,6 @@
 
         });
     }
-
 
     //
     let regexPattern = /[^A-Za-z-]/g;
