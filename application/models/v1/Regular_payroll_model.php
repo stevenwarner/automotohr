@@ -1,8 +1,4 @@
-<?php
-
-use function PHPSTORM_META\map;
-
-defined('BASEPATH') || exit('No direct script access allowed');
+<?php defined('BASEPATH') || exit('No direct script access allowed');
 // load the payroll model
 loadUpModel('v1/Payroll_model', 'Payroll_model');
 /**
@@ -914,6 +910,10 @@ class Regular_payroll_model extends Payroll_model
         // errors found
         if ($errors) {
             return $errors;
+        }
+        //
+        if (!$gustoResponse['processed']) {
+            return $this->syncPayroll($payrollId, $companyDetails);
         }
         //
         $upd = [];

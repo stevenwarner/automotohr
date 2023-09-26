@@ -220,7 +220,7 @@
                                 <?= _a($value['gross_pay']); ?>
                             </td>
                             <td class="vam text-right">
-                                <?= _a($deductions['employer_tax_total'] ?? 0); ?>
+                                <?= _a($deductions['employee_tax_total'] ?? 0); ?>
                             </td>
                             <td class="vam text-right">
                                 <?= _a($value['fixed_compensations']['reimbursement']['amount'] ?? 0); ?>
