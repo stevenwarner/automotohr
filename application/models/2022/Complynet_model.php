@@ -872,7 +872,9 @@ class Complynet_model extends CI_Model
         //
         $this->load->library('Complynet/Complynet_lib', '', 'clib');
         //
+
         if ($this->findEmployeeBySid($employeeId, $companyId)) {
+
             $errorArray[] = 'Employee already synced with ComplyNet.';
             if ($doReturn) {
                 return $errorArray;
@@ -984,6 +986,14 @@ class Complynet_model extends CI_Model
             if ($doReturn) {
                 return [];
             }
+
+            // Update Altid if missing
+            if ($employeeObj[0]['AltId'] == null || $employeeObj[0]['AltId'] == '') {
+                $altUpdateData['id'] = $employeeObj[0]['UserId'];
+                $altUpdateData['AltId'] = 'AHR' . $employeeId;
+                $this->clib->updateEmployeeAltid($altUpdateData);
+            }
+
             return SendResponse(200, ['success' => true]);
         }
         //
@@ -1000,6 +1010,7 @@ class Complynet_model extends CI_Model
         $ins['jobRoleId'] = $complyJobRoleId;
         $ins['PhoneNumber'] = $employee['PhoneNumber'];
         $ins['AltId'] = 'AHR' . $employeeId;
+       
         $ins['TwoFactor'] = false;
         //
         $response = $this->clib->addEmployee($ins);
@@ -1073,6 +1084,14 @@ class Complynet_model extends CI_Model
             if ($doReturn) {
                 return [];
             }
+
+            // Update Altid if missing
+            if ($employeeObj[0]['AltId'] == null || $employeeObj[0]['AltId'] == '') {
+                $altUpdateData['id'] = $employeeObj[0]['UserId'];
+                $altUpdateData['AltId'] = 'AHR' . $employeeId;
+                $this->clib->updateEmployeeAltid($altUpdateData);
+            }
+           
             return SendResponse(200, ['success' => true]);
         }
         //

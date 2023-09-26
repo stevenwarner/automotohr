@@ -426,4 +426,23 @@ class Complynet_lib
         //
         $this->CI->db->insert('complynet_calls', $ins);
     }
+
+
+
+
+    /**
+     * @param array $ins
+     * @return array
+     */
+    public function updateEmployeeAltid(
+        array $ins
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'UserAltId?id=' . $ins['id'] . '&AltId=' . $ins['AltId'],
+            'PUT'
+        );
+    }
 }
