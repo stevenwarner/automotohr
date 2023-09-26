@@ -23,7 +23,11 @@
                             <?php echo $courseInfo["course_title"]; ?>
                             <div style="float: right;">
                                 <?php if ($viewMode == "preview_only") { ?>
-                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <?php if ($reviewAs == "plus") { ?>
+                                        <a href="<?php echo base_url('lms/employee/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <?php } else { ?>
+                                        <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <?php } ?>
                                 <?php } else { ?> 
                                     <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                 <?php } ?>     
