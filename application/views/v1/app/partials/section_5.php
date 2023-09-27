@@ -8,7 +8,7 @@
         <div class="form_section px-5 d-flex flex-column justify-content-center">
             <div class="d-flex flex-column align-items-center mb-5">
                 <p class="lightgrey heading-h4-grey heading opacity-eighty">
-                <?php echo $homeContent['page']['sections']['section16']['heading1']?>
+                <?php echo $homeContent['page']['sections']['section16']['heading']?>
 
                 </p>
                 <p class="darkgrey title"><?php echo $homeContent['page']['sections']['section16']['heading2']?></p>

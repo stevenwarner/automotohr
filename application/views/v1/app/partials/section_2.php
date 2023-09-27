@@ -24,7 +24,7 @@
                     
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                    <?php echo $homeContent['page']['sections']['section3']['headingDetail']?>
+                    <?php echo strip_tags($homeContent['page']['sections']['section3']['headingDetail'])?>
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
@@ -75,7 +75,7 @@
                 <?php echo $homeContent['page']['sections']['section4']['heading']?>
                 </p>
                 <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                <?php echo $homeContent['page']['sections']['section4']['headingDetail']?>
+                <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail'])?>
                 </p>
 
                 <button class="button explore_btn mt-5 solution-btn d-flex text-white">
@@ -102,7 +102,7 @@
                     <?php echo $homeContent['page']['sections']['section4']['heading']?>
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-eighty">
-                    <?php echo $homeContent['page']['sections']['section4']['headingDetail']?>
+                    <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail'])?>
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
@@ -146,7 +146,7 @@
 
                 </p>
                 <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                <?php echo $homeContent['page']['sections']['section5']['headingDetail']?>
+                <?php echo strip_tags($homeContent['page']['sections']['section5']['headingDetail'])?>
     
             </p>
 
@@ -175,7 +175,7 @@
 
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-eighty">
-                    <?php echo $homeContent['page']['sections']['section6']['headingDetail']?>
+                    <?php echo strip_tags($homeContent['page']['sections']['section6']['headingDetail'])?>
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
@@ -226,7 +226,7 @@
 
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                    <?php echo $homeContent['page']['sections']['section7']['headingDetail']?>
+                    <?php echo strip_tags($homeContent['page']['sections']['section7']['headingDetail'])?>
 
                     </p>
 

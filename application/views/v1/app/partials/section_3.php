@@ -10,15 +10,15 @@
         <div class="col-sm-12 text-center">
             <div class="margin-btm">
                 <p class="second-heading">
-                <?php echo $homeContent['page']['sections']['section8']['heading']?>
+                <?php echo $homeContent['page']['sections']['section9']['heading']?>
                 </p>
             </div>
         </div>
         <div class="col-sm-12">
             <div class="margin-btm">
                 <p class="text-center simple-step-text opacity-eighty">
-                <?php echo $homeContent['page']['sections']['section8']['headingDetail']?>
-                </p>
+                Take these simple steps to achieve success today!
+               </p>
             </div>
         </div>
     </div>

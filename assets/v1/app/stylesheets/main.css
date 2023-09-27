@@ -122,7 +122,6 @@ a {
 }
 
 
-
 /* Footer */
 
 .footer-section {
@@ -444,4 +443,8 @@ a {
     padding: 60px 80px;
   }
  
+}
+
+.error {
+  color: #dc3545!important;
 }

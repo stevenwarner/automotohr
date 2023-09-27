@@ -32,6 +32,7 @@
                 </div>
                 <div class="col-sm-12">
                     <div class="margin-btm">
+
                         <div class="d-flex">
                             <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
@@ -80,6 +81,7 @@
                                 regulations and requirements.
                             </p>
                         </div>
+
                     </div>
                 </div>
             </div>

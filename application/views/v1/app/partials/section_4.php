@@ -36,7 +36,7 @@
                                     </div>
                                 </div>
                                 <p class="detail-text white-text opacity-ninety">
-                                <?php echo $homeContent['page']['sections']['section11']['headingDetail']?>
+                                <?php echo strip_tags($homeContent['page']['sections']['section11']['headingDetail'])?>
 
                                 </p>
                             </div>
@@ -54,7 +54,7 @@
                                     </div>
                                 </div>
                                 <p class="detail-text white-text opacity-ninety">
-                                <?php echo $homeContent['page']['sections']['section12']['headingDetail']?>
+                                <?php echo strip_tags($homeContent['page']['sections']['section12']['headingDetail'])?>
 
                                 </p>
                             </div>
