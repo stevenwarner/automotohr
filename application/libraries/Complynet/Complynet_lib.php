@@ -445,4 +445,27 @@ class Complynet_lib
             'PUT'
         );
     }
+
+
+    /**
+     * @param array $ins
+     * @return array
+     */
+    public function updateEmployeeStatus(
+        array $ins
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        if ($ins['status'] == 'active') {
+            $status = 'true';
+        } else {
+            $status = 'false';
+        }
+
+        return $this->execute(
+            'UserStatus?username=' . $ins['userName'] . '&status=' . $status,
+            'PUT'
+        );
+    }
 }

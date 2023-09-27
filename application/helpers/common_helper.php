@@ -12113,11 +12113,11 @@ if (!function_exists('')) {
         //
         $printURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/print');
         $downloadURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/download');
-      
+
         $printURLNew = base_url('hr_documents_management/perform_action_on_document_content_new/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/print');
         $downloadURLNew = base_url('hr_documents_management/perform_action_on_document_content_new/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/download');
 
-      
+
         // For Generated
         if ($document['offer_letter_type'] == 'generated' || $document['document_type'] == 'generated') {
             //
@@ -12133,9 +12133,6 @@ if (!function_exists('')) {
             //
             $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
             $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
-
-
-
         } else if ($document['offer_letter_type'] == 'uploaded' || $document['document_type'] == 'uploaded') {
             //
             if ($type == '') {
@@ -12149,11 +12146,10 @@ if (!function_exists('')) {
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . ($awsPath) . '&embedded=true';
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
             $downloadURL = base_url("hr_documents_management/download_upload_document/" . $awsPath);
-        
+
             //
             $printURLNew = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . ($awsPath) . '&embedded=true';
             $downloadURLNew = base_url("hr_documents_management/download_upload_document_new/" . $document['document_s3_name']);
-
         } else if ($document['offer_letter_type'] == 'hybrid_document' || $document['document_type'] == 'hybrid_document') {
             //
             if ($type == '') {
@@ -12170,22 +12166,17 @@ if (!function_exists('')) {
             // $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
             // $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
             if (isset($document['uploaded_document_extension'])) {
-                $printURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document['sid']);
-                $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document['sid']);
+                $printURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/' . $document['sid']);
+                $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/' . $document['sid']);
             } else {
                 if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
-                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document['sid']);
-                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document['sid']);
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/' . $document['sid']);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/' . $document['sid']);
                 } else {
-                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document['sid']);
-                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document['sid']);
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/' . $document['sid']);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/' . $document['sid']);
                 }
             }
-            
-            
-            
-
-
         }
         //_e($document, true);
         //
@@ -12194,7 +12185,7 @@ if (!function_exists('')) {
         //
         $r['dw'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
         $r['dm'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black"  target="_blank">Download</a>';
-        
+
         //
         $r['pwnew'] = '<a href="' . ($printURLNew) . '" class="btn ' . ($cls) . ' btn-orange" style="margin-right: 5px" target="_blank">Print</a>';
         $r['dwnew'] = '<a href="' . ($downloadURLNew) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
@@ -13291,7 +13282,7 @@ if (!function_exists('isDocumentCompletedCheck')) {
                     $ra['ifram_url'] = $listaction['ifram_url'];
                     $ra['image_path'] = $listaction['image_path'];
                 }
-            } else if($type === 'hybrid_document') {
+            } else if ($type === 'hybrid_document') {
                 if ($document['user_consent'] == 1) {
                     $ra['isCompleted'] = true;
                 }
@@ -14679,7 +14670,7 @@ if (!function_exists('_m')) {
         //
         if ($d) {
             return
-            $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
+                $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
         }
         //
         return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
@@ -16711,6 +16702,90 @@ if (!function_exists('get_executive_administrator_admin_plus_status')) {
 }
 
 
+if (!function_exists('changeComplynetEmployeeStatusOld')) {
+    /**
+     * Check and update status on ComplyNet
+     * 
+     * @method get_instance
+     * 
+     * @param int    $employeeId
+     * @param string $newStatus active|deactive
+     * @param bool   $doReturn Optional
+     * @return array
+     */
+    function changeComplynetEmployeeStatusOld(int $employeeId, string $newStatus, bool $doReturn = true)
+    {
+        // set default response array
+        $res = [];
+        // set default old status
+        $oldStatus = '';
+        // get CI instance
+        $CI = &get_instance();
+        // check if employee is already synced with ComplyNet
+        if (!$CI->db->where('employee_sid', $employeeId)->count_all_results('complynet_employees')) {
+            $res['errors'][] = 'The employee has not yet been synchronized with ComplyNet.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // get the employee details
+        $record =
+            $CI->db->select('complynet_location_sid, email, complynet_json')->where([
+                'employee_sid' => $employeeId
+            ])
+            ->get('complynet_employees')
+            ->row_array();
+        // check if something happens in between
+        if (empty($record)) {
+            $res['errors'][] = 'The employee has not yet been synchronized with ComplyNet.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // decode the json to array
+        $jsonToArray = json_decode($record['complynet_json'], true);
+        // set the username of employee on ComplyNet
+        $username = isset($jsonToArray[0]['UserName']) ? $jsonToArray[0]['UserName'] : $jsonToArray['UserName'];
+        // if username is not email then set it to username
+        if (strpos($username, '@') === false) {
+            $record['email'] = $username;
+        }
+        // Load ComplyNet library
+        $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
+        // Get the employee
+        $response = $CI->complynet_lib->getEmployeeByEmail($record['email']);
+        // if ComplyNet don't have this employee
+        if (!$response) {
+            $res['errors'][] = 'ComplyNet does not have a record of the selected employee.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // get the employee agianst right location0
+        foreach ($response as $key => $value) {
+            if ($value['LocationId'] == $record['complynet_location_sid']) {
+                $oldStatus =  $value['Status'] == 1 ? "active" : "deactive";
+            }
+        }
+        // if the employee is not found
+        if ($oldStatus == '') {
+            $res['errors'][] = 'The ComplyNet status of selected employee could not be located.';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        // skip if both status are same
+        if ($newStatus != $oldStatus) {
+            //
+            $updateArray = [];
+            $updateArray["userName"] = $record['email'];
+            //
+            $CI->complynet_lib->changeEmployeeStatusByEmail(['userName' => $record['email']]);
+            //
+            $res['success'] = 'The status of the selected employee has been updated to "' . (ucfirst($newStatus)) . '".';
+            return $doReturn ? $res : sendResponse(200, $res);
+        }
+        //
+        $res['success'] = 'The employee\'s status had already been marked as "' . (ucfirst($newStatus)) . '".';
+        return $doReturn ? $res : sendResponse(200, $res);
+    }
+}
+
+
+
+
 if (!function_exists('changeComplynetEmployeeStatus')) {
     /**
      * Check and update status on ComplyNet
@@ -16780,8 +16855,11 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
             //
             $updateArray = [];
             $updateArray["userName"] = $record['email'];
+            $updateArray["status"] = $newStatus;
+
             //
-            $CI->complynet_lib->changeEmployeeStatusByEmail(['userName' => $record['email']]);
+            $CI->complynet_lib->updateEmployeeStatus($updateArray);
+
             //
             $res['success'] = 'The status of the selected employee has been updated to "' . (ucfirst($newStatus)) . '".';
             return $doReturn ? $res : sendResponse(200, $res);
