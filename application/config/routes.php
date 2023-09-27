@@ -1880,6 +1880,26 @@ $route['sa/benefits/add']['post'] = "manage_admin/Benefits/saveBenefit";
 $route['sa/benefits/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitView/$1";
 $route['sa/benefits/(:num)']['post'] = "manage_admin/Benefits/updateBenefit/$1";
 
+// Company benefits
+$route['benefits']['get'] = "v1/Company_benefits/index";
+$route['benefits/all']['get'] = "v1/Company_benefits/generateBenefitsView";
+// add
+$route['benefits/add']['get'] = "v1/Company_benefits/generateAddView";
+$route['benefits/add']['post'] = "v1/Company_benefits/createBenefit";
+// edit
+$route['benefits/edit/(:num)']['get'] = "v1/Company_benefits/generateEditView/$1";
+$route['benefits/edit/(:num)']['post'] = "v1/Company_benefits/updateBenefit/$1";
+// delete
+$route['benefits/(:num)']['delete'] = "v1/Company_benefits/deleteBenefit/$1";
+// employees
+$route['benefits/employees/(:num)']['get'] = "v1/Company_benefits/generateBenefitEmployeesView/$1";
+$route['benefits/edit/(:num)/employees']['post'] = "v1/Company_benefits/updateBenefitEmployees/$1";
+//
+$route['benefits/(:num)/employees/listing']['get'] = "v1/Company_benefits/generateBenefitEmployeesListingView/$1";
+$route['benefits/employees/(:num)/edit']['get'] = "v1/Company_benefits/generateBenefitEmployeesEditView/$1";
+$route['benefits/employees/(:num)']['post'] = "v1/Company_benefits/updateBenefitEmployee/$1";
+$route['benefits/employees/(:num)']['delete'] = "v1/Company_benefits/deleteBenefitEmployee/$1";
+
 /**
  * form routes
  */

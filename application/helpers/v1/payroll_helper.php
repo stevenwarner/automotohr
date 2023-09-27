@@ -403,6 +403,26 @@ if (!function_exists('getUrl')) {
         $urls["updateGarnishment"] =
             "v1/garnishments/$key1";
 
+        // company benefits
+        // create
+        $urls['createCompanyBenefit'] =
+            "v1/companies/$key/company_benefits";
+        // update
+        $urls['updateCompanyBenefit'] =
+            "v1/company_benefits/$key1";
+        // delete
+        $urls['deleteCompanyBenefit'] =
+            "v1/company_benefits/$key1";
+        // create employee benefit
+        $urls['createEmployeeBenefit'] =
+            "v1/employees/$key1/employee_benefits";
+        // update employee benefit
+        $urls['updateEmployeeBenefit'] =
+            "v1/employee_benefits/$key1";
+        // delete employee benefit
+        $urls['deleteEmployeeBenefit'] =
+            "v1/employee_benefits/$key1";
+
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }

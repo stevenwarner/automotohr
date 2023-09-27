@@ -34,6 +34,9 @@ $sideBarUrls = [
     'settings' => [
         'payrolls/settings',
     ],
+    'benefits' => [
+        'benefits',
+    ],
     'paystubs' => [
         'payrolls/pay-stubs',
     ],
@@ -140,15 +143,24 @@ $sideBarUrls = [
 
                         <!-- Payroll history -->
                         <li>
-                            <a <?php if (in_array(uri_string(), $sideBarUrls['payrolls_history'])|| preg_match('/payrolls\/history/im', uri_string())) {
+                            <a <?php if (in_array(uri_string(), $sideBarUrls['payrolls_history']) || preg_match('/payrolls\/history/im', uri_string())) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo base_url('payrolls/history'); ?>">
                                 <figure><i class="fa fa-history"></i></figure>Payroll History
                             </a>
                         </li>
 
-                      
+
                     <?php endif; ?>
+
+                    <!-- Manage custom/earnings -->
+                    <li>
+                        <a <?php if (in_array(uri_string(), $sideBarUrls['benefits'])) {
+                                echo 'class="active"';
+                            } ?> href="<?php echo base_url('benefits'); ?>">
+                            <figure><i class="fa fa-book"></i></figure>Benefits
+                        </a>
+                    </li>
 
                     <!-- Manage custom/earnings -->
                     <li>
@@ -159,7 +171,7 @@ $sideBarUrls = [
                         </a>
                     </li>
                 <?php endif; ?>
-                  <!-- Pay stubs -->
+                <!-- Pay stubs -->
                 <li>
                     <a <?php if (in_array(uri_string(), $sideBarUrls['paystubs'])) {
                             echo 'class="active"';
