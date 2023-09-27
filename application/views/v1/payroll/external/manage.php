@@ -35,14 +35,12 @@
                                 <div class="col-sm-8 col-xs-12">
                                     <p class="csF16">To make sure we file your taxes properly, we need to collect some info from your employees' previous payrolls.</p>
                                 </div>
-                                <?php if ($hasUnProcessedExternalPayroll) { ?>
                                 <div class="col-sm-4 col-xs-12 text-right">
                                     <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csBG3 csF16">
                                         <i class="fa fa-plus-circle csF16"></i>
                                         &nbsp;Create an external payroll
                                     </a>
                                 </div>
-                                <?php } ?>
                             </div>
                             <hr />
                             <?php $this->load->view('v1/payroll/historical_info'); ?>

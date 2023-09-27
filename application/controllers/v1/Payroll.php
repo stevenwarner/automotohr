@@ -74,6 +74,7 @@ class Payroll extends CI_Controller
                     payroll_schedule,
                     federal_tax_setup,
                     state_setup,
+                    sign_all_forms,
                     " . (isLoggedInPersonIsSignatory() ? 'sign_all_forms' : '') . "
                 ",
                 "entity_type" => "Company",
