@@ -533,8 +533,11 @@ class Company_benefits extends Public_controller
             $this->db->where_in('employee_sid', $employeeIds)->delete('gusto_employees_state_tax');
             $this->db->where_in('employee_sid', $employeeIds)->delete('payrolls.employee_benefits');
             $this->db->where_in('employee_sid', $employeeIds)->delete('payrolls.employee_garnishments');
-            $this->db->where_in('employee_sid', $employeeIds)->update('bank_account_details', ['gusto_uuid' => null]);
-            $this->db->where_in('employee_sid', $employeeIds)->update('users', ['on_payroll' => 0]);
+            $this->db
+                ->where_in('users_sid', $employeeIds)
+                ->where('users_type', 'employee')
+                ->update('bank_account_details', ['gusto_uuid' => null]);
+            $this->db->where_in('sid', $employeeIds)->update('users', ['on_payroll' => 0]);
         }
         //
         if ($contractorIds) {
@@ -576,7 +579,7 @@ class Company_benefits extends Public_controller
         $this->db->where('company_sid', $companyId)->delete('payrolls.external_payrolls_tax_liabilities');
         $this->db->where('company_sid', $companyId)->delete('payrolls.payroll_blockers');
         $this->db->where('company_sid', $companyId)->delete('payrolls.regular_payrolls');
-        $this->db->where('company_sid', $companyId)->update('users', ['on_payroll' => 0]);
+        $this->db->where('sid', $companyId)->update('users', ['on_payroll' => 0]);
         //
         return redirect('/dashboard');
     }

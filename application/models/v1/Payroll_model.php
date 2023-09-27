@@ -4364,6 +4364,13 @@ class Payroll_model extends CI_Model
             ])
             ->get('timeoff_policies')
             ->result_array();
+        //
+        return $this->addCompanyEarningType(
+            $companyId,
+            [
+                'name' => "Paid Time Off"
+            ]
+        );
         if (!$paidPolicies) {
             //
             return $this->addCompanyEarningType(
