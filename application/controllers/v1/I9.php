@@ -644,7 +644,7 @@ class I9 extends Public_Controller
                         'section3_expiration_date' => $formpost['section3_authorized_expiration_date_'.$i],
                         'section3_name_of_emp' => $formpost['section3_authorized_name_of_emp_'.$i],
                         'signature' => $this->input->post('section3_authorized_signature_'.$i, FALSE),
-                        'section3_signature_date' => $formpost['section3_authorized_today_date_'.$i],
+                        'section3_signature_date' => !empty($formpost['section3_authorized_today_date_'.$i]) ? $formpost['section3_authorized_today_date_'.$i] : "",
                         'section3_additional_information' => $formpost['section3_authorized_additional_information_'.$i],
                         'section3_alternative_procedure' => isset($formpost['section3_authorized_alternative_procedure_'.$i]) ? 1 : 0,
                     ];

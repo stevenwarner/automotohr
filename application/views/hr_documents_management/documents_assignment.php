@@ -281,17 +281,17 @@ $assignIdObj = $confidential_sids;
                                                                                 <?php if ($user_type == 'employee') { ?>
                                                                                     <a class="btn <?php echo $i9_SD > 0 ? 'btn-success' : 'blue-button'; ?>" href="<?= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $i9_form['sid'] . "/i9_assigned" ?>">Upload Supporting Docs</a>
                                                                                 <?php } ?>
-                                                                                <?php if ($i9_form['employer_flag']) {
-                                                                                    if (!empty($i9_form['s3_filename']) && $i9_form['s3_filename'] != NULL) { ?>
+                                                                                <?php if ($i9_form['employer_flag']) { ?>
+                                                                                    <?php if (!empty($i9_form['s3_filename']) && $i9_form['s3_filename'] != NULL) { ?>
                                                                                         <a class="btn btn-success" onclick="preview_eev_document_model(this);" data-toggle="modal" href="javascript:;" data-document-type="i9" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $i9_form['s3_filename']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $i9_form['s3_filename']; ?>" data-file-name="<?php echo $i9_form['s3_filename']; ?>" data-document-title="<?php echo $i9_form['s3_filename']; ?>">
                                                                                             View hand signed I9
                                                                                         </a>
                                                                                     <?php } else { ?>
                                                                                         <?php if ($i9_form['user_consent'] == 1 && (empty($i9_form['s3_filename']) || $i9_form['s3_filename'] == NULL)) {
                                                                                             if ($i9_form['employer_flag']) { ?>
-                                                                                                <a class="btn btn-success <?= $i9_form['version'] == '2023' ? 'jsI9EmployerSection' : 'i9_edit_employer_section'; ?>" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Completed</a>
+                                                                                                <a class="btn btn-success <?= $i9_form['version'] == '2023' ? 'i9_edit_employer_section' : 'i9_edit_employer_section'; ?>" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Completed</a>
                                                                                             <?php } else { ?>
-                                                                                                <a class="btn blue-button <?= $i9_form['version'] == '2023' ? 'jsI9EmployerSection' : 'i9_edit_employer_section'; ?>" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Not Completed</a>
+                                                                                                <a class="btn blue-button <?= $i9_form['version'] == '2023' ? 'i9_edit_employer_section' : 'i9_edit_employer_section'; ?>" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Not Completed</a>
                                                                                         <?php }
                                                                                         } ?>
                                                                                         <a class="btn btn-success" data-toggle="modal" data-target="#i9_modal" href="javascript:void(0);">View I9</a>
@@ -299,7 +299,7 @@ $assignIdObj = $confidential_sids;
                                                                                 } else { ?>
                                                                                     <?php if ($i9_form['user_consent'] == 1 && (empty($i9_form['s3_filename']) || $i9_form['s3_filename'] == NULL)) {
                                                                                         if ($i9_form['employer_flag']) { ?>
-                                                                                            <a class="btn btn-success <?= $i9_form['version'] == '2023' ? 'jsI9EmployerSection' : 'i9_edit_employer_section'; ?>" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Completed</a>
+                                                                                            <a class="btn btn-success <?= $i9_form['version'] == '2023' ? 'i9_edit_employer_section' : 'i9_edit_employer_section'; ?>" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Completed</a>
                                                                                         <?php } else { ?>
                                                                                             <a class="btn blue-button i9_edit_employer_section" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Not Completed</a>
                                                                                     <?php }

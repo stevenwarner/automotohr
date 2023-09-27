@@ -1,4 +1,4 @@
-<?php
+<?php 
 for ($i = 1; $i <= 3; $i++) : ?>
 
     <div class="row <?= $i % 2 === 0 ? 'csBG5 p10' : '' ?>">
@@ -9,7 +9,7 @@ for ($i = 1; $i <= 3; $i++) : ?>
             <div class="form-group">
                 <label>Date (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_8_date"></i></label>
                 <input type="text" class="form-control date_picker2" readonly
-                        value="<?= isset($authorizedArray[$i]['section3_rehire_date']) && !empty($authorizedArray[$i]['section3_rehire_date']) ? date('m-d-Y',strtotime($authorizedArray[$i]['section3_rehire_date'])) : "";?>" id="section3_authorized_rehire_date_<?= $i; ?>" name="section3_authorized_rehire_date_<?= $i; ?>" autocomplete="off">
+                        value="<?= isset($authorizedArray[$i]['section3_rehire_date']) && !empty($authorizedArray[$i]['section3_rehire_date']) ? $authorizedArray[$i]['section3_rehire_date'] : "";?>" id="section3_authorized_rehire_date_<?= $i; ?>" name="section3_authorized_rehire_date_<?= $i; ?>" autocomplete="off">
             </div>
         </div>
 
@@ -200,7 +200,7 @@ for ($i = 1; $i <= 3; $i++) : ?>
                             <div class="form-group">
                                 <label>Expiration Date (if any) (mm/dd/yyyy) <i
                                         class="fa fa-question-circle-o modalShow" src="section_8_expiration"></i></label>
-                                <input type="text" value="<?= isset($authorizedArray[$i]['section3_expiration_date']) && !empty($authorizedArray[$i]['section3_expiration_date']) ? date('m-d-Y',strtotime($authorizedArray[$i]['section3_expiration_date'])) : "";?>"
+                                <input type="text" value="<?= isset($authorizedArray[$i]['section3_expiration_date']) && !empty($authorizedArray[$i]['section3_expiration_date']) ? $authorizedArray[$i]['section3_expiration_date'] : "";?>"
                                         class="form-control date_picker2" readonly
                                         name="section3_authorized_expiration_date_<?= $i; ?>" id="section3_authorized_expiration_date_<?= $i; ?>" autocomplete="off">
                             </div>
@@ -247,8 +247,8 @@ for ($i = 1; $i <= 3; $i++) : ?>
                         <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i
-                                        class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>
-                                <input type="text" readonly value="<?= isset($authorizedArray[$i]['section3_signature_date']) && !empty($authorizedArray[$i]['section3_signature_date']) ? date('m-d-Y',strtotime($authorizedArray[$i]['section3_signature_date'])) : date('m-d-Y');?>"
+                                        class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>       
+                                <input type="text" readonly value="<?= isset($authorizedArray[$i]['section3_signature_date']) && !empty($authorizedArray[$i]['section3_signature_date']) ? $authorizedArray[$i]['section3_signature_date'] : '';?>"
                                         class="form-control date_picker" readonly
                                         id="section3_authorized_today_date_<?= $i; ?>" name="section3_authorized_today_date_<?= $i; ?>" autocomplete="off">
                             </div>
