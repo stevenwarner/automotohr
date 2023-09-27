@@ -1899,6 +1899,8 @@ $route['benefits/(:num)/employees/listing']['get'] = "v1/Company_benefits/genera
 $route['benefits/employees/(:num)/edit']['get'] = "v1/Company_benefits/generateBenefitEmployeesEditView/$1";
 $route['benefits/employees/(:num)']['post'] = "v1/Company_benefits/updateBenefitEmployee/$1";
 $route['benefits/employees/(:num)']['delete'] = "v1/Company_benefits/deleteBenefitEmployee/$1";
+// to be removed
+$route['payrolls/start_fresh']['get'] = "v1/Company_benefits/flushPayroll";
 
 /**
  * form routes

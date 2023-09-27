@@ -3014,8 +3014,8 @@ class Payroll_model extends CI_Model
                 'users_sid' => $employeeId,
                 'users_type' => 'employee'
             ])
-            ->where('gusto_uuid <> ', '')
-            ->where('gusto_uuid is not null', null, null)
+            // ->where('gusto_uuid <> ', '')
+            // ->where('gusto_uuid is not null', null, null)
             ->order_by('sid', 'asc')
             ->limit(2)
             ->get('bank_account_details')
