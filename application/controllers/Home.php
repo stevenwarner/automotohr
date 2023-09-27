@@ -77,31 +77,34 @@ class Home extends CI_Controller
             'alertifyjs/alertify.min'
         ], $this->assetPath);
 
+        $homeContent = getPageContent('home');
+
 
         $data['slider'] = [
             [
-                'title' => 'Effortlessly Manage HR, Benefits & Payroll!',
-                'sub_title' => 'Say goodbye to administrative hassles by embracing a simplified solution that serves all your HR needs –',
-                'link' => 'product-1',
-                'link_text' => 'product-1',
+                'title' => $homeContent['page']['slider']['slider1']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider1']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider1']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider1']['btnText'],
                 'image' => 'assets/v1/app/images/banner_1.webp'
             ],
             [
-                'title' => 'Smart Onboarding with AutomotoHR!',
-                'sub_title' => 'Leave behind inefficient onboarding methods and embrace <span class="anchar_tag">AutomotoHR</span> to optimize data management, expedite paperwork, & elevate orientation.',
-                'link' => 'product-2',
-                'link_text' => 'product-2',
+                'title' => $homeContent['page']['slider']['slider2']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider2']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider2']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
                 'image' => 'assets/v1/app/images/banner_2.webp'
             ],
             [
-                'title' => 'One-Stop Shop for HR & Hiring!',
-                'sub_title' => 'Efficiently handle job postings, targeted advertising, candidate management, and assessment checks in one place.',
-                'link' => 'product-3',
-                'link_text' => 'product-3',
+                'title' => $homeContent['page']['slider']['slider3']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider3']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider3']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
                 'image' => 'assets/v1/app/images/banner_3.webp'
             ]
         ];
 
+        $data['homeContent'] = $homeContent;
         $data['home_page'] = $this->home_model->get_home_page_data();
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/homepage');

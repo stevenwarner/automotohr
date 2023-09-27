@@ -641,7 +641,7 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
         $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
         // check and return data
-        return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0'): ($files[$file] ?? []);
+        return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
     }
 }
 
@@ -1092,5 +1092,21 @@ if (!function_exists('isSerializeString')) {
         $data = @unserialize($string);
         //
         return is_array($data) ? true : false;
+    }
+}
+
+
+if (!function_exists('getPageContent')) {
+
+    function getPageContent($page)
+    {
+        //
+        $CI = &get_instance();
+        $pageContent = $CI->db
+            ->select('content')
+            ->where('page', $page)
+            ->get('cms_pages_new')
+            ->row_array();
+        return json_decode($pageContent['content'],true);
     }
 }

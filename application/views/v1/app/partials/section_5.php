@@ -8,9 +8,10 @@
         <div class="form_section px-5 d-flex flex-column justify-content-center">
             <div class="d-flex flex-column align-items-center mb-5">
                 <p class="lightgrey heading-h4-grey heading opacity-eighty">
-                    Want the Inside Secret on People Operations?
+                <?php echo $homeContent['page']['sections']['section16']['heading1']?>
+
                 </p>
-                <p class="darkgrey title">Watch AutomotoHR in action</p>
+                <p class="darkgrey title"><?php echo $homeContent['page']['sections']['section16']['heading2']?></p>
             </div>
             <form method="post" action="<?= base_url('schedule_your_free_demo'); ?>" class="form" id="schedule-free-demo-form">
                 <div class="form-group">

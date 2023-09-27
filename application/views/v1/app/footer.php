@@ -1,4 +1,7 @@
 <footer class="footer-section">
+<?php $footerContent = getPageContent('footer'); 
+ ?>
+
     <div class="footer-space-adj">
         <div class="row margin-bottom-20">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
@@ -65,16 +68,17 @@
                 <p class="footer-text-three">
                     <a href="#"> Products</a>
                 </p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="product/people-operations"> Product Operations </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="product-recruitment"> Recruitment </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="product/hr-electronic-onboarding"> HR Electronic Onboarding </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="product-employee-management"> Employee Management </a></li>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="product-payroll"> Payroll </a></p>
-                <p class=" second-text-adj f-w-500"><a href="product-compliance"> Compliance </a></p>
+
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['productoperations']['slug'])?>"> <?php echo $footerContent['page']['products']['productoperations']['title']?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['recruitment']['electroniconboarding']['slug'])?>"> <?php echo $footerContent['page']['products']['recruitment']['title']?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['electroniconboarding']['slug'])?>"> <?php echo $footerContent['page']['products']['electroniconboarding']['title']?></a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['employeemanagement']['slug'])?>"> <?php echo $footerContent['page']['products']['employeemanagement']['title']?> </a></li>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['payroll']['slug'])?>"> <?php echo $footerContent['page']['products']['payroll']['title']?> </a></p>
+                <p class=" second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['compliance']['slug'])?>"> <?php echo $footerContent['page']['products']['compliance']['title']?> </a></p>
 
                 <div class="margin-top-40 margin-bottom-30">
-                    <p class="footer-text-three p-bottom-adj"><a href="affiliate_portal/login"> Affiliate Program</a></p>
-                    <p class="footer-text-three p-bottom-adj"><a href="services/privacy-policy"> Privacy Policy </a></p>
+                    <p class="footer-text-three p-bottom-adj"><a href="<?= base_url($footerContent['page']['affiliateprogram']['slug'])?>"> <?php echo $footerContent['page']['affiliateprogram']['title']?></a></p>
+                    <p class="footer-text-three p-bottom-adj"><a href="<?= base_url($footerContent['page']['privacypolicy']['slug'])?>"> <?php echo $footerContent['page']['privacypolicy']['title']?> </a></p>
                 </div>
 
                 <div class="book-demo-btn">
@@ -84,22 +88,22 @@
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-2">
                 <div>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="#">Why Us?</a>
+                        <a href="<?= base_url($footerContent['page']['whyus']['slug'])?>"><?php echo $footerContent['page']['whyus']['title']?></a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= base_url('/services/about-us'); ?>">About Us</a>
+                        <a href="<?= base_url($footerContent['page']['aboutus']['slug'])?>"><?php echo $footerContent['page']['aboutus']['title']?></a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="#">Resources</a>
+                        <a href="<?= base_url($footerContent['page']['resources']['slug'])?>"><?php echo $footerContent['page']['resources']['title']?></a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= base_url('/contact_us'); ?>">Contact Us</a>
+                        <a href="<?= base_url($footerContent['page']['contactus']['slug'])?>"><?php echo $footerContent['page']['contactus']['title']?></a>
                     </p>
                     <div class="margin-top-40">
                         <p class="footer-text-three p-bottom-adj">
-                            <a href="terms-of-service">Terms Of Service </a>
+                            <a href="<?= base_url($footerContent['page']['terms']['slug'])?>"><?php echo $footerContent['page']['terms']['title']?></a>
                         </p>
-                        <p class="footer-text-three"><a href="services/sitemap">Sitemap</a></p>
+                        <p class="footer-text-three"><a href="<?= base_url($footerContent['page']['sitemap']['slug'])?>"><?php echo $footerContent['page']['sitemap']['title']?></a></p>
                     </div>
                 </div>
             </div>
@@ -110,13 +114,13 @@
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons "><i class="fa-solid fa-phone"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="#"><?php echo TALENT_NETWORK_SALE_CONTACTNO; ?></a>
+                        <a class="icon-text-adj" href="#"><?php echo $footerContent['page']['sales']['title']?></a>
                     </div>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?php echo TALENT_NETWORK_SALES_EMAIL; ?>">accounts@automotohr.com </a>
+                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['sales']['slug']?>"><?php echo $footerContent['page']['sales']['slug']?> </a>
                     </div>
                 </div>
                 <div class="margin-top-40">
@@ -125,13 +129,13 @@
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-phone"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="#"><?php echo TALENT_NETWORK_SUPPORT_CONTACTNO; ?></a>
+                        <a class="icon-text-adj" href="#"><?php echo $footerContent['page']['technical']['title']?></a>
                     </div>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?php echo TALENT_NETWORK_SALES_EMAIL; ?>">accounts@automotohr.com </a>
+                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['technical']['slug']?>"><?php echo $footerContent['page']['technical']['slug']?> </a>
                     </div>
                 </div>
             </div>
@@ -150,5 +154,4 @@
 </footer>
 </body>
 <?= $appJs ?? ''; ?>
-
 </html>

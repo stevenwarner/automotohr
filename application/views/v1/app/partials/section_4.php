@@ -11,7 +11,7 @@
                 <div class="col-sm-12 hide-on-mobile">
                     <div class="margin-btm">
                         <p class="second-heading white-text text-align-center-ontablet">
-                            HR Practices Redefined & Elevated by Innovation
+                        <?php echo $homeContent['page']['sections']['section10']['heading']?>
                         </p>
                     </div>
                 </div>
@@ -31,21 +31,13 @@
                                 <div class="col-sm-12 show-on-mobile">
                                     <div class="margin-btm">
                                         <p class="second-heading white-text">
-                                            HR Practices Redefined & Elevated by Innovation
+                                        <?php echo $homeContent['page']['sections']['section11']['heading']?>
                                         </p>
                                     </div>
                                 </div>
                                 <p class="detail-text white-text opacity-ninety">
-                                    Our mission is to revolutionize talent acquisition and
-                                    drive business growth efficiently by offering
-                                    organizations a cutting-edge HR software solution. Unlike
-                                    half-baked onboarding solutions, we provide a modern and
-                                    mobile user experience, empowering companies with
-                                    customization options and seamless integration. By
-                                    delivering these advanced features, we aim to assist
-                                    organizations in managing talent acquisition effectively,
-                                    enhancing their productivity, and enabling them to thrive
-                                    in a competitive business landscape.
+                                <?php echo $homeContent['page']['sections']['section11']['headingDetail']?>
+
                                 </p>
                             </div>
                             <div class="tab-pane fade mt-3" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
@@ -57,21 +49,13 @@
                                 <div class="col-sm-12 show-on-mobile">
                                     <div class="margin-btm">
                                         <p class="second-heading white-text">
-                                            HR Practices Redefined & Elevated by Innovation
+                                        <?php echo $homeContent['page']['sections']['section12']['heading']?>
                                         </p>
                                     </div>
                                 </div>
                                 <p class="detail-text white-text opacity-ninety">
-                                    Our mission is to revolutionize talent acquisition and
-                                    drive business growth efficiently by offering
-                                    organizations a cutting-edge HR software solution. Unlike
-                                    half-baked onboarding solutions, we provide a modern and
-                                    mobile user experience, empowering companies with
-                                    customization options and seamless integration. By
-                                    delivering these advanced features, we aim to assist
-                                    organizations in managing talent acquisition effectively,
-                                    enhancing their productivity, and enabling them to thrive
-                                    in a competitive business landscape.
+                                <?php echo $homeContent['page']['sections']['section12']['headingDetail']?>
+
                                 </p>
                             </div>
                         </div>
@@ -106,15 +90,15 @@
                         </div>
                         <div class="col-9 col-sm-9 col-md-10 col-lg-9">
                             <p class="mid-heading grey-text">
-                                Save Time to Do <br />More
+                            <?php echo $homeContent['page']['sections']['section13']['heading']?>
                             </p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                                Streamline your HR operations & empower your team to
-                                accomplish more with a cutting-edge software solution.
+                            <?php echo $homeContent['page']['sections']['section13']['headingDetail']?>
+
                             </p>
                         </div>
                     </div>
@@ -129,14 +113,15 @@
                             </div>
                         </div>
                         <div class="col-9 col-sm-9 col-md-10 col-lg-9">
-                            <p class="mid-heading grey-text">Reduce Human <br />Errors</p>
+                            <p class="mid-heading grey-text"><?php echo $homeContent['page']['sections']['section14']['heading']?>
+</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                                Ensure error-free human resource operations with an advanced
-                                set of tools for enhanced accuracy & efficiency!
+                            <?php echo $homeContent['page']['sections']['section14']['headingDetail']?>
+
                             </p>
                         </div>
                     </div>
@@ -152,15 +137,15 @@
                         </div>
                         <div class="col-9 col-sm-9 col-md-10 col-lg-9">
                             <p class="mid-heading grey-text">
-                                Create Unbeatable Culture 
+                            <?php echo $homeContent['page']['sections']['section15']['heading']?>
                             </p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                                Foster an unbeatable company culture with an integrated HR
-                                solution tailored to your organization's needs!
+                            <?php echo $homeContent['page']['sections']['section15']['headingDetail']?>
+
                             </p>
                         </div>
                     </div>
