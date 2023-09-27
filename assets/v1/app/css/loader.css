@@ -15,6 +15,7 @@
 .csPageLoader div i {
 	font-size: 50px;
     color: #fd7a2a;
+	left: 0 !important;
 }
 .csPageLoader div p {
     margin-top: 10px;
