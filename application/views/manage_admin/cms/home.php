@@ -163,6 +163,52 @@
                                                         </div>
                                                     </div>
 
+
+
+                                                    <div class="col-xs-12">
+                                                        <br>
+                                                            <label class="text-danger">Note: In bullet text Within [ ] will show as bold and yellow. exe [PEOPLE OPERATIONS]  </label>
+                                                    </div>
+
+
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Bullet 1</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section1_bullet1" id="section1_bullet1" value="<?php echo $pageContent['page']['sections']['section1']['bullet1']; ?>" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Bullet 2</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section1_bullet2" id="section1_bullet2" value="<?php echo $pageContent['page']['sections']['section1']['bullet2']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Bullet 3</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section1_bullet3" id="section1_bullet3" value="<?php echo $pageContent['page']['sections']['section1']['bullet3']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Bullet 4</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section1_bullet4" id="section1_bullet4" value="<?php echo $pageContent['page']['sections']['section1']['bullet4']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Bullet 5</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section1_bullet5" id="section1_bullet5" value="<?php echo $pageContent['page']['sections']['section1']['bullet5']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Bullet 6</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section1_bullet6" id="section1_bullet6" value="<?php echo $pageContent['page']['sections']['section1']['bullet6']; ?>" />
+                                                        </div>
+                                                    </div>
+
                                                 </div>
 
                                             </div>
@@ -725,6 +771,24 @@
                 section1_button_slug: {
                     required: true
                 },
+                section1_bullet1: {
+                    required: true
+                },
+                section1_bullet2: {
+                    required: true
+                },
+                section1_bullet3: {
+                    required: true
+                },
+                section1_bullet4: {
+                    required: true
+                },
+                section1_bullet5: {
+                    required: true
+                },
+                section1_bullet6: {
+                    required: true
+                },
                 section2_heading: {
                     required: true
                 },
@@ -927,7 +991,14 @@
                 heading: $("#section1_heading").val(),
                 headingDetail: CKEDITOR.instances['section1_details'].getData().trim(),
                 btnText: $("#section1_button_text").val(),
-                btnSlug: $("#section1_button_slug").val()
+                btnSlug: $("#section1_button_slug").val(),
+                bullet1: $("#section1_bullet1").val(),
+                bullet2: $("#section1_bullet2").val(),
+                bullet3: $("#section1_bullet3").val(),
+                bullet4: $("#section1_bullet4").val(),
+                bullet5: $("#section1_bullet5").val(),
+                bullet6: $("#section1_bullet6").val()
+
             },
             section2: {
                 heading: $("#section2_heading").val(),
