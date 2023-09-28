@@ -219,6 +219,24 @@ class Complynet_lib
     }
 
     /**
+     * get company employees
+     *
+     * @param string $companyId
+     * @return array
+     */
+    public function getCompanyEmployees(
+        string $companyId
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            "CompanyUsers?CompanyId={$companyId}",
+            'GET'
+        );
+    }
+
+    /**
      * Change user status
      *
      * @param array $upd
