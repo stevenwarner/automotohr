@@ -33,9 +33,11 @@ class Demo extends CI_Controller {
         $this->form_validation->set_rules('company_name', 'Please provide your Company Name', 'trim|required|xss_clean');
         $this->form_validation->set_rules('title', 'Please provide your Title', 'trim|xss_clean');
         $this->form_validation->set_rules('company_size', 'Please provide your Company Size', 'trim|xss_clean');
-        $this->form_validation->set_rules('newsletter_subscribe', 'Please select your choice', 'trim|xss_clean');
-        $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
-        
+     
+        //  $this->form_validation->set_rules('newsletter_subscribe', 'Please select your choice', 'trim|xss_clean');  nisar
+          $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
+       
+       
         /*if ($this->uri->segment(1) == 'demo') {
            $this->form_validation->set_rules('schedule_date', 'Please select schedule date', 'trim|required|xss_clean');
            $this->form_validation->set_rules('schedule_time', 'Please select schedule time', 'trim|required|xss_clean');                     
@@ -101,7 +103,7 @@ class Demo extends CI_Controller {
             $company_name = $this->input->post('company_name');
             $job_role = $this->input->post('job_role');
             $company_size = $this->input->post('company_size');
-            $newsletter_subscribe = $this->input->post('newsletter_subscribe');
+            $newsletter_subscribe = 0;////$this->input->post('newsletter_subscribe');  Nisar
             $date_requested = date('Y-m-d H:i:s');
             
             
@@ -118,6 +120,7 @@ class Demo extends CI_Controller {
                $message = $this->input->post('client_message');
             }
             
+
             $this->Demo_model->free_demo_new($first_name, $email, $phone_number, $company_name, $date_requested, $schedule_demo, $client_source, $ppc, $message, $company_size, $newsletter_subscribe, $job_role);
             $replacement_array['name'] = $first_name;
             $replacement_array['firstname'] = $first_name;
@@ -129,8 +132,8 @@ class Demo extends CI_Controller {
             if ($client_source == 'demo') {
                 redirect('/thank_you', 'refresh');
             } elseif ($client_source == 'schedule_your_free_demo') {
-                // $this->session->set_flashdata('message', '<strong>Success: </strong> Schedule Successfully Saved');
-                redirect('/schedule_your_free_demo', 'refresh');
+                $this->session->set_flashdata('message', '<strong>Success: </strong> Schedule Successfully Saved');
+                redirect('/', 'refresh');
             }
         }
     }
@@ -160,7 +163,6 @@ class Demo extends CI_Controller {
         if ($this->input->post('email')) {
             $email = $this->input->post('email');
             $result = $this->Demo_model->check_reffer_affiliater($email);
-            
             if ($result > 0) {
                 $this->form_validation->set_message('email', 'You already applied for demo, we will get back to you');
                 $this->session->set_flashdata('message', '<strong>Warning: </strong> You already applied for demo, we will get back to you');
@@ -169,6 +171,7 @@ class Demo extends CI_Controller {
                 echo json_encode(1);
             }
         }
+
     }
 
     function thank_you() {

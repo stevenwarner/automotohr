@@ -4,12 +4,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Home extends CI_Controller
 {
+    private $assetPath;
 
     public function __construct()
     {
         parent::__construct();
         $data['title'] = "Home";
         $this->load->model('home_model');
+
+        $this->header = "v1/app/header";
+        $this->footer = "v1/app/footer";
+        $this->assetPath = "assets/v1/app/";
     }
 
     public function index()
@@ -21,8 +26,11 @@ class Home extends CI_Controller
             $data['security_details'] = $security_details;
             $data['session'] = $this->session->userdata('logged_in');
         }
-
-        $data['title'] = 'Home';
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = 'Home | AutomotoHR.com';
+        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
+        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
 
         if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
             $this->load->model('users_model');
@@ -43,11 +51,64 @@ class Home extends CI_Controller
                 $this->session->set_userdata('logged_in', $sess_array);
             }
         }
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/alertifyjs/css/alertify.min'
+        ];
 
+        $data['pageJs'] = [
+            'v1/app/js/jquery-1.11.3.min',
+            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js',
+            'v1/app/alertifyjs/alertify.min',
+            'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js',
+            'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js',
+        ];
+
+
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/app',
+            'v1/app/stylesheets/main'
+        ], $this->assetPath);
+
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->assetPath);
+
+        $homeContent = getPageContent('home');
+
+
+        $data['slider'] = [
+            [
+                'title' => $homeContent['page']['slider']['slider1']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider1']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider1']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider1']['btnText'],
+                'image' => 'assets/v1/app/images/banner_1.webp'
+            ],
+            [
+                'title' => $homeContent['page']['slider']['slider2']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider2']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider2']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
+                'image' => 'assets/v1/app/images/banner_2.webp'
+            ],
+            [
+                'title' => $homeContent['page']['slider']['slider3']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider3']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider3']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
+                'image' => 'assets/v1/app/images/banner_3.webp'
+            ]
+        ];
+
+        $data['homeContent'] = $homeContent;
         $data['home_page'] = $this->home_model->get_home_page_data();
-        $this->load->view('main/header', $data);
-        $this->load->view('static-pages/home');
-        $this->load->view('main/footer');
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/homepage');
+        $this->load->view($this->footer);
     }
 
     public function decryptCookie($value)
@@ -2094,7 +2155,6 @@ class Home extends CI_Controller
                 $action = 'updated';
             }
             $employee_sid = $employeeId;
-
         } else {
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;

@@ -1,4 +1,5 @@
 <main>
+    <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
     <?php $this->load->view('v1/app/partials/slider'); ?>
     <?php $this->load->view('v1/app/partials/section_1'); ?>
     <?php $this->load->view('v1/app/partials/section_2'); ?>

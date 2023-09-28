@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- favicons -->
@@ -21,57 +22,112 @@
     <?php if (isset($appCSS)) {
         echo $appCSS;
     } ?>
+
+    <?php
+    if (isset($pageJs)) :
+        echo GetScripts($pageJs);
+    endif;
+    ?>
+
 </head>
 
 <body>
     <!-- header -->
     <header>
-        <div class="d-flex justify-content-center width_100 navbar_main">
-            <nav class="navbar navbar-expand-xl navbar-light d-flex justify-content-between px-3">
-                <a class="navbar-brand" href="<?= base_url('/home2'); ?>">
-                    <img src="<?= base_url('assets/v1/app/images/logo.png'); ?>" alt="logo" />
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+    <?php $headerContent = getPageContent('header');  ?>
+    
+        <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="<?= base_url('/'); ?>"><img src="<?= base_url('assets/v1/app/images/Mask group.png'); ?>" alt="logo" /></a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <div class="collapse navbar-collapse" id="navbarScroll">
+                    <ul class="navbar-nav mx-auto my-2 my-lg-0 navbar-nav-scroll">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="<?= base_url($headerContent['page']['home']['slug']); ?>"><?php echo $headerContent['page']['home']['title']; ?></a>
+                        </li>
 
-                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                    <ul class="navbar-nav mx-auto mt-2 mt-lg-0">
-                        <li class="nav-item active nav_link mx-3">
-                            <a class="nav-link" href="<?= base_url('/home2'); ?>">Home</a>
-                        </li>
-                        <li class="nav-item active nav_link mx-3 mt-lg-2 my-2">
-                            <div class="dropdown">
-                                <a class="dropdown-toggle navbar-dropdown nav-link nav_link" id="hoverDropdown" data-bs-toggle="dropdown">
-                                    Product
-                                </a>
-                                <ul class="dropdown-menu p-0" aria-labelledby="hoverDropdown">
-                                    <li class="dropdown-li">
-                                        <a class="dropdown-item dropdown-option" href="<?= base_url('/ats'); ?>">ATS</a>
-                                        <hr class="m-0" />
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <?php echo $headerContent['page']['products']['title']; ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
+                                <div class="display-flex">
+                                    <li>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu1']['slug']); ?> "><?php echo $headerContent['page']['products']['submenu1']['title']; ?> </a>
+                                        <p class="dropdown-item-custom">
+                                            Performance reviews, surveys,<br />
+                                            employment info, and more.
+                                        </p>
+                                        <hr class="dropdown-hr" />
                                     </li>
-                                </ul>
-                            </div>
+                                    <hr />
+                                    <li>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu2']['slug']); ?> "><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
+                                        <p class="dropdown-item-custom">
+                                            Onboarding, hiring paperwork,<br />
+                                            orientation, and compliance.
+                                        </p>
+                                        <hr class="dropdown-hr" />
+                                    </li>
+                                    <hr class="dropdown-divider" />
+                                    <li>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
+                                        <p class="dropdown-item-custom">
+                                            Automate payroll deductions, <br />
+                                            direct deposits, and tax filing.
+                                        </p>
+                                        <hr class="dropdown-hr" />
+                                    </li>
+                                    <hr class="dropdown-divider" />
+                                </div>
+                                <div class="display-flex margin-top-twenty">
+                                    <li>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
+                                        </a>
+                                        <p class="dropdown-item-custom">
+                                            Career website, mobile recruiting,<br />
+                                            collaborative hiring & more.
+                                        </p>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
+                                        <p class="dropdown-item-custom">
+                                            Attendance, scheduling, PTO,<br />
+                                            leave, and overtime.
+                                        </p>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
+                                        <p class="dropdown-item-custom">
+                                            Add compliance videos,<br />
+                                            employee handbook, and policies.
+                                        </p>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+                                </div>
+                            </ul>
                         </li>
-                        <li class="nav-item active nav_link mx-3">
-                            <a class="nav-link" href="<?= base_url('/why-us'); ?>">Why Us</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= base_url($headerContent['page']['whyus']['slug']); ?>"><?php echo $headerContent['page']['whyus']['title']; ?></a>
                         </li>
-                        <li class="nav-item active nav_link mx-3">
-                            <a class="nav-link" href="<?= base_url('/about-us'); ?>">About Us</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= base_url($headerContent['page']['aboutus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['aboutus']['title']; ?></a>
                         </li>
-                        <li class="nav-item active nav_link mx-3">
-                            <a class="nav-link" href="<?= base_url('/contact-us'); ?>">Contact</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= base_url($headerContent['page']['contactus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['contactus']['title']; ?></a>
                         </li>
                     </ul>
-                    <form class="form-inline my-2 my-lg-0">
-                        <a href="<?= base_url('/schedule'); ?>" class="my-2 px-4 py-3 my-sm-0 nav-btn nav_btn_1" type="submit">
-                            Schedule Your No Obligation Consultation
-                        </a>
-                        <a href="<?= base_url('/login'); ?>" class="nav_btn_2 my-2 my-sm-0 px-4 py-3 ms-sm-3" type="submit">
-                            Login
-                        </a>
-                    </form>
+
+                    <div class="d-flex flex-direction-coloumn-on-mobile">
+                        <a class="btn schedule-btn" href="#freedemo"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
+                        <a class="btn login-btn" href="<?= base_url($headerContent['page']['btnlogin']['slug']) ?>"> <?php echo $headerContent['page']['btnlogin']['title']; ?> </a>
+                    </div>
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     </header>

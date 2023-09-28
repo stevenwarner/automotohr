@@ -220,10 +220,12 @@
             },
             submitHandler: function (form) {
                 //
+                
                 if($('#g-recaptcha-response').val() == ''){
                     alertify.alert('Captcha is required.');
                     return;
                 }
+
                 var myurl = "<?= base_url() ?>demo/check_already_applied";
                 $.ajax({
                     type: "POST",

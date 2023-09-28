@@ -1751,5 +1751,18 @@ if (!function_exists('getAWSSecureFile')) {
         // Load AWS library
         $CI->load->library('aws_lib');
         return $CI->aws_lib->get_secure_object($config);
+
+if (!function_exists('getPageContent')) {
+
+    function getPageContent($page)
+    {
+        //
+        $CI = &get_instance();
+        $pageContent = $CI->db
+            ->select('content')
+            ->where('page', $page)
+            ->get('cms_pages_new')
+            ->row_array();
+        return json_decode($pageContent['content'],true);
     }
 }

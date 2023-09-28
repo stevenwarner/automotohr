@@ -17,24 +17,22 @@
                 <div class="col-sm-12">
                     <div class="margin-btm">
                         <h4 class="second-heading text-center-onmobile white-text text-align-center-ontablet">
-                            An all-in-one HR management system for every business size
-                            and industry.
+                        <?php echo $homeContent['page']['sections']['section1']['heading']?>
+
                         </h4>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="margin-btm">
                         <p class="detail-text text-center-onmobile white-text opacity-eighty text-align-center-ontablet">
-                            AutomotoHR brings all your HR functions together in one
-                            convenient place, making it effortless to handle every
-                            aspect of the employee journey from hiring to training and
-                            beyond. So take the leap and redefine the workplace
-                            experience by knowing the features you need.
+                        <?php echo $homeContent['page']['sections']['section1']['headingDetail']?>
+
                         </p>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="margin-btm">
+
                         <div class="d-flex">
                             <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
@@ -83,6 +81,7 @@
                                 regulations and requirements.
                             </p>
                         </div>
+
                     </div>
                 </div>
             </div>
