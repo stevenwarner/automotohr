@@ -218,6 +218,7 @@ if ($company_sid != 'logout') {
             $this->uri->segment(2) != 'questionnaires-tutorial ' &&
             $this->uri->segment(1) != 'performance_review' &&
             $this->uri->segment(1) != 'payroll' &&
+            $this->uri->segment(1) != 'payrolls' &&
             $this->uri->segment(1) != 'performance' &&
             !isset($logged_in_view)
         ) { ?>

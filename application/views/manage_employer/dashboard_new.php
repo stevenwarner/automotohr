@@ -858,46 +858,100 @@
                                         </div>
                                     <?php } ?>
 
-                                    <?php if (
-                                        isEmployeeOnPayroll($this->session->userdata('logged_in')['employer_detail']['sid']) ||
-                                        isPayrollAuthorizePerson($this->session->userdata('logged_in')['employer_detail']['email'])
-                                    ) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?= base_url('payroll/run'); ?>">Payroll</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <small style="font-size: 12px"></small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?= base_url('payroll/employees/normal'); ?>" class="site-btn">Payroll Dashboard</a>
+                                    <?php if (checkIfAppIsEnabled('payroll')) { ?>
+                                        <?php
+                                        $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                        $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
+                                        ?>
+
+                                        <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
+                                            <!-- Set up -->
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="#" class="jsCreatePartnerCompanyBtn" data-cid="<?= $this->session->userdata('logged_in')['company_detail']['sid']; ?>">Payroll</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <small style="font-size: 12px"></small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="#" class="site-btn jsCreatePartnerCompanyBtn" data-cid="<?= $this->session->userdata('logged_in')['company_detail']['sid']; ?>">Set-up Payroll</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
+
+                                        <?php if ($isCompanyOnPayroll && !$isTermsAgreed) { ?>
+                                            <!-- Service agreement -->
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="#" class="jsServiceAgreement" data-cid="<?= $this->session->userdata('logged_in')['company_detail']['sid']; ?>">Payroll</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <small style="font-size: 12px"></small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="#" class="site-btn jsServiceAgreement" data-cid="<?= $this->session->userdata('logged_in')['company_detail']['sid']; ?>">Payroll Service Agreement</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <small style="font-size: 12px"></small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?= base_url('payrolls/dashboard'); ?>" class="site-btn">View Dashboard</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?= base_url('payrolls/pay-stubs'); ?>">Pay Stubs</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <small style="font-size: 12px"><?= $employeePayStubsCount; ?> pay stubs</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?= base_url('payrolls/pay-stubs'); ?>" class="site-btn">View Pay stubs</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
                                     <?php } ?>
 
-                                    <?php if (checkIfAppIsEnabled('payroll') && !isCompanyOnBoard()) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?= base_url('payroll/run'); ?>">Payroll</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <small style="font-size: 12px"></small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <button class="site-btn jsAddCompanyToGusto" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
+
 
                                     <?php $this->load->view('attendance/2022/clock_green'); ?>
 

@@ -1402,67 +1402,6 @@ $route['send_manual_reminder_email_to_employee']['post'] = 'ajax/Email_manager/S
 $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/SendManualEmailReminderToManager';
 
 
-
-//
-
-
-// // AJAX Get
-// $route['payroll/get_add_bank_account/(:num)']['get'] = 'payroll/Payroll/GetAddBankAccount/$1';
-// $route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/GetEditBankAccount/$1/$2';
-// $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
-
-// $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
-// $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
-// $route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
-// $route['payroll/add_bc_to_payroll']['post'] = 'payroll/Payroll/AddBankAccountToPayroll';
-// $route['payroll/add_company_payroll_bank_account']['post'] = 'payroll/Payroll/AddCompanyBankAccountToPayroll';
-// $route['payroll/edit_company_payroll_bank_account']['post'] = 'payroll/Payroll/EditCompanyBankAccountToPayroll';
-// $route['payroll/remove_company_bank_account']['post'] = 'payroll/Payroll/RemoveCompanyBankAccounts';
-// $route['payroll/update_bank_account_to_payroll']['post'] = 'payroll/Payroll/UpdateCompanyBankAccount';
-// //
-// $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
-
-
-
-/**
- * Payroll routes
- */
-// Employee listing
-$route["payroll/company"]['get'] = "payroll/Payroll/CompanyOnboard";
-$route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
-$route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
-$route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
-$route["payroll/manage-admin"]['get'] = "payroll/Payroll/ManageAdmins";
-$route["payroll/service-terms"]['get'] = "payroll/Payroll/ServiceTerms";
-$route["payroll/settings"]['get'] = "payroll/Payroll/Settings";
-$route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
-$route["payroll/my_payroll_documents"]['get'] = "payroll/Payroll/MyPayrollDocuments";
-$route["payroll/my_document/(:num)"]['get'] = "payroll/Payroll/MyDocument/$1";
-$route["payroll/my_document/(:num)"]['post'] = "payroll/Payroll/MyDocument/$1";
-$route["payroll/history"]['get'] = "payroll/Payroll/PayrollHistory";
-$route["payroll/history/(:num)"]['get'] = "payroll/Payroll/PayrollSingleHistory/$1";
-//
-$route["payroll/p/(:any)/(:num)"]['get'] = "payroll/Payroll/PrivateFile/$1/$2";
-
-
-$route['company_tax']['get'] = 'payroll/Payroll/CompanyTax';
-$route['payroll/run']['get'] = 'payroll/Payroll/Run';
-$route['payroll/run/(:any)/(:any)']['get'] = 'payroll/Payroll/RunSingle/$1/$2';
-$route['payroll/run/(:any)']['get'] = 'payroll/Payroll/RunSingle/$1';
-
-// AJAX Get
-$route['payroll/employees']['get'] = 'payroll/Payroll_ajax/GetEmployees';
-
-
-$route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
-$route['payroll/submit']['post'] = 'payroll/Payroll/SubmitPayroll';
-$route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
-$route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
-$route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
-$route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
-
-
-
 /**
  * API - Authentication
  * Authenticates the company request
@@ -1483,11 +1422,6 @@ $route['manage_admin/job_categories_manager/job_category_industries/(:num)']['de
 //
 $route['manage_admin/merge_employees/employees/(:num)']['get'] = 'manage_admin/Merge_employees/employees/$1';
 $route['manage_admin/merge_employees/merge/(:num)']['get'] = 'manage_admin/Merge_employees/merge';
-//
-$route['create_partner_company']['post'] = 'payroll/Payroll/CreatePartnerCompany';
-$route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
-
-
 //
 $route['eeoc/get_trail/(:num)/(:any)']['get'] = 'Eeo/get_trail/$1/$2';
 $route['eeoc/get_history/(:num)/(:any)/(:any)']['get'] = 'Eeo/get_history/$1/$2/$3';
@@ -1516,43 +1450,6 @@ $route['company/pay_periods']['get'] = 'company/Company/PayPeriods';
 $route['employee/add/(:num)']['get'] = 'company/Company/AddEmployee/$1';
 //
 $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
-
-// Company Onboard
-$route['company_payroll']['get'] = 'company/Company/CompanyOnboard';
-
-// New Gusto routes
-$route['get_gusto_onboarding_page/(:any)'] = 'gusto/Gusto_payroll/GetPage/$1';
-$route['get_gusto_onboarding_page/(:any)/(:num)'] = 'gusto/Gusto_payroll/GetPage/$1/$2';
-$route['gusto/onboard_employee/(:num)']['post'] = "gusto/Gusto_payroll/AddEmployeeOnGusto/$1";
-$route['gusto/onboard_company/(:num)']['post'] = "gusto/Gusto_payroll/createPartnerCompanyOnGusto/$1";
-$route['get_payroll_employees/(:num)/(:any)'] = 'gusto/Gusto_payroll/getActiveCompanyEmployeesForPayroll/$1/$2';
-
-/**
- * 
- */
-$route['get_payroll_page/(:any)'] = 'payroll/Payroll_ajax/GetPage/$1';
-$route['get_payroll_page/(:any)/(:num)'] = 'payroll/Payroll_ajax/GetPage/$1/$2';
-//
-$route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
-
-
-/**
- * 
- */
-$route['payroll/(:num)/admin']['post'] = "payroll/Payroll_onboard/AddAdmin/$1";
-$route['payroll/(:num)/service']['post'] = "payroll/Payroll_onboard/AcceptServiceTerms/$1";
-$route['payroll/(:num)/settings']['post'] = "payroll/Payroll_onboard/Settings/$1";
-$route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/createPartnerCompanyOnGusto/$1";
-$route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";
-
-$route['payroll/onboard_employee/(:num)/(:num)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeFromPayroll/$1/$2";
-$route['payroll/onboard_employee/(:any)/(:num)']['post'] = "payroll/Payroll_onboard/EmployeeOnboardPiece/$1/$2";
-$route['payroll/onboard_employee/(:any)/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/GetEmployeeOnboardSection/$1/$2/$3";
-$route['payroll/onboard_employee/(:any)/(:num)/(:num)/(:any)']['delete'] = "payroll/Payroll_onboard/DeleteEmployeeOnboardSection/$1/$2/$3/$4";
-$route['payroll/onboard_status/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/OnboardStatus/$1/$2";
-//
-$route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";
-
 
 /**
  * Attendance routes
@@ -1713,24 +1610,6 @@ $route['compose_message_help'] = "Private_messages/compose_message_help";
 $route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
 $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';
 
-/**
- * Payroll routes for Gusto
- */
-// Admins
-$route['get_payroll_admins/(:num)']['get'] = 'gusto/Gusto_payroll/getAdmins/$1';
-$route['payroll/admin/(:num)']['post'] = 'gusto/Gusto_payroll/addAdmin/$1';
-// Signatories
-$route['payroll/signatories/(:num)']['get'] = 'gusto/Gusto_payroll/getSignatories/$1';
-$route['payroll/signatory/(:num)']['post'] = 'gusto/Gusto_payroll/addSignatory/$1';
-$route['payroll/signatories/(:num)/(:num)']['delete'] = 'gusto/Gusto_payroll/deleteSignatory/$1/$2';
-$route['payroll/signatory/(:num)']['put'] = 'gusto/Gusto_payroll/updateSignatory/$1';
-// Sync
-$route['gusto/sync/all/(:num)']['get'] = 'gusto/Gusto_payroll/syncDataDataWithGusto/$1';
-$route['gusto/company/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishCompanyOnboard/$1';
-$route['gusto/company/(:num)/send_test_deposits']['get'] = 'gusto/Gusto_payroll/sendTestDeposits/$1';
-$route['gusto/company/(:num)/approve']['get'] = 'gusto/Gusto_payroll/approveCompany/$1';
-$route['gusto/employee/(:num)/onboard/finish']['get'] = 'gusto/Gusto_payroll/checkAndFinishEmployeeOnboard/$1';
-
 //Job Title Templates
 $route['manage_admin/job_title_templates'] = 'manage_admin/job_title_templates/index';
 $route['manage_admin/job_title_templates/add'] = 'manage_admin/job_title_templates/add_edit';
@@ -1739,14 +1618,6 @@ $route['manage_admin/job_title_templates/edit/(:any)'] = 'manage_admin/job_title
 $route['manage_admin/job_title_groups'] = 'manage_admin/job_title_templates/index';
 $route['manage_admin/job_title_groups/add'] = 'manage_admin/job_title_templates/add_edit_group';
 $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_templates/add_edit_group/$1';
-
-// Employee onboard
-$route['gusto/employee/profile']['post'] = 'gusto/Gusto_payroll/onboardEmployee/profile';
-$route['gusto/employee/compensation']['post'] = 'gusto/Gusto_payroll/onboardEmployee/compensation';
-$route['gusto/employee/home_address']['post'] = 'gusto/Gusto_payroll/onboardEmployee/home_address';
-$route['gusto/employee/federal_tax']['post'] = 'gusto/Gusto_payroll/onboardEmployee/federal_tax';
-$route['gusto/employee/payment_method']['post'] = 'gusto/Gusto_payroll/onboardEmployee/payment_method';
-$route['gusto/employee/bank_account_add']['post'] = 'gusto/Gusto_payroll/onboardEmployee/bank_account_add';
 
 
 /**
@@ -1846,3 +1717,203 @@ $route['forms/i9/expired']['get'] = 'v1/I9/publicLinkExpired';
 $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 
 
+
+
+/**
+ * Payroll routes
+ */
+$route['payroll/company/(:num)/requirements'] = 'v1/Payroll/checkCompanyRequirements/$1';
+$route['payroll/cpc/(:num)/(:num)'] = 'v1/Payroll/getCreatePartnerCompanyPage/$1/$2';
+// agreement
+$route['payrolls/agreement/(:num)']['get'] = 'v1/Payroll/getCompanyAgreement/$1';
+$route['payrolls/agreement/(:num)']['post'] = 'v1/Payroll/signCompanyAgreement/$1';
+$route['payrolls/dashboard']['get'] = 'v1/Payroll/dashboard';
+// admin routes
+$route['payrolls/admins']['get'] = 'v1/Payroll/manageAdmins';
+$route['payrolls/admins/add']['get'] = 'v1/Payroll/manageAddAdmin';
+$route['payrolls/admin/create']['post'] = 'v1/Payroll/createAdmin';
+// signatories routes
+$route['payrolls/signatories']['get'] = 'v1/Payroll/manageSignatories';
+$route['payrolls/signatories/create']['get'] = 'v1/Payroll/createSignatoriesPage';
+$route['payrolls/signatories/create']['post'] = 'v1/Payroll/createSignatory';
+// payroll settings
+$route['payrolls/settings']['get'] = 'v1/Payroll/settings';
+$route['payrolls/settings']['post'] = 'v1/Payroll/updateSettings';
+// sync with Gusto
+$route['payrolls/company/sync']['get'] = 'v1/Payroll/syncCompanyWithGusto';
+// verify company bank account
+// only on demo mode
+$route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAccount';
+$route['payrolls/company/verify']['post'] = 'v1/Payroll/verifyCompany';
+// admin routes
+$route['payrolls/earnings/types']['get'] = 'v1/Payroll/earningTypes';
+// employees
+$route['payrolls/employees']['get'] = 'v1/Payroll/manageEmployees';
+$route['payrolls/(:num)/employees/get']['get'] = 'v1/Payroll/getEmployeesForPayroll/$1';
+// employee onboard
+$route['payrolls/onboard/employee/(:num)']['post'] = 'v1/Payroll/onboardEmployee/$1';
+// employee remove from payroll
+$route['payrolls/flow/employee/(:num)/delete']['delete'] = 'v1/Payroll/removeEmployee/$1';
+// employee onboard flow
+$route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';
+$route['payrolls/flow/employee/(:num)/(:any)']['get'] = 'v1/Payroll/employeeOnboardFlow/$1/$2';
+$route['payrolls/flow/employee/(:num)/personal_details']['post'] = 'v1/Payroll/updateEmployeePersonalDetails/$1';
+$route['payrolls/flow/employee/(:num)/compensation']['post'] = 'v1/Payroll/updateEmployeeCompensation/$1';
+$route['payrolls/flow/employee/(:num)/home_address']['post'] = 'v1/Payroll/updateEmployeeHomeAddress/$1';
+$route['payrolls/flow/employee/(:num)/federal_tax']['post'] = 'v1/Payroll/updateEmployeeFederalTax/$1';
+$route['payrolls/flow/employee/(:num)/state_tax']['post'] = 'v1/Payroll/updateEmployeeStateTax/$1';
+$route['payrolls/flow/employee/(:num)/bank_account']['post'] = 'v1/Payroll/addEmployeeBankAccount/$1';
+$route['payrolls/flow/employee/(:num)/payment_method']['post'] = 'v1/Payroll/updateEmployeePaymentMethod/$1';
+$route['payrolls/flow/employee/(:num)/bank_account/(:num)']['delete'] = 'v1/Payroll/deleteBankAccount/$1/$2';
+$route['payrolls/flow/employee/(:num)/bank_account/(:num)']['put'] = 'v1/Payroll/useBankAccount/$1/$2';
+$route['payrolls/flow/employee/(:num)/finish_onboard']['post'] = 'v1/Payroll/finishOnboard/$1';
+
+// contractor
+$route['payrolls/contractors']['get'] = 'v1/Payroll/manageContractors/$1';
+// add view
+$route['payrolls/flow/contractors/add']['get'] = 'v1/Payroll/addContractor/$1';
+$route['payrolls/flow/contractors/add']['post'] = 'v1/Payroll/processAddContractor/$1';
+
+// add view
+$route['payrolls/flow/contractors/(:num)/(:any)']['get'] = 'v1/Payroll/contractorFlow/$1/$2';
+$route['payrolls/flow/contractors/(:num)/single_form/(:num)']['get'] = 'v1/Payroll/contractorFlow/$1/single_form/$2';
+$route['payrolls/flow/contractors/(:num)/personal_details']['post'] = 'v1/Payroll/updateContractorPersonalDetails/$1';
+$route['payrolls/flow/contractors/(:num)/home_address']['post'] = 'v1/Payroll/updateContractorHomeAddress/$1';
+$route['payrolls/flow/contractors/(:num)/payment_method']['post'] = 'v1/Payroll/updateContractorPaymentMethod/$1';
+// Custom Earning Types
+$route['payrolls/earnings/deactivate/(:num)']['delete'] = 'v1/Payroll/deactivateCustomEarningType/$1';
+$route['payrolls/earnings/add']['get'] = 'v1/Payroll/addCustomEarningType';
+$route['payrolls/earnings/add']['post'] = 'v1/Payroll/processAddCustomEarningType';
+$route['payrolls/earnings/edit/(:num)']['get'] = 'v1/Payroll/editCustomEarningType/$1';
+$route['payrolls/earnings/edit/(:num)']['post'] = 'v1/Payroll/processEditCustomEarningType/$1';
+// Company approval webhook
+$route['gusto/subscriber'] = 'v1/App/gustoCompanyVerification';
+
+// External payroll routes
+$route['payrolls/external']['get'] = 'v1/payrolls/External/index';
+// creation
+$route['payrolls/external/create']['get'] = 'v1/payrolls/External/create';
+$route['payrolls/external/create']['post'] = 'v1/payrolls/External/createProcess';
+// deletion
+$route['payrolls/external/(:num)']['delete'] = 'v1/payrolls/External/deleteProcess/$1';
+// manage single
+$route['payrolls/external/(:num)']['get'] = 'v1/payrolls/External/manageSingle/$1';
+// edit single employee
+$route['payrolls/external/(:num)/(:num)']['get'] = 'v1/payrolls/External/manageSingleEmployee/$1/$2';
+// update employee external payroll
+$route['payrolls/external/(:num)/(:num)']['post'] = 'v1/payrolls/External/processEmployeeExternalPayroll/$1/$2';
+// calculate employee external payroll taxes
+$route['payrolls/external/(:num)/(:num)/calculates_taxes']['get'] =
+  'v1/payrolls/External/calculateEmployeeExternalPayroll/$1/$2';
+// tax liabilities
+$route['payrolls/external/confirm-tax-liabilities']['get'] =
+  'v1/payrolls/External/taxLiabilities';
+// update tax liabilities
+$route['payrolls/external/tax-liabilities']['post'] =
+  'v1/payrolls/External/updateTaxLiabilities';
+// confirm tax liabilities
+$route['payrolls/external/tax-liabilities/confirm']['get'] =
+  'v1/payrolls/External/confirmTaxLiabilities';
+// confirm tax liabilities
+$route['payrolls/external/tax-liabilities/confirm']['put'] =
+  'v1/payrolls/External/finishTaxLiabilities';
+
+// Regular payroll routes
+$route['payrolls/regular']['get'] =
+  'v1/payrolls/regular/index';
+// Regular single payroll routes
+$route['payrolls/regular/(:num)']['get'] =
+  'v1/payrolls/regular/single/$1';
+// Submit
+// submit regular payroll
+$route['payrolls/regular/(:num)/submit']['put'] =
+  'v1/payrolls/regular/submitPayroll/$1';
+// cancel regular payroll
+$route['payrolls/regular/(:num)/cancel']['put'] =
+  'v1/payrolls/regular/cancelPayroll/$1';
+
+// Regular single payroll routes
+$route['payrolls/regular/(:num)/(:any)']['get'] =
+  'v1/payrolls/regular/single/$1/$2';
+// Hours and earnings
+// Regular single payroll update employees routes
+$route['payrolls/regular/(:num)/prepare']['post'] =
+  'v1/payrolls/regular/preparePayrollForUpdate/$1';
+// get regular payroll step 1 view
+$route['payrolls/regular/(:num)/view/1']['get'] =
+  'v1/payrolls/regular/getRegularPayrollStep1/$1';
+// save regular payroll step 1
+$route['payrolls/regular/(:num)/save/1']['post'] =
+  'v1/payrolls/regular/saveRegularPayrollStep1/$1';
+
+// Time off
+// get regular payroll step 2 view
+$route['payrolls/regular/(:num)/view/2']['get'] =
+  'v1/payrolls/regular/getRegularPayrollStep2/$1';
+// Review
+// get regular payroll step 3 view
+$route['payrolls/regular/(:num)/view/3']['get'] =
+  'v1/payrolls/regular/getRegularPayrollStep3/$1';
+
+// Payroll History routes
+$route['payrolls/history']['get'] = 'v1/payrolls/History/index';
+$route['payrolls/history/(:num)']['get'] = 'v1/payrolls/History/single/$1';
+
+// pay stubs
+$route['payrolls/pay-stubs']['get'] = 'v1/payrolls/Pay_stub/index';
+$route['payrolls/pay-stubs/(:num)/view']['get'] = 'v1/payrolls/Pay_stub/generateView/$1';
+$route['payrolls/pay-stubs/(:num)/download']['get'] = 'v1/payrolls/Pay_stub/download/$1';
+
+// employee garnishments
+$route['payrolls/employees/(:num)/garnishments']['get'] = 'v1/payrolls/Garnishments/generateView/$1';
+$route['payrolls/employees/(:num)/garnishments/add']['get'] = 'v1/payrolls/Garnishments/generateAddView/$1';
+// save garnishment
+$route['payrolls/employees/(:num)/garnishment']['post'] = 'v1/payrolls/Garnishments/save/$1';
+// edit
+$route['payrolls/employees/(:num)/garnishments/(:num)']['get'] = 'v1/payrolls/Garnishments/generateEditView/$1/$2';
+$route['payrolls/employees/(:num)/garnishments/(:num)']['post'] = 'v1/payrolls/Garnishments/updateGarnishment/$1/$2';
+
+
+// Benefits routes
+$route['sa/benefits']['get'] = "manage_admin/Benefits/index";
+$route['sa/benefits/view']['get'] = "manage_admin/Benefits/generateView";
+// save
+$route['sa/benefits/category/add/view']['get'] = "manage_admin/Benefits/generateAddBenefitCategoryView";
+$route['sa/benefits/category']['post'] = "manage_admin/Benefits/saveBenefitCategory";
+// update
+$route['sa/benefits/category/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitCategoryView/$1";
+$route['sa/benefits/category/(:num)']['post'] = "manage_admin/Benefits/updateBenefitCategory/$1";
+// add benefit
+$route['sa/benefits/add']['get'] = "manage_admin/Benefits/generateAddBenefitView";
+$route['sa/benefits/add']['post'] = "manage_admin/Benefits/saveBenefit";
+// edit benefit
+$route['sa/benefits/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitView/$1";
+$route['sa/benefits/(:num)']['post'] = "manage_admin/Benefits/updateBenefit/$1";
+
+// Company benefits
+$route['benefits']['get'] = "v1/Company_benefits/index";
+$route['benefits/all']['get'] = "v1/Company_benefits/generateBenefitsView";
+// add
+$route['benefits/add']['get'] = "v1/Company_benefits/generateAddView";
+$route['benefits/add']['post'] = "v1/Company_benefits/createBenefit";
+// edit
+$route['benefits/edit/(:num)']['get'] = "v1/Company_benefits/generateEditView/$1";
+$route['benefits/edit/(:num)']['post'] = "v1/Company_benefits/updateBenefit/$1";
+// delete
+$route['benefits/(:num)']['delete'] = "v1/Company_benefits/deleteBenefit/$1";
+// employees
+$route['benefits/employees/(:num)']['get'] = "v1/Company_benefits/generateBenefitEmployeesView/$1";
+$route['benefits/edit/(:num)/employees']['post'] = "v1/Company_benefits/updateBenefitEmployees/$1";
+//
+$route['benefits/(:num)/employees/listing']['get'] = "v1/Company_benefits/generateBenefitEmployeesListingView/$1";
+$route['benefits/employees/(:num)/edit']['get'] = "v1/Company_benefits/generateBenefitEmployeesEditView/$1";
+$route['benefits/employees/(:num)']['post'] = "v1/Company_benefits/updateBenefitEmployee/$1";
+$route['benefits/employees/(:num)']['delete'] = "v1/Company_benefits/deleteBenefitEmployee/$1";
+// to be removed
+$route['payrolls/start_fresh']['get'] = "v1/Company_benefits/flushPayroll";
+
+/**
+ * form routes
+ */
+$route['forms/w4/(:any)/(:num)/assign']['post'] = 'v1/Documents_management/assignW4Form/$2/$1';
+$route['forms/w4/(:any)/(:num)/revoke']['delete'] = 'v1/Documents_management/revokeW4Form/$2/$1';

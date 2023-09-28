@@ -191,6 +191,8 @@ if (!function_exists('bundleJs')) {
             "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
         );
         //
+        @unlink($absolutePath);
+        //
         return '<script src="' . (base_url(
             $destination . $file . '.min.js?v=' . time()
         )) . '"></script>';
@@ -250,6 +252,8 @@ if (!function_exists('bundleCSS')) {
         shell_exec(
             "uglifycss {$absolutePath} > {$absolutePathMin}"
         );
+        //
+        @unlink($absolutePath);
         //
         return '<link rel="stylesheet" href="' . (base_url(
             $destination . $file . '.min.css?v=' . time()

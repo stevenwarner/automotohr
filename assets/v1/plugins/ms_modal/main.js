@@ -127,12 +127,12 @@
 		else $(p).show();
 		// place text
 		if (msg !== undefined) {
-			$(".jsIPLoaderText").text(msg);
+			$(".jsIPLoaderText").html(msg);
 		}
 		// set to default text
 		if (!doShow) {
 			//
-			$(".jsIPLoaderText").text(
+			$(".jsIPLoaderText").html(
 				"Please wait, while we are generating a preview."
 			);
 		}

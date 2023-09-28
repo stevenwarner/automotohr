@@ -23,6 +23,10 @@ class Gusto_payroll extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+
+        if (!$this->session->userdata('logged_in') && !$this->session->userdata('user_id')) {
+            return SendResponse(401, ['errors' => ['Access denied, you are not authorized to make this call.']]);
+        }
         // Call the model
         $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
         $this->datetime = date('Y-m-d H:i:s', strtotime('now'));
@@ -736,7 +740,7 @@ class Gusto_payroll extends CI_Controller
         }
         return SendResponse(200, $response);
     }
-    
+
     /**
      * send test deposits
      *
@@ -749,7 +753,7 @@ class Gusto_payroll extends CI_Controller
         $companyDetails = $this
             ->gusto_payroll_model
             ->getCompanyDetailsForGusto($companyId);
-       
+
         // get the deposits
         $response = approveCompanyOnGusto($companyDetails);
         //
@@ -759,5 +763,37 @@ class Gusto_payroll extends CI_Controller
             return SendResponse(200, $errors);
         }
         return SendResponse(200, ['success' => true]);
+    }
+
+
+
+    // AS of 22/06/2023
+
+    /**
+     * get the create partner company step
+     *
+     * @param int $step
+     * @return json
+     */
+    public function getCreatePartnerCompanyPage(int $step)
+    {
+        // welcome page
+        if ($step === 1) :
+            return SendResponse(
+                200,
+                [
+                    'view' => $this->load->view('v1/payroll/create_partner_company/welcome', [], true)
+                ]
+            );
+        elseif ($step === 2) : // employee listing page
+            return SendResponse(
+                200,
+                [
+                    'view' => $this->load->view('v1/payroll/create_partner_company/employees', [], true)
+                ]
+            );
+        endif;
+        // send default response
+        return SendResponse(400, ['errors' => ['Invalid call.']]);
     }
 }

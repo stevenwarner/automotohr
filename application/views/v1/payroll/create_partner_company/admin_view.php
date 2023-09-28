@@ -1,0 +1,57 @@
+<!--  -->
+<div class="container">
+    <div class="csPageWrap">
+        <!-- Heading -->
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="csF18 csB7">
+                    Payroll Admin
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="csF16">
+                    The person who will manage and run the payroll for this store.
+                </h1>
+            </div>
+        </div>
+        <!-- Body -->
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16 csB7">
+                    First name
+                </label>
+                <p class="csF16"><?= $admin['first_name']; ?></p>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16 csB7">
+                    Last name
+                </label>
+                <p class="csF16"><?= $admin['last_name']; ?></p>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16 csB7">
+                    Email
+                </label>
+                <p class="csF16"><?= $admin['email_address']; ?></p>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-12">
+                <button class="btn btn-black csF16 csB7 jsBackToStep3">
+                    <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;
+                    Back
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

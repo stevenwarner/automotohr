@@ -159,4 +159,58 @@ class App extends CI_Controller
     {
         downloadAWSFileToBrowser($key);
     }
+
+    /**
+     * Gusto webhook for company approval
+     */
+    public function gustoCompanyVerification()
+    {
+        // get incoming post
+        $post = json_decode(
+            file_get_contents('php://input'),
+            true
+        );
+        // check for empty post
+        if (!$post) {
+            return SendResponse(400, ['errors' => ['"Data" is missing.']]);
+        }
+        //
+        if ($post['verification_token']) {
+            //
+            $this->load->model('v1/payroll_model');
+            //
+            $gustoResponse = $this->payroll_model->callWebHook($post);
+            //
+            return SendResponse(
+                $gustoResponse['errors'] ? 400 : 200,
+                $gustoResponse
+            );
+        } else {
+            // listen to the approval
+            if ($post['event_type'] === 'company.approved') {
+                $this->db
+                    ->where('gusto_uuid', $post['resource_uuid'])
+                    ->update(
+                        'gusto_companies',
+                        [
+                            'status' => 'approved'
+                        ]
+                    );
+                //
+                return SendResponse(
+                    200,
+                    ['success' => true]
+                );
+            }
+        }
+        //
+        return SendResponse(
+            400,
+            [
+                'errors' => [
+                    'No listeners found.'
+                ]
+            ]
+        );
+    }
 }
