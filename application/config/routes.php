@@ -1917,3 +1917,23 @@ $route['payrolls/start_fresh']['get'] = "v1/Company_benefits/flushPayroll";
  */
 $route['forms/w4/(:any)/(:num)/assign']['post'] = 'v1/Documents_management/assignW4Form/$2/$1';
 $route['forms/w4/(:any)/(:num)/revoke']['delete'] = 'v1/Documents_management/revokeW4Form/$2/$1';
+//
+$route['manage_admin/cms'] = 'manage_admin/Cms/index';
+$route['manage_admin/edit_page/(:num)'] = 'manage_admin/Cms/edit_page/$1';
+
+//
+$route['manage_admin/resources'] = 'manage_admin/Resources/index';
+$route['manage_admin/resources/(:num)'] = 'manage_admin/Resources/index/$1';
+
+$route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resource/$1';
+$route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
+$route['resources/(:any)'] = 'manage_admin/Resources/view_resource/$1';
+$route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
+
+
+
+
+
+
+
+
