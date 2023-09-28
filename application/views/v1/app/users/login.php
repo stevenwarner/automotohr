@@ -1,5 +1,7 @@
 <main>
-    <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
+    <?php 
+            $loginContent = getPageContent('login');
+    ?>
     <div class="row">
         <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
             <div class="top-div">
@@ -14,7 +16,10 @@
                             </div>
                             <form action="" method="post" id="loginForm" class="ng-pristine ng-valid">
                                 <div class="login-section">
-                                    <h1>Login here</h1>
+                                <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
+
+                                    <h1><?php echo $loginContent['page']['sections']['section1']['heading'] ?>
+</h1>
                                     <input class="d-block login-inputs" placeholder="Username" name="username" id="email" value="<?php echo set_value('username'); ?>" />
                                     <?php echo form_error('username'); ?>
 
@@ -26,7 +31,7 @@
                                     </div>
 
                                     <div class="margin-top-30">
-                                        <button class="d-block login-screen-btns" type="submit" value="Login"> Login <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                                        <button class="d-block login-screen-btns" type="submit" value="Login"> <?php echo $loginContent['page']['sections']['section1']['btnText'] ?> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
                                     </div>
                                 </div>
                         </div>
@@ -40,8 +45,8 @@
                                     Or
                                 </div>
                             </div>
-                            <h2>Executive Admin Login here</h2>
-                            <button class=" login-screen-btns margin-top-30" id="executiveadmin"> Executive Admin Login <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                            <h2><?php echo $loginContent['page']['sections']['section2']['heading'] ?></h2>
+                            <button class=" login-screen-btns margin-top-30" id="executiveadmin"> <?php echo $loginContent['page']['sections']['section2']['btnText'] ?> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
                         </div>
                         <div class="second-child position-relative column-flex-center">
                             <div class="or-div">
@@ -49,8 +54,8 @@
                                     Or
                                 </div>
                             </div>
-                            <h2>Don't Have An AutomotoHR Account Yet? <br />No Problem Get Yours Today.</h2>
-                            <button class=" login-screen-btns margin-top-30" id="contactsupport"> Contact Support <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                            <h2><?php echo $loginContent['page']['sections']['section3']['heading'] ?></h2>
+                            <button class=" login-screen-btns margin-top-30" id="contactsupport"> <?php echo $loginContent['page']['sections']['section3']['btnText'] ?> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
                         </div>
                     </div>
                 </div>

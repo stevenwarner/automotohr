@@ -1752,6 +1752,9 @@ if (!function_exists('getAWSSecureFile')) {
         $CI->load->library('aws_lib');
         return $CI->aws_lib->get_secure_object($config);
 
+    }
+}
+
 if (!function_exists('getPageContent')) {
 
     function getPageContent($page)

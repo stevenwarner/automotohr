@@ -1931,9 +1931,3 @@ $route['resources/(:any)'] = 'manage_admin/Resources/view_resource/$1';
 $route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
 
 
-
-
-
-
-
-

@@ -12,7 +12,9 @@ class Users extends CI_Controller
         //
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
-        $this->assetPath = "assets/v1/app/";
+        //
+        $this->css = "public/v1/css/app/";
+        $this->js = "public/v1/js/app/";
     }
 
     public function login()
@@ -29,35 +31,22 @@ class Users extends CI_Controller
         $data['meta']['title'] = 'Home | AutomotoHR.com';
         $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
         $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
-
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
             'v1/app/plugins/fontawesome/css/all',
-            'v1/app/alertifyjs/css/alertify.min',
-            'v1/app/stylesheets/main'
         ];
-
-
-        $data['pageJs'] = [
-            'v1/app/js/jquery-1.11.3.min',
-            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js',
-            'v1/app/alertifyjs/alertify.min',
-            'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js',
-            'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js',
-        ];
-
-
+        //
         $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
             'v1/app/css/app',
-            'v1/app/stylesheets/main'
-        ], $this->assetPath);
-
+        ], $this->css);
+        //
         $data['appJs'] = bundleJs([
+            'v1/app/js/jquery-1.11.3.min',
             'plugins/bootstrap5/js/bootstrap.bundle',
             'alertifyjs/alertify.min'
-        ], $this->assetPath);
-
+        ], $this->js);
 
 
         if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
@@ -337,34 +326,22 @@ class Users extends CI_Controller
         $data['meta']['title'] = 'Home | AutomotoHR.com';
         $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
         $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
-
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
             'v1/app/plugins/fontawesome/css/all',
-            'v1/app/alertifyjs/css/alertify.min',
-            'v1/app/stylesheets/main'
         ];
-
-
-        $data['pageJs'] = [
-            'v1/app/js/jquery-1.11.3.min',
-            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js',
-            'v1/app/alertifyjs/alertify.min',
-            'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js',
-            'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js',
-        ];
-
-
+        //
         $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
             'v1/app/css/app',
-            'v1/app/stylesheets/main'
-        ], $this->assetPath);
-
+        ], $this->css);
+        //
         $data['appJs'] = bundleJs([
+            'v1/app/js/jquery-1.11.3.min',
             'plugins/bootstrap5/js/bootstrap.bundle',
             'alertifyjs/alertify.min'
-        ], $this->assetPath);
+        ], $this->js);
 
 
 
@@ -498,15 +475,42 @@ class Users extends CI_Controller
             )
         );
 
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = 'Home | AutomotoHR.com';
+        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
+        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'v1/app/js/jquery-1.11.3.min',
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+
+
         $this->form_validation->set_rules($config);
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
             $retrn = $this->users_model->varification_user_key($user, $key);
             $data['title'] = "Change Password";
-            $this->load->view('main/header', $data);
-            $this->load->view('users/change_password');
-            $this->load->view('main/footer');
+
+            //
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/users/password_recovery');
+            $this->load->view($this->footer);
+           
         } else {
             $password = $this->input->post('password');
             $re_password = $this->input->post('retypepassword');

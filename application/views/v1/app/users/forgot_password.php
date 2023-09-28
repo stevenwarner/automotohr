@@ -1,5 +1,7 @@
 <main>
-    <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
+    <?php
+    $forgotPasswordContent = getPageContent('forgot_password');
+    ?>
     <div class="row">
         <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
             <div class="top-div">
@@ -9,13 +11,22 @@
                             <div class="high-lighted-text-div">
                                 <div class="highlighted-text-upper-div">
                                     <p class="highlighted-text">
-                                        FORGOT PASSWORD
+                                        <?php echo $forgotPasswordContent['page']['heading'] ?>
                                     </p>
                                 </div>
 
                                 <div class="login-section">
-                                    <p>Please, enter your email in the field below and we'll <br /> send you a link to a page where you can change <br /> your password: </p>
-                                    <input class="d-block login-inputs" placeholder="Email" value="<?php echo set_value('email'); ?>" type="Email" id="email" name="email" />
+
+                                    <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
+
+                                    <br>
+                                    <p>
+
+                                    <?php echo $forgotPasswordContent['page']['heading'] ?>
+
+                                    
+                                        Please, enter your email in the field below and we'll <br /> send you a link to a page where you can change <br /> your password: </p>
+                                    <input class="d-block login-inputs" placeholder="Email" value="<?php echo set_value('email'); ?>" type="Email" id="email" name="email" style="margin-left: 20px;margin-right: 20px;" />
                                     <?php echo form_error('email'); ?>
                                 </div>
                             </div>

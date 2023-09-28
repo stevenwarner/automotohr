@@ -22,20 +22,13 @@
     <?php if (isset($appCSS)) {
         echo $appCSS;
     } ?>
-
-    <?php
-    if (isset($pageJs)) :
-        echo GetScripts($pageJs);
-    endif;
-    ?>
-
 </head>
 
 <body>
     <!-- header -->
     <header>
-    <?php $headerContent = getPageContent('header');  ?>
-    
+        <?php $headerContent = getPageContent('header');  ?>
+
         <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
             <div class="container-fluid">
                 <a class="navbar-brand" href="<?= base_url('/'); ?>"><img src="<?= base_url('assets/v1/app/images/Mask group.png'); ?>" alt="logo" /></a>
@@ -51,7 +44,7 @@
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <?php echo $headerContent['page']['products']['title']; ?>
+                                <?php echo $headerContent['page']['products']['title']; ?>
                             </a>
                             <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
                                 <div class="display-flex">

@@ -14,7 +14,8 @@ class Home extends CI_Controller
 
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
-        $this->assetPath = "assets/v1/app/";
+        $this->css = "public/v1/css/app/";
+        $this->js = "public/v1/js/app/";
     }
 
     public function index()
@@ -68,14 +69,14 @@ class Home extends CI_Controller
 
 
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/app',
-            'v1/app/stylesheets/main'
-        ], $this->assetPath);
+            'v1/app/css/home',
+            'v1/app/css/main'
+        ], $this->css, 'home');
 
         $data['appJs'] = bundleJs([
             'plugins/bootstrap5/js/bootstrap.bundle',
             'alertifyjs/alertify.min'
-        ], $this->assetPath);
+        ], $this->js, 'home');
 
         $homeContent = getPageContent('home');
 
