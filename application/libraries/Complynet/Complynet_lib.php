@@ -199,6 +199,26 @@ class Complynet_lib
     }
 
     /**
+     * Update Alt id
+     *
+     * @param string $id
+     * @param string $alt_id
+     * @return array
+     */
+    public function updateAltId(
+        string $id,
+        string $alt_id
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            "UserAltId?id={$id}&altid=AHR{$alt_id}",
+            'PUT'
+        );
+    }
+
+    /**
      * Change user status
      *
      * @param array $upd

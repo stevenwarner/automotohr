@@ -1647,6 +1647,10 @@ class Complynet_model extends CI_Model
                     'company_sid' => $passArray['newCompanyId'],
                     'created_date' => getSystemDate()
                 ]);
+
+                //
+                $teamId =
+                    $this->db->insert_id();
             }
             //
             if (!$this->db->where([
@@ -1662,6 +1666,15 @@ class Complynet_model extends CI_Model
                     'created_at' => getSystemDate()
                 ]);
             }
+
+
+            // update user table
+            $this->db
+                ->where('sid', $passArray['newEmployeeId'])
+                ->update('users', [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId,
+                ]);
         }
         //
         return true;
@@ -1781,8 +1794,9 @@ class Complynet_model extends CI_Model
         if (isset($employeeObj[0]['Id'])) {
             //
             if (!$employeeObj[0]['AltId']) {
-                mail('mubashar@automotohr.com', 'Employee ALTId is missing: ', json_encode($employeeObj));
-                return ['errors' => 'Employees ALTId is missing'];
+                $this->clib->updateAltId($employeeObj[0]['Id'], $updateArray['AltId']);
+                // lets check the employee
+                $employeeObj = $this->clib->getEmployeeByEmail($email);
             }
             //
             $employeeObj = findTheRightEmployee($employeeObj, $complyArray['complynet_company_sid'], $complyArray['complynet_location_sid']);
