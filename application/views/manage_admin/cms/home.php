@@ -167,7 +167,7 @@
 
                                                     <div class="col-xs-12">
                                                         <br>
-                                                            <label class="text-danger">Note: In bullet text Within [ ] will show as bold and yellow. exe [PEOPLE OPERATIONS]  </label>
+                                                            <label class="text-danger">Note: In bullet text Within #  will show as bold and yellow. exe # PEOPLE OPERATIONS #  </label>
                                                     </div>
 
 
