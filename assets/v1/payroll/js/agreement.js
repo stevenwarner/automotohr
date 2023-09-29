@@ -45,7 +45,7 @@ $(function serviceAgreement() {
 		event.preventDefault();
 		//
 		const obj = {
-			email: $("#jsTermsOfServiceEmail").val().trim(),
+			email: $("#jsTermsOfServiceEmail option:selected").val(),
 			userReference: $("#jsTermsOfServiceReference")
 				.val()
 				.replace(/[^0-9]/g, ""),

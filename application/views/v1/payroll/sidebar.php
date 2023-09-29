@@ -133,13 +133,13 @@ $sideBarUrls = [
                         </li>
 
                         <!-- Off cycle -->
-                        <li>
+                        <!-- <li>
                             <a <?php if (in_array(uri_string(), $sideBarUrls['offcycle_payrolls'])) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo base_url('payrolls/offcycle'); ?>">
                                 <figure><i class="fa fa-calculator"></i></figure>Off-Cycle Payroll
                             </a>
-                        </li>
+                        </li> -->
 
                         <!-- Payroll history -->
                         <li>

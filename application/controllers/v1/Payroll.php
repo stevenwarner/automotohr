@@ -1004,6 +1004,13 @@ class Payroll extends CI_Controller
             ->where('company_sid', $companyId)
             ->get('gusto_companies')
             ->row_array();
+        // get company's dmins
+        $data['admins'] = $this->db
+            ->select('email_address')
+            ->where('company_sid', $companyId)
+            ->where('is_store_admin', 0)
+            ->get('gusto_companies_admin')
+            ->result_array();
         //
         return SendResponse(
             200,

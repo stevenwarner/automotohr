@@ -902,6 +902,10 @@ class Payroll_model extends CI_Model
             ->update('gusto_companies', [
                 'employee_ids' => $newIds
             ]);
+        // create earning types
+        $this->createCompanyEarningTypes($companyId);
+        //
+        $this->syncCompanyEarningTypes($companyId);
         //
         return true;
     }
@@ -973,6 +977,25 @@ class Payroll_model extends CI_Model
         $this->syncEmployeePaymentMethod($employeeId);
         // sync employee work locations
         $this->syncEmployeeWorkAddresses($employeeId);
+        // get employee address
+        $employee = $this->getEmployeeHomeAddress($employeeId);
+        //
+        if (
+            $employee['Location_Address'] &&
+            $employee['Location_Address_2'] &&
+            $employee['Location_City'] &&
+            $employee['state_code'] &&
+            $employee['Location_ZipCode']
+        ) {
+            // sync employee address
+            $this->createEmployeeHomeAddress($employeeId, [
+                'street_1' => $employee['Location_Address'],
+                'street_2' => $employee['Location_Address_2'],
+                'city' => $employee['Location_City'],
+                'state' => strtoupper($employee['state_code']),
+                'zip' => $employee['Location_ZipCode'],
+            ]);
+        }
         //
         return $megaResponse;
     }

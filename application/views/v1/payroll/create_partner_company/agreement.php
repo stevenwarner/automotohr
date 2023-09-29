@@ -19,7 +19,11 @@
             <form>
                 <div class="form-group">
                     <label>Email <strong class="text-danger">*</strong></label>
-                    <input type="email" id="jsTermsOfServiceEmail" class="form-control" required />
+                    <select class="form-control" id="jsTermsOfServiceEmail">
+                        <?php foreach ($admins as $value) { ?>
+                            <option value="<?= $value['email_address']; ?>"><?= $value['email_address']; ?></option>
+                        <?php } ?>
+                    </select>
                 </div>
 
                 <div class="form-group">
