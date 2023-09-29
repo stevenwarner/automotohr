@@ -18,58 +18,76 @@
                                             <?php
                                             $pageContent = json_decode($page_data['content'], true);
                                             ?>
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                            <div class="hr-search-main" style="display: block;">
-                                                <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="heading" id="heading" value="<?php echo $pageContent['page']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Sub Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="sub_heading" id="sub_heading" value="<?php echo $pageContent['page']['subHeading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button 1 title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn1_text" id="btn1_text" value="<?php echo $pageContent['page']['btn1Text']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button 1 slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn1_slug" id="btn1_slug" value="<?php echo $pageContent['page']['btn1Slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button 2 title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn2_text" id="btn2_text" value="<?php echo $pageContent['page']['btn2Text']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button 1 slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn2_slug" id="btn2_slug" value="<?php echo $pageContent['page']['btn2Slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Meta Details</h1>
                                                 </div>
 
+                                                <div class="col-xs-12 form-group">
+                                                    <br> <label>Meta Title:</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $pageContent['page']['meta']['title']; ?>" />
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <label>Meta Description:</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="meta_description" id="meta_description" rows="4" cols="60"><?php echo $pageContent['page']['meta']['description']; ?></textarea>
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <label>Meta Keywords:</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="meta_key_word" id="meta_key_word" rows="4" cols="60"><?php echo $pageContent['page']['meta']['keyword']; ?></textarea>
+                                                </div>
                                             </div>
 
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
+                                                <div class="hr-box-header bg-header-green">
+                                                </div>
+                                                <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="heading" id="heading" value="<?php echo $pageContent['page']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Sub Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="sub_heading" id="sub_heading" value="<?php echo $pageContent['page']['subHeading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button 1 title</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn1_text" id="btn1_text" value="<?php echo $pageContent['page']['btn1Text']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button 1 slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn1_slug" id="btn1_slug" value="<?php echo $pageContent['page']['btn1Slug']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button 2 title</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn2_text" id="btn2_text" value="<?php echo $pageContent['page']['btn2Text']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button 1 slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn2_slug" id="btn2_slug" value="<?php echo $pageContent['page']['btn2Slug']; ?>" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                     </div>
                                 </div>
 
@@ -117,6 +135,15 @@
                 },
                 btn2_slug: {
                     required: true
+                },
+                meta_title: {
+                    required: true
+                },
+                meta_description: {
+                    required: true
+                },
+                meta_key_word: {
+                    required: true
                 }
             },
             messages: {
@@ -147,6 +174,12 @@
         pageData.page['btn1Text'] = $("#btn1_text").val();
         pageData.page['btn2Slug'] = $("#btn2_slug").val();
         pageData.page['btn2Text'] = $("#btn2_text").val();
+        
+        pageData.page['meta'] = {
+            title: $("#meta_title").val(),
+            keyword: $("#meta_key_word").val(),
+            description: $("#meta_description").val()
+        };
 
         //
         url_to = "<?= base_url() ?>manage_admin/cms/update_page";

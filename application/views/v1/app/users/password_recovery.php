@@ -1,7 +1,5 @@
 <main>
-    <?php
-    $passwordRecoveryContent = getPageContent('password_recovery');
-    ?>
+   
     <div class="row">
         <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
             <div class="top-div">

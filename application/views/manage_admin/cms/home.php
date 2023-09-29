@@ -13,557 +13,553 @@
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-envelope-o"></i>Edit Home</h1>
                                     </div>
+                                    <?php
+                                    $pageContent = json_decode($page_data['content'], true);
+                                    //  _e($pageContent ,true);
+                                    ?>
                                     <div class="hr-search-main" style="display: block;">
                                         <form enctype="multipart/form-data" method="post" id="header_form">
 
-                                            <div class="row">
+
+                                            <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
+
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Meta Details</h1>
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <br> <label>Meta Title:</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $pageContent['page']['meta']['title']; ?>" />
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <label>Meta Description:</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="meta_description" id="meta_description" rows="4" cols="60"><?php echo $pageContent['page']['meta']['description']; ?></textarea>
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <label>Meta Keywords:</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="meta_key_word" id="meta_key_word" rows="4" cols="60"><?php echo $pageContent['page']['meta']['keyword']; ?></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Sliders</h1>
+                                                </div>
+
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Slider1</label>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider1_heading" id="slider1_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Detail</label><b class="text-danger"> *</b>
+                                                        <textarea class="invoice-fields" name="slider1_heading_detail" id="slider1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider1']['headingDetail']; ?></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider1_btn_text" id="slider1_btn_text" value="<?php echo $pageContent['page']['slider']['slider1']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider1_btn_slug" id="slider1_btn_slug" value="<?php echo $pageContent['page']['slider']['slider1']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+
+                                                <br>
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Slider2</label>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider2_heading" id="slider2_heading" value="<?php echo $pageContent['page']['slider']['slider2']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Detail</label><b class="text-danger"> *</b>
+                                                        <textarea class="invoice-fields" name="slider2_heading_detail" id="slider2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider2']['headingDetail']; ?></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider2_btn_text" id="slider2_btn_text" value="<?php echo $pageContent['page']['slider']['slider2']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider2_btn_slug" id="slider2_btn_slug" value="<?php echo $pageContent['page']['slider']['slider2']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+
+                                                <br>
+
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Slider3</label>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider3_heading" id="slider3_heading" value="<?php echo $pageContent['page']['slider']['slider3']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Detail</label><b class="text-danger"> *</b>
+                                                        <textarea class="invoice-fields" name="slider3_heading_detail" id="slider3_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider3']['headingDetail']; ?></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider3_btn_text" id="slider3_btn_text" value="<?php echo $pageContent['page']['slider']['slider3']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="slider3_btn_slug" id="slider3_btn_slug" value="<?php echo $pageContent['page']['slider']['slider3']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">WHAT WE OFFER?</h1>
+                                                </div>
+
                                                 <div class="col-xs-12">
-                                                    <label> Slider</label>
-                                                    <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
-
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_heading" id="section1_heading" value="<?php echo $pageContent['page']['sections']['section1']['heading']; ?>" />
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="hr-search-main" style="display: block;">
-                                                <?php
-                                                $pageContent = json_decode($page_data['content'], true);
-                                                //  _e($pageContent ,true);
-                                                ?>
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Slider1</label>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Main Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider1_heading" id="slider1_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Detail</label><b class="text-danger"> *</b>
-                                                            <textarea class="invoice-fields" name="slider1_heading_detail" id="slider1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider1']['headingDetail']; ?></textarea>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider1_btn_text" id="slider1_btn_text" value="<?php echo $pageContent['page']['slider']['slider1']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider1_btn_slug" id="slider1_btn_slug" value="<?php echo $pageContent['page']['slider']['slider1']['btnSlug']; ?>" />
-                                                        </div>
-                                                    </div>
-
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section1_details" id="section1_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
                                                 </div>
-                                                <br>
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Slider2</label>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Main Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider2_heading" id="slider2_heading" value="<?php echo $pageContent['page']['slider']['slider2']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Detail</label><b class="text-danger"> *</b>
-                                                            <textarea class="invoice-fields" name="slider2_heading_detail" id="slider2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider2']['headingDetail']; ?></textarea>
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_button_text" id="section1_button_text" value="<?php echo $pageContent['page']['sections']['section1']['btnText']; ?>" />
                                                     </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider2_btn_text" id="slider2_btn_text" value="<?php echo $pageContent['page']['slider']['slider2']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider2_btn_slug" id="slider2_btn_slug" value="<?php echo $pageContent['page']['slider']['slider2']['btnSlug']; ?>" />
-                                                        </div>
-                                                    </div>
-
                                                 </div>
-                                                <br>
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Slider3</label>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_button_slug" id="section1_button_slug" value="<?php echo $pageContent['page']['sections']['section1']['btnSlug']; ?>" />
                                                     </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Main Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider3_heading" id="slider3_heading" value="<?php echo $pageContent['page']['slider']['slider3']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Detail</label><b class="text-danger"> *</b>
-                                                            <textarea class="invoice-fields" name="slider3_heading_detail" id="slider3_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider3']['headingDetail']; ?></textarea>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider3_btn_text" id="slider3_btn_text" value="<?php echo $pageContent['page']['slider']['slider3']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="slider3_btn_slug" id="slider3_btn_slug" value="<?php echo $pageContent['page']['slider']['slider3']['btnSlug']; ?>" />
-                                                        </div>
-                                                    </div>
-
                                                 </div>
-                                            </div>
 
 
-                                            <div class="hr-search-main" style="display: block;">
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>WHAT WE OFFER?</label>
+                                                <div class="col-xs-12">
+                                                    <br>
+                                                    <label class="text-danger">Note: In bullet text Within # will show as bold and yellow. exe # PEOPLE OPERATIONS # </label>
+                                                </div>
+
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet1" id="section1_bullet1" value="<?php echo $pageContent['page']['sections']['section1']['bullet1']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_heading" id="section1_heading" value="<?php echo $pageContent['page']['sections']['section1']['heading']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 2</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet2" id="section1_bullet2" value="<?php echo $pageContent['page']['sections']['section1']['bullet2']; ?>" />
                                                     </div>
-
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section1_details" id="section1_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 3</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet3" id="section1_bullet3" value="<?php echo $pageContent['page']['sections']['section1']['bullet3']; ?>" />
                                                     </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_button_text" id="section1_button_text" value="<?php echo $pageContent['page']['sections']['section1']['btnText']; ?>" />
-                                                        </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 4</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet4" id="section1_bullet4" value="<?php echo $pageContent['page']['sections']['section1']['bullet4']; ?>" />
                                                     </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_button_slug" id="section1_button_slug" value="<?php echo $pageContent['page']['sections']['section1']['btnSlug']; ?>" />
-                                                        </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 5</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet5" id="section1_bullet5" value="<?php echo $pageContent['page']['sections']['section1']['bullet5']; ?>" />
                                                     </div>
-
-
-
-                                                    <div class="col-xs-12">
-                                                        <br>
-                                                            <label class="text-danger">Note: In bullet text Within #  will show as bold and yellow. exe # PEOPLE OPERATIONS #  </label>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 6</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet6" id="section1_bullet6" value="<?php echo $pageContent['page']['sections']['section1']['bullet6']; ?>" />
                                                     </div>
-
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Bullet 1</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_bullet1" id="section1_bullet1" value="<?php echo $pageContent['page']['sections']['section1']['bullet1']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Bullet 2</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_bullet2" id="section1_bullet2" value="<?php echo $pageContent['page']['sections']['section1']['bullet2']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Bullet 3</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_bullet3" id="section1_bullet3" value="<?php echo $pageContent['page']['sections']['section1']['bullet3']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Bullet 4</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_bullet4" id="section1_bullet4" value="<?php echo $pageContent['page']['sections']['section1']['bullet4']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Bullet 5</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_bullet5" id="section1_bullet5" value="<?php echo $pageContent['page']['sections']['section1']['bullet5']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Bullet 6</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_bullet6" id="section1_bullet6" value="<?php echo $pageContent['page']['sections']['section1']['bullet6']; ?>" />
-                                                        </div>
-                                                    </div>
-
                                                 </div>
 
                                             </div>
 
 
-                                            <div class="hr-search-main" style="display: block;">
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>WHY SHOULD YOU SWITCH TO AUTOMOTOHR?</label>
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">WHY SHOULD YOU SWITCH TO AUTOMOTOHR?</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_heading" id="section2_heading" value="<?php echo $pageContent['page']['sections']['section2']['heading']; ?>" />
                                                     </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section2_heading" id="section2_heading" value="<?php echo $pageContent['page']['sections']['section2']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
                                                 </div>
 
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>ONBOARDING AND HIRING</label>
-                                                    </div>
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">ONBOARDING AND HIRING</h1>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section3_heading" id="section3_heading" value="<?php echo $pageContent['page']['sections']['section3']['heading']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section3_heading" id="section3_heading" value="<?php echo $pageContent['page']['sections']['section3']['heading']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section3_details" id="section3_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section3']['headingDetail']; ?></textarea>
-                                                    </div>
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section3_details" id="section3_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section3']['headingDetail']; ?></textarea>
+                                                </div>
 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section3_button_text" id="section3_button_text" value="<?php echo $pageContent['page']['sections']['section3']['btnText']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section3_button_text" id="section3_button_text" value="<?php echo $pageContent['page']['sections']['section3']['btnText']; ?>" />
                                                     </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section3_button_slug" id="section3_button_slug" value="<?php echo $pageContent['page']['sections']['section3']['btnSlug']; ?>" />
-                                                        </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section3_button_slug" id="section3_button_slug" value="<?php echo $pageContent['page']['sections']['section3']['btnSlug']; ?>" />
                                                     </div>
-
                                                 </div>
 
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>TIME, PAYROLL, AND BENEFITS</label>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section4_heading" id="section4_heading" value="<?php echo $pageContent['page']['sections']['section4']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section4_details" id="section4_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section4']['headingDetail']; ?></textarea>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section4_button_text" id="section4_button_text" value="<?php echo $pageContent['page']['sections']['section4']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section4_button_slug" id="section4_button_slug" value="<?php echo $pageContent['page']['sections']['section4']['btnSlug']; ?>" />
-                                                        </div>
-                                                    </div>
-
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">TIME, PAYROLL, AND BENEFITS</h1>
                                                 </div>
 
-                                            </div>
-
-                                            <div class="hr-search-main" style="display: block;">
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>EMPLOYEE EXPERIENCE & PERFORMANCE</label>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_heading" id="section4_heading" value="<?php echo $pageContent['page']['sections']['section4']['heading']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section5_heading" id="section5_heading" value="<?php echo $pageContent['page']['sections']['section5']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section4_details" id="section4_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section4']['headingDetail']; ?></textarea>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section5_details" id="section5_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section5']['headingDetail']; ?></textarea>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_button_text" id="section4_button_text" value="<?php echo $pageContent['page']['sections']['section4']['btnText']; ?>" />
                                                     </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section5_button_text" id="section5_button_text" value="<?php echo $pageContent['page']['sections']['section5']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section5_button_slug" id="section5_button_slug" value="<?php echo $pageContent['page']['sections']['section5']['btnSlug']; ?>" />
-                                                        </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_button_slug" id="section4_button_slug" value="<?php echo $pageContent['page']['sections']['section4']['btnSlug']; ?>" />
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>VACATION & TIME OFF MONITORING</label>
-                                                    </div>
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">EMPLOYEE EXPERIENCE & PERFORMANCE</h1>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section6_heading" id="section6_heading" value="<?php echo $pageContent['page']['sections']['section6']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section6_details" id="section6_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section6']['headingDetail']; ?></textarea>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section6_button_text" id="section6_button_text" value="<?php echo $pageContent['page']['sections']['section6']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section6_button_slug" id="section6_button_slug" value="<?php echo $pageContent['page']['sections']['section6']['btnSlug']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_heading" id="section5_heading" value="<?php echo $pageContent['page']['sections']['section5']['heading']; ?>" />
                                                     </div>
                                                 </div>
+
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section5_details" id="section5_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section5']['headingDetail']; ?></textarea>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_button_text" id="section5_button_text" value="<?php echo $pageContent['page']['sections']['section5']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_button_slug" id="section5_button_slug" value="<?php echo $pageContent['page']['sections']['section5']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">VACATION & TIME OFF MONITORING</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section6_heading" id="section6_heading" value="<?php echo $pageContent['page']['sections']['section6']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section6_details" id="section6_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section6']['headingDetail']; ?></textarea>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section6_button_text" id="section6_button_text" value="<?php echo $pageContent['page']['sections']['section6']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section6_button_slug" id="section6_button_slug" value="<?php echo $pageContent['page']['sections']['section6']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">TRANSFORM, EMPOWER & SUCCEED</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_heading" id="section7_heading" value="<?php echo $pageContent['page']['sections']['section7']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section7_details" id="section7_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_button_text" id="section7_button_text" value="<?php echo $pageContent['page']['sections']['section7']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_button_slug" id="section7_button_slug" value="<?php echo $pageContent['page']['sections']['section7']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
                                             </div>
 
 
-                                            <div class="hr-search-main" style="display: block;">
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>TRANSFORM, EMPOWER & SUCCEED</label>
-                                                    </div>
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">FULL COMPANY CAREER WEBSITE</h1>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section7_heading" id="section7_heading" value="<?php echo $pageContent['page']['sections']['section7']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section7_details" id="section7_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section7_button_text" id="section7_button_text" value="<?php echo $pageContent['page']['sections']['section7']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section7_button_slug" id="section7_button_slug" value="<?php echo $pageContent['page']['sections']['section7']['btnSlug']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section8_heading" id="section8_heading" value="<?php echo $pageContent['page']['sections']['section8']['heading']; ?>" />
                                                     </div>
                                                 </div>
-                                            </div>
 
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section8_details" id="section8_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section8']['headingDetail']; ?></textarea>
+                                                </div>
 
-                                            <div class="hr-search-main" style="display: block;">
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>FULL COMPANY CAREER WEBSITE</label>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section8_heading" id="section8_heading" value="<?php echo $pageContent['page']['sections']['section8']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section8_details" id="section8_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section8']['headingDetail']; ?></textarea>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section8_button_text" id="section8_button_text" value="<?php echo $pageContent['page']['sections']['section8']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section8_button_slug" id="section8_button_slug" value="<?php echo $pageContent['page']['sections']['section8']['btnSlug']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section8_button_text" id="section8_button_text" value="<?php echo $pageContent['page']['sections']['section8']['btnText']; ?>" />
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div class="hr-search-main" style="display: block;">
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>OUR PROCESS</label>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_heading" id="section9_heading" value="<?php echo $pageContent['page']['sections']['section9']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-xs-3">
-                                                        <div class="field-row">
-                                                            <label>Heading 1</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_heading_sub1" id="section9_heading_sub1" value="<?php echo $pageContent['page']['sections']['section9']['headingSub1']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-3">
-                                                        <div class="field-row">
-                                                            <label>Heading 2</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_heading_sub2" id="section9_heading_sub2" value="<?php echo $pageContent['page']['sections']['section9']['headingSub2']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-3">
-                                                        <div class="field-row">
-                                                            <label>Heading 3</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_heading_sub3" id="section9_heading_sub3" value="<?php echo $pageContent['page']['sections']['section9']['headingSub3']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-3">
-                                                        <div class="field-row">
-                                                            <label>Heading 4</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_heading_sub4" id="section9_heading_sub4" value="<?php echo $pageContent['page']['sections']['section9']['headingSub4']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_btn_text" id="section9_btn_text" value="<?php echo $pageContent['page']['sections']['section9']['btnText']; ?>" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Button Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_btn_slug" id="section9_btn_slug" value="<?php echo $pageContent['page']['sections']['section9']['btnSlug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-
-                                            <div class="hr-search-main" style="display: block;">
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>INNOVATING HR</label>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section10_heading" id="section10_heading" value="<?php echo $pageContent['page']['sections']['section10']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Our Mission</label>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section11_heading" id="section11_heading" value="<?php echo $pageContent['page']['sections']['section11']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section11_details" id="section11_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section11']['headingDetail']; ?></textarea>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section8_button_slug" id="section8_button_slug" value="<?php echo $pageContent['page']['sections']['section8']['btnSlug']; ?>" />
                                                     </div>
                                                 </div>
+
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Our Vision</label>
-                                                    </div>
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section12_heading" id="section12_heading" value="<?php echo $pageContent['page']['sections']['section12']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">OUR PROCESS</h1>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <label>Details</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section12_details" id="section12_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section12']['headingDetail']; ?></textarea>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_heading" id="section9_heading" value="<?php echo $pageContent['page']['sections']['section9']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-xs-3">
+                                                    <div class="field-row">
+                                                        <label>Heading 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_heading_sub1" id="section9_heading_sub1" value="<?php echo $pageContent['page']['sections']['section9']['headingSub1']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <div class="field-row">
+                                                        <label>Heading 2</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_heading_sub2" id="section9_heading_sub2" value="<?php echo $pageContent['page']['sections']['section9']['headingSub2']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <div class="field-row">
+                                                        <label>Heading 3</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_heading_sub3" id="section9_heading_sub3" value="<?php echo $pageContent['page']['sections']['section9']['headingSub3']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <div class="field-row">
+                                                        <label>Heading 4</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_heading_sub4" id="section9_heading_sub4" value="<?php echo $pageContent['page']['sections']['section9']['headingSub4']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_btn_text" id="section9_btn_text" value="<?php echo $pageContent['page']['sections']['section9']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_btn_slug" id="section9_btn_slug" value="<?php echo $pageContent['page']['sections']['section9']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">INNOVATING HR</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section10_heading" id="section10_heading" value="<?php echo $pageContent['page']['sections']['section10']['heading']; ?>" />
                                                     </div>
                                                 </div>
                                             </div>
 
 
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Notable Benefits</label>
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Our Mission</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section11_heading" id="section11_heading" value="<?php echo $pageContent['page']['sections']['section11']['heading']; ?>" />
                                                     </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section11_details" id="section11_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section11']['headingDetail']; ?></textarea>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Our Vision</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section12_heading" id="section12_heading" value="<?php echo $pageContent['page']['sections']['section12']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <label>Details</label><b class="text-danger"> *</b>
+                                                    <textarea class="ckeditor" name="section12_details" id="section12_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section12']['headingDetail']; ?></textarea>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Notable Benefits</h1>
+                                                </div>
+                                                <div class="row">
 
                                                 </div>
 
@@ -625,71 +621,67 @@
 
                                                 </div>
 
+                                                <div class="hr-box" style="margin: 15px 0 0;">
 
+                                                    <div class="hr-box-header bg-header-green">
+                                                        <h1 class="hr-registered pull-left">Form</h1>
+                                                    </div>
 
-                                                <div class="hr-search-main" style="display: block;">
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <label>Form</label>
-                                                        </div>
-
-                                                        <div class="col-xs-12">
-                                                            <div class="field-row">
-                                                                <label>Heading 1</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section16_heading" id="section16_heading" value="<?php echo $pageContent['page']['sections']['section16']['heading']; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-12">
-                                                            <div class="field-row">
-                                                                <label>Heading 2</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section16_heading2" id="section16_heading2" value="<?php echo $pageContent['page']['sections']['section16']['heading2']; ?>" />
-                                                            </div>
-                                                        </div>
-
-
-                                                        <div class="col-xs-6">
-                                                            <div class="field-row">
-                                                                <label>Button Text</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section16_btn_text" id="section16_btn_text" value="<?php echo $pageContent['page']['sections']['section16']['btnText']; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-6">
-                                                            <div class="field-row">
-                                                                <label>Button Slug</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section16_btn_slug" id="section16_btn_slug" value="<?php echo $pageContent['page']['sections']['section16']['btnSlug']; ?>" />
-                                                            </div>
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Heading 1</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section16_heading" id="section16_heading" value="<?php echo $pageContent['page']['sections']['section16']['heading']; ?>" />
                                                         </div>
                                                     </div>
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Heading 2</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section16_heading2" id="section16_heading2" value="<?php echo $pageContent['page']['sections']['section16']['heading2']; ?>" />
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-xs-6">
+                                                        <div class="field-row">
+                                                            <label>Button Text</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section16_btn_text" id="section16_btn_text" value="<?php echo $pageContent['page']['sections']['section16']['btnText']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6">
+                                                        <div class="field-row">
+                                                            <label>Button Slug</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section16_btn_slug" id="section16_btn_slug" value="<?php echo $pageContent['page']['sections']['section16']['btnSlug']; ?>" />
+                                                        </div>
+                                                    </div>
+
                                                 </div>
 
+                                                <div class="hr-box" style="margin: 15px 0 0;">
 
+                                                    <div class="hr-box-header bg-header-green">
+                                                        <h1 class="hr-registered pull-left">Form Bottom</h1>
+                                                    </div>
 
-                                                <div class="hr-search-main" style="display: block;">
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <label>Form Bottom</label>
-                                                        </div>
-
-                                                        <div class="col-xs-12">
-                                                            <div class="field-row">
-                                                                <label>Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section17_heading" id="section17_heading" value="<?php echo $pageContent['page']['sections']['section17']['heading']; ?>" />
-                                                            </div>
-                                                        </div>
-                                                    
-                                                        <div class="col-xs-6">
-                                                            <div class="field-row">
-                                                                <label>Button Text</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section17_btn_text" id="section17_btn_text" value="<?php echo $pageContent['page']['sections']['section17']['btnText']; ?>" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-6">
-                                                            <div class="field-row">
-                                                                <label>Button Slug</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section17_btn_slug" id="section17_btn_slug" value="<?php echo $pageContent['page']['sections']['section17']['btnSlug']; ?>" />
-                                                            </div>
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section17_heading" id="section17_heading" value="<?php echo $pageContent['page']['sections']['section17']['heading']; ?>" />
                                                         </div>
                                                     </div>
+
+                                                    <div class="col-xs-6">
+                                                        <div class="field-row">
+                                                            <label>Button Text</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section17_btn_text" id="section17_btn_text" value="<?php echo $pageContent['page']['sections']['section17']['btnText']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6">
+                                                        <div class="field-row">
+                                                            <label>Button Slug</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section17_btn_slug" id="section17_btn_slug" value="<?php echo $pageContent['page']['sections']['section17']['btnSlug']; ?>" />
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
 
@@ -938,6 +930,15 @@
                 },
                 section17_btn_slug: {
                     required: true
+                },
+                meta_title: {
+                    required: true
+                },
+                meta_description: {
+                    required: true
+                },
+                meta_key_word: {
+                    required: true
                 }
 
             },
@@ -1084,7 +1085,11 @@
             }
 
         };
-
+        pageData.page['meta'] = {
+            title: $("#meta_title").val(),
+            keyword: $("#meta_key_word").val(),
+            description: $("#meta_description").val()
+        };
 
         //
         url_to = "<?= base_url() ?>manage_admin/cms/update_page";

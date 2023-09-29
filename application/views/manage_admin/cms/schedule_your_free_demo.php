@@ -20,237 +20,249 @@
                                             <?php
                                             $pageContent = json_decode($page_data['content'], true);
                                             ?>
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                            <div class="hr-search-main" style="display: block;">
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Meta Details</h1>
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <br> <label>Meta Title:</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $pageContent['page']['meta']['title']; ?>" />
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <label>Meta Description:</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="meta_description" id="meta_description" rows="4" cols="60"><?php echo $pageContent['page']['meta']['description']; ?></textarea>
+                                                </div>
+
+                                                <div class="col-xs-12 form-group">
+                                                    <label>Meta Keywords:</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="meta_key_word" id="meta_key_word" rows="4" cols="60"><?php echo $pageContent['page']['meta']['keyword']; ?></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Section 1</h1>
+                                                </div>
                                                 <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Section 1</label>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section1_heading" id="section1_heading" value="<?php echo $pageContent['page']['sections']['section1']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-xs-12"><br>
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="section1_heading_detail" id="section1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_heading" id="section1_heading" value="<?php echo $pageContent['page']['sections']['section1']['heading']; ?>" />
                                                     </div>
                                                 </div>
+
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section1_heading_detail" id="section1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
+                                                </div>
+
                                             </div>
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Section 2</label>
-                                                    </div>
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Section 2</h1>
+                                                </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section2_heading" id="section2_heading" value="<?php echo $pageContent['page']['sections']['section2']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-xs-12"><br>
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="section2_heading_detail" id="section2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section2']['headingDetail']; ?></textarea>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_heading" id="section2_heading" value="<?php echo $pageContent['page']['sections']['section2']['heading']; ?>" />
                                                     </div>
                                                 </div>
-                                            </div>
 
-
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Section 3</label>
-                                                    </div>
-
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Main Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section3_heading" id="section3_heading" value="<?php echo $pageContent['page']['sections']['section3']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="col-xs-12">
-                                                            <div class="field-row">
-                                                                <label>Sub Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section3_heading1" id="section3_heading1" value="<?php echo $pageContent['page']['sections']['section3']['heading1']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section3_heading1_detail" id="section3_heading1_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading1Detail']; ?></textarea>
-                                                            </div>
-                                                            <div class="field-row">
-                                                                <label>Sub Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section3_heading2" id="section3_heading2" value="<?php echo $pageContent['page']['sections']['section3']['heading2']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section3_heading2_detail" id="section3_heading2_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading2Detail']; ?></textarea>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="col-xs-12">
-                                                            <div class="field-row">
-                                                                <label>Sub Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section3_heading3" id="section3_heading3" value="<?php echo $pageContent['page']['sections']['section3']['heading3']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section3_heading3_detail" id="section3_heading3_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading3Detail']; ?></textarea>
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Sub Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section3_heading4" id="section3_heading4" value="<?php echo $pageContent['page']['sections']['section3']['heading4']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section3_heading4_detail" id="section3_heading4_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading4Detail']; ?></textarea>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-
-
-
-
+                                                <div class="col-xs-12"><br>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section2_heading_detail" id="section2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section2']['headingDetail']; ?></textarea>
                                                 </div>
+
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Section 4</label>
-                                                    </div>
+                                            <div class="hr-box" style="margin: 15px 0 0;">
 
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Section 3</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section3_heading" id="section3_heading" value="<?php echo $pageContent['page']['sections']['section3']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
                                                     <div class="col-xs-12">
                                                         <div class="field-row">
-                                                            <label>Main Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section4_heading" id="section4_heading" value="<?php echo $pageContent['page']['sections']['section4']['heading']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="col-xs-12">
-                                                            <div class="field-row">
-                                                                <label>Step 1 Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section4_heading1" id="section4_heading1" value="<?php echo $pageContent['page']['sections']['section4']['heading1']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section4_heading1_detail" id="section4_heading1_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading1Detail']; ?></textarea>
-                                                            </div>
-                                                            <div class="field-row">
-                                                                <label>Step 2 Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section4_heading2" id="section4_heading2" value="<?php echo $pageContent['page']['sections']['section4']['heading2']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section4_heading2_detail" id="section4_heading2_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading2Detail']; ?></textarea>
-                                                            </div>
-                                                            <div class="field-row">
-                                                                <label>Step 3 Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section4_heading3" id="section4_heading3" value="<?php echo $pageContent['page']['sections']['section4']['heading3']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section4_heading3_detail" id="section4_heading3_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading3Detail']; ?></textarea>
-                                                            </div>
+                                                            <label>Sub Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section3_heading1" id="section3_heading1" value="<?php echo $pageContent['page']['sections']['section3']['heading1']; ?>" />
                                                         </div>
 
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="col-xs-12">
-                                                            <div class="field-row">
-                                                                <label>Step 4 Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section4_heading4" id="section4_heading4" value="<?php echo $pageContent['page']['sections']['section4']['heading4']; ?>" />
-                                                            </div>
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section3_heading1_detail" id="section3_heading1_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading1Detail']; ?></textarea>
+                                                        </div>
+                                                        <div class="field-row">
+                                                            <label>Sub Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section3_heading2" id="section3_heading2" value="<?php echo $pageContent['page']['sections']['section3']['heading2']; ?>" />
+                                                        </div>
 
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section4_heading4_detail" id="section4_heading4_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading4Detail']; ?></textarea>
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Step 5 Heading</label><b class="text-danger"> *</b>
-                                                                <input type="text" class="invoice-fields" name="section4_heading5" id="section4_heading5" value="<?php echo $pageContent['page']['sections']['section4']['heading5']; ?>" />
-                                                            </div>
-
-                                                            <div class="field-row">
-                                                                <label>Detail</label><b class="text-danger"> *</b>
-                                                                <textarea class="invoice-fields" name="section4_heading5_detail" id="section4_heading5_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading5Detail']; ?></textarea>
-                                                            </div>
-
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section3_heading2_detail" id="section3_heading2_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading2Detail']; ?></textarea>
                                                         </div>
                                                     </div>
 
                                                 </div>
-                                            </div>
-
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Section 5</label>
-                                                    </div>
-
+                                                <div class="col-xs-6">
                                                     <div class="col-xs-12">
                                                         <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section5_heading" id="section5_heading" value="<?php echo $pageContent['page']['sections']['section5']['heading']; ?>" />
+                                                            <label>Sub Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section3_heading3" id="section3_heading3" value="<?php echo $pageContent['page']['sections']['section3']['heading3']; ?>" />
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section3_heading3_detail" id="section3_heading3_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading3Detail']; ?></textarea>
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Sub Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section3_heading4" id="section3_heading4" value="<?php echo $pageContent['page']['sections']['section3']['heading4']; ?>" />
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section3_heading4_detail" id="section3_heading4_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section3']['heading4Detail']; ?></textarea>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Section 4</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_heading" id="section4_heading" value="<?php echo $pageContent['page']['sections']['section4']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Step 1 Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section4_heading1" id="section4_heading1" value="<?php echo $pageContent['page']['sections']['section4']['heading1']; ?>" />
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section4_heading1_detail" id="section4_heading1_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading1Detail']; ?></textarea>
+                                                        </div>
+                                                        <div class="field-row">
+                                                            <label>Step 2 Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section4_heading2" id="section4_heading2" value="<?php echo $pageContent['page']['sections']['section4']['heading2']; ?>" />
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section4_heading2_detail" id="section4_heading2_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading2Detail']; ?></textarea>
+                                                        </div>
+                                                        <div class="field-row">
+                                                            <label>Step 3 Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section4_heading3" id="section4_heading3" value="<?php echo $pageContent['page']['sections']['section4']['heading3']; ?>" />
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section4_heading3_detail" id="section4_heading3_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading3Detail']; ?></textarea>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-xs-12"><br>
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="section5_heading_detail" id="section5_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section5']['headingDetail']; ?></textarea>
-                                                    </div>
                                                 </div>
-                                            </div>
-
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Section 6</label>
-                                                    </div>
-
+                                                <div class="col-xs-6">
                                                     <div class="col-xs-12">
                                                         <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section6_heading" id="section6_heading" value="<?php echo $pageContent['page']['sections']['section6']['heading']; ?>" />
+                                                            <label>Step 4 Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section4_heading4" id="section4_heading4" value="<?php echo $pageContent['page']['sections']['section4']['heading4']; ?>" />
                                                         </div>
-                                                    </div>
 
-                                                    <div class="col-xs-12"><br>
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="section6_heading_detail" id="section6_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section6']['headingDetail']; ?></textarea>
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section4_heading4_detail" id="section4_heading4_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading4Detail']; ?></textarea>
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Step 5 Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section4_heading5" id="section4_heading5" value="<?php echo $pageContent['page']['sections']['section4']['heading5']; ?>" />
+                                                        </div>
+
+                                                        <div class="field-row">
+                                                            <label>Detail</label><b class="text-danger"> *</b>
+                                                            <textarea class="invoice-fields" name="section4_heading5_detail" id="section4_heading5_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['heading5Detail']; ?></textarea>
+                                                        </div>
+
                                                     </div>
                                                 </div>
+
+
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Section 7</label>
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Section 5</h1>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_heading" id="section5_heading" value="<?php echo $pageContent['page']['sections']['section5']['heading']; ?>" />
                                                     </div>
+                                                </div>
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section5_heading_detail" id="section5_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section5']['headingDetail']; ?></textarea>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Section 6</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section6_heading" id="section6_heading" value="<?php echo $pageContent['page']['sections']['section6']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section6_heading_detail" id="section6_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section6']['headingDetail']; ?></textarea>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Section 7</h1>
+                                                </div>
 
                                                     <div class="col-xs-12">
                                                         <div class="field-row">
@@ -263,7 +275,7 @@
                                                         <label>Detail</label><b class="text-danger"> *</b>
                                                         <textarea class="ckeditor" name="section7_heading_detail" id="section7_heading_detail" rows="2" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
                                                     </div>
-                                                </div>
+                                                
                                             </div>
 
                                     </div>
@@ -385,6 +397,15 @@
                 },
                 section7_heading_detail: {
                     required: true
+                },
+                meta_title: {
+                    required: true
+                },
+                meta_description: {
+                    required: true
+                },
+                meta_key_word: {
+                    required: true
                 }
             },
             submitHandler: function(form) {
@@ -457,7 +478,13 @@
 
         };
 
-            //
+        pageData.page['meta'] = {
+            title: $("#meta_title").val(),
+            keyword: $("#meta_key_word").val(),
+            description: $("#meta_description").val()
+        };
+
+        //
         url_to = "<?= base_url() ?>manage_admin/cms/update_page";
         $.post(url_to, {
                 pageId: pageId,

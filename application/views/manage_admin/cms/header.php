@@ -23,14 +23,15 @@
                                                 </div>
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
+                                          
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Home</h1>
+                                                </div>
                                                 <?php
                                                 $pageContent = json_decode($page_data['content'], true);
                                                 ?>
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Home</label>
-                                                    </div>
+                                                  
                                                     <div class="col-xs-6">
                                                         <div class="field-row">
                                                             <label>Title</label><b class="text-danger"> *</b>
@@ -46,204 +47,198 @@
                                                         </div>
                                                     </div>
 
-                                                </div>
+                                                
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Products</label>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+
+                                                    <div class="hr-box" style="margin: 15px 0 0;">
+                                                        <div class="hr-box-header bg-header-green">
+                                                            <h1 class="hr-registered pull-left">Products</h1>
+                                                        </div>
+
+
+                                                        <div class="col-xs-6 form-group"> </br>
                                                             <label>Title</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="product_title" id="product_title" value="<?php echo $pageContent['page']['products']['title']; ?>" />
                                                         </div>
-                                                    </div>
 
-                                                    <div class="col-xs-6">
+                                                        <div class="col-xs-6 form-group"> <br>
 
-                                                        <div class="field-row">
                                                             <label>Slug</label><b class="text-danger"> *</b>
                                                             <input type="text" class="invoice-fields" name="product_slug" id="product_slug" value="<?php echo $pageContent['page']['products']['slug']; ?>" />
                                                         </div>
-                                                    </div>
 
+
+                                                        <div class="col-xs-12 form-group">
+                                                            <label>Products Submenu</label>
+                                                        </div>
+                                                        <div class="col-xs-6">
+                                                            <div class="field-row">
+                                                                <label>People Operations Text</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="people_operations_title" id="people_operations_title" value="<?php echo $pageContent['page']['products']['submenu1']['title']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+                                                            <div class="field-row">
+                                                                <label>Slug</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="people_operations_slug" id="people_operations_slug" value="<?php echo $pageContent['page']['products']['submenu1']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+                                                            <div class="field-row">
+                                                                <label>HR Electronic Onboarding Text</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="hr_electronic_onboarding_title" id="hr_electronic_onboarding_title" value="<?php echo $pageContent['page']['products']['submenu2']['title']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+
+                                                            <div class="field-row">
+                                                                <label>Slug</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="hr_electronic_onboarding_slug" id="hr_electronic_onboarding_slug" value="<?php echo $pageContent['page']['products']['submenu2']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+                                                            <div class="field-row">
+                                                                <label>Payroll Text</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="payroll_title" id="payroll_title" value="<?php echo $pageContent['page']['products']['submenu3']['title']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+
+                                                            <div class="field-row">
+                                                                <label>Slug</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="payroll_slug" id="payroll_slug" value="<?php echo $pageContent['page']['products']['submenu3']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+                                                            <div class="field-row">
+                                                                <label>Recruitment Text</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="recruitment_title" id="recruitment_title" value="<?php echo $pageContent['page']['products']['submenu4']['title']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+
+                                                            <div class="field-row">
+                                                                <label>Slug</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="recruitment_slug" id="recruitment_slug" value="<?php echo $pageContent['page']['products']['submenu4']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+                                                            <div class="field-row">
+                                                                <label>Employee Management Text</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="employee_management_title" id="employee_management_title" value="<?php echo $pageContent['page']['products']['submenu5']['title']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+
+                                                            <div class="field-row">
+                                                                <label>Slug</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="employee_management_slug" id="employee_management_slug" value="<?php echo $pageContent['page']['products']['submenu5']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="col-xs-6">
+                                                            <div class="field-row">
+                                                                <label>Compliance Text</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="compliance_title" id="compliance_title" value="<?php echo $pageContent['page']['products']['submenu6']['title']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+
+                                                            <div class="field-row">
+                                                                <label>Slug</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="compliance_slug" id="compliance_slug" value="<?php echo $pageContent['page']['products']['submenu6']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Why Us</h1>
                                                 </div>
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Products Submenu</label>
+
+                                                <div class="col-xs-6 form-group"><br>
+                                                    <label>Title</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="whyus_title" id="whyus_title" value="<?php echo $pageContent['page']['whyus']['title']; ?>" />
+                                                </div>
+
+                                                <div class="col-xs-6 form-group"><br>
+                                                    <label>Slug</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="whyus_slug" id="whyus_slug" value="<?php echo $pageContent['page']['whyus']['slug']; ?>" />
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">About Us</h1>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Title</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="aboutus_title" id="aboutus_title" value="<?php echo $pageContent['page']['aboutus']['title']; ?>" />
                                                     </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>People Operations Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="people_operations_title" id="people_operations_title" value="<?php echo $pageContent['page']['products']['submenu1']['title']; ?>" />
-                                                        </div>
-                                                    </div>
+                                                </div>
 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="people_operations_slug" id="people_operations_slug" value="<?php echo $pageContent['page']['products']['submenu1']['slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>HR Electronic Onboarding Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="hr_electronic_onboarding_title" id="hr_electronic_onboarding_title" value="<?php echo $pageContent['page']['products']['submenu2']['title']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="hr_electronic_onboarding_slug" id="hr_electronic_onboarding_slug" value="<?php echo $pageContent['page']['products']['submenu2']['slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Payroll Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="payroll_title" id="payroll_title" value="<?php echo $pageContent['page']['products']['submenu3']['title']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="payroll_slug" id="payroll_slug" value="<?php echo $pageContent['page']['products']['submenu3']['slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Recruitment Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="recruitment_title" id="recruitment_title" value="<?php echo $pageContent['page']['products']['submenu4']['title']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="recruitment_slug" id="recruitment_slug" value="<?php echo $pageContent['page']['products']['submenu4']['slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Employee Management Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="employee_management_title" id="employee_management_title" value="<?php echo $pageContent['page']['products']['submenu5']['title']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="employee_management_slug" id="employee_management_slug" value="<?php echo $pageContent['page']['products']['submenu5']['slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Compliance Text</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="compliance_title" id="compliance_title" value="<?php echo $pageContent['page']['products']['submenu6']['title']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="compliance_slug" id="compliance_slug" value="<?php echo $pageContent['page']['products']['submenu6']['slug']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="aboutus_slug" id="aboutus_slug" value="<?php echo $pageContent['page']['aboutus']['slug']; ?>" />
                                                     </div>
                                                 </div>
 
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Contact Us</h1>
+                                                </div>
 
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Why Us</label>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="whyus_title" id="whyus_title" value="<?php echo $pageContent['page']['whyus']['title']; ?>" />
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="whyus_slug" id="whyus_slug" value="<?php echo $pageContent['page']['whyus']['slug']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Title</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="contactus_title" id="contactus_title" value="<?php echo $pageContent['page']['contactus']['title']; ?>" />
                                                     </div>
+                                                </div>
 
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="contactus_slug" id="contactus_slug" value="<?php echo $pageContent['page']['contactus']['slug']; ?>" />
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div class="hr-search-main" style="display: block;">
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>About Us</label>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="aboutus_title" id="aboutus_title" value="<?php echo $pageContent['page']['aboutus']['title']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="aboutus_slug" id="aboutus_slug" value="<?php echo $pageContent['page']['aboutus']['slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Buttons</h1>
                                                 </div>
-                                            </div>
 
-                                            <div class="hr-search-main" style="display: block;">
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Contact Us</label>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="contactus_title" id="contactus_title" value="<?php echo $pageContent['page']['contactus']['title']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="contactus_slug" id="contactus_slug" value="<?php echo $pageContent['page']['contactus']['slug']; ?>" />
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div class="hr-search-main" style="display: block;">
-
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <label>Buttons</label>
-                                                    </div>
+                                                 
                                                     <div class="col-xs-6">
                                                         <div class="field-row">
                                                             <label>Login Title</label><b class="text-danger"> *</b>
@@ -272,7 +267,7 @@
                                                         </div>
                                                     </div>
 
-                                                </div>
+                                                
                                             </div>
                                     </div>
                                 </div>

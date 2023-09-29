@@ -19,42 +19,70 @@
                                         $pageContent = json_decode($page_data['content'], true);
                                         ?>
 
-                                        <div class="hr-search-main" style="display: block;">
+
+                                        <div class="hr-box" style="margin: 15px 0 0;">
+
+                                            <div class="hr-box-header bg-header-green">
+                                                <h1 class="hr-registered pull-left">Meta Details</h1>
+                                            </div>
+
+                                            <div class="col-xs-12 form-group">
+                                                <br> <label>Meta Title:</label><b class="text-danger"> *</b>
+                                                <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $pageContent['page']['meta']['title']; ?>" />
+                                            </div>
+
+                                            <div class="col-xs-12 form-group">
+                                                <label>Meta Description:</label><b class="text-danger"> *</b>
+                                                <textarea class="invoice-fields" name="meta_description" id="meta_description" rows="4" cols="60"><?php echo $pageContent['page']['meta']['description']; ?></textarea>
+                                            </div>
+
+                                            <div class="col-xs-12 form-group">
+                                                <label>Meta Keywords:</label><b class="text-danger"> *</b>
+                                                <textarea class="invoice-fields" name="meta_key_word" id="meta_key_word" rows="4" cols="60"><?php echo $pageContent['page']['meta']['keyword']; ?></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="hr-box" style="margin: 15px 0 0;">
+
+                                            <div class="hr-box-header bg-header-green">
+                                            </div>
+
                                             <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
 
-                                            <div class="row">
-                                                <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>About Us Slug</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="aboutus_slug" id="aboutus_slug" value="<?php echo $pageContent['page']['aboutUs']['slug']; ?>" />
-                                                    </div>
+                                            <div class="col-xs-6">
+                                                <div class="field-row">
+                                                    <label>About Us Slug</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="aboutus_slug" id="aboutus_slug" value="<?php echo $pageContent['page']['aboutUs']['slug']; ?>" />
                                                 </div>
-                                                <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Main Heading</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="main_heading_text" id="main_heading_text" value="<?php echo $pageContent['page']['mainHeading']['text']; ?>" />
-                                                    </div>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <div class="field-row">
+                                                    <label>Main Heading</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="main_heading_text" id="main_heading_text" value="<?php echo $pageContent['page']['mainHeading']['text']; ?>" />
                                                 </div>
-                                                <div class="col-xs-12">
-                                                    <div class="field-row">
-                                                        <label>Text Under Main Heading</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="main_heading_detail_text" id="main_heading_detail_text" value="<?php echo $pageContent['page']['mainHeadingDetail']['text']; ?>" />
-                                                    </div>
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <div class="field-row">
+                                                    <label>Text Under Main Heading</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="main_heading_detail_text" id="main_heading_detail_text" value="<?php echo $pageContent['page']['mainHeadingDetail']['text']; ?>" />
                                                 </div>
                                             </div>
 
-                                            <div class="row">
-                                                <div class="col-xs-12"><br>
-                                                    <label>Text Under Main Heading Picture</label><b class="text-danger"> *</b>
-                                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                    <textarea class="ckeditor" name="main_heading_picture_text" id="main_heading_picture_text" rows="8" cols="60"><?php echo $pageContent['page']['mainHeadingPicture']['text']; ?></textarea>
-                                                </div>
+                                            <div class="col-xs-12"><br>
+                                                <label>Text Under Main Heading Picture</label><b class="text-danger"> *</b>
+                                                <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                                <textarea class="ckeditor" name="main_heading_picture_text" id="main_heading_picture_text" rows="8" cols="60"><?php echo $pageContent['page']['mainHeadingPicture']['text']; ?></textarea>
                                             </div>
+
 
                                         </div>
 
 
-                                        <div class="hr-search-main" style="display: block;">
+                                        <div class="hr-box" style="margin: 15px 0 0;">
+
+                                            <div class="hr-box-header bg-header-green">
+                                            </div>
+
                                             <div class="col-xs-12"><br>
                                                 <label>An Award-Winning Solution</label><b class="text-danger"> *</b>
                                                 <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
@@ -62,7 +90,10 @@
                                             </div>
                                         </div>
 
-                                        <div class="hr-search-main" style="display: block;">
+                                        <div class="hr-box" style="margin: 15px 0 0;">
+
+                                            <div class="hr-box-header bg-header-green">
+                                            </div>
                                             <div class="col-xs-6">
                                                 <div class="field-row">
                                                     <label>Our Leadership Team</label><b class="text-danger"> *</b>
@@ -71,34 +102,34 @@
                                             </div>
 
                                             <div class="col-xs-6">
-                                            <div class="field-row">
-                                            </div>
-                                             
+                                                <div class="field-row">
+                                                </div>
+
                                             </div>
 
                                             <div class="col-xs-6">
-                                            <label>Robert Hollenshead </label><b class="text-danger"> *</b>
+                                                <label>Robert Hollenshead </label><b class="text-danger"> *</b>
                                                 <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                 <textarea class="ckeditor" name="leadership_left1_text" id="leadership_left1_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipLeft1']['text']; ?></textarea>
-                                          
+
                                             </div>
 
                                             <div class="col-xs-6">
-                                            <div class="col-xs-12">
-                                            <label>Steven Warner</label><b class="text-danger"> *</b>
-                                                <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                <textarea class="ckeditor" name="leadership_right1_text" id="leadership_right1_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight1']['text']; ?></textarea>
-                                          
-                                            </div>
+                                                <div class="col-xs-12">
+                                                    <label>Steven Warner</label><b class="text-danger"> *</b>
+                                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                                    <textarea class="ckeditor" name="leadership_right1_text" id="leadership_right1_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight1']['text']; ?></textarea>
 
-                                            <div class="col-xs-12"><br>
-                                            <label>E J Shelby</label><b class="text-danger"> *</b>
-                                                <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                <textarea class="ckeditor" name="leadership_right2_text" id="leadership_right2_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight2']['text']; ?></textarea>
-                                          
-                                            </div>
+                                                </div>
 
-                                            </div> 
+                                                <div class="col-xs-12"><br>
+                                                    <label>E J Shelby</label><b class="text-danger"> *</b>
+                                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                                    <textarea class="ckeditor" name="leadership_right2_text" id="leadership_right2_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight2']['text']; ?></textarea>
+
+                                                </div>
+
+                                            </div>
 
                                         </div>
 
@@ -107,13 +138,11 @@
 
                                     <hr />
                                     <div class="row">
-                                        <div class="col-lg-12 text-right">
+                                        <div class="col-lg-12 text-right"><br>
                                             <input type="submit" name="submit_button" class="btn btn-success" value="Save">
                                             <a class="btn btn-default" href='<?php echo base_url('manage_admin/cms') ?>'>Cancel</a>
                                         </div>
 
-
-                                        
                                     </div>
                                 </form>
                             </div>
@@ -161,9 +190,16 @@
                 },
                 leadership_right2_text: {
                     required: true
+                },
+                meta_title: {
+                    required: true
+                },
+                meta_description: {
+                    required: true
+                },
+                meta_key_word: {
+                    required: true
                 }
-
-               
 
 
             },
@@ -217,6 +253,13 @@
         pageData.page['leaderShipRight2'] = {
             text: CKEDITOR.instances['leadership_right2_text'].getData().trim(),
         };
+
+        pageData.page['meta'] = {
+            title: $("#meta_title").val(),
+            keyword: $("#meta_key_word").val(),
+            description: $("#meta_description").val()
+        };
+        
         //
         url_to = "<?= base_url() ?>manage_admin/cms/update_page";
         $.post(url_to, {

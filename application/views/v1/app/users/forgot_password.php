@@ -1,8 +1,5 @@
 <main>
-    <?php
-    $forgotPasswordContent = getPageContent('forgot_password');
-    ?>
-    <div class="row">
+       <div class="row">
         <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
             <div class="top-div">
                 <form action="" method="post" id="forgotForm" class="ng-pristine ng-valid">

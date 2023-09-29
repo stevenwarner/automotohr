@@ -1,8 +1,5 @@
 <main>
-    <?php 
-            $loginContent = getPageContent('login');
-    ?>
-    <div class="row">
+        <div class="row">
         <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
             <div class="top-div">
                 <div class="parent-div">
@@ -63,6 +60,8 @@
         </div>
     </div>
 </main>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
 <script type="text/javascript">
     $('input').keydown(function(e) {
         if (e.keyCode == 13) {

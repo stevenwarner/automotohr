@@ -19,32 +19,54 @@
                                         $pageContent = json_decode($page_data['content'], true);
                                         ?>
 
-                                        <div class="hr-search-main" style="display: block;">
+                                        <div class="hr-box" style="margin: 15px 0 0;">
+
+                                            <div class="hr-box-header bg-header-green">
+                                                <h1 class="hr-registered pull-left">Meta Details</h1>
+                                            </div>
+
+                                            <div class="col-xs-12 form-group">
+                                                <br> <label>Meta Title:</label><b class="text-danger"> *</b>
+                                                <input type="text" class="invoice-fields" name="meta_title" id="meta_title" value="<?php echo $pageContent['page']['meta']['title']; ?>" />
+                                            </div>
+
+                                            <div class="col-xs-12 form-group">
+                                                <label>Meta Description:</label><b class="text-danger"> *</b>
+                                                <textarea class="invoice-fields" name="meta_description" id="meta_description" rows="4" cols="60"><?php echo $pageContent['page']['meta']['description']; ?></textarea>
+                                            </div>
+
+                                            <div class="col-xs-12 form-group">
+                                                <label>Meta Keywords:</label><b class="text-danger"> *</b>
+                                                <textarea class="invoice-fields" name="meta_key_word" id="meta_key_word" rows="4" cols="60"><?php echo $pageContent['page']['meta']['keyword']; ?></textarea>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="hr-box" style="margin: 15px 0 0;">
+
+                                            <div class="hr-box-header bg-header-green">
+                                                <h1 class="hr-registered pull-left">Terms of Service</h1>
+                                            </div>
                                             <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
 
-                                            <div class="row">
-                                                <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Terms of Service Slug</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="terms_slug" id="terms_slug" value="<?php echo $pageContent['page']['terms']['slug']; ?>" />
-                                                    </div>
+                                            <div class="col-xs-6">
+                                                <div class="field-row">
+                                                    <label>Terms of Service Slug</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="terms_slug" id="terms_slug" value="<?php echo $pageContent['page']['terms']['slug']; ?>" />
                                                 </div>
                                             </div>
 
-                                            <div class="row">
-                                                <div class="col-xs-12"><br>
-                                                    <label>Terms of Service Text</label><b class="text-danger"> *</b>
-                                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                    <textarea class="ckeditor" name="terms_text" id="terms_text" rows="8" cols="60"><?php echo $pageContent['page']['terms']['text']; ?></textarea>
-                                                </div>
+                                            <div class="col-xs-12"><br>
+                                                <label>Terms of Service Text</label><b class="text-danger"> *</b>
+                                                <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                                <textarea class="ckeditor" name="terms_text" id="terms_text" rows="8" cols="60"><?php echo $pageContent['page']['terms']['text']; ?></textarea>
                                             </div>
-
                                         </div>
                                     </div>
 
                                     <hr />
                                     <div class="row">
-                                        <div class="col-lg-12 text-right">
+                                        <div class="col-lg-12 text-right"><br>
                                             <input type="submit" name="submit_button" class="btn btn-success" value="Save">
                                             <a class="btn btn-default" href='<?php echo base_url('manage_admin/cms') ?>'>Cancel</a>
                                         </div>
@@ -74,6 +96,15 @@
                 },
                 terms_text: {
                     required: true
+                },
+                meta_title: {
+                    required: true
+                },
+                meta_description: {
+                    required: true
+                },
+                meta_key_word: {
+                    required: true
                 }
             },
             messages: {
@@ -95,12 +126,18 @@
             page: {}
         };
 
-        
+
         const pageId = $("#page_id").val();
         //
         pageData.page['terms'] = {
             text: CKEDITOR.instances['terms_text'].getData().trim(),
             slug: $("#terms_slug").val()
+        };
+
+        pageData.page['meta'] = {
+            title: $("#meta_title").val(),
+            keyword: $("#meta_key_word").val(),
+            description: $("#meta_description").val()
         };
 
         //

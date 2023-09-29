@@ -26,11 +26,14 @@ class Users extends CI_Controller
             $data['security_details'] = $security_details;
         }
 
+        //
+        $loginContent = getPageContent('login');
+
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = 'Home | AutomotoHR.com';
-        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
-        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
+        $data['meta']['title'] = $loginContent['page']['meta']['title'];
+        $data['meta']['description'] = $loginContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $loginContent['page']['meta']['keywords'];
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
@@ -98,7 +101,9 @@ class Users extends CI_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
+
             $data['title'] = "Login";
+            $data['loginContent'] = $loginContent;
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/users/login');
@@ -320,17 +325,19 @@ class Users extends CI_Controller
             )
         );
 
+        $forgotPasswordContent = getPageContent('forgot_password');
 
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = 'Home | AutomotoHR.com';
-        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
-        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
+        $data['meta']['title'] = $forgotPasswordContent['page']['meta']['title'];
+        $data['meta']['description'] = $forgotPasswordContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $forgotPasswordContent['page']['meta']['keywords'];
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
             'v1/app/plugins/fontawesome/css/all',
         ];
+
         //
         $data['appCSS'] = bundleCSS([
             'v1/app/css/main',
@@ -344,12 +351,13 @@ class Users extends CI_Controller
         ], $this->js);
 
 
-
         $this->form_validation->set_rules($config);
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
             $data['title'] = "Forgot Password";
+            $data['forgotPasswordContent'] = $forgotPasswordContent;
+
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/users/forgot_password');
@@ -406,7 +414,32 @@ class Users extends CI_Controller
         }
 
         $data['title'] = "Contact Us";
-        $data['sub_title'] = "Don't be Shy!! We would Love to hear from you.Please send us your Questions or Comments.";
+
+        $contactUsContent = getPageContent('contact_us');
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $contactUsContent['page']['meta']['title'];
+        $data['meta']['description'] = $contactUsContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $contactUsContent['page']['meta']['keywords'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/contact_us',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+
         $this->form_validation->set_rules('name', 'Name', 'required|trim|xss_clean');
         $this->form_validation->set_rules('email', 'Email', 'required|trim|xss_clean|valid_email');
         $this->form_validation->set_rules('message', 'Message', 'required|trim|xss_clean|min_length[50]|strip_tags');
@@ -414,18 +447,23 @@ class Users extends CI_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
-            $this->load->view('main/header', $data);
-            $this->load->view('users/contact_us');
-            $this->load->view('main/footer');
+
+            $data['contactUsContent'] = $contactUsContent;
+
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/users/contact_us');
+            $this->load->view($this->footer);
         } else {
             $contact_name = $this->input->post('name');
             $contact_email = $this->input->post('email');
             $contact_message = strip_tags($this->input->post('message'));
             $is_blocked_email = checkForBlockedEmail($contact_email);
 
+
             //
             if (preg_match('/.ru$/', $contact_email)) {
                 $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your enquiry. We will get back to you!');
+
                 redirect(base_url('contact_us'), "refresh");
             }
 
@@ -475,11 +513,13 @@ class Users extends CI_Controller
             )
         );
 
+        $passwordRecoveryContent = getPageContent('password_recovery');
+
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = 'Home | AutomotoHR.com';
-        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
-        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
+        $data['meta']['title'] = $passwordRecoveryContent['page']['meta']['title'];
+        $data['meta']['description'] = $passwordRecoveryContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $passwordRecoveryContent['page']['meta']['keywords'];
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
@@ -498,19 +538,18 @@ class Users extends CI_Controller
         ], $this->js);
 
 
-
         $this->form_validation->set_rules($config);
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
             $retrn = $this->users_model->varification_user_key($user, $key);
             $data['title'] = "Change Password";
+            $data['passwordRecoveryContent'] = $passwordRecoveryContent;
 
             //
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/users/password_recovery');
             $this->load->view($this->footer);
-           
         } else {
             $password = $this->input->post('password');
             $re_password = $this->input->post('retypepassword');

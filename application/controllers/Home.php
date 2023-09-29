@@ -27,11 +27,15 @@ class Home extends CI_Controller
             $data['security_details'] = $security_details;
             $data['session'] = $this->session->userdata('logged_in');
         }
+
+        //
+        $homeContent = getPageContent('home');
+
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = 'Home | AutomotoHR.com';
-        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
-        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
+        $data['meta']['title'] = $homeContent['page']['meta']['title'];
+        $data['meta']['description'] = $homeContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $homeContent['page']['meta']['keyword'];
 
         if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
             $this->load->model('users_model');
@@ -78,7 +82,6 @@ class Home extends CI_Controller
             'alertifyjs/alertify.min'
         ], $this->js, 'home');
 
-        $homeContent = getPageContent('home');
 
 
         $data['slider'] = [
@@ -106,7 +109,6 @@ class Home extends CI_Controller
         ];
 
         $data['homeContent'] = $homeContent;
-        $data['home_page'] = $this->home_model->get_home_page_data();
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/homepage');
         $this->load->view($this->footer);
@@ -139,11 +141,43 @@ class Home extends CI_Controller
             redirect(base_url());
         }
 
+      
         $data['home_page'] = $this->home_model->get_home_page_data(); //Getting customize home page Data Starts
         $data['title'] = ucfirst(str_replace("-", " ", $pageName));
-        $this->load->view('main/header', $data);
-        $this->load->view('static-pages/' . $pageName);
-        $this->load->view('main/footer');
+
+        $privacyPolicyContent = getPageContent('privacy_policy');
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $privacyPolicyContent['page']['meta']['title'];
+        $data['meta']['description'] = $privacyPolicyContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $privacyPolicyContent['page']['meta']['keywords'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/contact_us',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+            'v1/app/css/services',
+
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+
+      $data['privacyPolicyContent'] =    $privacyPolicyContent;
+
+      $this->load->view($this->header, $data);
+      $this->load->view('v1/app/services/'. $pageName);
+      $this->load->view($this->footer);
+
     }
 
     function remove_cart_item()
