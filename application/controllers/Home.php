@@ -141,7 +141,7 @@ class Home extends CI_Controller
             redirect(base_url());
         }
 
-      
+
         $data['home_page'] = $this->home_model->get_home_page_data(); //Getting customize home page Data Starts
         $data['title'] = ucfirst(str_replace("-", " ", $pageName));
 
@@ -172,12 +172,11 @@ class Home extends CI_Controller
         ], $this->js);
 
 
-      $data['privacyPolicyContent'] =    $privacyPolicyContent;
+        $data['privacyPolicyContent'] =    $privacyPolicyContent;
 
-      $this->load->view($this->header, $data);
-      $this->load->view('v1/app/services/'. $pageName);
-      $this->load->view($this->footer);
-
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/services/' . $pageName);
+        $this->load->view($this->footer);
     }
 
     function remove_cart_item()
@@ -2226,5 +2225,57 @@ class Home extends CI_Controller
             'invoiceDetails' => $invoiceDetails,
             'hf' => $hf
         ]);
+    }
+
+    //
+    public function products($pageName)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $session_details = $this->session->userdata('logged_in');
+            $sid = $session_details['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($sid);
+            $data['security_details'] = $security_details;
+        }
+
+
+        $data['title'] = ucfirst(str_replace("-", " ", $pageName));
+
+        $productsContent = getPageContent($pageName, true);
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $productsContent['page']['meta']['title'];
+        $data['meta']['description'] = $productsContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $productsContent['page']['meta']['keywords'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/products',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+            
+
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+        //
+        $page = getPageNameBySlug($pageName);
+
+        if (empty($page)) {
+            redirect(base_url());
+        }
+        $data['pageSlug'] = 'products/'.$pageName;
+        $data['productsContent'] =    $productsContent;
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/products/' .  $page);
+        $this->load->view($this->footer);
     }
 }

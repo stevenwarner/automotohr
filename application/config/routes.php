@@ -1930,4 +1930,8 @@ $route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax
 $route['resources/(:any)'] = 'manage_admin/Resources/view_resource/$1';
 $route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
 
+//
+$route['products/(:any)'] = "home/products/$1";
+
+
 

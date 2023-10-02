@@ -70,7 +70,7 @@
                 </p>
 
                 <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['productoperations']['slug']) ?>"> <?php echo $footerContent['page']['products']['productoperations']['title'] ?> </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['recruitment']['electroniconboarding']['slug']) ?>"> <?php echo $footerContent['page']['products']['recruitment']['title'] ?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['recruitment']['slug']) ?>"> <?php echo $footerContent['page']['products']['recruitment']['title'] ?> </a></p>
                 <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['electroniconboarding']['slug']) ?>"> <?php echo $footerContent['page']['products']['electroniconboarding']['title'] ?></a></p>
                 <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['employeemanagement']['slug']) ?>"> <?php echo $footerContent['page']['products']['employeemanagement']['title'] ?> </a></li>
                 <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['payroll']['slug']) ?>"> <?php echo $footerContent['page']['products']['payroll']['title'] ?> </a></p>

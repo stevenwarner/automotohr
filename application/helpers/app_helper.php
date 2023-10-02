@@ -1692,8 +1692,8 @@ if (!function_exists('splitPathAndFileName')) {
     {
         //
         $returnArray = [
-            'path' => '', 
-            'name' => '', 
+            'path' => '',
+            'name' => '',
             'orig_name' => $file,
             'ext' => '',
             'mime' => ''
@@ -1745,27 +1745,43 @@ if (!function_exists('getAWSSecureFile')) {
         // secure params
         $config['ResponseContentLanguage'] = 'en-US';
         $config['ResponseContentType'] = $parsedFile['mime'];
-        $config['ResponseContentDisposition'] = 'attachment; filename="'.($parsedFile['name']).'"';
+        $config['ResponseContentDisposition'] = 'attachment; filename="' . ($parsedFile['name']) . '"';
         $config['ResponseCacheControl'] = 'No-cache';
         $config['ResponseExpires'] = gmdate(DATE_RFC2822, time() + 3600); // 1 hour
         // Load AWS library
         $CI->load->library('aws_lib');
         return $CI->aws_lib->get_secure_object($config);
-
     }
 }
 
 if (!function_exists('getPageContent')) {
 
-    function getPageContent($page)
+    function getPageContent($page, $slug = false)
     {
         //
         $CI = &get_instance();
-        $pageContent = $CI->db
-            ->select('content')
-            ->where('page', $page)
+        $CI->db
+            ->select('content');
+        if ($slug == true) {
+            $CI->db->where('slug', $page);
+        } else {
+            $CI->db->where('page', $page);
+        }
+        $pageContent =   $CI->db->get('cms_pages_new')->row_array();
+        return json_decode($pageContent['content'], true);
+    }
+}
+
+if (!function_exists('getPageNameBySlug')) {
+
+    function getPageNameBySlug($slug)
+    {
+        //
+        $CI = &get_instance();
+        $page =  $CI->db->select('page')
+            ->where('slug', $slug)
             ->get('cms_pages_new')
             ->row_array();
-        return json_decode($pageContent['content'],true);
+        return $page['page'];
     }
 }
