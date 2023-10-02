@@ -1,0 +1,243 @@
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+
+class Payrolls extends Admin_Controller
+{
+    /**
+     * for js
+     */
+    private $js;
+    /**
+     * for css
+     */
+    private $css;
+    /**
+     * wether to create minified files or not
+     */
+    private $createMinifyFiles;
+
+
+    public function __construct()
+    {
+        parent::__construct();
+        // load gusto helper
+        $this->load->helper('v1/payroll');
+        // load model
+        $this->load->model('v1/Payroll_model', 'payroll_model');
+        // set path to CSS file
+        $this->css = 'public/v1/sa/css/payrolls/';
+        // set path to JS file
+        $this->js = 'public/v1/sa/js/payrolls/';
+        //
+        $this->createMinifyFiles = false;
+    }
+
+    /**
+     * main page
+     *
+     * @param int $companyId
+     */
+    public function index(int $companyId)
+    {
+        //
+        $this->data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls']);
+        //
+        $this->data['companyStatus'] = $companyGustoDetails['status'];
+        // get the company onboard flow
+        $this->data['flow'] = gustoCall(
+            'getCompanyOnboardFlow',
+            $companyGustoDetails,
+            [
+                'flow_type' => "
+                    select_industry,
+                    add_bank_info,
+                    verify_bank_info,
+                    payroll_schedule,
+                    federal_tax_setup,
+                    state_setup,
+                    sign_all_forms
+                ",
+                "entity_type" => "Company",
+                "entity_uuid" => $companyGustoDetails['gusto_uuid']
+            ],
+            "POST"
+        )['url'];
+        // get the payroll blockers
+        $this->data['payrollBlockers'] = gustoCall(
+            'getPayrollBlockers',
+            $companyGustoDetails
+        );
+        // set title
+        $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
+        // set JS
+        $this->data['appJs'] = bundleJs([
+            'js/app_helper',
+            'v1/sa/payrolls/dashboard'
+        ], $this->js, 'dashboard', $this->createMinifyFiles);
+        // render the page
+        $this->render('v1/sa/payrolls/dashboard', 'admin_master');
+    }
+
+
+    // API routes
+    /**
+     * Sync company
+     *
+     * @param int $companyId
+     * @return
+     */
+    public function syncCompanyWithGusto(int $companyId): array
+    {
+        //
+        return $this->payroll_model->syncCompanyWithGusto(
+            $companyId
+        );
+    }
+
+    /**
+     * Verify bank account
+     * Only available on demo mode
+     *
+     * @return
+     */
+    public function verifyCompanyBankAccount(int $companyId): array
+    {
+        // get the company
+        $companyDetails = $this->payroll_model
+            ->getCompanyDetailsForGusto($companyId);
+        // get the company bank details
+        $companyBankAccounts = $this->db
+            ->select('sid, gusto_uuid')
+            ->where('company_sid', $companyId)
+            ->get('companies_bank_accounts')
+            ->result_array();
+        //
+        if (!$companyBankAccounts) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => 'Company doesn\'t registered a bank account. Please sync the company first.'
+                ]
+            );
+        }
+        //
+        $errorsArray = [];
+        //
+        foreach ($companyBankAccounts as $bankAccount) {
+            //
+            $companyDetails['other_uuid'] = $bankAccount['gusto_uuid'];
+            //
+            $gustoResponse = gustoCall(
+                'sendDeposits',
+                $companyDetails,
+                [
+                    'deposit_1' => '0.02',
+                    'deposit_2' => '0.42',
+                ],
+                "POST"
+            );
+            //
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                $errorsArray = array_merge($errorsArray, $errors['errors']);
+                continue;
+            }
+            // verify call
+            $gustoResponse = gustoCall(
+                'verifyBankAccount',
+                $companyDetails,
+                $gustoResponse,
+                "PUT"
+            );
+            //
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                $errorsArray = array_merge($errorsArray, $errors['errors']);
+            }
+            //
+            $this->db
+                ->where('sid', $bankAccount['sid'])
+                ->update(
+                    'companies_bank_accounts',
+                    [
+                        'verification_status' => $gustoResponse['verification_status'],
+                        'verification_type' => $gustoResponse['verification_type'],
+                        'plaid_status' => $gustoResponse['plaid_status'],
+                        'last_cached_balance' => $gustoResponse['last_cached_balance'],
+                        'balance_fetched_date' => $gustoResponse['balance_fetched_date'],
+                    ]
+                );
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => $errorsArray
+                ]
+            );
+        }
+        return SendResponse(
+            200,
+            [
+                'success' => true
+            ]
+        );
+    }
+
+    /**
+     * Verify bank account
+     * Only available on demo mode
+     *
+     * @return
+     */
+    public function verifyCompany(int $companyId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        // get the company
+        $companyDetails = $this->payroll_model
+            ->getCompanyDetailsForGusto($companyId);
+        // verify call
+        $gustoResponse = gustoCall(
+            'verifyCompany',
+            $companyDetails,
+            [],
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($gustoResponse['company_status'] === 'Approved') {
+            $this->db
+                ->where('company_sid', $companyId)
+                ->update('gusto_companies', ['status' => 'approved']);
+        }
+        //
+        return SendResponse(
+            $errors ? 400 : 200,
+            $errors ?? ['msg' => 'Company is successfully verified']
+        );
+    }
+
+    /**
+     * check company requirements
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function checkCompanyRequirements(int $companyId): array
+    {
+        //
+        $returnArray = $this->payroll_model->checkCompanyRequirements($companyId);
+        //
+        if (!$returnArray) {
+            return SendResponse(200, ['success' => true]);
+        }
+        //
+        return SendResponse(400, ['errors' => $returnArray]);
+    }
+}

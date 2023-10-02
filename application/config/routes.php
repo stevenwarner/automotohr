@@ -1920,3 +1920,11 @@ $route['forms/w4/(:any)/(:num)/revoke']['delete'] = 'v1/Documents_management/rev
 
 
 $route['payrolls/employees/(:num)/get']['get'] = 'v1/Payroll/getSingleEmployee/$1';
+
+
+/**
+ * Super admin payroll
+ */
+$route['sa/payrolls/(:num)']['get'] = 'v1/sa/Payrolls/index/$1';
+// sync with Gusto
+$route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
