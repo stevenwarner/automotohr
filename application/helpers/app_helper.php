@@ -629,7 +629,7 @@ if (!function_exists('getStaticFileVersion')) {
         // set the main CSS file
         $files['2022/css/main'] = ['css' => '2.1.1'];
         // set the course files
-        $files['js/app_helper'] = ['js' => '3.0.0'];
+        $files['js/app_helper'] = ['js' => '3.1.0'];
         $files['v1/common'] = ['js' => '3.0.0'];
         $files['v1/lms/add_question'] = ['js' => '3.0.0'];
         $files['v1/lms/edit_question'] = ['js' => '3.0.0'];
@@ -652,6 +652,13 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/payroll/js/contractors'] = ['js' => '1.0.0'];
         // Earning types
         $files['v1/payroll/js/earnings/manage'] = ['js' => '1.0.0'];
+
+        // Payroll
+        // signatory
+        $files['public/v1/js/payroll/add-signatory'] = ['js' => '1.0.1'];
+        $files['public/v1/css/payroll/add-signatory'] = ['css' => '1.0.1'];
+        // regular
+        $files['public/v1/js/payroll/regular/hours_and_earnings'] = ['js' => '1.0.1'];
         // check and return data
         return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
     }
@@ -1692,8 +1699,8 @@ if (!function_exists('splitPathAndFileName')) {
     {
         //
         $returnArray = [
-            'path' => '', 
-            'name' => '', 
+            'path' => '',
+            'name' => '',
             'orig_name' => $file,
             'ext' => '',
             'mime' => ''
@@ -1745,7 +1752,7 @@ if (!function_exists('getAWSSecureFile')) {
         // secure params
         $config['ResponseContentLanguage'] = 'en-US';
         $config['ResponseContentType'] = $parsedFile['mime'];
-        $config['ResponseContentDisposition'] = 'attachment; filename="'.($parsedFile['name']).'"';
+        $config['ResponseContentDisposition'] = 'attachment; filename="' . ($parsedFile['name']) . '"';
         $config['ResponseCacheControl'] = 'No-cache';
         $config['ResponseExpires'] = gmdate(DATE_RFC2822, time() + 3600); // 1 hour
         // Load AWS library

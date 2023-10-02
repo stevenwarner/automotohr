@@ -8,7 +8,7 @@ $(function regularPayrollsHoursAndEarnings() {
 	 */
 	const payrollId = getSegment(2);
 	/**
-	 * holds the payroll employees      
+	 * holds the payroll employees
 	 */
 	let payrollEmployees = {};
 	/**
@@ -45,7 +45,10 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.data("id");
 		//
-		$(".jsRegularHoursText").text(`${val} hrs`);
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsRegularHoursText")
+			.text(`${val} hrs`);
 		//
 		payroll["employees"][employeeId]["hourly_compensations"][
 			"regular_hours"
@@ -63,7 +66,10 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.data("id");
 		//
-		$(".jsOvertimeText").text(`${val} hrs`);
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsOvertimeText")
+			.text(`${val} hrs`);
 		//
 		payroll["employees"][employeeId]["hourly_compensations"]["overtime"][
 			"hours"
@@ -81,7 +87,10 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.data("id");
 		//
-		$(".jsDoubleOvertimeText").text(`${val} hrs`);
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsDoubleOvertimeText")
+			.text(`${val} hrs`);
 		//
 		payroll["employees"][employeeId]["hourly_compensations"][
 			"double_overtime"
@@ -99,7 +108,10 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.data("id");
 		//
-		$(".jsBonusText").text(`$${val}`);
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsBonusText")
+			.text(`$${val}`);
 		//
 		payroll["employees"][employeeId]["fixed_compensations"]["bonus"][
 			"amount"
@@ -128,7 +140,9 @@ $(function regularPayrollsHoursAndEarnings() {
 			total += val;
 		});
 		//
-		$(".jsAdditionalEarningValue").val(total);
+		$('tr.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
+			.find(".jsAdditionalEarningValue")
+			.val(total);
 		//
 		setSingleView(employeeId);
 		//
@@ -231,13 +245,23 @@ $(function regularPayrollsHoursAndEarnings() {
 		$(".jsModalCancel").trigger("click");
 		//
 		if (obj.total != 0) {
-				$('.jsRegularPayrollEmployeeRow[data-id="'+employeeId+'"]').find(".jsReimburmentTotal").text('R $'+(parseFloat(obj.total)));
-				$('.jsRegularPayrollEmployeeRow[data-id="'+employeeId+'"]').find('.jsReimbursementTotalBox').removeClass('hidden');
-				$('.jsRegularPayrollEmployeeRow[data-id="'+employeeId+'"]').find('.jsReimbursementTotalBoxBtn').addClass('hidden');
-			} else {
-				$('.jsRegularPayrollEmployeeRow[data-id="'+employeeId+'"]').find('.jsReimbursementTotalBox').addClass('hidden');
-				$('.jsRegularPayrollEmployeeRow[data-id="'+employeeId+'"]').find('.jsReimbursementTotalBoxBtn').removeClass('hidden');
-			}
+			$('.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
+				.find(".jsReimburmentTotal")
+				.text("R $" + parseFloat(obj.total));
+			$('.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
+				.find(".jsReimbursementTotalBox")
+				.removeClass("hidden");
+			$('.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
+				.find(".jsReimbursementTotalBoxBtn")
+				.addClass("hidden");
+		} else {
+			$('.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
+				.find(".jsReimbursementTotalBox")
+				.addClass("hidden");
+			$('.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
+				.find(".jsReimbursementTotalBoxBtn")
+				.removeClass("hidden");
+		}
 		//
 		setSingleView(employeeId);
 	});
@@ -445,21 +469,36 @@ $(function regularPayrollsHoursAndEarnings() {
 			let fixedCompensationTotal = 0;
 			// for fixed compensations
 			$.each(payrollEmployee["fixed_compensations"], function (i, v) {
-				if (i != "bonus" && i.match('timeoff') === null && i != 'reimbursement') {
+				if (
+					i != "bonus" &&
+					i.match("timeoff") === null &&
+					i != "reimbursement"
+				) {
 					fixedCompensationTotal += parseFloat(v.amount);
 				}
 			});
 			//
-			$(this).find(".jsAdditionalEarningText").text('AE $'+(parseFloat(fixedCompensationTotal)));
-			$(this).find(".jsAdditionalEarningValue").val(fixedCompensationTotal);
+			$(this)
+				.find(".jsAdditionalEarningText")
+				.text("AE $" + parseFloat(fixedCompensationTotal));
+			$(this)
+				.find(".jsAdditionalEarningValue")
+				.val(fixedCompensationTotal);
 			//
 			if (payrollEmployee.v1.reimbursements.total != 0) {
-				$(this).find(".jsReimburmentTotal").text('R $'+(parseFloat(payrollEmployee.v1.reimbursements.total)));
-				$(this).find('.jsReimbursementTotalBox').removeClass('hidden');
-				$(this).find('.jsReimbursementTotalBoxBtn').addClass('hidden');
+				$(this)
+					.find(".jsReimburmentTotal")
+					.text(
+						"R $" +
+							parseFloat(payrollEmployee.v1.reimbursements.total)
+					);
+				$(this).find(".jsReimbursementTotalBox").removeClass("hidden");
+				$(this).find(".jsReimbursementTotalBoxBtn").addClass("hidden");
 			} else {
-				$(this).find('.jsReimbursementTotalBox').addClass('hidden');
-				$(this).find('.jsReimbursementTotalBoxBtn').removeClass('hidden');
+				$(this).find(".jsReimbursementTotalBox").addClass("hidden");
+				$(this)
+					.find(".jsReimbursementTotalBoxBtn")
+					.removeClass("hidden");
 			}
 			// skip payroll
 			if (payrollEmployee.excluded) {
@@ -467,7 +506,9 @@ $(function regularPayrollsHoursAndEarnings() {
 				$(this).find(".jsAddEmployeeFromPayroll").removeClass("hidden");
 				$(this).find(".jsSkipPayroll").addClass("hidden");
 			} else {
-				$(this).find(".jsSkipEmployeeFromPayroll").removeClass("hidden");
+				$(this)
+					.find(".jsSkipEmployeeFromPayroll")
+					.removeClass("hidden");
 				$(this).find(".jsAddEmployeeFromPayroll").addClass("hidden");
 				$(this).find(".jsSkipPayroll").removeClass("hidden");
 			}

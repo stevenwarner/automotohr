@@ -779,6 +779,11 @@ if (!function_exists('getBankAccountForGusto')) {
             $return['splits'][0]['split_amount'] = 100;
             $return['split_by'] = 'Percentage';
         }
+
+        //
+        if (count($bankAccounts) > 1) {
+            $return['splits'][1]['split_amount'] = null;
+        }
         //
         return $return;
     }
