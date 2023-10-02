@@ -1917,3 +1917,6 @@ $route['payrolls/start_fresh']['get'] = "v1/Company_benefits/flushPayroll";
  */
 $route['forms/w4/(:any)/(:num)/assign']['post'] = 'v1/Documents_management/assignW4Form/$2/$1';
 $route['forms/w4/(:any)/(:num)/revoke']['delete'] = 'v1/Documents_management/revokeW4Form/$2/$1';
+
+
+$route['payrolls/employees/(:num)/get']['get'] = 'v1/Payroll/getSingleEmployee/$1';

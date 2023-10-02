@@ -167,7 +167,7 @@ class Payroll extends CI_Controller
         $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/admin/add'
-        ], $this->js,'add-admin', $this->createMinifyFiles);
+        ], $this->js, 'add-admin', $this->createMinifyFiles);
         //
         $this->load
             ->view('main/header', $data)
@@ -236,6 +236,10 @@ class Payroll extends CI_Controller
         ) {
             return redirect('payrolls/signatories');
         }
+        // get all active employees
+        $data['employees'] = $this->payroll_model->getSystemEmployees(
+            $data['loggedInPersonCompany']['sid']
+        );
         // get the security details
         $data['security_details'] = db_get_access_level_details(
             $data['session']['employer_detail']['sid'],
@@ -244,10 +248,23 @@ class Payroll extends CI_Controller
         );
         $data['title'] = "Add Payroll Signatory";
         // scripts
-        $data['appJs'] = bundleJs([
-            'js/app_helper',
-            'v1/payroll/js/signatories/create'
-        ], $this->js,'add-signatory', $this->createMinifyFiles);
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'add-signatory',
+            $this->createMinifyFiles
+        );
+        $data['appJs'] = bundleJs(
+            [
+                'js/app_helper',
+                'v1/payroll/js/signatories/create'
+            ],
+            $this->js,
+            'add-signatory',
+            $this->createMinifyFiles
+        );
         //
         $this->load
             ->view('main/header', $data)
@@ -290,7 +307,7 @@ class Payroll extends CI_Controller
                 'v1/plugins/ms_modal/main',
                 'js/app_helper',
                 'v1/payroll/js/earnings/manage'
-            ], $this->js,'earning-types', $this->createMinifyFiles);
+            ], $this->js, 'earning-types', $this->createMinifyFiles);
         // get admins
         $data['earnings'] = $this->payroll_model
             ->getCompanyEarningTypes(
@@ -340,7 +357,7 @@ class Payroll extends CI_Controller
             'v1/payroll/js/employees/add',
             'v1/payroll/js/employees/manage',
             'v1/payroll/js/employees/garnishments',
-        ], $this->js,'employee-onboard', $this->createMinifyFiles);
+        ], $this->js, 'employee-onboard', $this->createMinifyFiles);
         // get employees
         $data['payrollEmployees'] = $this->payroll_model->getPayrollEmployees($companyId);
         //
@@ -1025,12 +1042,15 @@ class Payroll extends CI_Controller
         // let's push the saved data
         // location
         $this->payroll_model->checkAndPushCompanyLocationToGusto($companyId);
-        // get the employee list
-        $ids = explode(',', $companyDetails['employee_ids']);
         //
-        foreach ($ids as $employeeId) {
-            // selected employees
-            $this->payroll_model->onboardEmployee($employeeId, $companyId);
+        if ($companyDetails['employee_ids']) {
+            // get the employee list
+            $ids = explode(',', $companyDetails['employee_ids']);
+            //
+            foreach ($ids as $employeeId) {
+                // selected employees
+                $this->payroll_model->onboardEmployee($employeeId, $companyId);
+            }
         }
         //
         return SendResponse(200, ['success' => true]);
@@ -2687,5 +2707,13 @@ class Payroll extends CI_Controller
             // redirect
             return redirect('dashboard');
         }
+    }
+
+    public function getSingleEmployee(int $employeeId): array
+    {
+        return SendResponse(
+            200,
+            $this->payroll_model->getEmployeeById($employeeId)
+        );
     }
 }

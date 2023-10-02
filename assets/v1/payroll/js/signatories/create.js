@@ -32,6 +32,21 @@ $(function createSignatory() {
 	};
 
 	/**
+	 *
+	 */
+	$("#jsEmployeeChoose").change(function () {
+		//
+		const id = $(this).val();
+		//
+		if (id != 0) {
+			// hides the loader
+			ml(true, "jsCreateLoader");
+			//
+			getAndSetView(id);
+		}
+	});
+
+	/**
 	 * capture the view admin event
 	 */
 	$("#jsCreateForm").submit(function (event) {
@@ -148,6 +163,56 @@ $(function createSignatory() {
 				ml(false, "jsCreateLoader");
 				XHR = null;
 				$(".jsSubmitBTN span").text("Save Signatory");
+			});
+	}
+
+	/**
+	 * get the view
+	 * @param {number} id
+	 */
+	function getAndSetView(id) {
+		//
+		ml(
+			true,
+			"jsCreateLoader",
+			"Please wait, while we are generating view."
+		);
+		//
+		$.ajax({
+			url: baseUrl("/payrolls/employees/" + id + "/get"),
+			method: "GET",
+		})
+			.success(function (resp) {
+				//
+				$(".jsCreateFirstName").val(resp.first_name || '');
+				$(".jsCreateLastName").val(resp.last_name || '');
+				$(".jsCreateMiddleInitial").val(resp.middle_name || "");
+				$(".jsCreateSocialSecurityNumber").val(resp.ssn || "");
+				$(".jsCreateEmail").val(resp.email || "");
+				$(".jsCreatePhone").val(resp.phone || "");
+				$(".jsCreateBirthday").val(resp.date_of_birth || "");
+				$(".jsCreateStreet1").val(resp.street_1 || "");
+				$(".jsCreateStreet2").val(resp.street_2 || "");
+				$(".jsCreateCity").val(resp.city || "");
+				$(".jsCreateState").val(resp.state || "");
+				$(".jsCreateZip").val(resp.zip_code || "");
+			})
+			.fail(function (response) {
+				window.scrollTo(0, 0);
+				return $(".jsErrorDiv")
+					.html(
+						getErrorsStringFromArray(
+							(
+								response.responseJSON ||
+								JSON.parse(response.responseText)
+							).errors
+						)
+					)
+					.removeClass("hidden");
+			})
+			.always(function () {
+				// hide the loader
+				ml(false, "jsCreateLoader");
 			});
 	}
 	// datepicker

@@ -112,8 +112,7 @@ $formItems = [
                             <h2 class="csF16 csW"><strong>Add a Signatory</strong></h2>
                         </div>
                         <div class="panel-body">
-                            <!--  -->
-                            <?php $this->load->view('loader_new', ['id' => 'jsCreateLoader']); ?>
+
                             <p class="text-danger csF16">
                                 <em>
                                     <strong>
@@ -126,6 +125,19 @@ $formItems = [
                             <br>
                             <!--  -->
                             <form action="javascript:void(0)" id="jsCreateForm">
+                                <!--  -->
+                                <div class="form-group">
+                                    <label class="csF16">Choose an employee</label>
+                                    <p class="text-danger"><strong><em><?= $item['help']; ?></em></strong></p>
+                                    <select id="jsEmployeeChoose" class="form-control">
+                                        <option value="0"></option>
+                                        <?php foreach ($employees as $value) { ?>
+                                            <option value="<?= $value['id']; ?>"><?= $value['value'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <hr />
+                                <br>
                                 <?php foreach ($formItems as $item) { ?>
                                     <div class="form-group">
                                         <label>
@@ -133,11 +145,7 @@ $formItems = [
                                             <?= $item['required'] ? '<span class="text-danger">*</span>' : ''; ?>
                                         </label>
                                         <p class="text-danger"><strong><em><?= $item['help']; ?></em></strong></p>
-                                        <input
-                                            type="text"
-                                            <?=$item['props'] ?? ''?>
-                                            class="form-control jsCreate<?= ucwords(preg_replace('/[^a-z0-9]/i', '', $item['label'])); ?>" 
-                                        />
+                                        <input type="text" <?= $item['props'] ?? '' ?> class="form-control jsCreate<?= ucwords(preg_replace('/[^a-z0-9]/i', '', $item['label'])); ?>" />
                                     </div>
                                 <?php } ?>
                                 <div class="form-group text-right">
@@ -147,6 +155,8 @@ $formItems = [
                                     </button>
                                 </div>
                             </form>
+                            <!--  -->
+                            <?php $this->load->view('v1/loader', ['id' => 'jsCreateLoader']); ?>
                         </div>
                     </div>
                 </div>

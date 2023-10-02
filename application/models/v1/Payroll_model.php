@@ -5115,4 +5115,76 @@ class Payroll_model extends CI_Model
             ->get('gusto_employees_jobs')
             ->row_array();
     }
+
+    /**
+     * get all company active employees
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getSystemEmployees(int $companyId): array
+    {
+        $employees = $this->db->select(
+            getUserFields()
+        )
+            ->where('parent_sid', $companyId)
+            ->order_by('first_name', 'ASC')
+            ->get('users')
+            ->result_array();
+        //
+        if (!$employees) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($employees as $value) {
+            //
+            $tmp[] = [
+                'value' => remakeEmployeeName($value),
+                'id' => $value['userId']
+            ];
+        }
+        //
+        return $tmp;
+    }
+
+    /**
+     * get all company active employees
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeeById(int $employeeId): array
+    {
+        $employee = $this->db->select(
+            getUserFields() . '
+                ssn,
+                dob,
+                PhoneNumber,
+                middle_name
+            '
+        )
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        //
+        $returnArray = [];
+        $returnArray['first_name'] = $employee['first_name'];
+        $returnArray['last_name'] = $employee['last_name'];
+        $returnArray['middle_name'] = $employee['middle_name'];
+        $returnArray['ssn'] = $employee['ssn'];
+        $returnArray['date_of_birth'] = $employee['dob'] ? formatDateToDB($employee['dob'], DB_DATE, SITE_DATE) : '';
+        $returnArray['email'] = $employee['email'];
+        $returnArray['phone'] = $employee['PhoneNumber'];
+        // get address
+        $address = $this->getEmployeeHomeAddress($employeeId);
+        $returnArray['street_1'] = $address['Location_Address'];
+        $returnArray['street_2'] = $address['Location_Address_2'];
+        $returnArray['city'] = $address['Location_City'];
+        $returnArray['state'] = $address['state_code'];
+        $returnArray['zip_code'] = $address['Location_ZipCode'];
+        //
+        return $returnArray;
+    }
 }
