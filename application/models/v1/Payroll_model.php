@@ -3086,6 +3086,75 @@ class Payroll_model extends CI_Model
      *
      * @param int   $employeeId
      */
+    public function getEmployeeBankAccountsByIdWithGusto(
+        int $employeeId,
+        bool $doMoveToGusto = false
+    ): array {
+        // get employee bank accounts
+        $bankAccounts = $this->db
+        ->select('
+                sid,
+                account_title,
+                account_number,
+                routing_transaction_number,
+                account_type,
+                deposit_type,
+                account_percentage,
+                gusto_uuid
+            ')
+        ->where([
+            'users_sid' => $employeeId,
+            'users_type' => 'employee'
+        ])
+        ->where('gusto_uuid <> ', '')
+        ->where('gusto_uuid is not null', null, null)
+        ->order_by('sid', 'asc')
+        ->limit(2)
+        ->get('bank_account_details')
+        ->result_array();
+        //
+        if (!$bankAccounts) {
+            return [];
+        }
+        if (!$doMoveToGusto) {
+            return $bankAccounts;
+        }
+        //
+        $didIt = false;
+        //
+        foreach ($bankAccounts as $index => $bankAccount) {
+            //
+            if (!$bankAccount['gusto_uuid']) {
+                //
+                $response = $this->addEmployeeBankAccountToGusto($employeeId, [
+                    'account_title' => $bankAccount['account_title'],
+                    'account_number' => $bankAccount['account_number'],
+                    'routing_transaction_number' => $bankAccount['routing_transaction_number'],
+                    'account_type' => $bankAccount['account_type'],
+                    'sid' => $bankAccount['sid'],
+                ]);
+                //
+                if ($response['errors']) {
+                    unset($bankAccounts[$index]);
+                } else {
+                    $didIt = true;
+                    $bankAccounts[$index]['gusto_uuid'] = $response['gusto_uuid'];
+                }
+            }
+        }
+        //
+        if ($didIt) {
+            $this->syncEmployeePaymentMethodFromGusto($employeeId);
+        }
+        //
+        return $bankAccounts;
+    }
+
+    /**
+     * get employee bank accounts
+     *
+     * @param int   $employeeId
+     */
     public function useEmployeeSingleBankAccount(
         int $employeeId,
         int $bankId

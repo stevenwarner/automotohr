@@ -1711,7 +1711,7 @@ class Payroll extends CI_Controller
         if ($post['paymentType'] == 'Direct Deposit') {
             // get account id
             $accounts = $this->payroll_model
-                ->getEmployeeBankAccountsById(
+                ->getEmployeeBankAccountsByIdWithGusto(
                     $employeeId
                 );
             //
