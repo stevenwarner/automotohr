@@ -2398,8 +2398,8 @@ class Payroll_model extends CI_Model
         $request['rate'] = $data['amount'];
         $request['flsa_status'] = $data['classification'];
         $request['payment_unit'] = $data['per'];
-        $request['adjust_for_minimum_wage'] = $gustoJob['adjust_for_minimum_wage'];
-        $request['minimum_wages'] = json_decode($gustoJob['minimum_wages'], true);
+        // $request['adjust_for_minimum_wage'] = $gustoJob['adjust_for_minimum_wage'];
+        // $request['minimum_wages'] = json_decode($gustoJob['minimum_wages'], true);
         // response
         $gustoResponse = gustoCall(
             'updateEmployeeJobCompensation',

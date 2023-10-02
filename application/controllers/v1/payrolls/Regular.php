@@ -78,7 +78,7 @@ class Regular extends Public_controller
                 'v1/payroll/js/regular/main'
             ],
             $this->js,
-            'main',,
+            'main',
             $this->createMinifyFiles
         );
         // let's check and sync payrolls
