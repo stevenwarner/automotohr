@@ -2232,6 +2232,7 @@ class Payroll_model extends CI_Model
             ->getEmployeeDetailsForGusto(
                 $employeeId,
                 [
+                    'gusto_uuid',
                     'company_sid',
                 ]
             );
@@ -2246,7 +2247,7 @@ class Payroll_model extends CI_Model
             ->row_array();
         //
         if (!$gustoJob) {
-            $gustoJob = $this->createEmployeeJob($employeeId, $gustoEmployee['company_sid']);
+            $gustoJob = $this->createEmployeeJob($employeeId, $gustoEmployee['gusto_uuid'], $gustoEmployee['company_sid']);
             //
             if ($gustoJob['errors']) {
                 return $gustoJob;
@@ -5092,11 +5093,12 @@ class Payroll_model extends CI_Model
         ];
     }
 
-    public function createEmployeeJob(int $employeeId, int $companyId): array
+    public function createEmployeeJob(int $employeeId, string $gustoUUID, int $companyId): array
     {
         // get company details
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
         $companyDetails['company_sid'] = $companyId;
+        $companyDetails['other_uuid'] = $gustoUUID;
         //
         $gustoResponse = $this->createEmployeeJobOnGusto($employeeId, $companyDetails);
         //
