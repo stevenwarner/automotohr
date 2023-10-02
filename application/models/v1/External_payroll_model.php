@@ -670,7 +670,7 @@ class External_payroll_model extends Payroll_model
         //
         $saveTax = [];
         foreach ($data as $tax) {
-            $saveTax[$taxis_processed['tax_id']] = $tax;
+            $saveTax[$tax['tax_id']] = $tax;
         }
         //
         $this->db
