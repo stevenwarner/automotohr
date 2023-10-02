@@ -39,7 +39,7 @@ class External_payroll_model extends Payroll_model
             ')
             ->where('company_sid', $companyId)
             ->where('is_deleted', 0)
-            ->order_by('sid', 'DESC')
+            ->order_by('check_date', 'DESC')
             ->get('payrolls.external_payrolls')
             ->result_array();
     }
