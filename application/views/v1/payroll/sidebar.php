@@ -1,3 +1,81 @@
+<style>
+    /* make sidebar nav vertical */
+    .csAdminSideBar {
+        border: 1px solid #ababab;
+        background-color: #f3f3f3;
+        border-radius: 5px;
+        margin: 0 0 30px 0;
+    }
+
+    .csAdminSideBar .navbar {
+        margin-bottom: 0;
+    }
+
+    .csAdminSideBar .navbar ul {
+        float: none;
+    }
+
+    .csAdminSideBar .navbar .navbar-collapse {
+        padding: 0;
+        max-height: none;
+    }
+
+    .csAdminSideBar .navbar li {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        border-bottom: 1px solid #ababab;
+    }
+
+    .csAdminSideBar .navbar li a {
+        display: block;
+        padding: 15px 20px;
+        font-size: 15px;
+        color: #000;
+        font-weight: 600;
+        font-style: italic;
+        text-transform: capitalize;
+    }
+
+    .csAdminSideBar ul li figure {
+        display: inline-block;
+        width: 35px;
+        text-align: center;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+
+    .csAdminSideBar ul li figure i {
+        font-size: 22px;
+        color: #4d4d4d;
+    }
+
+    .csAdminSideBar .navbar ul:not {
+        display: block;
+    }
+
+    .csAdminSideBar .navbar li a:hover {
+        background-color: #81b431;
+        color: #fff;
+    }
+
+    .csAdminSideBar .navbar li a:hover figure i {
+        color: #fff;
+    }
+
+    .csAdminSideBar .navbar-nav a.active,
+    .csAdminSideBar .navbar-nav a.active:hover,
+    .csAdminSideBar .navbar-nav a.active:focus {
+        background-color: #81b431;
+        color: #fff;
+    }
+
+    .csAdminSideBar .navbar-nav a.active figure i,
+    .csAdminSideBar .navbar-nav a.active:hover figure i,
+    .csAdminSideBar a.active:focus figure i {
+        color: #fff;
+    }
+</style>
 <?php
 $sideBarUrls = [
     'admins' => [
@@ -161,7 +239,7 @@ $sideBarUrls = [
                             <figure><i class="fa fa-book"></i></figure>Benefits
                         </a>
                     </li>
-                 
+
                 <?php endif; ?>
                 <!-- Pay stubs -->
                 <li>
@@ -180,82 +258,3 @@ $sideBarUrls = [
         </div>
     </div>
 </div>
-
-<style>
-    /* make sidebar nav vertical */
-    .csAdminSideBar {
-        border: 1px solid #ababab;
-        background-color: #f3f3f3;
-        border-radius: 5px;
-        margin: 0 0 30px 0;
-    }
-
-    .csAdminSideBar .navbar {
-        margin-bottom: 0;
-    }
-
-    .csAdminSideBar .navbar ul {
-        float: none;
-    }
-
-    .csAdminSideBar .navbar .navbar-collapse {
-        padding: 0;
-        max-height: none;
-    }
-
-    .csAdminSideBar .navbar li {
-        display: block;
-        width: 100%;
-        overflow: hidden;
-        border-bottom: 1px solid #ababab;
-    }
-
-    .csAdminSideBar .navbar li a {
-        display: block;
-        padding: 15px 20px;
-        font-size: 15px;
-        color: #000;
-        font-weight: 600;
-        font-style: italic;
-        text-transform: capitalize;
-    }
-
-    .csAdminSideBar ul li figure {
-        display: inline-block;
-        width: 35px;
-        text-align: center;
-        vertical-align: middle;
-        margin-right: 10px;
-    }
-
-    .csAdminSideBar ul li figure i {
-        font-size: 22px;
-        color: #4d4d4d;
-    }
-
-    .csAdminSideBar .navbar ul:not {
-        display: block;
-    }
-
-    .csAdminSideBar .navbar li a:hover {
-        background-color: #81b431;
-        color: #fff;
-    }
-
-    .csAdminSideBar .navbar li a:hover figure i {
-        color: #fff;
-    }
-
-    .csAdminSideBar .navbar-nav a.active,
-    .csAdminSideBar .navbar-nav a.active:hover,
-    .csAdminSideBar .navbar-nav a.active:focus {
-        background-color: #81b431;
-        color: #fff;
-    }
-
-    .csAdminSideBar .navbar-nav a.active figure i,
-    .csAdminSideBar .navbar-nav a.active:hover figure i,
-    .csAdminSideBar a.active:focus figure i {
-        color: #fff;
-    }
-</style>
