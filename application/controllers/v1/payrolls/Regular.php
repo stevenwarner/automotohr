@@ -11,6 +11,10 @@ class Regular extends Public_controller
      */
     private $css;
     /**
+     * wether to create minified files or not
+     */
+    private $createMinifyFiles;
+    /**
      * main entry point to controller
      */
     public function __construct()
@@ -28,6 +32,8 @@ class Regular extends Public_controller
         $this->css = 'public/v1/css/payroll/regular/';
         // set path to JS file
         $this->js = 'public/v1/js/payroll/regular/';
+        //
+        $this->createMinifyFiles = true;
     }
 
     /**
@@ -61,7 +67,9 @@ class Regular extends Public_controller
             [
                 'v1/app/css/loader'
             ],
-            $this->css
+            $this->css,
+            'main',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -69,7 +77,9 @@ class Regular extends Public_controller
                 'js/app_helper',
                 'v1/payroll/js/regular/main'
             ],
-            $this->js
+            $this->js,
+            'main',,
+            $this->createMinifyFiles
         );
         // let's check and sync payrolls
         $this->regular_payroll_model
@@ -159,7 +169,8 @@ class Regular extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'hours_and_earnings'
+            'hours_and_earnings',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -169,7 +180,8 @@ class Regular extends Public_controller
                 'v1/payroll/js/regular/hours_and_earnings'
             ],
             $this->js,
-            'hours_and_earnings'
+            'hours_and_earnings',
+            $this->createMinifyFiles
         );
         //
         $this->load
@@ -193,7 +205,8 @@ class Regular extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'timeoff'
+            'timeoff',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -203,7 +216,8 @@ class Regular extends Public_controller
                 'v1/payroll/js/regular/timeoff'
             ],
             $this->js,
-            'timeoff'
+            'timeoff',
+            $this->createMinifyFiles
         );
         //
         $this->load
@@ -233,7 +247,8 @@ class Regular extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'review'
+            'review',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -243,7 +258,8 @@ class Regular extends Public_controller
                 'v1/payroll/js/regular/review'
             ],
             $this->js,
-            'review'
+            'review',
+            $this->createMinifyFiles
         );
         //
         $this->load

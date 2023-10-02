@@ -11,6 +11,10 @@ class External extends Public_controller
      */
     private $css;
     /**
+     * wether to create minified files or not
+     */
+    private $createMinifyFiles;
+    /**
      * main entry point to controller
      */
     public function __construct()
@@ -28,6 +32,8 @@ class External extends Public_controller
         $this->css = 'public/v1/css/payroll/external/';
         // set path to JS file
         $this->js = 'public/v1/js/payroll/external/';
+        //
+        $this->createMinifyFiles = true;
     }
 
     /**
@@ -57,7 +63,9 @@ class External extends Public_controller
             [
                 'v1/app/css/loader'
             ],
-            $this->css
+            $this->css,
+            'main',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -65,7 +73,9 @@ class External extends Public_controller
                 'js/app_helper',
                 'v1/payroll/js/external/main'
             ],
-            $this->js
+            $this->js,
+            'main',
+            $this->createMinifyFiles
         );
         // get all external payrolls
         $data['externalPayrolls'] =
@@ -116,7 +126,8 @@ class External extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'add-external'
+            'add-external',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -125,7 +136,8 @@ class External extends Public_controller
                 'v1/payroll/js/external/add'
             ],
             $this->js,
-            'add-external'
+            'add-external',
+            $this->createMinifyFiles
         );
         //
         $this->load
@@ -253,7 +265,8 @@ class External extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'employee'
+            'employee',
+            $this->createMinifyFiles
         );
         // add js
         $data['appJs'] = bundleJs(
@@ -262,7 +275,8 @@ class External extends Public_controller
                 'v1/payroll/js/external/employee'
             ],
             $this->js,
-            'employee'
+            'employee',
+            $this->createMinifyFiles
         );
         // get actual payroll
         $externalPayrollDetails =
@@ -356,7 +370,8 @@ class External extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'tax-liabilities'
+            'tax-liabilities',
+            $this->createMinifyFiles
         );
         // add js
         $data['appJs'] = bundleJs(
@@ -365,7 +380,8 @@ class External extends Public_controller
                 'v1/payroll/js/external/tax_liabilities'
             ],
             $this->js,
-            'tax-liabilities'
+            'tax-liabilities',
+            $this->createMinifyFiles
         );
         //
         $this->load
@@ -411,7 +427,8 @@ class External extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'confirm-tax-liabilities'
+            'confirm-tax-liabilities',
+            $this->createMinifyFiles
         );
         // add js
         $data['appJs'] = bundleJs(
@@ -420,7 +437,8 @@ class External extends Public_controller
                 'v1/payroll/js/external/confirm_tax_liabilities'
             ],
             $this->js,
-            'confirm-tax-liabilities'
+            'confirm-tax-liabilities',
+            $this->createMinifyFiles
         );
         //
         $this->load

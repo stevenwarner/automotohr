@@ -161,15 +161,7 @@ $sideBarUrls = [
                             <figure><i class="fa fa-book"></i></figure>Benefits
                         </a>
                     </li>
-
-                    <!-- Manage custom/earnings -->
-                    <li>
-                        <a <?php if (in_array(uri_string(), $sideBarUrls['settings'])) {
-                                echo 'class="active"';
-                            } ?> href="<?php echo base_url('payrolls/settings'); ?>">
-                            <figure><i class="fa fa-cogs"></i></figure>Settings
-                        </a>
-                    </li>
+                 
                 <?php endif; ?>
                 <!-- Pay stubs -->
                 <li>

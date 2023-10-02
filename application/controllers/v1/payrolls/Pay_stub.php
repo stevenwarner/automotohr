@@ -11,6 +11,10 @@ class Pay_stub extends Public_controller
      */
     private $css;
     /**
+     * wether to create minified files or not
+     */
+    private $createMinifyFiles;
+    /**
      * main entry point to controller
      */
     public function __construct()
@@ -23,6 +27,8 @@ class Pay_stub extends Public_controller
         $this->css = 'public/v1/css/payroll/pay_stub/';
         // set path to JS file
         $this->js = 'public/v1/js/payroll/pay_stub/';
+        //
+        $this->createMinifyFiles = true;
     }
 
     /**
@@ -41,7 +47,8 @@ class Pay_stub extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'main'
+            'main',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -51,7 +58,8 @@ class Pay_stub extends Public_controller
                 'v1/payroll/js/pay_stubs/main'
             ],
             $this->js,
-            'main'
+            'main',
+            $this->createMinifyFiles
         );
         // get my pay subs
         $data['payStubs'] = $this

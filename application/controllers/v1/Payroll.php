@@ -11,6 +11,10 @@ class Payroll extends CI_Controller
      */
     private $css;
     /**
+     * wether to create minified files or not
+     */
+    private $createMinifyFiles;
+    /**
      * main entry point to controller
      */
     public function __construct()
@@ -28,6 +32,8 @@ class Payroll extends CI_Controller
         $this->css = 'public/v1/css/payroll/';
         // set path to JS file
         $this->js = 'public/v1/js/payroll/';
+        //
+        $this->createMinifyFiles = true;
     }
 
     public function dashboard()
@@ -57,7 +63,7 @@ class Payroll extends CI_Controller
         $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/dashboard'
-        ], $this->js, 'dashboard');
+        ], $this->js, 'dashboard', $this->createMinifyFiles);
         //
         $data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls']);
         //
@@ -161,7 +167,7 @@ class Payroll extends CI_Controller
         $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/admin/add'
-        ], $this->js, 'add-admin');
+        ], $this->js,'add-admin', $this->createMinifyFiles);
         //
         $this->load
             ->view('main/header', $data)
@@ -241,7 +247,7 @@ class Payroll extends CI_Controller
         $data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/payroll/js/signatories/create'
-        ], $this->js, 'add-signatory');
+        ], $this->js,'add-signatory', $this->createMinifyFiles);
         //
         $this->load
             ->view('main/header', $data)
@@ -284,7 +290,7 @@ class Payroll extends CI_Controller
                 'v1/plugins/ms_modal/main',
                 'js/app_helper',
                 'v1/payroll/js/earnings/manage'
-            ], $this->js, 'earning-types');
+            ], $this->js,'earning-types', $this->createMinifyFiles);
         // get admins
         $data['earnings'] = $this->payroll_model
             ->getCompanyEarningTypes(
@@ -334,7 +340,7 @@ class Payroll extends CI_Controller
             'v1/payroll/js/employees/add',
             'v1/payroll/js/employees/manage',
             'v1/payroll/js/employees/garnishments',
-        ], $this->js, 'employee-onboard');
+        ], $this->js,'employee-onboard', $this->createMinifyFiles);
         // get employees
         $data['payrollEmployees'] = $this->payroll_model->getPayrollEmployees($companyId);
         //
@@ -386,58 +392,6 @@ class Payroll extends CI_Controller
             ->view('main/footer');
     }
 
-
-    /**
-     * Settings
-     */
-    public function settings()
-    {
-        //
-        $data = [];
-        // check and set user session
-        $data['session'] = checkUserSession();
-        //
-        $data['title'] = "Payroll Settings";
-        // set
-        $data['loggedInPerson'] = $data['session']['employer_detail'];
-        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
-        // get the security details
-        $data['security_details'] = db_get_access_level_details(
-            $data['session']['employer_detail']['sid'],
-            null,
-            $data['session']
-        );
-        // get payment config
-        $data['settings'] = $this->db
-            ->select('payment_speed')
-            ->where([
-                'company_sid' => $data['loggedInPersonCompany']['sid'],
-            ])
-            ->get('companies_payment_configs')
-            ->row_array();
-        // css
-        $data['appCSS'] = bundleCSS(
-            [
-                'v1/app/css/loader'
-            ],
-            $this->css,
-            'settings'
-        );
-        //
-        $data['appJs'] = bundleJs(
-            [
-                'js/app_helper',
-                'v1/payroll/js/settings/main'
-            ],
-            $this->js,
-            'settings'
-        );
-        //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/settings/manage')
-            ->view('main/footer');
-    }
 
 
     // API routes

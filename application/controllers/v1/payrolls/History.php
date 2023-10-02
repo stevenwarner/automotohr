@@ -11,6 +11,10 @@ class History extends Public_controller
      */
     private $css;
     /**
+     * wether to create minified files or not
+     */
+    private $createMinifyFiles;
+    /**
      * main entry point to controller
      */
     public function __construct()
@@ -23,6 +27,8 @@ class History extends Public_controller
         $this->css = 'public/v1/css/payroll/history/';
         // set path to JS file
         $this->js = 'public/v1/js/payroll/history/';
+        //
+        $this->createMinifyFiles = true;
     }
 
     /**
@@ -40,7 +46,8 @@ class History extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'main'
+            'main',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -49,7 +56,8 @@ class History extends Public_controller
                 'v1/payroll/js/history/main'
             ],
             $this->js,
-            'main'
+            'main',
+            $this->createMinifyFiles
         );
         // get the processed payrolls
         $data['payrolls'] = $this
@@ -98,7 +106,8 @@ class History extends Public_controller
                 'v1/app/css/loader'
             ],
             $this->css,
-            'single'
+            'single',
+            $this->createMinifyFiles
         );
         //
         $data['appJs'] = bundleJs(
@@ -107,7 +116,8 @@ class History extends Public_controller
                 'v1/payroll/js/history/main'
             ],
             $this->js,
-            'single'
+            'single',
+            $this->createMinifyFiles
         );
 
 
