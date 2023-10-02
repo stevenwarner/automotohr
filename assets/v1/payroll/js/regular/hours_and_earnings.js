@@ -427,36 +427,46 @@ $(function regularPayrollsHoursAndEarnings() {
 				.find(".jsRegularHoursValue")
 				.val(payrollEmployee.hourly_compensations.regular_hours.hours);
 
-			// for overtime
-			$(this)
-				.find(".jsOvertimeText")
-				.text(
-					`${payrollEmployee.hourly_compensations.overtime.hours} hrs`
-				);
-			//
-			$(this)
-				.find(".jsOvertimeValue")
-				.val(`${payrollEmployee.hourly_compensations.overtime.hours}`);
+			if (payrollEmployee.hourly_compensations.overtime) {
+				// for overtime
+				$(this)
+					.find(".jsOvertimeText")
+					.text(
+						`${payrollEmployee.hourly_compensations.overtime.hours} hrs`
+					);
+				//
+				$(this)
+					.find(".jsOvertimeValue")
+					.val(
+						`${payrollEmployee.hourly_compensations.overtime.hours}`
+					);
+			}
 			// for double overtime
-			$(this)
-				.find(".jsDoubleOvertimeText")
-				.text(
-					`${payrollEmployee.hourly_compensations.double_overtime.hours} hrs`
-				);
-			//
-			$(this)
-				.find(".jsDoubleOvertimeValue")
-				.val(
-					`${payrollEmployee.hourly_compensations.double_overtime.hours}`
-				);
-			// for bonus
-			$(this)
-				.find(".jsBonusText")
-				.text(`B $${payrollEmployee.fixed_compensations.bonus.amount}`);
-			//
-			$(this)
-				.find(".jsBonusValue")
-				.val(`${payrollEmployee.fixed_compensations.bonus.amount}`);
+			if (payrollEmployee.hourly_compensations.double_overtime) {
+				$(this)
+					.find(".jsDoubleOvertimeText")
+					.text(
+						`${payrollEmployee.hourly_compensations.double_overtime.hours} hrs`
+					);
+				//
+				$(this)
+					.find(".jsDoubleOvertimeValue")
+					.val(
+						`${payrollEmployee.hourly_compensations.double_overtime.hours}`
+					);
+			}
+			if (payrollEmployee.fixed_compensations.bonus) {
+				// for bonus
+				$(this)
+					.find(".jsBonusText")
+					.text(
+						`B $${payrollEmployee.fixed_compensations.bonus.amount}`
+					);
+				//
+				$(this)
+					.find(".jsBonusValue")
+					.val(`${payrollEmployee.fixed_compensations.bonus.amount}`);
+			}
 			// payment method
 			$(this)
 				.find(
