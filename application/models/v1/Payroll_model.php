@@ -2244,6 +2244,14 @@ class Payroll_model extends CI_Model
             ])
             ->get('gusto_employees_jobs')
             ->row_array();
+        //
+        if (!$gustoJob) {
+            $gustoJob = $this->createEmployeeJob($employeeId, $gustoEmployee['company_sid']);
+            //
+            if ($gustoJob['errors']) {
+                return $gustoJob;
+            }
+        }
         // get company details
         $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
         //
@@ -3092,7 +3100,7 @@ class Payroll_model extends CI_Model
     ): array {
         // get employee bank accounts
         $bankAccounts = $this->db
-        ->select('
+            ->select('
                 sid,
                 account_title,
                 account_number,
@@ -3102,16 +3110,16 @@ class Payroll_model extends CI_Model
                 account_percentage,
                 gusto_uuid
             ')
-        ->where([
-            'users_sid' => $employeeId,
-            'users_type' => 'employee'
-        ])
-        ->where('gusto_uuid <> ', '')
-        ->where('gusto_uuid is not null', null, null)
-        ->order_by('sid', 'asc')
-        ->limit(2)
-        ->get('bank_account_details')
-        ->result_array();
+            ->where([
+                'users_sid' => $employeeId,
+                'users_type' => 'employee'
+            ])
+            ->where('gusto_uuid <> ', '')
+            ->where('gusto_uuid is not null', null, null)
+            ->order_by('sid', 'asc')
+            ->limit(2)
+            ->get('bank_account_details')
+            ->result_array();
         //
         if (!$bankAccounts) {
             return [];
@@ -5082,5 +5090,26 @@ class Payroll_model extends CI_Model
             ),
             'id' => $employee['userId'],
         ];
+    }
+
+    public function createEmployeeJob(int $employeeId, int $companyId): array
+    {
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        $gustoResponse = $this->createEmployeeJobOnGusto($employeeId, $companyDetails);
+        //
+        if ($gustoResponse['errors']) {
+            return $gustoResponse;
+        }
+        // get the job
+        return $this->db
+            ->select('sid, title, gusto_uuid, gusto_location_uuid, hire_date, gusto_version')
+            ->where([
+                'employee_sid' => $employeeId,
+                'is_primary' => 1
+            ])
+            ->get('gusto_employees_jobs')
+            ->row_array();
     }
 }
