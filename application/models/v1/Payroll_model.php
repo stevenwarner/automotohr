@@ -5096,6 +5096,7 @@ class Payroll_model extends CI_Model
     {
         // get company details
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        $companyDetails['company_sid'] = $companyId;
         //
         $gustoResponse = $this->createEmployeeJobOnGusto($employeeId, $companyDetails);
         //
