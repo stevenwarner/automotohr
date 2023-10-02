@@ -249,7 +249,7 @@ $sideBarUrls = [
                         <figure><i class="fa fa-money"></i></figure>My Pay Stubs
                     </a>
                 </li>
-                <li>
+                <li class="hidden">
                     <a class="bg-danger" href="<?php echo base_url('payrolls/start_fresh'); ?>">
                         <figure><i class="fa fa-times-circle"></i></figure>Start fresh
                     </a>
