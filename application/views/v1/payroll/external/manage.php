@@ -36,10 +36,12 @@
                                     <p class="csF16">To make sure we file your taxes properly, we need to collect some info from your employees' previous payrolls.</p>
                                 </div>
                                 <div class="col-sm-4 col-xs-12 text-right">
-                                    <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csBG3 csF16">
-                                        <i class="fa fa-plus-circle csF16"></i>
-                                        &nbsp;Create an external payroll
-                                    </a>
+                                    <?php if (!$hasExternalPayroll || $hasUnProcessedExternalPayroll) { ?>
+                                        <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csBG3 csF16">
+                                            <i class="fa fa-plus-circle csF16"></i>
+                                            &nbsp;Create an external payroll
+                                        </a>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <hr />
@@ -81,11 +83,16 @@
                                                                 <i class="fa fa-times-circle csF16"></i>
                                                                 &nbsp;Delete
                                                             </button>
+                                                            <a href="<?= base_url('payrolls/external/' . ($value['sid']) . ''); ?>" class="btn btn-warning csF16">
+                                                                <i class="fa fa-edit csF16"></i>
+                                                                &nbsp;Update
+                                                            </a>
+                                                        <?php } else { ?>
+                                                            <a href="<?= base_url('payrolls/external/' . ($value['sid']) . ''); ?>" class="btn csW csBG3 csF16">
+                                                                <i class="fa fa-eye csF16"></i>
+                                                                &nbsp;View
+                                                            </a>
                                                         <?php } ?>
-                                                        <a href="<?= base_url('payrolls/external/' . ($value['sid']) . ''); ?>" class="btn btn-warning csF16">
-                                                            <i class="fa fa-edit csF16"></i>
-                                                            &nbsp;Update
-                                                        </a>
                                                     </td>
                                                 </tr>
                                             <?php } ?>

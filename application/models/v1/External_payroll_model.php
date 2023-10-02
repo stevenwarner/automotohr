@@ -60,6 +60,20 @@ class External_payroll_model extends Payroll_model
     }
 
     /**
+     * hasExternalPayroll
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    public function hasExternalPayroll(int $companyId): bool
+    {
+        return (bool)$this->db
+            ->where('company_sid', $companyId)
+            ->where('is_deleted', 0)
+            ->count_all_results('payrolls.external_payrolls');
+    }
+
+    /**
      * get single company external payroll
      *
      * @param array $where

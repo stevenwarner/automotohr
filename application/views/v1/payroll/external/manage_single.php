@@ -62,6 +62,11 @@
                                         </thead>
                                         <tbody>
                                             <?php foreach ($payrollEmployees as $value) { ?>
+                                                <?php if ($externalPayroll['is_processed'] == 1) {
+                                                    if (!in_array($value['id'], $linkedEmployeeIds)) {
+                                                        continue;
+                                                    }
+                                                } ?>
                                                 <tr>
                                                     <td class="vam">
                                                         <p class="csF16">
@@ -77,7 +82,10 @@
                                                     </td>
                                                     <td class="vam text-right">
                                                         <a href="<?= base_url('payrolls/external/' . ($externalPayrollId) . '/' . ($value['id']) . ''); ?>" class="btn csW csBG3 csF16">
-                                                            <?php if (in_array($value['id'], $linkedEmployeeIds)) { ?>
+                                                            <?php if ($externalPayroll['is_processed'] == 1) { ?>
+                                                                <i class="fa fa-eye csF16" aria-hidden="true"></i>
+                                                                &nbsp;View
+                                                            <?php } elseif (in_array($value['id'], $linkedEmployeeIds)) { ?>
                                                                 <i class="fa fa-edit csF16" aria-hidden="true"></i>
                                                                 &nbsp;Edit
                                                             <?php } else { ?>
@@ -110,11 +118,11 @@
                                         <i class="fa fa-long-arrow-left csF16" aria-hidden="true"></i>
                                         &nbsp;Back
                                     </a>
-                                    <?php if($externalPayroll['is_processed'] == 0) {?>
-                                    <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csF16 csBG3">
-                                        <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
-                                        &nbsp;Create an external payroll
-                                    </a>
+                                    <?php if ($externalPayroll['is_processed'] == 0) { ?>
+                                        <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csF16 csBG3">
+                                            <i class="fa fa-plus-circle csF16" aria-hidden="true"></i>
+                                            &nbsp;Create an external payroll
+                                        </a>
                                     <?php } ?>
                                 </div>
                             </div>

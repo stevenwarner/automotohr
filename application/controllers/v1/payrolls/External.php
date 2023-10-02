@@ -91,6 +91,12 @@ class External extends Public_controller
                 $data['loggedInPersonCompany']['sid']
             );
 
+        $data['hasExternalPayroll'] =
+            $this->external_payroll_model
+            ->hasExternalPayroll(
+                $data['loggedInPersonCompany']['sid']
+            );
+
         //
         $this->load
             ->view('main/header', $data)
