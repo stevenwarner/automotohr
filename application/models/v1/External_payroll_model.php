@@ -29,7 +29,7 @@ class External_payroll_model extends Payroll_model
      */
     public function getAllCompanyExternalPayrolls(int $companyId): array
     {
-        return $this->db
+        $records = $this->db
             ->select('
                 sid,
                 check_date,
@@ -42,6 +42,18 @@ class External_payroll_model extends Payroll_model
             ->order_by('check_date', 'DESC')
             ->get('payrolls.external_payrolls')
             ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        foreach ($records as $key => $value) {
+            $records[$key]['employees_count'] = $this->db
+                ->where('external_payrolls_sid', $value['sid'])
+                ->count_all_results('payrolls.external_payrolls_employees');
+        }
+        //
+        return $records;
     }
 
     /**

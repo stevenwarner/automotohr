@@ -59,6 +59,7 @@
                                             <tr>
                                                 <th scope="col" class="csBG4">Check date</th>
                                                 <th scope="col" class="csBG4">Pay periods</th>
+                                                <th scope="col" class="csBG4"># of employees</th>
                                                 <th scope="col" class="text-right csBG4">Actions</th>
                                             </tr>
                                         </thead>
@@ -75,6 +76,11 @@
                                                             <?= formatDateToDB($value['payment_period_start_date'], DB_DATE, DATE); ?>
                                                             -
                                                             <?= formatDateToDB($value['payment_period_end_date'], DB_DATE, DATE); ?>
+                                                        </p>
+                                                    </td>
+                                                    <td class="vam">
+                                                        <p class="csF16">
+                                                            <?=$value['employees_count'];?>
                                                         </p>
                                                     </td>
                                                     <td class="vam text-right">
