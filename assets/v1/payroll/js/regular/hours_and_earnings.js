@@ -416,114 +416,132 @@ $(function regularPayrollsHoursAndEarnings() {
 			const employeeId = $(this).data("id");
 			//
 			const payrollEmployee = payroll["employees"][employeeId];
-			// for regular hours
-			$(this)
-				.find(".jsRegularHoursText")
-				.text(
-					`${payrollEmployee.hourly_compensations.regular_hours.hours} hrs`
-				);
-			//
-			$(this)
-				.find(".jsRegularHoursValue")
-				.val(payrollEmployee.hourly_compensations.regular_hours.hours);
+			if (payrollEmployee) {
+				// for regular hours
+				$(this)
+					.find(".jsRegularHoursText")
+					.text(
+						`${payrollEmployee.hourly_compensations.regular_hours.hours} hrs`
+					);
+				//
+				$(this)
+					.find(".jsRegularHoursValue")
+					.val(
+						payrollEmployee.hourly_compensations.regular_hours.hours
+					);
 
-			if (payrollEmployee.hourly_compensations.overtime) {
-				// for overtime
-				$(this)
-					.find(".jsOvertimeText")
-					.text(
-						`${payrollEmployee.hourly_compensations.overtime.hours} hrs`
-					);
-				//
-				$(this)
-					.find(".jsOvertimeValue")
-					.val(
-						`${payrollEmployee.hourly_compensations.overtime.hours}`
-					);
-			}
-			// for double overtime
-			if (payrollEmployee.hourly_compensations.double_overtime) {
-				$(this)
-					.find(".jsDoubleOvertimeText")
-					.text(
-						`${payrollEmployee.hourly_compensations.double_overtime.hours} hrs`
-					);
-				//
-				$(this)
-					.find(".jsDoubleOvertimeValue")
-					.val(
-						`${payrollEmployee.hourly_compensations.double_overtime.hours}`
-					);
-			}
-			if (payrollEmployee.fixed_compensations.bonus) {
-				// for bonus
-				$(this)
-					.find(".jsBonusText")
-					.text(
-						`B $${payrollEmployee.fixed_compensations.bonus.amount}`
-					);
-				//
-				$(this)
-					.find(".jsBonusValue")
-					.val(`${payrollEmployee.fixed_compensations.bonus.amount}`);
-			}
-			// payment method
-			$(this)
-				.find(
-					'.jsPaymentMethod option[value="' +
-						payrollEmployee.payment_method +
-						'"]'
-				)
-				.prop("selected", true);
-			// fix compensations
-			let fixedCompensationTotal = 0;
-			// for fixed compensations
-			$.each(payrollEmployee["fixed_compensations"], function (i, v) {
-				if (
-					i != "bonus" &&
-					i.match("timeoff") === null &&
-					i != "reimbursement"
-				) {
-					fixedCompensationTotal += parseFloat(v.amount);
+				if (payrollEmployee.hourly_compensations.overtime) {
+					// for overtime
+					$(this)
+						.find(".jsOvertimeText")
+						.text(
+							`${payrollEmployee.hourly_compensations.overtime.hours} hrs`
+						);
+					//
+					$(this)
+						.find(".jsOvertimeValue")
+						.val(
+							`${payrollEmployee.hourly_compensations.overtime.hours}`
+						);
 				}
-			});
-			//
-			$(this)
-				.find(".jsAdditionalEarningText")
-				.text("AE $" + parseFloat(fixedCompensationTotal));
-			$(this)
-				.find(".jsAdditionalEarningValue")
-				.val(fixedCompensationTotal);
-			//
-			if (payrollEmployee.v1.reimbursements.total != 0) {
+				// for double overtime
+				if (payrollEmployee.hourly_compensations.double_overtime) {
+					$(this)
+						.find(".jsDoubleOvertimeText")
+						.text(
+							`${payrollEmployee.hourly_compensations.double_overtime.hours} hrs`
+						);
+					//
+					$(this)
+						.find(".jsDoubleOvertimeValue")
+						.val(
+							`${payrollEmployee.hourly_compensations.double_overtime.hours}`
+						);
+				}
+				if (payrollEmployee.fixed_compensations.bonus) {
+					// for bonus
+					$(this)
+						.find(".jsBonusText")
+						.text(
+							`B $${payrollEmployee.fixed_compensations.bonus.amount}`
+						);
+					//
+					$(this)
+						.find(".jsBonusValue")
+						.val(
+							`${payrollEmployee.fixed_compensations.bonus.amount}`
+						);
+				}
+				// payment method
 				$(this)
-					.find(".jsReimburmentTotal")
-					.text(
-						"R $" +
-							parseFloat(payrollEmployee.v1.reimbursements.total)
-					);
-				$(this).find(".jsReimbursementTotalBox").removeClass("hidden");
-				$(this).find(".jsReimbursementTotalBoxBtn").addClass("hidden");
-			} else {
-				$(this).find(".jsReimbursementTotalBox").addClass("hidden");
+					.find(
+						'.jsPaymentMethod option[value="' +
+							payrollEmployee.payment_method +
+							'"]'
+					)
+					.prop("selected", true);
+				// fix compensations
+				let fixedCompensationTotal = 0;
+				// for fixed compensations
+				$.each(payrollEmployee["fixed_compensations"], function (i, v) {
+					if (
+						i != "bonus" &&
+						i.match("timeoff") === null &&
+						i != "reimbursement"
+					) {
+						fixedCompensationTotal += parseFloat(v.amount);
+					}
+				});
+				//
 				$(this)
-					.find(".jsReimbursementTotalBoxBtn")
-					.removeClass("hidden");
+					.find(".jsAdditionalEarningText")
+					.text("AE $" + parseFloat(fixedCompensationTotal));
+				$(this)
+					.find(".jsAdditionalEarningValue")
+					.val(fixedCompensationTotal);
+				//
+				if (payrollEmployee.v1.reimbursements.total != 0) {
+					$(this)
+						.find(".jsReimburmentTotal")
+						.text(
+							"R $" +
+								parseFloat(
+									payrollEmployee.v1.reimbursements.total
+								)
+						);
+					$(this)
+						.find(".jsReimbursementTotalBox")
+						.removeClass("hidden");
+					$(this)
+						.find(".jsReimbursementTotalBoxBtn")
+						.addClass("hidden");
+				} else {
+					$(this).find(".jsReimbursementTotalBox").addClass("hidden");
+					$(this)
+						.find(".jsReimbursementTotalBoxBtn")
+						.removeClass("hidden");
+				}
+				// skip payroll
+				if (payrollEmployee.excluded) {
+					$(this)
+						.find(".jsSkipEmployeeFromPayroll")
+						.addClass("hidden");
+					$(this)
+						.find(".jsAddEmployeeFromPayroll")
+						.removeClass("hidden");
+					$(this).find(".jsSkipPayroll").addClass("hidden");
+				} else {
+					$(this)
+						.find(".jsSkipEmployeeFromPayroll")
+						.removeClass("hidden");
+					$(this)
+						.find(".jsAddEmployeeFromPayroll")
+						.addClass("hidden");
+					$(this).find(".jsSkipPayroll").removeClass("hidden");
+				}
+				//
+				setSingleView(employeeId);
 			}
-			// skip payroll
-			if (payrollEmployee.excluded) {
-				$(this).find(".jsSkipEmployeeFromPayroll").addClass("hidden");
-				$(this).find(".jsAddEmployeeFromPayroll").removeClass("hidden");
-				$(this).find(".jsSkipPayroll").addClass("hidden");
-			} else {
-				$(this)
-					.find(".jsSkipEmployeeFromPayroll")
-					.removeClass("hidden");
-				$(this).find(".jsAddEmployeeFromPayroll").addClass("hidden");
-				$(this).find(".jsSkipPayroll").removeClass("hidden");
-			}
-			//
-			setSingleView(employeeId);
 		});
 	}
 
