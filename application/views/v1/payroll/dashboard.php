@@ -199,7 +199,7 @@
                                                                         <?= $value['count']; ?>
                                                                     </td>
                                                                     <td class="vam text-right">
-                                                                        <a href="<?= base_url('payrolls/pay_stubs/' . ($value['sid']) . ''); ?>" class="btn csW csBG3 csF16">
+                                                                        <a href="<?= base_url('payrolls/pay-stubs/report/' . ($value['sid']) . ''); ?>" class="btn csW csBG3 csF16">
                                                                             View
                                                                         </a>
                                                                     </td>
@@ -213,7 +213,7 @@
                                             <?php } ?>
                                         </div>
                                         <div class="panel-footer text-center">
-                                            <a href="<?= base_url('payrolls/pay_stubs'); ?>" class="btn csW csBG3 csF16">
+                                            <a href="<?= base_url('payrolls/pay-stubs/report'); ?>" class="btn csW csBG3 csF16">
                                                 <i class="fa fa-eye csF16" aria-hidden="true"></i>
                                                 &nbsp;View more
                                             </a>
