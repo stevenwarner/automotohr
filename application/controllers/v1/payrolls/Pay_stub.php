@@ -39,7 +39,7 @@ class Pay_stub extends Public_controller
         //
         $data = $this->getData();
         //
-        $data['title'] = "Pay stubs";
+        $data['title'] = "My Pay stubs";
         // css
         $data['appCSS'] = bundleCSS(
             [
@@ -77,6 +77,125 @@ class Pay_stub extends Public_controller
     }
 
     /**
+     * report page
+     */
+    public function report()
+    {
+        //
+        $data = $this->getData();
+        //
+        $data['title'] = "Pay stubs report";
+
+        $data['employees'] = $this->pay_stubs_model->getPayrollEmployees($data['loggedInPersonCompanyId'], true);
+        //
+        if ($data['employees']) {
+            $data['employees'] = array_filter($data['employees'], function ($employee) {
+                return $employee['is_onboard'];
+            });
+        }
+        // get sanitized
+        $get = $this->input->get(null, true);
+        //
+        $data['filter'] = [
+            'employees' => $get['employees'] && !in_array('all', $get['employees']) ? $get['employees'] : ['all'],
+            'pay_periods' =>
+            $get['pay_periods'] && !in_array('all', $get['pay_periods']) ? $get['pay_periods'] : ['all'],
+            'check_dates' =>
+            $get['check_dates'] && !in_array('all', $get['check_dates']) ? $get['check_dates'] : ['all'],
+        ];
+        // get filter periods and check dates
+        $data['payStubsFilter'] = $this
+            ->pay_stubs_model
+            ->getCompanyPayStubsFilter(
+                $data['loggedInPersonCompanyId']
+            );
+        // set pass filter
+        $filter = ['employeeIds' => [], 'sid' => []];
+        //
+        if (!in_array('all', $data['filter']['employees'])) {
+            $filter['employeeIds'] = $data['filter']['employees'];
+        }
+        //
+        if (!in_array('all', $data['filter']['pay_periods'])) {
+            $filter['sid'] = $data['filter']['pay_periods'];
+        }
+        //
+        if (!in_array('all', $data['filter']['check_dates'])) {
+            $filter['sid'] = array_unique(array_merge($filter['sid'], $data['filter']['check_dates']));
+        }
+        // get pay subs
+        $data['payStubs'] = $this
+            ->pay_stubs_model
+            ->getCompanyPayStubs(
+                $data['loggedInPersonCompanyId'],
+                0,
+                $filter
+            );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/pay_stubs/report')
+            ->view('main/footer');
+    }
+
+    /**
+     * single report page
+     *
+     * @param int $periodId
+     */
+    public function singleReport(int $periodId)
+    {
+        //
+        $data = $this->getData();
+        
+        //
+        $data['title'] = "Pay stubs report";
+
+        $data['employees'] = $this->pay_stubs_model->getPayrollEmployees($data['loggedInPersonCompanyId'], true);
+        //
+        if ($data['employees']) {
+            $data['employees'] = array_filter($data['employees'], function ($employee) {
+                return $employee['is_onboard'];
+            });
+        }
+        // get sanitized
+        $get = $this->input->get(null, true);
+        //
+        $data['filter'] = [
+            'employees' => $get['employees'] && !in_array('all', $get['employees']) ? $get['employees'] : ['all']
+        ];
+        // css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'main',
+            $this->createMinifyFiles
+        );
+        //
+        $data['appJs'] = bundleJs(
+            [
+                'js/app_helper',
+                'v1/plugins/ms_modal/main',
+                'v1/payroll/js/pay_stubs/main'
+            ],
+            $this->js,
+            'main',
+            $this->createMinifyFiles
+        );
+        // get the full report
+        $data['payStub'] = $this->pay_stubs_model->getPayStubWithEmployeesById($periodId, $data['loggedInPersonCompanyId'], $data['filter']['employees']);
+        $data['periodId'] = $periodId;
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/pay_stubs/single_report')
+            ->view('main/footer');
+    }
+
+    /**
      * get the regular payroll view - review
      *
      * @param int $payStubId
@@ -97,7 +216,7 @@ class Pay_stub extends Public_controller
             $payStub['paystub_json']['s3_file_name']
         );
         //
-        $fileName = 'pay_stub_'.(stringToSlug($payStub['start_date'], '_')).'_'.(stringToSlug($payStub['end_date'], '_')).'.pdf';
+        $fileName = 'pay_stub_' . (stringToSlug($payStub['start_date'], '_')) . '_' . (stringToSlug($payStub['end_date'], '_')) . '.pdf';
         //
         $this->load->helper('download');
         //
@@ -107,7 +226,7 @@ class Pay_stub extends Public_controller
         );
     }
 
-
+    // API Calls
     /**
      * get the regular payroll view - review
      *

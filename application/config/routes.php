@@ -1864,6 +1864,9 @@ $route['payrolls/history/(:num)']['get'] = 'v1/payrolls/History/single/$1';
 $route['payrolls/pay-stubs']['get'] = 'v1/payrolls/Pay_stub/index';
 $route['payrolls/pay-stubs/(:num)/view']['get'] = 'v1/payrolls/Pay_stub/generateView/$1';
 $route['payrolls/pay-stubs/(:num)/download']['get'] = 'v1/payrolls/Pay_stub/download/$1';
+// pay stubs report
+$route['payrolls/pay-stubs/report']['get'] = 'v1/payrolls/Pay_stub/report';
+$route['payrolls/pay-stubs/report/(:num)']['get'] = 'v1/payrolls/Pay_stub/singleReport/$1';
 
 // employee garnishments
 $route['payrolls/employees/(:num)/garnishments']['get'] = 'v1/payrolls/Garnishments/generateView/$1';
