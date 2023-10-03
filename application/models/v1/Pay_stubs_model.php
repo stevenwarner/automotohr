@@ -159,7 +159,7 @@ class Pay_stubs_model extends Payroll_model
         //
         foreach ($records as $value) {
             //
-            $slug = $value['check_date'];
+            $slug = $value['sid'];
             //
             if (!isset($payStubs[$slug])) {
                 //
@@ -197,15 +197,10 @@ class Pay_stubs_model extends Payroll_model
                 payrolls.regular_payrolls.end_date,
                 payrolls.regular_payrolls.check_date
             ')
-            ->join(
-                'payrolls.regular_payrolls',
-                'payrolls.regular_payrolls.sid = payrolls.regular_payrolls_employees.regular_payroll_sid',
-                'inner'
-            )
             ->where('payrolls.regular_payrolls.processed_date <>', null)
             ->where('payrolls.regular_payrolls.company_sid', $companyId)
             ->order_by('payrolls.regular_payrolls.processed_date', 'DESC')
-            ->get('payrolls.regular_payrolls_employees')
+            ->get('payrolls.regular_payrolls')
             ->result_array();
         //
         if (!$records) {
