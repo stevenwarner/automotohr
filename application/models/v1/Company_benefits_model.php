@@ -119,11 +119,12 @@ class Company_benefits_model extends Payroll_model
      * get all benefits
      *
      * @param int $companyId
+     * @param int $limit Optional
      * @return array
      */
-    public function getBenefits(int $companyId): array
+    public function getBenefits(int $companyId, int $limit = 0): array
     {
-        $records = $this->db
+        $this->db
             ->select('
                 sid,
                 description,
@@ -134,7 +135,13 @@ class Company_benefits_model extends Payroll_model
                 benefit_type
             ')
             ->where('company_sid', $companyId)
-            ->order_by('sid', 'DESC')
+            ->order_by('sid', 'DESC');
+        //
+        if ($limit != 0) {
+            $this->db->limit($limit);
+        }
+        //
+        $records = $this->db
             ->get('payrolls.company_benefits')
             ->result_array();
         //

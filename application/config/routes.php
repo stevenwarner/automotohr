@@ -1728,6 +1728,7 @@ $route['payroll/cpc/(:num)/(:num)'] = 'v1/Payroll/getCreatePartnerCompanyPage/$1
 $route['payrolls/agreement/(:num)']['get'] = 'v1/Payroll/getCompanyAgreement/$1';
 $route['payrolls/agreement/(:num)']['post'] = 'v1/Payroll/signCompanyAgreement/$1';
 $route['payrolls/dashboard']['get'] = 'v1/Payroll/dashboard';
+$route['payrolls/setup']['get'] = 'v1/Payroll/setup';
 // admin routes
 $route['payrolls/admins']['get'] = 'v1/Payroll/manageAdmins';
 $route['payrolls/admins/add']['get'] = 'v1/Payroll/manageAddAdmin';

@@ -111,4 +111,57 @@ class Pay_stubs_model extends Payroll_model
         //
         return $record;
     }
+
+    /**
+     * get pay stubs
+     *
+     * @param int $companyId
+     * @param int $limit Optional
+     * @return array
+     */
+    public function getCompanyPayStubs(
+        int $companyId,
+        int $limit = 0
+    ): array {
+        $records = $this->db
+            ->select('
+                payrolls.regular_payrolls.start_date,
+                payrolls.regular_payrolls.end_date,
+                payrolls.regular_payrolls.check_date,
+                payrolls.regular_payrolls_employees.sid
+            ')
+            ->join(
+                'payrolls.regular_payrolls',
+                'payrolls.regular_payrolls.sid = payrolls.regular_payrolls_employees.regular_payroll_sid',
+                'inner'
+            )
+            ->where('payrolls.regular_payrolls.processed_date <>', null)
+            ->where('payrolls.regular_payrolls.company_sid', $companyId)
+            ->order_by('payrolls.regular_payrolls.processed_date', 'DESC')
+            ->get('payrolls.regular_payrolls_employees')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $payStubs = [];
+        //
+        foreach ($records as $value) {
+            //
+            $slug = $value['check_date'];
+            //
+            if (!isset($payStubs[$slug])) {
+                //
+                if ($limit != 0 && count($payStubs) === $limit) {
+                    continue;
+                }
+                $payStubs[$slug] = $value;
+                $payStubs[$slug]['count'] = 0;
+            }
+            $payStubs[$slug]['count']++;
+        }
+        //
+        return array_values($payStubs);
+    }
 }

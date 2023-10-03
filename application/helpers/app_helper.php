@@ -1642,8 +1642,9 @@ if (!function_exists('getDueDate')) {
         $currentDateObj = new DateTime();
         //
         $diff = $currentDateObj->diff($dateTimeObj);
+
         //
-        return $diff->format('%d days');
+        return $diff->format(($diff->invert ? '-' : '')."%d days");
     }
 }
 

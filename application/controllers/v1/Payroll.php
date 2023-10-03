@@ -58,6 +58,84 @@ class Payroll extends CI_Controller
             null,
             $data['session']
         );
+        // load regular payroll model
+        $this->load->model("v1/Regular_payroll_model", "regular_payroll_model");
+        // load external payroll model
+        $this->load->model("v1/External_payroll_model", "external_payroll_model");
+        // load history payroll model
+        $this->load->model("v1/History_payroll_model", "history_payroll_model");
+        // Call the model
+        $this->load->model("v1/Company_benefits_model", "company_benefits_model");
+        //
+        $this->load->model("v1/Pay_stubs_model", "pay_stubs_model");
+        // get the payrolls
+        $data['regularPayrolls'] = $this->regular_payroll_model
+            ->getRegularPayrolls(
+                $companyId,
+                5
+            );
+        // get the processed payrolls
+        $data['payrolls'] = $this
+            ->history_payroll_model
+            ->getProcessedPayrolls(
+                $companyId,
+                10
+            );
+        // get all external payrolls
+        $data['externalPayrolls'] =
+            $this->external_payroll_model
+            ->getAllCompanyExternalPayrolls(
+                $companyId,
+                3
+            );
+        //
+        $data['payrollEmployees'] = $this->payroll_model->getPayrollEmployees($companyId, false, 5);
+        // get store benefits
+        $data['benefits'] = $this->company_benefits_model
+            ->getBenefits(
+                $companyId,
+                5
+            );
+        // get company bank account
+        $data['bankAccount'] = $this->payroll_model->getCompanyBankAccount(
+            $companyId
+        );
+        // get company pay stubs
+        $data['payStubs'] = $this->pay_stubs_model->getCompanyPayStubs(
+            $companyId,
+            5
+        );
+
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/dashboard')
+            ->view('main/footer');
+    }
+
+
+    public function setup()
+    {
+        // check for linked company
+        $this->checkForLinkedCompany();
+        //
+        $data = [];
+        // check and set user session
+        $data['session'] = checkUserSession();
+        $data['title'] = "Payroll Set up";
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['companyId'] = $data['session']['company_detail']['sid'];
+        $data['employerId'] = $data['session']['employer_detail']['sid'];
+        $data['level'] = 0;
+        //
+        $companyId = $data['session']['company_detail']['sid'];
+        // get the security details
+        $data['security_details'] = db_get_access_level_details(
+            $data['session']['employer_detail']['sid'],
+            null,
+            $data['session']
+        );
         // scripts
         $data['PageCSS'] = [];
         $data['appJs'] = bundleJs([
@@ -101,9 +179,10 @@ class Payroll extends CI_Controller
         //
         $this->load
             ->view('main/header', $data)
-            ->view('v1/payroll/dashboard')
+            ->view('v1/payroll/setup')
             ->view('main/footer');
     }
+
 
     /**
      * Manage admins

@@ -608,7 +608,7 @@ class Regular extends Public_controller
             );
         //
         if ($gustoResponse['errors']) {
-            return SendResponse(400, $gustoResponse['errors']);
+            return SendResponse(400, ['errors' => $gustoResponse['errors']]);
         }
 
         // save entries

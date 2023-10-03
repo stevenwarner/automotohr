@@ -162,10 +162,10 @@ class Regular_payroll_model extends Payroll_model
      * get regular payroll
      *
      * @param int $companyId
-     * @param int $loggedInEmployeeId
+     * @param int $limit Optional
      * @return array
      */
-    public function getRegularPayrolls(int $companyId): array
+    public function getRegularPayrolls(int $companyId, int $limit = 0): array
     {
         //
         $returnArray = [
@@ -173,7 +173,7 @@ class Regular_payroll_model extends Payroll_model
             'late' => []
         ];
         // get payrolls
-        $records = $this->db
+        $this->db
             ->select('
                 sid,
                 start_date,
@@ -183,7 +183,13 @@ class Regular_payroll_model extends Payroll_model
             ')
             ->where('company_sid', $companyId)
             ->where('processed', 0)
-            ->get('payrolls.regular_payrolls')
+            ->order_by('is_late_payroll', 'ASC')
+            ->order_by('check_date', 'DESC');
+        //
+        if ($limit != 0) {
+            $this->db->limit($limit);
+        }
+        $records = $this->db->get('payrolls.regular_payrolls')
             ->result_array();
         //
         if (!$records) {

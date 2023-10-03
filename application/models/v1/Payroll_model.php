@@ -281,16 +281,20 @@ class Payroll_model extends CI_Model
     /**
      * get payroll employees
      */
-    public function getPayrollEmployees(int $companyId, bool $useIndex = false): array
+    public function getPayrollEmployees(int $companyId, bool $useIndex = false, int $limit = 0): array
     {
         //
-        $records = $this->db
+        $this->db
             ->select(
                 getUserFields() . 'is_onboarded'
             )
             ->join('users', 'users.sid = gusto_companies_employees.employee_sid', 'inner')
-            ->where('gusto_companies_employees.company_sid', $companyId)
-            ->get('gusto_companies_employees')
+            ->where('gusto_companies_employees.company_sid', $companyId);
+        //
+        if ($limit !== 0) {
+            $this->db->limit($limit);
+        }
+        $records = $this->db->get('gusto_companies_employees')
             ->result_array();
         //
         if (!$records) {
@@ -5186,5 +5190,20 @@ class Payroll_model extends CI_Model
         $returnArray['zip_code'] = $address['Location_ZipCode'];
         //
         return $returnArray;
+    }
+
+    /**
+     * get the company bank account
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyBankAccount(int $companyId): array
+    {
+        return $this->db
+            ->select('routing_number, hidden_account_number, verification_status, name, account_type')
+            ->where('company_sid', $companyId)
+            ->get('companies_bank_accounts')
+            ->row_array();
     }
 }

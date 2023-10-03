@@ -25,11 +25,12 @@ class External_payroll_model extends Payroll_model
      * listing
      *
      * @param int $companyId
+     * @param int $limit Optional
      * @return array
      */
-    public function getAllCompanyExternalPayrolls(int $companyId): array
+    public function getAllCompanyExternalPayrolls(int $companyId, int $limit = 0): array
     {
-        $records = $this->db
+        $this->db
             ->select('
                 sid,
                 check_date,
@@ -39,8 +40,11 @@ class External_payroll_model extends Payroll_model
             ')
             ->where('company_sid', $companyId)
             ->where('is_deleted', 0)
-            ->order_by('check_date', 'DESC')
-            ->get('payrolls.external_payrolls')
+            ->order_by('sid', 'DESC');
+        if ($limit !== 0) {
+            $this->db->limit($limit);
+        }
+        $records =  $this->db->get('payrolls.external_payrolls')
             ->result_array();
         //
         if (!$records) {

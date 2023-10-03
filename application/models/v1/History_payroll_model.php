@@ -24,13 +24,15 @@ class History_payroll_model extends Payroll_model
      * get processed regular payrolls
      *
      * @param int $companyId
+     * @param int $limit Optional
      * @return array
      */
     public function getProcessedPayrolls(
-        int $companyId
+        int $companyId,
+        int $limit = 0
     ): array {
         //
-        $records = $this->db
+        $this->db
             ->select('
                 sid,
                 check_date,
@@ -43,8 +45,14 @@ class History_payroll_model extends Payroll_model
             ->where('company_sid', $companyId)
             ->where('processed', 1)
             ->where('is_cancelled', 0)
-            ->order_by('processed_date', 'DESC')
-            ->get('payrolls.regular_payrolls')
+            ->order_by('processed_date', 'DESC');
+        //
+        if ($limit !== 0) {
+            $this->db->limit($limit);
+        }
+
+        //
+        $records = $this->db->get('payrolls.regular_payrolls')
             ->result_array();
         //
         if ($records) {

@@ -118,6 +118,9 @@ $sideBarUrls = [
     'paystubs' => [
         'payrolls/pay-stubs',
     ],
+    'paystubs_report' => [
+        'payrolls/pay-stubs/report',
+    ],
 ]
 ?>
 
@@ -135,7 +138,8 @@ $sideBarUrls = [
         <div class="navbar-collapse collapse admin-sidebar-navbar-collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="<?php echo base_url('dashboard'); ?>">
+                    <a href="<?php echo base_url('dashboard'); ?>        'payrolls/pay-stubs/report',
+">
                         <figure><i class="fa fa-th"></i></figure>Dashboard
                     </a>
                 </li>
@@ -146,6 +150,15 @@ $sideBarUrls = [
                                 echo 'class="active"';
                             } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
                             <figure><i class="fa fa-home"></i></figure>Payroll Dashboard
+                        </a>
+                    </li>
+
+                    <!-- Payrolls -->
+                    <li>
+                        <a <?php if (uri_string() === 'payrolls/setup') {
+                                echo 'class="active"';
+                            } ?> href="<?php echo base_url('payrolls/setup'); ?>">
+                            <figure><i class="fa fa-cogs"></i></figure>Payroll Set up
                         </a>
                     </li>
                     <!-- Manage Admins -->
@@ -225,6 +238,15 @@ $sideBarUrls = [
                                     echo 'class="active"';
                                 } ?> href="<?php echo base_url('payrolls/history'); ?>">
                                 <figure><i class="fa fa-history"></i></figure>Payroll History
+                            </a>
+                        </li>
+
+                        <!-- pay stubs -->
+                        <li>
+                            <a <?php if (in_array(uri_string(), $sideBarUrls['paystubs_report']) || preg_match('/payrolls\/pay-stubs\/report/im', uri_string())) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo base_url('payrolls/pay-stubs/report'); ?>">
+                                <figure><i class="fa fa-files-o"></i></figure>Pay stubs
                             </a>
                         </li>
 
