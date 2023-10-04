@@ -38,7 +38,7 @@
                 <div class="collapse navbar-collapse" id="navbarScroll">
                     <ul class="navbar-nav mx-auto my-2 my-lg-0 navbar-nav-scroll">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= base_url($headerContent['page']['home']['slug']); ?>"><?php echo $headerContent['page']['home']['title']; ?></a>
+                            <a class="nav-link" aria-current="page" href="<?= base_url($headerContent['page']['home']['slug']);?>"><?php echo $headerContent['page']['home']['title']; ?></a>
                         </li>
 
                         <li class="nav-item dropdown">
@@ -48,7 +48,7 @@
                             <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
                                 <div class="display-flex">
                                     <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu1']['slug']); ?> "><?php echo $headerContent['page']['products']['submenu1']['title']; ?> </a>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?> </a>
                                         <p class="dropdown-item-custom">
                                             Performance reviews, surveys,<br />
                                             employment info, and more.
@@ -57,7 +57,7 @@
                                     </li>
                                     <hr />
                                     <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu2']['slug']); ?> "><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
+                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
                                         <p class="dropdown-item-custom">
                                             Onboarding, hiring paperwork,<br />
                                             orientation, and compliance.

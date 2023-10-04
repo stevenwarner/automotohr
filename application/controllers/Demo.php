@@ -39,7 +39,7 @@ class Demo extends CI_Controller
 
         //  $this->form_validation->set_rules('newsletter_subscribe', 'Please select your choice', 'trim|xss_clean');  nisar
 
-        //$this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
+        $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
 
 
         /*if ($this->uri->segment(1) == 'demo') {
