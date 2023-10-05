@@ -124,6 +124,11 @@
             <script src="<?php echo base_url('assets/video_interview/video-js-record/dist/videojs.record.js') ?>"></script>
         <?php } ?>
 
+        <?php if (isset($PageCSS)) : ?>
+            <!-- Stylesheets -->
+            <?= GetCss($PageCSS); ?>
+        <?php endif; ?>
+
         <!--  -->
         <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
             <?php $this->load->view("{$pp}styles"); ?>
@@ -335,6 +340,7 @@
         <div id="wrapper">
             <header class="<?= in_array('iframe', $this->uri->segment_array()) ? 'hidden' : ''; ?> header<?php
                                                                                                             if (
+                                                                                                                isset($isLoggedInView) ||
                                                                                                                 $class == 'dashboard' ||
                                                                                                                 $class == 'time_off' ||
                                                                                                                 $class == 'job_listings' ||
@@ -1974,7 +1980,3 @@
                                 .error();
                         }
                     </script>
-                    <?php if (isset($PageScripts)) : ?>
-                        <!-- Scripts -->
-                        <?= GetScripts($PageScripts); ?>
-                    <?php endif; ?>

@@ -199,6 +199,44 @@ class Complynet_lib
     }
 
     /**
+     * Update Alt id
+     *
+     * @param string $id
+     * @param string $alt_id
+     * @return array
+     */
+    public function updateAltId(
+        string $id,
+        string $alt_id
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            "UserAltId?id={$id}&altid=AHR{$alt_id}",
+            'PUT'
+        );
+    }
+
+    /**
+     * get company employees
+     *
+     * @param string $companyId
+     * @return array
+     */
+    public function getCompanyEmployees(
+        string $companyId
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            "CompanyUsers?CompanyId={$companyId}",
+            'GET'
+        );
+    }
+
+    /**
      * Change user status
      *
      * @param array $upd

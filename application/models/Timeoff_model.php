@@ -4561,15 +4561,24 @@ class Timeoff_model extends CI_Model
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
             ->order_by('requested_date', 'ASC')
             ->order_by('status', 'DESC');
-        //
-        if ($startDate == $endDate) {
-            $this->db->or_where("'$startDate' BETWEEN timeoff_requests.request_from_date AND timeoff_requests.request_to_date");
-        } else if ($type == 'week') {
-            if ($startDate != '' && $startDate != 'all') $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
-        } else {
-            if ($startDate != '' && $startDate != 'all') $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
-            if ($endDate != '' && $endDate != 'all') $this->db->where('timeoff_requests.request_to_date <= "' . ($endDate) . '"', null);
-        }
+        // find the date within
+        $this->db->group_start();
+        $this->db->group_start();
+        $this->db->where('timeoff_requests.request_from_date <=', $calendarStartDate);
+        $this->db->where('timeoff_requests.request_to_date >=', $calendarStartDate);
+        $this->db->where('timeoff_requests.request_from_date <=', $calendarEndDate);
+        $this->db->where('timeoff_requests.request_to_date >=', $calendarEndDate);
+        $this->db->group_end();
+        $this->db->or_group_start();
+        $this->db->where('timeoff_requests.request_from_date >=', $calendarStartDate);
+        $this->db->where('timeoff_requests.request_to_date <=', $calendarEndDate);
+        $this->db->group_end();
+        $this->db->or_group_start();
+        $this->db->where('timeoff_requests.request_from_date <=', $calendarEndDate);
+        $this->db->where('timeoff_requests.request_to_date >=', $calendarStartDate);
+        $this->db->group_end();
+        $this->db->group_end();
+
 
         $this->db->group_start();
         $this->db->where('timeoff_requests.status', 'approved');
@@ -6929,7 +6938,6 @@ class Timeoff_model extends CI_Model
                         //
                         $isAddedHistory = "yes";
                     }
-            
                 }
             } else {
                 if ($policy['is_entitled_employee'] == 1) {
@@ -6980,7 +6988,7 @@ class Timeoff_model extends CI_Model
                         //
                         $isAddedHistory = "yes";
                     }
-                }    
+                }
             }
             //
             if ($isAddedHistory == "yes") {

@@ -209,13 +209,6 @@
                                         <?php if (check_access_permissions_for_view($security_details, 'applicant_status_bar')) { ?>
                                             <li><a href="<?php echo base_url(); ?>application_status">Applicant Status Bar Module</a></li>
                                         <?php } ?>
-                                        <!--                                    --><?php //if (check_blue_panel_status_for_view()) { //TODO Remove This Check After Completion  
-                                                                                    ?>
-                                        <!--                                            <li><a href="--><?php //echo base_url('onboarding/configuration'); 
-                                                                                                        ?>
-                                        <!--">Onboarding Configuration</a></li>-->
-                                        <!--                                    --><?php //} 
-                                                                                    ?>
                                         <?php if ($reassign_flag && in_array('full_access', $security_details) && check_access_permissions_for_view($security_details, 're_assign_applicant')) { ?>
                                             <li><a href="<?php echo base_url(); ?>re_assign_candidate">Re Assign Applicant</a></li>
                                         <?php } ?>
@@ -251,6 +244,21 @@
                                             <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
                                         <?php } ?>
 
+                                        <?php if (checkIfAppIsEnabled('payroll')) { ?>
+                                            <?php
+                                            $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                            $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
+                                            ?>
+                                            <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
+                                                <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">Set-up Payroll</a></li>
+                                            <?php } ?>
+                                            <?php if ($isCompanyOnPayroll && !$isTermsAgreed) { ?>
+                                                <li><a href="javascript:void(0)" class="jsServiceAgreement" data-cid="<?= $session['company_detail']['sid']; ?>">Payroll Service Agreement</a></li>
+                                            <?php } ?>
+                                            <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+                                                <li><a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a></li>
+                                            <?php } ?>
+                                        <?php } ?>
                                     </ul>
                                 </article>
                             <?php } ?>

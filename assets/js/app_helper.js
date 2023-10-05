@@ -34,13 +34,22 @@ if (typeof ml === "undefined") {
 	 *
 	 * @param {bool}   action
 	 * @param {string} id
+	 * @param {string} msg
 	 */
-	function ml(action, id) {
+	function ml(action, id, msg) {
 		//
 		if (action) {
 			$(".jsIPLoader[data-page='" + id + "']").show();
+			$(".jsIPLoader[data-page='" + id + "']")
+				.find(".jsIPLoaderText")
+				.html(
+					msg || "Please wait, while we are processing your request."
+				);
 		} else {
 			$(".jsIPLoader[data-page='" + id + "']").hide();
+			$(".jsIPLoader[data-page='" + id + "']")
+				.find(".jsIPLoaderText")
+				.html("Please wait, while we are processing your request.");
 		}
 	}
 }
@@ -241,6 +250,11 @@ if (typeof handleErrorResponse === "undefined") {
 				CB
 			);
 		}
+		// Page not found
+		if (response.status == 404) {
+			//
+			return _error("The requested route doesn't exists.");
+		}
 		//
 		const parsedJSON =
 			response.responseJSON || JSON.parse(response.responseText);
@@ -262,9 +276,126 @@ if (typeof getQuestionsFromArray === "undefined") {
 			"<strong><p>" +
 			(errorMessage
 				? errorMessage
-				: "Please, provide the following question answer") +
+				: "Please, provide the following question answer.") +
 			"</p></strong><br >" +
 			errorArray.join("<br />")
 		);
+	}
+}
+
+if (typeof baseUrl === "undefined") {
+	/**
+	 * get the base url
+	 *
+	 * @param {string} appendUrl
+	 * @returns
+	 */
+	function baseUrl(appendUrl = "") {
+		// return the url
+		return window.location.origin + "/" + appendUrl;
+	}
+}
+
+if (typeof callButtonHook === "undefined") {
+	/**
+	 * button hook
+	 *
+	 * @param {object} appendUrl
+	 * @param {bool}   doShow
+	 * @return
+	 */
+	function callButtonHook(reference, doShow = true) {
+		//
+		if (doShow) {
+			const obj = {
+				pointer: reference,
+				html: reference.html(),
+			};
+			reference.html(
+				'<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
+			);
+			//
+			reference.off("click");
+			return obj;
+		}
+		//
+		reference.pointer.html(reference.html);
+	}
+}
+
+if (typeof _error === "undefined") {
+	/**
+	 * shows the error
+	 *
+	 * @param {string} msg
+	 */
+	function _error(msg) {
+		alertify.alert("Error!", msg, CB).setHeader("Error!").set("labels", {
+			ok: "Ok",
+			cancel: "cancel",
+		});
+	}
+}
+
+if (typeof _success === "undefined") {
+	/**
+	 * shows the success
+	 *
+	 * @param {string} msg
+	 */
+	function _success(msg, callback = CB) {
+		alertify
+			.alert("Success!", msg, callback)
+			.setHeader("Success!")
+			.set("labels", {
+				ok: "Ok",
+				cancel: "cancel",
+			});
+	}
+}
+
+if (typeof _confirm === "undefined") {
+	/**
+	 * confirm message
+	 *
+	 * @param {string} msg
+	 */
+	function _confirm(msg, callback) {
+		alertify.confirm(msg, callback, CB).setHeader("Confirm").set("labels", {
+			ok: "Yes",
+			cancel: "No",
+		});
+	}
+}
+
+if (typeof getSegment === "undefined") {
+	/**
+	 * Get the segment from the URL
+	 * @param {int} segment
+	 * @returns
+	 */
+	function getSegment(segment) {
+		// get the segments
+		let segmentArray = window.location.pathname.split("/");
+		// clean the array
+		segmentArray = segmentArray?.filter(function (single_segment) {
+			//
+			return single_segment?.trim();
+		});
+		// check if found
+		return segmentArray[segment];
+	}
+}
+
+if (typeof getRandomCode === "undefined") {
+	/**
+	 * Generates a random number
+	 * @returns
+	 */
+	function getRandomCode() {
+		// create a new date object
+		const dt = new Date();
+		// get the segments
+		return dt.getTime() + Math.floor(Math.random() * 5000000);
 	}
 }

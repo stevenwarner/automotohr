@@ -143,17 +143,19 @@ if (!function_exists('bundleJs')) {
      * @param array  $files
      * @param string $destination Optional
      * @param string $file Optional
+     * @param bool   $lockFile Optional
      * @return string
      */
     function bundleJs(
         array $inputs,
         string $destination = 'assets/v1/app/js/',
-        string $file = 'main'
+        string $file = 'main',
+        $lockFile = false
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
-        if (MINIFIED === '.min') {
+        if (MINIFIED === '.min' || $lockFile) {
             //
             $fileName = $destination . $file;
             //
@@ -191,6 +193,8 @@ if (!function_exists('bundleJs')) {
             "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
         );
         //
+        @unlink($absolutePath);
+        //
         return '<script src="' . (base_url(
             $destination . $file . '.min.js?v=' . time()
         )) . '"></script>';
@@ -204,17 +208,19 @@ if (!function_exists('bundleCSS')) {
      * @param array  $files
      * @param string $destination Optional
      * @param string $file Optional
+     * @param bool   $lockFile Optional
      * @return string
      */
     function bundleCSS(
         array $inputs,
         string $destination = 'assets/v1/app/css/',
-        string $file = 'main'
+        string $file = 'main',
+        $lockFile = false
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
-        if (MINIFIED === '.min') {
+        if (MINIFIED ==='.min' || $lockFile) {
             //
             $fileName = $destination . $file;
             //
@@ -250,6 +256,8 @@ if (!function_exists('bundleCSS')) {
         shell_exec(
             "uglifycss {$absolutePath} > {$absolutePathMin}"
         );
+        //
+        @unlink($absolutePath);
         //
         return '<link rel="stylesheet" href="' . (base_url(
             $destination . $file . '.min.css?v=' . time()

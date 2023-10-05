@@ -163,4 +163,15 @@ class Aws_lib
         ));
         return $result;
     }
+
+    /**
+     * Get secure Single Object from Bucket and save as well
+     * @param array $config
+     * @return \Aws\Result
+     */
+    public function get_secure_object(array $config = [])
+    {
+
+        return $this->s3->getObject($config);
+    }
 }
