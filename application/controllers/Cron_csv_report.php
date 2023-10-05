@@ -13,11 +13,11 @@ class Cron_csv_report extends CI_Controller
         $csv_report_settings = $this->export_csv_model->get_employee_csv_report_settings();
 
         if (!empty($csv_report_settings)) {
-             //Get current day,month and time
-             $current_day =  (int) date("d");
-             $current_month = (int) date('m');
-             $current_time = date('H:i A');
-             
+            //Get current day,month and time
+            $current_day =  (int) date("d");
+            $current_month = (int) date('m');
+            $current_time = date('H:i A');
+            // 
             foreach ($csv_report_settings as $settings_row) {
                
                 $custom_type = $settings_row['custom_type'];

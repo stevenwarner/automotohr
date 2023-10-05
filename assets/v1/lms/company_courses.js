@@ -26,8 +26,7 @@ $(function LMSCompanyCourses() {
 	/**
 	 * Toggle view
 	 */
-	$(document).on("click", ".jsToggleViewCompanyCourse", function (event) {
-		console.log($(this).closest("tr").data("id"))
+	$(document).on("click", ".jsToggleViewAssignCompanyCourse", function (event) {
 		// prevent default event
 		event.preventDefault();
 		//
@@ -76,7 +75,6 @@ $(function LMSCompanyCourses() {
 						// hide the loader
 						ml(false, "jsLMSPreviewCourseModalLoader");
 					});
-				// }, 225000);
 				// make the call
 			}
 		);
@@ -120,6 +118,8 @@ $(function LMSCompanyCourses() {
 				XHR = null;
 				// set the view
 				$("#jsDefaultCoursesView").html(response);
+				$(".jsFilterSectionBtn").hide();
+				$(".jsConpanyCourseExpand").hide();
 				// hide the loader
 				ml(false, "jsPageLoader");
 			})

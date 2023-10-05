@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
                                 <!-- Failed courses -->
-                                <div class="col-xs-12 col-md-3">
+                                <div class="col-xs-12 col-md-3 jsFilterBox" data-key="due_soon">
                                     <div class="thumbnail error-block">
                                         <div class="caption">
                                             <h3 id="jsExpiredSoonCount">0</h3>
@@ -100,7 +100,6 @@
                 </div>
             </div>
             
-
             <!--  -->
             <div class="row">
                 <div class="col-xs-12 col-md-12 text-right">

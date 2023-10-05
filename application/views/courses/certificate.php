@@ -195,6 +195,12 @@
             -moz-border-radius: 5px !important;
             -o-border-radius: 5px !important;
         }
+
+        .image-responsive {
+            margin: 20px auto;
+            max-width: 100%;
+            display: block;
+        }
     </style>
    
     <div class="main-content">
@@ -203,20 +209,20 @@
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 margin-bottom-15">
                     <div class="container">
                         <div class="row">
-                            <div class="col-xs-8"><!-- LEAVE EMPTY --></div>
-                            <div class="col-xs-2">
+                            <br>
+                            <div class="col-xs-12 text-right">
                                 <?php if ($type == "subordinate") { ?>
-                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$student_sid); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$student_sid); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left csF16"></i> Back to Courses</a>
                                 <?php } else { ?> 
-                                    <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left csF16"></i> Back to Courses</a>
                                 <?php } ?> 
-                            </div>    
-                            <div class="col-xs-2">    
-                                <button type="button" class="btn btn-success btn-block csRadius5 jsDownloadCertificate">
-                                    <i class="fa fa-download" aria-hidden="true"></i>
+                             
+                                <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsDownloadCertificate">
+                                    <i class="fa fa-download csF16" aria-hidden="true"></i>
                                     Download
                                 </button>
                             </div>
+                            <br>
                         </div>
                     </div>
                 </div>
@@ -273,12 +279,14 @@
                                     <div class="row">
                                         <div class="pm-certificate-footer">
                                             <div class="col-xs-5 pm-certified text-center">
-                                                <span class="pm-credits-text block sans">Signature</span>
+                                            <span class="pm-credits-text block sans">Training provided by</span>
+                                                <img class="image-responsive" src="<?php echo $AHRLogo; ?>" alt="">
+                                                <!-- <span class="pm-credits-text block sans">Signature</span>
                                                 <span class="pm-entitled-text block cursive"><?php echo $company_info['ContactName']; ?></span>
                                                 <span class="pm-empty-space block underline"></span>
                                                 <span class="bold block">
-                                                <?php echo ucwords($company_info['Location_Address']) . ', ' . ucwords($company_info['Location_City']) . ', ' . ucwords($company_info['state_name']) . ', ' . ucwords($company_info['Location_ZipCode']) . ', ' . ucwords($company_info['country_name']); ?>
-                                                </span>
+                                                <?php //echo ucwords($company_info['Location_Address']) . ', ' . ucwords($company_info['Location_City']) . ', ' . ucwords($company_info['state_name']) . ', ' . ucwords($company_info['Location_ZipCode']) . ', ' . ucwords($company_info['country_name']); ?>
+                                                </span> -->
                                             </div>
                                             <div class="col-xs-2">
                                                 <!-- LEAVE EMPTY -->
@@ -287,8 +295,7 @@
                                                 <span class="pm-credits-text block sans">Completion Date</span>
                                                 <span class="pm-entitled-text block cursive"><?php echo $completedOn; ?></span>
                                                 <span class="pm-empty-space block underline"></span>
-                                                <span class="bold block">DOB: <?php echo $studentDOB; ?></span>
-                                                <span class="bold block">Social Security # <?php echo $studentSSN; ?> (last 4 digits)</span>
+                                                <span class="bold block">Employee Number : <?php echo $AHRStudentID; ?></span>
                                             </div>
                                         </div>
                                     </div>

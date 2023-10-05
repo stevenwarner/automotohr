@@ -199,17 +199,17 @@ $(function LMSEmployeeCourses() {
 									var expiredSoonText = '';
 									//
 									if (end_diff == 0) {
-										expiredSoonText = `Expire Day`;
+										expiredSoonText = `Expiring today`;
 									} else if (end_diff == 1) {
-										expiredSoonText = `Expired in ${end_diff} day`;
+										expiredSoonText = `Expiring in ${end_diff} day`;
 									} else {
-										expiredSoonText = `Expired in ${end_diff} days`;
+										expiredSoonText = `Expiring in ${end_diff} days`;
 									}
 									//
 									//
 									coursesHTML += `    <div class="row">`;
 									coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
-									coursesHTML += `        	<a href="javascript:;" class="btn btn-warning btn-xs csRadius5 csF14" title="This course is expired in ${end_diff} days" placement="top">
+									coursesHTML += `        	<a href="javascript:;" class="btn btn-warning btn-xs csRadius5 csF14" title="This course will expired in ${end_diff} days" placement="top">
 																	<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
 																	&nbsp;${expiredSoonText}
 																</a>`;
@@ -225,7 +225,7 @@ $(function LMSEmployeeCourses() {
 									var expiredText = '';
 									//
 									if (end_diff == 0) {
-										expiredText = `Expire Day`;
+										expiredText = `Expired today`;
 									} else if (end_diff == 1) {
 										expiredText = `Expired ${end_diff} day ago`;
 									} else {
@@ -234,7 +234,7 @@ $(function LMSEmployeeCourses() {
 									//
 									coursesHTML += `    <div class="row">`;
 									coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
-									coursesHTML += `        	<a href="javascript:;" class="btn btn-danger btn-xs csRadius5 csF14" title="This course expired ${end_diff} days ago." placement="top">
+									coursesHTML += `        	<a href="javascript:;" class="btn btn-danger btn-xs csRadius5 csF14" title="This course was expired ${end_diff} days ago." placement="top">
 																	<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
 																	&nbsp;${expiredText}
 																</a>`;

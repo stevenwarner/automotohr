@@ -65,10 +65,10 @@
                                                     <select id="jsSubordinateEmployees" multiple style="width: 100%">
                                                         <option value="all">All</option>
                                                         <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
-                                                            <? if ($employee['job_title_sid'] > 0) { ?>
+                                                            <? //if ($employee['job_title_sid'] > 0) { ?>
                                                                 <option value="<?php echo $employee['employee_sid']; ?>"><?php echo $employee['full_name']; ?></option>
                                                             <?php } ?> 
-                                                        <?php } ?>     
+                                                        <?php //} ?>     
                                                     </select>
                                                 <?php } ?>     
                                             </div>
@@ -127,7 +127,7 @@
                                                                 <tr>
                                                                     <th>
                                                                         <label class="control control--checkbox">
-                                                                            <input type="checkbox" class="js-check-all" />
+                                                                            <input type="checkbox" class="jsCheckAll" />
                                                                             <div class="control__indicator" style="margin-top: -10px;"></div>
                                                                         </label>
                                                                     </th>
@@ -141,22 +141,29 @@
                                                             <tbody id="jsSubordinateList">
                                                                 <?php if (!empty($subordinateInfo["employees"])) { ?>
                                                                     <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
-                                                                        <?php if ($employee['job_title_sid'] > 0) { ?>
+                                                                        <?php //if ($employee['job_title_sid'] > 0) { ?>
                                                                             <?php 
                                                                                 $teamId = $employee['team_sid'];
                                                                                 $departmentId = $employee['department_sid'];
                                                                                 $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
                                                                                 $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
-                                                                                $courseCountText = $courseCount > 1 ? $courseCount." courses assign" : $courseCount." course assign";
+                                                                                $courseCountText = $courseCount > 1 ? $courseCount." courses assigned" : $courseCount." course assigned";
                                                                                 $departmentName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
                                                                                 $teamName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
                                                                             ?>
-                                                                            <tr class="js-tr">
+                                                                            <tr>
                                                                                 <td>
-                                                                                    <label class="control control--checkbox">
-                                                                                        <input type="checkbox" name="employees_ids[]" value="<?php echo $employee['employee_sid']; ?>" />
-                                                                                        <div class="control__indicator"></div>
-                                                                                    </label>
+                                                                                    <?php if ($courseCount > 0) { ?>
+                                                                                        <label class="control control--checkbox">
+                                                                                            <input type="checkbox" class="jsSelectSubordinate" name="employees_ids[]" value="<?php echo $employee['employee_sid']; ?>" />
+                                                                                            <div class="control__indicator"></div>
+                                                                                        </label>
+                                                                                    <?php } else { ?>  
+                                                                                        <label class="control control--checkbox">
+                                                                                            <input type="checkbox" value="" disabled/>
+                                                                                            <div class="control__indicator"></div>
+                                                                                        </label>
+                                                                                    <?php } ?> 
                                                                                 </td>
                                                                                 <td class="_csVm js-employee-name"><b><?php echo $employee['full_name']; ?></b></td>
                                                                                 <td class="_csVm"><?php echo $departmentName; ?></td>
@@ -168,7 +175,7 @@
                                                                                     </a>
                                                                                 </td>
                                                                             </tr>
-                                                                        <?php } ?>    
+                                                                        <?php //} ?>    
                                                                     <?php } ?>
                                                                 <?php } else { ?> 
                                                                     <tr>

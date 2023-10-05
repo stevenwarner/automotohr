@@ -1283,6 +1283,12 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         ->row_array();
                     //
                     $jobTitleId = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    //
+                    if ($jobTitleId == 0) {
+                        if (!empty($jobTitleInfo["job_title"])) {
+                            $jobTitleId = -1;
+                        }
+                    }
                     //  
                     $employeeName = remakeEmployeeName([
                         'first_name' => $jobTitleInfo['first_name'],
@@ -1307,7 +1313,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     $employeeData["employee_name"] =  $employeeName;
                     //
                     if ($flag == 'courses') {
-                        if ($jobTitleId > 0) {
+                        if ($jobTitleId != 0) {
                             $today = date('Y-m-d');
                             //
                             $companyId = getEmployeeUserParent_sid($employee['employee_sid']);

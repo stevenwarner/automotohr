@@ -112,17 +112,23 @@ $(function LMSEmployeeCourses() {
 			});
 	});
 	//
-	$(document).on('click', '.js-check-all', selectAllInputs);
-    $(document).on('click', '.js-tr', selectSingleInput);
+	$(document).on('click', '.jsCheckAll', selectAllInputs);
+    $(document).on('click', '.jsSelectSubordinate', selectSingleInput);
 
 	// Select all input: checkbox
 	function selectAllInputs() {
-		$('.js-tr').find('input[name="employees_ids[]"]').prop('checked', $(this).prop('checked'));
+		$(".jsSelectSubordinate")
+			.prop("checked", $(this).prop("checked"));
 	}
 
 	// Select single input: checkbox
 	function selectSingleInput() {
 		$(this).find('input[name="employees_ids[]"]').prop('checked', !$(this).find('input[name="employees_ids[]"]').prop('checked'));
+		$(".jsCheckAll")
+			.prop(
+				"checked",
+				$(".jsSelectSubordinate").length == $(".jsSelectSubordinate:checked").length
+			);
 	}
 
 	function get_all_selected_employees() {
@@ -169,22 +175,22 @@ $(function LMSEmployeeCourses() {
 				employeeList: senderList,
 			},
 		})
-			.success(function (response) {
-				// empty the call
-				XHR = null;
-				//
-				ml(false, "jsPageLoader");
-				//
-				return alertify.alert(
-					"SUCCESS!",
-					"You have successfully sent an email reminder to selected employees."
-				);
-			})
-			.fail(handleErrorResponse)
-			.done(function (response) {
-				// empty the call
-				XHR = null;
-			});
+		.success(function (response) {
+			// empty the call
+			XHR = null;
+			//
+			ml(false, "jsPageLoader");
+			//
+			return alertify.alert(
+				"SUCCESS!",
+				"You have successfully sent an email reminder to selected employees."
+			);
+		})
+		.fail(handleErrorResponse)
+		.done(function (response) {
+			// empty the call
+			XHR = null;
+		});
 	}
 
 

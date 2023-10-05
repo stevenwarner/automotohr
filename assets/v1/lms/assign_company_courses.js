@@ -25,7 +25,6 @@ $(function LMSStoreCourses() {
 		filterObj.jobTitleIds = $(".jsCourseJobTitleStoreCourse").select2(
 			"val"
 		);
-		console.log(filterObj)
 		//
 		getLMSStoreCourses();
 	});
@@ -181,7 +180,6 @@ $(function LMSStoreCourses() {
 	 * get LMS default courses
 	 */
 	function getLMSStoreCourses() {
-		console.log("get courses")
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();

@@ -148,7 +148,6 @@ $(function LMSCourses() {
 	 * get LMS default courses
 	 */
 	function getLMSDefaultCourses() {
-		console.log("the call is here")
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();

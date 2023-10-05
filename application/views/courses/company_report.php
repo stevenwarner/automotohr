@@ -254,7 +254,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <th>Employee Name</th>
-                                                                <th>Assign Course(s)</th>
+                                                                <th>Assigned Course(s)</th>
                                                                 <th>Pending Course(s)</th>
                                                                 <th>Completed Course(s)</th>
                                                                 <th>Completion Percentage</th>
@@ -269,7 +269,7 @@
                                                                     $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
                                                                     $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
                                                                     //
-                                                                    $assignText = $assignCourses > 1 ? $assignCourses." courses assign" : $assignCourses." course assign";
+                                                                    $assignText = $assignCourses > 1 ? $assignCourses." courses assigned" : $assignCourses." courses assigned";
                                                                     $pendingText = $pendingCourses > 1 ? $pendingCourses." courses pending" : $pendingCourses." course pending";
                                                                     $completedText = $completedCourses > 1 ? $completedCourses." courses completed" : $completedCourses." course completed";
                                                                     //
@@ -470,8 +470,8 @@
             name: 'Employee(s)',
             innerSize: '50%',
             data: [
-                ['Have Courses', <?php echo $percentageHaveCourses; ?>],
-                ['Not Have Courses', <?php echo $percentageNotHaveCourses; ?>]
+                ['Assigned Courses', <?php echo $percentageHaveCourses; ?>],
+                ['No Courses Assigned', <?php echo $percentageNotHaveCourses; ?>]
             ]
         }],
         colors: ['#4CBB17', '#fd7a2a']

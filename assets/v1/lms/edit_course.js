@@ -100,6 +100,10 @@ $(function editCourse() {
 			course_questions: questionsArray,
 		};
 		//
+		if ($(".jsEditIndefiniteCourse").is(":checked")) {
+			courseObj.course_end_period = null;
+		}
+		//
 		handleCourseUpdate(courseObj);
 	});
 
@@ -619,6 +623,10 @@ $(function editCourse() {
 		//
 		$("#jsEditCourseStartPeriod").val(co.course_start_period);
 		$("#jsEditCourseEndPeriod").val(co.course_end_period);
+		//
+		if (co.course_end_period == null) {
+			$('.jsEditIndefiniteCourse').prop('checked', true);
+		}
 		//
 		$("#jsEditCourseStartPeriod")
 			.datepicker({

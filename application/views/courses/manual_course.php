@@ -1,6 +1,7 @@
 <?php if ($load_view) { ?>
     <div class="main">
         <div class="container">
+        <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
             <div class="row">
                 <div class="col-lg-12">
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -19,7 +20,7 @@
                         <h1 class="section-ttile">
                             <?php echo $courseInfo["course_title"]; ?> 
                             <div style="float: right;">
-                                <button class="btn btn-info btn-orange csRadius5 jsSaveQuestionResult"><i class="fa fa-floppy-o"></i> Save</button>
+                                
                                 <?php if ($viewMode == "preview_only") { ?>
                                     <?php if ($reviewAs == "plus") { ?>
                                         <a href="<?php echo base_url('lms/employee/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
@@ -36,6 +37,10 @@
                     <div class="section-inner">
                         <div class="heading-sec">
                             <div id="jsPreviewCourse"></div> 
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right csRP">
+                                <button class="btn btn-info btn-orange csRadius5 jsSaveQuestionResult"><i class="fa fa-floppy-o"></i> Submit Answers</button>
+                            </div>
+                            <br>
                             <div id="jsPreviewCourseQuestion"></div> 
                         </div>
                     </div>
@@ -47,7 +52,7 @@
                     <div class="page-footer">
                         <h1 class="section-ttile">
                             <div style="float: right;">
-                                <button class="btn btn-info btn-orange csRadius5 jsSaveQuestionResult"><i class="fa fa-floppy-o"></i> Save</button>
+                                <button class="btn btn-info btn-orange csRadius5 jsSaveQuestionResult"><i class="fa fa-floppy-o"></i> Submit Answers</button>
                             </div>
                         </h1>
                     </div>
@@ -58,6 +63,12 @@
 <?php } else { ?>
     <?php echo $this->load->view('learning_center/my_courses_blue'); ?>
 <?php } ?>
+
+<style>
+    #jsPreviewCourseQuestion {
+        margin-top: 28px;
+    }
+</style>
 
 <script>
     var courseId = "<?php echo $course_sid; ?>";

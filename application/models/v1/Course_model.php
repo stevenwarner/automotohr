@@ -140,7 +140,19 @@ class Course_model extends CI_Model
             ->row_array();
         // when no job title is assigned
         if (!$jobTitleId) {
-            return 0;
+            $userJobTitle = $this->db
+                ->select('job_title')
+                ->from('users')
+                ->where('users.sid', $employeeId)
+                ->get()
+                ->row_array();
+            //    
+            if (!empty($userJobTitle['job_title'])) {
+                $jobTitleId = -1;
+            } else {  
+                return 0;
+            }
+            
         }
         //
         $jobTitleId = $jobTitleId['sid'];
@@ -154,6 +166,7 @@ class Course_model extends CI_Model
                 'inner'
             )
             ->where('lms_default_courses.company_sid', $companyId)
+            ->where('lms_default_courses.is_active', 1)
             ->group_start()
             ->where('lms_default_courses_job_titles.job_title_id', -1)
             ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
@@ -300,6 +313,7 @@ class Course_model extends CI_Model
             users.access_level_plus,
             users.is_executive_admin,
             users.pay_plan_flag,
+            users.job_title,
             portal_job_title_templates.sid as job_title_sid
         ')
             ->join(
@@ -311,6 +325,11 @@ class Course_model extends CI_Model
             ->where('users.active', 1)
             ->where('users.terminated_status', 0)
             ->order_by('users.first_name', 'ASC');
+        //
+        // $this->db->group_start();
+        // $this->db->where('users.job_title <> ', NULL);
+        // $this->db->where('users.job_title <> ', '');
+        // $this->db->group_end();
         //
         if (!$withExec) {
             $this->db->where('users.is_executive_admin', 0);

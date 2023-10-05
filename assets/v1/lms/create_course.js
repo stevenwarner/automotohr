@@ -60,6 +60,10 @@ $(function createCourse() {
 			course_questions: questionsArray,
 		};
 		//
+		if ($(".jsAddIndefiniteCourse").is(":checked")) {
+			courseObj.course_end_period = null;
+		}
+		//
 		handleCourseCreation(courseObj);
 	});
 
@@ -303,9 +307,6 @@ $(function createCourse() {
 		}
 		if (!courseObj.course_start_period) {
 			errorArray.push("Course start date is required.");
-		}
-		if (!courseObj.course_end_period) {
-			errorArray.push("Course end date is required.");
 		}
 		if (!courseObj.course_recurring_type.length) {
 			errorArray.push("Course recurring type is required.");

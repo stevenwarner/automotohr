@@ -105,6 +105,7 @@ $(function LMSEmployeeCourses() {
 	 * From question to main screen
 	 */
 	$(document).on("click", ".jsSaveQuestionResult", function (event) {
+		
 		// stop the default behavior
 		event.preventDefault();
 		var errorArray = [];
@@ -124,7 +125,7 @@ $(function LMSEmployeeCourses() {
 				answerObj[question.question_id] = value;
 				//
 				if (!value || value === undefined) {
-					if (question.is_required === "yes") {
+					if (question.question_required == true) {
 						errorArray.push(question.question_title);
 					}
 				}
@@ -139,7 +140,7 @@ $(function LMSEmployeeCourses() {
 				answerObj[question.question_id] = list;
 				//
 				if (list.length == 0) {
-					if (question.is_required === "yes") {
+					if (question.question_required == true) {
 						errorArray.push(question.question_title);
 					}
 				}
@@ -151,7 +152,7 @@ $(function LMSEmployeeCourses() {
 				answerObj[question.question_id] = text;
 				//
 				if (!text || text === undefined) {
-					if (question.is_required === "yes") {
+					if (question.question_required == true) {
 						errorArray.push(question.question_title);
 					}
 				}
@@ -248,21 +249,21 @@ $(function LMSEmployeeCourses() {
 				mode,
 			method: "GET",
 		})
-			.success(function (response) {
-				// empty the call
-				XHR = null;
-				// set the view
-				$("#jsPreviewCourseQuestion").html(response);
-				//
-				ml(false, "jsPageLoader");
-			})
-			.fail(handleErrorResponse)
-			.done(function () {
-				// empty the call
-				XHR = null;
-				// hide the loader
-				ml(false, "jsPageLoader");
-			});
+		.success(function (response) {
+			// empty the call
+			XHR = null;
+			// set the view
+			$("#jsPreviewCourseQuestion").html(response);
+			//
+			ml(false, "jsPageLoader");
+		})
+		.fail(handleErrorResponse)
+		.done(function () {
+			// empty the call
+			XHR = null;
+			// hide the loader
+			ml(false, "jsPageLoader");
+		});
 	}
 	//
 	/**
@@ -307,7 +308,7 @@ $(function LMSEmployeeCourses() {
 				} else if (response.status === "passed") {
 					return alertify.alert(
 						"SUCCESS!",
-						"Congratulations on successfully passing this course!",
+						"Congratulations! you have successfully passed this course!",
 						function () {
 							window.location = baseURI + "lms/courses/my";
 						}
@@ -324,8 +325,6 @@ $(function LMSEmployeeCourses() {
 				ml(false, "jsPageLoader");
 			});
 	}
-	//
-	
 	//
 	if (lessonStatus === "not_started") {
 		ml(false, "jsPageLoader");

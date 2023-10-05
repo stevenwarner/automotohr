@@ -605,6 +605,14 @@ class Dashboard extends Public_Controller
                 $this->course_model->getCompanyCoursesInfo(
                     $data['session']['company_detail']['sid']
                 );
+                //
+                $subordinateInfo = getMyDepartmentAndTeams($data['session']['employer_detail']['sid']);
+                //
+                $data['haveSubordinate'] = 'no';
+                //
+                if (!empty($subordinateInfo['employees'])) {
+                    $data['haveSubordinate'] = 'yes';
+                }
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
@@ -618,8 +626,8 @@ class Dashboard extends Public_Controller
         }
     }
 
-    public function employee_management_system()
-    {
+    public function employee_management_system() {
+    
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
@@ -1035,6 +1043,14 @@ class Dashboard extends Public_Controller
                         $data['session']['company_detail']['sid'],
                         $data['session']['employer_detail']['sid']
                     );
+                //
+                $subordinateInfo = getMyDepartmentAndTeams($data['session']['employer_detail']['sid']);
+                //
+                $data['haveSubordinate'] = 'no';
+                //
+                if (!empty($subordinateInfo['employees'])) {
+                    $data['haveSubordinate'] = 'yes';
+                }    
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;

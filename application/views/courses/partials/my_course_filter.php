@@ -30,6 +30,7 @@
                         <option value="all">All</option>
                         <option value="pending">Pending</option>
                         <option value="completed">Completed</option>
+                        <option value="due_soon">Due Soon</option>
                     </select>
                 </div>
             </div>

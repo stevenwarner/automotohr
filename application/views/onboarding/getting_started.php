@@ -931,7 +931,27 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                         <?php } ?>
 
                         <?php if ($isLMSModuleEnabled) : ?>
-                            <!-- LMS - Trainings -->
+                            <!-- LMS - Team Courses -->
+                            <?php if ($haveSubordinate == "yes") { ?>
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="widget-box">
+                                        <a href="<?php echo base_url('lms/courses/my'); ?>">
+                                            <div class="link-box bg-redish full-width">
+                                                <h2>Team Courses</h2>
+                                                <div><span>&nbsp;</span></div>
+                                                <div class="current-date">
+                                                    <!-- <span><?= $pendingTrainings?? 0; ?><sub>Pending</sub></span> -->
+                                                </div>
+                                                <div class="status-panel">
+                                                    <!-- <h3>Courses</h3> -->
+                                                    <span>Manage Team Courses</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php } ?>    
+                            <!-- LMS - Courses -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('lms/courses/my'); ?>">

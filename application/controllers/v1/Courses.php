@@ -45,7 +45,7 @@ class Courses extends Public_Controller
             $haveSubordinate = 'no';
         }
         //
-        $data['title'] = "My Trainings | " . STORE_NAME;
+        $data['title'] = "My Course(s) | " . STORE_NAME;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = 0;
         $data['page'] = "my_courses";
@@ -198,6 +198,8 @@ class Courses extends Public_Controller
         $data['employeeName'] = getUserNameBySID($studentId);
         $data['company_info'] = $session['company_detail'];
         $data['companyName'] = getCompanyNameBySid($companyId);
+        $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
+        $data['AHRStudentID'] = 'AHR-'.$studentId;
         $data['load_view'] = 1;
         $data['courseInfo'] = $this->course_model->getCourseInfo($courseId);
         $EmployeeCourseProgress = $this->course_model->getEmployeeCourseProgressInfo($courseId, $studentId, $companyId);
@@ -373,7 +375,6 @@ class Courses extends Public_Controller
             echo json_encode($selectedEmployeesList); exit(0);
         }
         //
-        //
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
@@ -384,10 +385,6 @@ class Courses extends Public_Controller
         $data['title'] = "Employee(s) Report";
         $data['filters'] = $filters;
         // load CSS
-        //
-        // $data['page_css'] = bundleCSS([
-        //     '2022/css/main'
-        // ]);
         //
         $data['Page_CSS'] = [
             '2022/css/main'
@@ -672,9 +669,9 @@ class Courses extends Public_Controller
                 //
                 $companyDepartments = $this->course_model->getCompanyActiveDepartment($data['company_sid'], $fetchDepartment);
                 $jobTitleIds = array_filter(array_column($companyEmployeesList, "job_title_sid"));
-                $jobRoleCourses = $this->course_model->fetchCourses($jobTitleIds, $data['company_sid']);
+                $jobTitleIds[] = -1;
                 //
-                
+                $jobRoleCourses = $this->course_model->fetchCourses($jobTitleIds, $data['company_sid']);
                 //
                 foreach ($companyDepartments as $department) {
                     $departments[$department['sid']] = $department;
@@ -699,7 +696,6 @@ class Courses extends Public_Controller
                 //
                 $companyReport["total_employees"] = count($companyEmployeesList);
                 //
-                
                 foreach ($companyEmployeesList as $ekey => $employee) {
                     
                     if ($fetchEmployees == "all" || in_array($employee['sid'], explode("," ,$fetchEmployees))) {
@@ -720,13 +716,15 @@ class Courses extends Public_Controller
                         //
                         $employeesList[$employee['sid']]["full_name"]  = $employeeName;
                         //
-                        if (!empty($employee['job_title_sid'])) {
+                        if (!empty($employee['job_title'])) {
                             $employeesList[$employee['sid']]["courses_sid"]  = $jobRoleCourses[$employee['job_title_sid']];
+                            //
+                            $job_title_sid = !empty($employee['job_title_sid']) ? $employee['job_title_sid'] : -1;
                             //
                             $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeCoursesReport(
                                 $data['company_sid'], 
                                 $employee['sid'],
-                                $jobRoleCourses[$employee['job_title_sid']]
+                                $jobRoleCourses[$job_title_sid ]
                             );
                             //
                             $companyReport["employee_have_courses"]++;
@@ -889,10 +887,10 @@ class Courses extends Public_Controller
             // load JS
             $data['PageScripts'] = [
                 'js/app_helper',
-                'v1/plugins/ms_uploader/main',
-                'v1/plugins/ms_modal/main',
-                'v1/plugins/ms_recorder/main',
-                'v1/common',
+                // 'v1/plugins/ms_uploader/main',
+                // 'v1/plugins/ms_modal/main',
+                // 'v1/plugins/ms_recorder/main',
+                // 'v1/common',
                 'v1/lms/company_courses'
             ];
             $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
@@ -912,6 +910,7 @@ class Courses extends Public_Controller
     }
 
     public function emailReminder ($type) {
+
         //
         $res = [
             'Status' => false,
@@ -928,9 +927,22 @@ class Courses extends Public_Controller
         //
         $post = $this->input->post(NULL, TRUE);
         //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyName = $session['company_detail']['CompanyName'];
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        //
         foreach ($post['employeeList'] as $employee) {
             $employeeInfo = db_get_employee_profile($employee['employee_sid'])[0];
-            $companyName = getCompanyName($employee['employee_sid'], 'employee');
+            $assignCourses = $subordinateInfo['employees'][$employee['employee_sid']]['assign_courses'];
+            //
+            $coursesStatistics = $this->course_model->checkEmployeeCoursesReport(
+                $companyId, 
+                $employee['employee_sid'],
+                $assignCourses
+            );
             //
             $replaceArray = [];
             $replaceArray['username'] = $employee['employee_name'];
@@ -938,16 +950,21 @@ class Courses extends Public_Controller
             $replaceArray['last_name'] = ucwords($employeeInfo['last_name']);
             $replaceArray['baseurl'] = base_url();
             $replaceArray['company_name'] = $companyName;
+            $replaceArray['assigned_count'] = $coursesStatistics['courseCount'];
+            $replaceArray['completed_count'] = $coursesStatistics['completedCount'];
+            $replaceArray['pending_count'] = $coursesStatistics['pendingCount'];
+            $replaceArray['percentage'] = $coursesStatistics['percentage'];
+            $replaceArray['my_courses_link'] = '<a href="'. base_url("lms/courses/my").'" target="_blank" style="padding: 8px 12px; border: 1px solid #4CBB17;background-color:#4CBB17;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">My Courses</a>';
             //
             if ($type == 'single') {
-                $replaceArray['employee_note'] = '<strong>Employer Note</strong></br>'.$post['note'];
+                $replaceArray['employee_note'] = '<strong>Employer Note:</strong></br>'.$post['note'];
             }
             //
             log_and_send_templated_email(
                 COURSES_REMINDER_NOTIFICATION,
                 $employeeInfo['email'],
                 $replaceArray,
-                message_header_footer(getEmployeeUserParent_sid($employee['employee_sid']), $companyName)
+                message_header_footer($companyId, $companyName)
             );
         }
         //
