@@ -4567,8 +4567,9 @@ class Timeoff_model extends CI_Model
         } else if ($type == 'week') {
             if ($startDate != '' && $startDate != 'all') $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
         } else {
-            if ($startDate != '' && $startDate != 'all') $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
-            if ($endDate != '' && $endDate != 'all') $this->db->where('timeoff_requests.request_to_date <= "' . ($endDate) . '"', null);
+           // if ($startDate != '' && $startDate != 'all') $this->db->where('timeoff_requests.request_from_date >= "' . ($startDate) . '"', null);
+           // if ($endDate != '' && $endDate != 'all') $this->db->where('timeoff_requests.request_to_date <= "' . ($endDate) . '"', null);
+           if ($endDate != '' && $endDate != 'all') $this->db->where('timeoff_requests.request_from_date <= "' . ($endDate) . '"', null);
         }
 
         $this->db->group_start();
