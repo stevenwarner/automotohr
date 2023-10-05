@@ -227,7 +227,7 @@ $sideBarUrls = [
                         </li>
 
                         <!-- Off cycle -->
-                        <li>
+                        <li class="hidden">
                             <a <?php if (preg_match('/payrolls\/off-cycle/im', uri_string())) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo base_url('payrolls/off-cycle'); ?>">
