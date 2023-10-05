@@ -172,9 +172,103 @@
                                 <?php } ?>
                             <?php } ?>
                         </div>
+                        <div class="panel-footer">
+                            <h1 class="csF16">
+                                <strong>
+                                    Other payroll options
+                                </strong>
+                            </h1>
+                            <hr />
+                            <div class="row">
+
+                                <div class="col-sm-4 col-xs-12 ">
+                                    <div class="panel">
+                                        <a href="<?= base_url('payrolls/bonus'); ?>">
+                                            <div class="panel-body csBox">
+                                                <h1 class="csF16">
+                                                    <strong>
+                                                        Bonus Payroll
+                                                    </strong>
+                                                </h1>
+                                                <p class="csF16">
+                                                    Reward a team member with a bonus, gift, or commission.
+                                                </p>
+                                                <br>
+                                                <button class="btn btn-link csF16">
+                                                    <i class="fa fa-long-arrow-right csF16" aria-hidden="true"></i>
+                                                    &nbsp;Run Bonus Payroll
+                                                </button>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4 col-xs-12 ">
+                                    <div class="panel">
+                                        <a href="<?= base_url('payrolls/off-cycle'); ?>">
+                                            <div class="panel-body csBox">
+                                                <h1 class="csF16">
+                                                    <strong>
+                                                        Off-Cycle Payroll
+                                                    </strong>
+                                                </h1>
+                                                <p class="csF16">
+                                                    Run a payroll outside of your regular pay schedule.
+                                                </p>
+                                                <br>
+                                                <br>
+                                                <button class="btn btn-link csF16">
+                                                    <i class="fa fa-long-arrow-right csF16" aria-hidden="true"></i>
+                                                    &nbsp;Run Off-Cycle Payroll
+                                                </button>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4 col-xs-12 ">
+                                    <div class="panel">
+                                        <a href="<?= base_url('payrolls/corrections'); ?>">
+                                            <div class="panel-body csBox">
+                                                <h1 class="csF16">
+                                                    <strong>
+                                                        Payroll Corrections
+                                                    </strong>
+                                                </h1>
+                                                <p class="csF16">
+                                                    Adjust or cancel a recent payroll.
+                                                </p>
+                                                <br>
+                                                <br>
+                                                <button class="btn btn-link csF16">
+                                                    <i class="fa fa-long-arrow-right csF16" aria-hidden="true"></i>
+                                                    &nbsp;Adjust or cancel payroll
+                                                </button>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<style>
+    .csBox {
+        color: #000;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        min-height: 220px;
+    }
+
+    .csBox:hover {
+        border: 2px solid rgba(253, 122, 42, .5);
+        background-color: rgba(253, 122, 42, .5);
+    }
+</style>

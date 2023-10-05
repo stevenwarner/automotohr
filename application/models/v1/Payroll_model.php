@@ -5206,4 +5206,23 @@ class Payroll_model extends CI_Model
             ->get('companies_bank_accounts')
             ->row_array();
     }
+
+    /**
+     * get filtered payroll employees
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getFilteredPayrollEmployees(int $companyId): array
+    {
+        $employees = $this->getPayrollEmployees($companyId);
+        //
+        if ($employees) {
+            $employees = array_filter($employees, function ($employee) {
+                return $employee['is_onboard'];
+            });
+        }
+        //
+        return $employees;
+    }
 }

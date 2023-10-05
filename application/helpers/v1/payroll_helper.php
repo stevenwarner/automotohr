@@ -423,7 +423,6 @@ if (!function_exists('getUrl')) {
         $urls['deleteEmployeeBenefit'] =
             "v1/employee_benefits/$key1";
 
-
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
 }
@@ -943,5 +942,26 @@ if (!function_exists('getPaymentUnitType')) {
 
 
         return $flsaStatus;
+    }
+}
+
+
+if (!function_exists('getReason')) {
+    /**
+     * get reason for Gusto
+     *
+     * @param string $reason
+     * @return string
+     */
+    function getReason(string $reason): string
+    {
+        // get reason
+        $reasonsArray = [];
+        $reasonsArray['bonus'] = 'Bonus';
+        $reasonsArray['corrections'] = 'Correction';
+        $reasonsArray['dismissed-employee'] = 'Dismissed employee';
+        $reasonsArray['transition'] = 'Transition from old pay schedule';
+        //
+        return $reasonsArray[$reason] ?? '';
     }
 }

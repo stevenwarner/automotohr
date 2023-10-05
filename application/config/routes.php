@@ -1925,6 +1925,14 @@ $route['forms/w4/(:any)/(:num)/revoke']['delete'] = 'v1/Documents_management/rev
 
 $route['payrolls/employees/(:num)/get']['get'] = 'v1/Payroll/getSingleEmployee/$1';
 
+/**
+ * Off-cycle payroll
+ */
+$route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle/index/off_cycle';
+$route['payrolls/bonus']['get'] = 'v1/payrolls/Off_cycle/index/bonus';
+$route['payrolls/corrections']['get'] = 'v1/payrolls/Off_cycle/index/corrections';
+// save employees
+$route['payrolls/off-cycle/employees']['post'] = 'v1/payrolls/Off_cycle/saveEmployees';
 
 /**
  * Super admin payroll

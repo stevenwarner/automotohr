@@ -105,6 +105,9 @@ $sideBarUrls = [
         'payrolls/regular/add',
         'payrolls/regular/(:num)',
     ],
+    'regular_payrolls' => [
+        'payrolls/off-cycle',
+    ],
     'payrolls_history' => [
         'payrolls/history',
         'payrolls/history/(:num)',
@@ -224,13 +227,13 @@ $sideBarUrls = [
                         </li>
 
                         <!-- Off cycle -->
-                        <!-- <li>
-                            <a <?php if (in_array(uri_string(), $sideBarUrls['offcycle_payrolls'])) {
+                        <li>
+                            <a <?php if (preg_match('/payrolls\/off-cycle/im', uri_string())) {
                                     echo 'class="active"';
-                                } ?> href="<?php echo base_url('payrolls/offcycle'); ?>">
+                                } ?> href="<?php echo base_url('payrolls/off-cycle'); ?>">
                                 <figure><i class="fa fa-calculator"></i></figure>Off-Cycle Payroll
                             </a>
-                        </li> -->
+                        </li>
 
                         <!-- Payroll history -->
                         <li>
