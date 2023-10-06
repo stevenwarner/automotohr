@@ -1000,7 +1000,7 @@
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">
                                                         <figure>
-                                                            <i class="fa fa-file" aria-hidden="true"></i>
+                                                            <i class="fa fa-file <?= $coursesInfo['expire_soon'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
                                                         </figure>
                                                         <h2 class="post-title" style="margin: 2px 0;">
                                                             <a href="<?= base_url('lms/courses/company_courses'); ?>">
@@ -1033,9 +1033,7 @@
                                                             </a>
                                                         </h2>
                                                         <div class="count-box" style="font-size: 12px">
-                                                            <!-- <span class="red">Due soon <?= $coursesInfo['expire_soon']; ?> course(s)</span><br> -->
-                                                            <!-- <small style="font-size: 12px">Upcoming <?= $coursesInfo['upcoming']; ?> course(s)</small><br> -->
-                                                            <!-- <small style="font-size: 12px">Expired <?= $coursesInfo['expired']; ?> course(s)</small><br> -->
+                                                            <small style="font-size: 12px"><?= $subordinateCount; ?> Employees</small>
                                                         </div>
                                                         <div class="button-panel">
                                                             <a href="<?= base_url('lms/courses/report'); ?>" class="site-btn">Manage</a>

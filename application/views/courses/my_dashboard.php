@@ -103,6 +103,12 @@
             <!--  -->
             <div class="row">
                 <div class="col-xs-12 col-md-12 text-right">
+                        <?php if ($viewMode == 'subordinate') { ?>
+                            <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
+                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                Send Reminder Email                                        
+                            </button>
+                        <?php } ?>
                     <button class="btn btn-black csRadius5 jsFilterSectionBtn csF16" data-key="jsPageLoader">
                         <i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Filter
                     </button>
@@ -128,16 +134,7 @@
                                     The course has not been completed and has now expired.
                                 </div>
                             </div>
-                        </div>
-                        <?php if ($viewMode == 'subordinate') { ?>
-                            <div class="col-xs-3 text-right">
-                                <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
-                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                    Send Reminder Email                                        
-                                </button>
-                            </div>
-                        <?php } ?>
-                            
+                        </div>     
                     </div>
                     <div id="jsMyAssignedCourses">
                         

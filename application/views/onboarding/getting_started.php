@@ -940,7 +940,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                 <h2>Team Courses</h2>
                                                 <div><span>&nbsp;</span></div>
                                                 <div class="current-date">
-                                                    <!-- <span><?= $pendingTrainings?? 0; ?><sub>Pending</sub></span> -->
+                                                    <span><?= $subordinateCount?? 0; ?><sub>Employees</sub></span>
                                                 </div>
                                                 <div class="status-panel">
                                                     <!-- <h3>Courses</h3> -->

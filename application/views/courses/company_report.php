@@ -270,8 +270,8 @@
                                                                     $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
                                                                     //
                                                                     $assignText = $assignCourses > 1 ? $assignCourses." courses assigned" : $assignCourses." courses assigned";
-                                                                    $pendingText = $pendingCourses > 1 ? $pendingCourses." courses pending" : $pendingCourses." course pending";
-                                                                    $completedText = $completedCourses > 1 ? $completedCourses." courses completed" : $completedCourses." course completed";
+                                                                    $pendingText = $pendingCourses > 1 ? $pendingCourses." courses pending" : $pendingCourses." courses pending";
+                                                                    $completedText = $completedCourses > 1 ? $completedCourses." courses completed" : $completedCourses." courses completed";
                                                                     //
                                                                     $rowColor = "bg-danger";
                                                                     if ($completedCoursesPercentage >= "50") {

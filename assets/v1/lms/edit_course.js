@@ -209,6 +209,18 @@ $(function editCourse() {
 	});
 
 	/**
+	 * Indefinite Course
+	 */
+	$(document).on("click", ".jsEditIndefiniteCourse", function (event) {
+		if ($('.jsEditIndefiniteCourse').is(':checked')) {
+			$("#jsEditCourseEndPeriod").val("");
+			$(".jsRecurringCourses").hide();
+		} else {
+			$(".jsRecurringCourses").show();
+		}
+	});
+
+	/**
 	 * Create a course
 	 *
 	 * @param {int} companyId
@@ -626,6 +638,7 @@ $(function editCourse() {
 		//
 		if (co.course_end_period == null) {
 			$('.jsEditIndefiniteCourse').prop('checked', true);
+			$(".jsRecurringCourses").hide();
 		}
 		//
 		$("#jsEditCourseStartPeriod")
@@ -654,6 +667,9 @@ $(function editCourse() {
 						"maxDate",
 						value
 					);
+					//
+					$('.jsEditIndefiniteCourse').prop('checked', false);
+					$(".jsRecurringCourses").show();
 				},
 			})
 			.datepicker(

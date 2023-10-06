@@ -255,9 +255,15 @@ $(function LMSEmployeeCourses() {
 								coursesHTML += `        </div>`;
 								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
 								coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
-								coursesHTML += `            <p>${moment(
-									course.course_end_period
-								).format(timeOffDateFormatWithTime)}</p>`;
+
+								if (course.course_end_period === null) {
+									coursesHTML += `N/A`;
+								} else {
+									coursesHTML += `            <p>${moment(
+										course.course_end_period
+									).format(timeOffDateFormatWithTime)}</p>`;
+								}
+								
 								coursesHTML += `        </div>`;
 								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
 								coursesHTML += `            <p class="csColumSection"><strong>STATUS</strong></p>`;

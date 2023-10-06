@@ -585,9 +585,38 @@ class Dashboard extends Public_Controller
             $data['incident_count'] = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
 
             // LMS - Trainings
+            // if ($isLMSModuleEnabled = checkIfAppIsEnabled(MODULE_LMS)) {
+            //     // load model
+            //     $this->load->model('v1/course_model');
+            //     // get pending course count
+            //     $data['pendingTrainings'] =
+            //         $this->course_model->getEmployeePendingCourseCount(
+            //             $data['session']['company_detail']['sid'],
+            //             $data['session']['employer_detail']['sid']
+            //         );
+            //     //
+            //     $data['coursesInfo'] =
+            //     $this->course_model->getCompanyCoursesInfo(
+            //         $data['session']['company_detail']['sid']
+            //     );
+            //     //
+            //     $subordinateInfo = getMyDepartmentAndTeams($data['session']['employer_detail']['sid']);
+            //     //
+            //     $data['haveSubordinate'] = 'no';
+            //     //
+            //     if (!empty($subordinateInfo['employees'])) {
+            //         $data['haveSubordinate'] = 'yes';
+            //     }
+
+            // }
             if ($isLMSModuleEnabled = checkIfAppIsEnabled(MODULE_LMS)) {
                 // load model
                 $this->load->model('v1/course_model');
+                //
+                $data['coursesInfo'] =
+                $this->course_model->getCompanyCoursesInfo(
+                    $data['session']['company_detail']['sid']
+                );
                 // get pending course count
                 $data['pendingTrainings'] =
                     $this->course_model->getEmployeePendingCourseCount(
@@ -595,19 +624,15 @@ class Dashboard extends Public_Controller
                         $data['session']['employer_detail']['sid']
                     );
                 //
-                $data['coursesInfo'] =
-                $this->course_model->getCompanyCoursesInfo(
-                    $data['session']['company_detail']['sid']
-                );
-                //
                 $subordinateInfo = getMyDepartmentAndTeams($data['session']['employer_detail']['sid']);
                 //
                 $data['haveSubordinate'] = 'no';
+                $data['subordinateCount'] = 0;
                 //
                 if (!empty($subordinateInfo['employees'])) {
                     $data['haveSubordinate'] = 'yes';
-                }
-
+                    $data['subordinateCount'] = count($subordinateInfo['employees']);
+                }    
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
@@ -1068,11 +1093,14 @@ class Dashboard extends Public_Controller
                 //
                 $subordinateInfo = getMyDepartmentAndTeams($data['session']['employer_detail']['sid']);
                 //
+                //
                 $data['haveSubordinate'] = 'no';
+                $data['subordinateCount'] = 0;
                 //
                 if (!empty($subordinateInfo['employees'])) {
                     $data['haveSubordinate'] = 'yes';
-                }    
+                    $data['subordinateCount'] = count($subordinateInfo['employees']);
+                }   
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;

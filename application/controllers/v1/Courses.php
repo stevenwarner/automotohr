@@ -699,7 +699,6 @@ class Courses extends Public_Controller
                 foreach ($companyEmployeesList as $ekey => $employee) {
                     
                     if ($fetchEmployees == "all" || in_array($employee['sid'], explode("," ,$fetchEmployees))) {
-                        // _e($employee['sid'],true);
                         
                         $employeesList[$employee['sid']]["sid"]  = $employee['sid'];
                         //
@@ -887,10 +886,10 @@ class Courses extends Public_Controller
             // load JS
             $data['PageScripts'] = [
                 'js/app_helper',
-                // 'v1/plugins/ms_uploader/main',
-                // 'v1/plugins/ms_modal/main',
-                // 'v1/plugins/ms_recorder/main',
-                // 'v1/common',
+                'v1/plugins/ms_uploader/main',
+                'v1/plugins/ms_modal/main',
+                'v1/plugins/ms_recorder/main',
+                'v1/common',
                 'v1/lms/company_courses'
             ];
             $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
