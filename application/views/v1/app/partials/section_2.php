@@ -28,7 +28,7 @@
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section3']['btnText']?></p>
+                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section3']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section3']['btnText']?></a></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>
@@ -79,7 +79,7 @@
                 </p>
 
                 <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                    <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section3']['btnText']?></p>
+                    <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section4']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section3']['btnText']?></a></p>
 
                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                 </button>
@@ -106,7 +106,7 @@
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section4']['btnText']?></p>
+                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section4']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section4']['btnText']?></a></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>
@@ -151,7 +151,7 @@
             </p>
 
                 <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                    <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section5']['btnText']?></p>
+                    <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section5']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section5']['btnText']?></a></p>
 
                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                 </button>
@@ -179,7 +179,7 @@
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section6']['btnText']?></p>
+                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section6']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section6']['btnText']?></a></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>
@@ -231,7 +231,7 @@
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section7']['btnText']?></p>
+                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section7']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section7']['btnText']?></a></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>

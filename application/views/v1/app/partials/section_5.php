@@ -12,24 +12,28 @@
 
                 </p>
                 <p class="darkgrey title"><?php echo $homeContent['page']['sections']['section16']['heading2']?></p>
+                <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
+
             </div>
             <form method="post" action="<?= base_url('schedule_your_free_demo'); ?>" class="form" id="schedule-free-demo-form">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="name" placeholder="Name*" name="name" required />
+                <input type="hidden" class="form-control" id="pagename" name="pagename" value="home"  />
+
+                    <input type="text" class="form-control" id="name" placeholder="Name*" name="name"  />
                     <?php echo form_error('name'); ?>
                 </div>
                 <div class="form-group mt-4">
-                    <input type="email" class="form-control" id="email_id" placeholder="Email*" name="email" required />
+                    <input type="email" class="form-control" id="email_id" placeholder="Email*" name="email"  />
                     <?php echo form_error('email'); ?>
                 </div>
                 <div class="form-group mt-4">
-                    <input type="text" class="form-control" id="phone_number" placeholder="Phone Number*" name="phone_number" required />
+                    <input type="text" class="form-control" id="phone_number" placeholder="Phone Number*" name="phone_number"  />
                     <?php echo form_error('phone_number'); ?>
                 </div>
                 <div class="row mt-4">
                     <div class="col-sm-6 col-12">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="title*" name="job_roles" required />
+                            <input type="text" class="form-control" placeholder="title*" name="job_roles"  />
                             <?php echo form_error('title'); ?>
 
                         </div>
@@ -48,7 +52,7 @@
                     </div>
                 </div>
                 <div class="form-group mt-4">
-                    <input type="text" class="form-control" placeholder="Company Name*" name="company_name" required />
+                    <input type="text" class="form-control" placeholder="Company Name*" name="company_name"  />
                     <?php echo form_error('company_name'); ?>
 
                 </div>
@@ -77,6 +81,10 @@
     <div class="width_100 auto-schedule-btn-height"></div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+
 
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <script type="text/javascript">
@@ -95,7 +103,14 @@
                 },
                 company_name:{
                     required: true,
+                } ,
+                company_size:{
+                    required: true,
+                } ,
+                job_roles:{
+                    required: true,
                 }
+                
             },
             messages: {
                 name: {
@@ -109,13 +124,20 @@
                 },
                 company_name: {
                     required: 'Please provide company name.',
+                },
+                company_size: {
+                    required: 'Please provide employee count.',
+                },
+                job_roles: {
+                    required: 'Please provide employee count.',
                 }
+                
             },
             submitHandler: function (form) {
                 //
-                                
+                
                 if($('#g-recaptcha-response').val() == ''){
-                    alertify.alert('Captcha is required.');
+                    alert('Captcha is required.');
                     return;
                 }
 

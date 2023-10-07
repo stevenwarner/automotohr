@@ -94,9 +94,10 @@
                 </div>
             </div>
             <div class="row get-started">
+
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 btn-mob-center text-align-center-ontablet">
                     <button class="button explore_btn bg-white mt-4 solution-btn d-inline-flex ms-2 auto-right-top-button">
-                        <p class="mb-0 btn-text">Explore Our Solutions</p>
+                        <p class="mb-0 btn-text"> <a href="<?= base_url($homeContent['page']['sections']['section1']['btnSlug']) ?>"> <?php echo $homeContent['page']['sections']['section1']['btnText'] ?></a></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>

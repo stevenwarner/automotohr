@@ -95,6 +95,8 @@ class Affiliates extends CI_Controller
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
             'v1/app/plugins/fontawesome/css/all',
             'v1/app/css/affiliate_program',
+            'v1/app/alertifyjs/css/alertify.min'
+
         ];
         //
         $data['appCSS'] = bundleCSS([
@@ -121,7 +123,6 @@ class Affiliates extends CI_Controller
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/' .  $page);
         $this->load->view($this->footer);
-     
     }
 
     public function affiliationform()
@@ -210,34 +211,33 @@ class Affiliates extends CI_Controller
 
 
         if ($this->form_validation->run() == FALSE) {
-        
+
             redirect('affiliate-program', 'refresh');
         } else {
             $formpost = $this->input->post(NULL, TRUE);
-
             //
-            
-            if(!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])){
+
+            if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
                 redirect('affiliate-program', 'refresh');
-
             }
+
             //
-         
+
             $gr = verifyCaptcha($formpost['g-recaptcha-response']);
             //
-            if(!$gr['success']){
+            if (!$gr['success']) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
                 redirect('affiliate-program', 'refresh');
-
             }
+
+
             //
-            if(!filter_var($formpost['email'], FILTER_VALIDATE_EMAIL)){
+            if (!filter_var($formpost['email'], FILTER_VALIDATE_EMAIL)) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Affiliate Request Have Already Been Sent!');
                 redirect('affiliate-program', 'refresh');
-
             }
-            
+
             //
             $insert_data = array();
             $already_applied = $this->affiliation_model->check_register_affiliater($formpost['email']);
@@ -299,7 +299,7 @@ class Affiliates extends CI_Controller
                 . '<br><b>Country: </b>' . $insert_data['country']
                 . '<br>Login To Your Admin Panel For More Details'
                 . EMAIL_FOOTER;
-           
+
             //sendMail($from, $to, $subject, $body, $fromName, $replyTo);
             //Send Emails Through System Notifications Email - Start
             $system_notification_emails = get_system_notification_emails('free_demo_enquiry_emails');
@@ -312,7 +312,6 @@ class Affiliates extends CI_Controller
 
             $this->session->set_flashdata('message', '<strong>Success: </strong>Affiliate Request Submitted Successfully!');
             redirect('affiliate-program', 'refresh');
-            // redirect('can-we-send-you-a-check-every-month', 'refresh');
 
         }
     }

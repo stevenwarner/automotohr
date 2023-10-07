@@ -752,4 +752,46 @@ class Users extends CI_Controller
             redirect(base_url('login'), "refresh");
         }
     }
+
+
+    public function why_us()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+        }
+
+        $data['title'] = "Why Us";
+
+        $whyUsContent = getPageContent('why_us');
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $whyUsContent['page']['meta']['title'];
+        $data['meta']['description'] = $whyUsContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $whyUsContent['page']['meta']['keywords'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/why_us',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+        $data['whyUsContent'] = $whyUsContent;
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/why_us');
+        $this->load->view($this->footer);
+    }
 }

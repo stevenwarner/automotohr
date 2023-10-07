@@ -1932,6 +1932,6 @@ $route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_li
 
 //
 $route['products/(:any)'] = "home/products/$1";
-
+$route['why-us'] = 'users/why_us';
 
 

@@ -39,7 +39,7 @@
                                 <?php echo $affiliateContent['page']['sections']['section2']['headingDetail'] ?>
                             </p>
                             <button class="Affiliate-btn">
-                                <p class="text"><?php echo $affiliateContent['page']['sections']['section2']['btnText'] ?></p>
+                                <p class="text"><a style="color: #fff;" href="<?= base_url($affiliateContent['page']['sections']['section2']['btnSlug']) ?>"><?php echo $affiliateContent['page']['sections']['section2']['btnText'] ?></a></p>
                                 <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                             </button>
                             <div class="Blue_bubble"></div>
@@ -134,6 +134,8 @@
                                     Please Upload W9 Form ( For Our U.S Affiliates )
                                 </p>
 
+                                <span id="erabc"></span>
+
                                 <div class="file-btn-div">
                                     <input type="file" id="file-input" class="upload-file-input" name="w9_form" />
                                     <label for="file-input" id="first-upload-btn" class="custom-file-upload">
@@ -169,6 +171,10 @@
                                 <p class="text-white margin-left-15 margin-top-30 extra-text">
                                     Security check
                                 </p>
+                                <div class="form-group mt-4">
+                                    <div class="g-recaptcha" data-sitekey="6Les2Q0TAAAAAAyeysl-dZsPUm98_6K2fNkyNCwI"></div>
+                                    <?php echo form_error('g-recaptcha-response'); ?>
+                                </div>
 
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 margin-bottom-30">
@@ -575,16 +581,16 @@
 
                                         <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
                                         <input type="hidden" class="d-block " id="pagename" placeholder="Name*" name="pagename" value="<?php echo $pageSlug; ?>" />
-                                        <input class="d-block" placeholder="Name*" id="name" placeholder="Name*" name="name" />
+                                        <input class="d-block" placeholder="Name*" id="name1" placeholder="Name*" name="name" />
                                         <?php echo form_error('name'); ?>
-                                        <input class="d-block" placeholder="Email*" id="email_id" placeholder="Email*" name="email" />
+                                        <input class="d-block" placeholder="Email*" id="email_id1" placeholder="Email*" name="email" />
                                         <?php echo form_error('email'); ?>
 
-                                        <input class="d-block" placeholder="Phone Number*" id="phone_number" name="phone_number" />
+                                        <input class="d-block" placeholder="Phone Number*" id="phone_number1" name="phone_number" />
                                         <input class="title-field" placeholder="Title*" name="title" />
                                         <?php echo form_error('title'); ?>
 
-                                        <select class="form-select select-form-field" aria-label="Default select example" name="company_size">
+                                        <select class="form-select select-form-field" aria-label="Default select example" name="company_size" id="company_size1">
                                             <option selected>Employee Count*</option>
                                             <option value="1-5">1 - 5</option>
                                             <option value="6-25">6 - 25</option>
@@ -594,8 +600,8 @@
                                             <option value="251-500">251 - 500</option>
                                             <option value="501+">501+</option>
                                         </select>
-                                        <input class="d-block" placeholder="Company Name*" name="company_name" />
-                                        <textarea placeholder="Your Message" class="form-control border-radius-25 dark-grey-color" id="exampleFormControlTextarea1" rows="4" name="client_message"></textarea>
+                                        <input class="d-block" placeholder="Company Name*" name="company_name" id="company_name1" />
+                                        <textarea placeholder="Your Message" class="form-control border-radius-25 dark-grey-color" id="exampleFormControlTextarea1" rows="4" name="client_message" id="client_message1"></textarea>
                                         <div class="form-group mt-4">
                                             <div class="g-recaptcha" data-sitekey="6Les2Q0TAAAAAAyeysl-dZsPUm98_6K2fNkyNCwI"></div>
                                             <?php echo form_error('g-recaptcha-response'); ?>
@@ -609,7 +615,7 @@
                                     </div>
                                     <img src="./assets/v1/app/images/yellow-half.png" class="second-light-blue-half-circle-form" alt="half-purple-circle" />
                                 </div>
-                             </div>
+                        </div>
                         </form>
                     </div>
                 </div>
@@ -701,6 +707,13 @@
                 }
             },
             submitHandler: function(form) {
+                //
+
+                if ($('#g-recaptcha-response').val() == '') {
+                    alertify.alert('Captcha is required.');
+                    return;
+                }
+
                 form.submit();
             }
         });
@@ -748,26 +761,28 @@
             submitHandler: function(form) {
                 //
 
+                /*
                 if ($('#g-recaptcha-response').val() == '') {
                     alert('Captcha is required.');
                     return;
                 }
+*/
 
                 var myurl = "<?= base_url() ?>demo/check_already_applied";
                 $.ajax({
                     type: "POST",
                     url: myurl,
                     data: {
-                        email: $('#email_id').val()
+                        email: $('#email_id1').val()
                     },
                     dataType: "json",
                     success: function(data) {
                         var obj = jQuery.parseJSON(data);
                         if (obj == 0) {
-                            form.submit();
+                            schedule_your_free_demo_ajax_form(1);
                         } else {
                             $("#schedule-free-demo-form-submit").attr("disabled", true);
-                            form.submit();
+                            schedule_your_free_demo_ajax_form(1);
                         }
                     },
                     error: function(data) {
@@ -779,4 +794,107 @@
         });
 
     });
+
+
+
+    function schedule_your_free_demo_ajax_form(formId) {
+        var myformurl = "<?= base_url() ?>demo/schedule_your_free_demo_ajax";
+
+        $.ajax({
+            type: "POST",
+            url: myformurl,
+            data: {
+                email: $('#email_id' + formId).val(),
+                name: $('#name' + formId).val(),
+                phone_number: $('#phone_number' + formId).val(),
+                company_name: $('#company_name' + formId).val(),
+                title: $('#title' + formId).val(),
+                response: $('#g-recaptcha-response').val()
+            },
+            dataType: "json",
+            success: function(data) {
+
+                if (data.error == true) {
+                    const errorArray = [];
+                    //
+                    if (data.name_error != '') {
+                        errorArray.push(data.name_error);
+                    }
+                    //
+                    if (data.email_error != '') {
+                        errorArray.push(data.email_error);
+                    }
+                    //
+                    if (data.phone_number_error != '') {
+                        errorArray.push(data.phone_number_error);
+                    }
+                    //
+                    if (data.company_name_error != '') {
+                        errorArray.push(data.company_name_error);
+                    }
+                    //
+                    if (data.title_error != '') {
+                        errorArray.push(data.title_error);
+                    }
+                    //
+                    if (data.company_size_error != '') {
+                        errorArray.push(data.company_size_error);
+                    }
+                    //
+
+                    if (data.g_recaptcha_response_error != '') {
+                        errorArray.push(data.g_recaptcha_response_error);
+                    }
+
+                    //
+                    if (errorArray.length) {
+                        return alertify.alert(
+                            "ERROR!",
+                            getErrorsStringFromArray(errorArray),
+                            CB
+                        );
+                    }
+
+                } else {
+                    return alertify.success('Schedule Successfully Saved');
+
+                }
+
+            },
+            error: function(data) {
+                alertify.error('Sorry we will fix that issue');
+            }
+        });
+        return;
+
+    }
+
+
+
+    if (typeof CB === "undefined") {
+        /**
+         * Empty callback
+         */
+        function CB() {}
+    }
+
+    if (typeof getErrorsStringFromArray === "undefined") {
+        /**
+         * Error message
+         *
+         * @param {*} errorArray
+         * @param {*} errorMessage
+         * @returns
+         */
+        function getErrorsStringFromArray(errorArray, errorMessage) {
+            return (
+                "<strong><p>" +
+                (errorMessage ?
+                    errorMessage :
+                    "Please, resolve the following errors") +
+                "</p></strong><br >" +
+                errorArray.join("<br />")
+            );
+        }
+    }
 </script>

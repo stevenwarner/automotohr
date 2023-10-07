@@ -28,13 +28,13 @@
                   class="col-xxl-6 col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12"
                 >
                   <p class="subtitle_text text-lg-start text-center">
-                    Get Your Account <br />
-                    Join Our Affiliate Program <br />
-                    Affiliate Log In
+                  <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('#freedemo');?>">Get Your Account </a><br />
+                  <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('affiliate-program');?>">Join Our Affiliate Program </a><br />
+                  <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('login');?>"> Affiliate Log In </a>
                   </p>
                   <ul class="Sitemap_content light-li list_item_center">
-                    <li><a href="#"> Forgot Password</a></li>
-                    <li><a href="#"> Not an AutomotoHR Affiliate Yet?</a></li>
+                    <li><a href="<?php echo base_url('forgot_password') ?>"> Forgot Password</a></li>
+                    <li><a href="<?php echo base_url('#freedemo');?>"> Not an AutomotoHR Affiliate Yet?</a></li>
                   </ul>
                 </div>
               </div>
@@ -46,10 +46,10 @@
                     class="subtitle_text dark-li PL-zero text-lg-start text-center"
                   >
                   
-                    <li><a href="#">Why Us?</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="<?php echo base_url('contact_us') ?>">Contact Us</a></li>
-                    <li><a href="#">Resources</a></li>
+                    <li><a href="<?php echo base_url('why-us');?>">Why Us?</a></li>
+                    <li><a href="<?php echo base_url('about-us');?>">About Us</a></li>
+                    <li><a href="<?php echo base_url('contact_us');?>">Contact Us</a></li>
+                    <li><a href="<?php echo base_url('resources');?>">Resources</a></li>
                   </ul>
                 </div>
                 <div
@@ -57,14 +57,14 @@
                 >
                   <h3 class="subtitle_text text-lg-start text-center">
                     Log In
-                  </h3>
+                  </h3> 
                   <ul class="Sitemap_content list_item_center light-li">
                     <li><a href="<?php echo base_url('forgot_password') ?>"> Forgot Password </a></li>
-                    <li><a href="#"> Executive Admin Login</a></li>
-                    <li><a href="#"> Get Your Account</a></li>
+                    <li><a href="<?php echo base_url('executive_admin');?>"> Executive Admin Login</a></li>
+                    <li><a href="<?php echo base_url('#freedemo');?>"> Get Your Account</a></li>
                   </ul>
                   <h3 class="subtitle_text text-lg-start text-center">
-                    Privacy Policy
+                   <a  class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('services/privacy-policy');?>"> Privacy Policy
                   </h3>
                 </div>
               </div>

@@ -56,6 +56,12 @@
  */
 define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
+
+//
+define('ROOTPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+define('MINIFIED', in_array($_SERVER['HTTP_HOST'], ['automotohr.local']) ?  '' : '.min');
+
+
 require_once(dirname(__FILE__).'/../../protected_files/main.php');
 
 /*

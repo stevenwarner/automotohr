@@ -191,7 +191,7 @@
                                                 <div class="col-xs-6">
                                                     <div class="field-row">
                                                         <label>Title</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="aboutus_title" id="aboutus_title" value="<?php echo $pageContent['page']['whyus']['title']; ?>" />
+                                                        <input type="text" class="invoice-fields" name="aboutus_title" id="aboutus_title" value="<?php echo $pageContent['page']['aboutus']['title']; ?>" />
                                                     </div>
                                                 </div>
 

@@ -116,7 +116,7 @@
                     </ul>
 
                     <div class="d-flex flex-direction-coloumn-on-mobile">
-                        <a class="btn schedule-btn" href="#freedemo"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
+                        <a class="btn schedule-btn" href="<?= base_url('#freedemo'); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
                         <a class="btn login-btn" href="<?= base_url($headerContent['page']['btnlogin']['slug']) ?>"> <?php echo $headerContent['page']['btnlogin']['title']; ?> </a>
                     </div>
                 </div>
