@@ -37,6 +37,11 @@ $(function serviceAgreement() {
 		gustoServiceAgreement(parseInt($(this).data("cid")));
 	});
 
+	$(document).on("change", "#jsTermsOfServiceEmail", function () {
+		//
+		$("#jsTermsOfServiceReference").val($("#jsTermsOfServiceEmail option:selected").data('id'));
+	});
+
 	/**
 	 * capture the create partner company click
 	 */

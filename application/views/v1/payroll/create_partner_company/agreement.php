@@ -20,8 +20,9 @@
                 <div class="form-group">
                     <label>Email <strong class="text-danger">*</strong></label>
                     <select class="form-control" id="jsTermsOfServiceEmail">
+                        <option value="0"></option>
                         <?php foreach ($admins as $value) { ?>
-                            <option value="<?= $value['email_address']; ?>"><?= $value['email_address']; ?></option>
+                            <option value="<?= $value['email_address']; ?>" data-id="<?=$value['automotohr_reference'];?>"><?= $value['email_address']; ?></option>
                         <?php } ?>
                     </select>
                 </div>

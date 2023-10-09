@@ -978,10 +978,15 @@ class Payroll extends CI_Controller
                 ]
             );
         elseif ($step === 4) : // set admin step
+            // get system employees
+            $employees = $this->payroll_model->getActiveEmployees($companyId);
+            //
             return SendResponse(
                 200,
                 [
-                    'view' => $this->load->view('v1/payroll/create_partner_company/admin', [], true)
+                    'view' => $this->load->view('v1/payroll/create_partner_company/admin', [
+                        'employees' => $employees
+                    ], true)
                 ]
             );
         elseif ($step === 5) : // save admin step
@@ -1063,7 +1068,7 @@ class Payroll extends CI_Controller
             ->row_array();
         // get company's dmins
         $data['admins'] = $this->db
-            ->select('email_address')
+            ->select('email_address, automotohr_reference')
             ->where('company_sid', $companyId)
             ->where('is_store_admin', 0)
             ->get('gusto_companies_admin')

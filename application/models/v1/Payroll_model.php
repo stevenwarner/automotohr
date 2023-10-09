@@ -986,7 +986,6 @@ class Payroll_model extends CI_Model
         //
         if (
             $employee['Location_Address'] &&
-            $employee['Location_Address_2'] &&
             $employee['Location_City'] &&
             $employee['state_code'] &&
             $employee['Location_ZipCode']
@@ -5174,6 +5173,7 @@ class Payroll_model extends CI_Model
             ->row_array();
         //
         $returnArray = [];
+        $returnArray['id'] = $employee['userId'];
         $returnArray['first_name'] = $employee['first_name'];
         $returnArray['last_name'] = $employee['last_name'];
         $returnArray['middle_name'] = $employee['middle_name'];
@@ -5224,5 +5224,23 @@ class Payroll_model extends CI_Model
         }
         //
         return $employees;
+    }
+
+    /**
+     * get active employees
+     *
+     * @param int $companyId
+     * @return
+     */
+    public function getActiveEmployees(int $companyId): array
+    {
+        return $this->db
+            ->select(getUserFields())
+            ->where('parent_sid', $companyId)
+            ->where('active', 1)
+            ->where('terminated_status', 0)
+            ->where('access_level <>', 'employee')
+            ->get('users')
+            ->result_array();
     }
 }

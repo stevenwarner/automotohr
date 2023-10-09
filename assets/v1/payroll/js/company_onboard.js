@@ -117,6 +117,21 @@ $(function createPartnerCompany() {
 	);
 
 	/**
+	 *
+	 */
+	$(document).on("change", "#jsEmployeeChoose", function () {
+		//
+		const id = $(this).val();
+		//
+		if (id != 0) {
+			// hides the loader
+			ml(true, "jsCreateLoader");
+			//
+			getAndSetView(id);
+		}
+	});
+
+	/**
 	 * check company requirements
 	 */
 	function checkRequirements() {
@@ -324,6 +339,7 @@ $(function createPartnerCompany() {
 			firstName: $(".jsAdminFirstName").val().trim(),
 			lastName: $(".jsAdminLastName").val().trim(),
 			email: $(".jsAdminEmailAddress").val().trim(),
+			id: $(".jsAdminUserId").val().trim(),
 		};
 		// set default error array
 		let errors = [];
@@ -441,5 +457,47 @@ $(function createPartnerCompany() {
 		$(`#${modalId} .jsModalCancel`).trigger("click");
 		// show error
 		return handleErrorResponse(err);
+	}
+
+	/**
+	 * get the view
+	 * @param {number} id
+	 */
+	function getAndSetView(id) {
+		//
+		ml(
+			true,
+			"jsCreateLoader",
+			"Please wait, while we are generating view."
+		);
+		//
+		$.ajax({
+			url: baseUrl("/payrolls/employees/" + id + "/get"),
+			method: "GET",
+		})
+			.success(function (resp) {
+				//
+				$(".jsAdminFirstName").val(resp.first_name || "");
+				$(".jsAdminLastName").val(resp.last_name || "");
+				$(".jsAdminEmailAddress").val(resp.email || "");
+				$(".jsAdminUserId").val(resp.id || 0);
+			})
+			.fail(function (response) {
+				window.scrollTo(0, 0);
+				return $(".jsErrorDiv")
+					.html(
+						getErrorsStringFromArray(
+							(
+								response.responseJSON ||
+								JSON.parse(response.responseText)
+							).errors
+						)
+					)
+					.removeClass("hidden");
+			})
+			.always(function () {
+				// hide the loader
+				ml(false, "jsCreateLoader");
+			});
 	}
 });
