@@ -77,7 +77,14 @@ class Payroll extends CI_Controller
         // get the processed payrolls
         $data['payrolls'] = $this
             ->history_payroll_model
-            ->getProcessedPayrolls(
+            ->getProcessedRegularPayrolls(
+                $companyId,
+                10
+            );
+        // get the processed off cycle payrolls
+        $data['offCyclePayrolls'] = $this
+            ->history_payroll_model
+            ->getProcessedOffcyclePayrolls(
                 $companyId,
                 10
             );

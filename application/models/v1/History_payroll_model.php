@@ -69,6 +69,101 @@ class History_payroll_model extends Payroll_model
     }
 
     /**
+     * get processed regular payrolls
+     *
+     * @param int $companyId
+     * @param int $limit Optional
+     * @return array
+     */
+    public function getProcessedRegularPayrolls(
+        int $companyId,
+        int $limit = 0
+    ): array {
+        //
+        $this->db
+            ->select('
+                sid,
+                check_date,
+                payroll_deadline,
+                start_date,
+                end_date,
+                totals
+            ')
+            ->where('company_sid', $companyId)
+            ->where('processed', 1)
+            ->where('is_cancelled', 0)
+            ->where('off_cycle', 0)
+            ->order_by('processed_date', 'DESC');
+        //
+        if ($limit !== 0) {
+            $this->db->limit($limit);
+        }
+
+        //
+        $records = $this->db->get('payrolls.regular_payrolls')
+        ->result_array();
+        //
+        if ($records) {
+            foreach ($records as $key => $value) {
+                $records[$key]['totals'] = json_decode(
+                    $value['totals'],
+                    true
+                );
+            }
+        }
+        //
+        return $records;
+    }
+
+    /**
+     * get processed regular payrolls
+     *
+     * @param int $companyId
+     * @param int $limit Optional
+     * @return array
+     */
+    public function getProcessedOffcyclePayrolls(
+        int $companyId,
+        int $limit = 0
+    ): array {
+        //
+        $this->db
+            ->select('
+                sid,
+                check_date,
+                payroll_deadline,
+                off_cycle_reason,
+                start_date,
+                end_date,
+                totals
+            ')
+            ->where('company_sid', $companyId)
+            ->where('processed', 1)
+            ->where('is_cancelled', 0)
+            ->where('off_cycle', 1)
+            ->order_by('processed_date', 'DESC');
+        //
+        if ($limit !== 0) {
+            $this->db->limit($limit);
+        }
+
+        //
+        $records = $this->db->get('payrolls.regular_payrolls')
+        ->result_array();
+        //
+        if ($records) {
+            foreach ($records as $key => $value) {
+                $records[$key]['totals'] = json_decode(
+                    $value['totals'],
+                    true
+                );
+            }
+        }
+        //
+        return $records;
+    }
+
+    /**
      * get single processed payroll
      *
      * @param int $payrollId

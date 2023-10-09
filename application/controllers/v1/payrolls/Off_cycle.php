@@ -13,7 +13,7 @@ class Off_cycle extends Public_controller
     /**
      * wether to create minified files or not
      */
-    private $createMinifyFiles;
+    private $blockMinifyFilesCreation;
     /**
      * main entry point to controller
      */
@@ -34,7 +34,7 @@ class Off_cycle extends Public_controller
         // set path to JS file
         $this->js = 'public/v1/js/payroll/off_cycle/';
         //
-        $this->createMinifyFiles = false;
+        $this->blockMinifyFilesCreation = true;
     }
 
     /**
@@ -104,7 +104,7 @@ class Off_cycle extends Public_controller
             ],
             $this->css,
             'basic',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $data['appJs'] = bundleJs(
@@ -114,7 +114,7 @@ class Off_cycle extends Public_controller
             ],
             $this->js,
             'basic',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $data['reason'] = $reason;
@@ -156,7 +156,7 @@ class Off_cycle extends Public_controller
             ],
             $this->css,
             'hours_and_earnings',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $data['appJs'] = bundleJs(
@@ -168,7 +168,7 @@ class Off_cycle extends Public_controller
             ],
             $this->js,
             'hours_and_earnings',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $this->load
@@ -208,7 +208,7 @@ class Off_cycle extends Public_controller
             ],
             $this->css,
             'timeoff',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $data['appJs'] = bundleJs(
@@ -220,7 +220,7 @@ class Off_cycle extends Public_controller
             ],
             $this->js,
             'timeoff',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $this->load
@@ -266,7 +266,7 @@ class Off_cycle extends Public_controller
             ],
             $this->css,
             'review',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $data['appJs'] = bundleJs(
@@ -278,7 +278,7 @@ class Off_cycle extends Public_controller
             ],
             $this->js,
             'review',
-            $this->createMinifyFiles
+            $this->blockMinifyFilesCreation
         );
         //
         $this->load
