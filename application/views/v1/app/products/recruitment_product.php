@@ -37,7 +37,7 @@
                             <input type="text" class="d-block" id="phone_number1" placeholder="Phone Number*" name="phone_number" required />
                             <?php echo form_error('phone_number'); ?>
 
-                            <input type="text" class="title-field" placeholder="title*" name="title" id="title1" required />
+                            <input type="text" class="title-field" placeholder="title*" name="title" id="title1" />
                             <?php echo form_error('title'); ?>
 
                             <select class="form-select select-form-field" aria-label="Default select example" name="company_size" id="company_size1">
@@ -62,7 +62,7 @@
                                 <?php echo form_error('g-recaptcha-response'); ?>
                             </div>
 
-                            <button class="margin-top-twent center-horizontally schedule-btn-product margin-top-twenty btn-animate" id="schedule-free-demo-form-submit" type="submit">
+                            <button class="margin-top-twent center-horizontally schedule-btn-product margin-top-twenty btn-animate has-spinner" id="schedule-free-demo-form-submit1" type="submit">
                                 <p class="text">Schedule Your No Obligation Consultation</p> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                             </button>
                         </div>
@@ -305,7 +305,7 @@
                                             <?php echo form_error('g-recaptcha-response'); ?>
                                         </div>
 
-                                        <button class="margin-top-twent w-100 center-horizontally schedule-btn-product margin-top-twenty btn-animate" id="schedule-free-demo-form-submit2" type="submit">
+                                        <button class="margin-top-twent w-100 center-horizontally schedule-btn-product margin-top-twenty btn-animate has-spinner" id="schedule-free-demo-form-submit2" type="submit">
                                             <p class="text">Schedule Your No Obligation Consultation</p> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                                         </button>
                                     </div>
@@ -326,253 +326,6 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script src='https://www.google.com/recaptcha/api.js'></script>
 
-
 <script type="text/javascript">
-
-    $('#schedule-free-demo-form-submit').click(function() {
-        $("#schedule-free-demo-form").validate({
-            ignore: [],
-            rules: {
-                name: {
-                    required: true,
-                },
-                email: {
-                    required: true,
-                },
-                phone_number: {
-                    required: true,
-                },
-                company_name: {
-                    required: true,
-                },
-                title: {
-                    required: true,
-                }
-            },
-            messages: {
-                name: {
-                    required: 'Please provide user name.',
-                },
-                email: {
-                    required: 'Please provide valid email.',
-                },
-                phone_number: {
-                    required: 'Please provide valid phone number',
-                },
-                company_name: {
-                    required: 'Please provide company name.',
-                },
-                title: {
-                    required: 'Please provide title.',
-                }
-            },
-            submitHandler: function(form) {
-                //
-
-                if ($('#g-recaptcha-response').val() == '') {
-                    alertify.alert('Captcha is required.');
-                    return;
-                }
-
-                var myurl = "<?= base_url() ?>demo/check_already_applied";
-                $.ajax({
-                    type: "POST",
-                    url: myurl,
-                    data: {
-                        email: $('#email_id1').val()
-                    },
-                    dataType: "json",
-                    success: function(data) {
-                        var obj = jQuery.parseJSON(data);
-                        if (obj == 0) {
-                            schedule_your_free_demo_ajax_form(1);
-                        } else {
-                            schedule_your_free_demo_ajax_form(1);
-
-                        }
-                    },
-                    error: function(data) {
-                        alertify.error('Sorry we will fix that issue');
-                    }
-                });
-            }
-        });
-
-    });
-
-    //
-    $('#schedule-free-demo-form-submit2').click(function() {
-        $("#schedule-free-demo-form2").validate({
-            ignore: [],
-            rules: {
-                name: {
-                    required: true,
-                },
-                email: {
-                    required: true,
-                },
-                phone_number: {
-                    required: true,
-                },
-                company_name: {
-                    required: true,
-                },
-                title: {
-                    required: true,
-                }
-            },
-            messages: {
-                name: {
-                    required: 'Please provide user name.',
-                },
-                email: {
-                    required: 'Please provide valid email.',
-                },
-                phone_number: {
-                    required: 'Please provide valid phone number',
-                },
-                company_name: {
-                    required: 'Please provide company name.',
-                },
-                title: {
-                    required: 'Please provide title.',
-                }
-
-            },
-            submitHandler: function(form) {
-                //
-                
-                if ($('#g-recaptcha-response').val() == '') {
-                    alertify.alert('Captcha is required.');
-                    return;
-                }
-                
-                var myurl = "<?= base_url() ?>demo/check_already_applied";
-                $.ajax({
-                    type: "POST",
-                    url: myurl,
-                    data: {
-                        email: $('#email_id2').val()
-                    },
-                    dataType: "json",
-                    success: function(data) {
-                        var obj = jQuery.parseJSON(data);
-                        if (obj == 0) {
-                            schedule_your_free_demo_ajax_form(2);
-                        } else {
-                            schedule_your_free_demo_ajax_form(2);
-                        }
-                    },
-                    error: function(data) {
-                        alertify.error('Sorry we will fix that issue');
-                    }
-                });
-            }
-        });
-
-    });
-
-
-
-    //
-    function schedule_your_free_demo_ajax_form(formId) {
-        var myformurl = "<?= base_url() ?>demo/schedule_your_free_demo_ajax";
-
-        $.ajax({
-            type: "POST",
-            url: myformurl,
-            data: {
-                email: $('#email_id' + formId).val(),
-                name: $('#name'+ formId).val(),
-                phone_number: $('#phone_number' + formId).val(),
-                company_name: $('#company_name' + formId).val(),
-                title: $('#title' + formId).val(),
-                response: $('#g-recaptcha-response').val()
-            },
-            dataType: "json",
-            success: function(data) {
-
-                if (data.error == true) {
-                    const errorArray = [];
-                    //
-                    if (data.name_error != '') {
-                        errorArray.push(data.name_error);
-                    }
-                    //
-                    if (data.email_error != '') {
-                        errorArray.push(data.email_error);
-                    }
-                    //
-                    if (data.phone_number_error != '') {
-                        errorArray.push(data.phone_number_error);
-                    }
-                    //
-                    if (data.company_name_error != '') {
-                        errorArray.push(data.company_name_error);
-                    }
-                    //
-                    if (data.title_error != '') {
-                        errorArray.push(data.title_error);
-                    }
-                    //
-                    if (data.company_size_error != '') {
-                        errorArray.push(data.company_size_error);
-                    }
-                    //
-
-                    if (data.g_recaptcha_response_error != '') {
-                        errorArray.push(data.g_recaptcha_response_error);
-                    }
-
-                    //
-                    if (errorArray.length) {
-                        return alertify.alert(
-                            "ERROR!",
-                            getErrorsStringFromArray(errorArray),
-                            CB
-                        );
-                    }
-
-                } else {
-                    return alertify.success('Schedule Successfully Saved');
-
-                }
-
-            },
-            error: function(data) {
-                alertify.error('Sorry we will fix that issue');
-            }
-        });
-        return;
-
-    }
-
-
-
-    if (typeof CB === "undefined") {
-        /**
-         * Empty callback
-         */
-        function CB() {}
-    }
-
-    if (typeof getErrorsStringFromArray === "undefined") {
-        /**
-         * Error message
-         *
-         * @param {*} errorArray
-         * @param {*} errorMessage
-         * @returns
-         */
-        function getErrorsStringFromArray(errorArray, errorMessage) {
-            return (
-                "<strong><p>" +
-                (errorMessage ?
-                    errorMessage :
-                    "Please, resolve the following errors") +
-                "</p></strong><br >" +
-                errorArray.join("<br />")
-            );
-        }
-    }
+    var BASEURL = "<?php echo base_url(); ?>";
 </script>

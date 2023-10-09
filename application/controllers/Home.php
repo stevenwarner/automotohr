@@ -2258,7 +2258,7 @@ class Home extends CI_Controller
         $data['appCSS'] = bundleCSS([
             'v1/app/css/main',
             'v1/app/css/app',
-            
+
 
         ], $this->css);
         //
@@ -2267,13 +2267,20 @@ class Home extends CI_Controller
             'alertifyjs/alertify.min'
         ], $this->js);
 
+
+
+        //
+        $data['pageJs'] = [
+            'v1/app/js/products'
+        ];
+
         //
         $page = getPageNameBySlug($pageName);
 
         if (empty($page)) {
             redirect(base_url());
         }
-        $data['pageSlug'] = 'products/'.$pageName;
+        $data['pageSlug'] = 'products/' . $pageName;
         $data['productsContent'] =    $productsContent;
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/products/' .  $page);

@@ -190,7 +190,7 @@ class Demo extends CI_Controller
         $this->form_validation->set_rules('company_size', 'Company Size', 'trim|xss_clean');
         //  $this->form_validation->set_rules('newsletter_subscribe', 'Please select your choice', 'trim|xss_clean');  nisar
 
-      //  $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
+        $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
 
         $redirectPage = $this->input->post('pagename');
 
@@ -259,7 +259,7 @@ class Demo extends CI_Controller
             $email = $this->input->post('email');
             $phone_number = $this->input->post('phone_number');
             $company_name = $this->input->post('company_name');
-            $job_role = $this->input->post('job_role');
+            $job_role = $this->input->post('title');
             $company_size = $this->input->post('company_size');
             $newsletter_subscribe = 0; ////$this->input->post('newsletter_subscribe');  Nisar
             $date_requested = date('Y-m-d H:i:s');
@@ -269,7 +269,7 @@ class Demo extends CI_Controller
             $schedule_demo = NULL;
 
 
-            /*
+            
             $this->Demo_model->free_demo_new($first_name, $email, $phone_number, $company_name, $date_requested, $schedule_demo, $client_source, $ppc, $message, $company_size, $newsletter_subscribe, $job_role);
             $replacement_array['name'] = $first_name;
             $replacement_array['firstname'] = $first_name;
@@ -277,7 +277,7 @@ class Demo extends CI_Controller
             $replacement_array['first-name'] = $first_name;
             $replacement_array['date_time'] = $schedule_demo;
             log_and_send_templated_email(DEMO_REQUEST_THANKYOU, $email, $replacement_array);
-*/
+
             //
             $array = array(
                 'error'   => false,
