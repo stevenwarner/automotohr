@@ -141,8 +141,7 @@ $sideBarUrls = [
         <div class="navbar-collapse collapse admin-sidebar-navbar-collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="<?php echo base_url('dashboard'); ?>        'payrolls/pay-stubs/report',
-">
+                    <a href="<?php echo base_url('dashboard'); ?>">
                         <figure><i class="fa fa-th"></i></figure>Dashboard
                     </a>
                 </li>
