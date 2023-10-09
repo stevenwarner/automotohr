@@ -38,6 +38,7 @@ class History_payroll_model extends Payroll_model
                 check_date,
                 payroll_deadline,
                 off_cycle,
+                off_cycle_reason,
                 start_date,
                 end_date,
                 totals
@@ -85,6 +86,8 @@ class History_payroll_model extends Payroll_model
                 start_date,
                 end_date,
                 check_date,
+                off_cycle,
+                off_cycle_reason,
                 payroll_deadline,
                 processed_date,
                 payroll_receipt

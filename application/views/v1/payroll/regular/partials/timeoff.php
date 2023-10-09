@@ -1,5 +1,6 @@
 <?php if ($payrollEmployees) { ?>
     <?php foreach ($payrollEmployees as $value) { ?>
+        <?php if($regularPayroll['employees'][$value['id']]['excluded']) { continue;} ?>
         <tr class="jsRegularPayrollEmployeeRowTimeOff" data-id="<?= $value['id']; ?>">
             <td class="vam">
                 <p class="csF16">

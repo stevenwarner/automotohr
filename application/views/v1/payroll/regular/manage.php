@@ -172,7 +172,7 @@
                                 <?php } ?>
                             <?php } ?>
                         </div>
-                        <div class="panel-footer hidden">
+                        <div class="panel-footer">
                             <h1 class="csF16">
                                 <strong>
                                     Other payroll options

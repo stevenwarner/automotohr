@@ -79,14 +79,14 @@ $(function () {
 			employees: [],
 		};
 		//
-		$('[name="payroll[employees][]"]:checked').map(function () {
+		$('[name="payroll[employees]"]:checked').map(function () {
 			obj.employees.push($(this).val());
 		});
 		// set error array
 		const errorArray = [];
 		// validation
 		if (!obj.off_cycle_reason) {
-			errorArray.push('"Off cycle reason date" is missing.');
+			errorArray.push('"Off cycle reason" is missing.');
 		}
 		if (!obj.start_date) {
 			errorArray.push('"Start date" is missing.');
@@ -97,52 +97,47 @@ $(function () {
 		if (!obj.check_date) {
 			errorArray.push('"Check date" is missing.');
 		}
-		if (!obj.skip_regular_deductions) {
+		if (obj.skip_regular_deductions == "") {
 			errorArray.push('"Deductions and contributions" is missing.');
 		}
-		if (!obj.skip_regular_deductions) {
-			errorArray.push('"Deductions and contributions" is missing.');
+		if (!obj.withholding_pay_period) {
+			errorArray.push('"Withholding pay period" is missing.');
 		}
-
-		console.log(obj);
-		// validation
-		// if ($(".jsSelectSingle:checked").length === 0) {
-		// 	return _error(
-		// 		getErrorsStringFromArray([
-		// 			"Please select at least one employee.",
-		// 		])
-		// 	);
-		// }
-		// //
-		// const employeeIds = [];
-		// // get all selected employees
-		// $(".jsSelectSingle:checked").map(function () {
-		// 	employeeIds.push($(this).val());
-		// });
-		// //
-		// saveEmployees(employeeIds);
+		if (obj.fixed_withholding_rate == "") {
+			errorArray.push('"Withholding pay period" is missing.');
+		}
+		if (!obj.employees.length) {
+			errorArray.push("Please select at least one employee.");
+		}
+		//
+		if (errorArray.length) {
+			return _error(getErrorsStringFromArray(errorArray));
+		}
+		//
+		processOffCycle(obj);
 	});
 
 	/**
-	 * saves the employees and start he off cycle process
-	 * @param {number} employeeIds
+	 * process off cycle payroll
+	 * @param {object} data
 	 */
-	function saveEmployees(employeeIds) {
+	function processOffCycle(data) {
 		// check for existing call
 		if (XHR !== null) {
 			return;
 		}
 		//
 		XHR = $.ajax({
-			url: baseUrl("payrolls/off-cycle/employees"),
+			url: baseUrl("payrolls/off-cycle/basics"),
 			method: "POST",
-			data: {
-				employees: employeeIds,
-				reason: reason,
-			},
+			data,
 		})
-			.success(function () {
-				window.location.href = baseUrl(`payrolls/${reason}/basic`);
+			.success(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						`payrolls/${reason}/${resp.id}/hours_and_earnings`
+					);
+				});
 			})
 			.fail(handleErrorResponse)
 			.always(function () {

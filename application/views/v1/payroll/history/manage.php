@@ -56,7 +56,7 @@
                                                         <?= formatDateToDB($payroll['check_date'], DB_DATE, DATE); ?>
                                                     </td>
                                                     <td class="vam text-right">
-                                                        <?= !$payroll['off_cycle'] ? 'Regular' : 'Off cycle'; ?>
+                                                        <?= !$payroll['off_cycle'] ? 'Regular' : $payroll['off_cycle_reason']; ?>
                                                     </td>
                                                     <td class="vam text-right">
                                                         <?= formatDateToDB($payroll['start_date'], DB_DATE, DATE); ?>

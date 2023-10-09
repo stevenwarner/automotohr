@@ -26,6 +26,7 @@ class Off_cycle extends Public_controller
         $this->form_validation->set_message('valid_date', '"{field}" is invalid.');
         // Call the model
         $this->load->model("v1/Off_cycle_payroll_model", "off_cycle_payroll_model");
+        $this->load->model("v1/Regular_payroll_model", "regular_payroll_model");
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
         // set path to CSS file
@@ -63,14 +64,14 @@ class Off_cycle extends Public_controller
                 ->view('v1/payroll/regular/blockers')
                 ->view('main/footer');
         }
-
-        // check if off cycle already exists
-        $data['payroll'] = $this->off_cycle_payroll_model->alreadyExists($reason, $data['loggedInPersonCompanyId']);
         //
-        if ($data['payroll']) {
-            // payrollid
-            // return redirect("/payrolls/off-cycle/{}/hours_and_earnings");
-            die('sadas');
+        $parsedReason = getReason($reason);
+        // check if off cycle already exists
+        $payrollId = $this->off_cycle_payroll_model->getPayrollId($parsedReason, $data['loggedInPersonCompanyId']);
+        //
+        if ($payrollId) {
+            // redirect to payroll
+            return redirect("/payrolls/{$reason}/{$payrollId}/hours_and_earnings");
         }
         //
         $this->basic($reason);
@@ -116,22 +117,187 @@ class Off_cycle extends Public_controller
             $this->createMinifyFiles
         );
         //
+        $data['reason'] = $reason;
+        //
         $this->load
             ->view('main/header', $data)
             ->view('v1/payroll/off_cycle/basic')
             ->view('main/footer');
     }
 
+    /**
+     * hours and earnings
+     *
+     * @param string $reason
+     * @param string $payrollId
+     */
+    public function hoursAndEarnings(string $reason, int $payrollId)
+    {
+        //
+        $data = $this->getData();
+        //
+        $data['title'] = "Hours and earnings details";
+        // get data
+        $data['payroll'] = $this->regular_payroll_model
+            ->getRegularPayrollByIdColumns(
+                $payrollId,
+                [
+                    'start_date',
+                    'end_date',
+                    'check_date',
+                    'payroll_deadline'
+                ]
+            );
+        //
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'hours_and_earnings',
+            $this->createMinifyFiles
+        );
+        //
+        $data['appJs'] = bundleJs(
+            [
+                'v1/plugins/ms_modal/main',
+                'js/app_helper',
+                'v1/payroll/js/off_cycle/clear_data',
+                'v1/payroll/js/off_cycle/hours_and_earnings'
+            ],
+            $this->js,
+            'hours_and_earnings',
+            $this->createMinifyFiles
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/off_cycle/hours_and_earnings')
+            ->view('main/footer');
+    }
+
+    /**
+     * hours and earnings
+     *
+     * @param string $reason
+     * @param string $payrollId
+     */
+    public function timeOff(string $reason, int $payrollId)
+    {
+        //
+        $data = $this->getData();
+        //
+        $data['title'] = "Time off details";
+        // get data
+        $data['payroll'] = $this->regular_payroll_model
+            ->getRegularPayrollByIdColumns(
+                $payrollId,
+                [
+                    'start_date',
+                    'end_date',
+                    'check_date',
+                    'payroll_deadline'
+                ]
+            );
+        // css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'timeoff',
+            $this->createMinifyFiles
+        );
+        //
+        $data['appJs'] = bundleJs(
+            [
+                'v1/plugins/ms_modal/main',
+                'js/app_helper',
+                'v1/payroll/js/off_cycle/clear_data',
+                'v1/payroll/js/off_cycle/timeoff'
+            ],
+            $this->js,
+            'timeoff',
+            $this->createMinifyFiles
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/off_cycle/timeoff')
+            ->view('main/footer');
+    }
+
+    /**
+     * review
+     *
+     * @param string $reason
+     * @param string $payrollId
+     */
+    public function review(string $reason, int $payrollId)
+    {
+        // time to calculate payroll
+        $gustoResponse = $this->off_cycle_payroll_model->calculatePayrollById($payrollId);
+        //
+        if (!$gustoResponse['success']) {
+            return redirect("payrolls/{$reason}");
+        }
+        //
+        $data = $this->getData();
+        //
+        $data['title'] = "Time off details";
+        // get data
+        $data['payroll'] = $this->regular_payroll_model
+            ->getRegularPayrollByIdColumns(
+                $payrollId,
+                [
+                    'start_date',
+                    'end_date',
+                    'check_date',
+                    'payroll_deadline'
+                ]
+            );
+        // css
+        $data['appCSS'] = bundleCSS(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            $this->css,
+            'review',
+            $this->createMinifyFiles
+        );
+        //
+        $data['appJs'] = bundleJs(
+            [
+                'v1/plugins/ms_modal/main',
+                'js/app_helper',
+                'v1/payroll/js/off_cycle/clear_data',
+                'v1/payroll/js/off_cycle/review'
+            ],
+            $this->js,
+            'review',
+            $this->createMinifyFiles
+        );
+        //
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/payroll/off_cycle/review')
+            ->view('main/footer');
+    }
+
+
 
 
     // API calls
 
     /**
-     * save employees
+     * process basic
      *
      * @return json
      */
-    public function saveEmployees(): array
+    public function processBasics(): array
     {
         // get the session
         $session = checkUserSession(false);
@@ -145,29 +311,78 @@ class Off_cycle extends Public_controller
         $errorsArray = [];
         // validation
         if (!$post) {
-            $errorsArray[] = '"Data" is required.';
+            $errorsArray[] = '"Data" is missing.';
+        }
+        if (!$post['off_cycle_reason']) {
+            $errorsArray[] = '"off cycle reason" is missing.';
+        }
+        if (!$post['start_date']) {
+            $errorsArray[] = '"Start date" is missing.';
+        } elseif (!$this->valid_date($post['start_date'])) {
+            $errorsArray[] = '"Start date" is invalid.';
+        }
+        if (!$post['end_date']) {
+            $errorsArray[] = '"End date" is missing.';
+        } elseif (!$this->valid_date($post['end_date'])) {
+            $errorsArray[] = '"End date" is invalid.';
+        }
+        if (!$post['check_date']) {
+            $errorsArray[] = '"Check date" is missing.';
+        } elseif (!$this->valid_date($post['check_date'])) {
+            $errorsArray[] = '"Check date" is invalid.';
+        }
+        if (!$post['skip_regular_deductions']) {
+            $errorsArray[] = '"Deductions and contributions" is missing.';
+        }
+        if (!$post['withholding_pay_period']) {
+            $errorsArray[] = '"Withholding pay period" is missing.';
+        }
+        if (!$post['fixed_withholding_rate']) {
+            $errorsArray[] = '"Withholding pay period" is missing.';
         }
         if (!$post['employees']) {
-            $errorsArray[] = '"Employees" are required.';
-        }
-        if (!$post['reason']) {
-            $errorsArray[] = '"Reason" is required.';
+            $errorsArray[] = 'Please select at least one employee.';
         }
         //
         if ($errorsArray) {
             return SendResponse(400, ['errors' => $errorsArray]);
         }
         // check if payroll already exists
-        $doExists = $this->off_cycle_payroll_model->alreadyExists($post['reason'], $session['company_detail']['sid']);
-        //
-        if ($doExists) {
-            return SendResponse(400, ['errors' => ['"' . ($post['reason']) . '" already in progress.']]);
+        if ($this->off_cycle_payroll_model->getPayrollId($post['off_cycle_reason'], $session['company_detail']['sid'])) {
+            return SendResponse(400, ['errors' => ['"' . ($post['off_cycle_reason']) . '" already in progress.']]);
         }
         // 
-        $response = $this->off_cycle_payroll_model->addPayrollWithEmployees(
+        $response = $this->off_cycle_payroll_model->processOffCyclePayroll(
             $session['company_detail']['sid'],
             $post
         );
+        //
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
+     * Clear draft data
+     *
+     * @param int $payrollId
+     * @return json
+     */
+    public function clearDraftData(int $payrollId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus($session);
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        // 
+        $response = $this->off_cycle_payroll_model
+            ->clearDraftData(
+                $session['company_detail']['sid'],
+                $payrollId
+            );
         //
         return SendResponse(
             $response['errors'] ? 400 : 200,
