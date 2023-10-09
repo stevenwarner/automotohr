@@ -4,12 +4,17 @@
  */
 class Resources extends Public_Controller
 {
+    private $header;
+    private $footer;
+    private $css;
+    private $js;
+
     public function __construct()
     {
         parent::__construct();
         //
         $data['title'] = "Home";
-        $this->load->model('v1/resources_model');
+        $this->load->model('v1/Resources_model', "resources_model");
         //                                                                                                                                       
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
@@ -43,17 +48,14 @@ class Resources extends Public_Controller
 
         $data['pageJs'] = [
             'v1/app/js/jquery-1.11.3.min',
-            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js',
-            'v1/app/alertifyjs/alertify.min',
-            'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js',
-            'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js',
+            'v1/app/alertifyjs/alertify.min'
         ];
 
 
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/resources',
-            'v1/app/css/main'
-        ], $this->css, 'home');
+            'v1/app/css/main',
+            'v1/app/css/resources'
+        ], $this->css, 'resources');
 
         $data['appJs'] = bundleJs([
             'plugins/bootstrap5/js/bootstrap.bundle',

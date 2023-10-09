@@ -16,35 +16,40 @@
                             <h2 class="desktop-left sora-family darkGreyColor margin-bottom-30">Latest blog posts</h2>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="jsBlogSection">
                         <?php if (!empty($blogs)) { ?>
-                            <!-- <div id="jsBlogSection"> -->
+                          
                                 <?php foreach ($blogs as $blog) { ?>
                                     <div class="col-xs-12 col-md-6 col-lg-4">
                                         <div class="card card-margin-bottom" >
-                                            <img src="<?= !empty($blog['feature_image']) ? AWS_S3_BUCKET_URL . $blog['feature_image'] : base_url('assets/images/no-img.jpg'); ?>" alt="smiling girl">
+                                            <img class="resources-card-images-adjustment" src="<?= !empty($blog['feature_image']) ? AWS_S3_BUCKET_URL . $blog['feature_image'] : base_url('assets/images/no-img.jpg'); ?>" alt="smiling girl">
                                             <div class="card-body">
                                                 <p class="card-text">
-                                                    <?= $blog['description']; ?>
+                                                    <?= substr(strip_tags($blog['description']),0,200) . '...'; ?>
                                                 </p>
-                                                <a  href="<?php echo base_url("read_more/".$blog['slug']); ?>"  class="card-text">Read more</a>
+                                                <a  href="<?php echo base_url("resources/".$blog['slug']); ?>"  class="card-text">Read more</a>
                                             </div>
                                         </div>
                                     </div>
                                 <?php } ?> 
-                            <!-- </div>   -->
-                            <div class="col-xs-12 margin-top-30 column-flex-center">
-                                <button class="d-flex justify-content-center align-items-center load-more login-screen-btns admin_btn btn-animate margin-top-30 jsLoadMoreBlog">
-                                    <p class="text">Load More</p>
-                                    <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                                </button>    
-                            </div> 
+                           
+                        
                         <?php } else { ?>    
                             <div class="col-xs-12">
                                 <p class="desktop-left sora-family darkGreyColor margin-bottom-30">No blog publish yet.</p>
                             </div>
                         <?php } ?> 
                     </div>
+                    <?php if (!empty($resources)) { ?>
+                        <div class="row">
+                            <div class="col-xs-12 margin-top-30 column-flex-center">
+                                <button class="d-flex justify-content-center align-items-center load-more login-screen-btns admin_btn btn-animate margin-top-30 jsLoadMoreBlog">
+                                    <p class="text">Load More</p>
+                                    <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
+                                </button>    
+                            </div> 
+                        </div>
+                    <?php } ?>    
                 </div>
             </div>
         </div>
@@ -122,7 +127,7 @@
                                                 <video poster="./assets/images/smillingGirl.png" src="<?php echo base_url().'assets/uploaded_videos/resourses/' .$resource['resources']; ?>" controls="true" class="resources-video" alt="smiling girl" > </video>
                                             </div>
                                         <?php } else if (in_array($dcoument_extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) { ?>
-                                            <img src="<?= !empty($resource['resources']) ? AWS_S3_BUCKET_URL . $resource['resources'] : base_url('assets/images/no-img.jpg'); ?>" class="" alt="tablet with tea">
+                                            <img src="<?= !empty($resource['resources']) ? AWS_S3_BUCKET_URL . $resource['resources'] : base_url('assets/images/no-img.jpg'); ?>" class="resources-card-images-adjustment" alt="tablet with tea">
                                         <?php } ?>
                                         
                                         <div class="card-body">
@@ -131,32 +136,34 @@
                                                     $types = explode(',',$resource['resource_type']);
                                                     //
                                                     foreach ($types as $type) {
-                                                        echo '<span class="resources-card-type">'.$type.'</span>';
+                                                        echo '<span class="resources-card-type card-pills-resource-type">'.$type.'</span>';
                                                     }
                                                 ?>
                                             </div>
                                             <p class="card-text">
-                                                <?= $resource['description']; ?>
+                                                <?= substr($resource['description'],0,200) . '...'; ?>
                                             </p>
-                                            <a href="<?php echo base_url("watch_resource/".$resource['slug']); ?>" class="card-anchor-text opacity-90">Watch Now</a>
+                                            <a href="<?php echo base_url("resources/".$resource['slug']); ?>" class="card-anchor-text opacity-90">Watch Now</a>
                                         </div>
                                     </div>
                                 </div>
                             <?php } ?>  
-
-                            <div class="col-xs-12 margin-top-30 column-flex-center">
-                                <button class="d-flex load-more justify-content-center align-items-center login-screen-btns admin_btn btn-animate margin-top-30 jsLoadMoreResources">
-                                    <p class="text">Load More</p>
-                                    <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                                </button>    
-                            </div>
-
                         <?php } else { ?>    
                             <div class="col-xs-12">
                                 <p class="desktop-left sora-family darkGreyColor margin-bottom-30">No Resources Found.</p>
                             </div>
                         <?php } ?> 
                     </div>
+                    <?php if (!empty($resources)) { ?>
+                        <div class="row">
+                            <div class="col-xs-12 margin-top-30 column-flex-center">
+                                <button class="d-flex load-more justify-content-center align-items-center login-screen-btns admin_btn btn-animate margin-top-30 jsLoadMoreResources">
+                                    <p class="text">Load More</p>
+                                    <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
+                                </button>    
+                            </div>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -240,7 +247,7 @@
                 response.map(function (blog) {
                     blogHTML += `<div class="col-xs-12 col-md-6 col-lg-4">`;
                     blogHTML += `   <div class="card card-margin-bottom">`;
-                    blogHTML += `       <img src="${AWSPath+blog.feature_image}" alt="smiling girl">`;
+                    blogHTML += `       <img src="${AWSPath+blog.feature_image}" class="resources-card-images-adjustment" alt="smiling girl">`;
                     blogHTML += `       <div class="card-body">`;
                     blogHTML += `           <p class="card-text">`;
                     blogHTML += `               ${blog.description}`;
@@ -311,6 +318,7 @@
 
     $(document).on("click", ".resources-checkbox", function (event) {
         resourceCount = 0;
+        $("#jsResourceSection").html("");
         getMoreResources();
     });
 
@@ -319,6 +327,7 @@
         let value = e.target.value
         timeoutID = setTimeout(function () {
             resourceCount = 0;
+            $("#jsResourceSection").html("");
             getMoreResources();
         }, 1000);
     });
@@ -351,7 +360,7 @@
                     var ext = resource.resources.split('.').pop();
                     //
                     if (ext == "jpe" || ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif") {
-                        resourceHTML += `<img src="${AWSPath+resource.resources}" class="" alt="tablet with tea">`;
+                        resourceHTML += `<img src="${AWSPath+resource.resources}" class="resources-card-images-adjustment" alt="tablet with tea">`;
                     } else if (ext == "mp4" || ext == "m4a" || ext == "m4v" || ext == "f4v" || ext == "f4a" | ext == "m4b" || ext == "m4r" || ext == "f4b" || ext == "mov") {
                         resourceHTML += `<div class="resources-video-div">`; 
                         resourceHTML += `   <video poster="./assets/images/smillingGirl.png" src="${BASEURL}assets/uploaded_videos/resourses/${resource.resources}" controls="true" class="resources-video" alt="smiling girl" > </video>`;

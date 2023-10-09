@@ -1347,7 +1347,13 @@
   .top-background-div-resources {
     height: 350px;
   }
-  
+  .resources-card-images-adjustment{
+    height: 325px;
+    width: 100%;
+  }
+  .card-pills-resource-type{
+    margin-right: 5px;
+  }
   .desktop-left {
     text-align: left;
   }
