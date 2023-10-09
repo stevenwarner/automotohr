@@ -165,16 +165,19 @@ $(function () {
             employeeId = 0,
             employeeName = '';
         //
-        if ($(this).data('id') !== undefined) {
+        if (window.location.pathname.match("/create_employee/") !== null) {
+			selectedEmployeeId = employeeId;
+			selectedEmployeeName = employeeName;
+		} else if ($(this).data("id") !== undefined) {
 			//
 			selectedEmployeeId = loggedInId;
 			selectedEmployeeName = loggedInName;
 			employeeId = selectedEmployeeId;
 			employeeName = selectedEmployeeName;
 		} else {
-            employeeId = $(this).closest('.jsBox').data('id');
-            employeeName = $(this).closest('.jsBox').data('name');
-        }
+			employeeId = $(this).closest(".jsBox").data("id");
+			employeeName = $(this).closest(".jsBox").data("name");
+		}
         selectedEmployeeId = employeeId;
         selectedEmployeeName = employeeName;
         //
