@@ -685,7 +685,7 @@ class Courses extends Public_Controller
                 //
                 if ($filters["departments"] == "all" || $filters["departments"] == '0') {
                     $departments[0]['sid'] = 0;
-                    $departments[0]['name'] = "Other";
+                    $departments[0]['name'] = "Other (Employees who are not assigned to any department)";
                     $departments[0]['employee_have_courses'] = 0;
                     $departments[0]['employee_not_have_courses'] = 0;
                     $departments[0]['total_employees'] = 0;

@@ -257,7 +257,7 @@ $(function LMSEmployeeCourses() {
 								coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
 
 								if (course.course_end_period === null) {
-									coursesHTML += `N/A`;
+									coursesHTML += `--`;
 								} else {
 									coursesHTML += `            <p>${moment(
 										course.course_end_period
