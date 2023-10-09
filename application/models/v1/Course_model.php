@@ -194,9 +194,10 @@ class Course_model extends CI_Model
                 $returnCount++;
             } else {
                 //
-                if ($courseStatus['course_status'] === 'pending') {
+                if ($courseStatus['course_status'] != 'passed') {
                     $returnCount++;
                 }
+                //
             }
         }
 
