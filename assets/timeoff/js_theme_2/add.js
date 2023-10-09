@@ -166,8 +166,8 @@ $(function () {
             employeeName = '';
         //
         if (window.location.pathname.match("/create_employee/") !== null) {
-			selectedEmployeeId = selectedEmployeeId;
-			selectedEmployeeName = selectedEmployeeName;
+			employeeId = window.location.pathname.split("/")[3];
+			employeeName = selectedEmployeeName;
 		} else if ($(this).data("id") !== undefined) {
 			//
 			selectedEmployeeId = loggedInId;
