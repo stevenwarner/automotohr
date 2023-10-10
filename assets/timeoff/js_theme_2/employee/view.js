@@ -629,7 +629,7 @@ $(function () {
         rows += `            <div class="clearfix"></div>`;
         rows += `        </div>`;
         rows += `        <!-- Box Content -->`;
-        rows += `        <div class="csBoxContent">dddddd`;
+        rows += `        <div class="csBoxContent">`;
         rows += `            <!-- Section 1 -->`;
         rows += `            <div class="csBoxContentDateSection">`;
         rows += `                <div class="col-sm-5 col-xs-5">`;
