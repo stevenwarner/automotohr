@@ -5,8 +5,7 @@
                 WHY SHOULD YOU SWITCH TO AUTOMOTOHR?
             </p>
             <h5 class="darkgrey text-center mt-3 title px-sm-5 px-2 mx-sm-3 mx-0 title">
-                Recruit, Onboard, and Manage all of your Employees in one place.
-                Hire to Retire Talent Management platform.
+                 <?php echo $homeContent['page']['sections']['section2']['heading']?>
             </h5>
         </div>
     </div>
@@ -21,21 +20,15 @@
                         ONBOARDING AND HIRING
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                        With advanced recruiting tools, discover and onboard the right
-                        talent faster.
+                    <?php echo $homeContent['page']['sections']['section3']['heading']?>
+                    
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                        Ready to build a rockstar team without hassle? Say hello to
-                        AutomotoHR, the ultimate hiring solution. It swiftly finds,
-                        evaluates, and onboards top talent in a flash. With impeccable
-                        applicant tracking and features like automated HR, electronic
-                        self onboarding, and an employee dashboard, managing your
-                        dream team is a breeze. So get ready to hire like a boss with
-                        AutomotoHR!
+                    <?php echo strip_tags($homeContent['page']['sections']['section3']['headingDetail'])?>
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text">Explore Our Solutions</p>
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section3']['btnText']?></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>
@@ -79,20 +72,14 @@
                     TIME, PAYROLL, AND BENEFITS
                 </p>
                 <p class="darkgrey mt-3 title text-lg-start text-center">
-                    One platform for time tracking, benefits, and payroll to
-                    simplify workload.
+                <?php echo $homeContent['page']['sections']['section4']['heading']?>
                 </p>
                 <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                    With AutomotoHR, juggling multiple HR tasks is a thing of the
-                    past. The remarkable platform lets you effortlessly track hours
-                    worked, handle benefits enrollment, and seamlessly process
-                    payroll, all in one place. No more tedious data double entry or
-                    manual approval headaches—just smooth sailing towards easy and
-                    precise payroll management for both you and your employees.
+                <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail'])?>
                 </p>
 
                 <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                    <p class="mb-0 btn-text">Explore Our Solutions</p>
+                    <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section3']['btnText']?></p>
 
                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                 </button>
@@ -112,21 +99,14 @@
                         EMPLOYEE EXPERIENCE & PERFORMANCE
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                        Take your organization's culture to new heights with a smart
-                        suite of tools.
+                    <?php echo $homeContent['page']['sections']['section4']['heading']?>
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-eighty">
-                        Nurturing a strong company culture begins with actively
-                        engaging and investing in your employees' development. With
-                        AutomotoHR, you gain access to a comprehensive set of tools
-                        designed to collect feedback, amplify employee satisfaction,
-                        and facilitate personal and professional growth. This results
-                        in a vibrant and thriving organization that attracts top
-                        talent to join its ranks.
+                    <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail'])?>
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text">Explore Our Solutions</p>
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section4']['btnText']?></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>
@@ -162,21 +142,16 @@
                     VACATION & TIME OFF MONITORING
                 </p>
                 <p class="darkgrey mt-3 title text-lg-start text-center">
-                    Eliminate complexity and save time by simplifying vacation
-                    management.
+                <?php echo $homeContent['page']['sections']['section5']['heading']?>
+
                 </p>
                 <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                    Say goodbye to manual vacation tracking and endless
-                    spreadsheets. From submitting requests to approving and tracking
-                    time off balances, AutomotoHR takes care of it all, ensuring
-                    accurate records and a smoother workflow. Simplify your
-                    vacation, leaves, and paid time off tracking with AutomotoHR,
-                    and enjoy peace of mind knowing everything is organized and
-                    accounted for.
-                </p>
+                <?php echo strip_tags($homeContent['page']['sections']['section5']['headingDetail'])?>
+    
+            </p>
 
                 <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                    <p class="mb-0 btn-text">Explore Our Solutions</p>
+                    <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section5']['btnText']?></p>
 
                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                 </button>
@@ -196,20 +171,15 @@
                         TRANSFORM, EMPOWER & SUCCEED
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                        Optimize employee experience, performance, goals, satisfaction
-                        & well-being.
+                    <?php echo $homeContent['page']['sections']['section6']['heading']?>
+
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-eighty">
-                        Unleash the true potential of your organization with
-                        AutomotoHR's robust feature set, designed to optimize employee
-                        experience and revolutionize performance management. Drive
-                        goal alignment throughout your workforce, gather invaluable
-                        feedback through employee satisfaction surveys and prioritize
-                        employee wellbeing to cultivate a supportive work environment.
+                    <?php echo strip_tags($homeContent['page']['sections']['section6']['headingDetail'])?>
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text">Explore Our Solutions</p>
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section6']['btnText']?></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>
@@ -252,21 +222,16 @@
                         FULL COMPANY CAREER WEBSITE
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                        Get a slick full company career website that dazzles on
-                        desktop & mobile.
+                    <?php echo $homeContent['page']['sections']['section7']['heading']?>
+
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                        Ready to build a rockstar team without hassle? Say hello to
-                        AutomotoHR, the ultimate hiring solution. It swiftly finds,
-                        evaluates, and onboards top talent in a flash. With impeccable
-                        applicant tracking and features like automated HR, electronic
-                        self onboarding, and an employee dashboard, managing your
-                        dream team is a breeze. So get ready to hire like a boss with
-                        AutomotoHR!
+                    <?php echo strip_tags($homeContent['page']['sections']['section7']['headingDetail'])?>
+
                     </p>
 
                     <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text">Explore Our Solutions</p>
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section7']['btnText']?></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </button>

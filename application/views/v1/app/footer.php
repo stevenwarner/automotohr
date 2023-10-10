@@ -1,156 +1,160 @@
-<footer>
-    <div class="footer width_100 d-flex flex-column align-items-center pb-5 auto-footer-background-color">
-        <div class="partner_btn_main position-relative width_80">
-            <div class="partner_btn px-5">
-                <div class="position-relative">
-                    <div class="partner_btn_section_bubble"></div>
-                    <div class="partner_btn_section_bubble_pink"></div>
+<footer class="footer-section">
+    <?php $footerContent = getPageContent('footer');
+    ?>
+
+    <div class="footer-space-adj">
+        <div class="row margin-bottom-20">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+                <div>
+                    <img src="<?= base_url('assets/v1/app/images/'); ?>Emboss-Logo.png" alt="embose logo" />
+                    <p class="white-opacity-text">Hire & Manage Great People</p>
+                    <p class="white-opacity-text text-left">AutomotoHR.com</p>
                 </div>
-                <div class="width_100 d-flex flex-md-row flex-column justify-content-md-between justify-content-center align-items-center px-5 auto-footer-height">
-                    <p class="title text-white text-md-start text-center auto-footer-width">
-                        Can we send you a check every month?
+                <div class="margin-top-60">
+                    <p class="stay-connect">Stay Connect</p>
+
+
+                    <div class="inline-flex">
+                        <div class="anchor-span">
+                            <?php
+                            $y_url = get_slug_data('youtube_url', 'settings');
+                            if (!empty($y_url)) {
+                            ?>
+                                <a href="<?php echo $y_url; ?>" class="simple-anchor-icons"><i class="fa-brands fa-youtube"></i></a>
+                            <?php } ?>
+                        </div>
+                        <?php
+                        $i_url = get_slug_data('instagram_url', 'settings');
+                        if (!empty($i_url)) {
+                        ?>
+                            <div class="anchor-span">
+                                <a href="<?php echo $i_url; ?>" class="simple-anchor-icons"><i class="fa-brands fa-instagram"></i></a>
+                            </div>
+                        <?php } ?>
+                        <div class="anchor-span">
+                            <a href="<?php
+                                        $t_url = get_slug_data('twitter_url', 'settings');
+                                        if (!empty($t_url)) {
+                                            echo $t_url;
+                                        } else {
+                                            echo "https://twitter.com/AutomotoSocial";
+                                        }
+                                        ?>" class="simple-anchor-icons"><i class="fa-brands fa-twitter"></i></a>
+                        </div>
+                        <div class="anchor-span">
+                            <a href="<?php
+                                        $f_url = get_slug_data('facebook_url', 'settings');
+                                        if (!empty($f_url)) {
+                                            echo $f_url;
+                                        } else {
+                                            echo "https://www.facebook.com/automotosocialjobs";
+                                        }
+                                        ?>" class="simple-anchor-icons"><i class="fa-brands fa-facebook"></i></a>
+                        </div>
+                        <div class="anchor-span">
+                            <a href="<?php
+                                        $l_url = get_slug_data('linkedin_url', 'settings');
+                                        if (!empty($l_url)) {
+                                            echo $l_url;
+                                        } else {
+                                            echo "https://www.linkedin.com/grp/home?gid=6735083&goback=%2Egna_6735083";
+                                        }
+                                        ?>" class="simple-anchor-icons"><i class="fa-brands fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 section-space-adj">
+                <p class="footer-text-three">
+                    <a href="#"> Products</a>
+                </p>
+
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['productoperations']['slug']) ?>"> <?php echo $footerContent['page']['products']['productoperations']['title'] ?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['recruitment']['slug']) ?>"> <?php echo $footerContent['page']['products']['recruitment']['title'] ?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['electroniconboarding']['slug']) ?>"> <?php echo $footerContent['page']['products']['electroniconboarding']['title'] ?></a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['employeemanagement']['slug']) ?>"> <?php echo $footerContent['page']['products']['employeemanagement']['title'] ?> </a></li>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['payroll']['slug']) ?>"> <?php echo $footerContent['page']['products']['payroll']['title'] ?> </a></p>
+                <p class=" second-text-adj f-w-500"><a href="<?= base_url($footerContent['page']['products']['compliance']['slug']) ?>"> <?php echo $footerContent['page']['products']['compliance']['title'] ?> </a></p>
+
+                <div class="margin-top-40 margin-bottom-30">
+                    <p class="footer-text-three p-bottom-adj"><a href="<?= base_url($footerContent['page']['affiliateprogram']['slug']) ?>"> <?php echo $footerContent['page']['affiliateprogram']['title'] ?></a></p>
+                    <p class="footer-text-three p-bottom-adj"><a href="<?= base_url($footerContent['page']['privacypolicy']['slug']) ?>"> <?php echo $footerContent['page']['privacypolicy']['title'] ?> </a></p>
+                </div>
+
+                <div class="book-demo-btn">
+                    <a href="#freedemo"> Book A Free Demo</a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-2">
+                <div>
+                    <p class="footer-text-three p-bottom-adj">
+                        <a href="<?= base_url($footerContent['page']['whyus']['slug']) ?>"><?php echo $footerContent['page']['whyus']['title'] ?></a>
                     </p>
-
-                    <button class="button py-3 explore_btn touch-btn d-flex me-4 mt-md-0 mt-4 auto-footer-button">
-                        <p class="mb-0 btn-text">Become a Partners</p>
-
-                        <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                    </button>
+                    <p class="footer-text-three p-bottom-adj">
+                        <a href="<?= base_url($footerContent['page']['aboutus']['slug']) ?>"><?php echo $footerContent['page']['aboutus']['title'] ?></a>
+                    </p>
+                    <p class="footer-text-three p-bottom-adj">
+                        <a href="<?= base_url($footerContent['page']['resources']['slug']) ?>"><?php echo $footerContent['page']['resources']['title'] ?></a>
+                    </p>
+                    <p class="footer-text-three p-bottom-adj">
+                        <a href="<?= base_url($footerContent['page']['contactus']['slug']) ?>"><?php echo $footerContent['page']['contactus']['title'] ?></a>
+                    </p>
+                    <div class="margin-top-40">
+                        <p class="footer-text-three p-bottom-adj">
+                            <a href="<?= base_url($footerContent['page']['terms']['slug']) ?>"><?php echo $footerContent['page']['terms']['title'] ?></a>
+                        </p>
+                        <p class="footer-text-three"><a href="<?= base_url($footerContent['page']['sitemap']['slug']) ?>"><?php echo $footerContent['page']['sitemap']['title'] ?></a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
+                <div>
+                    <p class="footer-text-three">Sales Support</p>
+                    <div class="flex-center margin-bottom-20">
+                        <div class="anchor-span">
+                            <a href="#" class="simple-anchor-icons "><i class="fa-solid fa-phone"></i></a>
+                        </div>
+                        <a class="icon-text-adj" href="#"><?php echo $footerContent['page']['sales']['title'] ?></a>
+                    </div>
+                    <div class="flex-center margin-bottom-20">
+                        <div class="anchor-span">
+                            <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
+                        </div>
+                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['sales']['slug'] ?>"><?php echo $footerContent['page']['sales']['slug'] ?> </a>
+                    </div>
+                </div>
+                <div class="margin-top-40">
+                    <p class="footer-text-three">Technical Support</p>
+                    <div class="flex-center margin-bottom-20">
+                        <div class="anchor-span">
+                            <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-phone"></i></a>
+                        </div>
+                        <a class="icon-text-adj" href="#"><?php echo $footerContent['page']['technical']['title'] ?></a>
+                    </div>
+                    <div class="flex-center margin-bottom-20">
+                        <div class="anchor-span">
+                            <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
+                        </div>
+                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['technical']['slug'] ?>"><?php echo $footerContent['page']['technical']['slug'] ?> </a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="width_80 d-flex flex-wrap justify-content-lg-between align-items-lg-start align-items-center flex-lg-row flex-column mt- pt-5">
-            <div class="footer_logo mt-4">
-                <img src="<?= base_url('assets/v1/app/images/'); ?>footer_logo.webp" alt="footer logo" />
-                <p class="text-white text-end">
-                    Hire & Manage Great People AutomotoHR.com
-                </p>
-                <div class="mt-5 d-flex flex-column align-items-lg-start align-items-center">
-                    <p class="text-white footer-auto-logo-heading">Stay Connect</p>
-                    <div class="d-flex align-items-center mt-2 footer-auto-logo-heading">
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="https://www.youtube.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-youtube"></i></a>
-                        </div>
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="https://www.instagram.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-instagram"></i></a>
-                        </div>
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="https://www.twitter.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-twitter"></i></a>
-                        </div>
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="https://www.facebook.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-facebook"></i></a>
-                        </div>
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-icon-common">
-                            <a href="https://www.linkdin.com" class="simple-anchor anchar_tag auto-youtube-icon"><i class="fa-brands fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                </div>
+        <hr class="footer-hr" />
+        <div class="row">
+            <div class="col-sm-12 col-lg-6">
+                <p class="margin-top-10">©2023 AutomotoHR.All Rights Reserved</p>
             </div>
-            <div class="mt-4">
-                <ul class="text-white mt-lg-0 mt-md-5 mt-lg-5 no-margin-bottom-onmobile d-flex flex-column align-items-lg-start align-items-center no-padding-onmobile auto-footer-ul">
-                    <li>
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag"> Solutions </a>
-                    </li>
-                    <li class="mt-3">
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Privacy Policy</a>
-                    </li>
-                    <li class="mt-3">
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Login</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="mt-4">
-                <ul class="text-white mt-lg-0 mt-lg-5 mt-md-5 d-flex flex-column align-items-lg-start align-items-center no-padding-onmobile auto-footer-ul">
-                    <li>
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Contact Us</a>
-                    </li>
-                    <li class="mt-3">
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Site Map</a>
-                    </li>
-                    <li class="mt-3">
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Affiliate Partner Login</a>
-                    </li>
-                    <li class="mt-3">
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Can we send you a check every month?</a>
-                    </li>
-                    <li class="mt-3">
-                        <a href="<?= base_url() ?>" class="text-white simple-anchor anchar_tag">Join our automotoHR affiliate program now!</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="mt-lg-4 mt-md-4 mt-sm-1">
-                <div class="mt-lg-0 mt-lg-5 mt-md-5 d-flex flex-column align-items-lg-start align-items-center">
-                    <p class="text-white auto-footer-h1">Sales Support</p>
-                    <div class="d-flex align-items-center mt-4">
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-phone">
-                            <i class="fa-solid fa-phone"></i>
-                        </div>
-                        <a href="tel:(888) 794-0794" class="text-white heading anchar_tag ms-3">
-                            (888) 794-0794 Ext 1
-                        </a>
-                    </div>
-                    <div class="d-flex align-items-center mt-4">
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-phone">
-                            <i class="fa-solid fa-envelope"></i>
-                        </div>
-                        <a href="mailto:accounts@automotohr.com" class="text-white heading anchar_tag ms-3">
-                            accounts@automotohr.com
-                        </a>
-                    </div>
-                </div>
-                <div class="mt-5 d-flex flex-column align-items-lg-start align-items-center">
-                    <p class="text-white auto-technicial">Technical Support</p>
-                    <div class="d-flex align-items-center mt-4">
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-phone">
-                            <i class="fa-solid fa-phone"></i>
-                        </div>
-                        <a href="tel:(888) 794-0794" class="text-white heading anchar_tag ms-3">
-                            (888) 794-0794 Ext 2
-                        </a>
-                    </div>
-                    <div class="d-flex align-items-center mt-4">
-                        <div class="rounded-circle d-flex justify-content-center align-items-center auto-fa-phone">
-                            <i class="fa-solid fa-envelope"></i>
-                        </div>
-                        <a href="mailto:support@automotohr.com" class="text-white heading anchar_tag ms-3">
-                            support@automotohr.com
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="copyright_section_footer d-md-flex d-none justify-content-between align-items-center mt-5 pt-4">
-                <p class="detail text-white">
-                    © 2023 AutomotoHR. All Rights Reserved.
-                </p>
-                <div class="d-flex align-items-center">
-                    <p class="detail text-white me-3">Powered by</p>
-                    <img src="<?= base_url('assets/v1/app/images/'); ?>footer_logo.webp" class="auto-copy-right-common" alt="copy right image" />
-                </div>
-            </div>
-            <div class="copyright_section_footer d-md-none d-flex flex-column align-items-center mt-5 pt-4">
-                <div class="d-flex align-items-center">
-                    <p class="detail text-white me-3">Powered by</p>
-                    <img src="<?= base_url('assets/v1/app/images/'); ?>footer_logo.webp" class="auto-copy-right-common" alt="" />
-                </div>
-                <p class="detail text-white mt-4">
-                    © 2023 AutomotoHR. All Rights Reserved.
-                </p>
+            <div class="col-sm-12 col-lg-6 text-right">
+                <p class="inline-block">Powered by</p>
+                <img src="<?= base_url('assets/v1/app/images/'); ?>footerlogo.png" alt="footer logo" />
             </div>
         </div>
     </div>
 </footer>
-
-<script src="<?= base_url('assets/v1/app/js/bootstrap.bundle.min.js'); ?>"></script>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/fac56683c8.js" crossorigin="anonymous"></script>
-
-<script>
-    if ($(window).width() >= 1200) {
-        $('.carousel').css('height', $(window).height() + 'px')
-    }
-</script>
 </body>
+
+<?= $pageJs ? GetScripts($pageJs) : ''; ?>
+<?= $appJs ?? ''; ?>
 
 </html>

@@ -17,72 +17,79 @@
                 <div class="col-sm-12">
                     <div class="margin-btm">
                         <h4 class="second-heading text-center-onmobile white-text text-align-center-ontablet">
-                            An all-in-one HR management system for every business size
-                            and industry.
+                            <?php echo $homeContent['page']['sections']['section1']['heading'] ?>
+
                         </h4>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="margin-btm">
                         <p class="detail-text text-center-onmobile white-text opacity-eighty text-align-center-ontablet">
-                            AutomotoHR brings all your HR functions together in one
-                            convenient place, making it effortless to handle every
-                            aspect of the employee journey from hiring to training and
-                            beyond. So take the leap and redefine the workplace
-                            experience by knowing the features you need.
+                            <?php echo $homeContent['page']['sections']['section1']['headingDetail'] ?>
+
                         </p>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="margin-btm">
+
+                        <?php
+                        $bullet1Array = explode('#', $homeContent['page']['sections']['section1']['bullet1']);
+                        $bullet2Array = explode('#', $homeContent['page']['sections']['section1']['bullet2']);
+                        $bullet3Array = explode('#', $homeContent['page']['sections']['section1']['bullet3']);
+                        $bullet4Array = explode('#', $homeContent['page']['sections']['section1']['bullet4']);
+                        $bullet5Array = explode('#', $homeContent['page']['sections']['section1']['bullet5']);
+                        $bullet6Array = explode('#', $homeContent['page']['sections']['section1']['bullet6']);
+                        ?>
+
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                Efficient
-                                <span class="yellow-text">PEOPLE OPERATIONS</span> for
-                                streamlined HR management.
+                                <?php echo $bullet1Array[0]; ?>
+                                <?php if ($bullet1Array[1]) { ?> <span class="yellow-text"><?php echo $bullet1Array[1]; ?></span> <?php } ?>
+                                <?php echo $bullet1Array[2]; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                Comprehensive
-                                <span class="yellow-text">RECRUITMENT</span> tools for
-                                attracting top talent.
+                                <?php echo $bullet2Array[0]; ?>
+                                <?php if ($bullet2Array[1]) { ?> <span class="yellow-text"><?php echo $bullet2Array[1]; ?></span> <?php } ?>
+                                <?php echo $bullet2Array[2]; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                Seamless
-                                <span class="yellow-text">HR ELECTRONIC ONBOARDING</span>
-                                for a smooth start.
+                                <?php echo $bullet3Array[0]; ?>
+                                <?php if ($bullet3Array[1]) { ?> <span class="yellow-text"><?php echo $bullet3Array[1]; ?></span> <?php } ?>
+                                <?php echo $bullet3Array[2]; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                Robust
-                                <span class="yellow-text">EMPLOYEE MANAGEMENT</span>
-                                features for adequate control.
+                                <?php echo $bullet4Array[0]; ?>
+                                <?php if ($bullet4Array[1]) { ?> <span class="yellow-text"><?php echo $bullet4Array[1]; ?></span> <?php } ?>
+                                <?php echo $bullet4Array[2]; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                Automated
-                                <span class="yellow-text">PAYROLL</span> system for
-                                accurate processing.
+                                <?php echo $bullet5Array[0]; ?>
+                                <?php if ($bullet5Array[1]) { ?> <span class="yellow-text"><?php echo $bullet5Array[1]; ?></span> <?php } ?>
+                                <?php echo $bullet5Array[2]; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?=base_url('assets/v1/app/images/Group.png');?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                Ensuring
-                                <span class="yellow-text">COMPLIANCE</span> with
-                                regulations and requirements.
-                            </p>
+                                <?php echo $bullet6Array[0]; ?>
+                                <?php if ($bullet6Array[1]) { ?> <span class="yellow-text"><?php echo $bullet6Array[1]; ?></span> <?php } ?>
+                                <?php echo $bullet6Array[2]; ?>
                         </div>
+
                     </div>
                 </div>
             </div>

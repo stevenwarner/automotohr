@@ -4,12 +4,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Home extends CI_Controller
 {
+    private $assetPath;
 
     public function __construct()
     {
         parent::__construct();
         $data['title'] = "Home";
         $this->load->model('home_model');
+
+        $this->header = "v1/app/header";
+        $this->footer = "v1/app/footer";
+        $this->css = "public/v1/css/app/";
+        $this->js = "public/v1/js/app/";
     }
 
     public function index()
@@ -22,7 +28,14 @@ class Home extends CI_Controller
             $data['session'] = $this->session->userdata('logged_in');
         }
 
-        $data['title'] = 'Home';
+        //
+        $homeContent = getPageContent('home');
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $homeContent['page']['meta']['title'];
+        $data['meta']['description'] = $homeContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $homeContent['page']['meta']['keyword'];
 
         if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
             $this->load->model('users_model');
@@ -43,11 +56,62 @@ class Home extends CI_Controller
                 $this->session->set_userdata('logged_in', $sess_array);
             }
         }
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/alertifyjs/css/alertify.min'
+        ];
 
-        $data['home_page'] = $this->home_model->get_home_page_data();
-        $this->load->view('main/header', $data);
-        $this->load->view('static-pages/home');
-        $this->load->view('main/footer');
+        $data['pageJs'] = [
+            'v1/app/js/jquery-1.11.3.min',
+            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js',
+            'v1/app/alertifyjs/alertify.min',
+            'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js',
+            'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js',
+        ];
+
+
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/home',
+            'v1/app/css/main'
+        ], $this->css, 'home');
+
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js, 'home');
+
+
+
+        $data['slider'] = [
+            [
+                'title' => $homeContent['page']['slider']['slider1']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider1']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider1']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider1']['btnText'],
+                'image' => 'assets/v1/app/images/banner_1.webp'
+            ],
+            [
+                'title' => $homeContent['page']['slider']['slider2']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider2']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider2']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
+                'image' => 'assets/v1/app/images/banner_2.webp'
+            ],
+            [
+                'title' => $homeContent['page']['slider']['slider3']['heading'],
+                'sub_title' => $homeContent['page']['slider']['slider3']['headingDetail'],
+                'link' => $homeContent['page']['slider']['slider3']['btnSlug'],
+                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
+                'image' => 'assets/v1/app/images/banner_3.webp'
+            ]
+        ];
+
+        $data['homeContent'] = $homeContent;
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/homepage');
+        $this->load->view($this->footer);
     }
 
     public function decryptCookie($value)
@@ -77,11 +141,42 @@ class Home extends CI_Controller
             redirect(base_url());
         }
 
+
         $data['home_page'] = $this->home_model->get_home_page_data(); //Getting customize home page Data Starts
         $data['title'] = ucfirst(str_replace("-", " ", $pageName));
-        $this->load->view('main/header', $data);
-        $this->load->view('static-pages/' . $pageName);
-        $this->load->view('main/footer');
+
+        $privacyPolicyContent = getPageContent('privacy_policy');
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $privacyPolicyContent['page']['meta']['title'];
+        $data['meta']['description'] = $privacyPolicyContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $privacyPolicyContent['page']['meta']['keywords'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/contact_us',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+            'v1/app/css/services',
+
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+
+        $data['privacyPolicyContent'] =    $privacyPolicyContent;
+
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/services/' . $pageName);
+        $this->load->view($this->footer);
     }
 
     function remove_cart_item()
@@ -2094,7 +2189,6 @@ class Home extends CI_Controller
                 $action = 'updated';
             }
             $employee_sid = $employeeId;
-
         } else {
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;
@@ -2131,5 +2225,57 @@ class Home extends CI_Controller
             'invoiceDetails' => $invoiceDetails,
             'hf' => $hf
         ]);
+    }
+
+    //
+    public function products($pageName)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $session_details = $this->session->userdata('logged_in');
+            $sid = $session_details['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($sid);
+            $data['security_details'] = $security_details;
+        }
+
+
+        $data['title'] = ucfirst(str_replace("-", " ", $pageName));
+
+        $productsContent = getPageContent($pageName, true);
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $productsContent['page']['meta']['title'];
+        $data['meta']['description'] = $productsContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $productsContent['page']['meta']['keywords'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/products',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+            
+
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+        //
+        $page = getPageNameBySlug($pageName);
+
+        if (empty($page)) {
+            redirect(base_url());
+        }
+        $data['pageSlug'] = 'products/'.$pageName;
+        $data['productsContent'] =    $productsContent;
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/products/' .  $page);
+        $this->load->view($this->footer);
     }
 }
