@@ -772,7 +772,7 @@ class Attendance extends Public_Controller {
             $fromDate = reset_datetime([
                 'datetime' => $fromDate.' 00:00:00',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => DB_DATE,
+                'format' => DB_DATE_WITH_TIME,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -780,7 +780,7 @@ class Attendance extends Public_Controller {
             $toDate = reset_datetime([
                 'datetime' => $toDate.' 23:59:59',
                 'from_format' => 'm/d/Y H:i:s',
-                'format' => DB_DATE,
+                'format' => DB_DATE_WITH_TIME,
                 'from_timezone' => $this->args['employee']['timezone'],
                 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
                 '_this' => $this
@@ -789,7 +789,7 @@ class Attendance extends Public_Controller {
         //
         $this->args['from_date'] = $SysFromDate;
         $this->args['to_date'] = $SysToDate;
-       $this->args['employees'] = $employees;
+        $this->args['employees'] = $employees;
         $this->args['selected_employee_ids'] = $selectedEmployeeIds;
         //
 
@@ -800,7 +800,11 @@ class Attendance extends Public_Controller {
             $this->args['selected_employee_ids'],
             'employee_sid'
         );
-
+        // _e($fromDate,true);
+        // _e($toDate,true);
+        // _e($this->companyId,true);
+        // _e($this->args['selected_employee_ids'],true);
+        // _e($clockedInEmployees,true,true);
         //
         $this->args['lists'] = array_column($clockedInEmployees,"location");
         //
