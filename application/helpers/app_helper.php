@@ -638,7 +638,16 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/lms/main'] = ['js' => '3.0.0'];
         $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
         $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
-
+        //
+        $files['v1/lms/assign_employee_courses'] = ['js' => '1.0.0'];
+        $files['v1/plugins/ms_scorm/main'] = ['js' => '1.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_12'] = ['js' => '1.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_3'] = ['js' => '1.0.0'];
+        $files['v1/plugins/ms_scorm/adapter_2004_4'] = ['js' => '1.0.0'];
+        $files['v1/lms/subordinate_reporting'] = ['js' => '1.0.0'];
+        $files['v1/lms/employee_course_preview'] = ['js' => '1.0.0'];
+        $files['v1/lms/company_courses'] = ['js' => '1.0.0'];
+        //
         // payroll files
         // dashboard
         $files['v1/payroll/js/dashboard'] = ['js' => '1.0.0'];
