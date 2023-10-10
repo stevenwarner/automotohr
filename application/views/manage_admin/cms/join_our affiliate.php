@@ -148,9 +148,48 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xs-12"><br>
-                                                    <label>Detail</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section4_heading_detail" id="section4_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section4']['headingDetail']; ?></textarea>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_heading1" id="section4_heading1" value="<?php echo $pageContent['page']['sections']['section4']['heading1']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_tick1" id="section4_tick1" value="<?php echo $pageContent['page']['sections']['section4']['tick1']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 2</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_tick2" id="section4_tick2" value="<?php echo $pageContent['page']['sections']['section4']['tick2']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 3</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_tick3" id="section4_tick3" value="<?php echo $pageContent['page']['sections']['section4']['tick3']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 4</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_tick4" id="section4_tick4" value="<?php echo $pageContent['page']['sections']['section4']['tick4']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 5</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_tick5" id="section4_tick5" value="<?php echo $pageContent['page']['sections']['section4']['tick5']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 6</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_tick6" id="section4_tick6" value="<?php echo $pageContent['page']['sections']['section4']['tick6']; ?>" />
+                                                    </div>
                                                 </div>
 
                                             </div>
@@ -167,10 +206,51 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xs-12"><br>
-                                                    <label>Detail</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section5_heading_detail" id="section5_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section5']['headingDetail']; ?></textarea>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_heading1" id="section5_heading1" value="<?php echo $pageContent['page']['sections']['section5']['heading1']; ?>" />
+                                                    </div>
                                                 </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_tick1" id="section5_tick1" value="<?php echo $pageContent['page']['sections']['section5']['tick1']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 2</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_tick2" id="section5_tick2" value="<?php echo $pageContent['page']['sections']['section5']['tick2']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 3</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_tick3" id="section5_tick3" value="<?php echo $pageContent['page']['sections']['section5']['tick3']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 4</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_tick4" id="section5_tick4" value="<?php echo $pageContent['page']['sections']['section5']['tick4']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 5</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_tick5" id="section5_tick5" value="<?php echo $pageContent['page']['sections']['section5']['tick5']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 6</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_tick6" id="section5_tick6" value="<?php echo $pageContent['page']['sections']['section5']['tick6']; ?>" />
+                                                    </div>
+                                                </div>
+
                                             </div>
 
                                             <div class="hr-box" style="margin: 15px 0 0;">
@@ -185,8 +265,22 @@
                                                 </div>
 
                                                 <div class="col-xs-12"><br>
-                                                    <label>Detail</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section6_heading_detail" id="section6_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section6']['headingDetail']; ?></textarea>
+                                                    <label>Heading 1</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="section6_heading1" id="section6_heading1" value="<?php echo $pageContent['page']['sections']['section6']['heading1']; ?>" />
+                                                </div>
+                                                <div class="col-xs-12"><br>
+                                                    <label>Heading 1 Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section6_heading1_detail" id="section6_heading1_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section6']['heading1Detail']; ?></textarea>
+                                                </div>
+
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Heading 2</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="section6_heading2" id="section6_heading2" value="<?php echo $pageContent['page']['sections']['section6']['heading2']; ?>" />
+                                                </div>
+                                                <div class="col-xs-12"><br>
+                                                    <label>Heading 2 Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section6_heading2_detail" id="section6_heading2_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section6']['heading2Detail']; ?></textarea>
                                                 </div>
 
                                             </div>
@@ -206,8 +300,61 @@
 
                                                 <div class="col-xs-12"><br>
                                                     <label>Detail</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section7_heading_detail" id="section7_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section7_heading_detail" id="section7_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
                                                 </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_heading1" id="section7_heading1" value="<?php echo $pageContent['page']['sections']['section7']['heading1']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_tick1" id="section7_tick1" value="<?php echo $pageContent['page']['sections']['section7']['tick1']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 2</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_tick2" id="section7_tick2" value="<?php echo $pageContent['page']['sections']['section7']['tick2']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 3</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_tick3" id="section7_tick3" value="<?php echo $pageContent['page']['sections']['section7']['tick3']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 4</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_tick4" id="section7_tick4" value="<?php echo $pageContent['page']['sections']['section7']['tick4']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 5</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_tick5" id="section7_tick5" value="<?php echo $pageContent['page']['sections']['section7']['tick5']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Tick 6</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_tick6" id="section7_tick6" value="<?php echo $pageContent['page']['sections']['section7']['tick6']; ?>" />
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section7_heading_detail1" id="section7_heading_detail1" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail1']; ?></textarea>
+                                                </div>
+
+
                                             </div>
 
                                             <div class="hr-box" style="margin: 15px 0 0;">
@@ -387,25 +534,94 @@
                 section4_heading: {
                     required: true
                 },
-                section4_heading_detail: {
+                section4_heading1: {
+                    required: true
+                },
+                section4_tick1: {
+                    required: true
+                },
+                section4_tick2: {
+                    required: true
+                },
+                section4_tick3: {
+                    required: true
+                },
+                section4_tick4: {
+                    required: true
+                },
+                section4_tick5: {
+                    required: true
+                },
+                section4_tick6: {
                     required: true
                 },
                 section5_heading: {
                     required: true
                 },
-                section5_heading_detail: {
+                section5_heading1: {
+                    required: true
+                },
+                section5_tick1: {
+                    required: true
+                },
+                section5_tick2: {
+                    required: true
+                },
+                section5_tick3: {
+                    required: true
+                },
+                section5_tick4: {
+                    required: true
+                },
+                section5_tick5: {
+                    required: true
+                },
+                section5_tick6: {
                     required: true
                 },
                 section6_heading: {
                     required: true
                 },
-                section6_heading_detail: {
+                section6_heading1: {
+                    required: true
+                },
+                section6_heading1_detail: {
+                    required: true
+                },
+                section6_heading2: {
+                    required: true
+                },
+                section6_heading2_detail: {
                     required: true
                 },
                 section7_heading: {
                     required: true
                 },
                 section7_heading_detail: {
+                    required: true
+                },
+                section7_heading1: {
+                    required: true
+                },
+                section7_heading_detail1: {
+                    required: true
+                },
+                section7_tick1: {
+                    required: true
+                },
+                section7_tick2: {
+                    required: true
+                },
+                section7_tick3: {
+                    required: true
+                },
+                section7_tick4: {
+                    required: true
+                },
+                section7_tick5: {
+                    required: true
+                },
+                section7_tick6: {
                     required: true
                 },
                 section8_heading: {
@@ -497,19 +713,42 @@
             },
             section4: {
                 heading: $("#section4_heading").val(),
-                headingDetail: CKEDITOR.instances['section4_heading_detail'].getData().trim()
+                heading1: $("#section4_heading1").val(),
+                tick1: $("#section4_tick1").val(),
+                tick2: $("#section4_tick2").val(),
+                tick3: $("#section4_tick3").val(),
+                tick4: $("#section4_tick4").val(),
+                tick5: $("#section4_tick5").val(),
+                tick6: $("#section4_tick6").val(),
             },
             section5: {
                 heading: $("#section5_heading").val(),
-                headingDetail: CKEDITOR.instances['section5_heading_detail'].getData().trim()
+                heading1: $("#section5_heading1").val(),
+                tick1: $("#section5_tick1").val(),
+                tick2: $("#section5_tick2").val(),
+                tick3: $("#section5_tick3").val(),
+                tick4: $("#section5_tick4").val(),
+                tick5: $("#section5_tick5").val(),
+                tick6: $("#section5_tick6").val(),
             },
             section6: {
                 heading: $("#section6_heading").val(),
-                headingDetail: CKEDITOR.instances['section6_heading_detail'].getData().trim()
+                heading1: $("#section6_heading1").val(),
+                heading1Detail: $("#section6_heading1_detail").val(),
+                heading2: $("#section6_heading2").val(),
+                heading2Detail: $("#section6_heading2_detail").val(),
             },
             section7: {
                 heading: $("#section7_heading").val(),
-                headingDetail: CKEDITOR.instances['section7_heading_detail'].getData().trim()
+                headingDetail: $("#section7_heading_detail").val(),
+                heading1: $("#section7_heading1").val(),
+                headingDetail1: $("#section7_heading_detail1").val(),
+                tick1: $("#section7_tick1").val(),
+                tick2: $("#section7_tick2").val(),
+                tick3: $("#section7_tick3").val(),
+                tick4: $("#section7_tick4").val(),
+                tick5: $("#section7_tick5").val(),
+                tick6: $("#section7_tick6").val(),
             },
             section8: {
                 heading: $("#section8_heading").val(),

@@ -1958,5 +1958,13 @@ $route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_li
 //
 $route['products/(:any)'] = "home/products/$1";
 
+//
+$route['resources']['get'] = 'v1/Resources/index';
+$route['subscribeCommunity']['post'] = 'v1/Resources/subscribeCommunity';
+$route['searchResources']['get'] = 'v1/Resources/searchResources';
+$route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
+$route['read_more/(:any)']['get'] = 'v1/Resources/readMore/$1';
+$route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
+
 
 
