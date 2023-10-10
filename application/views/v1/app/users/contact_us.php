@@ -15,13 +15,13 @@
                             <div class="anchor-span-grey">
                                 <a href="#" class="simple-anchor-icons "><i class="fa-solid  dark-grey-color fa-phone"></i></a>
                             </div>
-                            <a class="contact-us-icons-size number-text " href="#"> <?php echo $contactUsContent['page']['salesNumber']['text'] ?></a>
+                            <a class="contact-us-icons-size number-text " href="tel:<?php echo $contactUsContent['page']['salesNumber']['text'] ?>"> <?php echo $contactUsContent['page']['salesNumber']['text'] ?></a>
                         </div>
                         <div class="flex-center justify-content-center-mobile">
                             <div class="anchor-span">
                                 <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                             </div>
-                            <a class="contact-us-icons-size email-text" href="#"><?php echo $contactUsContent['page']['salesNumber']['text'] ?></a>
+                            <a class="contact-us-icons-size email-text" href="mailto:<?php echo $contactUsContent['page']['salesEmail']['text'] ?>"><?php echo $contactUsContent['page']['salesEmail']['text'] ?></a>
                         </div>
                     </div>
                 </div>
@@ -34,13 +34,13 @@
                             <div class="anchor-span-grey ">
                                 <a href="#" class="simple-anchor-icons "><i class="fa-solid dark-grey-color fa-phone"></i></a>
                             </div>
-                            <a class="contact-us-icons-size number-text " href="#"><?php echo $contactUsContent['page']['technicalNumber']['text'] ?></a>
+                            <a class="contact-us-icons-size number-text " href="tel:<?php echo $contactUsContent['page']['technicalNumber']['text'] ?>"><?php echo $contactUsContent['page']['technicalNumber']['text'] ?></a>
                         </div>
                         <div class="flex-center justify-content-center-mobile">
                             <div class="anchor-span">
                                 <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                             </div>
-                            <a class="contact-us-icons-size email-text" href="#"><?php echo $contactUsContent['page']['technicalEmail']['text'] ?> </a>
+                            <a class="contact-us-icons-size email-text" href="mailto:<?php echo $contactUsContent['page']['technicalEmail']['text'] ?>"><?php echo $contactUsContent['page']['technicalEmail']['text'] ?> </a>
                         </div>
                     </div>
                 </div>

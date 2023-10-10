@@ -1,3 +1,9 @@
+.error{
+  font-size: 12px;
+}
+
+
+
 .form-adjustment {
     display: flex;
     flex-direction: column;
@@ -316,7 +322,7 @@
     color: white;
     position: relative;
     width: 40%;
-    font-size: 19px;
+    font-size: 15px;
   }
   .upload-file-input:hover {
     border-color: white !important;
@@ -382,7 +388,7 @@
   }
   .extra-text {
     font-family: Inter;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 500;
     line-height: 26px;
     letter-spacing: 0em;

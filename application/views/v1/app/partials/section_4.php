@@ -62,6 +62,11 @@
                     </div>
                 </div>
             </div>
+
+
+
+
+            
             <div class="col-sm-12 col-md-12 col-lg-6 position-relative div-one">
                 <div class="text-right text-align-center-ontablet">
                     <img class="rotate-img" src="<?= base_url('assets/v1/app/images/'); ?>girl.webp" alt="girl with glasses on face image" />

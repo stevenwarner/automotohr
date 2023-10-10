@@ -172,7 +172,7 @@ class Home extends CI_Controller
         ], $this->js);
 
 
-        $data['privacyPolicyContent'] =    $privacyPolicyContent;
+        $data['privacyPolicyContent'] = $privacyPolicyContent;
 
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/services/' . $pageName);
@@ -2252,12 +2252,13 @@ class Home extends CI_Controller
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
             'v1/app/plugins/fontawesome/css/all',
             'v1/app/css/products',
+            'v1/app/alertifyjs/css/alertify.min'
         ];
         //
         $data['appCSS'] = bundleCSS([
             'v1/app/css/main',
             'v1/app/css/app',
-            
+
 
         ], $this->css);
         //
@@ -2266,13 +2267,20 @@ class Home extends CI_Controller
             'alertifyjs/alertify.min'
         ], $this->js);
 
+
+
+        //
+        $data['pageJs'] = [
+            'v1/app/js/products'
+        ];
+
         //
         $page = getPageNameBySlug($pageName);
 
         if (empty($page)) {
             redirect(base_url());
         }
-        $data['pageSlug'] = 'products/'.$pageName;
+        $data['pageSlug'] = 'products/' . $pageName;
         $data['productsContent'] =    $productsContent;
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/products/' .  $page);

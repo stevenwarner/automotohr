@@ -15,6 +15,13 @@ class Dashboard extends CI_Controller
 
         $this->resp['Status'] = false;
         $this->resp['Response'] = 'Invalid Request!';
+
+        //
+        $this->header = "v1/app/header";
+        $this->footer = "v1/app/footer";
+        //
+        $this->css = "public/v1/css/app/";
+        $this->js = "public/v1/js/app/";
     }
 
     public function index($keyword = null)
@@ -185,14 +192,46 @@ class Dashboard extends CI_Controller
                 'rules' => 'trim|required|valid_email|xss_clean'
             )
         );
+
+        //
+        $passwordRecoveryContent = getPageContent('exe_admin_password_recovery');
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $passwordRecoveryContent['page']['meta']['title'];
+        $data['meta']['description'] = $passwordRecoveryContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $passwordRecoveryContent['page']['meta']['keyword'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/login',
+
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'v1/app/js/jquery-1.11.3.min',
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+
         $this->form_validation->set_rules($config);
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
             $data['page_title'] = "Forgot Password";
-            $this->load->view('main/header', $data);
-            $this->load->view('users/forgot_password');
-            $this->load->view('main/footer');
+
+            $data['passwordRecoveryContent'] = $passwordRecoveryContent;
+
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/exe_admin_password_recovery');
+            $this->load->view($this->footer);
         } else {
             $email = $this->input->post('email');
             $result = $this->Users_model->check_email($email);

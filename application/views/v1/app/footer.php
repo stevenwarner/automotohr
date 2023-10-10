@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="book-demo-btn">
-                    <a href="#freedemo"> Book A Free Demo</a>
+                    <a href="<?= base_url('#freedemo') ?>"> Book A Free Demo</a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-2">
@@ -114,7 +114,7 @@
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons "><i class="fa-solid fa-phone"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="#"><?php echo $footerContent['page']['sales']['title'] ?></a>
+                        <a class="icon-text-adj" href="tel:<?php echo $footerContent['page']['sales']['title'] ?>"><?php echo $footerContent['page']['sales']['title'] ?></a>
                     </div>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
@@ -129,7 +129,7 @@
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-phone"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="#"><?php echo $footerContent['page']['technical']['title'] ?></a>
+                        <a class="icon-text-adj" href="tel:<?php echo $footerContent['page']['technical']['title'] ?>"><?php echo $footerContent['page']['technical']['title'] ?></a>
                     </div>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">

@@ -28,22 +28,19 @@
                                 <?php echo $productsContent['page']['sections']['section1']['heading']; ?>
                             </h2>
 
-                            <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
-
-
                             <input type="hidden" class="d-block " id="pagename" placeholder="Name*" name="pagename" value="<?php echo $pageSlug; ?>" />
 
-                            <input type="text" class="d-block " id="name" placeholder="Name*" name="name" required />
+                            <input type="text" class="d-block " id="name1" placeholder="Name*" name="name" required />
                             <?php echo form_error('name'); ?>
-                            <input type="email" class="d-block" id="email_id" placeholder="Email*" name="email" required />
+                            <input type="email" class="d-block" id="email_id1" placeholder="Email*" name="email" required />
                             <?php echo form_error('email'); ?>
-                            <input type="text" class="d-block" id="phone_number" placeholder="Phone Number*" name="phone_number" required />
+                            <input type="text" class="d-block" id="phone_number1" placeholder="Phone Number*" name="phone_number" required />
                             <?php echo form_error('phone_number'); ?>
 
-                            <input type="text" class="title-field" placeholder="title*" name="title" required />
+                            <input type="text" class="title-field" placeholder="title*" name="title" id="title1" />
                             <?php echo form_error('title'); ?>
 
-                            <select class="form-select select-form-field" aria-label="Default select example" name="company_size">
+                            <select class="form-select select-form-field" aria-label="Default select example" name="company_size" id="company_size1">
                                 <option selected>Employee Count*</option>
                                 <option value="1-5">1 - 5</option>
                                 <option value="6-25">6 - 25</option>
@@ -56,16 +53,16 @@
 
                             <?php echo form_error('job_roles'); ?>
 
-                            <input type="text" class="d-block" placeholder="Company Name*" name="company_name" required />
+                            <input type="text" class="d-block" placeholder="Company Name*" name="company_name" id="company_name1" required />
                             <?php echo form_error('company_name'); ?><br>
 
-                            <textarea class="form-control border-radius-25 dark-grey-color" id="client_message" rows="4" placeholder="Message" name="client_message"></textarea>
+                            <textarea class="form-control border-radius-25 dark-grey-color" id="client_message1" rows="4" placeholder="Message" name="client_message"></textarea>
                             <div class="form-group mt-4">
                                 <div class="g-recaptcha" data-sitekey="6Les2Q0TAAAAAAyeysl-dZsPUm98_6K2fNkyNCwI"></div>
                                 <?php echo form_error('g-recaptcha-response'); ?>
                             </div>
 
-                            <button class="margin-top-twent center-horizontally schedule-btn-product margin-top-twenty btn-animate" id="schedule-free-demo-form-submit" type="submit">
+                            <button class="margin-top-twent center-horizontally schedule-btn-product margin-top-twenty btn-animate has-spinner" id="schedule-free-demo-form-submit1" type="submit">
                                 <p class="text">Schedule Your No Obligation Consultation</p> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                             </button>
                         </div>
@@ -250,7 +247,6 @@
                 </div>
             </div>
 
-
         </div>
     </section>
     <section class="padding-top-50">
@@ -264,7 +260,6 @@
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-7 column-center padding-20-products">
-
                             <form method="post" action="<?= base_url('schedule_your_free_demo'); ?>" class="form" id="schedule-free-demo-form2">
 
                                 <div class="position-relative">
@@ -273,27 +268,22 @@
                                         <div class="highlighted-div column-flex-center opacity-80-product">
                                             <p><span class="highlighted-light-blue-div">Want</span>the Inside Secret on People Operations?</p>
                                         </div>
-
                                         <h2 class="">
                                             <?php echo $productsContent['page']['sections']['section9']['heading']; ?>
                                         </h2>
+                                        <input type="hidden" class="d-block " id="pagename2" placeholder="Name*" name="pagename" value="<?php echo $pageSlug; ?>" />
 
-                                        <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
-
-
-                                        <input type="hidden" class="d-block " id="pagename" placeholder="Name*" name="pagename" value="<?php echo $pageSlug; ?>" />
-
-                                        <input type="text" class="d-block " id="name" placeholder="Name*" name="name" required />
+                                        <input type="text" class="d-block " id="name2" placeholder="Name*" name="name" required />
                                         <?php echo form_error('name'); ?>
                                         <input type="email" class="d-block" id="email_id2" placeholder="Email*" name="email" required />
                                         <?php echo form_error('email'); ?>
-                                        <input type="text" class="d-block" id="phone_number" placeholder="Phone Number*" name="phone_number" required />
+                                        <input type="text" class="d-block" id="phone_number2" placeholder="Phone Number*" name="phone_number" required />
                                         <?php echo form_error('phone_number'); ?>
 
-                                        <input type="text" class="title-field" placeholder="title*" name="title" required />
+                                        <input type="text" class="title-field" placeholder="title*" name="title" id="title2" required />
                                         <?php echo form_error('title'); ?>
 
-                                        <select class="form-select select-form-field" aria-label="Default select example" name="company_size">
+                                        <select class="form-select select-form-field" aria-label="Default select example" name="company_size" id="company_size2">
                                             <option selected>Employee Count*</option>
                                             <option value="1-5">1 - 5</option>
                                             <option value="6-25">6 - 25</option>
@@ -305,23 +295,20 @@
                                         </select>
 
                                         <?php echo form_error('job_roles'); ?>
-
-                                        <input type="text" class="d-block" placeholder="Company Name*" name="company_name" required />
+                                        <input type="text" class="d-block" placeholder="Company Name*" name="company_name" id="company_name2" required />
                                         <?php echo form_error('company_name'); ?><br>
 
-                                        <textarea class="form-control border-radius-25 dark-grey-color" id="client_message" rows="4" placeholder="Message" name="client_message"></textarea>
-
+                                        <textarea class="form-control border-radius-25 dark-grey-color" id="client_message2" rows="4" placeholder="Message" name="client_message"></textarea>
 
                                         <div class="form-group mt-4">
                                             <div class="g-recaptcha" data-sitekey="6Les2Q0TAAAAAAyeysl-dZsPUm98_6K2fNkyNCwI"></div>
                                             <?php echo form_error('g-recaptcha-response'); ?>
                                         </div>
 
-                                        <button class="margin-top-twent w-100 center-horizontally schedule-btn-product margin-top-twenty btn-animate" id="schedule-free-demo-form-submit2" type="submit">
+                                        <button class="margin-top-twent w-100 center-horizontally schedule-btn-product margin-top-twenty btn-animate has-spinner" id="schedule-free-demo-form-submit2" type="submit">
                                             <p class="text">Schedule Your No Obligation Consultation</p> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                                         </button>
                                     </div>
-
                                     <img src="/assets/v1/app/images/yellow-half.png" class="second-light-blue-half-circle-form" alt="half-purple-circle" />
                                 </div>
 
@@ -340,146 +327,5 @@
 <script src='https://www.google.com/recaptcha/api.js'></script>
 
 <script type="text/javascript">
-    $('#schedule-free-demo-form-submit').click(function() {
-        $("#schedule-free-demo-form").validate({
-            ignore: [],
-            rules: {
-                name: {
-                    required: true,
-                },
-                email: {
-                    required: true,
-                },
-                phone_number: {
-                    required: true,
-                },
-                company_name: {
-                    required: true,
-                },
-                title: {
-                    required: true,
-                }
-            },
-            messages: {
-                name: {
-                    required: 'Please provide user name.',
-                },
-                email: {
-                    required: 'Please provide valid email.',
-                },
-                phone_number: {
-                    required: 'Please provide valid phone number',
-                },
-                company_name: {
-                    required: 'Please provide company name.',
-                },
-                title: {
-                    required: 'Please provide title.',
-                }
-            },
-            submitHandler: function(form) {
-                //
-
-                if ($('#g-recaptcha-response').val() == '') {
-                    alertify.alert('Captcha is required.');
-                    return;
-                }
-
-                var myurl = "<?= base_url() ?>demo/check_already_applied";
-                $.ajax({
-                    type: "POST",
-                    url: myurl,
-                    data: {
-                        email: $('#email_id').val()
-                    },
-                    dataType: "json",
-                    success: function(data) {
-                        var obj = jQuery.parseJSON(data);
-                        if (obj == 0) {
-                            form.submit();
-                        } else {
-                            $("#schedule-free-demo-form-submit").attr("disabled", true);
-                            form.submit();
-                        }
-                    },
-                    error: function(data) {
-                        alertify.error('Sorry we will fix that issue');
-                    }
-                });
-            }
-        });
-
-    });
-
-    $('#schedule-free-demo-form-submit2').click(function() {
-        $("#schedule-free-demo-form2").validate({
-            ignore: [],
-            rules: {
-                name: {
-                    required: true,
-                },
-                email: {
-                    required: true,
-                },
-                phone_number: {
-                    required: true,
-                },
-                company_name: {
-                    required: true,
-                },
-                title: {
-                    required: true,
-                }
-            },
-            messages: {
-                name: {
-                    required: 'Please provide user name.',
-                },
-                email: {
-                    required: 'Please provide valid email.',
-                },
-                phone_number: {
-                    required: 'Please provide valid phone number',
-                },
-                company_name: {
-                    required: 'Please provide company name.',
-                },
-                title: {
-                    required: 'Please provide title.',
-                }
-            },
-            submitHandler: function(form) {
-                //
-
-                if ($('#g-recaptcha-response').val() == '') {
-                    alertify.alert('Captcha is required.');
-                    return;
-                }
-
-
-                var myurl = "<?= base_url() ?>demo/check_already_applied";
-                $.ajax({
-                    type: "POST",
-                    url: myurl,
-                    data: {
-                        email: $('#email_id2').val()
-                    },
-                    dataType: "json",
-                    success: function(data) {
-                        var obj = jQuery.parseJSON(data);
-                        if (obj == 0) {
-                            form.submit();
-                        } else {
-                            $("#schedule-free-demo-form-submit2").attr("disabled", true);
-                            form.submit();
-                        }
-                    },
-                    error: function(data) {
-                        alertify.error('Sorry we will fix that issue');
-                    }
-                });
-            }
-        });
-
-    });
+    var BASEURL = "<?php echo base_url(); ?>";
 </script>

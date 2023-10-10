@@ -1966,5 +1966,6 @@ $route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
 $route['read_more/(:any)']['get'] = 'v1/Resources/readMore/$1';
 $route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
 
+$route['why-us'] = 'users/why_us';
 
 
