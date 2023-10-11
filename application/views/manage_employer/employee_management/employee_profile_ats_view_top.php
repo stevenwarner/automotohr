@@ -12,7 +12,8 @@
                 <div class="text">
                     <h2>
                         <?= $employer["first_name"] ?> <?= $employer["last_name"] ?>
-                        <?php if (isset($employer['user_type']) && $employer['user_type'] != 'Applicant') { ?>
+                        <?php //if (isset($employer['user_type']) && $employer['user_type'] != 'Applicant') { ?>
+                            <?php if ($employer['user_type'] != 'Applicant') {?>
                             <br>
                             <span>
                                 <?= remakeEmployeeName($employer, false); ?>
@@ -66,6 +67,5 @@
                 </div>
             </div>
         </div>
-        <!--  -->
     </article>
 </div>
