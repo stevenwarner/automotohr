@@ -19,7 +19,7 @@ class Resources extends Public_Controller
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
         $this->css = "public/v1/css/app/";
-        $this->js = "public/v1/js/app/";  
+        $this->js = "public/v1/js/app/";
     }
 
     public function index()
@@ -34,11 +34,11 @@ class Resources extends Public_Controller
         //
         // get latest blogs
         $data['blogs'] =
-            $this->resources_model->getLatestBlogs(3,0); 
+            $this->resources_model->getLatestBlogs(3, 0);
         //
         // get latest blogs
         $data['resources'] =
-            $this->resources_model->getResources(3,0);
+            $this->resources_model->getResources(3, 0);
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
@@ -68,8 +68,9 @@ class Resources extends Public_Controller
         $this->load->view($this->footer);
     }
 
-    public function subscribeCommunity () {
-        if($this->input->is_ajax_request()){
+    public function subscribeCommunity()
+    {
+        if ($this->input->is_ajax_request()) {
             //
             $checkEmail = $this->resources_model->checkSubscriberAlreadyExist($_POST['scriber_email']);
             //
@@ -89,22 +90,25 @@ class Resources extends Public_Controller
                 $this->resources_model->updateSubscriber($dataToUpdate, $_POST['scriber_email']);
             }
             //
-            echo 'success'; exit(0);
-        }    
+            echo 'success';
+            exit(0);
+        }
     }
 
-    public function searchResources () {
-        _e($_GET,true,true);
+    public function searchResources()
+    {
+        _e($_GET, true, true);
     }
 
-    public function loadMore ($type, $row) {
-        if($this->input->is_ajax_request()){
+    public function loadMore($type, $row)
+    {
+        if ($this->input->is_ajax_request()) {
             //
             $result = [];
             $start = 3 * $row;
             //
             if ($type == "blog") {
-                $result = $this->resources_model->getLatestBlogs(3, $start); 
+                $result = $this->resources_model->getLatestBlogs(3, $start);
             } else if ($type == "resource") {
                 $category = isset($_GET['category']) ? implode(',', $_GET['category']) : null;
                 $keywords = !empty($_GET['keywords']) ? $_GET['keywords'] : null;
@@ -113,17 +117,57 @@ class Resources extends Public_Controller
             }
             //
             header('Content-Type: application/json');
-            echo json_encode($result); exit(0);
-        }    
-        
+            echo json_encode($result);
+            exit(0);
+        }
     }
 
-    function readMore ($slug) {
+    function readMore($slug)
+    {
+
+        // meta titles
+        $blogs =
+            $this->resources_model->getBlogDetail($slug);
+
+        $data = [];
+        $data['meta'] = [];
+        $data['meta']['title'] = $blogs['meta_title'];
+        $data['meta']['description'] = $blogs['meta_description'];
+        $data['meta']['keywords'] = $blogs['meta_key_word'];
+
+        //
+        $data['blogs'] = $blogs;
+
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/alertifyjs/css/alertify.min'
+        ];
+
+        $data['pageJs'] = [
+            'v1/app/js/jquery-1.11.3.min',
+            'v1/app/alertifyjs/alertify.min'
+        ];
+
+
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/resources'
+        ], $this->css, 'resources');
+
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'public/v1/js/app/resources',
+            'alertifyjs/alertify.min'
+        ], $this->js, 'home');
+
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/resource_detail');
+        $this->load->view($this->footer);
+    }
+
+    function watchResource($slug)
+    {
         echo $slug;
     }
-
-    function watchResource ($slug) {
-        echo $slug;
-    }
-
-}    
+}

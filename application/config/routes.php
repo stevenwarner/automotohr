@@ -1952,7 +1952,7 @@ $route['manage_admin/resources/(:num)'] = 'manage_admin/Resources/index/$1';
 
 $route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resource/$1';
 $route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
-$route['resources/(:any)'] = 'manage_admin/Resources/view_resource/$1';
+//$route['resources/(:any)'] = 'manage_admin/Resources/view_resource/$1';
 $route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
 
 //
@@ -1963,9 +1963,13 @@ $route['resources']['get'] = 'v1/Resources/index';
 $route['subscribeCommunity']['post'] = 'v1/Resources/subscribeCommunity';
 $route['searchResources']['get'] = 'v1/Resources/searchResources';
 $route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
-$route['read_more/(:any)']['get'] = 'v1/Resources/readMore/$1';
+//$route['read_more/(:any)']['get'] = 'v1/Resources/readMore/$1';
 $route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
 
+$route['resources/(:any)'] = 'v1/Resources/readMore/$1';
+
+
 $route['why-us'] = 'users/why_us';
+
 
 

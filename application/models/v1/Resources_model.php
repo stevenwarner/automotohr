@@ -7,12 +7,13 @@ class Resources_model extends CI_Model
         parent::__construct();
     }
 
-    public function getLatestBlogs ($limit = null, $start = null) {
+    public function getLatestBlogs($limit = null, $start = null)
+    {
         //
         $this->db->select("title, slug, description, feature_image");
         $this->db->where('status', 1);
         //
-        if($limit != null){
+        if ($limit != null) {
             $this->db->limit($limit, $start);
         }
         //
@@ -26,21 +27,22 @@ class Resources_model extends CI_Model
         }
     }
 
-    public function getResources ($limit = null, $start = null, $keywords = null, $category = '') {
+    public function getResources($limit = null, $start = null, $keywords = null, $category = '')
+    {
         //
         $this->db->select("title, slug, description, resources, resource_type");
         $this->db->where('status', 1);
         //
         if (!empty($category)) {
             $this->db->where("resource_type LIKE '%$category%'");
-        } 
+        }
         //    
         if (!empty($keywords)) {
             $this->db->where("title LIKE '%$keywords%'");
         }
         //
-        if($limit != null){
-        $this->db->limit($limit, $start);
+        if ($limit != null) {
+            $this->db->limit($limit, $start);
         }
         //
         $this->db->order_by("sid", "asc");
@@ -53,7 +55,8 @@ class Resources_model extends CI_Model
         }
     }
 
-    public function checkSubscriberAlreadyExist ($email) {
+    public function checkSubscriberAlreadyExist($email)
+    {
         //
         $this->db->where('email', $email);
         //
@@ -68,12 +71,33 @@ class Resources_model extends CI_Model
         }
     }
 
-    public function addSubscriber ($dataToInsert) {
+    public function addSubscriber($dataToInsert)
+    {
         $this->db->insert('cms_subscribers', $dataToInsert);
     }
 
-    function updateSubscriber ($dataToUpdate, $email) {
+    function updateSubscriber($dataToUpdate, $email)
+    {
         $this->db->where('email', $email)
-                ->update('cms_subscribers', $dataToUpdate);
+            ->update('cms_subscribers', $dataToUpdate);
     }
-}    
+
+
+
+
+    public function getBlogDetail($slug)
+    {
+        //
+        $this->db->select("title, slug, description, feature_image,	resources,meta_title,meta_description,meta_key_word,created_at,resource_type");
+        //
+        $this->db->where('slug', $slug);
+
+        $result = $this->db->get('cms_resources')->row_array();
+        //
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return array();
+        }
+    }
+}

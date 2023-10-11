@@ -251,7 +251,7 @@
                         blogHTML += `           <p class="card-text">`;
                         blogHTML += `               ${strippedtitleblog.substr(0, 200)}...`;
                         blogHTML += `           </p>`;
-                        blogHTML += `           <a href="${BASEURL}read_more/${blog.slug}"  class="card-text">Read more</a>`;
+                        blogHTML += `           <a href="${BASEURL}resources/${blog.slug}"  class="card-text">Read more</a>`;
                         blogHTML += `       </div>`;
                         blogHTML += `   </div>`;
                         blogHTML += `</div>`;
@@ -386,7 +386,7 @@
                         resourceHTML += `           <p class="card-text">`;
                         resourceHTML += strippedtitle.substr(0, 200);
                         resourceHTML += `           ...</p>`;
-                        resourceHTML += `           <a href="${BASEURL}watch_resource/${resource.slug}" class="card-anchor-text opacity-90">Watch Now</a>`;
+                        resourceHTML += `           <a href="${BASEURL}resources/${resource.slug}" class="card-anchor-text opacity-90">Watch Now</a>`;
                         resourceHTML += `       </div>`;
                         resourceHTML += `   </div>`;
                         resourceHTML += `</div>`;
