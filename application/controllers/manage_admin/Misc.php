@@ -121,7 +121,7 @@ class Misc extends Admin_Controller
         $logArray = [];
         $logArray['ccid'] = substr($params['cc_card_no'], -4);
         $logArray['request_json'] = json_encode($card);
-        
+
         $card->setMerchantId("AHR_$company_sid");
         try {
             $response = $card->create($apiContext);
@@ -549,16 +549,14 @@ class Misc extends Admin_Controller
                         $fi = $payer->getFundingInstruments();
                         $cc_token = $fi[0]->getCreditCardToken();
 
-                         //
-                        if (false) {
-                            $last4 = $cc_token->getLast4();
-                            $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
-                            $cc_type = $cc_token->getType();
-                        } else {
-                            $last4 = substr($cc_number, -4);
-                            $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
-                            $cc_type = strtoupper($cc_type);
-                        }
+                        //
+                        $last4 = $cc_token->getLast4();
+                        $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
+                        $cc_type = $cc_token->getType();
+                        // $last4 = substr($cc_number, -4);
+                        // $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
+                        // $cc_type = strtoupper($cc_type);
+                        @mail('mubashar.ahmed@egenienext.com', "CC last 4 from admin", "Last 4 digits {$last4}");
 
                         $data_to_update = array();
                         $data_to_update['payment_status'] = 'paid';
