@@ -40,7 +40,7 @@ class Testing extends CI_Controller
     }
 
     public function pendingDocument ($companySid, $employeeSid) {
-        $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employee_id, 0, 0);
+        $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($companySid, 'employee', $employeeSid, 0, 0);
         //
         _e($assigned_documents,true);
         //
