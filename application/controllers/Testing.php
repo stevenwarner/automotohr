@@ -42,7 +42,7 @@ class Testing extends CI_Controller
     public function pendingDocument ($companySid, $employeeSid) {
         $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($companySid, 'employee', $employeeSid, 0, 0);
         //
-        _e($assigned_documents,true);
+        _e(count($assigned_documents),true);
         //
         foreach ($assigned_documents as $key => $assigned_document) {
             if ($assigned_document['archive'] == 0) {
@@ -149,13 +149,13 @@ class Testing extends CI_Controller
             }    
         }
         //
-        _e($assigned_documents,true,true);
+        _e(count($assigned_documents),true,true);
     }
 
     public function assignedDocument ($companySid, $employeeSid) {
         $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($companySid, 'employee', $employeeSid, 0, 1, 0, 0, 1, 1);
         //
-        _e($assigned_documents,true);
+        _e(count($assigned_documents),true);
         //
         foreach ($assigned_documents as $key => $assigned_document) {
             if ($assigned_document['archive'] == 0) {
@@ -321,7 +321,7 @@ class Testing extends CI_Controller
             
         }
         //
-        _e($assigned_documents,true,true);
+        _e(count($assigned_documents),true,true);
     }
 
     public function test()
