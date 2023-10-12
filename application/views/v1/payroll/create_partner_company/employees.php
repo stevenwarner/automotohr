@@ -12,6 +12,18 @@
             </div>
         <?php } else { ?>
             <h3 class="alert pl0">Welcome to Payroll. Which of your existing users do you want to run payroll for?</h3>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn csW csBG3 csF16 jsSelectAll">
+                        Select all
+                    </button>
+                    <button class="btn csW csBG4 csF16 jsUnSelectAll">
+                        Remove all
+                    </button>
+                </div>
+            </div>
+            <hr />
             <?php foreach ($employees as $employee) {
                 $isDisabled = 0;
                 $missingInfo = '';
@@ -23,7 +35,7 @@
                 <div class="row">
                     <div class="col-xs-12 col-md-12">
                         <label class="control control--checkbox">
-                            <input type="checkbox" <?= $isDisabled == 1 ? 'disabled' : ''; ?> class="jsEmployeesList" value="<?= $employee['sid']; ?>" name=<?= $isDisabled == 1 ? '' : 'jsEmployeesList[]'; ?> /> <?= $employee['full_name_with_role'] . $missingInfo; ?>
+                            <input type="checkbox" <?= $isDisabled == 1 ? 'disabled' : ''; ?> class="jsSingleEmployee jsEmployeesList" value="<?= $employee['sid']; ?>" name=<?= $isDisabled == 1 ? '' : 'jsEmployeesList[]'; ?> /> <?= $employee['full_name_with_role'] . $missingInfo; ?>
                             <div class="control__indicator"></div>
                             <!-- -->
                         </label>

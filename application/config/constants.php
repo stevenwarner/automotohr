@@ -697,3 +697,7 @@ define('FAST_PAYMENT_LIMIT', 500);
 define('MODULE_LMS', 'lms');
 define('USA_CODE', 227);
 define('COURSES_REMINDER_NOTIFICATION', 434);
+
+// W4 amounts
+define("W4_DEPENDENTS_UNDER_AGE_AMOUNT", 2000);
+define("W4_DEPENDENTS_AMOUNT", 500);

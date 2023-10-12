@@ -944,6 +944,20 @@ class Payroll_model extends CI_Model
             ->where(['employee_sid' => $employeeId])
             ->update('gusto_companies_employees', ['personal_details' => 1]);
         //
+        // get employee compensation
+        $employee = $this->db
+            ->select("
+                    payment_method,
+                    hourly_rate,
+                    hourly_technician,
+                    flat_rate_technician,
+                    semi_monthly_salary,
+                    semi_monthly_draw,
+                ")
+            ->where('sid', $employeeId)
+            ->get("users")
+            ->row_array();
+        //
         $megaResponse['employee'] = $gustoEmployee;
         $megaResponse['errors'] = [];
         // get company details
@@ -952,6 +966,12 @@ class Payroll_model extends CI_Model
         $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
         //
         $companyDetails['company_sid'] = $companyId;
+        // payment method
+        if ($employee['payment_method'] != 'check') {
+            $this->getEmployeeBankAccountsById($employeeId, true);
+        }
+        // sync federal tax
+        $this->syncEmployeeFederalTax($employeeId);
         // sync employee jobs
         $response = $this->syncEmployeeJobs($employeeId, $companyDetails);
         // if has errors
@@ -975,6 +995,34 @@ class Payroll_model extends CI_Model
                         ['Jobs & Compensations' => $response['errors']]
                     );
                 }
+            }
+            //
+            if (!$response['errors']) {
+                //
+                $data = [];
+                //
+                if ((int) $employee['hourly_rate'] != 0) {
+                    $data['amount'] = $employee['hourly_rate'];
+                    $data['classification'] = "Nonexempt";
+                    $data['per'] = "Hour";
+                } elseif ((int) $employee['hourly_technician'] != 0) {
+                    $data['amount'] = $employee['hourly_technician'];
+                    $data['classification'] = "Nonexempt";
+                    $data['per'] = "Hour";
+                } elseif ((int) $employee['flat_rate_technician'] != 0) {
+                    $data['amount'] = $employee['flat_rate_technician'];
+                    $data['classification'] = "Nonexempt";
+                    $data['per'] = "Hour";
+                } elseif ((int) $employee['semi_monthly_salary'] != 0) {
+                    $data['amount'] = $employee['semi_monthly_salary'];
+                    $data['classification'] = "Exempt";
+                    $data['per'] = "Month";
+                } elseif ((int) $employee['semi_monthly_draw'] != 0) {
+                    $data['amount'] = $employee['semi_monthly_draw'];
+                    $data['classification'] = "Exempt";
+                    $data['per'] = "Month";
+                }
+                $this->updateEmployeeCompensation($employeeId, $data);
             }
         }
         // sync employee bank accounts
@@ -1446,6 +1494,69 @@ class Payroll_model extends CI_Model
         }
         //
         return ['count' => count($gustoResponse)];
+    }
+
+
+    /**
+     * sync employee federal tax with Gusto
+     *
+     * @param int   $employeeId
+     * @return array
+     */
+    private function syncEmployeeFederalTax(int $employeeId): array
+    {
+        // get the federal tax
+        $record = $this->db
+            ->select("
+                marriage_status,
+                mjsw_status,
+                dependents_children,
+                other_dependents,
+                other_income,
+                other_deductions,
+                additional_tax
+            ")
+            ->where([
+                "user_type" => "employee",
+                "employer_sid" => $employeeId
+            ])
+            ->get("form_w4_original")
+            ->row_array();
+        //
+        if (!$record) {
+            return ["success" => false, "msg" => "No federal tax found."];
+        }
+        //
+        $record['dependents_children'] = (int)$record['dependents_children'];
+        $record['other_dependents'] = (int)$record['other_dependents'];
+        //
+        $data = [];
+        //
+        $data['filing_status'] = $record['marriage_status'] == 'jointly' ? "Married" : "Single";
+        if ($record['marriage_status'] == 'head') {
+            $data['filing_status'] = "Head of Household";
+        } elseif ($record['marriage_status'] == 'separately') {
+            $data['filing_status'] = "Single";
+        }
+        $data['two_jobs'] = $record['mjsw_status'] === "similar_pay" ? "yes" : "no";
+        //
+        $data['dependents_amount'] = $record['dependents_children'] + $record['other_dependents'];
+        $data['extra_withholding'] = (int) $record['additional_tax'];
+        $data['other_income'] = (int) $record['other_income'];
+        $data['deductions'] = (int) $record['other_deductions'];
+        $data['w4_data_type'] = "rev_2020_w4";
+        //
+        $gustoFederalTax = $this->db
+            ->where('employee_sid', $employeeId)
+            ->count_all_results('gusto_employees_federal_tax');
+        //
+        $method = !$gustoFederalTax ? 'createEmployeeFederalTax' : 'updateEmployeeFederalTax';
+        // let's update employee's home address
+        return $this->payroll_model
+            ->$method(
+                $employeeId,
+                $data
+            );
     }
 
     /**

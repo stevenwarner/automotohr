@@ -40,6 +40,13 @@ $(function createPartnerCompany() {
 		XHR = null;
 	});
 
+	$(document).on("click", ".jsSelectAll", function () {
+		$(".jsSingleEmployee").prop("checked", true);
+	});
+	$(document).on("click", ".jsUnSelectAll", function () {
+		$(".jsSingleEmployee").prop("checked", false);
+	});
+
 	/**
 	 * capture the create partner company click
 	 */
