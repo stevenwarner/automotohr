@@ -324,6 +324,27 @@ class Testing extends CI_Controller
         _e(count($assigned_documents),true,true);
     }
 
+    public function fixRequired () {
+        $this->db->select('sid');
+        $this->db->where('is_required', 1);
+        $this->db->where('archive', 0);
+        $record_obj = $this->db->get('documents_management');
+        $requiredDocuments = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($requiredDocuments)) {
+            foreach ($requiredDocuments as $document) {
+                $data_to_update = array();
+                $data_to_update['is_required'] = 1;
+                $this->db->where('document_sid', $document['sid']);
+                $this->db->update('documents_assigned', $data_to_update);
+            }
+            //
+            echo "End Script";
+            
+        } 
+    }
+
     public function test()
     {
 
