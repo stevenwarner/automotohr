@@ -28,16 +28,16 @@
                         <div class="col-sm-12 col-md-12 text-right">
                             <?php if ($payrollBlockers) { ?>
                                 <button class="btn btn-success jsVerifyCompany csF16" title="Verify Company" placement="top">
-                                    <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                    <i class="fa fa-shield csF16" aria-hidden="true"></i>&nbsp;
                                     <span>Verify Company</span>
                                 </button>
                                 <button class="btn btn-success jsVerifyBankAccount csF16" title="Verify bank account" placement="top">
-                                    <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                    <i class="fa fa-check-circle csF16" aria-hidden="true"></i>&nbsp;
                                     <span>Verify Bank Account</span>
                                 </button>
                             <?php } ?>
                             <button class="btn btn-success jsSyncCompanyData csF16" title="Sync data" placement="top">
-                                <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                <i class="fa fa-refresh csF16" aria-hidden="true"></i>&nbsp;
                                 <span>Sync</span>
                             </button>
                         </div>

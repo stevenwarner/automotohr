@@ -342,7 +342,7 @@
                                             <?php } ?>
                                         </div>
                                         <div class="panel-footer text-center">
-                                            <a href="<?= base_url('payrolls/benefits'); ?>" class="btn csW csBG3 csF16">
+                                            <a href="<?= base_url('benefits'); ?>" class="btn csW csBG3 csF16">
                                                 <i class="fa fa-eye csF16" aria-hidden="true"></i>
                                                 &nbsp;View more
                                             </a>
@@ -453,7 +453,7 @@
                                                                             DATE
                                                                         ); ?> -
                                                                         <?= formatDateToDB(
-                                                                            $value['end_Date'],
+                                                                            $value['end_date'],
                                                                             DB_DATE,
                                                                             DATE
                                                                         ); ?>
@@ -464,6 +464,83 @@
                                                                             DB_DATE,
                                                                             DATE
                                                                         ); ?>
+                                                                    </td>
+                                                                    <td class="vam text-right">
+                                                                        <a href="<?= base_url('payrolls/history/' . $value['sid']); ?>" class="btn csW csBG3 csF16">
+                                                                            View
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            <?php } else { ?>
+                                                <?php $this->load->view('v1/no_data', ['message' => 'No payroll history found.']); ?>
+                                            <?php } ?>
+                                        </div>
+                                        <div class="panel-footer text-center">
+                                            <a href="<?= base_url('payrolls/history'); ?>" class="btn csW csBG3 csF16">
+                                                <i class="fa fa-eye csF16" aria-hidden="true"></i>
+                                                &nbsp;View more
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!-- Payroll history -->
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">
+                                            <h1 class="csF16 csW m0">
+                                                <strong>
+                                                    Off Cycle Payroll receipts
+                                                </strong>
+                                            </h1>
+                                        </div>
+                                        <div class="panel-body">
+                                            <?php if ($offCyclePayrolls) { ?>
+                                                <div class="table-responsive">
+                                                    <table class="table">
+                                                        <caption></caption>
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="csW csBG4">
+                                                                    Pay period
+                                                                </th>
+                                                                <th scope="col" class="text-right csW csBG4">
+                                                                    Pay day
+                                                                </th>
+                                                                <th scope="col" class="text-right csW csBG4">
+                                                                    Reason
+                                                                </th>
+                                                                <th scope="col" class="text-right csW csBG4">
+                                                                    Actions
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            <?php foreach ($offCyclePayrolls as $value) { ?>
+                                                                <tr>
+                                                                    <td class="vam">
+                                                                        <?= formatDateToDB(
+                                                                            $value['start_date'],
+                                                                            DB_DATE,
+                                                                            DATE
+                                                                        ); ?> -
+                                                                        <?= formatDateToDB(
+                                                                            $value['end_date'],
+                                                                            DB_DATE,
+                                                                            DATE
+                                                                        ); ?>
+                                                                    </td>
+                                                                    <td class="vam text-right">
+                                                                        <?= formatDateToDB(
+                                                                            $value['check_date'],
+                                                                            DB_DATE,
+                                                                            DATE
+                                                                        ); ?>
+                                                                    </td>
+                                                                    <td class="vam text-right">
+                                                                        <?=$value['off_cycle_reason']; ?>
                                                                     </td>
                                                                     <td class="vam text-right">
                                                                         <a href="<?= base_url('payrolls/history/' . $value['sid']); ?>" class="btn csW csBG3 csF16">

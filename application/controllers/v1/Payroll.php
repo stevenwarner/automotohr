@@ -77,7 +77,14 @@ class Payroll extends CI_Controller
         // get the processed payrolls
         $data['payrolls'] = $this
             ->history_payroll_model
-            ->getProcessedPayrolls(
+            ->getProcessedRegularPayrolls(
+                $companyId,
+                10
+            );
+        // get the processed off cycle payrolls
+        $data['offCyclePayrolls'] = $this
+            ->history_payroll_model
+            ->getProcessedOffcyclePayrolls(
                 $companyId,
                 10
             );
@@ -159,7 +166,6 @@ class Payroll extends CI_Controller
                     federal_tax_setup,
                     state_setup,
                     sign_all_forms,
-                    " . (isLoggedInPersonIsSignatory() ? 'sign_all_forms' : '') . "
                 ",
                 "entity_type" => "Company",
                 "entity_uuid" => $companyGustoDetails['gusto_uuid']
@@ -971,10 +977,15 @@ class Payroll extends CI_Controller
                 ]
             );
         elseif ($step === 4) : // set admin step
+            // get system employees
+            $employees = $this->payroll_model->getActiveEmployees($companyId);
+            //
             return SendResponse(
                 200,
                 [
-                    'view' => $this->load->view('v1/payroll/create_partner_company/admin', [], true)
+                    'view' => $this->load->view('v1/payroll/create_partner_company/admin', [
+                        'employees' => $employees
+                    ], true)
                 ]
             );
         elseif ($step === 5) : // save admin step
@@ -1056,7 +1067,7 @@ class Payroll extends CI_Controller
             ->row_array();
         // get company's dmins
         $data['admins'] = $this->db
-            ->select('email_address')
+            ->select('email_address, automotohr_reference')
             ->where('company_sid', $companyId)
             ->where('is_store_admin', 0)
             ->get('gusto_companies_admin')

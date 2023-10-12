@@ -16,12 +16,27 @@
                 </h1>
             </div>
         </div>
+
         <!-- Body -->
         <div class="row">
             <div class="col-sm-12">
                 <p class="csF16">
                     Fields marked with asterisk (<span class="csRequired"></span>) are mandatory.
                 </p>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16 csB7">
+                    Select an employee
+                </label>
+                <select class="form-control" id="jsEmployeeChoose">
+                    <option value="0"></option>
+                    <?php foreach ($employees as $value) { ?>
+                        <option value="<?= $value['userId']; ?>"><?= remakeEmployeeName($value); ?></option>
+                    <?php } ?>
+                </select>
             </div>
         </div>
         <hr>
@@ -54,6 +69,7 @@
             </div>
         </form>
         <br>
+        <input type="hidden" class="jsAdminUserId" value="0" />
         <div class="row">
             <div class="col-sm-12">
                 <button class="btn btn-black csF16 csB7 jsBackToStep3">

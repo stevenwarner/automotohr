@@ -423,6 +423,9 @@ if (!function_exists('getUrl')) {
         $urls['deleteEmployeeBenefit'] =
             "v1/employee_benefits/$key1";
 
+        // off cycle payrolls
+        $urls["createOffCyclePayroll"] = "v1/companies/$key/payrolls";
+
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
 }
@@ -962,6 +965,6 @@ if (!function_exists('getReason')) {
         $reasonsArray['dismissed-employee'] = 'Dismissed employee';
         $reasonsArray['transition'] = 'Transition from old pay schedule';
         //
-        return $reasonsArray[$reason] ?? '';
+        return $reasonsArray[$reason] ?? 'Bonus';
     }
 }

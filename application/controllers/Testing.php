@@ -324,4 +324,15 @@ class Testing extends CI_Controller
         _e($assigned_documents,true,true);
     }
 
+    public function test()
+    {
+
+        $this->load->model("v1/payroll_model", "payroll_model");
+        //
+        $this->payroll_model->onboardEmployee(
+            53,
+            21
+        );
+    }
+
 }
