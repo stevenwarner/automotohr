@@ -1939,6 +1939,13 @@ $route['payrolls/corrections/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/O
 $route['payrolls/corrections/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/corrections/$1';
 // review off
 $route['payrolls/corrections/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/corrections/$1';
+
+// hours and earnings
+$route['payrolls/bonus/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/bonus/$1';
+// time off
+$route['payrolls/bonus/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/bonus/$1';
+// review off
+$route['payrolls/bonus/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/bonus/$1';
 // process payroll
 $route['payrolls/off-cycle/basics']['post'] = 'v1/payrolls/Off_cycle/processBasics';
 // clear payroll data
