@@ -27,5 +27,6 @@
 } ?>
 <?= $appJs ?? ''; ?>
 <?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) : ?>
+    <script type="text/javascript" src="<?= base_url('assets/attendance/js/moment-timezone.min.js'); ?>"></script>
     <script src="<?= base_url(_m("assets/attendance/js/main", 'js', '1.0.1')); ?>"></script>
 <?php endif; ?>

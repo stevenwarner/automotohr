@@ -240,6 +240,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['download_required'] = $document['download_required'];
                                 $data_to_update['signature_required'] = $document['signature_required'];
                                 $data_to_update['acknowledgment_required'] = $document['acknowledgment_required'];
+                                $data_to_update['is_required'] = $document['is_required'];
                                 //
                                 addColumnsForDocumentAssigned($data_to_update, $document);
                                 $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
@@ -262,6 +263,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['download_required'] = $document['download_required'];
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                                $data_to_insert['is_required'] = $document['is_required'];
 
                                 //
                                 $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
@@ -2141,6 +2143,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['download_required'] = $document['download_required'];
                                 $data_to_update['signature_required'] = $document['signature_required'];
                                 $data_to_update['acknowledgment_required'] = $document['acknowledgment_required'];
+                                $data_to_update['is_required'] = $document['is_required'];
                                 // $data_to_update['is_pending'] = 1;
 
                                 $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
@@ -2165,6 +2168,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['download_required'] = $document['download_required'];
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                                $data_to_insert['is_required'] = $document['is_required'];
 
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             }
@@ -3441,6 +3445,7 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
+                            $data_to_insert['is_required'] = $document['is_required'];
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -5404,6 +5409,7 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
+                            $data_to_insert['is_required'] = $document['is_required'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
@@ -8231,6 +8237,7 @@ class Hr_documents_management extends Public_Controller
                         $document_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
                         $document_to_insert['signature_required'] = $document['signature_required'];
                         $document_to_insert['download_required'] = $document['download_required'];
+                        $document_to_insert['is_required'] = $document['is_required'];
                         //
                         $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($document_to_insert);
                         //
@@ -10162,6 +10169,7 @@ class Hr_documents_management extends Public_Controller
                         $data_to_update['submitted_description'] = NULL;
                         $data_to_update['signature_base64'] = NULL;
                         $data_to_update['signature_initial'] = NULL;
+                        $data_to_update['is_required'] = $document['is_required'];
                         $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
                     } else {
                         $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
@@ -10179,6 +10187,7 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
                         $data_to_insert['document_title'] = $document['document_title'];
                         $data_to_insert['document_description'] = htmlentities($this->input->post('description'));
+                        $data_to_insert['is_required'] = $document['is_required'];
 
                         //
                         $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];

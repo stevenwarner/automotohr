@@ -181,7 +181,6 @@ class Attendance_ajax extends Public_Controller
             $ra['last_status'] = $attendanceListLastRecord[0]['action'];
             $ra['action_date_time'] = $attendanceListLastRecord[0]['action_date_time'];
         }
-
         // 
         if (empty($attendanceList)) {
             //
@@ -192,7 +191,9 @@ class Attendance_ajax extends Public_Controller
             return SendResponse(200, $this->resp);
         }
         //
-
+        $actionDate = new DateTime($ra['action_date_time'], new DateTimeZone('America/Los_Angeles'));
+        $ra['action_date_time'] = $actionDate->setTimezone(new DateTimeZone($_GET['timezone']))->format('Y-m-d H:i:s');
+        //
         unset($this->resp['errors']);
         $this->resp['success'] = $ra;
 
@@ -235,7 +236,6 @@ class Attendance_ajax extends Public_Controller
             $employeeId = $attendanceInfo["employee_sid"];
             $added_by = $this->employerId;
             //Todo Need to check converted date and actual date
-
         }
         //
         $attendanceList = $this->atm->GetAttendanceList(
@@ -469,7 +469,8 @@ class Attendance_ajax extends Public_Controller
             //
             unset($this->resp['errors']);
             //
-            $this->resp['success'] = 'Hurray! you are successfully "' . (GetAttendanceActionText($action)) . '".';
+            $
+            $this->resp['success'] = 'You are successfully ' . (GetAttendanceActionText($action)) . '.';
         }
         //
         if ($return) {

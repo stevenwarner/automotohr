@@ -27,6 +27,7 @@ $(function () {
         //
         event.preventDefault();
         //
+        ml(true, 'jsAttendanceLoader');
         CheckPost($(this).data('type'));
     });
 
@@ -225,7 +226,13 @@ $(function () {
                     }
                 )
             })
-            .fail(HandleError);
+            .fail(HandleError)
+            .always(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsAttendanceLoader");
+			});
     }
 
     /**
@@ -234,16 +241,27 @@ $(function () {
     function LoadClock() {
         //
         $('.jsAttendanceLoader').show(0);
+        let currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        moment.tz.setDefault("America/Los_Angeles");
+        console.log(currentTimeZone)
         // 
-        XHR = $.get(
-            baseURI + 'attendance/get/clock'
-        )
-            .done(function (resp) {
+        XHR = $.ajax({
+			url: baseURI + 'attendance/get/clock',
+			method: "GET",
+            data: {
+                "timezone": currentTimeZone
+            }
+		})
+        .done(function (resp) {
+            //
+            SetClock(resp.success.last_status);
+            //
+            if (resp.success.last_status == "break_in" || resp.success.last_status == "clock_in") {
                 //
                 var diffHours = 0;
                 var diffMiuntes = 0;
                 var diffSeconds = 0;
-
+                //
                 // break record
                 if (resp.success.break_record && resp.success.last_status == "break_in") {
                     var breakTime = resp.success.break_record;
@@ -279,7 +297,7 @@ $(function () {
                     diffMiuntes = totalBreakduration.minutes();
                     diffSeconds = totalBreakduration.seconds();
                 }
-
+                //
                 if (resp.success.last_status == "clock_in") {
                     // Get Current Date Time 
                     var checkinTime = resp.success.action_date_time;
@@ -289,12 +307,11 @@ $(function () {
                     diffMiuntes = difference.minutes();
                     diffSeconds = difference.seconds();
                 }
-
-                SetClock(resp.success.last_status);
+                //
                 CountDownTimer(diffHours, diffMiuntes, diffSeconds, resp.success.last_status);
-
-            })
-            .fail(HandleError);
+            }
+        })
+        .fail(HandleError);
     }
 
     function trackEmployeeLocation() {
@@ -639,6 +656,8 @@ $(function () {
     HideLoaders();
     //
     InitCurrentClock();
+    //
+    
     //
     // navigator.permissions.query({ name: 'geolocation' }).then(console.log);
 });
