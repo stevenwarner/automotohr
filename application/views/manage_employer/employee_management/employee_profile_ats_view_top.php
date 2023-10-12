@@ -12,7 +12,7 @@
                 <div class="text">
                     <h2>
                         <?= $employer["first_name"] ?> <?= $employer["last_name"] ?>
-                        <?php if (isset($employer['user_type']) && $employer['user_type'] != 'Applicant') { ?>
+                        <?php if(isset($employer['access_level_plus'])) {?>
                             <br>
                             <span>
                                 <?= remakeEmployeeName($employer, false); ?>

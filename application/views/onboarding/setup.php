@@ -64,6 +64,11 @@ if ($user_type == 'applicant') {
                                         $userInfoNew = get_user_datescolumns($user_info['sid']);
                                         ?>
                                         <h2><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></h2>
+                                        <?php if ($user_type === 'employee') { ?>
+                                            <span>
+                                                <?= remakeEmployeeName(getUserColumnByWhere(['sid' => $user_info['sid']]), false); ?>
+                                            </span>
+                                        <?php } ?>
                                         <h3 style="margin-top: -10px;margin-bottom: 5px">
                                             <span>
                                                 <?= get_user_anniversary_date(
