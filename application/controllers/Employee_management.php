@@ -1334,11 +1334,11 @@ class Employee_management extends Public_Controller
 
                     foreach ($rawMessages as $message) {
                         if ($message['outbox'] == 1) {
-                            $employerData = $this->application_tracking_system_model->getEmployerDetail($data["session"]["employer_detail"]["sid"]);
-                            $message['profile_picture'] = $employerData['profile_picture'];
-                            $message['first_name'] = $employerData['first_name'];
-                            $message['last_name'] = $employerData['last_name'];
-                            $message['username'] = $employerData['username'];
+                            // $employerData = $this->application_tracking_system_model->getEmployerDetail($data["session"]["employer_detail"]["sid"]);
+                            // $message['profile_picture'] = $employerData['profile_picture'];
+                            // $message['first_name'] = $employerData['first_name'];
+                            // $message['last_name'] = $employerData['last_name'];
+                            // $message['username'] = $employerData['username'];
                             if ($message['from_id'] == "notifications@automotohr.com") {
                                 $message['sender_name'] = getCompanyNameBySid($company_id);
                                 $logo = getCompanyLogoBySid($company_id);
@@ -1348,8 +1348,10 @@ class Employee_management extends Public_Controller
                                     $message['sender_profile_picture'] = getCompanyLogoBySid($company_id);
                                 }
                             } else {
-                                $message['sender_name'] = getUserNameBySID($message['from_id']);
-                                $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture'];
+                                //
+                                $details = get_employee_profile_info($message['from_id']);
+                                $message['sender_name'] = remakeEmployeeName($details);
+                                $message['sender_profile_picture'] = $details['profile_picture'];
                             }
                         } else {
                             $message['profile_picture'] = $data['employer']['profile_picture'];

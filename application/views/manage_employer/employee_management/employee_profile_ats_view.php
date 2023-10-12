@@ -1321,9 +1321,20 @@ if (checkIfAppIsEnabled('timeoff')) {
                                     </form>
                                     <div class="respond">
                                         <?php if (count($applicant_message) > 0) {
-                                            foreach ($applicant_message as $message) { ?>
+                                            foreach ($applicant_message as $message) {?>
                                                 <article <?php if ($message['outbox'] == 1) { ?>class="reply" <?php } ?> id="delete_message<?php echo $message['id']; ?>">
-                                                    <figure><img <?php if (empty($message['profile_picture'])) { ?> src="<?= base_url() ?>assets/images/attachment-img.png" <?php } else { ?> <?php if (isset($message['sender_logo'])) { ?> src="<?php echo $message['sender_logo']; ?>" width="48" style="height: 50px" <?php } else if ($message['sender_profile_picture']) { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>" width="48" <?php } else { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>" width="48" <?php } ?> <?php } ?>>
+                                                    <figure>
+                                                        <img 
+                                                        <?php if (empty($message['profile_picture'])) { ?> 
+                                                            src="<?= base_url() ?>assets/images/attachment-img.png" 
+                                                            <?php } else { ?>
+                                                                <?php if (isset($message['sender_logo'])) { ?> 
+                                                                    src="<?php echo $message['sender_logo']; ?>" width="48" style="height: 50px" 
+                                                                <?php } else if ($message['sender_profile_picture']) { ?> 
+                                                                    src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>" width="48" 
+                                                                <?php } else { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>" width="48" 
+                                                            <?php } ?> 
+                                                        <?php } ?>>
                                                     </figure>
                                                     <div class="text">
                                                         <div class="message-header">
