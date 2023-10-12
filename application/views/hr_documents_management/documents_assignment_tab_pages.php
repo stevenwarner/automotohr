@@ -74,7 +74,7 @@
                                                         <tr>
                                                             <td class="col-lg-6">
                                                                 <?php
-                                                                    echo $document['document_title']. '&nbsp;';
+                                                                    echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';
                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                     echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                     echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
@@ -345,7 +345,7 @@
                                                             <tr>
                                                                 <td class="col-lg-8">
                                                                     <?php
-                                                                        echo $document['document_title'] . '&nbsp;';
+                                                                        echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';;
                                                                         echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
                                                                         echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                         if ($document['manual_document_type'] == 'offer_letter') {
@@ -530,7 +530,7 @@
                                                             <tr>
                                                                 <td class="col-lg-8">
                                                                     <?php
-                                                                        echo $document['document_title'] . '&nbsp;';
+                                                                        echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';
                                                                         echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
                                                                         echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                         if ($document['manual_document_type'] == 'offer_letter') {
