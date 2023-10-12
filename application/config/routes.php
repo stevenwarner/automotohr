@@ -1930,11 +1930,19 @@ $route['payrolls/employees/(:num)/get']['get'] = 'v1/Payroll/getSingleEmployee/$
 /**
  * Off-cycle payroll
  */
-$route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle/index/off_cycle';
+$route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle/index/off-cycle';
 $route['payrolls/bonus']['get'] = 'v1/payrolls/Off_cycle/index/bonus';
 $route['payrolls/corrections']['get'] = 'v1/payrolls/Off_cycle/index/corrections';
-// save employees
-$route['payrolls/off-cycle/employees']['post'] = 'v1/payrolls/Off_cycle/saveEmployees';
+// hours and earnings
+$route['payrolls/corrections/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/corrections/$1';
+// time off
+$route['payrolls/corrections/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/corrections/$1';
+// review off
+$route['payrolls/corrections/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/corrections/$1';
+// process payroll
+$route['payrolls/off-cycle/basics']['post'] = 'v1/payrolls/Off_cycle/processBasics';
+// clear payroll data
+$route['payrolls/off-cycle/(:num)/clear']['post'] = 'v1/payrolls/Off_cycle/clearDraftData/$1';
 
 /**
  * Super admin payroll

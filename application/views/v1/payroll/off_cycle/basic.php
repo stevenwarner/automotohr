@@ -49,7 +49,7 @@
                                         </div>
                                     </div>
                                     <p class="csF16" style="margin-top: 10px;">
-                                        <strong>2. Hours and earnings</strong>
+                                        2. Hours and earnings
                                     </p>
                                 </div>
 
@@ -81,9 +81,9 @@
                             <!--  -->
                             <form action="">
 
-                                <div class="form-group">
+                                <div class="form-group <?=$reason != 'off-cycle' ? 'hidden' : '';?>">
                                     <label class="csF16">
-                                        Work period
+                                        Choose the type of off-cycle payroll
                                         <strong class="text-danger">*</strong>
                                     </label>
                                     <p class="csF12 text-danger">
@@ -95,7 +95,7 @@
                                     </p>
 
                                     <label class="control control--radio">
-                                        <input type="radio" name="payroll[off_cycle_reason]" class="" value="Correction" />
+                                        <input type="radio" name="payroll[off_cycle_reason]" class="" <?=$reason == 'corrections' ? 'checked' : '';?> value="Correction" />
                                         Correction
                                         <p class="csF12" style="font-weight: normal">
                                             Run a payroll outside of your regular pay schedule
@@ -104,7 +104,7 @@
                                     </label>
                                     <br />
                                     <label class="control control--radio">
-                                        <input type="radio" name="payroll[off_cycle_reason]" class="" value="Bonus" />
+                                        <input type="radio" name="payroll[off_cycle_reason]" class="" <?=$reason == 'bonus' ? 'checked' : '';?> value="Bonus" />
                                         Bonus
                                         <p class="csF12" style="font-weight: normal">
                                             Reward a team member with a bonus, gift, or commission

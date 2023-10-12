@@ -26,7 +26,13 @@
                     <br />
 
                     <div class="row">
-                        <div class="col-sm-8 col-xs-12"></div>
+                        <div class="col-sm-8 col-xs-12">
+                            <h1 class="csF16">
+                                <strong>
+                                    Payroll type: <?=!$payroll['off_cycle'] ? "Regular" :  $payroll['off_cycle_reason'];?>
+                                </strong>
+                            </h1>
+                        </div>
                         <div class="col-sm-4 col-xs-12 text-right">
                             <a href="<?= base_url('payrolls/history') ?>" class="btn csW csBG4 csF16">
                                 <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
