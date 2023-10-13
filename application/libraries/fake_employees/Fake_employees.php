@@ -104,7 +104,7 @@ class Fake_employees
             );
             // set the array
             $fakeEmployees[] = [
-                "username" => "fake" . $value['login']['username'],
+                "username" => "demo" . $value['login']['username'],
                 "password" => do_hash("password@123", "md5"),
                 "first_name" => $value['name']['first'],
                 "last_name" => $value['name']['last'],
