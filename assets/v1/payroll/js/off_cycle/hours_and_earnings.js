@@ -427,8 +427,7 @@ $(function regularPayrollsHoursAndEarnings() {
 			if (payrollEmployee && !payrollEmployee.excluded) {
 				if (
 					payrollEmployee.hourly_compensations &&
-					payrollEmployee
-						.hourly_compensations.regular_hours
+					payrollEmployee.hourly_compensations.regular_hours
 				) {
 					// for regular hours
 					$(this)
@@ -586,14 +585,16 @@ $(function regularPayrollsHoursAndEarnings() {
 		const ref = $('tr[data-id="' + employeeId + '"]');
 		//
 		let amountToShow = 0;
-		// calculate regular hours
-		amountToShow += parseFloat(
-			payrollOBJ["hourly_compensations"]["regular_hours"]["hours"] *
-				ratePerHour *
-				payrollOBJ["hourly_compensations"]["regular_hours"][
-					"compensation_multiplier"
-				]
-		);
+		if (payrollOBJ["hourly_compensations"]["regular_hours"]) {
+			// calculate regular hours
+			amountToShow += parseFloat(
+				payrollOBJ["hourly_compensations"]["regular_hours"]["hours"] *
+					ratePerHour *
+					payrollOBJ["hourly_compensations"]["regular_hours"][
+						"compensation_multiplier"
+					]
+			);
+		}
 		// calculate overtime
 		if (ref.find(".jsOvertimeText").length) {
 			// calculate overtime

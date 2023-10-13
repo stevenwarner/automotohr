@@ -205,7 +205,7 @@ class Off_cycle_payroll_model extends Payroll_model
             ->delete('payrolls.regular_payrolls');
         // delete off cycle payroll employees
         $this->db
-            ->where('off_cycle_payroll_sid', $companyId)
+            ->where('regular_payroll_sid', $companyId)
             ->delete('payrolls.regular_payrolls_employees');
         //
         return ["success" => true, 'msg' => "You have successfully removed the draft data."];
