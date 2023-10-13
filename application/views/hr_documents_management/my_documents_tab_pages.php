@@ -97,7 +97,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                 <tr>
                                                     <td class="">
                                                         <?php
-                                                        echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';
+                                                        echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '');
                                                         echo $document['user_consent'] == 1 ? '<b> (Waiting Authorize Signature)</b>' : '';
                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                         echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
@@ -170,7 +170,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                         <tr>
                                                             <td class="">
                                                                 <?php
-                                                                echo $uncompleted_offer_letter['document_title'] . ($uncompleted_offer_letter['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';
+                                                                echo $uncompleted_offer_letter['document_title'];
                                                                 echo $uncompleted_offer_letter['status'] ? '' : '<b>(revoked)</b>';
 
                                                                 if (isset($uncompleted_offer_letter['assigned_date']) && $uncompleted_offer_letter['assigned_date'] != '0000-00-00 00:00:00') {
@@ -272,7 +272,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                             <tr>
                                                                 <td class="">
                                                                     <?php
-                                                                    echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '') . '';
+                                                                    echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '');
                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
 
                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
@@ -650,7 +650,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                                             <tr>
                                                                                 <td class="">
                                                                                     <?php
-                                                                                    echo $document['document_title'] . '&nbsp;';
+                                                                                    echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '');
                                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                                     echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                                     echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
@@ -934,7 +934,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                                 <tr>
                                                                     <td class="">
                                                                         <?php
-                                                                        echo $document['document_title'] . '&nbsp;';
+                                                                        echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '');
                                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
 
                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {

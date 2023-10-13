@@ -1,5 +1,6 @@
 <?php
     $allDocuments = [];
+    $requiredMessage = 'This document is required to complete the process.';
 ?>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -53,7 +54,7 @@
                             </div>
                             <hr />
                         </div>
-<!--                        start-->
+                        <!--start-->
                         <div class="col-md-12">
                             <div class="hr-document-list">
                              <?php if(!empty($active_groups)) {
@@ -85,7 +86,7 @@
                                                                  <?php if($active_group['documents_count'] > 0) {
                                                                         foreach ($active_group['documents'] as $document) { ?>
                                                                             <tr>
-                                                                                <td class="col-xs-6"><?php echo $document['document_title']; ?><?php 
+                                                                                <td class="col-xs-6"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?><?php 
                                                                                 if($document['is_confidential']):
                                                                                     echo "<br /><strong>(Confidential)</strong>";
                                                                                 endif;
@@ -223,13 +224,13 @@
                                                          <?php  if($active_group['documents_count'] > 0) {
                                                                         foreach ($active_group['documents'] as $document) { ?>
                                                                             <tr>
-                                                                                <td class="col-xs-6"><?php echo $document['document_title']; ?><?php 
+                                                                                <td class="col-xs-6"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?><?php 
                                                                                 if($document['is_confidential']):
                                                                                     echo "<br /><strong>(Confidential)</strong>";
                                                                                 endif;
                                                                             ?></td>
                                                                                 <td class="col-xs-2">
-                                                                <?php if($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                                    <?php if($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                         echo reset_datetime(array( 'datetime' => $document['date_created'], '_this' => $this));
                                                                                     } else {
                                                                                         echo 'N/A';
@@ -241,9 +242,9 @@
                                                                                         <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
                                                                                         <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
                                                                                     </form>
-                                                                     <?php  if($document['document_type'] == 'uploaded') {?>
+                                                                                    <?php  if($document['document_type'] == 'uploaded') {?>
                                                                                         <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
-                                                                             <?php  } else { ?>
+                                                                                    <?php  } else { ?>
                                                                                         <button class="btn btn-primary btn-sm btn-block"
                                                                                                 onclick="fLaunchModalGen(this);"
                                                                                                 data-title="<?php echo $document['document_title']; ?>"
@@ -349,13 +350,13 @@
                                                          <?php if(count($uncategorized_documents) > 0) {
                                                                 foreach ($uncategorized_documents as $document) { ?>
                                                                     <tr>
-                                                                        <td class="col-xs-6"><?php echo $document['document_title']; ?><?php 
+                                                                        <td class="col-xs-6"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?><?php 
                                                                                 if($document['is_confidential']):
                                                                                     echo "<br /><strong>(Confidential)</strong>";
                                                                                 endif;
                                                                             ?></td>
                                                                         <td class="col-xs-2">
-                                                         <?php  if($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                            <?php  if($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                 echo reset_datetime(array( 'datetime' => $document['date_created'], '_this' => $this));
                                                                             } else {
                                                                                 echo 'N/A';
@@ -469,7 +470,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                             <?php   if(!empty($offer_letters)) {
+                                                        <?php   if(!empty($offer_letters)) {
                                                             foreach ($offer_letters as $offer_letter) { ?>
                                                                     <tr>
                                                                         <td class="col-xs-9"><?php echo $offer_letter['letter_name']; ?>
@@ -569,7 +570,7 @@
                                                                     $allDocuments[$document['sid']] = $document;?>
                                                                     <tr>
                                                                         <td class="col-xs-6">
-                                                                            <?php echo $document['document_title']; ?>
+                                                                            <?php echo $document['document_title']. ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?>
                                                                             <?php 
                                                                                 if($document['is_confidential']):
                                                                                     echo "<br /><strong>(Confidential)</strong>";
@@ -681,7 +682,7 @@
                             </div>
                         </div>
 
-<!--end-->
+                        <!--end-->
                         <div class="col-md-12">
                         <?php if(!empty($sections)) { ?>
                             <?php foreach($sections as $section) { ?>
