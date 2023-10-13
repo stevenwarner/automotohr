@@ -1890,7 +1890,7 @@ class Hr_documents_management_model extends CI_Model
                 }
 
                 //  if ($assigned_document['approval_process'] == 0) {
-                if ($assigned_document['document_type'] != 'offer_letter') {
+                if ($assigned_document['document_type'] != 'offer_letter' && $assigned_document['archive'] != 1) {
 
                     if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist)) {
 
