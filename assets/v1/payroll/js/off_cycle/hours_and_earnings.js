@@ -385,7 +385,7 @@ $(function regularPayrollsHoursAndEarnings() {
 					rows += '	<td colspan="6" class="vam text-right">';
 					rows +=
 						'		<a href="' +
-						baseUrl("payrolls/"+payrollReason) +
+						baseUrl("payrolls/" + payrollReason) +
 						'" class="btn csW csBG4 csF16">';
 					rows +=
 						'			<i class="fa fa-times-circle csF16" aria-hidden="true"></i>';
@@ -425,20 +425,30 @@ $(function regularPayrollsHoursAndEarnings() {
 			//
 			const payrollEmployee = payroll["employees"][employeeId];
 			if (payrollEmployee && !payrollEmployee.excluded) {
-				// for regular hours
-				$(this)
-					.find(".jsRegularHoursText")
-					.text(
-						`${payrollEmployee.hourly_compensations.regular_hours.hours} hrs`
-					);
-				//
-				$(this)
-					.find(".jsRegularHoursValue")
-					.val(
-						payrollEmployee.hourly_compensations.regular_hours.hours
-					);
+				if (
+					payrollEmployee.hourly_compensations &&
+					payrollEmployee
+						.hourly_compensations.regular_hours
+				) {
+					// for regular hours
+					$(this)
+						.find(".jsRegularHoursText")
+						.text(
+							`${payrollEmployee.hourly_compensations.regular_hours.hours} hrs`
+						);
+					//
+					$(this)
+						.find(".jsRegularHoursValue")
+						.val(
+							payrollEmployee.hourly_compensations.regular_hours
+								.hours
+						);
+				}
 
-				if (payrollEmployee.hourly_compensations.overtime) {
+				if (
+					payrollEmployee.hourly_compensations &&
+					payrollEmployee.hourly_compensations.overtime
+				) {
 					// for overtime
 					$(this)
 						.find(".jsOvertimeText")
@@ -453,7 +463,10 @@ $(function regularPayrollsHoursAndEarnings() {
 						);
 				}
 				// for double overtime
-				if (payrollEmployee.hourly_compensations.double_overtime) {
+				if (
+					payrollEmployee.hourly_compensations &&
+					payrollEmployee.hourly_compensations.double_overtime
+				) {
 					$(this)
 						.find(".jsDoubleOvertimeText")
 						.text(
