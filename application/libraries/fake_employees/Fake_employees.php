@@ -194,7 +194,7 @@ class Fake_employees
         $options = [
             'Bucket' => AWS_S3_BUCKET_NAME,
             'Key' => $fileName,
-            'Body' => file_get_contents($fileURL),
+            'Body' => getFileData($fileURL),
             'ACL' => 'public-read',
             'ContentType' => getMimeType("jpg")
         ];
