@@ -519,7 +519,7 @@ $assignIdObj = $confidential_sids;
                                                                                     <?php if ($active_group['documents_count'] > 0) { ?>
                                                                                         <?php foreach ($active_group['documents'] as $document) { ?>
                                                                                             <tr class="js-search-row">
-                                                                                                <td class="col-xs-8"><?php echo $document['document_title']; ?></td>
+                                                                                                <td class="col-xs-8"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?></td>
                                                                                                 <td class="col-xs-2">
                                                                                                     <?php echo ucwords($document['document_type']); ?>
                                                                                                 </td>
@@ -672,7 +672,7 @@ $assignIdObj = $confidential_sids;
                                                                                     <?php if ($active_group['documents_count'] > 0) { ?>
                                                                                         <?php foreach ($active_group['documents'] as $document) { ?>
                                                                                             <tr class="js-search-row">
-                                                                                                <td class="col-xs-8"><?php echo $document['document_title']; ?></td>
+                                                                                                <td class="col-xs-8"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?></td>
                                                                                                 <td class="col-xs-2">
                                                                                                     <?php echo ucwords($document['document_type']); ?>
                                                                                                 </td>
@@ -799,7 +799,7 @@ $assignIdObj = $confidential_sids;
                                                                             <?php if (count($uncategorized_documents) > 0) { ?>
                                                                                 <?php foreach ($uncategorized_documents as $document) { ?>
                                                                                     <tr>
-                                                                                        <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                        <td class="col-xs-6"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?></td>
                                                                                         <td class="col-xs-2">
                                                                                             <?php echo ucwords($document['document_type']); ?>
                                                                                         </td>
@@ -947,7 +947,7 @@ $assignIdObj = $confidential_sids;
                                                                                             $confidential_download_url = $confidential_document_info['download_url'];
                                                                                             ?>
                                                                                             <tr class="js-search-row">
-                                                                                                <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                                <td class="col-xs-6"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?></td>
                                                                                                 <td class="col-xs-2">
                                                                                                     <?php echo ucwords($document['document_type']); ?>
                                                                                                 </td>
@@ -1026,7 +1026,7 @@ $assignIdObj = $confidential_sids;
                                                                                     <tr class="js-search-row">
                                                                                         <td class="col-lg-5">
                                                                                             <?php
-                                                                                            echo $document['document_title'] . '&nbsp;';
+                                                                                            echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '');
                                                                                             echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
 
                                                                                             if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
@@ -1121,7 +1121,7 @@ $assignIdObj = $confidential_sids;
                                                                                     <tr class="js-search-row">
                                                                                         <td class="col-lg-7">
                                                                                             <?php
-                                                                                            echo $document['document_title'] . '&nbsp;';
+                                                                                            echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : '');
                                                                                             echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
 
                                                                                             if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
@@ -1505,7 +1505,7 @@ $assignIdObj = $confidential_sids;
                                                                             <?php if (count($all_documents) > 0) { ?>
                                                                                 <?php foreach ($all_documents as $document) { ?>
                                                                                     <tr class="js-search-row">
-                                                                                        <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                        <td class="col-xs-6"><?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?></td>
                                                                                         <td class="col-xs-2">
                                                                                             <?php echo ucwords($document['document_type']); ?>
                                                                                         </td>
@@ -1735,7 +1735,7 @@ $assignIdObj = $confidential_sids;
                                                             foreach ($assigned_offer_letter_history as $document) { ?>
                                                                 <tr>
                                                                     <td class="col-lg-3">
-                                                                        <?php echo $document['document_title'] . '<br>'; ?>
+                                                                        <?php echo $document['document_title'] . ($document['is_required'] == 1 ? ' <i class="fa fa-asterisk jsTooltip" style="color: #cc1100;" aria-hidden="true" title="' . ($requiredMessage) . '"></i>' : ''); ?>
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
                                                                         <?php $doc_type = '';
