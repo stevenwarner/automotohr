@@ -425,7 +425,11 @@ $(function regularPayrollsHoursAndEarnings() {
 			//
 			const payrollEmployee = payroll["employees"][employeeId];
 			if (payrollEmployee && !payrollEmployee.excluded) {
-				if (payrollEmployee.hourly_compensations.regular_hours) {
+				if (
+					payrollEmployee.hourly_compensations &&
+					payrollEmployee
+						.hourly_compensations.regular_hours
+				) {
 					// for regular hours
 					$(this)
 						.find(".jsRegularHoursText")
@@ -441,7 +445,10 @@ $(function regularPayrollsHoursAndEarnings() {
 						);
 				}
 
-				if (payrollEmployee.hourly_compensations.overtime) {
+				if (
+					payrollEmployee.hourly_compensations &&
+					payrollEmployee.hourly_compensations.overtime
+				) {
 					// for overtime
 					$(this)
 						.find(".jsOvertimeText")
@@ -456,7 +463,10 @@ $(function regularPayrollsHoursAndEarnings() {
 						);
 				}
 				// for double overtime
-				if (payrollEmployee.hourly_compensations.double_overtime) {
+				if (
+					payrollEmployee.hourly_compensations &&
+					payrollEmployee.hourly_compensations.double_overtime
+				) {
 					$(this)
 						.find(".jsDoubleOvertimeText")
 						.text(
