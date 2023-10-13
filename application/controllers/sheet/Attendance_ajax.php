@@ -469,7 +469,6 @@ class Attendance_ajax extends Public_Controller
             //
             unset($this->resp['errors']);
             //
-            $
             $this->resp['success'] = 'You are successfully ' . (GetAttendanceActionText($action)) . '.';
         }
         //
