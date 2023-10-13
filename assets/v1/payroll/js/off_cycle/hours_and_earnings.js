@@ -585,7 +585,7 @@ $(function regularPayrollsHoursAndEarnings() {
 		const ref = $('tr[data-id="' + employeeId + '"]');
 		//
 		let amountToShow = 0;
-		if (payrollOBJ["hourly_compensations"]["regular_hours"]["hours"]) {
+		if (payrollOBJ["hourly_compensations"]["regular_hours"]) {
 			// calculate regular hours
 			amountToShow += parseFloat(
 				payrollOBJ["hourly_compensations"]["regular_hours"]["hours"] *
