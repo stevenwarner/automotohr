@@ -4173,9 +4173,9 @@ class Payroll_model extends CI_Model
             ->get('gusto_companies_earning_types')
             ->result_array();
         //
+        // fetch them from Gusto
+        $earnings = $this->syncCompanyEarningTypes($companyId, true);
         if (!$earnings) {
-            // fetch them from Gusto
-            $earnings = $this->syncCompanyEarningTypes($companyId, true);
         }
         //
         return $earnings;
