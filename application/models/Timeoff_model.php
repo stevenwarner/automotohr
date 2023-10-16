@@ -4650,9 +4650,10 @@ class Timeoff_model extends CI_Model
                 ->where('terminated_status', 0)
                 ->limit(1)
                 ->get();
-                if (!$a) {
-                    continue;
-                }
+            if (!$a) {
+                unset($b[$k]);
+                continue;
+            }
             //
             $joinedAt = isset($a->row_array()['joined_at']) ? $a->row_array()['joined_at'] : null;
             $employeeShiftHours = isset($a->row_array()['user_shift_hours']) ? $a->row_array()['user_shift_hours'] : PTO_DEFAULT_SLOT;
