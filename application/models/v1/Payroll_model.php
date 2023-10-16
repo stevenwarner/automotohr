@@ -4173,9 +4173,9 @@ class Payroll_model extends CI_Model
             ->get('gusto_companies_earning_types')
             ->result_array();
         //
-        // fetch them from Gusto
-        $earnings = $this->syncCompanyEarningTypes($companyId, true);
         if (!$earnings) {
+            // fetch them from Gusto
+            $earnings = $this->syncCompanyEarningTypes($companyId, true);
         }
         //
         return $earnings;
@@ -4217,9 +4217,15 @@ class Payroll_model extends CI_Model
                 $ins['is_default'] = 1;
                 $ins['updated_at'] = getSystemDate();
 
-                if ($this->db->where('gusto_uuid', $type['uuid'])->count_all_results('gusto_companies_earning_types')) {
+                if ($this->db->where([
+                    'gusto_uuid' => $type['uuid'],
+                    "company_sid" => $companyId
+                ])->count_all_results('gusto_companies_earning_types')) {
                     // update
-                    $this->db->where('gusto_uuid', $type['uuid'])->update('gusto_companies_earning_types', $ins);
+                    $this->db->where([
+                        'gusto_uuid' => $type['uuid'],
+                        "company_sid" => $companyId
+                    ])->update('gusto_companies_earning_types', $ins);
                 } else {
                     // insert
                     $ins['created_at'] = getSystemDate();
@@ -4238,9 +4244,15 @@ class Payroll_model extends CI_Model
                 $ins['is_default'] = 0;
                 $ins['updated_at'] = getSystemDate();
 
-                if ($this->db->where('gusto_uuid', $type['uuid'])->count_all_results('gusto_companies_earning_types')) {
+                if ($this->db->where([
+                    'gusto_uuid' => $type['uuid'],
+                    "company_sid" => $companyId
+                ])->count_all_results('gusto_companies_earning_types')) {
                     // update
-                    $this->db->where('gusto_uuid', $type['uuid'])->update('gusto_companies_earning_types', $ins);
+                    $this->db->where([
+                        'gusto_uuid' => $type['uuid'],
+                        "company_sid" => $companyId
+                    ])->update('gusto_companies_earning_types', $ins);
                 } else {
                     // insert
                     $ins['created_at'] = getSystemDate();
