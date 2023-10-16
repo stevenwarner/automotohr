@@ -4646,6 +4646,8 @@ class Timeoff_model extends CI_Model
             ')
                 ->from('users')
                 ->where('sid', $v['employee_sid'])
+                ->where('active', 1)
+                ->where('terminated_status', 0)
                 ->limit(1)
                 ->get();
             //
