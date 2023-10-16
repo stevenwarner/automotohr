@@ -20,6 +20,12 @@
                             <!-- Content area -->
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 text-right">
+                                    <!-- admins -->
+                                    <a href="<?= base_url("sa/payrolls/company/" . $loggedInCompanyId . "/admins/manage"); ?>" class="btn btn-success csF16">
+                                        <i class="fa fa-users csF16"></i>
+                                        &nbsp;Manage Admins
+                                    </a>
+
                                     <?php if ($payrollBlockers) { ?>
                                         <button class="btn btn-success jsVerifyCompany csF16" title="Verify Company" placement="top">
                                             <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;

@@ -382,6 +382,7 @@ $(function createPartnerCompany() {
 			.success(function () {
 				//
 				XHR = null;
+				_ml(false, modalId + "Loader");
 				//
 				return alertify.alert(
 					"SUCCESS",
@@ -435,6 +436,9 @@ $(function createPartnerCompany() {
 				// flush XHR
 				XHR = null;
 				//
+				if (typeof gustoServiceAgreement === "undefined") {
+					return window.location.reload();
+				}
 				gustoServiceAgreement(companyId);
 			})
 			.fail(saveErrorsList);

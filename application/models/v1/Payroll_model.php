@@ -450,6 +450,7 @@ class Payroll_model extends CI_Model
                 'gusto_uuid' => null,
                 'first_name' => $post['firstName'],
                 'last_name' => $post['lastName'],
+                'automotohr_reference' => $post['id'],
                 'email_address' => $post['email'],
                 'is_store_admin' => 0,
                 'created_at' => getSystemDate(),
@@ -4582,6 +4583,20 @@ class Payroll_model extends CI_Model
     public function createCompanyEarningTypes(
         int $companyId
     ): array {
+        // check if already exists
+        if ($this->db->where([
+            "name" => "Paid Time Off",
+            "company_sid" => $companyId
+        ])->count_all_results("gusto_companies_earning_types")) {
+            return ['success' => true];
+        }
+        //
+        return $this->addCompanyEarningType(
+            $companyId,
+            [
+                'name' => "Paid Time Off"
+            ]
+        );
         // get the paid time offs
         $paidPolicies = $this->db
             ->select('sid, title')
@@ -4591,13 +4606,7 @@ class Payroll_model extends CI_Model
             ])
             ->get('timeoff_policies')
             ->result_array();
-        //
-        return $this->addCompanyEarningType(
-            $companyId,
-            [
-                'name' => "Paid Time Off"
-            ]
-        );
+
         if (!$paidPolicies) {
             //
             return $this->addCompanyEarningType(

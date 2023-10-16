@@ -10,8 +10,7 @@
         <?php } ?>
         <div class="row">
             <div class="col-sm-12">
-                <iframe src="https://flows.gusto.com/terms" frameborder="0" style="width: 100%; height: 500px;" title="Gusto service agreement">
-                </iframe>
+                <iframe src="https://flows.gusto.com/terms" style="width: 100%; height: 700px; border: 0" title="Gusto service agreement"></iframe>
             </div>
         </div>
         <hr>
@@ -22,7 +21,7 @@
                     <select class="form-control" id="jsTermsOfServiceEmail">
                         <option value="0"></option>
                         <?php foreach ($admins as $value) { ?>
-                            <option value="<?= $value['email_address']; ?>" data-id="<?=$value['automotohr_reference'];?>"><?= $value['email_address']; ?></option>
+                            <option value="<?= $value['email_address']; ?>" data-id="<?= $value['automotohr_reference']; ?>"><?= $value['email_address']; ?></option>
                         <?php } ?>
                     </select>
                 </div>

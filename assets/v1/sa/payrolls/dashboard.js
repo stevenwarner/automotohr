@@ -87,7 +87,7 @@ $(function dashboard() {
 		$(".jsVerifyBankAccount span").html("Verifying...");
 		//
 		XHR2 = $.ajax({
-			url: baseUrl("payrolls/company/bank/verify"),
+			url: baseUrl("sa/payrolls/company/" + companyId + "/bank/verify"),
 			method: "GET",
 		})
 			.success(function () {
@@ -128,7 +128,7 @@ $(function dashboard() {
 		$(".jsVerifyCompany span").html("Verifying...");
 		//
 		XHR3 = $.ajax({
-			url: baseUrl("payrolls/company/verify"),
+			url: baseUrl("sa/payrolls/company/" + companyId + "/verify"),
 			method: "POST",
 		})
 			.success(function () {
