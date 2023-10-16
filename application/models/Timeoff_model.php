@@ -4650,7 +4650,7 @@ class Timeoff_model extends CI_Model
                 ->where('terminated_status', 0)
                 ->limit(1)
                 ->get();
-            if (!$a) {
+            if (!$a->row_array()) {
                 unset($b[$k]);
                 continue;
             }
