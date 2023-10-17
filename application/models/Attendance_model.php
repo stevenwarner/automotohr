@@ -1398,7 +1398,7 @@ class Attendance_model extends CI_Model
         if (!empty($record_arr)) {
             return $record_arr["last_action"];
         } else {
-            return '';
+            return null;
         }
     }
 }
