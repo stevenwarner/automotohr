@@ -1185,7 +1185,7 @@ class Private_messages extends Public_Controller
                 //getting email header and footer
                 $message_hf = (message_header_footer($company_detail['sid'], $company_detail['CompanyName']));
                 //send email
-                $subject = 'Private Message Notification';
+                // $subject = 'Private Message Notification';
                 $body = $message_hf['header']
                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                     . '<br><br>'
@@ -1215,7 +1215,7 @@ class Private_messages extends Public_Controller
                 unset($message_data['template']);
                 $this->message_model->save_message($message_data);
 
-                $this->session->set_flashdata('message', 'Success! Messsage sent successfully!');
+                $this->session->set_flashdata('message', 'Success! Message sent successfully!');
                 redirect('private_messages', 'refresh');
             }
         }
