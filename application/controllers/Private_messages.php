@@ -632,6 +632,7 @@ class Private_messages extends Public_Controller
 
                             if (!empty($email_result['employee'])) {
 
+
                                 $found = 1;
                                 $message_data['from_id'] = $employer_id;
                                 $message_data['from_type'] = 'employer';
@@ -644,9 +645,16 @@ class Private_messages extends Public_Controller
                                 $name = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
                                 $message_data['contact_name'] = $name;
                                 $to_email = $email;
+                                //
                                 $subject = $formpost['subject'];
                                 $from = REPLY_TO;
                                 $secret_key = $message_data['identity_key'] . "__";
+                                // set replacement array
+                                $toArray = array($company_name, $today, $employee_data['first_name'], $employee_data['last_name'], $employee_data['job_title'], '',  $employee_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                $messageBody = $formpost['message'];
+                                replace_magic_quotes($subject, $fromArray, $toArray);
+                                replace_magic_quotes($messageBody, $fromArray, $toArray);
+
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                                     . '<br><br>'
@@ -658,10 +666,11 @@ class Private_messages extends Public_Controller
                                     . 'Subject:</b> '
                                     . $subject
                                     . '<br><hr>'
-                                    . $formpost['message'] . '<br><br>'
+                                    . $messageBody . '<br><br>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
+                                
 
                                 if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                                     $file = explode(".", $_FILES['message_attachment']['name']);
@@ -720,6 +729,11 @@ class Private_messages extends Public_Controller
                                 $subject = $formpost['subject'];
                                 $from = REPLY_TO;
                                 $secret_key = $message_data['identity_key'] . "__";
+                                // set replacement array
+                                $toArray = array($company_name, $today, $applicant_data['first_name'], $applicant_data['last_name'], $applicant_data['job_title'], '',  $applicant_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                $messageBody = $formpost['message'];
+                                replace_magic_quotes($subject, $fromArray, $toArray);
+                                replace_magic_quotes($messageBody, $fromArray, $toArray);
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                                     . '<br><br>'
@@ -731,7 +745,7 @@ class Private_messages extends Public_Controller
                                     . 'Subject:</b> '
                                     . $subject
                                     . '<br><hr>'
-                                    . $formpost['message'] . '<br><br>'
+                                    . $messageBody . '<br><br>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
@@ -760,7 +774,7 @@ class Private_messages extends Public_Controller
 
                                 unset($message_data['template']);
 
-                                $toArray = array($company_name, $today, $applicant_data['first_name'], $applicant_data['last_name'], $applicant_data['job_title'], '',$applicant_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                $toArray = array($company_name, $today, $applicant_data['first_name'], $applicant_data['last_name'], $applicant_data['job_title'], '', $applicant_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
                                 //
                                 $body    = $formpost["message"];
 
@@ -788,6 +802,11 @@ class Private_messages extends Public_Controller
                                 $subject = $formpost['subject'];
                                 $from = REPLY_TO;
                                 $secret_key = $message_data['identity_key'] . "__";
+                                // set replacement array
+                                $toArray = array($company_name, $today, $name, "", "", '',  $to_email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                $messageBody = $formpost['message'];
+                                replace_magic_quotes($subject, $fromArray, $toArray);
+                                replace_magic_quotes($messageBody, $fromArray, $toArray);
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                                     . '<br><br>'
@@ -799,7 +818,7 @@ class Private_messages extends Public_Controller
                                     . 'Subject:</b> '
                                     . $subject
                                     . '<br><hr>'
-                                    . $formpost['message'] . '<br><br>'
+                                    . $messageBody . '<br><br>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
@@ -912,6 +931,11 @@ class Private_messages extends Public_Controller
                             $employer_name = $employerData['username'];
                             $message_hf = (message_header_footer($company_id, $data['session']['company_detail']['CompanyName']));
                             $subject = $formpost['subject'];
+                            // set replacement array
+                            $toArray = array($company_name, $today, $first_name, $last_name, $job_title,  ' ', $to_email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                            $messageBody = $formpost['message'];
+                            replace_magic_quotes($subject, $fromArray, $toArray);
+                            replace_magic_quotes($messageBody, $fromArray, $toArray);
                             $body = $message_hf['header']
                                 . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $message_data['contact_name'] . ',</h2>'
                                 . '<br><br>'
@@ -923,7 +947,7 @@ class Private_messages extends Public_Controller
                                 . 'Subject:</b> '
                                 . $subject
                                 . '<br><hr>'
-                                . $formpost['message'] . '<br><br>'
+                                . $messageBody . '<br><br>'
                                 . $message_hf['footer']
                                 . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                 . $secret_key . '</div>';
