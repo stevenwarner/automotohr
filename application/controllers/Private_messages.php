@@ -1195,9 +1195,9 @@ class Private_messages extends Public_Controller
                     . date('m-d-Y H:i:s')
                     . '<br><br><b>'
                     . 'Subject:</b> '
-                    . $formpost["subject"]
+                    . $message_data["subject"]
                     . '<br><hr>'
-                    . $formpost["message"] . '<br><br>'
+                    . $message_data["message"] . '<br><br>'
                     . $message_hf['footer']
                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                     . $secret_key . '</div>';
