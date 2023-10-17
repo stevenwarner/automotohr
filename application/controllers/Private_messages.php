@@ -455,6 +455,19 @@ class Private_messages extends Public_Controller
             $data['employees'] = get_users_list($company_id, 'employee');
             $data['employer_sid'] = $employer_id;
 
+            //
+            $this->load->model('application_tracking_system_model');
+            $this->load->model('portal_email_templates_model');
+
+            $portal_email_templates   = $this->application_tracking_system_model->get_portal_email_templates($company_id);
+
+            foreach ($portal_email_templates as $key => $template) {
+                $portal_email_templates[$key]['attachments']  = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
+            }
+
+            $data['portal_email_templates'] = $portal_email_templates;
+
+
             if ($this->form_validation->run() === FALSE) {
                 $data['page'] = 'compose';
                 $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
@@ -471,6 +484,38 @@ class Private_messages extends Public_Controller
                 $formpost = $this->input->post(NULL, TRUE);
                 $this->load->helper('email');
 
+                //
+                $attach_body       = '';
+                if (!empty($formpost['template'])) {
+                    $attachments       = $this->portal_email_templates_model->get_all_email_template_attachments($formpost['template']);
+
+                    if (sizeof($attachments) > 0) {
+                        $attach_body .= '<br> Please Review The Following Attachments: <br>';
+
+                        foreach ($attachments as $attachment) {
+                            $attach_body .= '<a href="' . AWS_S3_BUCKET_URL . $attachment['attachment_aws_file'] . '">' . $attachment['original_file_name'] . '</a> <br>';
+                        }
+                    }
+                }
+
+                $fromArray = [
+                    '{{company_name}}',
+                    '{{date}}',
+                    '{{first_name}}',
+                    '{{last_name}}',
+                    '{{job_title}}',
+                    '{{applicant_name}}',
+                    '{{email}}',
+                    '{{company_address}}',
+                    '{{company_phone}}',
+                    '{{career_site_url}}'
+                ];
+                //
+                $today           = new DateTime();
+                $today           = reset_datetime(array('datetime' => $today->format('Y-m-d'), '_this' => $this, 'type' => 'company', 'with_timezone' => true));
+
+
+
                 if ($formpost['send_invoice'] == 'to_admin') {
                     foreach ($formpost as $key => $value) {
                         if ($key != 'send_invoice' && $key != 'toemail' && $key != 'employees' && $key != 'applicants') { // exclude these values from array
@@ -482,7 +527,13 @@ class Private_messages extends Public_Controller
                         }
                     }
 
+                    //
+                    unset($formpost['template']);
                     $message_data['to_id'] = '1';
+                    $adminDetails = $this->message_model->get_admin_details($message_data['to_id']);
+
+                    $toArray = array($company_name, $today, $adminDetails['first_name'], $adminDetails['last_name'], '',  ' ', $adminDetails['email'], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+
                     $to = $this->message_model->get_admin_email($message_data['to_id']);
                     $name = 'Admin';
                     $message_data['from_id'] = $employer_id;
@@ -514,6 +565,7 @@ class Private_messages extends Public_Controller
                         . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                         . $secret_key . '</div>';
 
+
                     if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                         $file = explode(".", $_FILES['message_attachment']['name']);
                         $file_name = str_replace(" ", "-", $file[0]);
@@ -536,6 +588,19 @@ class Private_messages extends Public_Controller
                     if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
                         $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to);
                     }
+                    unset($message_data['template']);
+
+                    //
+                    $subject = $formpost["subject"];
+                    $body    = $formpost["message"];
+
+                    replace_magic_quotes($subject, $fromArray, $toArray);
+                    replace_magic_quotes($body, $fromArray, $toArray);
+                    $body .= $attach_body;
+
+
+                    $message_data['message'] = $body;
+                    $message_data['subject'] = $subject;
 
                     $this->message_model->save_message($message_data);
                     $this->session->set_flashdata('message', 'Success! Message sent successfully!');
@@ -558,10 +623,15 @@ class Private_messages extends Public_Controller
                                 }
                             }
 
+
+                            //
+                            unset($formpost['template']);
+
                             $found = 0;
                             $email_result = $this->message_model->get_email_for_record($email, $company_id); //check if the email belongs to any applicant or employee in the company.
 
                             if (!empty($email_result['employee'])) {
+
                                 $found = 1;
                                 $message_data['from_id'] = $employer_id;
                                 $message_data['from_type'] = 'employer';
@@ -614,6 +684,21 @@ class Private_messages extends Public_Controller
                                 if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
                                     $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
                                 }
+
+
+                                unset($message_data['template']);
+
+                                $toArray = array($company_name, $today, $employee_data['first_name'], $employee_data['last_name'], $employee_data['job_title'], '',  $employee_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                //
+                                $subject = $formpost["subject"];
+                                $body    = $formpost["message"];
+
+                                replace_magic_quotes($subject, $fromArray, $toArray);
+                                replace_magic_quotes($body, $fromArray, $toArray);
+                                $body .= $attach_body;
+
+                                $message_data['message'] = $body;
+                                $message_data['subject'] = $subject;
 
                                 $this->message_model->save_message($message_data);
                             }
@@ -673,6 +758,19 @@ class Private_messages extends Public_Controller
                                     $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
                                 }
 
+                                unset($message_data['template']);
+
+                                $toArray = array($company_name, $today, $applicant_data['first_name'], $applicant_data['last_name'], $applicant_data['job_title'], '',$applicant_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                //
+                                $body    = $formpost["message"];
+
+                                replace_magic_quotes($subject, $fromArray, $toArray);
+                                replace_magic_quotes($body, $fromArray, $toArray);
+                                $body .= $attach_body;
+
+                                $message_data['message'] = $body;
+                                $message_data['subject'] = $subject;
+
                                 $this->message_model->save_message($message_data);
                             }
 
@@ -728,6 +826,20 @@ class Private_messages extends Public_Controller
                                     $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
                                 }
                                 //
+                                unset($message_data['template']);
+
+                                $toArray = array($company_name, $today, $name, '', '',  ' ', '', $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                //
+                                $body    = $formpost["message"];
+
+                                replace_magic_quotes($subject, $fromArray, $toArray);
+                                replace_magic_quotes($body, $fromArray, $toArray);
+                                $body .= $attach_body;
+
+                                $message_data['message'] = $body;
+                                $message_data['subject'] = $subject;
+
+
                                 $this->message_model->save_message($message_data);
                             }
                         }
@@ -764,6 +876,9 @@ class Private_messages extends Public_Controller
                             $message_data['identity_key'] = generateRandomString(49);
                             $message_data['company_sid'] = $company_id;
 
+                            $first_name = '';
+                            $last_name = '';
+
                             if ($type == 'employee') {
                                 foreach ($data['employees'] as $employee) {
                                     if ($user == $employee['sid']) {
@@ -771,6 +886,9 @@ class Private_messages extends Public_Controller
                                         $message_data['to_type'] = 'employer';
                                         $message_data['contact_name'] = $employee['first_name'] . ' ' . $employee['last_name'];
                                         $to_email = $employee['email'];
+                                        $first_name = $employee['first_name'];
+                                        $last_name = $employee['last_name'];
+                                        $job_title = $employee['job_title'];
                                     }
                                 }
                             } else {
@@ -781,6 +899,9 @@ class Private_messages extends Public_Controller
                                         $message_data['contact_name'] = $applicant['first_name'] . ' ' . $applicant['last_name'];
                                         $to_email = $applicant['email'];
                                         $message_data['job_id'] = $applicant['sid'];
+                                        $first_name = $applicant['first_name'];
+                                        $last_name = $applicant['last_name'];
+                                        $job_title = $applicant['job_title'];
                                     }
                                 }
                             }
@@ -829,6 +950,19 @@ class Private_messages extends Public_Controller
                                 $this->send_email_notification($company_id, $company_name, $message_data['contact_name'], $employer_name, $to_email);
                             }
 
+                            unset($message_data['template']);
+
+
+                            $toArray = array($company_name, $today, $first_name, $last_name, $job_title,  ' ', $to_email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                            //
+                            $body    = $formpost["message"];
+
+                            replace_magic_quotes($subject, $fromArray, $toArray);
+                            replace_magic_quotes($body, $fromArray, $toArray);
+                            $body .= $attach_body;
+
+                            $message_data['message'] = $body;
+                            $message_data['subject'] = $subject;
                             $this->message_model->save_message($message_data);
                         }
 
@@ -863,6 +997,8 @@ class Private_messages extends Public_Controller
             $data['backbtn'] = base_url('private_messages');
             //
             $type_flag = '';
+
+
             //
             if ($data['message_type'] != 1) {
                 if (is_numeric($data['message_type'])) {
@@ -885,6 +1021,9 @@ class Private_messages extends Public_Controller
             $this->form_validation->set_rules('subject', 'Subject', 'trim|required');
             $this->form_validation->set_rules('message', 'Message', 'trim|required');
 
+            $this->load->model('application_tracking_system_model');
+            $this->load->model('portal_email_templates_model');
+
             if ($this->form_validation->run() === FALSE) {
                 $data['page'] = 'reply';
                 $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
@@ -894,11 +1033,41 @@ class Private_messages extends Public_Controller
                 $data['load_view'] = $load_view;
                 $data['access_level'] = $access_level;
 
+                $portal_email_templates   = $this->application_tracking_system_model->get_portal_email_templates($company_id);
+
+                foreach ($portal_email_templates as $key => $template) {
+                    $portal_email_templates[$key]['attachments']  = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
+                }
+
+                $data['portal_email_templates'] = $portal_email_templates;
+
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/compose_message_new');
                 $this->load->view('main/footer');
             } else {
                 $message = $this->message_model->get_message($edit_id);
+
+                //
+                $formpost = $this->input->post(NULL, TRUE);
+
+                $attach_body       = '';
+                if (!empty($formpost['template'])) {
+                    $attachments       = $this->portal_email_templates_model->get_all_email_template_attachments($formpost['template']);
+                    if (sizeof($attachments) > 0) {
+                        $attach_body .= '<br> Please Review The Following Attachments: <br>';
+
+                        foreach ($attachments as $attachment) {
+                            $attach_body .= '<a href="' . AWS_S3_BUCKET_URL . $attachment['attachment_aws_file'] . '">' . $attachment['original_file_name'] . '</a> <br>';
+                        }
+                    }
+                }
+
+                $fromArray = array('{{company_name}}', '{{date}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}', '{{company_address}}', '{{company_phone}}', '{{career_site_url}}');
+                //
+                $today   = new DateTime();
+                $today   = reset_datetime(array('datetime' => $today->format('Y-m-d'), '_this' => $this, 'type' => 'company', 'with_timezone' => true));
+
+
 
                 if (isset($message[0])) {
                     $user_type = $message[0]['to_type'];
@@ -929,7 +1098,6 @@ class Private_messages extends Public_Controller
                     $last_name = '';
                 }
 
-                $formpost = $this->input->post(NULL, TRUE);
 
                 foreach ($formpost as $key => $value) {
                     if ($key != 'send_invoice' && $key != 'to-email') { // exclude these values from array
@@ -972,7 +1140,21 @@ class Private_messages extends Public_Controller
                 $secret_key = $message_data['identity_key'] . "__";
                 //                $message_data['to_id']                                        = $message_data['toemail'];
                 unset($message_data['toemail']);
-                $this->message_model->save_message($message_data);
+
+
+                $toArray = array($company_detail['CompanyName'], $today, $first_name, $last_name, '',  ' ', '', $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                //
+
+                $body    = $formpost["message"];
+                $subject    = $formpost["subject"];
+
+                replace_magic_quotes($subject, $fromArray, $toArray);
+                replace_magic_quotes($body, $fromArray, $toArray);
+                $body .= $attach_body;
+
+                $message_data['subject'] = $subject;
+                $message_data['message'] = $body;
+
                 $employerData = $this->message_model->user_data_by_id($employer_id);
                 $employer_name = $employerData['username'];
                 // $from = $employerData['email'];
@@ -1004,6 +1186,10 @@ class Private_messages extends Public_Controller
                     //
                     $this->send_email_notification($company_id, $company_detail['CompanyName'], $name, $employer_name, $to);
                 }
+
+                //
+                unset($message_data['template']);
+                $this->message_model->save_message($message_data);
 
                 $this->session->set_flashdata('message', 'Success! Messsage sent successfully!');
                 redirect('private_messages', 'refresh');
