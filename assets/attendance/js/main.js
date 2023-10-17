@@ -13,9 +13,10 @@ $(function () {
     };
     //
     var CountDown;
-
+    //
     var checkInCheck = '';
-
+    var previousStatus = '';
+    //
     var lateCheck = '';
     var lngeCheck = '';
 
@@ -26,9 +27,18 @@ $(function () {
     $(document).on('click', '.jsAttendanceClockBTN, .jsAttendanceBTN', function (event) {
         //
         event.preventDefault();
+        var number = parseInt($('.jsAttendanceClockMinute').text(), 10);
         //
-        ml(true, 'jsAttendanceLoader');
-        CheckPost($(this).data('type'));
+        if (number > 1 || $(this).data('type') == "clock_in") {
+            $('.jsAttendanceLoader').show(0);
+            CheckPost($(this).data('type'));
+        } else if (number == 0) {
+            return alertify.alert(
+                'Notice!',
+                'To ensure accurate time tracking, a minimum duration of one minute is necessary for logging your time. This requirement allows for precise recording and analysis of your activities.',
+                CB
+            )
+        }
     });
 
     /**
@@ -230,8 +240,6 @@ $(function () {
             .always(function () {
 				// empty the call
 				XHR = null;
-				// hide the loader
-				ml(false, "jsAttendanceLoader");
 			});
     }
 
@@ -241,9 +249,8 @@ $(function () {
     function LoadClock() {
         //
         $('.jsAttendanceLoader').show(0);
+        //
         let currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        moment.tz.setDefault("America/Los_Angeles");
-        console.log(currentTimeZone)
         // 
         XHR = $.ajax({
 			url: baseURI + 'attendance/get/clock',
@@ -255,6 +262,7 @@ $(function () {
         .done(function (resp) {
             //
             SetClock(resp.success.last_status);
+            previousStatus = resp.success.last_status;
             //
             if (resp.success.last_status == "break_in" || resp.success.last_status == "clock_in") {
                 //
@@ -311,11 +319,15 @@ $(function () {
                 CountDownTimer(diffHours, diffMiuntes, diffSeconds, resp.success.last_status);
             }
         })
-        .fail(HandleError);
+        .fail(HandleError)
+        .always(function () {
+			// empty the call
+            XHR = null;
+        });
     }
 
     function trackEmployeeLocation() {
-        //  console.log(checkInCheck);
+        // 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var lat = position.coords.latitude;
@@ -326,15 +338,19 @@ $(function () {
                 obj.lat = lat;
                 obj.lng = lng;
 
-                //
                 XHR = $.ajax({
                     url: baseURI + 'attendance/savelocation',
                     method: "post",
                     data: obj
                 })
-                    .success(function (resp) {
-                    })
-                    .fail(HandleError);
+                .success(function (resp) {
+                    
+                })
+                .fail(HandleError)
+                .always(function () {
+                    // empty the call
+                    XHR = null;
+                });
 
                 lateCheck = lat;
                 lngeCheck = lng;
@@ -346,12 +362,33 @@ $(function () {
                 setTimeout(function () {
                     trackEmployeeLocation();
                 }, 5000);
-
             }
-
+            //
             //  lateCheck = lat;
             //  lngeCheck = lng;
         }
+    }
+
+    function  trackAttendanceEvent () {
+        //
+        XHR = $.ajax({
+            url: baseURI + 'attendance/getCurrentState',
+            method: "GET",
+        })
+        .success(function (resp) {
+            if (resp.success != previousStatus) {
+                LoadClock();
+            }
+        })
+        .fail(HandleError)
+        .always(function () {
+            // empty the call
+            XHR = null;
+        });
+        //
+        setTimeout(function () {
+            trackAttendanceEvent();
+        }, 5000);
     }
 
 
@@ -657,7 +694,7 @@ $(function () {
     //
     InitCurrentClock();
     //
-    
+    trackAttendanceEvent();
     //
     // navigator.permissions.query({ name: 'geolocation' }).then(console.log);
 });

@@ -164,7 +164,7 @@ class Attendance_ajax extends Public_Controller
 
             $ra['last_status'] = $attendanceList[0]['action'];
             $ra['action_date_time'] = $attendanceList[0]['action_date_time'];
-        } else if ($attendanceListLastRecord[0]['action'] == 'break_in') {
+        } else if ($attendanceListLastRecord[0]['action'] == 'break_in') { 
 
             // Get all breaks for current day
             $attendanceListBrak = $this->atm->GetAttendanceListBreak(
@@ -173,6 +173,13 @@ class Attendance_ajax extends Public_Controller
                 $this->date
             );
 
+            if (!empty($attendanceListBrak)) {
+                foreach ($attendanceListBrak as $b_key => $break) {
+                    $breakTime = new DateTime($break['action_date_time'], new DateTimeZone('America/Los_Angeles'));
+                    $attendanceListBrak[$b_key]['action_date_time'] = $breakTime->setTimezone(new DateTimeZone($_GET['timezone']))->format('Y-m-d H:i:s');
+                }
+            }
+
             $ra['last_status'] = $attendanceListLastRecord[0]['action'];
             $ra['action_date_time'] = $attendanceListLastRecord[0]['action_date_time'];
             $ra['break_record'] = $attendanceListBrak;
@@ -180,6 +187,11 @@ class Attendance_ajax extends Public_Controller
 
             $ra['last_status'] = $attendanceListLastRecord[0]['action'];
             $ra['action_date_time'] = $attendanceListLastRecord[0]['action_date_time'];
+        }
+        //
+        if (!empty($ra['action_date_time'])) {
+            $actionDate = new DateTime($ra['action_date_time'], new DateTimeZone('America/Los_Angeles'));
+            $ra['action_date_time'] = $actionDate->setTimezone(new DateTimeZone($_GET['timezone']))->format('Y-m-d H:i:s');
         }
         // 
         if (empty($attendanceList)) {
@@ -190,9 +202,6 @@ class Attendance_ajax extends Public_Controller
             //
             return SendResponse(200, $this->resp);
         }
-        //
-        $actionDate = new DateTime($ra['action_date_time'], new DateTimeZone('America/Los_Angeles'));
-        $ra['action_date_time'] = $actionDate->setTimezone(new DateTimeZone($_GET['timezone']))->format('Y-m-d H:i:s');
         //
         unset($this->resp['errors']);
         $this->resp['success'] = $ra;
@@ -519,7 +528,7 @@ class Attendance_ajax extends Public_Controller
 
         $post = $this->input->post(NULL, TRUE);
         //
-         $this->atm->saveEmployeeMapLocation([
+        $this->atm->saveEmployeeMapLocation([
             'employee_sid' => $this->employeeId,
             'company_sid' => $this->companyId,
             'created_at' => $this->datetime,
@@ -527,5 +536,17 @@ class Attendance_ajax extends Public_Controller
             'lon' => isset($post['lng']) ? $post['lng'] : 0
         ]);
         
+    }
+
+    public function getAttendanceState () {
+        $date = $this->date;
+        $employeeId = $this->employeeId;
+        //
+        $lastAction = $this->atm->getAttendanceStatusByEmployeeId($employeeId, $date);
+        //
+        unset($this->resp['errors']);
+        $this->resp['success'] = $lastAction;
+        //
+        return SendResponse(200, $this->resp);
     }
 }
