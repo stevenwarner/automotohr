@@ -38,8 +38,18 @@ class Payrolls extends Admin_Controller
      */
     public function index(int $companyId)
     {
-        //
-        $this->data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls']);
+        // set the company id
+        $this->data['loggedInCompanyId'] = $companyId;
+        // get gusto details
+        $this->data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
+        // load set up page
+        if (!$this->data["companyGustoDetails"]) {
+            return $this->createPartnerCompany();
+        }
+        // load agreement page
+        if (!$this->data["companyGustoDetails"]["is_ts_accepted"]) {
+            return $this->agreement();
+        }
         //
         $this->data['companyStatus'] = $companyGustoDetails['status'];
         // get the company onboard flow
@@ -75,6 +85,102 @@ class Payrolls extends Admin_Controller
         ], $this->js, 'dashboard', $this->createMinifyFiles);
         // render the page
         $this->render('v1/sa/payrolls/dashboard', 'admin_master');
+    }
+
+    /**
+     * Manage admins
+     */
+    public function manageAdmins(int $companyId)
+    {
+        // set the company id
+        $this->data['loggedInCompanyId'] = $companyId;
+        // set
+        $this->data['title']
+            = 'Payroll admins :: ' . (STORE_NAME);
+        // set CSS
+        $this->data['appCSS'] = bundleCSS([
+            "v1/plugins/ms_modal/main",
+            "css/theme-2021"
+        ], $this->css, "admins", $this->createMinifyFiles);
+        // get admins
+        $this->data['admins'] = $this->db
+            ->where([
+                'company_sid' => $companyId,
+                'is_store_admin' => 0
+            ])
+            ->order_by('sid', 'DESC')
+            ->get('gusto_companies_admin')
+            ->result_array();
+        //
+        $this->render('v1/sa/payrolls/manage_admins', 'admin_master');
+    }
+
+    /**
+     * add admins
+     */
+    public function addAdmin(int $companyId)
+    {
+        // set the company id
+        $this->data['loggedInCompanyId'] = $companyId;
+        // set
+        $this->data['title']
+            = 'Payroll add admin :: ' . (STORE_NAME);
+        // set CSS
+        $this->data['appCSS'] = bundleCSS([
+            "v1/plugins/ms_modal/main",
+            "css/theme-2021"
+        ], $this->css, "admins", $this->createMinifyFiles);
+        // scripts
+        $this->data['appJs'] = bundleJs([
+            'js/app_helper',
+            'v1/sa/payrolls/add_admin'
+        ], $this->js, 'add-admin', $this->createMinifyFiles);
+        //
+        $this->render('v1/sa/payrolls/add_admins', 'admin_master');
+    }
+
+    /**
+     * create partner company
+     */
+    private function createPartnerCompany()
+    {
+        // set title
+        $this->data['page_title'] = 'Payroll set-up :: ' . (STORE_NAME);
+        // set CSS
+        $this->data['appCSS'] = bundleCSS([
+            "v1/plugins/ms_modal/main",
+            "css/theme-2021"
+        ], $this->css, "company-onboard", $this->createMinifyFiles);
+        // set JS
+        $this->data['appJs'] = bundleJs([
+            'v1/plugins/ms_modal/main',
+            'js/app_helper',
+            'v1/payroll/js/company_onboard'
+        ], $this->js, 'company-onboard', $this->createMinifyFiles);
+        // render the page
+        $this->render('v1/sa/payrolls/create_partner_company', 'admin_master');
+    }
+
+    /**
+     * sign the agreement
+     */
+    private function agreement()
+    {
+        // set title
+        $this->data['page_title'] = 'Payroll agreement :: ' . (STORE_NAME);
+        // set CSS
+        $this->data['appCSS'] = bundleCSS([
+            "v1/plugins/ms_modal/main",
+            "css/theme-2021"
+        ], $this->css, "agreement", $this->createMinifyFiles);
+        // set JS
+        $this->data['appJs'] = bundleJs([
+            'v1/plugins/ms_modal/main',
+            'js/app_helper',
+            "v1/payroll/js/agreement"
+        ], $this->js, 'agreement', $this->createMinifyFiles);
+        // render the page
+        $this->render('v1/sa/payrolls/agreement', 'admin_master');
     }
 
 
@@ -194,10 +300,6 @@ class Payrolls extends Admin_Controller
      */
     public function verifyCompany(int $companyId): array
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check for session out
-        $this->checkSessionStatus($session);
         // get the company
         $companyDetails = $this->payroll_model
             ->getCompanyDetailsForGusto($companyId);

@@ -2362,6 +2362,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', 0);
+        $this->db->where('documents_management.archive', 0);
         $this->db->where('status', 1);
         $this->db->join('documents_management', 'documents_management.sid = documents_assigned.document_sid', 'left');
         $record_obj = $this->db->get('documents_assigned');

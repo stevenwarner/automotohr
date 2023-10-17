@@ -1,0 +1,38 @@
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<div class="main">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="inner-content">
+                <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
+                    <div class="dashboard-content">
+                        <div class="dash-inner-block">
+                            <div class="heading-title page-title">
+                                <h1 class="page-title">
+                                    <i class="fa fa-cogs"></i>
+                                    <?php echo $page_title; ?>
+                                </h1>
+                            </div>
+
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+
+                            <!--  -->
+                            <div class="alert alert-info text-center">
+                                <p class="text-center">
+                                    Please use the following button to link this company to "Payroll".
+                                </p>
+                                <br />
+                                <button class="btn btn-success jsCreatePartnerCompanyBtn" data-cid="<?=$loggedInCompanyId;?>">
+                                    Set-up Payroll
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

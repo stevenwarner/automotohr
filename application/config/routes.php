@@ -1963,4 +1963,9 @@ $route['payrolls/off-cycle/(:num)/clear']['post'] = 'v1/payrolls/Off_cycle/clear
  */
 $route['sa/payrolls/(:num)']['get'] = 'v1/sa/Payrolls/index/$1';
 // sync with Gusto
-$route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
+$route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payrolls/syncCompanyWithGusto/$1';
+$route['sa/payrolls/company/(:num)/bank/verify']['get'] = 'v1/sa/Payrolls/verifyCompanyBankAccount/$1';
+$route['sa/payrolls/company/(:num)/verify']['POST'] = 'v1/sa/Payrolls/verifyCompany/$1';
+//
+$route['sa/payrolls/company/(:num)/admins/manage']['get'] = 'v1/sa/Payrolls/manageAdmins/$1';
+$route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmin/$1';
