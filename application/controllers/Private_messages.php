@@ -498,7 +498,18 @@ class Private_messages extends Public_Controller
                     }
                 }
 
-                $fromArray = array('{{company_name}}', '{{date}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}', '{{company_address}}', '{{company_phone}}', '{{career_site_url}}');
+                $fromArray = [
+                    '{{company_name}}',
+                    '{{date}}',
+                    '{{first_name}}',
+                    '{{last_name}}',
+                    '{{job_title}}',
+                    '{{applicant_name}}',
+                    '{{email}}',
+                    '{{company_address}}',
+                    '{{company_phone}}',
+                    '{{career_site_url}}'
+                ];
                 //
                 $today           = new DateTime();
                 $today           = reset_datetime(array('datetime' => $today->format('Y-m-d'), '_this' => $this, 'type' => 'company', 'with_timezone' => true));
@@ -677,7 +688,7 @@ class Private_messages extends Public_Controller
 
                                 unset($message_data['template']);
 
-                                $toArray = array($company_name, $today, $employee_data['first_name'], $employee_data['last_name'], $employee_data['job_title'],  ' ', $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                $toArray = array($company_name, $today, $employee_data['first_name'], $employee_data['last_name'], $employee_data['job_title'], '',  $employee_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
                                 //
                                 $subject = $formpost["subject"];
                                 $body    = $formpost["message"];
@@ -749,7 +760,7 @@ class Private_messages extends Public_Controller
 
                                 unset($message_data['template']);
 
-                                $toArray = array($company_name, $today, $applicant_data['first_name'], $applicant_data['last_name'], $applicant_data['job_title'],  ' ', $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                                $toArray = array($company_name, $today, $applicant_data['first_name'], $applicant_data['last_name'], $applicant_data['job_title'], '',$applicant_data["email"], $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
                                 //
                                 $body    = $formpost["message"];
 
@@ -942,7 +953,7 @@ class Private_messages extends Public_Controller
                             unset($message_data['template']);
 
 
-                            $toArray = array($company_name, $today, $first_name, $last_name, $job_title,  ' ', '', $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                            $toArray = array($company_name, $today, $first_name, $last_name, $job_title,  ' ', $to_email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
                             //
                             $body    = $formpost["message"];
 
@@ -1009,7 +1020,7 @@ class Private_messages extends Public_Controller
             $this->load->library('form_validation');
             $this->form_validation->set_rules('subject', 'Subject', 'trim|required');
             $this->form_validation->set_rules('message', 'Message', 'trim|required');
-            
+
             $this->load->model('application_tracking_system_model');
             $this->load->model('portal_email_templates_model');
 
@@ -1021,7 +1032,7 @@ class Private_messages extends Public_Controller
                 $load_view = check_blue_panel_status(false, 'self');
                 $data['load_view'] = $load_view;
                 $data['access_level'] = $access_level;
-              
+
                 $portal_email_templates   = $this->application_tracking_system_model->get_portal_email_templates($company_id);
 
                 foreach ($portal_email_templates as $key => $template) {

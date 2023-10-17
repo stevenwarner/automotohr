@@ -551,7 +551,7 @@ class message_model extends CI_Model {
     }
     
     function get_email_for_record($email, $company_sid) {
-        $this->db->select('sid, first_name, last_name,job_title');
+        $this->db->select('sid, first_name, last_name,job_title, email');
         $this->db->where('email', $email);
         $this->db->where('parent_sid', $company_sid);
         $this->db->limit(1);
@@ -559,7 +559,7 @@ class message_model extends CI_Model {
         $employee_arr = $records_obj->result_array();
         $records_obj->free_result();
 
-        $this->db->select('sid, first_name, last_name,desired_job_title as job_title ');
+        $this->db->select('sid, first_name, last_name,desired_job_title as job_title, email');
         $this->db->where('email', $email);
         $this->db->where('employer_sid', $company_sid);
         $this->db->limit(1);
