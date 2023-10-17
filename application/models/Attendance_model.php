@@ -1385,4 +1385,20 @@ class Attendance_model extends CI_Model
         //
         return $data;
     }
+
+    public function getAttendanceStatusByEmployeeId ($employeeId, $date) {
+        $this->db->select('last_action');
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('action_date', $date);
+
+        $record_obj = $this->db->get('portal_attendance');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr["last_action"];
+        } else {
+            return '';
+        }
+    }
 }
