@@ -547,7 +547,7 @@ class message_model extends CI_Model {
     }
     
     function get_email_for_record($email, $company_sid) {
-        $this->db->select('sid, first_name, last_name');
+        $this->db->select('sid, first_name, last_name,job_title, email');
         $this->db->where('email', $email);
         $this->db->where('parent_sid', $company_sid);
         $this->db->limit(1);
@@ -555,7 +555,7 @@ class message_model extends CI_Model {
         $employee_arr = $records_obj->result_array();
         $records_obj->free_result();
 
-        $this->db->select('sid, first_name, last_name');
+        $this->db->select('sid, first_name, last_name,desired_job_title as job_title, email');
         $this->db->where('email', $email);
         $this->db->where('employer_sid', $company_sid);
         $this->db->limit(1);
@@ -626,7 +626,13 @@ class message_model extends CI_Model {
             $table = 'portal_job_applications';
         }
 
-        $this->db->select('email, sid, first_name, last_name');
+        if ($type == 'employee') {
+        $this->db->select('email, sid, first_name, last_name,job_title');
+        }
+        if ($type == 'applicant') {
+            $this->db->select('email, sid, first_name, last_name,desired_job_title as job_title');
+            }
+
         $this->db->group_by('email');
 
         if ($type == 'employee') {
@@ -637,4 +643,37 @@ class message_model extends CI_Model {
         }
         return $this->db->get_where($table, $where)->result_array();
     }
+
+    //
+
+    function get_portal_email_templates($company_sid)
+    {
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('is_custom', 1);
+        $records_obj = $this->db->get('portal_email_templates');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }
+
+    //
+    function get_all_email_template_attachments($template_sid)
+    {
+        $this->db->where('portal_email_template_sid', $template_sid);
+        $records_obj = $this->db->get('portal_email_templates_attachments');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        return $records_arr;
+    }
+
+    //
+    public function get_admin_details($id) {
+        $this->db->where('id', $id);
+        $this->db->where('active', 1);
+        $result = $this->db->get('administrator_users')->row_array();
+        return $result;
+    }
+
 }
