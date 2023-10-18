@@ -89,6 +89,8 @@
                                         <table class="table table-bordered table-hover table-stripped">
                                             <tbody>
 
+                                            <?php if(strtolower($this->session->userdata("logged_in")["employer_detail"]["access_level"]) != "employee") {?>
+
                                                 <tr>
                                                     <td>Email Template</td>
                                                     <td> <select class="form-control invoice-fields" name="template" id="template">
@@ -102,6 +104,7 @@
                                                             <?php } ?>
                                                         </select></td>
                                                 </tr>
+                                                <?php } ?>
 
                                                 <?php if ($page == 'reply') { ?>
                                                     <tr <?php if ($message_type != '1') { ?>style="display: none" <?php } ?> id="to_employer_div">
