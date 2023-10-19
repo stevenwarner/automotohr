@@ -590,7 +590,7 @@ $(function () {
 
     /**
      * Retrieves lat lon
-     * @param {object} position 
+     * @param {object} position
      */
     function onSuccess(position) {
         //

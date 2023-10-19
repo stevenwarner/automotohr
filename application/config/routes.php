@@ -1462,21 +1462,27 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
  * @author  Mubashir Ahmed <mubashar.ahmed@egenienext.com>
  * @version 1.0
  */
-$route['attendance/my']['get'] = "sheet/Attendance/MyAttendance";
-$route['attendance/my/time-sheet']['get'] = "sheet/Attendance/MyTimeSheet";
-$route['attendance/time-sheet']['get'] = "sheet/Attendance/TimeSheet";
-$route['attendance/manage/(:num)']['get'] = "sheet/Attendance/ManageTimeSheet/$1";
-$route['attendance/settings']['get'] = "sheet/Attendance/Settings";
-$route['attendance/today_overview']['get'] = "sheet/Attendance/TodayOverview";
-$route['attendance/overtime']['get'] = "sheet/Attendance/Overtime";
-$route['attendance/report']['get'] = "sheet/Attendance/Report";
-// AJAX Calls
-$route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
-$route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/$1";
-$route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
-$route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
-$route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";
+// $route['attendance/my']['get'] = "sheet/Attendance/MyAttendance";
+// $route['attendance/my/time-sheet']['get'] = "sheet/Attendance/MyTimeSheet";
+// $route['attendance/time-sheet']['get'] = "sheet/Attendance/TimeSheet";
+// $route['attendance/manage/(:num)']['get'] = "sheet/Attendance/ManageTimeSheet/$1";
+// $route['attendance/settings']['get'] = "sheet/Attendance/Settings";
+// $route['attendance/today_overview']['get'] = "sheet/Attendance/TodayOverview";
+// $route['attendance/overtime']['get'] = "sheet/Attendance/Overtime";
+// $route['attendance/report']['get'] = "sheet/Attendance/Report";
+// // AJAX Calls
+// $route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
+// $route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/$1";
+// $route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
+// $route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
+// $route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";
+// $route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
+// $route['attendance/getCurrentState']['get'] = "sheet/Attendance_ajax/getAttendanceState";
+// $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
+//
+// employeer routes for attendance
+$route["timesheet"]["get"] = "v1/Attendance/Attendance/timeSheet";
 
 /**
  * 
@@ -1628,10 +1634,7 @@ $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_te
  * Cron job URLS
  */
 $route['cron_fix_duplicate_eeo']['cli'] = "Cron_common/fixDuplicateEEOForms";
-$route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
-$route['attendance/getCurrentState']['get'] = "sheet/Attendance_ajax/getAttendanceState";
 
-$route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
 
 // Download document zip file
