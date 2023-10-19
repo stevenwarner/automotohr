@@ -1,29 +1,32 @@
-<?php 
-    //
-    $navpills = [];
-    //
-    $navpills[] = [
-        'title' => 'Overview',
-        'url' => '/today_overview',
-        'slug' => '',
-        'icon' => 'list',
-        'segment' => '/today_overview'
-    ];
-    $navpills[] = [
-        'title' => 'Clock My Day',
-        'url' => '/my',
-        'slug' => '',
-        'icon' => 'clock-o',
-        'segment' => 'my'
-    ];
-    // Dashboard
-    $navpills[] = [
-        'title' => 'My Time sheet',
-        'url' => '/my/time-sheet',
-        'slug' => '',
-        'icon' => 'calendar',
-        'segment' => '/my/time-sheet'
-    ];
+<?php
+//
+$navpills = [];
+
+
+//
+$navpills[] = [
+    'title' => 'Overview',
+    'url' => '/today_overview',
+    'slug' => '',
+    'icon' => 'list',
+    'segment' => '/today_overview'
+];
+$navpills[] = [
+    'title' => 'Clock My Day',
+    'url' => '/my',
+    'slug' => '',
+    'icon' => 'clock-o',
+    'segment' => 'my'
+];
+// Dashboard
+$navpills[] = [
+    'title' => 'My Time sheet',
+    'url' => '/my/time-sheet',
+    'slug' => '',
+    'icon' => 'calendar',
+    'segment' => '/my/time-sheet'
+];
+if (isPayrollOrPlus()) {
     $navpills[] = [
         'title' => 'Time Sheet',
         'url' => '/time-sheet',
@@ -61,6 +64,7 @@
         'icon' => 'cogs',
         'segment' => 'settings'
     ];
+}
 
 
 //
