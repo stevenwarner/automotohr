@@ -2,15 +2,16 @@
 //
 $navpills = [];
 
-
-//
-$navpills[] = [
-    'title' => 'Overview',
-    'url' => '/today_overview',
-    'slug' => '',
-    'icon' => 'list',
-    'segment' => '/today_overview'
-];
+if (isPayrollOrPlus()) {
+    //
+    $navpills[] = [
+        'title' => 'Overview',
+        'url' => '/today_overview',
+        'slug' => '',
+        'icon' => 'list',
+        'segment' => '/today_overview'
+    ];
+}
 $navpills[] = [
     'title' => 'Clock My Day',
     'url' => '/my',
