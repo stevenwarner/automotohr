@@ -347,7 +347,27 @@ class Testing extends CI_Controller
 
     public function test()
     {
+        $this->load->model('hr_documents_management_model');
+        //
+        $company_sid = 16406;
+        $user_sid = 1098997;
+        $user_type = 'applicant';
+        //
+        $generalDocuments = $this->hr_documents_management_model->getUncompletedGeneralAssignedDocuments(
+            $company_sid,
+            $user_sid,
+            $user_type
+        );
 
+        //
+        $documents = $this->hr_documents_management_model->getUncompletedAssignedDocuments(
+            $company_sid,
+            $user_sid,
+            $user_type
+        );
+        //
+        _e($generalDocuments,true);
+        _e($documents,true,true);
         $this->load->model("v1/payroll_model", "payroll_model");
         //
         $this->payroll_model->onboardEmployee(
