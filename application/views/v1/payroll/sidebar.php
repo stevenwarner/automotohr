@@ -145,6 +145,25 @@ $sideBarUrls = [
                         <figure><i class="fa fa-th"></i></figure>Dashboard
                     </a>
                 </li>
+                <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
+                    <li>
+                        <a href="<?= base_url('attendance/today_overview'); ?>">
+                            <figure><i class="fa fa-pie-chart" aria-hidden="true"></i></figure>
+                            Attendance Management
+                        </a>
+                    </li>
+                <?php } ?>
+                <?php
+                $pto_user_access = get_pto_user_access($session['employer_detail']['parent_sid'], $session['employer_detail']['sid']);
+                ?>
+                <?php if (checkIfAppIsEnabled('timeoff') && $pto_user_access['quick_link'] == 1) { ?>
+                    <li>
+                        <a href="<?php echo $pto_user_access['url']; ?>">
+                            <figure><i class="fa fa-clock-o"></i></figure>
+                            Time Off
+                        </a>
+                    </li>
+                <?php  } ?>
                 <?php if (isPayrollOrPlus()) : ?>
                     <!-- Payrolls -->
                     <li>
