@@ -299,7 +299,7 @@
                                                                             <?php echo $file['sort_order'] ?>- <span class="uploaded-file-name"><a href="<?= AWS_S3_BUCKET_URL . $file['file_code'] ?>" download="<?php echo $file['file_name'] ?>"><?php echo $file['file_name'] ?></a></span>
                                                                         </div>
                                                                         <div class="pull-right">
-                                                                            <a href="javascript:;" title="Edit File" class="btn btn-success edit-file" data-preview-code="<?php echo $file['file_code'] ?>" data-word-content='<?php echo addslashes($file['word_content']) ?>' data-fedral="<?php echo $file['federal_check'] ?>" data-country="<?php echo $file['country'] ?>" data-state="<?php echo $file['states'] ?>" data-order="<?php echo $file['sort_order'] ?>" data-file-name="<?php echo $file['file_name'] ?>" data-attr="<?= $file['sid'] ?>" data-preview-ext="<?php echo $file['type'] ?>"><i class="fa fa-pencil"></i></a>
+                                                                            <a href="javascript:;" title="Edit File" class="btn btn-success hybrid-edit-file" data-preview-code="<?php echo $file['file_code'] ?>" data-word-content='<?php echo addslashes($file['word_content']) ?>' data-fedral="<?php echo $file['federal_check'] ?>" data-country="<?php echo $file['country'] ?>" data-state="<?php echo $file['states'] ?>" data-order="<?php echo $file['sort_order'] ?>" data-file-name="<?php echo $file['file_name'] ?>" data-attr="<?= $file['sid'] ?>" data-preview-ext="<?php echo $file['type'] ?>"><i class="fa fa-pencil"></i></a>
                                                                             <a href="javascript:;" title="<?= $file['status'] ? 'Enable' : 'Disable' ?>" class="btn <?= $file['status'] ? 'btn-warning delete-file' : 'btn-primary enable-file' ?>" data-attr="<?= $file['sid'] ?>"> <i class="fa fa-<?= $file['status'] ? 'ban' : 'shield' ?>"></i></a>
                                                                             <a href="javascript:;" title="Delete File" class="btn btn-danger delete-record" data-attr="<?= $file['sid'] ?>"> <i class="fa fa-times"></i></a>
                                                                         </div>
@@ -560,6 +560,122 @@
                                             </div>
                                         </form>
                                     </div>
+
+
+
+                                    <div class="add-new-company" id="hybrid_edit_doc_form" style="display: none">
+                                        <form action="" method="POST" autocomplete="off" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="heading-title">
+                                                        <h1 class="page-title">Edit Documents</h1>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row">
+                                                        <label for="hybrid_edit_file_name">Doc Name <span class="hr-required">*</span></label>
+                                                        <?php echo form_input('edit_file_name', set_value('edit_file_name'), 'class="hr-form-fileds" id="hybrid_edit_file_name"'); ?>
+                                                        <?php echo form_error('edit_file_name'); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row">
+                                                        <label for="edit_sort_order">Sort Order <span class="hr-required">*</span></label>
+                                                        <input type="number" name="edit_sort_order" class="hr-form-fileds" id="hybrid_edit_sort_order">
+                                                        <!-- --><?php //echo form_input('edit_sort_order', set_value('edit_sort_order'), 'class="hr-form-fileds" id="edit_sort_order"'); 
+                                                                ?>
+                                                        <!-- --><?php //echo form_error('edit_sort_order'); 
+                                                                ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label for="sort_order">Federal <span class="hr-required">*</span></label>
+                                                        <select class="invoice-fields" name="federal_check" id="hybrid_edit_federal_check">
+                                                            <option value="1">Yes</option>
+                                                            <option value="0">No</option>
+                                                        </select>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row">
+                                                        <label for="anchor-href">Country <span class="hr-required">*</span></label>
+                                                        <select class="invoice-fields" name="country" id="hybrid_edit_country" data-attr="<?php echo $states; ?>">
+                                                            <?php if (sizeof($active_countries) > 0) { ?>
+                                                                <option value="0">All</option>
+                                                                <?php foreach ($active_countries as $active_country) { ?>
+                                                                    <option value="<?= $active_country["sid"]; ?>">
+                                                                        <?= $active_country["country_name"]; ?>
+                                                                    </option>
+                                                            <?php }
+                                                            } else {
+                                                                echo '<option value="">No Country Allowed</option>';
+                                                            } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label for="anchor-href">State</label>
+
+                                                        <div class="hr-select-dropdown">
+                                                            <select multiple="multiple" name="states[]" id="hybrid_edit_state">
+                                                                <?php if (empty($country_id)) { ?>
+                                                                    <option value="all">All States</option>
+                                                                    <?php foreach ($active_states[$country_id] as $active_state) { ?>
+                                                                        <option value="<?= $active_state["id"] ?>" <?php if ($active_state["id"] == $applicant_info['state']) { ?>selected="selected" <?php } ?>><?= $active_state["state_name"] ?></option>
+                                                                    <?php
+                                                                    } ?>
+                                                                <?php   } else {
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label for="word_editor">Document Description</label>
+                                                        <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                                        <textarea class="ckeditor textarea" name="word_editor" id="hybrid_edit_doc_editor" rows="8" cols="60">
+                                                            <?php echo set_value('word_editor'); ?>
+                                                        </textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label>Edit Related Documents :</label>
+                                                        <div class="upload-file form-control">
+                                                            <span class="selected-file" id="name_hybrid-edit-file">No file selected</span>
+                                                            <input name="edit-file" id="hybrid-edit-file" onchange="check_hybrid_edit_file('hybrid-edit-file')" type="file">
+                                                            <a href="javascript:;">Choose File</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="edit_custom_loader">
+                                                        <div id="edit-loader" class="edit-loader" style="display: none">
+                                                            <i style="font-size: 25px; color: #81b431;" class="fa fa-cog fa-spin"></i>
+                                                            <span>Updating Document...</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <button type="button" id="preview-data" onclick="fLaunchModal(this);" class="btn btn-success" data-preview-url="" data-download-url="" data-file-name="" data-document-title="" data-preview-ext="">Preview File</button>
+                                                    <!--<a href="javascript:void(0);" onclick="fLaunchModal(this);" >View</a>-->
+                                                </div>
+                                                <input type="hidden" id="file-id">
+
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
+                                                    <input type="button" class="search-btn" id="hybrid-edit-form-submit" value="Update Document" name="form-submit">
+                                                    <input type="button" class="search-btn" id="hybrid_cancel" value="Cancel">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
 
                                     <div class="row">
                                         <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12">
@@ -1018,6 +1134,18 @@
         });
 
 
+        var hybrid_edit_select = $('#hybrid_edit_state').selectize({
+            plugins: ['remove_button'],
+            delimiter: ',',
+            persist: true,
+            create: function(input) {
+                return {
+                    value: input,
+                    text: input
+                }
+            }
+        });
+
         //
 
         var hybrid_state = $('#hybrid_state').selectize({
@@ -1037,6 +1165,8 @@
 
 
         var edit_state_select = edit_select[0].selectize;
+        var hybrid_edit_state_select = hybrid_edit_select[0].selectize;
+
 
         $('#generate-doc').click(function() {
             $('#word-doc-submit').val('Add Word Document');
@@ -1132,6 +1262,65 @@
             $('#edit_doc_form').show();
         });
 
+
+        $('.hybrid-edit-file').click(function() {
+            var name = $(this).attr('data-file-name');
+            var country = $(this).attr('data-country');
+            var state = $(this).attr('data-state');
+            var order = $(this).attr('data-order');
+            var federal = $(this).attr('data-fedral');
+            var word_content = $(this).attr('data-word-content');
+            var preview_ext = $(this).attr('data-preview-ext');
+            var id = $(this).attr('data-attr');
+            var pre_code = 'https://automotohrattachments.s3.amazonaws.com/' + $(this).attr('data-preview-code');
+
+            $('#hybrid_edit_country').val(country);
+            $('#hybrid_edit_file_name').val(name);
+            $('#hybrid_edit_sort_order').val(order);
+            $('#hybrid_edit_federal_check').val(federal);
+            $('#hybrid_edit_doc_editor').val(word_content);
+
+            $('#preview-data').attr('data-preview-url', pre_code);
+            $('#preview-data').attr('data-download-url', pre_code);
+            $('#preview-data').attr('data-file-name', name);
+            $('#preview-data').attr('data-document-title', name);
+            $('#preview-data').attr('data-preview-ext', preview_ext);
+
+            CKEDITOR.instances.hybrid_edit_doc_editor.setData(word_content);
+            $('#file-id').val(id);
+            var states = $('#hybrid_edit_country').attr('data-attr');
+            var allstates = $.parseJSON(states)[country];
+            hybrid_edit_state_select.clearOptions();
+            hybrid_edit_state_select.load(function(callback) {
+
+                var arr = [{}];
+                var j = 0;
+
+                if (country == 0 || country == 'all') {
+                    arr[j++] = {
+                        value: 'all',
+                        text: 'All States'
+                    }
+                } else {
+                    for (var i = 0; i < allstates.length; i++) {
+                        arr[j++] = {
+                            value: allstates[i].sid,
+                            text: allstates[i].state_name
+                        }
+                    }
+                }
+                callback(arr);
+                var selected_job = state.split(',');
+                $.each(selected_job, function(i, item) {
+                    hybrid_edit_state_select.addItems(item);
+                });
+                hybrid_edit_state_select.refreshItems();
+            });
+
+            $('#doc_form').hide();
+            $('#hybrid_edit_doc_form').show();
+        });
+
         $('.edit-word-doc').click(function() {
             $('#word-doc-submit').val('Update Word Document');
             $('#word-doc-submit').attr('id', 'word-doc-edit');
@@ -1191,6 +1380,11 @@
             $('#edit_doc_form').hide();
         });
 
+        $('#hybrid_cancel').click(function() {
+            $('#doc_form').show();
+            $('#hybrid_edit_doc_form').hide();
+        });
+
         var state_select = $('.chosen-select').selectize({
             plugins: ['remove_button'],
             delimiter: ',',
@@ -1208,6 +1402,7 @@
         CKEDITOR.replace('word_editor');
         CKEDITOR.replace('doc_editor');
         CKEDITOR.replace('edit_doc_editor');
+        CKEDITOR.replace('hybrid_edit_doc_editor');
 
         //
         CKEDITOR.replace('word_editor_hybrid');
@@ -1422,6 +1617,41 @@
             }
         });
 
+
+        $(document).on('change', '#hybrid_edit_country', function() {
+            var val = $(this).val();
+            var states = $(this).attr('data-attr');
+
+            if (val == '') {
+                $('#hybrid_edit_state').html('<option value="">Select State</option>');
+            } else {
+                var allstates = $.parseJSON(states)[val];
+                hybrid_edit_state_select.clearOptions();
+                hybrid_edit_state_select.load(function(callback) {
+
+                    var arr = [{}];
+                    var j = 0;
+
+                    if (val == 'all') {
+                        arr[j++] = {
+                            value: 'all',
+                            text: 'All States'
+                        }
+                    } else {
+                        for (var i = 0; i < allstates.length; i++) {
+                            arr[j++] = {
+                                value: allstates[i].sid,
+                                text: allstates[i].state_name
+                            }
+                        }
+                    }
+                    callback(arr);
+                    hybrid_edit_state_select.refreshItems();
+                });
+            }
+        });
+
+
         $(document).on('click', '#word-doc-submit', function() {
             var name = $('#generate_file_name').val();
             var sort_order = $('#generate_sort_order').val();
@@ -1582,6 +1812,82 @@
             });
         });
 
+
+
+        //
+        $('#hybrid-edit-form-submit').click(function() {
+
+
+            let name = $('#hybrid_edit_file_name').val();
+            let country = $('#hybrid_edit_country').val();
+            let state = $('#hybrid_edit_state').val();
+            let sort_order = $('#hybrid_edit_sort_order').val();
+            let word_content = $.trim(CKEDITOR.instances.hybrid_edit_doc_editor.getData());
+            let file_data = $('#hybrid-edit-file').prop('files')[0];
+
+
+            //
+            if (name == '') {
+                alertify.alert('Error! File Name Missing', "File Name is required");
+                return false;
+            } else if (country == '') {
+                alertify.alert('Error! Country Missing', "Country is required");
+                return false;
+            } else if (state == '' || state == null) {
+                alertify.alert('Error! States Missing', "States are required");
+                return false;
+            } else if (sort_order == '') {
+                alertify.alert('Error! Sort Order Missing', "Sort Order is required");
+                return false;
+            } else if (word_content == '') {
+                alertify.alert('Error! Word Document Missing', "Word Document is required");
+                return false;
+            } else if (file_data == '' || file_data == undefined) {
+                alertify.alert('Error! File Missing', "Documents File is required");
+                return false;
+            }
+
+
+            //           
+            var form_data = new FormData();
+            form_data.append('edit-file', file_data);
+            form_data.append('country', country);
+            form_data.append('states', state);
+            form_data.append('federal_check', $('#hybrid_edit_federal_check').val());
+            form_data.append('sort_order', sort_order);
+            form_data.append('file_name', name);
+            form_data.append('word_content', word_content);
+            form_data.append('id', $('#file-id').val());
+            form_data.append('doc_type', 'Hybrid');
+            $('#edit-loader').show();
+            $('#hybrid-edit-form-submit').addClass('disabled-btn');
+            $('#hybrid-edit-form-submit').prop('disabled', true);
+
+
+            $.ajax({
+                url: '<?= base_url('manage_admin/documents_library/edit_form_ajax_handler') ?>',
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'post',
+                data: form_data,
+                success: function(data) {
+                    $('#edit-loader').hide();
+                    $('#hybrid-edit-form-submit').removeClass('disabled-btn');
+                    $('#hybrid-edit-form-submit').prop('disabled', false);
+
+                    if (data != "error") {
+                        alertify.success('Document Updated Successfully');
+                        window.location.href = window.location.href;
+                    } else {
+                        alertify.alert('Doc error');
+                    }
+                },
+                error: function() {}
+            });
+        });
+
+
         //
         $(document).on('change', '#hybrid_country', function() {
             var val = $(this).val();
@@ -1654,15 +1960,7 @@
         });
 
 
-
     });
-
-
-
-
-
-
-
 
 
 
@@ -1851,6 +2149,27 @@
             $('#name_' + val).html('No file selected');
         }
     }
+
+    //
+    function check_hybrid_edit_file(val) {
+        var fileName = $("#" + val).val();
+
+        if (fileName.length > 0) {
+            var ext = fileName.split('.').pop();
+            var ext = ext.toLowerCase();
+            if (val == 'hybrid-edit-file') {
+                if (ext != "pdf" && ext != "docx" && ext != "doc" && ext != "PDF" && ext != "DOCX" && ext != "DOC" && ext != "xlsx" && ext != "xls") {
+                    $("#" + val).val(null);
+                    $('#name_' + val).html('<p class="red">Only (.pdf .docx .doc) allowed!</p>');
+                } else {
+                    $('#name_' + val).html(fileName.substring(0, 45));
+                }
+            }
+        } else {
+            $('#name_' + val).html('No file selected');
+        }
+    }
+
 
     function CancelUpload() {
         $('.upload-file').show();

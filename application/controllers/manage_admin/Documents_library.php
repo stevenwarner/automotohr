@@ -994,6 +994,12 @@ class Documents_library extends Admin_Controller
         $docs['federal_check'] = $_POST['federal_check'];
         $docs['word_content'] = $_POST['word_content'];
         $docs['upload_date'] = date('Y-m-d H:i:s');
+
+        if (isset($_POST['doc_type']) && $_POST['doc_type'] != '') {
+            $docs['doc_type'] = $_POST['doc_type'];
+        }
+
+
         $docs['file_url_code'] = strtolower(clean($_POST['file_name'])) . '-v' . $id;
         $this->documents_library_model->update_library_docs($docs, $id);
         echo $id;
