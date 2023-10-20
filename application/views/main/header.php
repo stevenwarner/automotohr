@@ -124,6 +124,10 @@
             <script src="<?php echo base_url('assets/video_interview/video-js-record/dist/videojs.record.js') ?>"></script>
         <?php } ?>
 
+        <?php if(checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
+            <script src="<?php echo base_url('assets/v1/payroll/js/employee-onboard.js') ?>"></script>
+        <?php } ?>    
+
         <?php if (isset($PageCSS)) : ?>
             <!-- Stylesheets -->
             <?= GetCss($PageCSS); ?>
@@ -1321,6 +1325,41 @@
                                                             Career Website
                                                         </a>
                                                     </li>
+                                                    <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
+                                                        <li>
+                                                            <a href="<?= base_url('attendance/today_overview'); ?>">
+                                                                <figure><i class="fa fa-pie-chart" aria-hidden="true"></i></figure>
+                                                                Attendance Management
+                                                            </a>
+                                                        </li>
+                                                    <?php } ?>
+                                                    <?php if (checkIfAppIsEnabled('payroll')) { ?>
+                                                        <?php
+                                                        $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                                        ?>
+
+                                                        <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
+                                                            <!-- Set up -->
+                                                            <li>
+                                                                <a href="#" class="jsCreatePartnerCompanyBtn" data-cid="<?= $this->session->userdata('logged_in')['company_detail']['sid']; ?>">
+                                                                    <figure><i class="fa fa-dollar" aria-hidden="true"></i></figure>
+                                                                    Payroll
+                                                                </a>
+                                                            </li>
+                                                        <?php } ?>
+                                                    <?php } ?>  
+                                                    
+                                                    <?php if ($isLMSModuleEnabled) { ?>
+                                                        <!--  -->
+                                                        <?php if ($session['employer_detail']['access_level_plus'] == 1) { ?>
+                                                            <li>
+                                                                <a href="<?= base_url('lms/courses/company_courses'); ?>">
+                                                                    <figure><i class="fa fa-file" aria-hidden="true"></i></figure>
+                                                                    Course Management
+                                                                </a>
+                                                            </li>
+                                                        <?php } ?>
+                                                    <?php } ?>     
                                                 </ul>
                                             </li>
                                             <li><a href="<?= base_url('logout') ?>">Logout</a></li>

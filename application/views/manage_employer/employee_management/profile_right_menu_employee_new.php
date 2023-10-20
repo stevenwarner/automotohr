@@ -267,6 +267,18 @@
                                             <a href="javascript:void(0);" class="jsPayrollEmployeeEdit">Manage<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                         </li>
                                     <?php } ?>
+                                    <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
+                                        <!-- <li>
+                                            <span class="left-addon">
+                                                <i aria-hidden="true" class="fa fa-clock-o"></i>
+                                            </span>
+                                            <h4>Manage Time Sheet</h4>
+                                            <a href="<?php echo base_url('attendance/manage/'.($employer["sid"]).''); ?>">
+                                                Manage
+                                                <i aria-hidden="true" class="fa fa-chevron-circle-right"></i>
+                                            </a>
+                                        </li> -->
+                                    <?php } ?>
                                 </ul>
                             </div>
                         </div>
