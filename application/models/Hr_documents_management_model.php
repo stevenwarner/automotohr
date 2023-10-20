@@ -7251,12 +7251,15 @@ class Hr_documents_management_model extends CI_Model
             $r[] = 'I9';
         }
         //
+        $this->db->select('documents_assigned.*');
         $this->db->from('documents_assigned');
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('user_sid', $user_sid);
-        $this->db->where('user_type', $user_type);
-        $this->db->where('is_required', 1);
-        $this->db->where('status', 1);
+        $this->db->join('documents_management', 'documents_management.sid = documents_assigned.document_sid', 'inner');
+        $this->db->where('documents_assigned.company_sid', $companyId);
+        $this->db->where('documents_assigned.user_sid', $user_sid);
+        $this->db->where('documents_assigned.user_type', $user_type);
+        $this->db->where('documents_assigned.is_required', 1);
+        $this->db->where('documents_assigned.status', 1);
+        $this->db->where('documents_management.archive', 0);
         //
         $documents = $this->db->get()
             ->result_array();
