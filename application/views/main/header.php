@@ -1350,7 +1350,7 @@
 
                                                     <?php } ?>  
                                                     
-                                                    <?php if ($isLMSModuleEnabled) { ?>
+                                                    <?php if (checkIfAppIsEnabled(MODULE_LMS)) { ?>
                                                         <!--  -->
                                                         <?php if ($session['employer_detail']['access_level_plus'] == 1) { ?>
                                                             <li>
