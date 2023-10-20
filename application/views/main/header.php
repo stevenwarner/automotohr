@@ -1338,15 +1338,15 @@
                                                         $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
                                                         ?>
 
-                                                        <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
-                                                            <!-- Set up -->
+                                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
                                                             <li>
-                                                                <a href="#" class="jsCreatePartnerCompanyBtn" data-cid="<?= $this->session->userdata('logged_in')['company_detail']['sid']; ?>">
+                                                                <a href="<?= base_url('payrolls/dashboard'); ?>">
                                                                     <figure><i class="fa fa-dollar" aria-hidden="true"></i></figure>
                                                                     Payroll
                                                                 </a>
                                                             </li>
                                                         <?php } ?>
+
                                                     <?php } ?>  
                                                     
                                                     <?php if ($isLMSModuleEnabled) { ?>
