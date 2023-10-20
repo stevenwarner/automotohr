@@ -1336,6 +1336,7 @@
                                                     <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                                         <?php
                                                         $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                                        $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
                                                         ?>
 
                                                         <?php if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
