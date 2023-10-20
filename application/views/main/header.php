@@ -1343,7 +1343,7 @@
                                                             <li>
                                                                 <a href="<?= base_url('payrolls/dashboard'); ?>">
                                                                     <figure><i class="fa fa-dollar" aria-hidden="true"></i></figure>
-                                                                    Payroll
+                                                                    Payroll Dashboard
                                                                 </a>
                                                             </li>
                                                         <?php } ?>
