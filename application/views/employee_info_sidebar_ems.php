@@ -1,4 +1,30 @@
 <div class="col-md-3 col-xs-12">
+
+    <div class="csSidebar">
+        <div class="csSidebarApproverSection">
+
+            <?php
+            $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+            $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
+            if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
+                <div class="p10">
+                    <a href="<?= base_url("payrolls/dashboard"); ?>" class="btn btn-orange " style="width: 100%;" title="" placement="top" data-original-title="Payroll">Payroll</a>
+                </div>
+            <?php } ?>
+
+            <?php
+            $pto_user_access = get_pto_user_access($employee['parent_sid'], $employee['sid']);
+            if (checkIfAppIsEnabled('timeoff') && $pto_user_access['dashboard'] == 1) { ?>
+                <div class="p10">
+                    <a href="<?= base_url("timeoff/requests"); ?>" class="btn btn-orange " style="width: 100%;" title="" placement="top" data-original-title="Time Off">Time Off</a>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+
+    <br>
+
+
     <div class="csSidebar csRadius5">
         <!-- Sidebar head -->
         <div class="csSidebarHead csRadius5 csRadiusBL0 csRadiusBR0 pa0">
