@@ -1,4 +1,3 @@
-<script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
 
 <div class="main">
     <div class="container-fluid">
@@ -273,7 +272,7 @@
 
                                                     <div class="col-xs-12"><br>
                                                         <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="ckeditor" name="section7_heading_detail" id="section7_heading_detail" rows="2" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
+                                                        <textarea class="invoice-fields" name="section7_heading_detail" id="section7_heading_detail" rows="2" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
                                                     </div>
                                                 
                                             </div>
@@ -472,8 +471,7 @@
             },
             section7: {
                 heading: $("#section7_heading").val(),
-                headingDetail: CKEDITOR.instances['section7_heading_detail'].getData().trim(),
-
+                headingDetail: $("section7_heading_detail").val(),
             }
 
         };

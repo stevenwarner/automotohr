@@ -1,4 +1,3 @@
-<script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -166,7 +165,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section1_details" id="section1_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section1_details" id="section1_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -261,7 +260,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section3_details" id="section3_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section3']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section3_details" id="section3_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section3']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -294,7 +293,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section4_details" id="section4_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section4']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section4_details" id="section4_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section4']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -326,7 +325,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section5_details" id="section5_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section5']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section5_details" id="section5_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section5']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -359,7 +358,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section6_details" id="section6_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section6']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section6_details" id="section6_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section6']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -392,7 +391,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section7_details" id="section7_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section7_details" id="section7_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section7']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -426,7 +425,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section8_details" id="section8_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section8']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section8_details" id="section8_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section8']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -528,7 +527,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section11_details" id="section11_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section11']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section11_details" id="section11_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section11']['headingDetail']; ?></textarea>
                                                 </div>
 
                                             </div>
@@ -548,7 +547,7 @@
 
                                                 <div class="col-xs-12">
                                                     <label>Details</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section12_details" id="section12_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section12']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section12_details" id="section12_details" rows="8" cols="60"><?php echo $pageContent['page']['sections']['section12']['headingDetail']; ?></textarea>
                                                 </div>
 
                                             </div>
@@ -990,7 +989,7 @@
         pageData.page['sections'] = {
             section1: {
                 heading: $("#section1_heading").val(),
-                headingDetail: CKEDITOR.instances['section1_details'].getData().trim(),
+                headingDetail: $("#section1_details").val(),
                 btnText: $("#section1_button_text").val(),
                 btnSlug: $("#section1_button_slug").val(),
                 bullet1: $("#section1_bullet1").val(),
@@ -1006,37 +1005,37 @@
             },
             section3: {
                 heading: $("#section3_heading").val(),
-                headingDetail: CKEDITOR.instances['section3_details'].getData().trim(),
+                headingDetail: $("#section3_details").val(),
                 btnText: $("#section3_button_text").val(),
                 btnSlug: $("#section3_button_slug").val()
             },
             section4: {
                 heading: $("#section4_heading").val(),
-                headingDetail: CKEDITOR.instances['section4_details'].getData().trim(),
+                headingDetail: $("#section4_details").val(),
                 btnText: $("#section4_button_text").val(),
                 btnSlug: $("#section4_button_slug").val()
             },
             section5: {
                 heading: $("#section5_heading").val(),
-                headingDetail: CKEDITOR.instances['section5_details'].getData().trim(),
+                headingDetail: $("#section5_details").val(),
                 btnText: $("#section5_button_text").val(),
                 btnSlug: $("#section5_button_slug").val()
             },
             section6: {
                 heading: $("#section6_heading").val(),
-                headingDetail: CKEDITOR.instances['section6_details'].getData().trim(),
+                headingDetail: $("#section6_details").val(),
                 btnText: $("#section6_button_text").val(),
                 btnSlug: $("#section6_button_slug").val()
             },
             section7: {
                 heading: $("#section7_heading").val(),
-                headingDetail: CKEDITOR.instances['section7_details'].getData().trim(),
+                headingDetail: $("#section7_details").val(),
                 btnText: $("#section7_button_text").val(),
                 btnSlug: $("#section7_button_slug").val()
             },
             section8: {
                 heading: $("#section8_heading").val(),
-                headingDetail: CKEDITOR.instances['section8_details'].getData().trim(),
+                headingDetail: $("#section8_details").val(),
                 btnText: $("#section8_button_text").val(),
                 btnSlug: $("#section8_button_slug").val()
             },
@@ -1054,11 +1053,11 @@
             },
             section11: {
                 heading: $("#section11_heading").val(),
-                headingDetail: CKEDITOR.instances['section11_details'].getData().trim(),
+                headingDetail: $("#section11_details").val(),
             },
             section12: {
                 heading: $("#section12_heading").val(),
-                headingDetail: CKEDITOR.instances['section12_details'].getData().trim(),
+                headingDetail: $("#section12_details").val(),
             },
             section13: {
                 heading: $("#section13_heading").val(),
