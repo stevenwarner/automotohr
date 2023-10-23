@@ -9713,5 +9713,18 @@ class Hr_documents_management_model extends CI_Model
     }
 
 
+        //
+        function getDocumentByIdResourceDocuments($documentId)
+        {
+            $a = $this->db
+                ->where('sid', $documentId)
+                ->get('document_library_files');
+            //
+            $b = $a->row_array();
+            $a->free_result();
+            //
+            return $b;
+        }
+
 
 }

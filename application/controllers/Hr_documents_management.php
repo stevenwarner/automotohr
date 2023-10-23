@@ -3857,7 +3857,7 @@ class Hr_documents_management extends Public_Controller
                             $revoked_sids[] = $assigned_document['document_sid'];
                         }
                     }
-                }    
+                }
             }
             //
             $data['history_doc_sids'] = $history_doc_sids;
@@ -5633,7 +5633,6 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
                 }
-                
             }
             //
             $data['history_doc_sids'] = $history_doc_sids;
@@ -6888,7 +6887,7 @@ class Hr_documents_management extends Public_Controller
                         //    } else {
                         //       unset($assigned_documents[$key]);
                         //   }
-                    }    
+                    }
                 }
 
 
@@ -13216,7 +13215,7 @@ class Hr_documents_management extends Public_Controller
                             $revoked_sids[] = $assigned_document['document_sid'];
                         }
                     }
-                }    
+                }
             }
 
             $uncomplete_documents_count = $uncomplete_documents_count + sizeof($assigned_documents);
@@ -13973,7 +13972,7 @@ class Hr_documents_management extends Public_Controller
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $html = $this->load->view('2022/federal_fillable/form_i9_preview_new', $data, true);
-            } else { 
+            } else {
                 $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
             }
             //
@@ -14056,11 +14055,11 @@ class Hr_documents_management extends Public_Controller
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
             //
             if (!empty($data["pre_form"]["section1_preparer_or_translator"]) && empty($data["pre_form"]["section1_preparer_json"])) {
-                $data["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $data["pre_form"]);
+                $data["pre_form"]["section1_preparer_json"] = copyPrepareI9Json($data["pre_form"]);
             }
             //
             if (!empty($data["pre_form"]["section3_emp_sign"]) && empty($data["pre_form"]["section3_authorized_json"])) {
-                $data["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json( $data["pre_form"]);
+                $data["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json($data["pre_form"]);
             }
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
@@ -16122,5 +16121,48 @@ class Hr_documents_management extends Public_Controller
             $data['original_document_description'] = '<img src="' . $document_file . '" style="width:100%; height:500px;" />';
             $this->load->view('hr_documents_management/print_generated_document', $data);
         }
+    }
+
+
+
+    function print_download_hybird_document_resource_center(
+        $i
+    ) {
+
+        //die($i);
+        //
+        $data["s3_path"] = '';
+        $data["document_body"] = '';
+        //
+
+        $d = $this->hr_documents_management_model->getDocumentByIdResourceDocuments($i);
+      // _e( $d,true,true);
+
+        $d['user_type'] = null;
+        $d['user_sid'] = null;
+        $d['document_sid'] = null;
+        $data["s3_path"] = $d['file_url_code'];
+
+        $d['document_description'] =  $d['word_content'];
+        
+        $document_body = $this->convertMagicCodeToHTML($d);
+        $data["document_body"] = $document_body;
+        //     
+
+        if (!isset($d['user_type'])) $d['user_type'] = 'employee';
+
+        $data['type'] = 'original';
+        $data['action'] = 'download';
+        $data['section'] = 'both';
+        $data['id'] = $i;
+        $data['document'] = $d;
+        $urls = get_required_url($data['s3_path']);
+        $data['print_url'] = $urls['print_url'];
+        $data['download_url'] = $urls['download_url'];
+        $data['company_sid'] = $data['session']['company_detail']['sid'];
+        $data['employer_sid'] = $data['session']['employer_detail']['sid'];
+        $data['title'] = $d['file_name'];
+        //
+        $this->load->view('hr_documents_management/hybrid/print_download_hybird_document', $data);
     }
 }
