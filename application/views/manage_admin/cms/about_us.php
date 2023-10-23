@@ -68,7 +68,6 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12"><br>
                                                 <label>Text Under Main Heading Picture</label><b class="text-danger"> *</b>
                                                 <textarea class="invoice-fields" name="main_heading_picture_text" id="main_heading_picture_text" rows="8" cols="60"><?php echo $pageContent['page']['mainHeadingPicture']['text']; ?></textarea>
                                             </div>
@@ -84,6 +83,7 @@
 
                                             <div class="col-xs-12"><br>
                                                 <label>An Award-Winning Solution</label><b class="text-danger"> *</b>
+                                                <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                 <textarea class="invoice-fields" name="award_winning_text" id="award_winning_text" rows="8" cols="60"><?php echo $pageContent['page']['awardWinning']['text']; ?></textarea>
                                             </div>
                                         </div>
@@ -107,6 +107,7 @@
 
                                             <div class="col-xs-6">
                                                 <label>Robert Hollenshead </label><b class="text-danger"> *</b>
+                                                <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                 <textarea class="invoice-fields" name="leadership_left1_text" id="leadership_left1_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipLeft1']['text']; ?></textarea>
 
                                             </div>
@@ -114,12 +115,14 @@
                                             <div class="col-xs-6">
                                                 <div class="col-xs-12">
                                                     <label>Steven Warner</label><b class="text-danger"> *</b>
+                                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                     <textarea class="invoice-fields" name="leadership_right1_text" id="leadership_right1_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight1']['text']; ?></textarea>
 
                                                 </div>
 
                                                 <div class="col-xs-12"><br>
                                                     <label>E J Shelby</label><b class="text-danger"> *</b>
+                                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                     <textarea class="invoice-fields" name="leadership_right2_text" id="leadership_right2_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight2']['text']; ?></textarea>
 
                                                 </div>
@@ -234,7 +237,7 @@
             text: $("#main_heading_picture_text").val(),
         };
         pageData.page['awardWinning'] = {
-            text: $("#main_heading_picture_text").val(),
+            text: $("#award_winning_text").val(), 
         };
         pageData.page['leaderShip'] = {
             text: $("#leadership_team").val(),
@@ -243,7 +246,8 @@
             text: $("#leadership_left1_text").val(),
         };
         pageData.page['leaderShipRight1'] = {
-            text: $("#leadership_right1_text").val(),        };
+            text: $("#leadership_right1_text").val(),
+        };
         pageData.page['leaderShipRight2'] = {
             text: $("#leadership_right2_text").val(),
         };

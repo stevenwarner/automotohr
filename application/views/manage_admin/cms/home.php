@@ -56,30 +56,24 @@
                                                     <label>Slider1</label>
                                                 </div>
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Main Heading</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider1_heading" id="slider1_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
-                                                    </div>
+                                                    <label>Main Heading</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider1_heading" id="slider1_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
                                                 </div>
 
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="slider1_heading_detail" id="slider1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider1']['headingDetail']; ?></textarea>
-                                                    </div>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="slider1_heading_detail" id="slider1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider1']['headingDetail']; ?></textarea>
                                                 </div>
 
+
+
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Button Text</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider1_btn_text" id="slider1_btn_text" value="<?php echo $pageContent['page']['slider']['slider1']['btnText']; ?>" />
-                                                    </div>
+                                                    <label>Button Text</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider1_btn_text" id="slider1_btn_text" value="<?php echo $pageContent['page']['slider']['slider1']['btnText']; ?>" />
                                                 </div>
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Button Slug</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider1_btn_slug" id="slider1_btn_slug" value="<?php echo $pageContent['page']['slider']['slider1']['btnSlug']; ?>" />
-                                                    </div>
+                                                    <label>Button Slug</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider1_btn_slug" id="slider1_btn_slug" value="<?php echo $pageContent['page']['slider']['slider1']['btnSlug']; ?>" />
                                                 </div>
 
 
@@ -89,30 +83,22 @@
                                                     <label>Slider2</label>
                                                 </div>
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Main Heading</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider2_heading" id="slider2_heading" value="<?php echo $pageContent['page']['slider']['slider2']['heading']; ?>" />
-                                                    </div>
+                                                    <label>Main Heading</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider2_heading" id="slider2_heading" value="<?php echo $pageContent['page']['slider']['slider2']['heading']; ?>" />
                                                 </div>
 
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="slider2_heading_detail" id="slider2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider2']['headingDetail']; ?></textarea>
-                                                    </div>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="slider2_heading_detail" id="slider2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider2']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Button Text</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider2_btn_text" id="slider2_btn_text" value="<?php echo $pageContent['page']['slider']['slider2']['btnText']; ?>" />
-                                                    </div>
+                                                    <label>Button Text</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider2_btn_text" id="slider2_btn_text" value="<?php echo $pageContent['page']['slider']['slider2']['btnText']; ?>" />
                                                 </div>
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Button Slug</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider2_btn_slug" id="slider2_btn_slug" value="<?php echo $pageContent['page']['slider']['slider2']['btnSlug']; ?>" />
-                                                    </div>
+                                                    <label>Button Slug</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider2_btn_slug" id="slider2_btn_slug" value="<?php echo $pageContent['page']['slider']['slider2']['btnSlug']; ?>" />
                                                 </div>
 
 
@@ -123,33 +109,26 @@
                                                     <label>Slider3</label>
                                                 </div>
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Main Heading</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider3_heading" id="slider3_heading" value="<?php echo $pageContent['page']['slider']['slider3']['heading']; ?>" />
-                                                    </div>
+                                                    <label>Main Heading</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider3_heading" id="slider3_heading" value="<?php echo $pageContent['page']['slider']['slider3']['heading']; ?>" />
                                                 </div>
 
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="slider3_heading_detail" id="slider3_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider3']['headingDetail']; ?></textarea>
-                                                    </div>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="slider3_heading_detail" id="slider3_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['slider']['slider3']['headingDetail']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Button Text</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider3_btn_text" id="slider3_btn_text" value="<?php echo $pageContent['page']['slider']['slider3']['btnText']; ?>" />
-                                                    </div>
+                                                    <label>Button Text</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider3_btn_text" id="slider3_btn_text" value="<?php echo $pageContent['page']['slider']['slider3']['btnText']; ?>" />
                                                 </div>
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Button Slug</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="slider3_btn_slug" id="slider3_btn_slug" value="<?php echo $pageContent['page']['slider']['slider3']['btnSlug']; ?>" />
-                                                    </div>
+                                                    <label>Button Slug</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="slider3_btn_slug" id="slider3_btn_slug" value="<?php echo $pageContent['page']['slider']['slider3']['btnSlug']; ?>" />
                                                 </div>
+                                                <br>
                                             </div>
-
+                                            <br>
                                             <div class="hr-box" style="margin: 15px 0 0;">
 
                                                 <div class="hr-box-header bg-header-green">

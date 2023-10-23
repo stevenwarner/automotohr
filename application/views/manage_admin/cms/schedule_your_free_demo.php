@@ -471,7 +471,7 @@
             },
             section7: {
                 heading: $("#section7_heading").val(),
-                headingDetail: $("section7_heading_detail").val(),
+                headingDetail: $("#section7_heading_detail").val(),
             }
 
         };
