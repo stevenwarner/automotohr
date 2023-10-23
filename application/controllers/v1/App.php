@@ -13,48 +13,70 @@ class App extends CI_Controller
         parent::__construct();
     }
 
-    public function index()
+    // main website routes
+    // API routes
+    /**
+     * schedule your free demo process
+     */
+    public function scheduleDemoProcess()
     {
-        ob_start(“ob_gzhandler”);
-        $data = [];
-        $data['meta'] = [];
-        $data['meta']['title'] = 'Homepage | AutomotoHR.com';
-        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
-        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
-        // stylesheets
-        $data['pageCSS'] = [
-            'v1/app/css/bootstrap',
-            'v1/app/css/app'
-        ];
+        // set rules
+        $this->form_validation->set_rules('name', 'Please provide name', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('email', 'Please provide valid email address ', 'trim|required|valid_email|xss_clean');
+        $this->form_validation->set_rules('phone_number', 'Please provide valid number', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('company_name', 'Please provide your Company Name', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('title', 'Please provide your Title', 'trim|xss_clean');
+        $this->form_validation->set_rules('company_size', 'Please provide your Company Size', 'trim|xss_clean');
+        $this->form_validation->set_rules('newsletter_subscribe', 'Please select your choice', 'trim|xss_clean');
+        $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha');
+        // run validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
         //
-        $data['slider'] = [
-            [
-                'title' => 'Effortlessly Manage HR, Benefits & Payroll!',
-                'sub_title' => 'Say goodbye to administrative hassles by embracing a simplified solution that serves all your HR needs –',
-                'link' => 'product-1',
-                'link_text' => 'product-1',
-                'image' => 'assets/v1/app/images/banner_1.webp'
-            ],
-            [
-                'title' => 'Smart Onboarding with AutomotoHR!',
-                'sub_title' => 'Leave behind inefficient onboarding methods and embrace <span class="anchar_tag">AutomotoHR</span> to optimize data management, expedite paperwork, & elevate orientation.',
-                'link' => 'product-2',
-                'link_text' => 'product-2',
-                'image' => 'assets/v1/app/images/banner_2.webp'
-            ],
-            [
-                'title' => 'One-Stop Shop for HR & Hiring!',
-                'sub_title' => 'Efficiently handle job postings, targeted advertising, candidate management, and assessment checks in one place.',
-                'link' => 'product-3',
-                'link_text' => 'product-3',
-                'image' => 'assets/v1/app/images/banner_3.webp'
-            ]
-        ];
+        $client_source = 'schedule_your_free_demo';
+        $first_name = $this->input->post('name', true);
+        $email = $this->input->post('email', true);
+        $phone_number = $this->input->post('phone_number', true);
+        $company_name = $this->input->post('company_name', true);
+        $job_role = $this->input->post('job_role', true);
+        $company_size = $this->input->post('company_size', true);
+        $newsletter_subscribe = $this->input->post('newsletter_subscribe', true);
+        $date_requested = getSystemDate();
+        $ppc = 0;
+        $schedule_demo = NULL;
+        $message = $this->input->post('client_message', true);
         //
-        $this->load
-            ->view('v1/app/header', $data)
-            ->view('v1/app/homepage')
-            ->view('v1/app/footer');
+        $this->load->model('Demo_model');
+        $this->Demo_model->free_demo_new($first_name, $email, $phone_number, $company_name, $date_requested, $schedule_demo, $client_source, $ppc, $message, $company_size, $newsletter_subscribe, $job_role);
+        $replacement_array['name'] = $first_name;
+        $replacement_array['firstname'] = $first_name;
+        $replacement_array['first_name'] = $first_name;
+        $replacement_array['first-name'] = $first_name;
+        $replacement_array['date_time'] = $schedule_demo;
+        log_and_send_templated_email(DEMO_REQUEST_THANKYOU, $email, $replacement_array);
+        //
+        return SendResponse(200, ["msg" => "Thank you for your free demo request, we will contact you soon."]);
+    }
+
+    /**
+     * validate google captcha
+     * 
+     * @param string $captchaCode
+     * @return bool
+     */
+    public function recaptcha($captchaCode)
+    {
+        $this->form_validation->set_message('recaptcha', 'The reCAPTCHA field is telling me that you are a robot. Shall we give it another try?');
+        //
+        if (!$captchaCode) {
+            return false;
+        }
+        //
+        return validateCaptcha($captchaCode);
     }
 
     /**

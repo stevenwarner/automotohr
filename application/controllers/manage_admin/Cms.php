@@ -17,7 +17,7 @@ class Cms extends Admin_Controller
         //
         $this->resp = [
             'Status' => false,
-            'Response' => 'Reqest Not Authorized'
+            'Response' => 'Request Not Authorized'
         ];
     }
 
@@ -87,9 +87,11 @@ class Cms extends Admin_Controller
         $this->data['groups'] = $this->ion_auth->groups()->result();
         $page_data = $this->cms_model->get_page_data($sid);
 
-      //  _e($page_data,true);
-
         $this->data['page_data'] = $page_data;
+
+        echo "<style>
+    textarea{min-height: 100px;}
+</style>";
         $this->render('manage_admin/cms/' . $page_data['page']);
     }
 

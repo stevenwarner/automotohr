@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Sora+Sompeng:wght@400;500;600;700&family=Sora:wght@100;200;300;400;500;600;700;800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Noto+Sans+Sora+Sompeng:wght@400;500;600;700&family=Sora:wght@100;200;300;400;500;600;700;800&display=swap");
+@import url("./app.css");
 body {
   font-family: Sora !important;
   color: #3d4250;
@@ -13,7 +14,10 @@ button {
   height: 54px;
   background-color: #315eff;
   color: white;
-  padding: 18px 35px 18px 35px;
+  padding: 0px 35px 0px 35px;
+}
+.margin-bottom-50 {
+  margin-bottom: 50px;
 }
 .first-heading {
   font-family: Sora;
@@ -36,6 +40,106 @@ button {
   line-height: 35px;
   letter-spacing: 0em;
   text-align: left;
+}
+
+.fourth-heading {
+  font-family: Sora;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 48px;
+}
+
+/* Theming css */
+p.autmotoPara {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: 0em;
+}
+.inter-family {
+  font-family: Inter;
+}
+.line-height-30 {
+  line-height: 30px !important;
+}
+.sora-family {
+  font-family: Sora;
+}
+.automotoGreytext {
+  color: #525252;
+}
+.darkGreyColor {
+  color: #3d4250;
+}
+h1.automotoH1 {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 50px;
+  letter-spacing: 0em;
+}
+.font_size_40 {
+  font-size: 40px !important;
+}
+h3.automotoH3 {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 50px;
+  letter-spacing: 0em;
+}
+.font_size_40 {
+  font-size: 40px !important;
+}
+.opacity-70 {
+  opacity: 70%;
+}
+.opacity-80 {
+  opacity: 80%;
+}
+.opacity-50 {
+  opacity: 50%;
+}
+.opacity-90 {
+  opacity: 90%;
+}
+.full-width-height-img {
+  width: 100%;
+  height: 100%;
+}
+.image-containing-div {
+  width: 90%;
+  height: 100%;
+}
+.column-flex-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.center-horizontally {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.column-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.padding-x-5 {
+  padding: 5px 0px;
+}
+.w-75 {
+  width: 75%;
+}
+.padding-top-80 {
+  padding-top: 80px;
+}
+.padding-bottom-100 {
+  padding-bottom: 100px;
+}
+/* Theming end */
+.margin-bottom-25 {
+  margin-bottom: 25px;
 }
 input {
   width: 100%;
@@ -75,22 +179,7 @@ textarea:focus {
   margin-top: 15px;
   margin-bottom: 15px;
 }
-.column-flex-center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.center-horizontally {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.column-center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+
 .schedule-btn {
   font-family: Sora;
   color: #525252;
@@ -509,10 +598,8 @@ a {
   }
 }
 
-.error {
-  color: #dc3545!important;
-}
-
-.error_message {
-  color: #dc3545!important;
+/* for errors */
+label.error{
+  font-weight: bold;
+  color: red;
 }

@@ -51,6 +51,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
   |		my-controller/my-method	-> my_controller/my_method
  */
 
+$route['schedule_free_demo']['post'] = 'v1/App/scheduleDemoProcess';
+
 //  Goals
 $route['remarket_portal'] = 'Remarket_portal/index';
 $route['goal'] = 'goals/Goals/index';

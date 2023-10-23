@@ -300,11 +300,12 @@ if (typeof callButtonHook === "undefined") {
 	/**
 	 * button hook
 	 *
-	 * @param {object} appendUrl
+	 * @param {object} reference
 	 * @param {bool}   doShow
+	 * @param {bool}   true
 	 * @return
 	 */
-	function callButtonHook(reference, doShow = true) {
+	function callButtonHook(reference, doShow = true, type = false) {
 		//
 		if (doShow) {
 			const obj = {
@@ -312,7 +313,9 @@ if (typeof callButtonHook === "undefined") {
 				html: reference.html(),
 			};
 			reference.html(
-				'<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
+				type
+					? '<i class="fa-solid fa-circle-notch fa-spin csW csF16" aria-hidden="true"></i>'
+					: '<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
 			);
 			//
 			reference.off("click");

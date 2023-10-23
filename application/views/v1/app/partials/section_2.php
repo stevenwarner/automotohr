@@ -5,7 +5,7 @@
                 WHY SHOULD YOU SWITCH TO AUTOMOTOHR?
             </p>
             <h5 class="darkgrey text-center mt-3 title px-sm-5 px-2 mx-sm-3 mx-0 title">
-                 <?php echo $homeContent['page']['sections']['section2']['heading']?>
+                <?php echo $homeContent['page']['sections']['section2']['heading'] ?>
             </h5>
         </div>
     </div>
@@ -20,18 +20,17 @@
                         ONBOARDING AND HIRING
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                    <?php echo $homeContent['page']['sections']['section3']['heading']?>
-                    
+                        <?php echo $homeContent['page']['sections']['section3']['heading'] ?>
+
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                    <?php echo strip_tags($homeContent['page']['sections']['section3']['headingDetail'])?>
+                        <?php echo strip_tags($homeContent['page']['sections']['section3']['headingDetail']) ?>
                     </p>
 
-                    <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section3']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section3']['btnText']?></a></p>
-
+                    <a href="<?= base_url($homeContent['page']['sections']['section3']['btnSlug']) ?>" class="button jsButtonAnimate explore_btn mt-5 solution-btn d-flex text-white">
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section3']['btnText'] ?></p>
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6 col-12 order-lg-2 order-1">
@@ -67,22 +66,23 @@
             </div>
         </div>
         <div class="col-lg-6 col-12 d-flex justify-content-center">
-            <div class="switch_automoto position-relative d-lg-block d-flex flex-column align-items-center width_80">
+            <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                 <p class="lightgrey heading-h4-grey opacity-ninety heading">
                     TIME, PAYROLL, AND BENEFITS
                 </p>
                 <p class="darkgrey mt-3 title text-lg-start text-center">
-                <?php echo $homeContent['page']['sections']['section4']['heading']?>
+                    <?php echo $homeContent['page']['sections']['section4']['heading'] ?>
                 </p>
                 <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail'])?>
+                    <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail']) ?>
                 </p>
 
-                <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                    <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section4']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section3']['btnText']?></a></p>
-
+                <a href="<?= base_url($homeContent['page']['sections']['section4']['btnSlug']) ?>" class="button jsButtonAnimate explore_btn mt-5 solution-btn d-flex text-white">
+                    <p class="mb-0 btn-text">
+                        <?php echo $homeContent['page']['sections']['section3']['btnText'] ?>
+                    </p>
                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -94,22 +94,21 @@
     <div class="employee_experience_section width_90">
         <div class="row d-flex align-items-center justify-content-lg-between justify-content-center">
             <div class="col-xl-5 col-lg-6 col-12 d-flex justify-content-center order-lg-1 order-2">
-                <div class="switch_automoto position-relative d-lg-block d-flex flex-column align-items-center my-5 width_90">
+                <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                     <p class="lightgrey heading-h4-grey opacity-eighty heading">
                         EMPLOYEE EXPERIENCE & PERFORMANCE
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                    <?php echo $homeContent['page']['sections']['section4']['heading']?>
+                        <?php echo $homeContent['page']['sections']['section4']['heading'] ?>
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-eighty">
-                    <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail'])?>
+                        <?php echo strip_tags($homeContent['page']['sections']['section4']['headingDetail']) ?>
                     </p>
 
-                    <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section4']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section4']['btnText']?></a></p>
-
+                    <a href="<?= base_url($homeContent['page']['sections']['section4']['btnSlug']) ?>" class="button jsButtonAnimate explore_btn mt-5 solution-btn d-flex text-white">
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section4']['btnText'] ?></p>
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6 col-12 d-flex justify-lg-content-end justify-content-center order-lg-2 order-1">
@@ -137,24 +136,25 @@
             </div>
         </div>
         <div class="col-lg-6 col-12 d-flex justify-content-center">
-            <div class="switch_automoto position-relative d-lg-block d-flex flex-column align-items-center width_90">
+            <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                 <p class="lightgrey heading-h4-grey opacity-ninety heading">
                     VACATION & TIME OFF MONITORING
                 </p>
                 <p class="darkgrey mt-3 title text-lg-start text-center">
-                <?php echo $homeContent['page']['sections']['section5']['heading']?>
+                    <?php echo $homeContent['page']['sections']['section5']['heading'] ?>
 
                 </p>
                 <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                <?php echo strip_tags($homeContent['page']['sections']['section5']['headingDetail'])?>
-    
-            </p>
+                    <?php echo strip_tags($homeContent['page']['sections']['section5']['headingDetail']) ?>
 
-                <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                    <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section5']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section5']['btnText']?></a></p>
+                </p>
 
+                <a href="<?= base_url($homeContent['page']['sections']['section5']['btnSlug']) ?>" class="button jsButtonAnimate explore_btn mt-5 solution-btn d-flex text-white">
+                    <p class="mb-0 btn-text">
+                        <?php echo $homeContent['page']['sections']['section5']['btnText'] ?>
+                    </p>
                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -166,23 +166,22 @@
     <div class="employee_experience_section width_90">
         <div class="row d-flex align-items-center justify-content-lg-between justify-content-center">
             <div class="col-xl-5 col-lg-6 col-12 d-flex justify-content-center order-lg-1 order-2">
-                <div class="switch_automoto position-relative d-lg-block d-flex flex-column align-items-center y-5 my-5 width_90">
+                <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                     <p class="lightgrey heading-h4-grey opacity-eighty heading">
                         TRANSFORM, EMPOWER & SUCCEED
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                    <?php echo $homeContent['page']['sections']['section6']['heading']?>
+                        <?php echo $homeContent['page']['sections']['section6']['heading'] ?>
 
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-eighty">
-                    <?php echo strip_tags($homeContent['page']['sections']['section6']['headingDetail'])?>
+                        <?php echo strip_tags($homeContent['page']['sections']['section6']['headingDetail']) ?>
                     </p>
 
-                    <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section6']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section6']['btnText']?></a></p>
-
+                    <a href="<?= base_url($homeContent['page']['sections']['section6']['btnSlug']) ?>" class="button jsButtonAnimate explore_btn mt-5 solution-btn d-flex text-white">
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section6']['btnText'] ?></p>
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6 col-12 d-flex justify-lg-content-end justify-content-center order-lg-2 order-1">
@@ -217,24 +216,23 @@
                 </div>
             </div>
             <div class="col-lg-6 col-12 ps-lg-3 ps-lg-5 d-flex justify-content-center">
-                <div class="switch_automoto position-relative ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
+                <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                     <p class="lightgrey heading-h4-grey opacity-ninety heading">
                         FULL COMPANY CAREER WEBSITE
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
-                    <?php echo $homeContent['page']['sections']['section7']['heading']?>
+                        <?php echo $homeContent['page']['sections']['section7']['heading'] ?>
 
                     </p>
                     <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                    <?php echo strip_tags($homeContent['page']['sections']['section7']['headingDetail'])?>
+                        <?php echo strip_tags($homeContent['page']['sections']['section7']['headingDetail']) ?>
 
                     </p>
 
-                    <button class="button explore_btn mt-5 solution-btn d-flex text-white">
-                        <p class="mb-0 btn-text"><a href="<?= base_url($homeContent['page']['sections']['section7']['btnSlug']) ?>" style="color:#fff;"><?php echo $homeContent['page']['sections']['section7']['btnText']?></a></p>
-
+                    <a href="<?= base_url($homeContent['page']['sections']['section7']['btnSlug']) ?>" class="button jsButtonAnimate explore_btn mt-5 solution-btn d-flex text-white">
+                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section7']['btnText'] ?></p>
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

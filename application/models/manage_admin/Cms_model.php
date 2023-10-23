@@ -11,10 +11,10 @@ class cms_model extends CI_Model
         }
 
         if ($count_only == true) {
-            $count = $this->db->count_all_results('cms_pages_new');
-            return $count;
+            return $this->db->count_all_results('cms_pages_new');
         } else {
-            $query = $this->db->get('cms_pages_new');
+            $query = $this->db
+            ->order_by("title", "ASC")->get('cms_pages_new');
             return $query->result_array();
         }
     }

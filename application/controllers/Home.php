@@ -1,10 +1,14 @@
-<?php
-
-defined('BASEPATH') or exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Home extends CI_Controller
 {
     private $assetPath;
+
+    private $css;
+    private $js;
+    private $header;
+    private $footer;
+    private $disableMinifiedFiles;
 
     public function __construct()
     {
@@ -16,6 +20,8 @@ class Home extends CI_Controller
         $this->footer = "v1/app/footer";
         $this->css = "public/v1/css/app/";
         $this->js = "public/v1/js/app/";
+        //
+        $this->disableMinifiedFiles = false;
     }
 
     public function index()
@@ -56,31 +62,31 @@ class Home extends CI_Controller
                 $this->session->set_userdata('logged_in', $sess_array);
             }
         }
-        //
+        // css
         $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
-            'v1/app/alertifyjs/css/alertify.min'
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
         ];
-
+        // js
         $data['pageJs'] = [
-            'v1/app/js/jquery-1.11.3.min',
-            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js',
-            'v1/app/alertifyjs/alertify.min',
-            'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js',
+            "https://www.google.com/recaptcha/api.js",
+            "https://code.jquery.com/jquery-3.5.1.min.js",
             'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js',
         ];
-
-
+        // css bundle
         $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
             'v1/app/css/home',
-            'v1/app/css/main'
-        ], $this->css, 'home');
-
+        ], $this->css, 'home', $this->disableMinifiedFiles);
+        // js bundle
         $data['appJs'] = bundleJs([
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
-        ], $this->js, 'home');
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'v1/plugins/alertifyjs/alertify.min',
+            'js/jquery.validate.min',
+            'v1/app/js/pages/home',
+            'js/app_helper',
+            'v1/app/js/pages/schedule_demo',
+        ], $this->js, 'home', $this->disableMinifiedFiles);
 
 
 

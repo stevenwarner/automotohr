@@ -10,15 +10,15 @@
         <div class="col-sm-12 text-center">
             <div class="margin-btm">
                 <p class="second-heading">
-                <?php echo $homeContent['page']['sections']['section9']['heading']?>
+                    <?php echo $homeContent['page']['sections']['section9']['heading'] ?>
                 </p>
             </div>
         </div>
         <div class="col-sm-12">
             <div class="margin-btm">
                 <p class="text-center simple-step-text opacity-eighty">
-                Take these simple steps to achieve success today!
-               </p>
+                    Take these simple steps to achieve success today!
+                </p>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
             </div>
             <div>
                 <p class="img-below-text">
-                <?php echo $homeContent['page']['sections']['section9']['headingSub1']?>
+                    <?php echo $homeContent['page']['sections']['section9']['headingSub1'] ?>
 
                 </p>
             </div>
@@ -44,7 +44,7 @@
 
             <div>
                 <p class="img-below-text">
-                <?php echo $homeContent['page']['sections']['section9']['headingSub2']?>
+                    <?php echo $homeContent['page']['sections']['section9']['headingSub2'] ?>
 
                 </p>
             </div>
@@ -59,7 +59,7 @@
 
             <div>
                 <p class="img-below-text">
-                <?php echo $homeContent['page']['sections']['section9']['headingSub3']?>
+                    <?php echo $homeContent['page']['sections']['section9']['headingSub3'] ?>
 
                 </p>
             </div>
@@ -72,18 +72,17 @@
                 <img class="small-inline-img image-on-mob-adj" src="<?= base_url('assets/v1/app/images/group_4.webp') ?>" alt="human mind with bulb image" />
             </div>
             <div>
-                <p class="img-below-text"><?php echo $homeContent['page']['sections']['section9']['headingSub4']?>
-</p>
+                <p class="img-below-text"><?php echo $homeContent['page']['sections']['section9']['headingSub4'] ?>
+                </p>
             </div>
         </div>
     </div>
     <div class="row get-started d-flex justify-content-center">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 p-0 text-center">
-            <button class="button explore_btn started-button text-white mt-4 auto-explore-button">
-                <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section9']['btnText']?></p>
-
+            <a href="<?=base_url("/#freedemo")?>" class="button explore_btn started-button text-white mt-4 auto-explore-button">
+                <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section9']['btnText'] ?></p>
                 <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-            </button>
+            </a>
         </div>
     </div>
 </div>
