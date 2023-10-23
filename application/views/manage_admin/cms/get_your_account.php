@@ -58,7 +58,7 @@
 
                                                 <div class="col-xs-12"><br>
                                                     <label>Detail</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section1_heading_detail" id="section1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section1_heading_detail" id="section1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
                                                 </div>
 
                                             </div>
@@ -77,7 +77,7 @@
 
                                                 <div class="col-xs-12"><br>
                                                     <label>Detail</label><b class="text-danger"> *</b>
-                                                    <textarea class="ckeditor" name="section2_heading_detail" id="section2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section2']['headingDetail']; ?></textarea>
+                                                    <textarea class="invoice-fields" name="section2_heading_detail" id="section2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section2']['headingDetail']; ?></textarea>
                                                 </div>
 
                                             </div>
@@ -218,12 +218,12 @@
         pageData.page['sections'] = {
             section1: {
                 heading: $("#section1_heading").val(),
-                headingDetail: CKEDITOR.instances['section1_heading_detail'].getData().trim(),
+                headingDetail: $("#section1_heading_detail").val(),
 
             },
             section2: {
                 heading: $("#section2_heading").val(),
-                headingDetail: CKEDITOR.instances['section2_heading_detail'].getData().trim(),
+                headingDetail: $("#section2_heading_detail").val(),
 
             },
             section3: {
