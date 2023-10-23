@@ -31,7 +31,6 @@
                                             <input class="form-fileds"  type="password" id="password" name="password" placeholder="Password">
                                             <span class="field-icon"><i class="fa fa-unlock"></i></span>
                                             <?php echo form_error('password'); ?>
-
                                         </div>
                                     </li>
 <!--                                    <li>

@@ -1,13 +1,20 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Affiliates extends CI_Controller {
-    public function __construct() {
+class Affiliates extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('affiliation_model');
+        //
+        $this->header = "v1/app/header";
+        $this->footer = "v1/app/footer";
+        $this->css = "public/v1/css/app/";
+        $this->js = "public/v1/js/app/";
     }
 
-    public function index() {
-        // die('pakistan');
+    public function index()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -15,17 +22,22 @@ class Affiliates extends CI_Controller {
             $data['security_details'] = $security_details;
         }
 
-        $data['title'] = "Affiliates";
-        $data['home_page'] = array( 'header_video_flag' => 0,
-                                    'header_text' => 'Can we send you a check every month?',
-                                    'header_sub_text' => 'Earn ongoing monthly income by joining the free AutomotoHR<br>Affiliate Program',
-                                    'header_banner' => 'Screen Shot 2018-06-01 at 1_POHNneDrSC.png',
-                                    'sign_up_btn' => 1);
+        $countries = $this->affiliation_model->get_all_countries();
+        $data['countries'] = $countries;
+
+
+        $data['home_page'] = array(
+            'header_video_flag' => 0,
+            'header_text' => 'Can we send you a check every month?',
+            'header_sub_text' => 'Earn ongoing monthly income by joining the free AutomotoHR<br>Affiliate Program',
+            'header_banner' => 'Screen Shot 2018-06-01 at 1_POHNneDrSC.png',
+            'sign_up_btn' => 1
+        );
 
         $validate_video_status = $this->affiliation_model->validate_affiliate_video_status(2);
 
         if (!empty($validate_video_status[0]['video_source']) && $validate_video_status[0]['status'] == 1) {
-            
+
             $selected_source = $validate_video_status[0]['video_source'];
             if (!empty($validate_video_status[0][$selected_source])) {
                 if ($selected_source == 'youtube_video') {
@@ -40,7 +52,6 @@ class Affiliates extends CI_Controller {
             } else {
                 $data['validate_flag'] = false;
             }
-            
         } else {
             $data['validate_flag'] = false;
         }
@@ -62,21 +73,60 @@ class Affiliates extends CI_Controller {
                 $data['body_column_type'] = $validate_body_video_status[0]['column_type'];
                 $data['body_title'] = $validate_body_video_status[0]['title'];
                 $data['body_content'] = $validate_body_video_status[0]['content'];
-
             } else {
                 $data['validate_body_flag'] = false;
             }
-            
         } else {
             $data['validate_body_flag'] = false;
         }
-        
-        $this->load->view('main/header', $data);
-        $this->load->view('affiliates/index');
-        $this->load->view('main/footer');
+
+
+        //
+        $pageName = $this->uri->segment(1);
+        $affiliateContent = getPageContent($pageName, true);
+
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $affiliateContent['page']['meta']['title'];
+        $data['meta']['description'] = $affiliateContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $affiliateContent['page']['meta']['keywords'];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/affiliate_program',
+            'v1/app/alertifyjs/css/alertify.min'
+
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/main',
+            'v1/app/css/app',
+
+
+        ], $this->css);
+        //
+        $data['appJs'] = bundleJs([
+            'plugins/bootstrap5/js/bootstrap.bundle',
+            'alertifyjs/alertify.min'
+        ], $this->js);
+
+        //
+        $page = getPageNameBySlug($pageName);
+
+        if (empty($page)) {
+            redirect(base_url());
+        }
+
+        $data['pageSlug'] = $pageName;
+        $data['affiliateContent'] =    $affiliateContent;
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/' .  $page);
+        $this->load->view($this->footer);
     }
 
-    public function affiliationform() {
+    public function affiliationform()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -85,19 +135,25 @@ class Affiliates extends CI_Controller {
         }
 
         $data['title'] = 'Affiliates';
-        $data['home_page'] = array( 'header_video_flag' => 0,
-                                    'header_text' => 'Earn Rewards',
-                                    'header_sub_text' => 'Earn ongoing monthly income by joining the free AutomotoHR Affiliate Program',
-                                    'header_banner' => 'Screen Shot 2018-06-01 at 1_POHNneDrSC.png',
-                                    'sign_up_btn' => 0);
+        $data['home_page'] = array(
+            'header_video_flag' => 0,
+            'header_text' => 'Earn Rewards',
+            'header_sub_text' => 'Earn ongoing monthly income by joining the free AutomotoHR Affiliate Program',
+            'header_banner' => 'Screen Shot 2018-06-01 at 1_POHNneDrSC.png',
+            'sign_up_btn' => 0
+        );
 
-        $field = array( 'field' => 'firstname',
-                        'label' => 'First Name',
-                        'rules' => 'xss_clean|trim|required');
-        
-        $order_field = array(   'field' => 'lastname',
-                                'label' => 'Last Name',
-                                'rules' => 'xss_clean|trim|required');
+        $field = array(
+            'field' => 'firstname',
+            'label' => 'First Name',
+            'rules' => 'xss_clean|trim|required'
+        );
+
+        $order_field = array(
+            'field' => 'lastname',
+            'label' => 'Last Name',
+            'rules' => 'xss_clean|trim|required'
+        );
 
         $countries = $this->affiliation_model->get_all_countries();
         $data['countries'] = $countries;
@@ -109,7 +165,7 @@ class Affiliates extends CI_Controller {
         $this->form_validation->set_rules($config);
 
         $validate_video_status = $this->affiliation_model->validate_affiliate_video_status(2);
-      
+
         if (!empty($validate_video_status[0]['video_source']) && $validate_video_status[0]['status'] == 1) {
             $selected_source = $validate_video_status[0]['video_source'];
             if (!empty($validate_video_status[0][$selected_source])) {
@@ -125,7 +181,6 @@ class Affiliates extends CI_Controller {
             } else {
                 $data['validate_flag'] = false;
             }
-            
         } else {
             $data['validate_flag'] = false;
         }
@@ -147,47 +202,51 @@ class Affiliates extends CI_Controller {
                 $data['body_column_type'] = $validate_body_video_status[0]['column_type'];
                 $data['body_title'] = $validate_body_video_status[0]['title'];
                 $data['body_content'] = $validate_body_video_status[0]['content'];
-
             } else {
                 $data['validate_body_flag'] = false;
             }
-            
         } else {
             $data['validate_body_flag'] = false;
         }
 
+
         if ($this->form_validation->run() == FALSE) {
-            $this->load->view('main/header', $data);
-            $this->load->view('affiliates/affiliate_form');
-            $this->load->view('main/footer');
+
+            redirect('affiliate-program', 'refresh');
         } else {
             $formpost = $this->input->post(NULL, TRUE);
             //
-            if(!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])){
+
+            if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                return redirect('can-we-send-you-a-check-every-month', 'refresh');
+                redirect('affiliate-program', 'refresh');
             }
+
             //
+
             $gr = verifyCaptcha($formpost['g-recaptcha-response']);
             //
-            if(!$gr['success']){
+            if (!$gr['success']) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                return redirect('can-we-send-you-a-check-every-month', 'refresh');
+                redirect('affiliate-program', 'refresh');
             }
+
+
             //
-            if(!filter_var($formpost['email'], FILTER_VALIDATE_EMAIL)){
+            if (!filter_var($formpost['email'], FILTER_VALIDATE_EMAIL)) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Affiliate Request Have Already Been Sent!');
-                return redirect('can-we-send-you-a-check-every-month', 'refresh');
+                redirect('affiliate-program', 'refresh');
             }
+
             //
             $insert_data = array();
             $already_applied = $this->affiliation_model->check_register_affiliater($formpost['email']);
-            
+
             if (sizeof($already_applied) > 0) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Affiliate Request Have Already Been Sent!');
-                redirect('can-we-send-you-a-check-every-month', 'refresh');
+                redirect('affiliate-program', 'refresh');
             }
-            
+
             $insert_data['first_name'] = $formpost['firstname'];
             $insert_data['last_name'] = $formpost['lastname'];
             $insert_data['email'] = $formpost['email'];
@@ -206,23 +265,23 @@ class Affiliates extends CI_Controller {
             $insert_data['request_date'] = date('Y-m-d H:i:s');
             $insert_data['ip_address'] = getUserIP();
             $insert_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-            
+
             if (isset($_FILES['w8_form']) && $_FILES['w8_form']['name'] != '') {
                 $w8_form = upload_file_to_aws('w8_form', generateRandomString(4), 'w8_form');
 
-                if($w8_form != 'error') {
+                if ($w8_form != 'error') {
                     $insert_data['w8_form'] = $w8_form;
                 }
-            } 
-            
+            }
+
             if (isset($_FILES['w9_form']) && $_FILES['w9_form']['name'] != '') {
                 $w9_form = upload_file_to_aws('w9_form', generateRandomString(4), 'w9_form');
 
-                if($w9_form != 'error') {
+                if ($w9_form != 'error') {
                     $insert_data['w9_form'] = $w9_form;
                 }
             }
-            
+
 
             $this->affiliation_model->insert_affiliation_form($insert_data);
 
@@ -241,9 +300,6 @@ class Affiliates extends CI_Controller {
                 . '<br>Login To Your Admin Panel For More Details'
                 . EMAIL_FOOTER;
 
-//            echo '<pre>';
-//            print_r($body);
-//            die();
             //sendMail($from, $to, $subject, $body, $fromName, $replyTo);
             //Send Emails Through System Notifications Email - Start
             $system_notification_emails = get_system_notification_emails('free_demo_enquiry_emails');
@@ -255,7 +311,8 @@ class Affiliates extends CI_Controller {
             }
 
             $this->session->set_flashdata('message', '<strong>Success: </strong>Affiliate Request Submitted Successfully!');
-            redirect('can-we-send-you-a-check-every-month', 'refresh');
+            redirect('affiliate-program', 'refresh');
+
         }
     }
 }

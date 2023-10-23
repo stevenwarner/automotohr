@@ -1223,3 +1223,314 @@ if (!function_exists('getCompanyInfo')) {
         return $ra;
     }
 }
+
+
+
+
+
+//
+if (!function_exists('getPageContent')) {
+
+    function getPageContent($page, $slug = false)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db
+            ->select('content');
+        if ($slug == true) {
+            $CI->db->where('slug', $page);
+        } else {
+            $CI->db->where('page', $page);
+        }
+        $pageContent =   $CI->db->get('cms_pages_new')->row_array();
+        return json_decode($pageContent['content'], true);
+    }
+}
+
+//
+if (!function_exists('getPageNameBySlug')) {
+
+    function getPageNameBySlug($slug)
+    {
+        //
+        $CI = &get_instance();
+        $page =  $CI->db->select('page')
+            ->where('slug', $slug)
+            ->get('cms_pages_new')
+            ->row_array();
+        return $page['page'];
+    }
+}
+
+
+//
+
+if (!function_exists('get_slug_data')) {
+
+    function get_slug_data($slug_name = NULL, $table_name = NULL)
+    {
+        if ($slug_name != NULL && $table_name != NULL) {
+            $CI = &get_instance();
+            $CI->db->select($slug_name);
+            $result = $CI->db->get($table_name)->row_array();
+
+            if (!empty($result)) {
+                return $result[$slug_name];
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
+    }
+}
+
+//
+
+if (!function_exists('getStaticFileVersion')) {
+    /**
+     * set and get the version of the minified file
+     *
+     * @param string $file The URI of the asset
+     * @param string   $newFlow
+     * @returns string
+     */
+    function getStaticFileVersion(
+        string $file,
+        string $newFlow = ''
+    ) {
+        // set files
+        $files = [];
+        // plugins
+        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        //
+        $files['js/app_helper'] = ['js' => '1.0.0'];
+        // Gusto
+        $files['v1/payroll/js/company_onboard'] = ['js' => '1.0.0'];
+        // set the main CSS file
+        $files['2022/css/main'] = ['css' => '2.1.1'];
+        // set the course files
+        $files['js/app_helper'] = ['js' => '3.0.0'];
+        $files['v1/common'] = ['js' => '3.0.0'];
+        $files['v1/lms/add_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/create_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/main'] = ['js' => '3.0.0'];
+        $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
+        $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
+
+        // payroll files
+        // dashboard
+        $files['v1/payroll/js/dashboard'] = ['js' => '1.0.0'];
+        // admins
+        $files['v1/payroll/js/admin/add'] = ['js' => '1.0.0'];
+        // signatory
+        $files['v1/payroll/js/signatories/create'] = ['js' => '1.0.0'];
+        // employee onboard
+        $files['v1/payroll/js/employees/manage'] = ['js' => '1.0.0'];
+        // contractor onboard
+        $files['v1/payroll/js/contractors'] = ['js' => '1.0.0'];
+        // Earning types
+        $files['v1/payroll/js/earnings/manage'] = ['js' => '1.0.0'];
+        // check and return data
+        return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
+    }
+}
+
+
+
+//
+
+if (!function_exists('_m')) {
+    /**
+     * Add environment check to the assets
+     * and add tags for version
+     * 
+     * @param string $string
+     * assets/js/script
+     * assets/css/style
+     * @param string $type
+     * js|css
+     * @param string $version
+     * 1.0.0
+     * @return
+     */
+    function _m($string, $type = 'js', $version = '1.0.0')
+    {
+        // get extension
+        $d = getStaticFileVersion($string);
+        //
+        if ($d) {
+            return
+            $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
+        }
+        //
+        return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
+    }
+}
+
+
+//
+if (!function_exists('GetCss')) {
+    /**
+     * Generates the style tags
+     * @param array  $tabs
+     * [
+     *  'assets/js/script'
+     * ]
+     *
+     * @return
+     */
+    function GetCss($scripts)
+    {
+        //
+        $html = '';
+        //
+        foreach ($scripts as $script) {
+            //
+            if (is_array($script)) {
+                $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script[1], 'css', $script[0]))) . '">' . "\n\t";
+            } else {
+                //
+                if (strpos($script, 'http') !== false) {
+                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . ($script) . '" />' . "\n\t";
+                } else {
+                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script, 'css'))) . '">' . "\n\t";
+                }
+            }
+        }
+        //
+        return $html;
+    }
+}
+
+
+//
+if (!function_exists('bundleJs')) {
+    /**
+     * Make a bundle of JS files
+     *
+     * @param array  $files
+     * @param string $destination Optional
+     * @param string $file Optional
+     * @return string
+     */
+    function bundleJs(
+        array $inputs,
+        string $destination = 'assets/v1/app/js/',
+        string $file = 'main'
+    ) {
+        // reset the destination path
+        $absolutePath = ROOTPATH . $destination;
+        // check if served over production
+        if (MINIFIED === '.min') {
+            //
+            $fileName = $destination . $file;
+            //
+            return
+                '<script src="' . (base_url(
+                    $destination . $file . '.min.js?v=' . (getStaticFileVersion($fileName, 'js'))
+                )) . '"></script>';
+        }
+        //
+        if (!is_dir($absolutePath)) {
+            mkdir($absolutePath, true, 0777) || exit('Failed to create path "'.($absolutePath).'"');
+        }
+        // add file to destination
+        $absolutePathMin = $absolutePath;
+        // add file to destination
+        $absolutePath .= $file . '.js';
+        $absolutePathMin .= $file . '.min.js';
+        // creates a new file
+        $handler = fopen($absolutePath, 'w');
+        // if failed throw an error
+        if (!$handler) {
+            exit('Failed to set resources');
+        }
+        //
+        foreach ($inputs as $input) {
+            //
+            $input = base_url('assets/' . $input . '.js');
+            //
+            fwrite($handler, file_get_contents($input) . "\n\n");
+        }
+        //
+        fclose($handler);
+        //
+        shell_exec(
+            "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
+        );
+        //
+        @unlink($absolutePath);
+        //
+        return '<script src="' . (base_url(
+            $destination . $file . '.min.js?v=' . time()
+        )) . '"></script>';
+    }
+}
+
+
+//
+if (!function_exists('bundleCSS')) {
+    /**
+     * Make a bundle of CSS files
+     *
+     * @param array  $files
+     * @param string $destination Optional
+     * @param string $file Optional
+     * @return string
+     */
+    function bundleCSS(
+        array $inputs,
+        string $destination = 'assets/v1/app/css/',
+        string $file = 'main'
+    ) {
+        // reset the destination path
+        $absolutePath = ROOTPATH . $destination;
+        // check if served over production
+        if (MINIFIED === '.min') {
+            //
+            $fileName = $destination . $file;
+            //
+            return '<link rel="stylesheet" href="' . (base_url(
+                $destination .
+                    $file . '.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
+            )) . '" />';
+        }
+        //
+        if (!is_dir($absolutePath)) {
+            mkdir($absolutePath, true) || exit('Failed to create path "'.($absolutePath).'"');
+        }
+        // add file to destination
+        $absolutePathMin = $absolutePath;
+        $absolutePath .= $file . '.css';
+        $absolutePathMin .= $file . '.min.css';
+        // creates a new file
+        $handler = fopen($absolutePath, 'w');
+        // if failed throw an error
+        if (!$handler) {
+            exit('Failed to set resources');
+        }
+        //
+        foreach ($inputs as $input) {
+            //
+            $input = base_url('assets/' . $input . '.css');
+            //
+            fwrite($handler, file_get_contents($input) . "\n\n");
+        }
+        //
+        fclose($handler);
+        //
+        shell_exec(
+            "uglifycss {$absolutePath} > {$absolutePathMin}"
+        );
+        //
+        @unlink($absolutePath);
+        //
+        return '<link rel="stylesheet" href="' . (base_url(
+            $destination . $file . '.min.css?v=' . time()
+        )) . '" />';
+    }
+}

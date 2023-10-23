@@ -1969,3 +1969,35 @@ $route['sa/payrolls/company/(:num)/verify']['POST'] = 'v1/sa/Payrolls/verifyComp
 //
 $route['sa/payrolls/company/(:num)/admins/manage']['get'] = 'v1/sa/Payrolls/manageAdmins/$1';
 $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmin/$1';
+$route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
+//
+$route['manage_admin/cms'] = 'manage_admin/Cms/index';
+$route['manage_admin/edit_page/(:num)'] = 'manage_admin/Cms/edit_page/$1';
+
+//
+$route['manage_admin/resources'] = 'manage_admin/Resources/index';
+$route['manage_admin/resources/(:num)'] = 'manage_admin/Resources/index/$1';
+
+$route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resource/$1';
+$route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
+//$route['resources/(:any)'] = 'manage_admin/Resources/view_resource/$1';
+$route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
+
+//
+$route['products/(:any)'] = "home/products/$1";
+
+//
+$route['resources']['get'] = 'v1/Resources/index';
+$route['subscribeCommunity']['post'] = 'v1/Resources/subscribeCommunity';
+$route['searchResources']['get'] = 'v1/Resources/searchResources';
+$route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
+//$route['read_more/(:any)']['get'] = 'v1/Resources/readMore/$1';
+$route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
+
+$route['resources/(:any)'] = 'v1/Resources/readMore/$1';
+
+
+$route['why-us'] = 'users/why_us';
+
+
+

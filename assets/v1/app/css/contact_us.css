@@ -1,0 +1,177 @@
+/* Contact Support Btn Animations */
+
+.login-screen-btns.contact-support .text {
+  transition: all 0.3s ease-in;
+  margin: 0;
+}
+
+.login-screen-btns.contact-support .fa-arrow-right {
+  transition: all 0.3s ease-in;
+}
+
+.login-screen-btns.contact-support:hover .text {
+  transform: translate(35px, 0);
+}
+
+.login-screen-btns.contact-support:hover .fa-arrow-right {
+  transform: translate(-165px, 0);
+}
+
+
+.contact-boxes-width {
+  width: 400px;
+  padding: 0px 27px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+  box-shadow: 0px 1px 50px 10px #0000000d;
+}
+.background-white {
+  background-color: white;
+}
+.py-4 {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+}
+
+
+.top-background-div {
+  height: 408px;
+  position: relative;
+}
+.background-border-radius {
+  border-radius: 0px 0px 0px 230px;
+}
+
+
+
+/* Contact Us */
+.contact-us-text {
+  font-weight: 700;
+  font-size: 50px;
+}
+.contact-us-line {
+  font-size: 20px;
+}
+.sales-support {
+  font-family: Sora;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 80px;
+  letter-spacing: 0em;
+  text-align: center;
+}
+.number-text {
+  font-family: Sora;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #525252;
+}
+.email-text {
+  font-family: Sora;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #525252;
+}
+.dark-grey-color {
+  color: #525252 !important;
+}
+.anchor-span-grey {
+  display: flex;
+  border: 2px solid #525252;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
+  margin-right: 9px;
+}
+.padding-right-box {
+  padding-right: 10px;
+}
+.contact-boxes-width {
+  width: 400px;
+  padding: 0px 27px;
+  box-shadow: 0px 1px 50px 10px #0000000d;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+.boxes-absolute {
+  position: absolute;
+  top: 250px;
+}
+.bacground-image-div {
+  position: absolute;
+  top: 270px;
+}
+.top-background-div {
+  height: 408px;
+  position: relative;
+}
+/* Contact Us Form */
+.form-adjustment {
+  display: flex;
+  flex-direction: column;
+}
+.send-us-text {
+  font-family: Sora;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 36px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+.contact-us-input {
+  height: 50px;
+  padding: 0px 10px;
+  border-radius: 25px;
+  border: 1px solid #ececec;
+  margin-bottom: 20px;
+}
+
+.border-radius-25 {
+  border: 1px solid #ececec;
+  border-radius: 25px;
+}
+.contact-us-image-div-adj {
+  padding: 180px 0px;
+}
+.w-75 {
+  width: 75%;
+}
+.flex-jutify-center {
+  display: flex;
+  justify-content: center;
+}
+.flex-auto {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.contact-us-icons-size {
+  font-size: 20px;
+}
+
+.forgot-password-buttons.btn-animate .text {
+  transition: all 0.3s ease-in;
+  margin: 0;
+}
+
+.btn-animate.btn-animate .fa-arrow-right {
+  transition: all 0.3s ease-in;
+}
+
+.btn-animate.btn-animate:hover .text {
+  transform: translate(35px, 0);
+}
+
+.btn-animate.btn-animate:hover .fa-arrow-right {
+  transform: translate(-80px, 0);
+}
