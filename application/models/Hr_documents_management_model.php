@@ -575,7 +575,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        $this->db->where('documents_assigned.archive', $archive);
+      //  $this->db->where('documents_assigned.archive', $archive);
         //
         if ($adf == 1) {
             $this->db->where('approval_process', 0);

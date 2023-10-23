@@ -66,12 +66,15 @@
                                 </thead>
                                 <tbody>
                                     <?php if (!empty($assigned_documents)) { 
+
+//user_consent
+                                       // _e($assigned_documents,true);
                                         ?>
                                         <?php $assigned_documents = array_reverse($assigned_documents);  ?>
                                         <?php foreach ($assigned_documents as $document) { ?>
                                             <?php if (!in_array($document['sid'], $payroll_documents_sids)) { ?>
-                                                <?php if ($document['archive'] != 1) { ?>
-                                                    <?php if ($document['status'] != 0) { ?>
+                                                <?php if ($document['archive'] != 1 || $document['user_consent'] == 1) { ?>
+                                                    <?php if ($document['status'] != 0 ) { ?>
                                                         <?php $ncd++; $notCompletedDocumentsList[] = $document; ?>
                                                         <tr>
                                                             <td class="col-lg-6">
