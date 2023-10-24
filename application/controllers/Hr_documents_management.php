@@ -16142,7 +16142,7 @@ class Hr_documents_management extends Public_Controller
         $d['user_type'] = null;
         $d['user_sid'] = null;
         $d['document_sid'] = null;
-        $data["s3_path"] = $d['file_url_code'];
+        $data["s3_path"] = $d['file_code'];
 
         $d['document_description'] =  $d['word_content'];
         

@@ -409,7 +409,7 @@ if (sizeof($assigned_offer_letter_history)) foreach ($assigned_offer_letter_hist
             // Set 
             //var s3_file = d.uploaded_file !== undefined && d.uploaded_file !== null ? d.uploaded_file : ( d.uploaded_document_s3_name !== undefined && d.uploaded_document_s3_name !== null ? d.uploaded_document_s3_name : d.document_s3_name );
 
-            var s3_file = d.file_url_code !== undefined && d.file_url_code !== null ? d.file_url_code : (d.title !== undefined && d.title !== null ? d.title : d.title);
+            var s3_file = d.file_code !== undefined && d.file_code !== null ? d.file_code : (d.title !== undefined && d.title !== null ? d.title : d.title);
 
             //
             if (s3_file == null) return;
