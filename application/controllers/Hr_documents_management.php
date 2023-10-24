@@ -3857,7 +3857,25 @@ class Hr_documents_management extends Public_Controller
                             $revoked_sids[] = $assigned_document['document_sid'];
                         }
                     }
-                }    
+                } else if ($assigned_document['archive'] == 1 && $assigned_document['user_consent'] == 1) {
+                    if (in_array($assigned_document['document_sid'], $documents_management_sids)) {
+                        $assigned_document['pay_roll_catgory'] = 1;
+                    } else if (in_array($assigned_document['sid'], $documents_assigned_sids)) {
+                        $assigned_document['pay_roll_catgory'] = 1;
+                    } else {
+                        $assigned_document['pay_roll_catgory'] = 0;
+                    }
+                    //
+                    if ($assigned_document['pay_roll_catgory'] == 0) {
+                        $signed_document_sids[] = $assigned_document['document_sid'];
+                        $signed_documents[] = $assigned_document;
+                        unset($assigned_documents[$key]);
+                    } else if ($assigned_document['pay_roll_catgory'] == 1) {
+                        $signed_document_sids[] = $assigned_document['document_sid'];
+                        $completed_payroll_documents[] = $assigned_document;
+                        unset($assigned_documents[$key]);
+                    }
+                }  
             }
             //
             $data['history_doc_sids'] = $history_doc_sids;
@@ -5631,6 +5649,24 @@ class Hr_documents_management extends Public_Controller
                         } else {
                             $revoked_sids[] = $assigned_document['document_sid'];
                         }
+                    }
+                } else if ($assigned_document['archive'] == 1 && $assigned_document['user_consent'] == 1) {
+                    if (in_array($assigned_document['document_sid'], $documents_management_sids)) {
+                        $assigned_document['pay_roll_catgory'] = 1;
+                    } else if (in_array($assigned_document['sid'], $documents_assigned_sids)) {
+                        $assigned_document['pay_roll_catgory'] = 1;
+                    } else {
+                        $assigned_document['pay_roll_catgory'] = 0;
+                    }
+                    //
+                    if ($assigned_document['pay_roll_catgory'] == 0) {
+                        $signed_document_sids[] = $assigned_document['document_sid'];
+                        $signed_documents[] = $assigned_document;
+                        unset($assigned_documents[$key]);
+                    } else if ($assigned_document['pay_roll_catgory'] == 1) {
+                        $signed_document_sids[] = $assigned_document['document_sid'];
+                        $completed_payroll_documents[] = $assigned_document;
+                        unset($assigned_documents[$key]);
                     }
                 }
                 
