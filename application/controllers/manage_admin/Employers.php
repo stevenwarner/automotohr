@@ -372,6 +372,10 @@ class employers extends Admin_Controller
             $data['union_name'] = $this->input->post('union_name');
             $data['union_member'] = $this->input->post('union_member');
 
+            //
+            $data['uniform_top_size'] = $this->input->post('uniform_top_size');
+            $data['uniform_bottom_size'] = $this->input->post('uniform_bottom_size');
+
             if ($data['union_member'] == 0) {
                 $data['union_name'] = '';
             }

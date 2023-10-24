@@ -347,6 +347,24 @@
     </div>
     <br />
 
+    <div class="row">
+        <div class="col-sm-6">
+            <label class="csF16">Uniform Top Size</label>
+            <p class="dummy-invoice-fields"><?= $employer['uniform_top_size']; ?></p>
+
+        </div>
+
+        <div class="col-sm-6">
+            <label class="csF16">Uniform Bottom Size</label>
+            <p class="dummy-invoice-fields"><?= $employer['uniform_bottom_size']; ?></p>
+
+        </div>
+
+    </div>
+    <br />
+       
+   
+
 
     <?php if ($timeOff == 'enable') { ?>
         <div class="row">

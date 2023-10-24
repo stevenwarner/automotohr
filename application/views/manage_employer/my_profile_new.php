@@ -413,6 +413,18 @@
                                                 <label>Office Location:</label>
                                                 <input class="invoice-fields" value="<?php echo set_value('office_location', $office_location); ?>" type="text" name="office_location" id="office_location">
                                             </li>
+
+                                            <li class="form-col-50-right">
+                                                <?php $uniform_top_size = isset($employer["uniform_top_size"]) ? $employer["uniform_top_size"] : ''; ?>
+                                                <label>Uniform Top Size:</label>
+                                                <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', $uniform_top_size); ?>" type="text" name="uniform_top_size" id="uniform_top_size">
+                                            </li>
+
+                                            <li class="form-col-50-right">
+                                                <?php $uniform_bottom_size = isset($employer["uniform_bottom_size"]) ? $employer["uniform_bottom_size"] : ''; ?>
+                                                <label>Uniform Bottom Size:</label>
+                                                <input class="invoice-fields" value="<?php echo set_value('uniform_bottom_size', $uniform_bottom_size); ?>" type="text" name="uniform_bottom_size" id="uniform_bottom_size">
+                                            </li>
                                             
                                             
                                             <?php if(IS_NOTIFICATION_ENABLED == 1 && $phone_sid = ''){ ?>

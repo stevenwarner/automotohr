@@ -595,6 +595,22 @@ if (checkIfAppIsEnabled('timeoff')) {
 
 
 
+                                            <div class="row">
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Uniform Top Size:</label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($employer["uniform_top_size"]) ? $employer["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
+                                                    </div>
+                                                    <!--  -->
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                        <label>Uniform Bottom Size:</label>
+                                                        <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($employer["uniform_bottom_size"]) ? $employer["uniform_bottom_size"] : ''); ?>" />
+
+                                                    </div>
+                                                </div>
+
+
+
 
                                             <?php if ($timeOff == 'enable') { ?>
                                                 <div class="row">

@@ -1419,6 +1419,11 @@ class Onboarding extends CI_Controller
             $secondary_info['short_bio'] = $short_bio;
             $primary_info['extra_info'] = serialize($secondary_info);
 
+            //
+            $primary_info['uniform_top_size'] = $this->input->post('uniform_top_size');
+            $primary_info['uniform_bottom_size'] = $this->input->post('uniform_bottom_size');
+
+
             //Ful Employment Application Form Update data
             $full_emp_app = isset($applicant_information['full_employment_application']) && !empty($applicant_information['full_employment_application']) ? unserialize($applicant_information['full_employment_application']) : array();
             $full_emp_app['PhoneNumber'] = $this->input->post('PhoneNumber');
