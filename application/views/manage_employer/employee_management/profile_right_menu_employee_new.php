@@ -66,7 +66,7 @@
                     <div class="hr-widget">
                         <div class="browse-attachments">
                             <ul>
-                                <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] && isPayrollOrPlus(true)){  ?>
+                                <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || isPayrollOrPlus(true)){  ?>
                                     <?php if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
                                         <li>
                                             <span class="left-addon">
@@ -289,7 +289,7 @@
                     </div>
                 <?php } ?>
 
-                <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] && isPayrollOrPlus(true)){  ?>
+                <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || isPayrollOrPlus(true)){  ?>
                     <?php $function_names = array('full_employment_application', 'employee_emergency_contacts', 'employee_occupational_license_info', 'employee_drivers_license_info', 'employee_equipment_info', 'employee_dependants', 'employee_hr_documents'); ?>
                     <?php if(check_access_permissions_for_view($security_details, $function_names)) { ?>
                         <div class="hr-widget">
