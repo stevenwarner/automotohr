@@ -37,6 +37,7 @@
                     </div>
                 </div>
             <?php }?>
+
             <div class="hr-widget">
                 <div class="applicant-status">
                     <div class="info-area">
@@ -58,101 +59,102 @@
                     </div>
                 </div>
             </div>
-                <?php if($canEMSPermission){ ?>
-                    <?php $function_names = array('employee_profile', 'employee_login_credentials', 'background_check', 'drug_test', 'reference_checks'); ?>
-                    <?php if(check_access_permissions_for_view($security_details, $function_names)) { ?>
-                        <div class="hr-widget">
-                            <div class="browse-attachments">
-                                <ul>
-                                    <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
+
+            <?php if($canEMSPermission){ ?>
+                <?php $function_names = array('employee_profile', 'employee_login_credentials', 'background_check', 'drug_test', 'reference_checks'); ?>
+                <?php if(check_access_permissions_for_view($security_details, $function_names)) { ?>
+                    <div class="hr-widget">
+                        <div class="browse-attachments">
+                            <ul>
+                                <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] && isPayrollOrPlus(true)){  ?>
                                     <?php if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
-                                    <li>
-                                        <span class="left-addon">
-                                            <i aria-hidden="true" class="fa fa-user"></i>
-                                        </span>
-                                        <h4>Employee Profile</h4>
-                                        <a href="<?php echo base_url('employee_profile') . '/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>
+                                        <li>
+                                            <span class="left-addon">
+                                                <i aria-hidden="true" class="fa fa-user"></i>
+                                            </span>
+                                            <h4>Employee Profile</h4>
+                                            <a href="<?php echo base_url('employee_profile') . '/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        </li>
                                     <?php } ?>
                                     <?php if(check_access_permissions_for_view($security_details, 'employee_login_credentials')) { ?>
-                                    <li>
-                                        <span class="left-addon">
-                                            <i aria-hidden="true" class="fa fa-lock"></i>
-                                        </span>
-                                        <h4>Login Credentials</h4>
-                                        <a href="<?php if(!$employer['is_executive_admin']) { echo base_url('employee_login_credentials') . '/' . $employer["sid"];} else{ echo '#';} ?>" >View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>
+                                        <li>
+                                            <span class="left-addon">
+                                                <i aria-hidden="true" class="fa fa-lock"></i>
+                                            </span>
+                                            <h4>Login Credentials</h4>
+                                            <a href="<?php if(!$employer['is_executive_admin']) { echo base_url('employee_login_credentials') . '/' . $employer["sid"];} else{ echo '#';} ?>" >View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        </li>
                                     <?php } ?>
                                     <?php if(check_access_permissions_for_view($security_details, 'background_check')) { ?>
-                                    <li>
-                                        <span class="left-addon">
-                                            <i aria-hidden="true" class="fa fa-check"></i>
-                                        </span>
-                                        <h4>Background Check</h4>
-                                        <?php
-                                        $_SESSION['applicant_id'] = $employer['sid'];
-                                        $_SESSION['applicant_type'] = 'employee_profile';
-                                        if ($company_background_check == 1) {
-                                            ?>
-                                            <a href="<?php echo base_url('background_check') . '/employee/' . $employer['sid']; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        <li>
+                                            <span class="left-addon">
+                                                <i aria-hidden="true" class="fa fa-check"></i>
+                                            </span>
+                                            <h4>Background Check</h4>
                                             <?php
-                                        } else {
-                                            ?>
-                                            <a href="<?php echo base_url('background_check/activate') ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                        <?php } ?>
+                                            $_SESSION['applicant_id'] = $employer['sid'];
+                                            $_SESSION['applicant_type'] = 'employee_profile';
+                                            if ($company_background_check == 1) {
+                                                ?>
+                                                <a href="<?php echo base_url('background_check') . '/employee/' . $employer['sid']; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <a href="<?php echo base_url('background_check/activate') ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                            <?php } ?>
 
-                                        <!-- Light Bulb Code - Start -->
-                                        <?php $background_check_count = count_accurate_background_orders($employer['sid']); ?>
-                                        <?php if(intval($background_check_count) > 0) { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Background Check Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                        <?php } else { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Background Check Not Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                        <?php } ?>
-                                        <!-- Light Bulb Code - End -->
-                                    </li>
+                                            <!-- Light Bulb Code - Start -->
+                                            <?php $background_check_count = count_accurate_background_orders($employer['sid']); ?>
+                                            <?php if(intval($background_check_count) > 0) { ?>
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Background Check Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                            <?php } else { ?>:
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Background Check Not Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                            <?php } ?>
+                                            <!-- Light Bulb Code - End -->
+                                        </li>
                                     <?php } ?>
                                     <!--<li>
                                         <h4>Background Check</h4>
                                         <a href="<?php echo base_url('background_check') . '/employee/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     </li>-->
                                     <?php if(check_access_permissions_for_view($security_details, 'drug_test')) { ?>
-                                    <li>
-                                        <span class="left-addon">
-                                            <i aria-hidden="true" class="fa fa-medkit"></i>
-                                        </span>
-                                        <h4>Drug Testing</h4>
-                                        <a href="<?php echo base_url('drug_test') . '/employee/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        <li>
+                                            <span class="left-addon">
+                                                <i aria-hidden="true" class="fa fa-medkit"></i>
+                                            </span>
+                                            <h4>Drug Testing</h4>
+                                            <a href="<?php echo base_url('drug_test') . '/employee/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
 
-                                        <!-- Light Bulb Code - Start -->
-                                        <?php $background_check_count = count_accurate_background_orders($employer['sid'], 'drug-testing'); ?>
-                                        <?php if(intval($background_check_count) > 0) { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Drug Test Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                        <?php } else { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Drug Test Not Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                        <?php } ?>
-                                        <!-- Light Bulb Code - End -->
-                                    </li>
+                                            <!-- Light Bulb Code - Start -->
+                                            <?php $background_check_count = count_accurate_background_orders($employer['sid'], 'drug-testing'); ?>
+                                            <?php if(intval($background_check_count) > 0) { ?>F
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Drug Test Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                            <?php } else { ?>
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Drug Test Not Processed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                            <?php } ?>
+                                            <!-- Light Bulb Code - End -->
+                                        </li>
                                     <?php } ?>
                                     <!-- <li>
                                         <h4>Behavioral Assessment</h4>
                                         <a href="javascript:;">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     </li>-->
                                     <?php if(check_access_permissions_for_view($security_details, 'reference_checks')) { ?>
-                                    <li>
-                                        <span class="left-addon">
-                                            <i aria-hidden="true" class="fa fa-link"></i>
-                                        </span>
-                                        <h4>Reference Check</h4>
-                                        <a href="<?php echo base_url('reference_checks/employee') . '/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                        <!-- Light Bulb Code - Start -->
-                                        <?php $references_count = count_references_records($employer['sid']);?>
-                                        <?php if(intval($references_count) > 0) { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Has References Setup" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                        <?php } else { ?>
-                                            <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No References Found" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                        <?php } ?>
-                                        <!-- Light Bulb Code - End -->
-                                    </li>
+                                        <li>
+                                            <span class="left-addon">
+                                                <i aria-hidden="true" class="fa fa-link"></i>
+                                            </span>
+                                            <h4>Reference Check</h4>
+                                            <a href="<?php echo base_url('reference_checks/employee') . '/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                            <!-- Light Bulb Code - Start -->
+                                            <?php $references_count = count_references_records($employer['sid']);?>
+                                            <?php if(intval($references_count) > 0) { ?>
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Has References Setup" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                            <?php } else { ?>
+                                                <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="No References Found" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                            <?php } ?>
+                                            <!-- Light Bulb Code - End -->
+                                        </li>
                                     <?php } ?>
                                     <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] == 1){?>
                                         <li>
@@ -188,7 +190,7 @@
                                             <!-- Light Bulb Code - End -->
                                         </li>
                                     <?php }?>
-                                     <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['employer_detail']['access_level_plus'] == 1)){?>
+                                    <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['employer_detail']['access_level_plus'] == 1)){?>
                                         <!-- <li>
                                             <span class="left-addon">
                                                 <i aria-hidden="true" class="fa fa-star"></i>
@@ -228,64 +230,68 @@
                                             <!-- Light Bulb Code - End -->
                                         </li>
                                     <?php } ?>
-                                    <?php } ?>
-                                    <?php if(checkIfAppIsEnabled('timeoff') && ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'])) { ?>
-                                        <li>
-                                            <span class="left-addon">
-                                                <i aria-hidden="true" class="fa fa-clock-o"></i>
-                                            </span>
-                                            <h4>Time Off</h4>
-                                            <a href="<?php echo base_url('timeoff/create_employee') . '/' . $employer["sid"]; ?>">Create / View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                        </li>
-                                    <?php } ?>
+                                <?php } ?>
 
-                                    <?php if(checkIfAppIsEnabled('performance_management')) { ?>
-                                        <li>
-                                            <span class="left-addon">
-                                                <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
-                                            </span>
-                                            <h4>Performance Management</h4>
-                                            <a href="<?php echo base_url('performance-management/employee/reviews/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                        </li>
-                                    <?php } ?>
-                                    <?php if(checkIfAppIsEnabled('performance_management')) { ?>
-                                        <li>
-                                            <span class="left-addon">
-                                                <i aria-hidden="true" class="fa fa-bullseye"></i>
-                                            </span>
-                                            <h4>Goals</h4>
-                                            <a href="<?php echo base_url('performance-management/employee/goals/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                        </li>
-                                    <?php } ?>
+                                <?php if(checkIfAppIsEnabled('timeoff') && ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'])) { ?>
+                                    <li>
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-clock-o"></i>
+                                        </span>
+                                        <h4>Time Off</h4>
+                                        <a href="<?php echo base_url('timeoff/create_employee') . '/' . $employer["sid"]; ?>">Create / View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    </li>
+                                <?php } ?>
 
-                                    <?php if(checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
-                                        <li class="jsPayrollOnEmployeeRow" data-id="<?=$employer["sid"];?>">
-                                            <span class="left-addon">
-                                                <i aria-hidden="true" class="fa fa-cogs"></i>
-                                            </span>
-                                            <h4>Edit Payroll</h4>
-                                            <a href="javascript:void(0);" class="jsPayrollEmployeeEdit">Manage<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                        </li>
-                                    <?php } ?>
-                                    <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
-                                        <!-- <li>
-                                            <span class="left-addon">
-                                                <i aria-hidden="true" class="fa fa-clock-o"></i>
-                                            </span>
-                                            <h4>Manage Time Sheet</h4>
-                                            <a href="<?php echo base_url('attendance/manage/'.($employer["sid"]).''); ?>">
-                                                Manage
-                                                <i aria-hidden="true" class="fa fa-chevron-circle-right"></i>
-                                            </a>
-                                        </li> -->
-                                    <?php } ?>
-                                </ul>
-                            </div>
+                                <?php if(checkIfAppIsEnabled('performance_management')) { ?>
+                                    <li>
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
+                                        </span>
+                                        <h4>Performance Management</h4>
+                                        <a href="<?php echo base_url('performance-management/employee/reviews/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    </li>
+                                <?php } ?>
+
+                                <?php if(checkIfAppIsEnabled('performance_management')) { ?>
+                                    <li>
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-bullseye"></i>
+                                        </span>
+                                        <h4>Goals</h4>
+                                        <a href="<?php echo base_url('performance-management/employee/goals/'.($employer["sid"]).''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    </li>
+                                <?php } ?>
+
+                                <?php if(checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
+                                    <li class="jsPayrollOnEmployeeRow" data-id="<?=$employer["sid"];?>">
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-cogs"></i>
+                                        </span>
+                                        <h4>Edit Payroll</h4>
+                                        <a href="javascript:void(0);" class="jsPayrollEmployeeEdit">Manage<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    </li>
+                                <?php } ?>
+
+                                <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
+                                    <!-- <li>
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-clock-o"></i>
+                                        </span>
+                                        <h4>Manage Time Sheet</h4>
+                                        <a href="<?php echo base_url('attendance/manage/'.($employer["sid"]).''); ?>">
+                                            Manage
+                                            <i aria-hidden="true" class="fa fa-chevron-circle-right"></i>
+                                        </a>
+                                    </li> -->
+                                <?php } ?>
+                            </ul>
                         </div>
-                        <?php } ?>
-                        <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
-                        <?php $function_names = array('full_employment_application', 'employee_emergency_contacts', 'employee_occupational_license_info', 'employee_drivers_license_info', 'employee_equipment_info', 'employee_dependants', 'employee_hr_documents'); ?>
-                        <?php if(check_access_permissions_for_view($security_details, $function_names)) { ?>
+                    </div>
+                <?php } ?>
+
+                <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] && isPayrollOrPlus(true)){  ?>
+                    <?php $function_names = array('full_employment_application', 'employee_emergency_contacts', 'employee_occupational_license_info', 'employee_drivers_license_info', 'employee_equipment_info', 'employee_dependants', 'employee_hr_documents'); ?>
+                    <?php if(check_access_permissions_for_view($security_details, $function_names)) { ?>
                         <div class="hr-widget">
                             <div class="browse-attachments">
                                 <ul>
@@ -589,118 +595,116 @@
                                 </ul>
                             </div>
                         </div>
-                        <?php } ?>
+                    <?php } ?>
 
-
-                        <div class="hr-widget" id="attachment_view" >
-                            <div class="attachment-header">
-                                <div class="form-title-section">
-                                    <h4>Attachments</h4>
-                                    <div class="form-btns">
-                                        <input type="button" value="edit" id="attachment_edit_button">
-                                    </div>
-                                </div>
-                                <div class="file-container">
-                                    <a id="show_employee_resume_btn" href="javascript:;">
-                                        <article>
-                                            <figure><img src="<?php echo base_url() ?>assets/images/attachment-img.png"></figure>
-                                            <div class="text">Resume</div>
-                                        </article>
-                                    </a>
-                                    <a data-toggle="modal" data-target="#cover_letter_modal" href="javascript:void(0);" title="<?= $cover_letter_title ?>">
-                                        <article>
-                                            <figure><img src="<?php echo base_url() ?>assets/images/attachment-img.png"></figure>
-                                            <div class="text">Cover Letter</div>
-                                        </article>
-                                    </a>
+                    <div class="hr-widget" id="attachment_view" >
+                        <div class="attachment-header">
+                            <div class="form-title-section">
+                                <h4>Attachments</h4>
+                                <div class="form-btns">
+                                    <input type="button" value="edit" id="attachment_edit_button">
                                 </div>
                             </div>
+                            <div class="file-container">
+                                <a id="show_employee_resume_btn" href="javascript:;">
+                                    <article>
+                                        <figure><img src="<?php echo base_url() ?>assets/images/attachment-img.png"></figure>
+                                        <div class="text">Resume</div>
+                                    </article>
+                                </a>
+                                <a data-toggle="modal" data-target="#cover_letter_modal" href="javascript:void(0);" title="<?= $cover_letter_title ?>">
+                                    <article>
+                                        <figure><img src="<?php echo base_url() ?>assets/images/attachment-img.png"></figure>
+                                        <div class="text">Cover Letter</div>
+                                    </article>
+                                </a>
+                            </div>
                         </div>
+                    </div>
 
-                        <div class="hr-widget" id="attachment_edit" style="display: none;">
-                            <form action="<?php echo base_url('employee_management/upload_attachment') ?>/<?php echo $employer['sid'] ?>" method="POST" enctype="multipart/form-data">
-                                <div class="form-title-section">
-                                    <div class="form-btns">
-                                        <input type="submit" value="save">
-                                        <input type="button" value="cancel" id="attachment_view_button">
-                                    </div>
+                    <div class="hr-widget" id="attachment_edit" style="display: none;">
+                        <form action="<?php echo base_url('employee_management/upload_attachment') ?>/<?php echo $employer['sid'] ?>" method="POST" enctype="multipart/form-data">
+                            <div class="form-title-section">
+                                <div class="form-btns">
+                                    <input type="submit" value="save">
+                                    <input type="button" value="cancel" id="attachment_view_button">
                                 </div>
-                                <div class="attachment-header attachment_edit">
-                                    <div class="remove-file">
-                                        <p id="name_resume"><?php echo substr($resume_link_title, 0, 28); ?></p>
-                                        <?php if ($resume_link_title != "No Resume found!") { ?>
-                                            <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?= $employer['sid'] ?>, 'Resume')"><i aria-hidden="true" class="fa fa-remove"></i></a>
-                                        <?php } ?>
-                                    </div>
-                                    <h4>Resume</h4>
-                                    <div class="btn-inner">
-                                        <input type="file" name="resume" id="resume"   onchange="check_file('resume')" class="choose-file-filed">
-                                        <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
-                                    </div>
+                            </div>
+                            <div class="attachment-header attachment_edit">
+                                <div class="remove-file">
+                                    <p id="name_resume"><?php echo substr($resume_link_title, 0, 28); ?></p>
+                                    <?php if ($resume_link_title != "No Resume found!") { ?>
+                                        <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?= $employer['sid'] ?>, 'Resume')"><i aria-hidden="true" class="fa fa-remove"></i></a>
+                                    <?php } ?>
                                 </div>
-                                <div class="attachment-header attachment_edit">
-                                    <div class="remove-file">
-                                        <p id="name_cover_letter"><?php echo substr($cover_letter_title, 0, 28); ?></p>
-                                        <?php if ($cover_letter_title != "No Cover Letter found!") { ?>
-                                            <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?= $employer['sid'] ?>, 'Cover Letter')"><i aria-hidden="true" class="fa fa-remove"></i></a>
-                                        <?php } ?>
-                                    </div>
-                                    <h4>Cover Letter</h4>
-                                    <div class="btn-inner">
-                                        <input type="file"  id="cover_letter" name="cover_letter" onchange="check_file('cover_letter')" class="choose-file-filed">
-                                        <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
-                                    </div>
+                                <h4>Resume</h4>
+                                <div class="btn-inner">
+                                    <input type="file" name="resume" id="resume"   onchange="check_file('resume')" class="choose-file-filed">
+                                    <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
                                 </div>
-                                <input type="hidden" name="old_resume" id="action" value="<?= $employer['resume'] ?>">
-                                <input type="hidden" name="old_letter" id="action" value="<?= $employer['cover_letter'] ?>">
-                            </form>
-                        </div>
+                            </div>
+                            <div class="attachment-header attachment_edit">
+                                <div class="remove-file">
+                                    <p id="name_cover_letter"><?php echo substr($cover_letter_title, 0, 28); ?></p>
+                                    <?php if ($cover_letter_title != "No Cover Letter found!") { ?>
+                                        <a class="remove-icon" href="javascript:void(0);" onclick="file_remove(<?= $employer['sid'] ?>, 'Cover Letter')"><i aria-hidden="true" class="fa fa-remove"></i></a>
+                                    <?php } ?>
+                                </div>
+                                <h4>Cover Letter</h4>
+                                <div class="btn-inner">
+                                    <input type="file"  id="cover_letter" name="cover_letter" onchange="check_file('cover_letter')" class="choose-file-filed">
+                                    <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                            <input type="hidden" name="old_resume" id="action" value="<?= $employer['resume'] ?>">
+                            <input type="hidden" name="old_letter" id="action" value="<?= $employer['cover_letter'] ?>">
+                        </form>
+                    </div>
 
-
-                        <!--Extra attachments panel starts-->
-                        <div class="hr-widget">
-                            <form action="<?php echo base_url('applicant_profile/upload_extra_attachment') ?>" method="POST" enctype="multipart/form-data">
+                    <!--Extra attachments panel starts-->
+                    <div class="hr-widget">
+                        <form action="<?php echo base_url('applicant_profile/upload_extra_attachment') ?>" method="POST" enctype="multipart/form-data">
+                            <div class="attachment-header">
                                 <div class="attachment-header">
-                                    <div class="attachment-header">
-                                        <p id="name_all_file"></p>
-                                        <h4>Add File<samp class="red"> * </samp></h4>
-                                        <div class="btn-inner">
+                                    <p id="name_all_file"></p>
+                                    <h4>Add File<samp class="red"> * </samp></h4>
+                                    <div class="btn-inner">
 
-                                            <input type="file" name="newlife" id="all_file" required="required" onchange="check_file('all_file')" class="choose-file-filed">
-                                            <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
-                                        </div>
+                                        <input type="file" name="newlife" id="all_file" required="required" onchange="check_file('all_file')" class="choose-file-filed">
+                                        <a href="" class="select-photo"><i aria-hidden="true" class="fa fa-plus"></i></a>
+                                    </div>
 
-                                    </div>
                                 </div>
-                                <div class="form-title-section">
-                                    <div class="form-btns">
-                                        <input type="submit" value="Upload">
-                                    </div>
+                            </div>
+                            <div class="form-title-section">
+                                <div class="form-btns">
+                                    <input type="submit" value="Upload">
                                 </div>
-                                <?php if (!empty($applicant_extra_attachments)) { ?>
-                                    <div class="browse-attachments">
-                                        <ul>
-                                            <?php foreach ($applicant_extra_attachments as $attachment) {
-                                                    if($attachment['status'] != 'deleted') {
-                                                ?>
-                                                <li>
-                                                    <h4><?php echo $attachment['original_name']; ?></h4>
-                                                    <div class="remove-file remove-icon">
-                                                        <a class="" href="javascript:void(0);" onclick="file_remove(<?= $attachment['sid'] ?>, 'file')"><i aria-hidden="true" class="fa fa-remove"></i></a>
-                                                    </div>
-                                                    <a href="<?php echo AWS_S3_BUCKET_URL . $attachment['uploaded_name']; ?>">Download<i aria-hidden="true" class="fa fa-chevron-circle-down"></i></a>
-                                                </li>
-                                                <?php } ?>
+                            </div>
+                            <?php if (!empty($applicant_extra_attachments)) { ?>
+                                <div class="browse-attachments">
+                                    <ul>
+                                        <?php foreach ($applicant_extra_attachments as $attachment) {
+                                                if($attachment['status'] != 'deleted') {
+                                            ?>
+                                            <li>
+                                                <h4><?php echo $attachment['original_name']; ?></h4>
+                                                <div class="remove-file remove-icon">
+                                                    <a class="" href="javascript:void(0);" onclick="file_remove(<?= $attachment['sid'] ?>, 'file')"><i aria-hidden="true" class="fa fa-remove"></i></a>
+                                                </div>
+                                                <a href="<?php echo AWS_S3_BUCKET_URL . $attachment['uploaded_name']; ?>">Download<i aria-hidden="true" class="fa fa-chevron-circle-down"></i></a>
+                                            </li>
                                             <?php } ?>
-                                        </ul>
-                                    </div>
-                                <?php } ?>
-                                <input type="hidden" name="applicant_job_sid" value="<?= $id ?>" >
-                                <input type="hidden" name="users_type" value="employee" >
-                            </form>
-                        </div>
-                    <?php } ?>
+                                        <?php } ?>
+                                    </ul>
+                                </div>
+                            <?php } ?>
+                            <input type="hidden" name="applicant_job_sid" value="<?= $id ?>" >
+                            <input type="hidden" name="users_type" value="employee" >
+                        </form>
+                    </div>
                 <?php } ?>
+            <?php } ?>
             <!--Extra attachments panel ends-->
         </div>
     </aside>
