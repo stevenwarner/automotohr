@@ -208,7 +208,12 @@
                                             </tr>
                                             <tr>
                                                 <td>Preview</td>
+                                                <?php if ($page_content['doc_type'] != 'Hybrid') { ?>
                                                 <td><a class="btn btn-success" href="javascript:;" onclick="fLaunchModal(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $page_content['file_code'] ?>" data-download-url="<?= AWS_S3_BUCKET_URL . $page_content['file_code'] ?>" data-file-name="<?php echo $page_content['title']; ?>" data-document-title="<?php echo $page_content['title']; ?>" data-preview-ext="<?php echo $page_content['type'] ?>">Preview</a></td>
+                                                <?php }else{?>
+                                                    <td><a class="btn btn-success js-hybrid-preview" href="javascript:;" data-id="<?php echo $page_content['sid']; ?>" >Preview</a></td>
+
+                                                    <?php }?>
                                             </tr>
 
                                             <?php if ($page_content['doc_type'] != 'Hybrid') { ?>
@@ -645,4 +650,9 @@
             );
         });
     })
+
 </script>
+
+<?php
+ $this->load->view('hr_documents_management/hybrid/resource_documents_scripts'); 
+ ?>
