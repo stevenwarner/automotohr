@@ -189,12 +189,19 @@ class Regular_payroll_model extends Payroll_model
         if ($limit != 0) {
             $this->db->limit($limit);
         }
-        $records = $this->db->get('payrolls.regular_payrolls')
+        $records = $this->db
+            ->get('payrolls.regular_payrolls')
             ->result_array();
         //
         if (!$records) {
             return $returnArray;
         }
+        $this->db
+            ->where("processed", 0)
+            ->where("company_sid", $companyId)
+            ->update("payrolls.regular_payrolls", [
+                "version" => null
+            ]);
         //
         foreach ($records as $record) {
             if ($record['is_late_payroll']) {
@@ -289,6 +296,12 @@ class Regular_payroll_model extends Payroll_model
             return [];
         }
         $record['totals'] = json_decode($record['totals'], true);
+        if (!$this->db
+            ->where('regular_payroll_sid', $payrollId)
+            ->count_all_results('payrolls.regular_payrolls_employees')) {
+            // check payroll employees
+            $this->getPayrollById($payrollId);
+        }
         // get the employees
         $employees = $this->db
             ->select('
@@ -474,10 +487,15 @@ class Regular_payroll_model extends Payroll_model
         // sync the employees
         if ($gustoResponse['employee_compensations']) {
             foreach ($gustoResponse['employee_compensations'] as $value) {
+                //
+                $employeeId = $this->db->select('employee_sid')->where('gusto_uuid', $value['employee_uuid'])->get('gusto_companies_employees')->row_array()['employee_sid'];
+                if (!$employeeId) {
+                    continue;
+                }
                 // set where array
                 $whereArray = [
                     'regular_payroll_sid' => $payrollId,
-                    'employee_sid' => $this->db->select('employee_sid')->where('gusto_uuid', $value['employee_uuid'])->get('gusto_companies_employees')->row_array()['employee_sid']
+                    'employee_sid' => $employeeId
                 ];
                 //
                 $dataArray = [];

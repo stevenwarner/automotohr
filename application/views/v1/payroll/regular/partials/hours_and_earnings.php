@@ -29,6 +29,11 @@
                                 <div class="input-group-addon">RH</div>
                                 <input type="number" class="form-control text-right jsRegularHours jsRegularHoursValue" value="" placeholder="0.0" />
                                 <div class="input-group-addon">hr</div>
+                                <div class="input-group-addon">
+                                    <button class="btn btn-danger">
+                                        <i class="fa fa-times-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

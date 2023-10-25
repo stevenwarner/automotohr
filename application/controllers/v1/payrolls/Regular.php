@@ -55,7 +55,7 @@ class Regular extends Public_controller
             $data['title'] = "Payroll blockers";
             $data['payrollBlockers'] = $payrollBlockers['data'];
             //
-            $this->load
+            return $this->load
                 ->view('main/header', $data)
                 ->view('v1/payroll/regular/blockers')
                 ->view('main/footer');
