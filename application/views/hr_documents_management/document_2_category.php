@@ -1,7 +1,7 @@
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
-           <div class="row">
+            <div class="row">
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
                     <?php $this->load->view('main/manage_ems_left_view'); ?>
                 </div>
@@ -17,9 +17,9 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="upload-new-doc-heading">
-                                            <i class="fa fa-file-text"></i>
-                                            <?php echo $title; ?>
-                                        </div>
+                                        <i class="fa fa-file-text"></i>
+                                        <?php echo $title; ?>
+                                    </div>
                                     <p class="upload-file-type">You can easily Assign documents to category</p>
                                     <div class="form-wrp">
                                         <form id="form_new_document_category" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -39,25 +39,20 @@
                                                     <div class="row">
                                                         <!-- company documents start -->
                                                         <div class="col-xs-12">
-                                                            <h4><strong>Company Documments</strong></h4>
-                                                        </div>    
-                                                        <?php if (!empty($documents)) { 
-                                                                foreach ($documents as $key => $document) { 
-                                                                    $cat_name = 'documents'; ?>
-                                                                    <div class="col-xs-6">
-                                                                        <label class="control control--checkbox font-normal <?php echo $document['archive'] == 1 ? 'red' :''; ?>">
-                                                                            <?php $document_status = $document['archive'] == 1 ? '(Archive)' :'(Active)'; ?>
-                                                                            <?php echo $document['document_title']. '' .$document_status; ?>
-                                                                            <?php if($document['archive'] != 1) { ?>
-                                                                                <input class="doc_checkbox" name="documents[]" value="<?php echo $document['sid']; ?>" type="checkbox" <?php echo in_array($document['sid'], $assigned_documents) ? 'checked="checked"' : ''; ?>>
-                                                                                <div class="control__indicator"></div>
-                                                                            <?php } else { ?>  
-                                                                                <input class="disable_doc_checkbox" name="documents[]" type="checkbox">
-                                                                                <div class="control__indicator"></div>
-                                                                            <?php } ?>    
-                                                                        </label>
-                                                                    </div>
-                                                        <?php   } ?>
+                                                            <h4><strong>Company Documents</strong></h4>
+                                                        </div>
+                                                        <?php if (!empty($documents)) {
+                                                            foreach ($documents as $key => $document) {
+                                                                $cat_name = 'documents'; ?>
+                                                                <div class="col-xs-6">
+                                                                    <label class="control control--checkbox font-normal <?php echo $document['archive'] == 1 ? 'red' : ''; ?>">
+                                                                        <?php $document_status = $document['archive'] == 1 ? '(Archive)' : '(Active)'; ?>
+                                                                        <?php echo $document['document_title'] . '' . $document_status; ?>
+                                                                        <input class="doc_checkbox" name="documents[]" value="<?php echo $document['sid']; ?>" type="checkbox" <?php echo in_array($document['sid'], $assigned_documents) ? 'checked="checked"' : ''; ?>>
+                                                                        <div class="control__indicator"></div>
+                                                                    </label>
+                                                                </div>
+                                                            <?php   } ?>
                                                         <?php } else { ?>
                                                             <div class="col-xs-12 text-center">
                                                                 <span class="no-data">No Documents</span>
@@ -88,10 +83,9 @@
     </div>
 </div>
 
-<script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
-<script  language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
-
     $(document).ready(function() {
         $('#count_documents').text($('.doc_checkbox:checked').length);
         $(".disable_doc_checkbox").click(function(e) {
@@ -99,41 +93,38 @@
             alertify.error('Archive document not allowed to select!');
         });
 
-        $('input[type="checkbox"]').click(function(){
+        $('input[type="checkbox"]').click(function() {
             $('#count_documents').text($('.doc_checkbox:checked').length);
         });
         var numberOfChecked = $('.doc_checkbox:checkbox:checked').length;
         var totalCheckboxes = $('.doc_checkbox:checkbox').length;
-        if(numberOfChecked == totalCheckboxes){
-            $('#selectall').prop("checked",true);
+        if (numberOfChecked == totalCheckboxes) {
+            $('#selectall').prop("checked", true);
         }
     });
 
-    $('#selectall').click(function (event) { 
-        if (this.checked) { 
-            $('.doc_checkbox').each(function () { 
-                this.checked = true;  
+    $('#selectall').click(function(event) {
+        if (this.checked) {
+            $('.doc_checkbox').each(function() {
+                this.checked = true;
             });
         } else {
-            $('.doc_checkbox').each(function () { 
+            $('.doc_checkbox').each(function() {
                 this.checked = false;
             });
         }
     });
-    $('.doc_checkbox').change(function(){
+    $('.doc_checkbox').change(function() {
 
-        if($(this).is(':checked')){
+        if ($(this).is(':checked')) {
             var numberOfChecked = $('.doc_checkbox:checkbox:checked').length;
             var totalCheckboxes = $('.doc_checkbox:checkbox').length;
-            if(numberOfChecked == totalCheckboxes){
-                $('#selectall').prop("checked",true);
+            if (numberOfChecked == totalCheckboxes) {
+                $('#selectall').prop("checked", true);
             }
+        } else {
+            $('#selectall').prop("checked", false);
         }
-        else
-        {
-            $('#selectall').prop("checked",false);
-        }    
 
     });
-    
 </script>
