@@ -204,7 +204,7 @@
                                     </div>
                                     <div class="col-lg-10 col-md-9 col-xs-12 col-sm-9">
                                         <div class="form-group autoheight">
-                                            <?php echo form_input('subject', set_value('subject'), 'class="form-control"');
+                                            <?php echo form_input('subject', set_value('subject'), 'class="form-control jsSubject"');
                                             echo form_error('subject'); ?>
                                         </div>
                                     </div>
@@ -231,24 +231,24 @@
                                         <div class="form-group autoheight">
                                             <div class="choose-file-wrp">
 
-                                            <?php if (!empty($portal_email_templates)) {
+                                                <?php if (!empty($portal_email_templates)) {
                                                     foreach ($portal_email_templates as $template) { ?>
                                                         <div id="<?php echo $template['sid']; ?>" class="temp-attachment" style="display: none">
-                                                                <?php if (sizeof($template['attachments']) > 0) {
-                                                                    foreach ($template['attachments'] as $attachment) { ?>
-                                                                     
-                                                                                <div class="invoice-fields">
-                                                                                    <span class="selected-file"><?php echo $attachment['original_file_name'] ?></span>
-                                                                                </div>
-                                                                         
+                                                            <?php if (sizeof($template['attachments']) > 0) {
+                                                                foreach ($template['attachments'] as $attachment) { ?>
 
-                                                                    <?php } ?>
-
-                                                                <?php } else { ?>
                                                                     <div class="invoice-fields">
-                                                                        <span class="selected-file">No Attachments</span>
+                                                                        <span class="selected-file"><?php echo $attachment['original_file_name'] ?></span>
                                                                     </div>
+
+
                                                                 <?php } ?>
+
+                                                            <?php } else { ?>
+                                                                <div class="invoice-fields">
+                                                                    <span class="selected-file">No Attachments</span>
+                                                                </div>
+                                                            <?php } ?>
                                                         </div>
 
 
@@ -470,6 +470,7 @@
         var msg_subject = $('#template_' + template_sid).attr('data-subject');
         var msg_body = $('#template_' + template_sid).attr('data-body');
         $('#email_subject').val(msg_subject);
+        $('.jsSubject').val(msg_subject);
         CKEDITOR.instances.message.setData(msg_body);
         $('.temp-attachment').hide();
         $('#' + template_sid).show();
