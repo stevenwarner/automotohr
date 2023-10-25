@@ -4648,6 +4648,7 @@ class Timeoff_model extends CI_Model
                 ->where('sid', $v['employee_sid'])
                 ->where('active', 1)
                 ->where('terminated_status', 0)
+                ->where('is_executive_admin', 0)
                 ->limit(1)
                 ->get();
             if (!$a->row_array()) {
@@ -5121,6 +5122,9 @@ class Timeoff_model extends CI_Model
         ')
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
             ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
+            ->where('users.active', 1)
+            ->where('users.terminated_status', 0)
+            ->where('users.is_executive_admin', 0)
             ->where('timeoff_policies.is_archived', 0)
             ->where('timeoff_requests.archive', 0)
             ->where('timeoff_requests.status', 'approved')
