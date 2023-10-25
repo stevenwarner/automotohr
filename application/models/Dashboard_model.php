@@ -3092,7 +3092,13 @@ class Dashboard_model extends CI_Model
 
     function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1)
     {
-        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive');
+        $this->db->select('
+            documents_assigned.*,
+            documents_management.acknowledgment_required,
+            documents_management.download_required,
+            documents_management.signature_required,
+            documents_management.archive as company_archive
+        ');
         if (ASSIGNEDOCIMPL) $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('documents_assigned.status', 1);

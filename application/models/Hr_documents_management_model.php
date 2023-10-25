@@ -531,8 +531,10 @@ class Hr_documents_management_model extends CI_Model
 
     function get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid = null, $pp_flag = 0)
     {
-        $payroll_sids = $this->get_payroll_documents_sids();
-        $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
+        if ($pp_flag) {
+            $payroll_sids = $this->get_payroll_documents_sids();
+            $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
+        }
 
         $this->db->select('sid, document_type, document_sid, document_title, assigned_date, document_original_name, visible_to_payroll, document_s3_name');
         $this->db->where('company_sid', $company_sid);
@@ -542,6 +544,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('status', 1);
         $this->db->where('document_sid', 0);
         $this->db->where('document_type', 'uploaded');
+
         if ($pp_flag) {
             $this->db->group_start();
             $this->db->where('visible_to_payroll', 1);
@@ -565,12 +568,22 @@ class Hr_documents_management_model extends CI_Model
 
     function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0, $ems = 0, $adf = 0)
     {
+        if ($pp_flag) {
+            $payroll_sids = $this->get_payroll_documents_sids();
+            $documents_management_sids = $payroll_sids['documents_management_sids'];
+            $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
+        }
 
-        $payroll_sids = $this->get_payroll_documents_sids();
-        $documents_management_sids = $payroll_sids['documents_management_sids'];
-        $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
-
-        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll, documents_management.is_available_for_na,  documents_management.is_specific');
+        $this->db->select('
+            documents_assigned.*,
+            documents_management.acknowledgment_required,
+            documents_management.download_required,
+            documents_management.signature_required,
+            documents_management.archive as company_archive,
+            documents_management.visible_to_payroll, 
+            documents_management.is_available_for_na,  
+            documents_management.is_specific
+        ');
         if (ASSIGNEDOCIMPL) $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required, documents_management.is_available_for_na');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
