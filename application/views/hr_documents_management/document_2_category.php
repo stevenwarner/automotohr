@@ -49,10 +49,10 @@
                                                                             <?php $document_status = $document['archive'] == 1 ? '(Archive)' :'(Active)'; ?>
                                                                             <?php echo $document['document_title']. '' .$document_status; ?>
                                                                             <?php if($document['archive'] != 1) { ?>
-                                                                                <input class="doc_checkbox" name="documents[]" value="<?php echo $document['sid']; ?>" type="checkbox" <?php echo in_array($document['sid'], $assigned_documents) ? 'checked="checked"' : ''; ?>>
+                                                                               <input class="doc_checkbox" name="documents[]" value="<?php echo $document['sid']; ?>" type="checkbox" <?php echo in_array($document['sid'], $assigned_documents) ? 'checked="checked"' : ''; ?>>
                                                                                 <div class="control__indicator"></div>
                                                                             <?php } else { ?>  
-                                                                                <input class="disable_doc_checkbox" name="documents[]" type="checkbox">
+                                                                               <input class="doc_checkbox" name="documents[]" value="<?php echo $document['sid']; ?>" type="checkbox" <?php echo in_array($document['sid'], $assigned_documents) ? 'checked="checked"' : ''; ?>>
                                                                                 <div class="control__indicator"></div>
                                                                             <?php } ?>    
                                                                         </label>
