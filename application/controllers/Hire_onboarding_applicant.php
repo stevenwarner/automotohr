@@ -222,7 +222,7 @@ class Hire_onboarding_applicant extends CI_Controller
         } else if ($applicant_profile_info['employee_type'] == 'full-time') {
             $employee_type = 'fulltime';
         } else {
-           $employee_type = $applicant_profile_info['employee_type']; 
+            $employee_type = $applicant_profile_info['employee_type'];
         }
         $employer_data['employee_type'] = $employee_type;
         //
@@ -243,15 +243,15 @@ class Hire_onboarding_applicant extends CI_Controller
         if (!empty($applicant_profile_info['ip_address'])) {
             $employer_data['ip_address'] = $applicant_profile_info['ip_address'];
         }
-        
+
         if (!empty($applicant_profile_info['cover_letter'])) {
             $employer_data['cover_letter'] = $applicant_profile_info['cover_letter'];
         }
-        
+
         if (!empty($applicant_profile_info['video_type'])) {
             $employer_data['video_type'] = $applicant_profile_info['video_type'];
         }
-        
+
         if (!empty($applicant_profile_info['middle_name'])) {
             $employer_data['middle_name'] = $applicant_profile_info['middle_name'];
         }
@@ -259,7 +259,14 @@ class Hire_onboarding_applicant extends CI_Controller
         if (!empty($applicant_profile_info['nick_name'])) {
             $employer_data['nick_name'] = $applicant_profile_info['nick_name'];
         }
-        
+
+        if (!empty($applicant_profile_info['uniform_top_size'])) {
+            $employer_data['uniform_top_size'] = $applicant_profile_info['uniform_top_size'];
+        }
+        if (!empty($applicant_profile_info['uniform_bottom_size'])) {
+            $employer_data['uniform_bottom_size'] = $applicant_profile_info['uniform_bottom_size'];
+        }
+
         //
         $employer_data['languages_speak'] = $applicant_profile_info['languages_speak'];
         $employer_data['salary_benefits'] = $applicant_profile_info['salary_benefits'];
@@ -436,7 +443,7 @@ class Hire_onboarding_applicant extends CI_Controller
         }
 
 
-       
+
         $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
         $status = $result['status'];
 
@@ -582,13 +589,11 @@ class Hire_onboarding_applicant extends CI_Controller
                     $emp_extra_unserial[$key] = $info;
                     $update_flag = 1;
                 }
-                
             }
 
             if ($emp_extra_unserial && sizeof($emp_extra_unserial)) {
                 $employer_data['extra_info'] = serialize($emp_extra_unserial);
             }
-
         }
 
         //
@@ -635,11 +640,11 @@ class Hire_onboarding_applicant extends CI_Controller
 
         //
         $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
-        if ($employee_profile_info['department_sid']== 0 && $departmentsTeams['department_sid']!=0 && $employee_profile_info['team_sid']== 0  && $departmentsTeams['team_sid']!=0 ) {
+        if ($employee_profile_info['department_sid'] == 0 && $departmentsTeams['department_sid'] != 0 && $employee_profile_info['team_sid'] == 0  && $departmentsTeams['team_sid'] != 0) {
             $employer_data['department_sid'] = $departmentsTeams['department_sid'];
             $employer_data['team_sid'] = $departmentsTeams['team_sid'];
         }
-    
+
         $this->hire_onboarding_applicant_model->update_company_employee($employer_data, $applicant_sid, $employee_sid, 0);
 
         // now move all other information

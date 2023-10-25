@@ -1432,6 +1432,16 @@ class Employee_management extends Public_Controller
                 $this->form_validation->set_rules('access_level', 'Access Level', 'trim|xss_clean');
                 $this->form_validation->set_rules('break_hours', 'break_hours', 'trim|xss_clean|min_length[1]|max_length[24]');
                 $this->form_validation->set_rules('break_mins', 'break_mins', 'trim|xss_clean|min_length[1]|max_length[59]');
+                $portalData = getPortalData(
+                    $this->session->userdata("logged_in")["company_detail"]["sid"],
+                    ["uniform_sizes"]
+                );
+                if ($portalData["uniform_sizes"]) {
+                    $this->form_validation->set_rules('uniform_top_size', 'Uniform top size', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('uniform_bottom_size', 'Uniform bottom size', 'required|trim|xss_clean');
+                }
+
+                $data['portalData'] = $portalData;
 
 
                 //
@@ -2260,6 +2270,16 @@ class Employee_management extends Public_Controller
             $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
             $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean');
+            $portalData = getPortalData(
+                $this->session->userdata("logged_in")["company_detail"]["sid"],
+                ["uniform_sizes"]
+            );
+            if ($portalData["uniform_sizes"]) {
+                $this->form_validation->set_rules('uniform_top_size', 'Uniform top size', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('uniform_bottom_size', 'Uniform bottom size', 'required|trim|xss_clean');
+            }
+
+            $data['portalData'] = $portalData;
             //$this->form_validation->set_rules('access_level', 'Access Level', 'trim|xss_clean');
 
             if ($data['employer']['email'] != $this->input->post('email')) {

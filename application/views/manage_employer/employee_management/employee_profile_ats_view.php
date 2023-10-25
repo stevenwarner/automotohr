@@ -171,10 +171,10 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Payment Method:</label>
-                                                    <select class="invoice-fields" name="payment_method">                                                                
+                                                    <select class="invoice-fields" name="payment_method">
                                                         <option <?= $employer["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
                                                         <option <?= $employer["payment_method"] == 'check' ? 'selected' : ''; ?> value="check">Check</option>
-                                                    </select> 
+                                                    </select>
                                                     <?php echo form_error('payment_method'); ?>
                                                 </div>
                                             </div>
@@ -596,18 +596,18 @@ if (checkIfAppIsEnabled('timeoff')) {
 
 
                                             <div class="row">
-                                                    <!--  -->
-                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                        <label>Uniform Top Size:</label>
-                                                        <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($employer["uniform_top_size"]) ? $employer["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
-                                                    </div>
-                                                    <!--  -->
-                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                        <label>Uniform Bottom Size:</label>
-                                                        <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($employer["uniform_bottom_size"]) ? $employer["uniform_bottom_size"] : ''); ?>" />
-
-                                                    </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Uniform Top Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                    <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($employer["uniform_top_size"]) ? $employer["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
                                                 </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Uniform Bottom Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                    <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($employer["uniform_bottom_size"]) ? $employer["uniform_bottom_size"] : ''); ?>" />
+
+                                                </div>
+                                            </div>
 
 
 
@@ -1337,20 +1337,10 @@ if (checkIfAppIsEnabled('timeoff')) {
                                     </form>
                                     <div class="respond">
                                         <?php if (count($applicant_message) > 0) {
-                                            foreach ($applicant_message as $message) {?>
+                                            foreach ($applicant_message as $message) { ?>
                                                 <article <?php if ($message['outbox'] == 1) { ?>class="reply" <?php } ?> id="delete_message<?php echo $message['id']; ?>">
                                                     <figure>
-                                                        <img 
-                                                        <?php if (empty($message['profile_picture'])) { ?> 
-                                                            src="<?= base_url() ?>assets/images/attachment-img.png" 
-                                                            <?php } else { ?>
-                                                                <?php if (isset($message['sender_logo'])) { ?> 
-                                                                    src="<?php echo $message['sender_logo']; ?>" width="48" style="height: 50px" 
-                                                                <?php } else if ($message['sender_profile_picture']) { ?> 
-                                                                    src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>" width="48" 
-                                                                <?php } else { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>" width="48" 
-                                                            <?php } ?> 
-                                                        <?php } ?>>
+                                                        <img <?php if (empty($message['profile_picture'])) { ?> src="<?= base_url() ?>assets/images/attachment-img.png" <?php } else { ?> <?php if (isset($message['sender_logo'])) { ?> src="<?php echo $message['sender_logo']; ?>" width="48" style="height: 50px" <?php } else if ($message['sender_profile_picture']) { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>" width="48" <?php } else { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>" width="48" <?php } ?> <?php } ?>>
                                                     </figure>
                                                     <div class="text">
                                                         <div class="message-header">
@@ -1720,7 +1710,15 @@ if (checkIfAppIsEnabled('timeoff')) {
                 <?php } ?>
                 YouTubeVideo: {
                     pattern: /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/
-                }
+                },
+                <?php if ($portalData["uniform_sizes"]) { ?>
+                    uniform_top_size: {
+                        required: true
+                    },
+                    uniform_bottom_size: {
+                        required: true
+                    },
+                <?php } ?>
             },
             messages: {
                 first_name: {
@@ -1761,6 +1759,14 @@ if (checkIfAppIsEnabled('timeoff')) {
                 YouTubeVideo: {
                     pattern: 'Please Enter a Valid Youtube Video Url.'
                 },
+                <?php if ($portalData["uniform_sizes"]) { ?>
+                    uniform_top_size: {
+                        required: "Uniform top size is required."
+                    },
+                    uniform_bottom_size: {
+                        required: "Uniform bottom size is required."
+                    },
+                <?php } ?>
                 break_hours: {
                     number: "please enter a number",
                     min: "Minimum allowed hours are 1",

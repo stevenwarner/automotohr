@@ -368,18 +368,18 @@ if ($_ssv) {
 
 
                                         <div class="col-md-6 col-xs-12">
-                                                <label class="csF16">Uniform Top Size</label>
-                                                <p class="dummy-invoice-fields">
-                                                    <?= GetVal($applicant_info['uniform_top_size']); ?>
-                                                </p>
-                                            </div>
+                                            <label class="csF16">Uniform Top Size</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?= GetVal($applicant_info['uniform_top_size']); ?>
+                                            </p>
+                                        </div>
 
-                                            <div class="col-md-6 col-xs-12">
-                                                <label class="csF16">Uniform Bottom Size</label>
-                                                <p class="dummy-invoice-fields">
-                                                    <?= GetVal($applicant_info['uniform_bottom_size']); ?>
-                                                </p>
-                                            </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Uniform Bottom Size</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?= GetVal($applicant_info['uniform_bottom_size']); ?>
+                                            </p>
+                                        </div>
 
 
                                         <div class="col-sm-12">
@@ -704,16 +704,18 @@ if ($_ssv) {
 
 
                                             <div class="row">
-                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                        <label>Uniform Top Size:</label>
-                                                        <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($applicant_info["uniform_top_size"]) ? $applicant_info["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
-                                                    </div>
-                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                        <label>Uniform Bottom Size:</label>
-                                                        <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($applicant_info["uniform_bottom_size"]) ? $applicant_info["uniform_bottom_size"] : ''); ?>" />
-
-                                                    </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Uniform Top Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                    <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($applicant_info["uniform_top_size"]) ? $applicant_info["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
+                                                    <?php echo form_error('uniform_top_size'); ?>
                                                 </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Uniform Bottom Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                    <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($applicant_info["uniform_bottom_size"]) ? $applicant_info["uniform_bottom_size"] : ''); ?>" />
+                                                    <?php echo form_error('uniform_bottom_size'); ?>
+
+                                                </div>
+                                            </div>
 
 
 

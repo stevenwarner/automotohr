@@ -1286,6 +1286,16 @@ class Onboarding extends CI_Controller
 
                 //
                 $data['_ssv'] = $this->_ssv;
+                $portalData = getPortalData(
+                    $company_info['sid'],
+                    ["uniform_sizes"]
+                );
+                if ($portalData["uniform_sizes"]) {
+                    $this->form_validation->set_rules('uniform_top_size', 'Uniform top size', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('uniform_bottom_size', 'Uniform bottom size', 'required|trim|xss_clean');
+                }
+
+                $data['portalData'] = $portalData;
 
                 // $this->load->view('onboarding/on_boarding_header', $data);
                 $this->load->view('onboarding/applicant_boarding_header', $data);

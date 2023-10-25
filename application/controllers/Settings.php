@@ -667,6 +667,9 @@ class Settings extends Public_Controller
                 endif;
                 //
 
+                // set uniform sizes
+                $portal_data["uniform_sizes"] = $this->input->post("uniform_sizes", true) === "on";
+
                 //Emergency Contact
                 $portal_data['emergency_contact_phone_number_status'] = $this->input->post('emergency_contact_phone_number_status')  ? 1 : 0;
                 $portal_data['emergency_contact_email_status'] = $this->input->post('emergency_contact_email_status')  ? 1 : 0;

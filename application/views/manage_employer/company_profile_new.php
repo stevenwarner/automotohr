@@ -210,6 +210,16 @@
                                 </label>
                             </div>
                         </div>
+                        
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Make Uniform sizes mandatory <small class="help_text">Make the uniform sizes mandatory</small>
+                                    <input class="" type="checkbox" id="uniform_sizes" name="uniform_sizes" <?php echo (isset($portal['uniform_sizes']) && $portal['uniform_sizes'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
 
 
 

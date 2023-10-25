@@ -1659,7 +1659,7 @@ if (!function_exists('getDueDate')) {
         $diff = $currentDateObj->diff($dateTimeObj);
 
         //
-        return $diff->format(($diff->invert ? '-' : '')."%d days");
+        return $diff->format(($diff->invert ? '-' : '') . "%d days");
     }
 }
 
@@ -1774,5 +1774,23 @@ if (!function_exists('getAWSSecureFile')) {
         // Load AWS library
         $CI->load->library('aws_lib');
         return $CI->aws_lib->get_secure_object($config);
+    }
+}
+
+if (!function_exists("getPortalData")) {
+    /**
+     * get portal data
+     *
+     * @param int $companyId
+     * @param array $fields Optional
+     * @return array
+     */
+    function getPortalData(int $companyId, array $fields = ["*"]): array
+    {
+        return get_instance()
+            ->db->select($fields)
+            ->where("user_sid", $companyId)
+            ->get("portal_employer")
+            ->row_array();
     }
 }

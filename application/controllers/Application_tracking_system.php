@@ -683,6 +683,15 @@ class Application_tracking_system extends Public_Controller
             if (get_company_module_status($data['session']['company_detail']['sid'], 'primary_number_required') == 1) {
                 $this->form_validation->set_rules('phone_number', 'phone_number', 'required|trim|xss_clean');
             }
+            $portalData = getPortalData(
+                $this->session->userdata("logged_in")["company_detail"]["sid"],
+                ["uniform_sizes"]
+            );
+            if ($portalData["uniform_sizes"]) {
+                $this->form_validation->set_rules('uniform_top_size', 'Uniform top size', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('uniform_bottom_size', 'Uniform bottom size', 'required|trim|xss_clean');
+            }
+            $data['portalData'] = $portalData;
 
 
             if ($this->form_validation->run() == FALSE) { //checking if the form is submitted so i can open the form screen again
