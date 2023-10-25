@@ -7114,10 +7114,10 @@ class Time_off extends Public_Controller
             [$request['timeoff_policy_sid']]
         );
         //
-        $allowedTime = $policiesDetail['AllowedTime']['text'];
-        $consumedTime = $policiesDetail['ConsumedTime']['text'];
-        $remainingTime = $policiesDetail['RemainingTime']['text'];
-        $policyCycle = formatDateToDB($policiesDetail['lastAnniversaryDate'], DB_DATE, DATE) . ' - ' . formatDateToDB($policiesDetail['upcomingAnniversaryDate'], DB_DATE, DATE);
+        $allowedTime = $policiesDetail[0]['AllowedTime']['text'];
+        $consumedTime = $policiesDetail[0]['ConsumedTime']['text'];
+        $remainingTime = $policiesDetail[0]['RemainingTime']['text'];
+        $policyCycle = formatDateToDB($policiesDetail[0]['lastAnniversaryDate'], DB_DATE, DATE) . ' - ' . formatDateToDB($policiesDetail[0]['upcomingAnniversaryDate'], DB_DATE, DATE);
         //
         $CHF = message_header_footer($request['company_sid'], $request['CompanyName']);
         // Get template
