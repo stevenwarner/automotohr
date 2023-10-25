@@ -1155,19 +1155,19 @@ class Time_off extends Public_Controller
             $filter_policy = "all";
         }
 
-       
+
         //
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
-      
 
-         if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate']) ) {
+
+        if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate'])) {
             $start_date = '';
             $end_date  = '';
-         }
+        }
 
 
-         //
+        //
         $data['page'] = 'view';
         $data['title'] = 'Report::time-off';
         //
@@ -1227,7 +1227,7 @@ class Time_off extends Public_Controller
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
-        
+
         $data['filter_employees'] = $filter_employees;
         $data['filter_departments'] = $filter_departments;
         $data['filter_teams'] = $filter_teams;
@@ -6422,7 +6422,7 @@ class Time_off extends Public_Controller
                 $eRP['{{approver_last_name}}'] = $approver['last_name'];
                 $eRP['{{approver_name}}'] = $approver_name;
 
-                $eRP['{{reason}}'] = '<p style="font-style: italic;font-size: 20px;"><strong>'.strip_tags($request['reason']).'</strong></p>';
+                $eRP['{{reason}}'] = '<p style="font-style: italic;font-size: 20px;"><strong>' . strip_tags($request['reason']) . '</strong></p>';
                 $eRP['{{policy_name}}'] = $request['title'];
                 $eRP['{{requested_date}}'] =  $request['request_from_date'] == $request['request_to_date'] ?
                     DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D') :
@@ -7107,6 +7107,18 @@ class Time_off extends Public_Controller
         // Get request
         $request = $this->timeoff_model->getRequestById($requestId);
         //
+        $policiesDetail  = $this->timeoff_model->getEmployeePoliciesByDate(
+            $request['company_sid'],
+            $request['userId'],
+            $request['request_from_date'],
+            [$request['timeoff_policy_sid']]
+        );
+        //
+        $allowedTime = $policiesDetail['AllowedTime']['text'];
+        $consumedTime = $policiesDetail['ConsumedTime']['text'];
+        $remainingTime = $policiesDetail['RemainingTime']['text'];
+        $policyCycle = formatDateToDB($policiesDetail['lastAnniversaryDate'], DB_DATE, DATE) . ' - ' . formatDateToDB($policiesDetail['upcomingAnniversaryDate'], DB_DATE, DATE);
+        //
         $CHF = message_header_footer($request['company_sid'], $request['CompanyName']);
         // Get template
         $employeeTemplate = [];
@@ -7115,7 +7127,7 @@ class Time_off extends Public_Controller
         $eRP = [];
         $eRP['{{company_name}}'] = $request['CompanyName'];
         $eRP['{{policy_name}}'] = $request['title'];
-        $eRP['{{reason}}'] = '<p style="font-style: italic;font-size: 20px;"><strong>'.strip_tags($request['reason']).'</strong></p>';
+        $eRP['{{reason}}'] = '<p style="font-style: italic;font-size: 20px;"><strong>' . strip_tags($request['reason']) . '</strong></p>';
         $eRP['{{requester_first_name}}'] = $request['first_name'];
         $eRP['{{requester_last_name}}'] = $request['last_name'];
         $eRP['{{requested_date}}'] =  $request['request_from_date'] == $request['request_to_date'] ?
@@ -7164,6 +7176,13 @@ class Time_off extends Public_Controller
             $eRP['{{user_first_name}}'] = $request['first_name'];
             $eRP['{{user_last_name}}'] = $request['last_name'];
             $eRP['{{request_type}}'] = $type;
+
+            $eRP['{{remaining_time}}'] = $remainingTime;
+            $eRP['{{allowed_time}}'] = $allowedTime;
+            $eRP['{{consumed_time}}'] = $consumedTime;
+            $eRP['{{policy_cycle}}'] = $policyCycle;
+
+
             //
             if (!empty($requesterTemplate)) {
                 //
@@ -7240,6 +7259,7 @@ class Time_off extends Public_Controller
 
             // Send Email to approver
             if (!empty($approverTemplate) && !empty($request['approvers'])) {
+
                 //
                 foreach ($request['approvers'] as $approver) {
                     //
@@ -7272,6 +7292,13 @@ class Time_off extends Public_Controller
                             '{{text}}' => 'Reject Request'
                         ]
                     );
+
+                    $eRP['{{remaining_time}}'] = $remainingTime;
+                    $eRP['{{allowed_time}}'] = $allowedTime;
+                    $eRP['{{consumed_time}}'] = $consumedTime;
+                    $eRP['{{policy_cycle}}'] = $policyCycle;
+
+
                     //
                     $approverTemplateI = timeoffMagicQuotesReplace($approverTemplate, $eRP);
 
