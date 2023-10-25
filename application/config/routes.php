@@ -52,6 +52,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 
 $route['schedule_free_demo']['post'] = 'v1/App/scheduleDemoProcess';
+$route['forgot-password']['get'] = 'users/forgot_password';
+$route['forgot-password']['post'] = 'users/forgot_password';
+$route['why-us']['get'] = 'v1/App/whyUs';
 
 //  Goals
 $route['remarket_portal'] = 'Remarket_portal/index';
@@ -1997,9 +2000,5 @@ $route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
 $route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
 
 $route['resources/(:any)'] = 'v1/Resources/readMore/$1';
-
-
-$route['why-us'] = 'users/why_us';
-
 
 

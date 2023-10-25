@@ -8,12 +8,70 @@
  */
 class App extends CI_Controller
 {
+    //
+    private $css;
+    private $js;
+    private $header;
+    private $footer;
+    private $disableMinifiedFiles;
+    //
     public function __construct()
     {
         parent::__construct();
+        //
+        $this->css = "public/v1/css/app/pages/";
+        $this->js = "public/v1/js/app/pages/";
+        //
+        $this->header = "v1/app/header";
+        $this->footer = "v1/app/footer";
     }
 
     // main website routes
+    /**
+     * why us route
+     */
+    public function whyUs()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+        }
+        //
+        $whyUsContent = getPageContent('why_us');
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $whyUsContent['page']['meta']['title'];
+        $data['meta']['description'] = $whyUsContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $whyUsContent['page']['meta']['keywords'];
+        // css
+        $data['pageCSS'] = [
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
+        ];
+        // css bundle
+        $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, 'why_us', $this->disableMinifiedFiles);
+        // js bundle
+        $data['appJs'] = bundleJs([
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'v1/plugins/alertifyjs/alertify.min',
+            'js/jquery.validate.min',
+            'js/app_helper',
+            'v1/app/js/pages/home',
+            'v1/app/js/pages/schedule_demo',
+        ], $this->js, 'why_us', $this->disableMinifiedFiles);
+
+        $data['whyUsContent'] = $whyUsContent;
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/why_us');
+        $this->load->view($this->footer);
+    }
+
     // API routes
     /**
      * schedule your free demo process

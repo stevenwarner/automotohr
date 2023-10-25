@@ -1,5 +1,5 @@
 <main>
-        <div class="row">
+    <div class="row">
         <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
             <div class="top-div">
                 <div class="parent-div">
@@ -13,10 +13,10 @@
                             </div>
                             <form action="" method="post" id="loginForm" class="ng-pristine ng-valid">
                                 <div class="login-section">
-                                <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
 
                                     <h1><?php echo $loginContent['page']['sections']['section1']['heading'] ?>
-</h1>
+                                    </h1>
+                                    <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
                                     <input class="d-block login-inputs" placeholder="Username" name="username" id="email" value="<?php echo set_value('username'); ?>" />
                                     <?php echo form_error('username'); ?>
 
@@ -24,15 +24,19 @@
                                     <?php echo form_error('password'); ?>
 
                                     <div class="w-full forgot-password-text">
-                                        <span><a href="<?php echo site_url('forgot_password'); ?>">Forgot Password ?</a></span>
+                                        <span><a href="<?php echo site_url('forgot-password'); ?>">Forgot Password ?</a></span>
                                     </div>
 
                                     <div class="margin-top-30">
-                                        <button class="d-block login-screen-btns" type="submit" value="Login"> <?php echo $loginContent['page']['sections']['section1']['btnText'] ?> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                                        <button class="d-block login-screen-btns jsButtonAnimationSecond" type="submit" value="Login">
+                                            <p><?php echo $loginContent['page']['sections']['section1']['btnText'] ?>
+                                            </p>
+                                        </button>
                                     </div>
+                                    <br>
                                 </div>
+                            </form>
                         </div>
-                        </form>
                     </div>
                     <div class="second-div ">
 
@@ -43,7 +47,7 @@
                                 </div>
                             </div>
                             <h2><?php echo $loginContent['page']['sections']['section2']['heading'] ?></h2>
-                            <button class=" login-screen-btns margin-top-30" id="executiveadmin"> <?php echo $loginContent['page']['sections']['section2']['btnText'] ?> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                            <a class="login-screen-btns  jsButtonAnimationSecond margin-top-30" href="<?= base_url("executive_admin"); ?>"> <?php echo $loginContent['page']['sections']['section2']['btnText'] ?> </a>
                         </div>
                         <div class="second-child position-relative column-flex-center">
                             <div class="or-div">
@@ -52,7 +56,9 @@
                                 </div>
                             </div>
                             <h2><?php echo $loginContent['page']['sections']['section3']['heading'] ?></h2>
-                            <button class=" login-screen-btns margin-top-30" id="contactsupport"> <?php echo $loginContent['page']['sections']['section3']['btnText'] ?> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                            <a href="<?= base_url("schedule_your_free_demo"); ?>" class=" login-screen-btns jsButtonAnimationSecond margin-top-30">
+                                <p class="btn-text"><?php echo $loginContent['page']['sections']['section3']['btnText'] ?></p>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -60,21 +66,3 @@
         </div>
     </div>
 </main>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-<script type="text/javascript">
-    $('input').keydown(function(e) {
-        if (e.keyCode == 13) {
-            $(this).closest('form').submit();
-        }
-    });
-
-
-    $("#executiveadmin").click(function() {
-        window.location.href = '<?php echo STORE_PROTOCOL_SSL . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']) . 'executive_admin'; ?>';
-    });
-
-    $("#contactsupport").click(function() {
-        window.location.href = '<?php echo base_url('schedule_your_free_demo'); ?>';
-    });
-</script>

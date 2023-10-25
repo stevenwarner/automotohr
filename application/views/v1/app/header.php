@@ -36,87 +36,90 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarScroll">
-                    <ul class="navbar-nav mx-auto my-2 my-lg-0 navbar-nav-scroll">
+                    <ul class="navbar-nav mx-auto<?= $limited_menu ? '-right' : ''; ?> my-2 my-lg-0 navbar-nav-scroll">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= base_url($headerContent['page']['home']['slug']);?>"><?php echo $headerContent['page']['home']['title']; ?></a>
+                            <a class="nav-link" aria-current="page" href="<?= base_url($headerContent['page']['home']['slug']); ?>"><?php echo $headerContent['page']['home']['title']; ?></a>
                         </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <?php echo $headerContent['page']['products']['title']; ?>
-                            </a>
-                            <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
-                                <div class="display-flex">
-                                    <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?> </a>
-                                        <p class="dropdown-item-custom">
-                                            Performance reviews, surveys,<br />
-                                            employment info, and more.
-                                        </p>
-                                        <hr class="dropdown-hr" />
-                                    </li>
-                                    <hr />
-                                    <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
-                                        <p class="dropdown-item-custom">
-                                            Onboarding, hiring paperwork,<br />
-                                            orientation, and compliance.
-                                        </p>
-                                        <hr class="dropdown-hr" />
-                                    </li>
-                                    <hr class="dropdown-divider" />
-                                    <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
-                                        <p class="dropdown-item-custom">
-                                            Automate payroll deductions, <br />
-                                            direct deposits, and tax filing.
-                                        </p>
-                                        <hr class="dropdown-hr" />
-                                    </li>
-                                    <hr class="dropdown-divider" />
-                                </div>
-                                <div class="display-flex margin-top-twenty">
-                                    <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
-                                        </a>
-                                        <p class="dropdown-item-custom">
-                                            Career website, mobile recruiting,<br />
-                                            collaborative hiring & more.
-                                        </p>
+                        <?php if (!$limited_menu) { ?>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <?php echo $headerContent['page']['products']['title']; ?>
+                                </a>
+                                <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
+                                    <div class="display-flex">
+                                        <li>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?> </a>
+                                            <p class="dropdown-item-custom">
+                                                Performance reviews, surveys,<br />
+                                                employment info, and more.
+                                            </p>
+                                            <hr class="dropdown-hr" />
+                                        </li>
+                                        <hr />
+                                        <li>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
+                                            <p class="dropdown-item-custom">
+                                                Onboarding, hiring paperwork,<br />
+                                                orientation, and compliance.
+                                            </p>
+                                            <hr class="dropdown-hr" />
+                                        </li>
                                         <hr class="dropdown-divider" />
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
-                                        <p class="dropdown-item-custom">
-                                            Attendance, scheduling, PTO,<br />
-                                            leave, and overtime.
-                                        </p>
+                                        <li>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
+                                            <p class="dropdown-item-custom">
+                                                Automate payroll deductions, <br />
+                                                direct deposits, and tax filing.
+                                            </p>
+                                            <hr class="dropdown-hr" />
+                                        </li>
                                         <hr class="dropdown-divider" />
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
-                                        <p class="dropdown-item-custom">
-                                            Add compliance videos,<br />
-                                            employee handbook, and policies.
-                                        </p>
-                                        <hr class="dropdown-divider" />
-                                    </li>
-                                </div>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= base_url($headerContent['page']['whyus']['slug']); ?>"><?php echo $headerContent['page']['whyus']['title']; ?></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= base_url($headerContent['page']['aboutus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['aboutus']['title']; ?></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= base_url($headerContent['page']['contactus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['contactus']['title']; ?></a>
-                        </li>
+                                    </div>
+                                    <div class="display-flex margin-top-twenty">
+                                        <li>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
+                                            </a>
+                                            <p class="dropdown-item-custom">
+                                                Career website, mobile recruiting,<br />
+                                                collaborative hiring & more.
+                                            </p>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
+                                            <p class="dropdown-item-custom">
+                                                Attendance, scheduling, PTO,<br />
+                                                leave, and overtime.
+                                            </p>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
+                                            <p class="dropdown-item-custom">
+                                                Add compliance videos,<br />
+                                                employee handbook, and policies.
+                                            </p>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                    </div>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?= base_url($headerContent['page']['whyus']['slug']); ?>"><?php echo $headerContent['page']['whyus']['title']; ?></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?= base_url($headerContent['page']['aboutus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['aboutus']['title']; ?></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?= base_url($headerContent['page']['contactus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['contactus']['title']; ?></a>
+                            </li>
+                        <?php } ?>
                     </ul>
 
                     <div class="d-flex flex-direction-coloumn-on-mobile">
-                        <a class="btn schedule-btn" href="<?= base_url('#freedemo'); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
+                        <?php if (!$limited_menu) { ?>
+                            <a class="btn schedule-btn" href="<?= base_url('#freedemo'); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
+                        <?php } ?>
                         <a class="btn login-btn" href="<?= base_url($headerContent['page']['btnlogin']['slug']) ?>"> <?php echo $headerContent['page']['btnlogin']['title']; ?> </a>
                     </div>
                 </div>

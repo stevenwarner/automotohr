@@ -1,5 +1,5 @@
 <main>
-   
+
     <div class="row">
         <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
             <div class="top-div">
@@ -17,11 +17,10 @@
                                         </div>
 
                                         <div class="login-section">
-                                            <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
-                                            <br>
                                             <p>
                                                 <?php echo $passwordRecoveryContent['page']['subHeading'] ?>
                                             </p>
+                                            <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
                                             <input class="d-block login-inputs" placeholder="Password" value="<?php echo set_value('password'); ?>" type="password" id="password" name="password" style="margin-left: 20px;margin-right: 20px;" />
                                             <?php echo form_error('password'); ?>
 
@@ -31,8 +30,10 @@
                                     </div>
                                 </div>
                                 <div class="second-div ">
-                                    <div class="first-child position-relative column-flex-center">
-                                        <button class=" login-screen-btns margin-top-30" onclick="validate_form()" value="Submit"> <?php echo $passwordRecoveryContent['page']['btnText'] ?> <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                                    <div class="first-child  position-relative column-flex-center">
+                                        <button class="jsButtonAnimationSecond login-screen-btns margin-top-30" value="Submit">
+                                            <?php echo $passwordRecoveryContent['page']['btnText'] ?>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -58,7 +59,7 @@
                             </div>
                             <div class="second-div ">
                                 <div class="first-child position-relative column-flex-center">
-                                    <button class=" login-screen-btns margin-top-30" onclick="forgotpassword()" value="Submit"> Forgot Password<i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
+                                    <a class="jsButtonAnimationSecond login-screen-btns margin-top-30" href="<?= base_url('forgot-password') ?>" value="Submit"> Forgot Password</a>
                                 </div>
                             </div>
                         </div>
@@ -91,38 +92,3 @@
     </div>
 
 </main>
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
-<script type="text/javascript">
-    function validate_form() {
-        $("#forgotForm").validate({
-            ignore: ":hidden:not(select)",
-            rules: {
-                password: {
-                    required: true
-                },
-                retypepassword: {
-                    required: true,
-                    equalTo: "#password"
-                }
-            },
-            messages: {
-                password: {
-                    required: '<p class="error_message"><i class="fa fa-exclamation-circle"></i>Password is required</p>'
-                },
-                retypepassword: {
-                    required: '<p class="error_message"><i class="fa fa-exclamation-circle"></i>Confirm Password is required</p>',
-                    equalTo: '<p class="error_message"><i class="fa fa-exclamation-circle"></i>Confirm Password does not match</p>'
-                }
-            },
-            submitHandler: function(form) {
-                form.submit();
-            }
-        });
-    }
-
-
-    function forgotpassword() {
-        window.location.href = '<?= base_url('forgot_password') ?>';
-    }
-</script>

@@ -15,6 +15,7 @@ class Users extends CI_Controller
         //
         $this->css = "public/v1/css/app/";
         $this->js = "public/v1/js/app/";
+        $this->disableMinifiedFiles = false;
     }
 
     public function login()
@@ -25,6 +26,7 @@ class Users extends CI_Controller
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
         }
+        $data['limited_menu'] = true;
 
         //
         $loginContent = getPageContent('login');
@@ -36,20 +38,20 @@ class Users extends CI_Controller
         $data['meta']['keywords'] = $loginContent['page']['meta']['keywords'];
         //
         $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
         ];
         //
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
-            'v1/app/css/app',
-        ], $this->css);
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, 'login', $this->disableMinifiedFiles);
         //
         $data['appJs'] = bundleJs([
-            'v1/app/js/jquery-1.11.3.min',
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
-        ], $this->js);
+            'v1/plugins/jquery-3.7.min', // jquery
+            'v1/plugins/bootstrap5/js/bootstrap.bundle', // bootstrap 5
+            "v1/app/js/pages/home"
+        ], $this->js, 'login', $this->disableMinifiedFiles);
 
 
         if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
@@ -332,23 +334,25 @@ class Users extends CI_Controller
         $data['meta']['title'] = $forgotPasswordContent['page']['meta']['title'];
         $data['meta']['description'] = $forgotPasswordContent['page']['meta']['description'];
         $data['meta']['keywords'] = $forgotPasswordContent['page']['meta']['keywords'];
+        $data['limited_menu'] = true;
         //
         $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
         ];
-
         //
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
-            'v1/app/css/app',
-        ], $this->css);
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, 'forgot', $this->disableMinifiedFiles);
         //
         $data['appJs'] = bundleJs([
-            'v1/app/js/jquery-1.11.3.min',
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
-        ], $this->js);
+            'v1/plugins/jquery/jquery-3.7.min', // jquery
+            'v1/plugins/bootstrap5/js/bootstrap.bundle', // bootstrap 5
+            'js/jquery.validate.min', // validator
+            "v1/app/js/pages/home",
+            "v1/app/js/pages/forgot_password",
+        ], $this->js, 'forgot', $this->disableMinifiedFiles);
 
 
         $this->form_validation->set_rules($config);
@@ -400,7 +404,7 @@ class Users extends CI_Controller
                 );
                 $this->users_model->save_email_logs($emailData);
             }
-            redirect('/forgot_password', 'refresh');
+            redirect('/forgot-password', 'refresh');
         }
     }
 
@@ -520,22 +524,26 @@ class Users extends CI_Controller
         $data['meta']['title'] = $passwordRecoveryContent['page']['meta']['title'];
         $data['meta']['description'] = $passwordRecoveryContent['page']['meta']['description'];
         $data['meta']['keywords'] = $passwordRecoveryContent['page']['meta']['keywords'];
+
+        $data['limited_menu'] = true;
         //
         $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
         ];
         //
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
-            'v1/app/css/app',
-        ], $this->css);
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, 'forgot', $this->disableMinifiedFiles);
         //
         $data['appJs'] = bundleJs([
-            'v1/app/js/jquery-1.11.3.min',
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
-        ], $this->js);
+            'v1/plugins/jquery/jquery-3.7.min', // jquery
+            'v1/plugins/bootstrap5/js/bootstrap.bundle', // bootstrap 5
+            'js/jquery.validate.min', // validator
+            "v1/app/js/pages/home",
+            "v1/app/js/pages/forgot_password_recovery",
+        ], $this->js, 'forgot', $this->disableMinifiedFiles);
 
 
         $this->form_validation->set_rules($config);

@@ -1,63 +1,31 @@
 <main>
-       <div class="row">
-        <div class="col-xs-12 background-image-css" style="background-image: url(/assets/v1/app/images/loginBackground.png);">
-            <div class="top-div">
-                <form action="" method="post" id="forgotForm" class="ng-pristine ng-valid">
-                    <div class="parent-div">
-                        <div class="first-div">
-                            <div class="high-lighted-text-div">
-                                <div class="highlighted-text-upper-div">
-                                    <p class="highlighted-text">
-                                        <?php echo $forgotPasswordContent['page']['heading'] ?>
-                                    </p>
-                                </div>
+    <div class="row">
+        <div class="col-xs-12 background-image-css light-blue-background">
+            <div class="first column-flex-center recovery-password-div-padding ">
 
-                                <div class="login-section">
+                <div class="box-div  background-white flex-coloumn padding-twenty">
+                    <h1 class="automotoH1 darkGreyColor sora-family  margin-bottom-30 font-size-40">
+                        <?php echo $forgotPasswordContent['page']['heading'] ?>
+                    </h1>
+                    <p class="autmotoPara text-center margin-bottom-50 opacity-70">
+                        <?= $forgotPasswordContent["page"]["subHeading"]; ?>
+                    </p>
+                    <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
+                    <form action="" method="post" id="forgotForm" class="ng-pristine ng-valid">
+                        <input class="light-blue-border" type="email" name="email" placeholder="email" />
+                        <?php echo form_error('email'); ?>
+                        <button type="submit" class="margin-bottom-20 border-none password-recovery-submit w-100">
+                            <?= $forgotPasswordContent["page"]["btn1Text"]; ?>
+                        </button>
+                    </form>
+                </div>
 
-                                    <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
-
-                                    <br>
-                                    <p>
-
-                                    <?php echo $forgotPasswordContent['page']['heading'] ?>
-
-                                    
-                                        Please, enter your email in the field below and we'll <br /> send you a link to a page where you can change <br /> your password: </p>
-                                    <input class="d-block login-inputs" placeholder="Email" value="<?php echo set_value('email'); ?>" type="Email" id="email" name="email" style="margin-left: 20px;margin-right: 20px;" />
-                                    <?php echo form_error('email'); ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="second-div ">
-                            <div class="first-child position-relative column-flex-center">
-                                <button class=" login-screen-btns margin-top-30" onclick="validate_form()" value="Submit"> Submit <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i> </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+            </div>
+        </div>
+        <div class="col-xs-12 background-image-css light-blue-background not-show-on-mob">
+            <div class="first column-flex-center ">
+                <img src="<?= base_url("assets/v1/app/images/peoplewithkey.png"); ?>" alt="peoplewithkey" />
             </div>
         </div>
     </div>
-
 </main>
-<script type="text/javascript">
-    function validate_form() {
-        $("#forgotForm").validate({
-            ignore: ":hidden:not(select)",
-            rules: {
-                email: {
-                    required: true,
-                    email: true
-                }
-            },
-            messages: {
-                email: {
-                    required: '<p class="error"><i class="fa fa-exclamation-circle"></i> Please provide Valid email</p>'
-                }
-            },
-            submitHandler: function(form) {
-                form.submit();
-            }
-        });
-    }
-</script>
