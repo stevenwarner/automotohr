@@ -23,14 +23,14 @@
                         <div class="jsBox jsRegularHoursBox" style="margin-bottom: 3px">
                             <button class="btn btn-link csF16 jsBoxSwitch">
                                 <i class="fa fa-edit csF16"></i>
-                                &nbsp; <span class="jsRegularHoursText">0.00 hrs</span> (RH)
+                                &nbsp; <span class="jsRegularHoursText">0.00 hrs</span> (Regular Hours)
                             </button>
                             <div class="input-group jsBoxField dn">
                                 <div class="input-group-addon">RH</div>
                                 <input type="number" class="form-control text-right jsRegularHours jsRegularHoursValue" value="" placeholder="0.0" />
                                 <div class="input-group-addon">hr</div>
-                                <div class="input-group-addon">
-                                    <button class="btn btn-danger">
+                                <div class="input-group-addon" style="padding: 0px;">
+                                    <button class="btn btn-danger jsCancelRH" style="padding: 4px; margin: 0">
                                         <i class="fa fa-times-circle"></i>
                                     </button>
                                 </div>
@@ -43,12 +43,17 @@
                         <div class="jsBox jsOvertimeBox" style="margin-bottom: 3px">
                             <button class="btn btn-link csF16 jsBoxSwitch">
                                 <i class="fa fa-edit csF16"></i>
-                                &nbsp; <span class="jsOvertimeText">0.00 hrs</span> (OT)
+                                &nbsp; <span class="jsOvertimeText">0.00 hrs</span> (Overtime)
                             </button>
                             <div class="input-group jsBoxField dn">
                                 <div class="input-group-addon">OT</div>
                                 <input type="number" class="form-control text-right jsOvertime jsOvertimeValue" value="" placeholder="0.0" />
                                 <div class="input-group-addon">hr</div>
+                                <div class="input-group-addon" style="padding: 0px;">
+                                    <button class="btn btn-danger jsCancelOT" style="padding: 4px; margin: 0">
+                                        <i class="fa fa-times-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -58,12 +63,17 @@
                         <div class="jsBox jsDoubleOvertimeBox" style="margin-bottom: 3px">
                             <button class="btn btn-link csF16 jsBoxSwitch">
                                 <i class="fa fa-edit csF16"></i>
-                                &nbsp; <span class="jsDoubleOvertimeText">0.00 hrs</span> (DOT)
+                                &nbsp; <span class="jsDoubleOvertimeText">0.00 hrs</span> (Double Overtime)
                             </button>
                             <div class="input-group jsBoxField dn">
                                 <div class="input-group-addon">DOT</div>
                                 <input type="number" class="form-control text-right jsDoubleOvertime jsDoubleOvertimeValue" value="" placeholder="0.0" />
                                 <div class="input-group-addon">hr</div>
+                                <div class="input-group-addon" style="padding: 0px;">
+                                    <button class="btn btn-danger jsCancelDOT" style="padding: 4px; margin: 0">
+                                        <i class="fa fa-times-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -81,9 +91,14 @@
                                 &nbsp; <span class="jsBonusText">$0.00</span>
                             </button>
                             <div class="input-group jsBoxField dn">
-                                <div class="input-group-addon">B</div>
+                                <div class="input-group-addon">Bonus</div>
                                 <input type="number" class="form-control text-right jsBonus jsBonusValue" value="" placeholder="0.0" />
                                 <div class="input-group-addon">$</div>
+                                <div class="input-group-addon" style="padding: 0px;">
+                                    <button class="btn btn-danger jsCancelBonus" style="padding: 4px; margin: 0">
+                                        <i class="fa fa-times-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     <?php } ?>
@@ -94,7 +109,7 @@
                             &nbsp; <span class="jsAdditionalEarningText">$0.00</span>
                         </button>
                         <div class="input-group jsBoxField dn">
-                            <div class="input-group-addon">AE</div>
+                            <div class="input-group-addon">Additional Earnings</div>
                             <input type="number" readonly class="form-control text-right jsAdditionalEarning jsAdditionalEarningValue" value="" placeholder="0.0" />
                         </div>
                     </div>
@@ -111,8 +126,8 @@
                         <i class="fa fa-plus-circle csF16"></i>
                         &nbsp;Reimbursement
                     </button>
-                     <p class="csF16 jsReimbursementTotalBox jsReimbursementBtn hidden">
-                        <strong class="jsReimburmentTotal">R $0.0</strong>
+                    <p class="csF16 jsReimbursementTotalBox jsReimbursementBtn hidden">
+                        <strong class="jsReimburmentTotal">Reimbursement $0.0</strong>
                     </p>
                     <p class="csF16">
                         Pay by: <select class="jsPaymentMethod">

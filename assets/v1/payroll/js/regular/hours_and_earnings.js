@@ -37,6 +37,86 @@ $(function regularPayrollsHoursAndEarnings() {
 	});
 
 	// Regular hours
+	$(document).on("click", ".jsCancelRH", function () {
+		//
+		const employeeId = $(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.data("id");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsRegularHoursBox")
+			.find(".jsBoxSwitch")
+			.removeClass("dn");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsRegularHoursBox")
+			.find(".jsBoxField")
+			.addClass("dn");
+	});
+
+	// Regular hours
+	$(document).on("click", ".jsCancelOT", function () {
+		//
+		const employeeId = $(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.data("id");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsOvertimeBox")
+			.find(".jsBoxSwitch")
+			.removeClass("dn");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsOvertimeBox")
+			.find(".jsBoxField")
+			.addClass("dn");
+	});
+
+	// Regular hours
+	$(document).on("click", ".jsCancelDOT", function () {
+		//
+		const employeeId = $(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.data("id");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsDoubleOvertimeBox")
+			.find(".jsBoxSwitch")
+			.removeClass("dn");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsDoubleOvertimeBox")
+			.find(".jsBoxField")
+			.addClass("dn");
+	});
+
+	// Regular hours
+	$(document).on("click", ".jsCancelBonus", function () {
+		//
+		const employeeId = $(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.data("id");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsBonusBox")
+			.find(".jsBoxSwitch")
+			.removeClass("dn");
+		//
+		$(this)
+			.closest("tr.jsRegularPayrollEmployeeRow")
+			.find(".jsBonusBox")
+			.find(".jsBoxField")
+			.addClass("dn");
+	});
+
+	// Regular hours
 	$(document).on("keyup", ".jsRegularHoursValue", function () {
 		//
 		const val = $(this).val().trim() || 0;
