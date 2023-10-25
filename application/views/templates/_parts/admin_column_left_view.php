@@ -1340,7 +1340,7 @@ if (
                 <li>
                     <a class="hr-closed-menu <?php if ($documents_library_menu) {
                                                     echo 'hr-opened-menu';
-                                                } ?>" href="javascript:;">Document Center</a>
+                                                } ?>" href="javascript:;">Resource Center</a>
                     <div class="submenu" <?php if ($documents_library_menu) {
                                                 echo 'style="display:block;"';
                                             } ?>>
@@ -1349,7 +1349,7 @@ if (
                             <div class="menu-item">
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/documents_library')) !== false) {
                                         echo 'class="active"';
-                                    } ?> href="<?php echo site_url('manage_admin/documents_library'); ?>">Document Center Management</a>
+                                    } ?> href="<?php echo site_url('manage_admin/documents_library'); ?>">Resource Center Management</a>
                             </div>
                         <?php } ?>
                     </div>
