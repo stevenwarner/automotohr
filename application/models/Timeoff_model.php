@@ -2826,7 +2826,8 @@ class Timeoff_model extends CI_Model
     function getEmployeePoliciesByDate(
         $companyId,
         $employeeId,
-        $startDate
+        $startDate,
+        $policyIds = []
     ) {
         //
         $r = [];
@@ -2857,7 +2858,7 @@ class Timeoff_model extends CI_Model
         }
         //
         $settings = $this->getSettings($companyId);
-        $policies = $this->getCompanyPoliciesWithAccruals($companyId);
+        $policies = $this->getCompanyPoliciesWithAccruals($companyId, true, $policyIds);
         $balances = $this->getBalances($companyId);
 
         //

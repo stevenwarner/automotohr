@@ -7105,31 +7105,19 @@ class Time_off extends Public_Controller
         $type = 'created'
     ) {
         // Get request
-
         $request = $this->timeoff_model->getRequestById($requestId);
         //
         $policiesDetail  = $this->timeoff_model->getEmployeePoliciesByDate(
             $request['company_sid'],
             $request['userId'],
-            $request['request_from_date']
+            $request['request_from_date'],
+            [$request['timeoff_policy_sid']]
         );
-
-        // 
-        $allowedTime = '';
-        $consumedTime = '';
-        $remainingTime = '';
-        $policyCycle = '';
-        foreach ($policiesDetail as $rowDetail) {
-            if ($rowDetail['PolicyId'] == $request['timeoff_policy_sid']) {
-                $allowedTime = $rowDetail['AllowedTime']['text'];
-                $consumedTime = $rowDetail['ConsumedTime']['text'];
-                $remainingTime = $rowDetail['RemainingTime']['text'];
-                $policyCycle =   formatDateToDB($rowDetail['lastAnniversaryDate'], DB_DATE, DATE) . ' - ' . formatDateToDB($rowDetail['upcomingAnniversaryDate'], DB_DATE, DATE);
-                break;
-            }
-        }
-
-
+        //
+        $allowedTime = $policiesDetail['AllowedTime']['text'];
+        $consumedTime = $policiesDetail['ConsumedTime']['text'];
+        $remainingTime = $policiesDetail['RemainingTime']['text'];
+        $policyCycle = formatDateToDB($policiesDetail['lastAnniversaryDate'], DB_DATE, DATE) . ' - ' . formatDateToDB($policiesDetail['upcomingAnniversaryDate'], DB_DATE, DATE);
         //
         $CHF = message_header_footer($request['company_sid'], $request['CompanyName']);
         // Get template
