@@ -1668,6 +1668,9 @@ class Employee_management extends Public_Controller
                         $data_to_insert['union_name'] = '';
                     }
 
+                    //
+                    $data_to_insert['uniform_top_size'] = $this->input->post('uniform_top_size');
+                    $data_to_insert['uniform_bottom_size'] = $this->input->post('uniform_bottom_size');
 
                     //
                     if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
@@ -1867,11 +1870,11 @@ class Employee_management extends Public_Controller
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
                         $this->load->model('timeoff_model');
                         //
-                         $this->timeoff_model->updateEmployeePoliciesNew(
-                             $company_id,
-                             $employer_id,
-                             $this->input->post('policies')
-                         );
+                        $this->timeoff_model->updateEmployeePoliciesNew(
+                            $company_id,
+                            $employer_id,
+                            $this->input->post('policies')
+                        );
                     }
                     // Profile save intercept
                     $this->handleProfileChange(
@@ -2423,7 +2426,9 @@ class Employee_management extends Public_Controller
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
                     'marital_status' => $this->input->post('marital_status'),
-                    'gender' => $gender
+                    'gender' => $gender,
+                    'uniform_top_size' => $this->input->post('uniform_top_size'),
+                    'uniform_bottom_size' => $this->input->post('uniform_bottom_size'),
                 );
 
                 //
@@ -4205,7 +4210,7 @@ class Employee_management extends Public_Controller
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
-            check_access_permissions($security_details, 'dashboard', 'employee_management'); 
+            check_access_permissions($security_details, 'dashboard', 'employee_management');
             if ($employee_sid != null) {
                 $this->load->model('manage_admin/company_model');
 

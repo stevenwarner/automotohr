@@ -341,6 +341,31 @@ if ($_ssv) {
                             </div>
                         </div>
 
+
+
+
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <?php $field_id = 'uniform_top_size'; ?>
+                                    <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
+                                    <?php echo form_label('Uniform Top Size: ', $field_id); ?>
+                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"'); ?>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <?php $field_id = 'uniform_bottom_size'; ?>
+                                    <?php $temp2 = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
+
+                                    <label>Uniform Bottom Size:</label>
+                                    <input class="form-control" id="date_of_birth"  type="text"  name="<?php echo $field_id; ?>" value="<?php echo $temp2; ?>">
+                                </div>
+                            </div>
+                        </div>
+
+
+
                         <?php
                         //
                         $hasOther = [];

@@ -700,8 +700,6 @@
                                                 <li>
                                                     <label>Union Member:</label>
                                                     <div class="hr-fields-wrap">
-
-
                                                         <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
                                                             <label class="control control--radio " style="margin-left: -20px;">Yes <input type="radio" name="union_member" class="unionmember" value="1" <?php echo $data['union_member'] ? 'checked' : '' ?>>
                                                                 <div class="control__indicator"></div>
@@ -740,7 +738,20 @@
                                                     </div>
                                                     <br>
                                                 </li>
+
+                                                <li>
+                                                    <label>Uniform Top Size</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds"  value="<?= !$data['uniform_top_size'] ? "" : $data['uniform_top_size']; ?>" name="uniform_top_size">
+                                                    </div>
+                                                </li>
                                                 <br>
+                                                <li>
+                                                    <label>Uniform Bottom Size</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" value="<?= !$data['uniform_bottom_size'] ? "" : $data['uniform_bottom_size']; ?>" name="uniform_bottom_size">
+                                                    </div>
+                                                </li>
 
 
                                                 <?php

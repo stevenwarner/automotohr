@@ -1004,6 +1004,11 @@ class Application_tracking_system extends Public_Controller
                 }
 
                 //
+                $user_data['uniform_top_size'] = $formpost['uniform_top_size'];
+                $user_data['uniform_bottom_size'] = $formpost['uniform_bottom_size'];
+
+
+                //
                 $user_data['languages_speak'] = null;
                 //
                 $languages_speak = $formpost['secondaryLanguages'];

@@ -353,6 +353,22 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                 </div>
                                             </div>
 
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Uniform Top Size<input type="checkbox" name="uniform_top_size" class="check_it" value="uniform_top_size">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Uniform Bottom Size<input type="checkbox" name="uniform_bottom_size" class="check_it" value="uniform_bottom_size">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
 
                                         </div>
                                     </div>
