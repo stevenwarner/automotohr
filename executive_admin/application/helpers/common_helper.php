@@ -1223,3 +1223,40 @@ if (!function_exists('getCompanyInfo')) {
         return $ra;
     }
 }
+
+
+
+// Replace magic quotes
+if (!function_exists('replace_magic_quotes')) {
+    function replace_magic_quotes(&$dataStr, $fromArray = array(), $toArray = array())
+    {
+        if (sizeof($fromArray) && sizeof($toArray)) {
+            $dataStr = str_replace($fromArray, $toArray, $dataStr);
+        } else if (sizeof($fromArray)) {
+            foreach ($fromArray as $k0 => $v0) {
+                $dataStr = str_replace($k0, $v0, $dataStr);
+            }
+        } else {
+            $CI = get_instance();
+            $ses = $CI->session->userdata('logged_in');
+            if (!$ses) return false;
+            //
+            $ses = $ses['company_detail'];
+            $dataStr = str_replace(
+                array(
+                    '{{company_name}}',
+                    '{{company_address}}',
+                    '{{company_phone}}',
+                    '{{career_site_url}}',
+                ),
+                array(
+                    $ses['CompanyName'],
+                    $ses['Location_Address'],
+                    $ses['PhoneNumber'],
+                    $ses['WebSite']
+                ),
+                $dataStr
+            );
+        }
+    }
+}

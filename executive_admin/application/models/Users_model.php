@@ -44,6 +44,9 @@ class Users_model extends CI_Model
         $this->db->select('t1.company_sid');
         $this->db->select('t1.logged_in_sid');
         $this->db->select('t2.CompanyName as company_name');
+        $this->db->select('t2.PhoneNumber');
+        $this->db->select('t2.Location_Address');
+
         $this->db->select('t2.company_status');
         $this->db->select('t3.sub_domain as company_website');
         $this->db->from('executive_user_companies as t1');

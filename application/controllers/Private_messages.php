@@ -549,6 +549,13 @@ class Private_messages extends Public_Controller
                     $employer_name = $employerData['username'];
                     $message_hf = (message_header_footer($data['session']['company_detail']['sid'], $data['session']['company_detail']['CompanyName']));
                     $subject = 'Private Message Notification'; //send email
+
+                    $messageBody = $formpost['message'];
+                    $messagesubject = $formpost["subject"];
+                    replace_magic_quotes($messagesubject, $fromArray, $toArray);
+                    replace_magic_quotes($messageBody, $fromArray, $toArray);
+                    $messageBody .= $attach_body;
+
                     $body = $message_hf['header']
                         . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                         . '<br><br>'
@@ -558,9 +565,9 @@ class Private_messages extends Public_Controller
                         . $message_date
                         . '<br><br><b>'
                         . 'Subject:</b> '
-                        . $formpost["subject"]
+                        . $messagesubject
                         . '<br><hr>'
-                        . $formpost["message"] . '<br><br>'
+                        . $messageBody  . '<br><br>'
                         . $message_hf['footer']
                         . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                         . $secret_key . '</div>';
@@ -601,6 +608,7 @@ class Private_messages extends Public_Controller
 
                     $message_data['message'] = $body;
                     $message_data['subject'] = $subject;
+
 
                     $this->message_model->save_message($message_data);
                     $this->session->set_flashdata('message', 'Success! Message sent successfully!');
@@ -654,6 +662,7 @@ class Private_messages extends Public_Controller
                                 $messageBody = $formpost['message'];
                                 replace_magic_quotes($subject, $fromArray, $toArray);
                                 replace_magic_quotes($messageBody, $fromArray, $toArray);
+                                $messageBody .= $attach_body;
 
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
@@ -670,7 +679,7 @@ class Private_messages extends Public_Controller
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
-                                
+
 
                                 if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                                     $file = explode(".", $_FILES['message_attachment']['name']);
@@ -734,6 +743,8 @@ class Private_messages extends Public_Controller
                                 $messageBody = $formpost['message'];
                                 replace_magic_quotes($subject, $fromArray, $toArray);
                                 replace_magic_quotes($messageBody, $fromArray, $toArray);
+                                $messageBody .= $attach_body;
+
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                                     . '<br><br>'
@@ -807,6 +818,8 @@ class Private_messages extends Public_Controller
                                 $messageBody = $formpost['message'];
                                 replace_magic_quotes($subject, $fromArray, $toArray);
                                 replace_magic_quotes($messageBody, $fromArray, $toArray);
+                                $messageBody .= $attach_body;
+
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                                     . '<br><br>'
@@ -936,6 +949,8 @@ class Private_messages extends Public_Controller
                             $messageBody = $formpost['message'];
                             replace_magic_quotes($subject, $fromArray, $toArray);
                             replace_magic_quotes($messageBody, $fromArray, $toArray);
+                            $messageBody .= $attach_body;
+
                             $body = $message_hf['header']
                                 . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $message_data['contact_name'] . ',</h2>'
                                 . '<br><br>'
@@ -1086,7 +1101,18 @@ class Private_messages extends Public_Controller
                     }
                 }
 
-                $fromArray = array('{{company_name}}', '{{date}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}', '{{company_address}}', '{{company_phone}}', '{{career_site_url}}');
+                $fromArray = [
+                    '{{company_name}}',
+                    '{{date}}',
+                    '{{first_name}}',
+                    '{{last_name}}',
+                    '{{job_title}}',
+                    '{{applicant_name}}',
+                    '{{email}}',
+                    '{{company_address}}',
+                    '{{company_phone}}',
+                    '{{career_site_url}}'
+                ];
                 //
                 $today   = new DateTime();
                 $today   = reset_datetime(array('datetime' => $today->format('Y-m-d'), '_this' => $this, 'type' => 'company', 'with_timezone' => true));
@@ -1102,9 +1128,15 @@ class Private_messages extends Public_Controller
                         //
                         $first_name = $user[0]['first_name'];
                         $last_name = $user[0]['last_name'];
+                        $email = $user[0]['email'];
+                        $job_title = $user[0]['job_title'];
+
                     } else if ($user_type == 'admin') {
                         $first_name = 'Admin';
                         $last_name = '';
+                        $email = '';
+                        $job_title = '';
+
                     } else {  // applicant
                         $job_id = $message[0]['job_id'];
                         //
@@ -1112,14 +1144,21 @@ class Private_messages extends Public_Controller
                             $applicant = $this->message_model->get_applicant($job_id);
                             $first_name = $applicant[0]['first_name'];
                             $last_name = $applicant[0]['last_name'];
+                            $email = $applicant[0]['email'];
+                            $job_title = $applicant[0]['desired_job_title'];
                         } else {
                             $first_name = $message[0]['from_id'];
                             $last_name = '';
+                            $email = '';
+                            $job_title ='';
                         }
                     }
                 } else {
                     $first_name = '';
                     $last_name = '';
+                    $email = '';
+                    $job_title ='';
+
                 }
 
 
@@ -1166,7 +1205,8 @@ class Private_messages extends Public_Controller
                 unset($message_data['toemail']);
 
 
-                $toArray = array($company_detail['CompanyName'], $today, $first_name, $last_name, '',  ' ', '', $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                $toArray = array($company_detail['CompanyName'], $today, $first_name, $last_name, $job_title,  ' ', $email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+
                 //
 
                 $body    = $formpost["message"];
@@ -1201,6 +1241,7 @@ class Private_messages extends Public_Controller
                     . $message_hf['footer']
                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                     . $secret_key . '</div>';
+
                 sendMail($from, $to, $subject, $body, $company_detail['CompanyName'], REPLY_TO);
                 //
                 if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
