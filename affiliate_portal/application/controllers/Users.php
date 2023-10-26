@@ -10,8 +10,8 @@ class Users extends CI_Controller
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
         //
-        $this->css = "public/v1/css/app/";
-        $this->js = "public/v1/js/app/";
+        $this->css = "../public/v1/css/app/";
+        $this->js = "../public/v1/js/app/";
     }
 
     public function register()
@@ -56,22 +56,16 @@ class Users extends CI_Controller
         $data['meta']['keywords'] = $loginContent['page']['meta']['keyword'];
         //
         $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
+            main_url('assets/v1/plugins/bootstrap5/css/bootstrap.min.css'),
+            main_url('assets/v1/plugins/fontawesome/css/all.min.css'),
             'v1/app/css/login',
-
         ];
         //
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
-            'v1/app/css/app',
-        ], $this->css);
+            'v1/app/css/theme',
+        ], $this->css, "affiliate-login");
         //
-        $data['appJs'] = bundleJs([
-            'v1/app/js/jquery-1.11.3.min',
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
-        ], $this->js);
+        $data['limited_menu'] = true;
 
 
         $this->form_validation->set_rules('identity', 'Username', 'trim|required|xss_clean');
@@ -102,7 +96,7 @@ class Users extends CI_Controller
 
                 redirect(base_url('dashboard'), "refresh");
             } else if ($result['status'] == 'inactive') {
-                $this->session->set_flashdata('message', '<b>Error:</b> Account De-activated, Please contact ' . STORE_NAME . ' Admininstrator!');
+                $this->session->set_flashdata('message', '<b>Error:</b> Account De-activated, Please contact ' . STORE_NAME . ' Administrator!');
                 redirect(base_url('login'), "refresh");
             } else {
                 $this->session->set_flashdata('message', '<b>Error:</b> Invalid Login Credentials!');

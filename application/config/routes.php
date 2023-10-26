@@ -65,6 +65,17 @@ $route['privacy-policy']['get'] = 'v1/App/privacyPolicy';
 $route['terms-of-service']['get'] = 'v1/App/termsOfService';
 $route['sitemap']['get'] = 'v1/App/siteMap';
 $route['products/(:any)']['get'] = 'v1/App/products/$1';
+$route['get-your-account']['get'] = 'v1/App/getYourAccount';
+$route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
+
+//
+$route['resources']['get'] = 'v1/Resources/index';
+$route['subscribeCommunity']['post'] = 'v1/Resources/subscribeCommunity';
+$route['searchResources']['get'] = 'v1/Resources/searchResources';
+$route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
+$route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
+$route['resources/(:any)'] = 'v1/Resources/readMore/$1';
+
 
 //  Goals
 $route['remarket_portal'] = 'Remarket_portal/index';
@@ -1103,7 +1114,6 @@ $route['my_learning_center'] = 'learning_center/my_learning_center';
 $route['learning_center/my_learning_center'] = 'learning_center/my_learning_center';
 //Affiliation Program
 $route['can-we-send-you-a-check-every-month'] = 'affiliates/affiliationform';
-$route['affiliate-program'] = 'affiliates/index';
 // $route['manage_admin/referred'] = 'manage_admin/affiliates/referred';
 // $route['manage_admin/referred/view_details/(:num)'] = 'manage_admin/affiliates/view_details/$1';
 // $route['manage_admin/referred/accept_reject'] = 'manage_admin/affiliates/accept_reject';
@@ -1997,11 +2007,3 @@ $route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resou
 $route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
 $route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
 
-//
-$route['resources']['get'] = 'v1/Resources/index';
-$route['subscribeCommunity']['post'] = 'v1/Resources/subscribeCommunity';
-$route['searchResources']['get'] = 'v1/Resources/searchResources';
-$route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
-$route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
-
-$route['resources/(:any)'] = 'v1/Resources/readMore/$1';

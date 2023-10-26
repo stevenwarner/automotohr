@@ -288,8 +288,7 @@ if (!isset($view_folder[0]) && is_dir(APPPATH . 'views' . DIRECTORY_SEPARATOR)) 
 
 define('VIEWPATH', $view_folder . DIRECTORY_SEPARATOR);
 
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+turnOnErrorReporting(0);
 
 /*
  * --------------------------------------------------------------------

@@ -56,7 +56,7 @@
                                 </div>
                             </div>
                             <h2><?php echo $loginContent['page']['sections']['section3']['heading'] ?></h2>
-                            <a href="<?= base_url("schedule_your_free_demo"); ?>" class=" login-screen-btns jsButtonAnimationSecond margin-top-30">
+                            <a href="<?php echo $loginContent['page']['sections']['section3']['btnSlug'] ?>" class=" login-screen-btns jsButtonAnimationSecond margin-top-30">
                                 <p class="btn-text"><?php echo $loginContent['page']['sections']['section3']['btnText'] ?></p>
                             </a>
                         </div>

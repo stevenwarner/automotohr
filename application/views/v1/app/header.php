@@ -118,7 +118,7 @@
 
                     <div class="d-flex flex-direction-coloumn-on-mobile">
                         <?php if (!$limited_menu) { ?>
-                            <a class="btn schedule-btn" href="<?= base_url('#freedemo'); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
+                            <a class="btn schedule-btn" href="<?= base_url($headerContent['page']['btnobligation']['slug']); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
                         <?php } ?>
                         <a class="btn login-btn" href="<?= base_url($headerContent['page']['btnlogin']['slug']) ?>"> <?php echo $headerContent['page']['btnlogin']['title']; ?> </a>
                     </div>

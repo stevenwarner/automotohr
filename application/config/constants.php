@@ -703,3 +703,6 @@ define('DUE_SOON_COURSES_REMINDER_NOTIFICATION', 436);
 // W4 amounts
 define("W4_DEPENDENTS_UNDER_AGE_AMOUNT", 2000);
 define("W4_DEPENDENTS_AMOUNT", 500);
+
+// web page cache time
+define("WEB_PAGE_CACHE_TIME_IN_MINUTES", 1);

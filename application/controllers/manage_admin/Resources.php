@@ -109,6 +109,7 @@ class Resources extends Admin_Controller
             $dataInsert['slug'] = $this->input->post('slug');
             $dataInsert['description'] = $this->input->post('description');
             $dataInsert['status'] = $this->input->post('status');
+            $dataInsert['created_at'] = $dataInsert['updated_at'] = getSystemDate();
             if (!empty($_POST['resourcesfile'])) {
                 $dataInsert['resources'] = $this->input->post('resourcesfile');
             }

@@ -104,6 +104,7 @@
                             <a href="<?= base_url($footerContent['page']['terms']['slug']) ?>"><?php echo $footerContent['page']['terms']['title'] ?></a>
                         </p>
                         <p class="footer-text-three"><a href="<?= base_url($footerContent['page']['sitemap']['slug']) ?>"><?php echo $footerContent['page']['sitemap']['title'] ?></a></p>
+                        <p class="footer-text-three"><a href="<?= base_url("affiliate_portal/login") ?>">Affiliate Partner Log-in</a></p>
                     </div>
                 </div>
             </div>

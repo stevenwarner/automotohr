@@ -6,7 +6,7 @@
         <div class="row margin-bottom-20">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
                 <div>
-                    <img src="<?= base_url('assets/v1/app/images/'); ?>Emboss-Logo.png" alt="embose logo" />
+                    <img src="<?= image_url('Emboss-Logo.png'); ?>" alt="embose logo" />
                     <p class="white-opacity-text">Hire & Manage Great People</p>
                     <p class="white-opacity-text text-left">AutomotoHR.com</p>
                 </div>
@@ -64,51 +64,47 @@
                     </div>
                 </div>
             </div>
-            <?php
-                $baseURL = base_url();
-                $homeURL = explode('/', $baseURL);
-                $automotohrURL = $homeURL[0] . '//' . $homeURL[2];
-                ?>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 section-space-adj">
                 <p class="footer-text-three">
                     <a href="#"> Products</a>
                 </p>
 
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= $automotohrURL.'/'.$footerContent['page']['products']['productoperations']['slug'];?>"> <?php echo $footerContent['page']['products']['productoperations']['title'] ?> </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= $automotohrURL.'/'.$footerContent['page']['products']['recruitment']['slug']; ?>"> <?php echo $footerContent['page']['products']['recruitment']['title'] ?> </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= $automotohrURL.'/'.$footerContent['page']['products']['electroniconboarding']['slug'];?>"> <?php echo $footerContent['page']['products']['electroniconboarding']['title'] ?></a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= $automotohrURL.'/'.$footerContent['page']['products']['employeemanagement']['slug']; ?>"> <?php echo $footerContent['page']['products']['employeemanagement']['title'] ?> </a></li>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= $automotohrURL.'/'.$footerContent['page']['products']['payroll']['slug']; ?>"> <?php echo $footerContent['page']['products']['payroll']['title'] ?> </a></p>
-                <p class=" second-text-adj f-w-500"><a href="<?= $automotohrURL.'/'.$footerContent['page']['products']['compliance']['slug']; ?>"> <?php echo $footerContent['page']['products']['compliance']['title'] ?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['productoperations']['slug']) ?>"> <?php echo $footerContent['page']['products']['productoperations']['title'] ?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['recruitment']['slug']) ?>"> <?php echo $footerContent['page']['products']['recruitment']['title'] ?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['electroniconboarding']['slug']) ?>"> <?php echo $footerContent['page']['products']['electroniconboarding']['title'] ?></a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['employeemanagement']['slug']) ?>"> <?php echo $footerContent['page']['products']['employeemanagement']['title'] ?> </a></li>
+                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['payroll']['slug']) ?>"> <?php echo $footerContent['page']['products']['payroll']['title'] ?> </a></p>
+                <p class=" second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['compliance']['slug']) ?>"> <?php echo $footerContent['page']['products']['compliance']['title'] ?> </a></p>
 
                 <div class="margin-top-40 margin-bottom-30">
-                    <p class="footer-text-three p-bottom-adj"><a href="<?= $automotohrURL.'/'.$footerContent['page']['affiliateprogram']['slug'];?>"> <?php echo $footerContent['page']['affiliateprogram']['title'] ?></a></p>
-                    <p class="footer-text-three p-bottom-adj"><a href="<?= $automotohrURL.'/'.$footerContent['page']['privacypolicy']['slug']; ?>"> <?php echo $footerContent['page']['privacypolicy']['title'] ?> </a></p>
+                    <p class="footer-text-three p-bottom-adj"><a href="<?= main_url($footerContent['page']['affiliateprogram']['slug']) ?>"> <?php echo $footerContent['page']['affiliateprogram']['title'] ?></a></p>
+                    <p class="footer-text-three p-bottom-adj"><a href="<?= main_url($footerContent['page']['privacypolicy']['slug']) ?>"> <?php echo $footerContent['page']['privacypolicy']['title'] ?> </a></p>
                 </div>
 
                 <div class="book-demo-btn">
-                    <a href="<?php echo $automotohrURL;?>"> Book A Free Demo</a>
+                    <a href="javascript:void(0)" class="jsButtonAnimate jsScheduleDemoPopup"> Book A Free Demo</a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-2">
                 <div>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= $automotohrURL.'/'.$footerContent['page']['whyus']['slug'];?>"><?php echo $footerContent['page']['whyus']['title'] ?></a>
+                        <a href="<?= main_url($footerContent['page']['whyus']['slug']) ?>"><?php echo $footerContent['page']['whyus']['title'] ?></a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= $automotohrURL.'/'.$footerContent['page']['aboutus']['slug'];?>"><?php echo $footerContent['page']['aboutus']['title'] ?></a>
+                        <a href="<?= main_url($footerContent['page']['aboutus']['slug']) ?>"><?php echo $footerContent['page']['aboutus']['title'] ?></a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= $automotohrURL.'/'.$footerContent['page']['resources']['slug'];?>"><?php echo $footerContent['page']['resources']['title'] ?></a>
+                        <a href="<?= main_url($footerContent['page']['resources']['slug']) ?>"><?php echo $footerContent['page']['resources']['title'] ?></a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= $automotohrURL.'/'.$footerContent['page']['contactus']['slug']; ?>"><?php echo $footerContent['page']['contactus']['title'] ?></a>
+                        <a href="<?= main_url($footerContent['page']['contactus']['slug']) ?>"><?php echo $footerContent['page']['contactus']['title'] ?></a>
                     </p>
                     <div class="margin-top-40">
                         <p class="footer-text-three p-bottom-adj">
-                            <a href="<?= $automotohrURL.'/'.$footerContent['page']['terms']['slug']; ?>"><?php echo $footerContent['page']['terms']['title'] ?></a>
+                            <a href="<?= main_url($footerContent['page']['terms']['slug']) ?>"><?php echo $footerContent['page']['terms']['title'] ?></a>
                         </p>
-                        <p class="footer-text-three"><a href="<?= $automotohrURL.'/'.$footerContent['page']['sitemap']['slug']; ?>"><?php echo $footerContent['page']['sitemap']['title'] ?></a></p>
+                        <p class="footer-text-three"><a href="<?= main_url($footerContent['page']['sitemap']['slug']) ?>"><?php echo $footerContent['page']['sitemap']['title'] ?></a></p>
+                        <p class="footer-text-three"><a href="<?= main_url("affiliate_portal/login") ?>">Affiliate Partner Log-in</a></p>
                     </div>
                 </div>
             </div>
@@ -152,14 +148,16 @@
             </div>
             <div class="col-sm-12 col-lg-6 text-right">
                 <p class="inline-block">Powered by</p>
-                <img src="<?= base_url('assets/v1/app/images/'); ?>footerlogo.png" alt="footer logo" />
+                <img src="<?= main_url('assets/v1/app/images/'); ?>footerlogo.png" alt="footer logo" />
             </div>
         </div>
     </div>
 </footer>
+<?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
 </body>
 
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>
 <?= $appJs ?? ''; ?>
+
 
 </html>

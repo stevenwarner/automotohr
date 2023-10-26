@@ -1507,7 +1507,7 @@ if (!function_exists('_m')) {
         //
         if ($d) {
             return
-            $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
+                $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
         }
         //
         return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
@@ -1550,7 +1550,6 @@ if (!function_exists('GetCss')) {
 }
 
 
-//
 if (!function_exists('bundleJs')) {
     /**
      * Make a bundle of JS files
@@ -1558,17 +1557,19 @@ if (!function_exists('bundleJs')) {
      * @param array  $files
      * @param string $destination Optional
      * @param string $file Optional
+     * @param bool   $lockFile Optional
      * @return string
      */
     function bundleJs(
         array $inputs,
         string $destination = 'assets/v1/app/js/',
-        string $file = 'main'
+        string $file = 'main',
+        $lockFile = false
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
-        if (MINIFIED === '.min') {
+        if (MINIFIED === '.min' || $lockFile) {
             //
             $fileName = $destination . $file;
             //
@@ -1579,7 +1580,7 @@ if (!function_exists('bundleJs')) {
         }
         //
         if (!is_dir($absolutePath)) {
-            mkdir($absolutePath, true, 0777) || exit('Failed to create path "'.($absolutePath).'"');
+            mkdir($absolutePath, true, 0777) || exit('Failed to create path "' . ($absolutePath) . '"');
         }
         // add file to destination
         $absolutePathMin = $absolutePath;
@@ -1601,6 +1602,10 @@ if (!function_exists('bundleJs')) {
         }
         //
         fclose($handler);
+        // delete the old file first
+        if (file_exists($absolutePathMin)) {
+            @unlink($absolutePathMin);
+        }
         //
         shell_exec(
             "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
@@ -1614,8 +1619,6 @@ if (!function_exists('bundleJs')) {
     }
 }
 
-
-//
 if (!function_exists('bundleCSS')) {
     /**
      * Make a bundle of CSS files
@@ -1623,17 +1626,19 @@ if (!function_exists('bundleCSS')) {
      * @param array  $files
      * @param string $destination Optional
      * @param string $file Optional
+     * @param bool   $lockFile Optional
      * @return string
      */
     function bundleCSS(
         array $inputs,
         string $destination = 'assets/v1/app/css/',
-        string $file = 'main'
+        string $file = 'main',
+        $lockFile = false
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
-        if (MINIFIED === '.min') {
+        if (MINIFIED === '.min' || $lockFile) {
             //
             $fileName = $destination . $file;
             //
@@ -1644,7 +1649,7 @@ if (!function_exists('bundleCSS')) {
         }
         //
         if (!is_dir($absolutePath)) {
-            mkdir($absolutePath, true) || exit('Failed to create path "'.($absolutePath).'"');
+            mkdir($absolutePath, true) || exit('Failed to create path "' . ($absolutePath) . '"');
         }
         // add file to destination
         $absolutePathMin = $absolutePath;
@@ -1665,6 +1670,10 @@ if (!function_exists('bundleCSS')) {
         }
         //
         fclose($handler);
+        // delete the old file first
+        if (file_exists($absolutePathMin)) {
+            @unlink($absolutePathMin);
+        }
         //
         shell_exec(
             "uglifycss {$absolutePath} > {$absolutePathMin}"

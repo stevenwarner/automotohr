@@ -13,7 +13,7 @@
                                 Products
                             </p>
                             <ul class="Sitemap_content light-li list_item_center">
-                                <li><a href="<?php echo base_url('products/product-operations') ?>">People Operations</a></li>
+                                <li><a href="<?php echo base_url('products/people-operations') ?>">People Operations</a></li>
                                 <li><a href="<?php echo base_url('products/recruitment') ?>">Recruitment</a></li>
                                 <li><a href="<?php echo base_url('products/hr-electronic-onboarding') ?>">HR Electronic Onboarding</a></li>
                                 <li><a href="<?php echo base_url('products/employee-management') ?>">Employee Management</a></li>
@@ -24,7 +24,7 @@
 
                         <div class="col-xxl-6 col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <p class="subtitle_text text-lg-start text-center">
-                                <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('schedule-your-free-demo'); ?>">Get Your Account </a><br />
+                                <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('get-your-account'); ?>">Get Your Account </a><br />
                                 <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('affiliate-program'); ?>">Join Our Affiliate Program </a><br />
                                 <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('affiliate_portal/login'); ?>"> Affiliate Log In </a>
                             </p>

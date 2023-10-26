@@ -21,7 +21,7 @@
                             <?php foreach ($blogs as $blog) { ?>
                                 <div class="col-xs-12 col-md-6 col-lg-4">
                                     <div class="card card-margin-bottom">
-                                        <img class="resources-card-images-adjustment" src="<?= !empty($blog['feature_image']) ? AWS_S3_BUCKET_URL . $blog['feature_image'] : base_url('assets/images/no-img.jpg'); ?>" alt="smiling girl">
+                                        <img class="resources-card-images-adjustment" src="<?= !empty($blog['feature_image']) ? AWS_S3_BUCKET_URL . $blog['feature_image'] : image_url('no-img.jpg'); ?>" alt="smiling girl">
                                         <div class="card-body">
                                             <p class="card-text">
                                                 <?= substr(strip_tags($blog['title']), 0, 200) . '...'; ?>
@@ -427,17 +427,16 @@
     }
 
 
-      // Loader
-      function loader(show_it, msg) {
-            msg = msg === undefined ? 'Please, wait while we are processing your request.' : msg;
-            show_it = show_it === undefined || show_it == true || show_it === 'show' ? 'show' : show_it;
-            if (show_it === 'show') {
-                $('#js-loader').show();
-                $('#js-loader-text').html(msg);
-            } else {
-                $('#js-loader').hide();
-                $('#js-loader-text').html('');
-            }
+    // Loader
+    function loader(show_it, msg) {
+        msg = msg === undefined ? 'Please, wait while we are processing your request.' : msg;
+        show_it = show_it === undefined || show_it == true || show_it === 'show' ? 'show' : show_it;
+        if (show_it === 'show') {
+            $('#js-loader').show();
+            $('#js-loader-text').html(msg);
+        } else {
+            $('#js-loader').hide();
+            $('#js-loader-text').html('');
         }
-    
+    }
 </script>

@@ -2,8 +2,6 @@
 
 class Home extends CI_Controller
 {
-    private $assetPath;
-
     private $css;
     private $js;
     private $header;
@@ -26,6 +24,9 @@ class Home extends CI_Controller
 
     public function index()
     {
+        //
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
+        ///
         if ($this->session->userdata('logged_in')) {
             $session_details = $this->session->userdata('logged_in');
             $sid = $session_details['employer_detail']['sid'];

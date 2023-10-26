@@ -144,11 +144,6 @@
         </div>
     </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-</div>
 
 
 <div id="my_loader" class="text-center my_loader">
@@ -316,68 +311,21 @@
     }
 
     //
-    let regexPattern = /[^A-Za-z 0-9-]/g;
     $("#title").keyup(function() {
-        let newSlug = $("#title").val();
-
-        newSlug = newSlug.trim().replaceAll("-", " ").toLowerCase();
         //
-        newSlug = removeSpaces(newSlug);
-        newSlug = newSlug.trim().replaceAll(" ", "-").toLowerCase();
-
-        //
-        $("#slug").val(newSlug.replace(regexPattern, ""));
+        $("#slug").val(
+            $("#title").val()
+            .trim()
+            .replace(/\s+/g, ' ')
+            .replace(/[^a-z0-9\s]/ig, '')
+            .replace(/\s/g, '-')
+            .toLowerCase()
+        );
     });
 
 
     function loader(is_show) {
         if (is_show == true) loaderTarget.fadeIn(500);
         else loaderTarget.fadeOut(500);
-    }
-
-    //
-    function removeSpaces(str) {
-        let n = str.length;
-        // in the original string
-        let i = 0,
-            j = -1;
-
-        let spaceFound = false;
-
-        // Handles leading spaces
-        while (++j < n && str[j] == ' ');
-
-        while (j < n) {
-            // if current characters is non-space
-            if (str[j] != ' ') {
-                // comma & question mark
-                if ((str[j] == '.' || str[j] == ',' ||
-                        str[j] == '?') && i - 1 >= 0 &&
-                    str[i - 1] == ' ')
-                    str = str.substr(0, i - 1) + str[j++] + str.substr(i);
-
-                else
-                    // and increment both i and j
-                    str = str.substr(0, i++) + str[j++] + str.substr(i);
-
-                // non-space character is found
-                spaceFound = false;
-            }
-            // if current character is a space
-            else if (str[j++] == ' ') {
-                if (!spaceFound) {
-                    str = str.substr(0, i++) + ' ' + str.substr(i);
-                    spaceFound = true;
-                }
-            }
-        }
-
-        // Remove trailing spaces
-        if (i <= 1)
-            str = str.substr(0, i);
-        else
-            str = str.substr(0, i - 1);
-
-        return str;
     }
 </script>

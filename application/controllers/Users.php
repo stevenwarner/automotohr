@@ -20,6 +20,9 @@ class Users extends CI_Controller
 
     public function login()
     {
+        //
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
+
         $data['session'] = $this->session->userdata('logged_in');
         if ($data['session']) {
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -48,7 +51,7 @@ class Users extends CI_Controller
         ], $this->css, 'login', $this->disableMinifiedFiles);
         //
         $data['appJs'] = bundleJs([
-            'v1/plugins/jquery-3.7.min', // jquery
+            'v1/plugins/jquery/jquery-3.7.min', // jquery
             'v1/plugins/bootstrap5/js/bootstrap.bundle', // bootstrap 5
             "v1/app/js/pages/home"
         ], $this->js, 'login', $this->disableMinifiedFiles);

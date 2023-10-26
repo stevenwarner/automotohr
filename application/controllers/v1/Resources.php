@@ -24,11 +24,10 @@ class Resources extends Public_Controller
 
     public function index()
     {
-        //
         // meta titles
         $data = [];
         $data['meta'] = [];
-        $data['meta']['title'] = 'Homepage | AutomotoHR.com';
+        $data['meta']['title'] = 'Resources | AutomotoHR.com';
         $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
         $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
         //
@@ -41,27 +40,20 @@ class Resources extends Public_Controller
             $this->resources_model->getResources(3, 0);
         //
         $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
-            'v1/app/alertifyjs/css/alertify.min'
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
         ];
-
-        $data['pageJs'] = [
-            'v1/app/js/jquery-1.11.3.min',
-            'v1/app/alertifyjs/alertify.min'
-        ];
-
-
+        //
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
+            'v1/app/css/theme',
             'v1/app/css/resources'
         ], $this->css, 'resources');
-
+        //
         $data['appJs'] = bundleJs([
+            'v1/app/jquery/jquery-3.7.min',
             'plugins/bootstrap5/js/bootstrap.bundle',
             'public/v1/js/app/resources',
-            'alertifyjs/alertify.min'
-        ], $this->js, 'home');
+        ], $this->js, 'resources');
 
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/resources');
