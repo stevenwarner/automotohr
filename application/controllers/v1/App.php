@@ -157,6 +157,38 @@ class App extends CI_Controller
     }
 
     /**
+     * products
+     *
+     * @param string $productSlug
+     */
+    public function products(string $productSlug)
+    {
+        //
+        $pageContent = getPageContent($productSlug, true);
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $pageContent['page']['meta']['title'];
+        $data['meta']['description'] = $pageContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
+        //
+        $this->getCommon($data, "products");
+        //
+        $pageContent["page"]["mainHeading"]["text"] = ucwords(trim(preg_replace('/-/', ' ', $productSlug)));
+        $pageContent["page"]["sections"]["section3"]["image"] = "framewithoutshadow.png";
+        $pageContent["page"]["sections"]["section4"]["image"] = "Frame 242.png";
+        $pageContent["page"]["sections"]["section5"]["image"] = "Frame 241.png";
+        $pageContent["page"]["sections"]["section6"]["image"] = "Frame 2.png";
+        $pageContent["page"]["sections"]["section7"]["image"] = "Frame 2.png";
+        $pageContent["page"]["sections"]["section8"]["image"] = "Frame 2.png";
+        //
+        $data["pageContent"] = $pageContent;
+        //
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/products/main');
+        $this->load->view($this->footer);
+    }
+
+    /**
      * set the common files
      *
      * @param string $filePath

@@ -1830,3 +1830,17 @@ if (!function_exists("validateCaptcha")) {
         return $res['success'];
     }
 }
+
+
+if (!function_exists("convertToStrip")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToStrip(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<strong class="text-yellow">$1</strong>', $str);
+    }
+}

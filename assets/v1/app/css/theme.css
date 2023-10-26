@@ -18,8 +18,8 @@ button {
 .margin-bottom-50 {
 	margin-bottom: 50px;
 }
-.mx-auto-right{
-  margin-right: auto !important;
+.mx-auto-right {
+	margin-right: auto !important;
 }
 .first-heading {
 	font-size: 36px;
@@ -592,7 +592,6 @@ p.error_message {
 	color: #ffff !important;
 }
 
-
 /* Alertify */
 .ajs-ok {
 	background-color: #0000ff;
@@ -634,9 +633,14 @@ input[type="radio"] {
 }
 
 .schedule-btn-demo {
+	transition: all 0.3s ease-in-out;
 	background-color: #0000ff;
 }
 
 button.schedule-btn-demo:hover {
 	background-color: #0066ff;
+}
+
+.text-yellow {
+	color: #ffb72b;
 }

@@ -58,6 +58,15 @@ $(function () {
 	});
 
 	/**
+	 *
+	 */
+	$("#jsScheduleFreeDemoFooter").validate({
+		rules,
+		messages,
+		submitHandler: submitFormHandler,
+	});
+
+	/**
 	 * handles the form submission
 	 * @param {*} form
 	 */
@@ -86,7 +95,7 @@ $(function () {
 			})
 			.done(function (resp) {
 				return _success(resp.msg, function () {
-					window.location.href = baseUrl();
+					window.location.href = baseUrl(window.location.pathname);
 				});
 			})
 			.fail(handleErrorResponse);

@@ -41,7 +41,6 @@
 	font-size: 18px;
 }
 h1 {
-	font-family: Sora;
 	font-size: 30px;
 	font-weight: 700;
 	line-height: 58px;
@@ -49,7 +48,6 @@ h1 {
 	text-align: center;
 }
 .highlighted-text {
-	font-family: Sora;
 	font-size: 21px;
 	font-weight: 500;
 	line-height: 26px;
@@ -154,7 +152,6 @@ h2 {
 	box-shadow: 0px 4px 5px 0px #0000001a;
 }
 .forgot-password-text {
-	font-family: Sora;
 	font-size: 16px;
 	font-weight: 600;
 	line-height: 58px;
@@ -224,7 +221,6 @@ h2 {
 	margin-top: 20px;
 }
 .executive-admin-text {
-	font-family: Sora;
 	font-size: 40px;
 	font-weight: 700;
 	line-height: 58px;
@@ -363,7 +359,6 @@ h2 {
 	font-size: 20px;
 }
 .sales-support {
-	font-family: Sora;
 	font-size: 32px;
 	font-weight: 700;
 	line-height: 80px;
@@ -371,7 +366,6 @@ h2 {
 	text-align: center;
 }
 .number-text {
-	font-family: Sora;
 	font-size: 21px;
 	font-weight: 700;
 	line-height: 40px;
@@ -380,7 +374,6 @@ h2 {
 	color: #525252;
 }
 .email-text {
-	font-family: Sora;
 	font-size: 21px;
 	font-weight: 700;
 	line-height: 40px;
@@ -431,7 +424,6 @@ h2 {
 	flex-direction: column;
 }
 .send-us-text {
-	font-family: Sora;
 	font-size: 28px;
 	font-weight: 400;
 	line-height: 36px;
@@ -592,7 +584,6 @@ h2 {
 	background-color: #315eff;
 }
 .white-heading-product {
-	font-family: Sora;
 	font-size: 40px;
 	font-weight: 700;
 	line-height: 80px;
@@ -610,7 +601,7 @@ h2 {
 	padding: 40px 0px 20px 0px;
 }
 .linebackround {
-	background-image: url("/assets/images/Layer_1.png");
+	background-image: url("../../../images/Layer_1.png");
 	background-repeat: no-repeat;
 	background-position: center center;
 }
@@ -621,7 +612,7 @@ h2 {
 	padding: 100px 0px 100px 0px !important;
 }
 .image-section-text {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-size: 21px;
 	font-weight: 400;
 	line-height: 35px;
@@ -629,7 +620,7 @@ h2 {
 	text-align: left;
 }
 .image-section-subheading {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-size: 30px;
 	font-weight: 600;
 	line-height: 40px;
@@ -644,7 +635,7 @@ h2 {
 	text-align: left;
 }
 .white-subheading-text-product {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-size: 21px;
 	font-weight: 400;
 	line-height: 35px;
@@ -657,7 +648,6 @@ h2 {
 .highlighted-div {
 	background-repeat: no-repeat;
 	background-position: start;
-	font-family: Sora;
 	font-size: 20px;
 	font-weight: 500;
 	line-height: 25px;
@@ -665,7 +655,6 @@ h2 {
 	text-align: center;
 }
 .product-screen-top-heading {
-	font-family: Sora;
 	font-size: 50px;
 	font-weight: 700;
 	line-height: 70px;
@@ -674,7 +663,7 @@ h2 {
 	color: #3d4250;
 }
 .product-screen-second-text {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-size: 21px;
 	font-weight: 500;
 	line-height: 35px;
@@ -825,7 +814,6 @@ h2 {
 	padding-bottom: 60px;
 }
 .affiliate-screen-top-heading {
-	font-family: Sora;
 	font-size: 25px;
 	font-weight: 600;
 	line-height: 32px;
@@ -844,7 +832,7 @@ h2 {
 	margin-left: 15px;
 }
 .extra-text {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-size: 18px;
 	font-weight: 500;
 	line-height: 26px;
@@ -894,7 +882,7 @@ h2 {
 	align-items: baseline;
 }
 .tick-div-affiliate-screen p {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-size: 21px;
 	font-weight: 600;
 	line-height: 40px;
@@ -903,7 +891,6 @@ h2 {
 	opacity: 90%;
 }
 .affiliate-sub-heading {
-	font-family: Sora;
 	font-size: 23px;
 	font-weight: 600;
 	line-height: 35px;
@@ -945,7 +932,7 @@ h2 {
 	font-size: 12px;
 }
 .affiliate-paragraph {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-size: 18px;
 	font-weight: 500;
 	line-height: 35px;
@@ -992,7 +979,6 @@ h2 {
 	padding: 147px 0px;
 }
 .Affiliate-title {
-	font-family: Sora;
 	font-weight: 500;
 	font-size: 20px;
 	color: #525252;
@@ -1003,7 +989,6 @@ h2 {
 }
 
 .Affiliate-heading {
-	font-family: Sora;
 	font-weight: 700;
 	font-size: 40px;
 	color: #3d4250;
@@ -1012,7 +997,6 @@ h2 {
 }
 
 .Affiliate-subtitle {
-	font-family: Sora;
 	font-weight: 700;
 	font-size: 40px;
 	color: #3d4250;
@@ -1021,7 +1005,7 @@ h2 {
 }
 
 .Affiliate-content {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-weight: 500;
 	font-size: 18px;
 	color: #525252;
@@ -1035,7 +1019,7 @@ h2 {
 }
 
 .Affiliate-content-picture {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-weight: 500;
 	font-size: 18px;
 	color: #525252;
@@ -1141,7 +1125,7 @@ ul li {
 }
 
 .funnels_content {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-weight: 500;
 	font-size: 21px;
 	line-height: 32px;
@@ -1207,7 +1191,7 @@ ul li {
 }
 
 .box_heading {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-weight: 600;
 	font-size: 30px;
 	line-height: 40px;
@@ -1215,7 +1199,7 @@ ul li {
 }
 
 .box_content {
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	font-weight: 500;
 	font-size: 21px;
 	line-height: 35px;
@@ -1287,7 +1271,6 @@ ul li {
 	color: #000000 !important;
 }
 .Sitemap-heading h1 {
-	font-family: Sora;
 	font-weight: 700;
 	font-size: 50px;
 	line-height: 80px;
@@ -1302,7 +1285,6 @@ ul li {
 }
 
 .home-heading {
-	font-family: Sora;
 	font-weight: 700;
 	font-size: 36px;
 	line-height: 80px;
@@ -1311,7 +1293,6 @@ ul li {
 }
 
 .subtitle_text {
-	font-family: Sora;
 	font-weight: 400;
 	font-size: 30px;
 	line-height: 64px;
@@ -1319,7 +1300,6 @@ ul li {
 }
 
 .subtitle_text li {
-	font-family: Sora;
 	font-weight: 400;
 	font-size: 30px;
 	line-height: 64px;
@@ -1327,7 +1307,6 @@ ul li {
 }
 
 .Sitemap_content li {
-	font-family: Sora;
 	font-weight: 400;
 	font-size: 23px;
 	line-height: 48px;
@@ -1450,7 +1429,7 @@ ul li {
 .resources-checkbox:checked[type="checkbox"] {
 	background-size: 15px;
 	border-color: #00c9ff !important;
-	background-image: url("/assets/images/checkbox-tick.png");
+	background-image: url("../../../images/checkbox-tick.png");
 }
 .resources-checkbox:checked {
 	background-color: #00c9ff !important;
@@ -1547,7 +1526,7 @@ ul li {
 	border-radius: 50%;
 	background-color: white;
 	opacity: 100%;
-	background-image: url("/assets/images/modelCloseIcon.png");
+	background-image: url("../../../images/modelCloseIcon.png");
 }
 .resources-subscribe-model .modal-content {
 	border-radius: 0px;
@@ -1688,7 +1667,7 @@ ul li {
 }
 .aboutus-boxes-para {
 	color: #525252;
-	font-family: Inter;
+	font-family: Inter, sans-serif;
 	padding: 15px 0px 10px 0px;
 }
 .grey-text-padding-2-aboutus {
