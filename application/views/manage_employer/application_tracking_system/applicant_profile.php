@@ -424,10 +424,15 @@ if ($_ssv) {
                                         <form method="POST" enctype="multipart/form-data" id="applicant_profile_form">
                                             <div class="form-title-section">
                                                 <h2>Personal Information</h2>
+                                                
                                                 <div class="form-btns">
+                                                <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
+
                                                     <input type="button" value="save" class="add_edit_submit">
-                                                    <input type="submit" value="cancel" class="view_button">
+                                                    <input type="submit" value="cancel" class="view_button" style="background-color: #d9534f;">
+                                                    <?php }?>
                                                 </div>
+
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
@@ -886,7 +891,7 @@ if ($_ssv) {
                                             <div class="form-title-section" style="margin-top: 50px;">
                                                 <div class="form-btns">
                                                     <input type="button" value="save" class="add_edit_submit">
-                                                    <input type="submit" value="cancel" class="view_button">
+                                                    <input type="submit" value="cancel" class="view_button" style="background-color: #d9534f;">
                                                 </div>
                                             </div>
                                         </form>
