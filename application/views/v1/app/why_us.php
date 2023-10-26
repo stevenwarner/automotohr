@@ -17,17 +17,17 @@
                                 <p class="autmotoPara opacity-70 why-us-first-para padding-x-35 why-us-first-para-color"><?php echo $whyUsContent['page']['sections']['section1']['detailHeading'] ?></p>
                             </div>
                             <div class="col-xs-12 margin-top-30 ">
-                                <button class="d-flex load-more justify-content-center align-items-center login-screen-btns admin_btn btn-animate margin-top-30">
-                                    <p class="text"><a href="<?= base_url($whyUsContent['page']['sections']['section1']['btnSlug']) ?>" style="color: #fff;"><?php echo $whyUsContent['page']['sections']['section1']['btnText'] ?></a></p>
+                                <button class="d-flex load-more justify-content-center align-items-center login-screen-btns admin_btn btn-animate margin-top-30 jsButtonAnimate jsScheduleDemoPopup">
+                                    <p class="text"><?php echo $whyUsContent['page']['sections']['section1']['btnText'] ?></p>
                                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="col-xs-12 col-lg-6 order-1-on-mobile">
                             <div class="position-relative">
-                                <img src="<?=base_url();?>assets/v1/app/images/WhyUsBackCover.png" class="whyUsBackCover" alt="why us back cover" />
-                                <img src="<?=base_url();?>assets/v1/app/images/girlWithBook.png" class="girl-width-book" alt="girl with book" />
-                                <img src="<?=base_url();?>assets/v1/app/images/fullPurpleCircle.png" class="whyus-full-purple" alt="purple circle" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/WhyUsBackCover.png" class="whyUsBackCover" alt="why us back cover" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/girlWithBook.png" class="girl-width-book" alt="girl with book" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/fullPurpleCircle.png" class="whyus-full-purple" alt="purple circle" />
                             </div>
                         </div>
                     </div>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/Group 6901.png" alt="database icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group 6901.png" alt="database icon" />
                                 </div>
                                 <div class="col-9 col-sm-9 ">
                                     <p class="text-bold text-white inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section2']['heading1'] ?></p>
@@ -57,7 +57,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/Group 6903.png" alt="attendance tracking icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group 6903.png" alt="attendance tracking icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold text-white inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section2']['heading2'] ?></p>
@@ -66,7 +66,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/Group 6905.png" alt="workflow  icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group 6905.png" alt="workflow  icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold text-white inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section2']['heading3'] ?></p>
@@ -77,8 +77,8 @@
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-end">
                             <div class="image-containing-div position-relative">
-                                <img src="<?=base_url();?>assets/v1/app/images/singleGirlWithDocuments.png" class="full-width-height-img" alt="girl with documents" />
-                                <img src="<?=base_url();?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/singleGirlWithDocuments.png" class="full-width-height-img" alt="girl with documents" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" alt="blue half circle" />
                             </div>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
                                     <div class="whyus-icons">
-                                        <img src="<?=base_url();?>assets/v1/app/images/Group 6974.png" alt="database icon" />
+                                        <img src="<?= base_url(); ?>assets/v1/app/images/Group 6974.png" alt="database icon" />
                                     </div>
 
                                 </div>
@@ -111,7 +111,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/Group 6975.png" alt="database icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group 6975.png" alt="database icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section3']['heading2'] ?></p>
@@ -120,7 +120,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/twoPersonsClappingIcon.png" alt="database icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/twoPersonsClappingIcon.png" alt="database icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section3']['heading3'] ?></p>
@@ -130,8 +130,8 @@
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-start order-1-product">
                             <div class="image-containing-div position-relative">
-                                <img src="<?=base_url();?>assets/v1/app/images/singleManWithDocumnets.png" class="full-width-height-img" alt="man with documents" />
-                                <img src="<?=base_url();?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/singleManWithDocumnets.png" class="full-width-height-img" alt="man with documents" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" alt="blue with half" />
                             </div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
                             </div>
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/Group_h_1.png" alt="speaker icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group_h_1.png" alt="speaker icon" />
                                 </div>
                                 <div class="col-9 col-sm-9 ">
                                     <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section4']['heading1'] ?></p>
@@ -161,7 +161,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/Group_h_3.png" alt="settings icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group_h_3.png" alt="settings icon" />
 
                                 </div>
                                 <div class="col-9">
@@ -171,7 +171,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/Group_h_2.png" alt="checklist icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group_h_2.png" alt="checklist icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section4']['heading3'] ?></p>
@@ -181,8 +181,8 @@
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-end">
                             <div class="image-containing-div position-relative">
-                                <img src="<?=base_url();?>assets/v1/app/images/twoPersonsHandShaking.png" class="full-width-height-img" alt="girl with documents" />
-                                <img src="<?=base_url();?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/twoPersonsHandShaking.png" class="full-width-height-img" alt="girl with documents" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" />
                             </div>
                         </div>
                     </div>
@@ -204,7 +204,7 @@
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
                                     <div class="whyus-icons">
-                                        <img src="<?=base_url();?>assets/v1/app/images/office_face_icon.png" alt="officer icon" />
+                                        <img src="<?= base_url(); ?>assets/v1/app/images/office_face_icon.png" alt="officer icon" />
                                     </div>
 
                                 </div>
@@ -215,7 +215,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/clockUmbrella.png" alt="attendance tracking icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/clockUmbrella.png" alt="attendance tracking icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section5']['heading2'] ?></p>
@@ -224,7 +224,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/alienShip.png" alt="workflow  icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/alienShip.png" alt="workflow  icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section5']['heading3'] ?></p>
@@ -234,8 +234,8 @@
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-start order-1-product">
                             <div class="image-containing-div position-relative">
-                                <img src="<?=base_url();?>assets/v1/app/images/manSmilingWithBook.png" class="full-width-height-img" alt="man sitting with book" />
-                                <img src="<?=base_url();?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/manSmilingWithBook.png" class="full-width-height-img" alt="man sitting with book" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" />
                             </div>
                         </div>
                     </div>
@@ -256,7 +256,7 @@
                             </div>
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/selfServiceOne.png" alt="database icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/selfServiceOne.png" alt="database icon" />
                                 </div>
                                 <div class="col-9 col-sm-9 ">
                                     <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section6']['heading1'] ?></p>
@@ -265,7 +265,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/selfServiceTwo.png" alt="attendance tracking icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/selfServiceTwo.png" alt="attendance tracking icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section6']['heading2'] ?></p>
@@ -276,8 +276,8 @@
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-end">
                             <div class="image-containing-div position-relative">
-                                <img src="<?=base_url();?>assets/v1/app/images/girlWithPhoneAndTablet.png" class="full-width-height-img" alt="girl with phone and tablet" />
-                                <img src="<?=base_url();?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/girlWithPhoneAndTablet.png" class="full-width-height-img" alt="girl with phone and tablet" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" />
                             </div>
                         </div>
                     </div>
@@ -299,7 +299,7 @@
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
                                     <div class="whyus-icons">
-                                        <img src="<?=base_url();?>assets/v1/app/images/scaleableOne.png" alt="Businesses of All Sizes" />
+                                        <img src="<?= base_url(); ?>assets/v1/app/images/scaleableOne.png" alt="Businesses of All Sizes" />
                                     </div>
 
                                 </div>
@@ -310,7 +310,7 @@
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?=base_url();?>assets/v1/app/images/scaleableTwo.png" alt="Industry Relevant icon" />
+                                    <img src="<?= base_url(); ?>assets/v1/app/images/scaleableTwo.png" alt="Industry Relevant icon" />
                                 </div>
                                 <div class="col-9">
                                     <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section7']['heading2'] ?></p>
@@ -321,8 +321,8 @@
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-start order-1-product">
                             <div class="image-containing-div position-relative">
-                                <img src="<?=base_url();?>assets/v1/app/images/manAndWomenClapping.png" class="full-width-height-img" alt="man sitting with book" />
-                                <img src="<?=base_url();?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/manAndWomenClapping.png" class="full-width-height-img" alt="man sitting with book" />
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" />
                             </div>
                         </div>
                     </div>
@@ -336,7 +336,7 @@
                 <div class="w-80 section-padding-whyus">
                     <div class="row">
                         <div class="col-xs-12 col-lg-6">
-                            <img src="<?=base_url();?>assets/v1/app/images/whyUsLastSectionImage.png" class="w-h-100" />
+                            <img src="<?= base_url(); ?>assets/v1/app/images/whyUsLastSectionImage.png" class="w-h-100" />
                         </div>
                         <div class="col-xs-12 col-lg-6">
                             <div class="row">
@@ -347,8 +347,8 @@
                                     <p class="autmotoPara opacity-70  padding-x-35 text-white"><?php echo $whyUsContent['page']['sections']['section8']['detailHeading'] ?></p>
                                 </div>
                                 <div class="col-xs-12  ">
-                                    <button class="d-flex  justify-content-center align-items-center  whyus-yellow-btn btn-animate ">
-                                        <p class="text"><a href="<?= base_url($whyUsContent['page']['sections']['section8']['btnSlug']); ?>" style="color: #fff;"> <?php echo $whyUsContent['page']['sections']['section8']['btnText'] ?></a></p>
+                                    <button class="d-flex  justify-content-center align-items-center  whyus-yellow-btn btn-animate jsButtonAnimate jsScheduleDemoPopup">
+                                        <p class="text"><?php echo $whyUsContent['page']['sections']['section8']['btnText'] ?></p>
                                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                                     </button>
                                 </div>
@@ -360,22 +360,3 @@
         </div>
     </section>
 </main>
-
-
-<div class="modal fade" id="jsScheduleDemoModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Schedule your free demo</h4>
-            </div>
-            <div class="modal-body">
-                <?php $this->load->view("v1/app/partials/demo_form"); ?>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>

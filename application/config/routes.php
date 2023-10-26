@@ -51,10 +51,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
   |		my-controller/my-method	-> my_controller/my_method
  */
 
+/**
+ * routes 2023 of main website
+ */
 $route['schedule_free_demo']['post'] = 'v1/App/scheduleDemoProcess';
 $route['forgot-password']['get'] = 'users/forgot_password';
 $route['forgot-password']['post'] = 'users/forgot_password';
 $route['why-us']['get'] = 'v1/App/whyUs';
+$route['about-us']['get'] = 'v1/App/aboutUs';
+$route['contact-us']['get'] = 'v1/App/contactUs';
+$route['contact-us']['post'] = 'v1/App/contactUsProcess';
+$route['privacy-policy']['get'] = 'v1/App/privacyPolicy';
+$route['terms-of-service']['get'] = 'v1/App/termsOfService';
+$route['sitemap']['get'] = 'v1/App/siteMap';
 
 //  Goals
 $route['remarket_portal'] = 'Remarket_portal/index';
@@ -2000,5 +2009,3 @@ $route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
 $route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
 
 $route['resources/(:any)'] = 'v1/Resources/readMore/$1';
-
-

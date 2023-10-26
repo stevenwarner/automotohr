@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="book-demo-btn">
-                    <a href="<?= base_url('#freedemo') ?>"> Book A Free Demo</a>
+                    <a href="javascript:void(0)" class="jsButtonAnimate jsScheduleDemoPopup"> Book A Free Demo</a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-2">
@@ -152,9 +152,11 @@
         </div>
     </div>
 </footer>
+<?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
 </body>
 
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>
 <?= $appJs ?? ''; ?>
+
 
 </html>

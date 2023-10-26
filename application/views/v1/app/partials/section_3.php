@@ -79,10 +79,10 @@
     </div>
     <div class="row get-started d-flex justify-content-center">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 p-0 text-center">
-            <a href="<?=base_url("/#freedemo")?>" class="button explore_btn started-button text-white mt-4 auto-explore-button">
+            <button class="button explore_btn started-button text-white mt-4 auto-explore-button jsButtonAnimate jsScheduleDemoPopup">
                 <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section9']['btnText'] ?></p>
                 <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-            </a>
+            </button>
         </div>
     </div>
 </div>

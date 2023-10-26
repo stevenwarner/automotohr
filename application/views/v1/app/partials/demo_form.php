@@ -63,7 +63,7 @@
         <?php echo form_error('g-recaptcha-response'); ?>
     </div>
 
-    <button class="button p-3 explore_btn schedule-btn schedule-btn-demo d-flex text-white mt-4 width_100 mb-lg-0 mb-5 auto-schedule-btn jsButtonAnimate jsScheduleDemoMainBtn" id="schedule-free-demo-form-submit" type="submit">
+    <button class="button p-3 explore_btn schedule-btn schedule-btn-demo d-flex text-white mt-4 width_100 mb-lg-0 mb-5 auto-schedule-btn jsButtonAnimate jsScheduleDemoMainBtn <?= $buttonClass ?? "";?>" id="schedule-free-demo-form-submit" type="submit">
         <p class="mb-0 btn-text">
             Schedule Your No Obligation Consultation
         </p>

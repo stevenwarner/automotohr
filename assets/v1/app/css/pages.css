@@ -283,11 +283,9 @@ h2 {
 }
 
 .login-screen-btns:hover .text {
-	transform: translate(35px, 0);
 }
 
 .login-screen-btns:hover .fa-arrow-right {
-	transform: translate(-65px, 0);
 }
 
 /* Executive_Button_Animation */
@@ -302,11 +300,9 @@ h2 {
 }
 
 .login-screen-btns.admin_btn.btn-animate:hover .text {
-	transform: translate(35px, 0);
 }
 
 .login-screen-btns.admin_btn.btn-animate:hover .fa-arrow-right {
-	transform: translate(-220px, 0);
 }
 
 /* Why_US_Button_Animations */
@@ -321,10 +317,8 @@ h2 {
 }
 
 .login-screen-btns.btn-animate.Schedule-btn_Animate:hover .text {
-	transform: translate(35px, 0);
 }
 .schedule-btn-whyus:hover .fa-arrow-right {
-	transform: translate(-250px, 0) !important;
 }
 
 /* Why_Us_Yellow_Button */
@@ -339,10 +333,8 @@ h2 {
 }
 
 .login-screen-btns.yellow_animate:hover .text {
-	transform: translate(35px, 0);
 }
 .yellow_animate:hover .fa-arrow-right {
-	transform: translate(-250px, 0) !important;
 }
 
 /* Contact Support Btn Animations */
@@ -357,11 +349,9 @@ h2 {
 }
 
 .login-screen-btns.contact-support:hover .text {
-	transform: translate(35px, 0);
 }
 
 .login-screen-btns.contact-support:hover .fa-arrow-right {
-	transform: translate(-165px, 0);
 }
 
 /* Contact Us */
@@ -489,11 +479,9 @@ h2 {
 }
 
 .btn-animate.btn-animate:hover .text {
-	transform: translate(35px, 0);
 }
 
 .btn-animate.btn-animate:hover .fa-arrow-right {
-	transform: translate(-80px, 0);
 }
 
 /* Terms of Service */
@@ -504,14 +492,14 @@ h2 {
 	padding: 80px 180px;
 }
 .service-main-div h2 {
-	font-family: Sora;
 	font-size: 40px;
-	font-weight: 400;
+	font-weight: bold;
 	line-height: 80px;
 	letter-spacing: 0em;
 	text-align: left;
 }
 .service-main-div h3 {
+	font-weight: bold;
 	font-size: 20px;
 	margin-top: 20px;
 	margin-bottom: 20px;
@@ -758,11 +746,9 @@ h2 {
 }
 
 .schedule-btn-product.btn-animate:hover .text {
-	transform: translate(32px, 0);
 }
 
 .schedule-btn-product.btn-animate:hover .fa-arrow-right {
-	transform: translate(-450px, 0);
 }
 
 /* Affiliate Screen */
@@ -1263,11 +1249,9 @@ ul li {
 }
 
 .Affiliate-btn:hover .text {
-	transform: translate(40px, 0);
 }
 
 .Affiliate-btn:hover .fa-arrow-right {
-	transform: translate(-280px, 0);
 }
 
 /* Affiliate submit-Application btn Animation */
@@ -1282,11 +1266,9 @@ ul li {
 }
 
 .affiliate-submit:hover .text {
-	transform: translate(42px, 0);
 }
 
 .affiliate-submit:hover .fa-arrow-right {
-	transform: translate(-210px, 0);
 }
 
 .padding_top {
@@ -1552,7 +1534,6 @@ ul li {
 	color: #525252 !important;
 }
 .load-more:hover .fa-arrow-right {
-	transform: translate(-130px, 0) !important;
 }
 
 .load-more {
@@ -3337,11 +3318,9 @@ button.color_light_grey {
 }
 
 .Expert-btn:hover .text {
-	transform: translate(40px, 0);
 }
 
 .Expert-btn:hover .fa-arrow-right {
-	transform: translate(-200px, 0);
 }
 
 .get-your-account-image {

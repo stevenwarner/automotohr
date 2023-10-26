@@ -40,7 +40,17 @@ $(function () {
 			required: "Please provide employee count.",
 		},
 	};
-	//
+	/**
+	 *
+	 */
+	$(".jsScheduleDemoPopup").click(function (event) {
+		event.preventDefault();
+		$("#jsScheduleDemoModal").modal("show");
+	});
+
+	/**
+	 *
+	 */
 	$("#jsScheduleFreeDemoMain").validate({
 		rules,
 		messages,

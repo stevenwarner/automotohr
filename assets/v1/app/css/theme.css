@@ -632,3 +632,11 @@ input[type="radio"] {
 	height: 15px !important;
 	line-height: 15px !important;
 }
+
+.schedule-btn-demo {
+	background-color: #0000ff;
+}
+
+button.schedule-btn-demo:hover {
+	background-color: #0066ff;
+}
