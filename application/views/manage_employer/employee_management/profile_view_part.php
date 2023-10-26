@@ -1,6 +1,6 @@
-<div class="form-title-section">
+<div class="form-title-section"><br>
     <h2>Personal Information </h2>
-    <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) {  ?>
+    <?php if (($this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']!=1) || ($this->session->userdata('logged_in')['employer_detail']['access_level_plus']==1 )) {  ?>
         <div class="form-btns">
             <?php if (($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) && isTranferredEmployee($employer['sid'])) { ?>
                 <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?= $employer_id; ?>" data-original-title="View Transfer Detail">

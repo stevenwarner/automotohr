@@ -85,11 +85,11 @@ if (checkIfAppIsEnabled('timeoff')) {
                                     <!--Edit part-->
                                     <div <?php if ($edit_form) { ?>style="display: block;" <?php } else { ?>style="display: none;" <?php } ?> class="universal-form-style-v2 info_edit">
                                         <form id="edit_employer" method="POST" enctype="multipart/form-data">
-                                            <div class="form-title-section">
+                                            <div class="form-title-section"><br>
                                                 <h2>Personal Information</h2>
                                                 <div class="form-btns">
                                                     <input type="button" value="Save" onclick="submitResult();">
-                                                    <input type="button" value="cancel" class="view_button">
+                                                    <input type="button" value="cancel" class="view_button" style="background-color: #d9534f;">
                                                     <input type="submit" id="submit_form" value="Submit Form" onclick="validate_employers_form();" style="display: none;">
                                                 </div>
                                             </div>
@@ -897,7 +897,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                         <input type="hidden" name="old_profile_picture" value="<?php echo $employer['profile_picture']; ?>">
                                                         <input type="hidden" name="id" value="<?php echo $employer['sid']; ?>">
                                                         <input type="button" value="Save" id="add_edit_submit" onclick="submitResult();">
-                                                        <input type="button" value="cancel" class="view_button">
+                                                        <input type="button" value="cancel" class="view_button" style="background-color: #d9534f;margin-right: 20px;">
                                                     </div>
                                                 </div>
                                             </div>
