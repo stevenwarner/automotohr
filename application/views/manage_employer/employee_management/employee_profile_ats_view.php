@@ -62,7 +62,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
                     <div id="HorizontalTab" class="HorizontalTab">
-                        <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) {  ?>
+                        <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
                             <ul class="resp-tabs-list hor_1">
                                 <li id="tab1_nav"><a href="javascript:;">Personal Info</a></li>
                                 <li id="tab2_nav"><a href="javascript:;">Questionnaire</a></li>
@@ -913,7 +913,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) {  ?>
+                            <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
                                 <!-- #tab1 -->
                                 <div id="tab2" class="tabs-content">
                                     <script type="text/javascript">
