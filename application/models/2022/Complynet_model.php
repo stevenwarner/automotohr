@@ -1921,4 +1921,36 @@ class Complynet_model extends CI_Model
             ->get('complynet_departments')
             ->result_array();
     }
+
+
+    //
+    public function getComplyNetLinkedDepartmentsAll(
+        int $companyId
+    ) {
+        //
+        $records =
+            $this->db
+            ->select('*')
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('complynet_departments')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        return $records;
+    }
+
+    //
+    public function checkAndUpdateDepartmentLink($companyId, $departmentId, $ins)
+    {
+
+        $this->db
+            ->where('sid', $departmentId)
+            ->where('company_sid', $companyId)
+            ->update('complynet_departments', $ins);
+    }
 }

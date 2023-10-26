@@ -356,6 +356,7 @@ class Complynet extends Admin_Controller
                         'ParentId' => $this->complyLocationId,
                         'Name' => $value['name']
                     ]);
+
                     //
                     if ($response && !empty($response['Id'])) {
                         //
@@ -540,6 +541,68 @@ class Complynet extends Admin_Controller
     {
         //
         $employeeId = $this->input->post('employeeId', true);
+        // Get company departments
+        $departments = $this->complynet_model->getComplyNetLinkedDepartmentsAll(
+            $companyId
+        );
+
+        // Convert department to index
+        $departmentObj = [];
+        //
+        if (!empty($departments)) {
+            //
+            foreach ($departments as $department) {
+                //
+                $slug = preg_replace('/[^a-zA-Z]/', '', strtolower($department['department_name']));
+                //
+                $departmentObj[$slug] = $department;
+            }
+        }
+
+        //
+        $company = $this->complynet_model->getIntegratedCompany(
+            $companyId
+        );
+
+        // Get all departments from ComplyNet
+        $complyDepartments = $this->clib->getComplyNetDepartments(
+            $company['complynet_location_sid']
+        );
+
+        // Convert department to index
+        $complyDepartmentObj = [];
+
+        //
+        if (!empty($complyDepartments)) {
+            //
+            foreach ($complyDepartments as $department) {
+                //
+                $slug = preg_replace('/[^a-zA-Z]/', '', strtolower($department['Name']));
+                $complyDepartmentObj[$slug] = $department;
+            }
+        }
+
+
+
+        // Lets hook and push departments to ComplyNet
+        if (!empty($departmentObj)) {
+
+            foreach ($departmentObj as $index => $value) {
+                //
+                if (isset($complyDepartmentObj[$index])) {
+                    //
+                    if ($complyDepartmentObj[$index]['Id'] == 'A') {
+                        continue;
+                    }
+                    // the department is on complynet
+                    $ins = [];
+                    $ins['complynet_department_sid'] = $complyDepartmentObj[$index]['Id'];
+                    //
+                    $this->complynet_model->checkAndUpdateDepartmentLink($companyId, $value['sid'], $ins);
+                }
+            }
+        }
+
         //
         return $this->complynet_model->syncSingleEmployee($companyId, $employeeId);
     }
