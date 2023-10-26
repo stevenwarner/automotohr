@@ -18,7 +18,7 @@
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="upload-new-doc-heading">
                                         <i class="fa fa-file-text"></i>
-                                        <?php echo $title; ?>
+                                        <?php echo $title; ?>&nbsp;  (<?php echo $category_name; ?>)
                                     </div>
                                     <p class="upload-file-type">You can easily Assign documents to category</p>
                                     <div class="form-wrp">
