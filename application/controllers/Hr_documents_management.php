@@ -3871,11 +3871,10 @@ class Hr_documents_management extends Public_Controller
                                 $revoked_sids[] = $assigned_document['document_sid'];
                             }
                         }
-
                     } else if ($assigned_document['archive'] == 1) {
                         unset($assigned_documents[$key]);
-                    }  
-                }    
+                    }
+                }
             }
             //
             $data['history_doc_sids'] = $history_doc_sids;
@@ -4027,8 +4026,8 @@ class Hr_documents_management extends Public_Controller
             }
 
             $data['assigned_documents']             = $assigned_documents; // not completed Documemts
-            
-            
+
+
             $data['uncompleted_payroll_documents']  = $uncompleted_payroll_documents;
             $data['completed_payroll_documents']    = $completed_payroll_documents;
             $data['payroll_documents_sids']         = $payroll_documents_sids;
@@ -5508,7 +5507,7 @@ class Hr_documents_management extends Public_Controller
                 }
                 //
                 if ($assigned_document['document_sid'] == 0) {
-                    if ($assigned_document['pay_roll_catgory'] == 0) { 
+                    if ($assigned_document['pay_roll_catgory'] == 0) {
                         $assigned_sids[] = $assigned_document['document_sid'];
                         $no_action_required_sids[] = $assigned_document['document_sid'];
                         $no_action_required_documents[] = $assigned_document;
@@ -5636,7 +5635,8 @@ class Hr_documents_management extends Public_Controller
 
                                         $assigned_sids[] = $assigned_document['document_sid'];
                                     }
-                                } else { echo "hete";
+                                } else {
+                                    echo "hete";
                                     if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
                                         //
                                         if (!empty($assigned_document['authorized_signature'])) {
@@ -5657,7 +5657,7 @@ class Hr_documents_management extends Public_Controller
                                         }
                                         //
                                         $assigned_sids[] = $assigned_document['document_sid'];
-                                    } else if ($assigned_document['pay_roll_catgory'] == 0) { 
+                                    } else if ($assigned_document['pay_roll_catgory'] == 0) {
                                         $assigned_sids[] = $assigned_document['document_sid'];
                                         $no_action_required_sids[] = $assigned_document['document_sid'];
                                         $no_action_required_documents[] = $assigned_document;
@@ -5668,7 +5668,7 @@ class Hr_documents_management extends Public_Controller
                                             unset($assigned_documents[$key]);
                                         }
                                     }
-                                }    
+                                }
                             } else {
                                 $revoked_sids[] = $assigned_document['document_sid'];
                             }
@@ -5676,7 +5676,7 @@ class Hr_documents_management extends Public_Controller
                     } else if ($assigned_document['archive'] == 1) {
                         unset($assigned_documents[$key]);
                     }
-                }    
+                }
             }
             //
             $data['history_doc_sids'] = $history_doc_sids;
@@ -6588,6 +6588,7 @@ class Hr_documents_management extends Public_Controller
                     $employees,
                     $documents
                 );
+
                 //
                 $emp_ids = array_keys($result);
                 // foreach ($result as $id) {
@@ -6828,7 +6829,6 @@ class Hr_documents_management extends Public_Controller
                 $employer_id = $data['session']['employer_detail']['sid'];
                 $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employee_id, 0, 0);
 
-
                 foreach ($assigned_documents as $key => $assigned_document) {
                     //
                     $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -6936,6 +6936,15 @@ class Hr_documents_management extends Public_Controller
                         //   }
                     } else {
                         unset($assigned_documents[$key]);
+                    }
+                }
+
+
+                //
+                $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, 'employee', $employee_id);
+                if (!empty($current_assigned_offer_letter)) {
+                    if ($current_assigned_offer_letter[0]['user_consent'] == 0) {
+                        $assigned_documents[] = $current_assigned_offer_letter[0];
                     }
                 }
 
@@ -16186,7 +16195,7 @@ class Hr_documents_management extends Public_Controller
         //
 
         $d = $this->hr_documents_management_model->getDocumentByIdResourceDocuments($i);
-      // _e( $d,true,true);
+        // _e( $d,true,true);
 
         $d['user_type'] = null;
         $d['user_sid'] = null;
@@ -16194,7 +16203,7 @@ class Hr_documents_management extends Public_Controller
         $data["s3_path"] = $d['file_code'];
 
         $d['document_description'] =  $d['word_content'];
-        
+
         $document_body = $this->convertMagicCodeToHTML($d);
         $data["document_body"] = $document_body;
         //     

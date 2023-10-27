@@ -239,7 +239,8 @@
                                                         </td>
                                                         <td class="col-lg-1 text-center">
 
-                                                            <?php if ($document['letter_type'] == 'hybrid_document') { ?>
+                                                            <?php if ($document['letter_type'] == 'hybrid_document') { 
+                                                                ?>
                                                                 <button 
                                                                     class="btn btn-success btn-sm btn-block js-hybrid-preview"
                                                                     data-document="assigned"
@@ -257,7 +258,7 @@
                                                                 >
                                                                     Preview Assigned
                                                                 </button>
-                                                            <?php } else if ($document['document_type'] == 'uploaded' || $document['document_type'] == 'offer_letter') { ?>
+                                                            <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                 <button class="btn btn-success btn-sm btn-block"
                                                                     onclick="preview_latest_generic_function(this);"
                                                                     date-letter-type="uploaded"
@@ -266,6 +267,38 @@
                                                                     data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
                                                                     Preview Assigned
                                                                 </button>
+
+                                                            <?php } else if ($document['document_type'] == 'offer_letter') { ?>
+                                                                
+                                                                <?php if($document['offer_letter_type'] == 'hybrid_document'){ ?>
+                                                                    <button 
+                                                                        class="btn btn-success btn-sm btn-block js-hybrid-preview"
+                                                                        data-document="assigned"
+                                                                        data-type="document"
+                                                                        data-id="<?=$document['sid'];?>"
+                                                                    >
+                                                                        Preview Assigned
+                                                                    </button>
+                                                                <?php } else if ($document['offer_letter_type'] == 'uploaded') { ?>
+                                                                    <button class="btn btn-success btn-sm btn-block"
+                                                                        onclick="preview_latest_generic_function(this);"
+                                                                        date-letter-type="uploaded"
+                                                                        data-on-action="assigned"
+                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
+                                                                        data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
+                                                                        Preview Assigned
+                                                                    </button>
+                                                                <?php } else if ($document['offer_letter_type'] == 'generated') { ?>    
+                                                                    <button class="btn btn-success btn-sm btn-block"
+                                                                        onclick="preview_latest_generic_function(this);"
+                                                                        date-letter-type="generated"
+                                                                        data-doc-sid="<?php echo $document['sid']; ?>"
+                                                                        data-on-action="assigned"
+                                                                        data-from="assigned_document">
+                                                                        Preview Assigned
+                                                                    </button>
+                                                                <?php } ?>
+                                                                   
                                                             <?php } else { ?>  
                                                                 <button class="btn btn-success btn-sm btn-block"
                                                                     onclick="preview_latest_generic_function(this);"

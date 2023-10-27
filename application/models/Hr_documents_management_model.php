@@ -1988,7 +1988,25 @@ class Hr_documents_management_model extends CI_Model
                 }
             }
 
+            //
             $pending_documents  = count($assigned_documents);
+
+            $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, 'employee', $employee_sid);
+
+            if (!empty($current_assigned_offer_letter)) {
+                if ($current_assigned_offer_letter[0]['user_consent'] == 0) {
+                  $pending_documents  =  $pending_documents + 1;
+                    $assigned_sids[] = $current_assigned_offer_letter[0]['document_sid'];
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($current_assigned_offer_letter[0]['assigned_date']));
+                    $now = time();
+                    $datediff = $now - strtotime($current_assigned_offer_letter[0]['assigned_date']);
+                    $days = round($datediff / (60 * 60 * 24));
+
+                    $employee_sids[$emp_key]['Documents'][] = array('ID' => $current_assigned_offer_letter[0]['document_sid'], 'Title' => $current_assigned_offer_letter[0]['document_title'], 'Type' => ucwords($current_assigned_offer_letter[0]['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $current_assigned_offer_letter[0]['assigned_by']);
+                }
+            }
+
+           
             $pending_w4         = $this->is_employee_w4_document_pending('employee', $employee_sid);
             $pending_w9         = $this->is_employee_w9_document_pending('employee', $employee_sid);
             $pending_i9         = $this->is_employee_i9_document_pending('employee', $employee_sid);
