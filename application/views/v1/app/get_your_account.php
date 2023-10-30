@@ -1,5 +1,6 @@
 <main>
     <div class="Get_Your_Account">
+       
         <div class="Background_Image background-image-css center-horizontally" style="background-image: url('<?= base_url("public/v1/images/AccountBackground.png") ?>')">
             <div class="opacity-on-background column-flex-center">
                 <div class="column-flex-center image_height">

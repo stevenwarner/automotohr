@@ -49,6 +49,13 @@
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_main_heading" id="section1_main_heading" value="<?php echo $pageContent['page']['sections']['section1']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="section1_heading" id="section1_heading" value="<?php echo $pageContent['page']['sections']['section1']['heading']; ?>" />
                                                     </div>
@@ -159,6 +166,8 @@
             rules: {
                 section1_heading: {
                     required: true
+                },section1_main_heading: {
+                    required: true
                 },
                 section1_title: {
                     required: true
@@ -218,6 +227,7 @@
         pageData.page['sections'] = {
             section1: {
                 heading: $("#section1_heading").val(),
+                mainheading: $("#section1_main_heading").val(),
                 btnText: $("#section1_btn_text").val(),
                 btnSlug: $("#section1_btn_slug").val()
             },

@@ -40,12 +40,66 @@
                                                 </div>
                                             </div>
 
+
+
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Banner</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="banner_heading" id="banner_heading" value="<?php echo $pageContent['page']['sections']['banner']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="banner_btn_text" id="banner_btn_text" value="<?php echo $pageContent['page']['sections']['banner']['btnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="banner_btn_slug" id="banner_btn_slug" value="<?php echo $pageContent['page']['sections']['banner']['btnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Call Us Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="banner_call_text" id="banner_call_text" value="<?php echo $pageContent['page']['sections']['banner']['calltext']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Call Number</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="banner_call_number" id="banner_call_number" value="<?php echo $pageContent['page']['sections']['banner']['callnumber']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+
                                             <div class="hr-box" style="margin: 15px 0 0;">
 
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">Section 1</h1>
                                                 </div>
                                                 <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_main_heading" id="section1_main_heading" value="<?php echo $pageContent['page']['sections']['section1']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
@@ -59,6 +113,66 @@
                                                     <textarea class="invoice-fields" name="section1_heading_detail" id="section1_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section1']['headingDetail']; ?></textarea>
                                                 </div>
 
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet1" id="section1_bullet1" value="<?php echo $pageContent['page']['sections']['section1']['bullet1']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 2</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet2" id="section1_bullet2" value="<?php echo $pageContent['page']['sections']['section1']['bullet1']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 3</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet3" id="section1_bullet3" value="<?php echo $pageContent['page']['sections']['section1']['bullet3']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 4</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet4" id="section1_bullet4" value="<?php echo $pageContent['page']['sections']['section1']['bullet4']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 5</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet5" id="section1_bullet5" value="<?php echo $pageContent['page']['sections']['section1']['bullet5']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 6</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_bullet6" id="section1_bullet6" value="<?php echo $pageContent['page']['sections']['section1']['bullet6']; ?>" />
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Banner Text</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section1_banner_text" id="section1_banner_text" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section1']['bannertext']; ?></textarea>
+                                                </div>
+
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_banner_btn_text" id="section1_banner_btn_text" value="<?php echo $pageContent['page']['sections']['section1']['bannerbtnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_banner_btn_slug" id="section1_banner_btn_slug" value="<?php echo $pageContent['page']['sections']['section1']['bannerbtnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+
                                             </div>
 
                                             <div class="hr-box" style="margin: 15px 0 0;">
@@ -66,6 +180,12 @@
                                                     <h1 class="hr-registered pull-left">Section 2</h1>
                                                 </div>
 
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_main_heading" id="section2_main_heading" value="<?php echo $pageContent['page']['sections']['section2']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
@@ -78,11 +198,74 @@
                                                     <textarea class="invoice-fields" name="section2_heading_detail" id="section2_heading_detail" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section2']['headingDetail']; ?></textarea>
                                                 </div>
 
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 1</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_bullet1" id="section2_bullet1" value="<?php echo $pageContent['page']['sections']['section2']['bullet1']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 2</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_bullet2" id="section2_bullet2" value="<?php echo $pageContent['page']['sections']['section2']['bullet1']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 3</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_bullet3" id="section2_bullet3" value="<?php echo $pageContent['page']['sections']['section2']['bullet3']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 4</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_bullet4" id="section2_bullet4" value="<?php echo $pageContent['page']['sections']['section2']['bullet4']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Bullet 5</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_bullet5" id="section2_bullet5" value="<?php echo $pageContent['page']['sections']['section2']['bullet5']; ?>" />
+                                                    </div>
+                                                </div>
+                                             
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Banner Text</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section2_banner_text" id="section2_banner_text" rows="4" cols="60"><?php echo $pageContent['page']['sections']['section2']['bannertext']; ?></textarea>
+                                                </div>
+
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Text</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_banner_btn_text" id="section2_banner_btn_text" value="<?php echo $pageContent['page']['sections']['section2']['bannerbtnText']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Button Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_banner_btn_slug" id="section2_banner_btn_slug" value="<?php echo $pageContent['page']['sections']['section2']['bannerbtnSlug']; ?>" />
+                                                    </div>
+                                                </div>
+
+
+
                                             </div>
 
                                             <div class="hr-box" style="margin: 15px 0 0;">
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">Section 3</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Youtube Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section3_youtube_heading" id="section3_youtube_heading" value="<?php echo $pageContent['page']['sections']['section3']['youtubeheading']; ?>" />
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -160,13 +343,88 @@
                 section1_heading: {
                     required: true
                 },
+                banner_heading: {
+                    required: true
+                },
+                banner_btn_text: {
+                    required: true
+                },
+                banner_btn_slug: {
+                    required: true
+                },
+                banner_call_text: {
+                    required: true
+                },
+                banner_call_number: {
+                    required: true
+                },
+                section1_main_heading: {
+                    required: true
+                },
                 section1_heading_detail: {
+                    required: true
+                },
+                section1_bullet1: {
+                    required: true
+                },
+                section1_bullet2: {
+                    required: true
+                },
+                section1_bullet3: {
+                    required: true
+                },
+                section1_bullet4: {
+                    required: true
+                },
+                section1_bullet5: {
+                    required: true
+                },
+                section1_bullet6: {
+                    required: true
+                },
+                section1_banner_text: {
+                    required: true
+                },
+                section1_banner_btn_text: {
+                    required: true
+                },
+                section1_banner_btn_slug: {
+                    required: true
+                },
+                section2_main_heading: {
                     required: true
                 },
                 section2_heading: {
                     required: true
                 },
                 section2_heading_detail: {
+                    required: true
+                },
+                section2_bullet1: {
+                    required: true
+                },
+                section2_bullet2: {
+                    required: true
+                },
+                section2_bullet3: {
+                    required: true
+                },
+                section2_bullet4: {
+                    required: true
+                },
+                section2_bullet5: {
+                    required: true
+                },
+                section2_banner_text: {
+                    required: true
+                },
+                section2_banner_btn_text: {
+                    required: true
+                },
+                section2_banner_btn_slug: {
+                    required: true
+                },
+                section3_youtube_heading: {
                     required: true
                 },
                 section3_heading: {
@@ -215,16 +473,44 @@
         //
         pageData.page['sections'] = {
             section1: {
+                mainheading: $("#section1_main_heading").val(),
                 heading: $("#section1_heading").val(),
                 headingDetail: $("#section1_heading_detail").val(),
+                bullet1: $("#section1_bullet1").val(),
+                bullet2: $("#section1_bullet2").val(),
+                bullet3: $("#section1_bullet3").val(),
+                bullet4: $("#section1_bullet4").val(),
+                bullet5: $("#section1_bullet5").val(),
+                bullet6: $("#section1_bullet6").val(),
+                bannertext: $("#section1_banner_text").val(),
+                bannerbtnText: $("#section1_banner_btn_text").val(),
+                bannerbtnSlug: $("#section1_banner_btn_slug").val(),
 
             },
+            banner: {
+                heading: $("#banner_heading").val(),
+                btnText: $("#banner_btn_text").val(),
+                btnSlug: $("#banner_btn_slug").val(),
+                calltext: $("#banner_call_text").val(),
+                callnumber: $("#banner_call_number").val()
+            },
             section2: {
+                mainheading: $("#section2_main_heading").val(),
                 heading: $("#section2_heading").val(),
                 headingDetail: $("#section2_heading_detail").val(),
+                bullet1: $("#section2_bullet1").val(),
+                bullet2: $("#section2_bullet2").val(),
+                bullet3: $("#section2_bullet3").val(),
+                bullet4: $("#section2_bullet4").val(),
+                bullet5: $("#section2_bullet5").val(),
+                bullet6: $("#section2_bullet6").val(),
+                bannertext: $("#section2_banner_text").val(),
+                bannerbtnText: $("#section2_banner_btn_text").val(),
+                bannerbtnSlug: $("#section2_banner_btn_slug").val(),
 
             },
             section3: {
+                youtubeheading: $("#section3_youtube_heading").val(),
                 heading: $("#section3_heading").val(),
                 btnText: $("#section3_btn_text").val(),
                 btnSlug: $("#section3_btn_slug").val(),

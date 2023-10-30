@@ -7,9 +7,7 @@
                         <div class="high-lighted-text-div">
                             <div class="highlighted-text-upper-div">
                                 <p class="highlighted-text">
-
-                                    ALREADY REGISTERED
-                                </p>
+                                    <?php echo $loginContent['page']['sections']['section1']['mainheading'] ?> </p>
                             </div>
                             <form action="" method="post" id="loginForm" class="ng-pristine ng-valid">
                                 <div class="login-section">
