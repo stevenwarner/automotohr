@@ -262,7 +262,8 @@ class Merge_employees_model extends CI_Model
         $secondary_notes = $this->db->get('portal_misc_notes')->result_array();
         //
         if (count($secondary_notes) > 0) {
-            foreach ($secondary_notes as $secondary_note) {
+                foreach ($secondary_notes as $secondary_check) {
+
                 $primary_check = array();
                 //
                 $data_to_insert = $this->findDifference($primary_check, $secondary_check);
