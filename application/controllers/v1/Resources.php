@@ -8,36 +8,43 @@ class Resources extends Public_Controller
     private $footer;
     private $css;
     private $js;
+    private $disableMinifiedFiles;
+
+    private $blogCount = 6;
 
     public function __construct()
     {
         parent::__construct();
         //
-        $data['title'] = "Home";
         $this->load->model('v1/Resources_model', "resources_model");
-        //                                                                                                                                       
+        //
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
         $this->css = "public/v1/css/app/";
         $this->js = "public/v1/js/app/";
+        $this->disableMinifiedFiles = false;
     }
 
+    /**
+     * main resources page
+     */
     public function index()
     {
+        $pageData = getPageContent("resources", true);
         // meta titles
         $data = [];
         $data['meta'] = [];
-        $data['meta']['title'] = 'Resources | AutomotoHR.com';
-        $data['meta']['description'] = 'AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT? ';
-        $data['meta']['keywords'] = 'AutomotoHR,People Operations platform,Business Differentiation,Brand Identity,One System Solution,Hire to Retire,Company Distinctiveness,HR Innovation,Unified HR Management,Branding Strategy,Employee Lifecycle,Streamlined Operations,Personnel Management,HR Efficiency,Competitive Advantage,Employee Experience,Seamless Integration,Organizational Uniqueness,HR Transformation,Comprehensive HR Solution';
+        $data['meta']['title'] = $pageData["page"]["meta"]["title"];
+        $data['meta']['description'] = $pageData["page"]["meta"]["keyword"];
+        $data['meta']['keywords'] = $pageData["page"]["meta"]["description"];
         //
         // get latest blogs
         $data['blogs'] =
-            $this->resources_model->getLatestBlogs(3, 0);
+            $this->resources_model->getLatestBlogs($this->blogCount, 0);
         //
         // get latest blogs
         $data['resources'] =
-            $this->resources_model->getResources(3, 0);
+            $this->resources_model->getResources($this->blogCount, 0);
         //
         $data['pageCSS'] = [
             'v1/plugins/bootstrap5/css/bootstrap.min',
@@ -45,19 +52,67 @@ class Resources extends Public_Controller
         ];
         //
         $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
             'v1/app/css/theme',
             'v1/app/css/resources'
-        ], $this->css, 'resources');
+        ], $this->css, 'resources', $this->disableMinifiedFiles);
         //
         $data['appJs'] = bundleJs([
-            'v1/app/jquery/jquery-3.7.min',
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'public/v1/js/app/resources',
-        ], $this->js, 'resources');
+            'v1/plugins/jquery/jquery-3.7.min',
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            "v1/plugins/alertifyjs/alertify.min",
+            'js/app_helper',
+            'v1/resources/main',
+        ], $this->js, 'resources', $this->disableMinifiedFiles);
 
         $this->load->view($this->header, $data);
-        $this->load->view('v1/app/resources');
+        $this->load->view('v1/app/resources/resources');
         $this->load->view($this->footer);
+    }
+
+
+    // API routes
+    /**
+     * get blogs
+     */
+    public function loadMoreBlogs()
+    {
+        $page = $this->input->get("page", true) ?? 1;
+        $offset = ($page - 1) * $this->blogCount;
+        //
+        $result = $this->resources_model->getLatestBlogs($this->blogCount, $offset);
+        //
+        return SendResponse(200, [
+            'view' => $this->load->view("v1/app/resources/partials/blogs", [
+                'blogs' => $result
+            ], true),
+            'count' => count($result)
+        ]);
+    }
+
+    /**
+     * get resources
+     */
+    public function loadMoreResources()
+    {
+        $page = $this->input->get("page", true) ?? 1;
+        $keywords = $this->input->get("keywords", true) ?? "";
+        $categories = $this->input->get("categories", true) ?? "";
+        $offset = ($page - 1) * $this->blogCount;
+        //
+        $result = $this->resources_model->getResources(
+            $this->blogCount,
+            $offset,
+            $keywords,
+            $categories
+        );
+        //
+        return SendResponse(200, [
+            'view' => $this->load->view("v1/app/resources/partials/resources", [
+                'resources' => $result
+            ], true),
+            'count' => count($result)
+        ]);
     }
 
     public function subscribeCommunity()
@@ -87,79 +142,47 @@ class Resources extends Public_Controller
         }
     }
 
-    public function searchResources()
-    {
-        _e($_GET, true, true);
-    }
 
-    public function loadMore($type, $row)
-    {
-        if ($this->input->is_ajax_request()) {
-            //
-            $result = [];
-            $start = 3 * $row;
-            //
-            if ($type == "blog") {
-                $result = $this->resources_model->getLatestBlogs(3, $start);
-            } else if ($type == "resource") {
-                $category = isset($_GET['category']) ? implode(',', $_GET['category']) : null;
-                $keywords = !empty($_GET['keywords']) ? $_GET['keywords'] : null;
-                //
-                $result = $this->resources_model->getResources(3, $start, $keywords, $category);
-            }
-            //
-            header('Content-Type: application/json');
-            echo json_encode($result);
-            exit(0);
-        }
-    }
-
-    function readMore($slug)
+    /**
+     * single 
+     */
+    public function readMore($slug)
     {
 
         // meta titles
-        $blogs =
+        $blog =
             $this->resources_model->getBlogDetail($slug);
 
         $data = [];
         $data['meta'] = [];
-        $data['meta']['title'] = $blogs['meta_title'];
-        $data['meta']['description'] = $blogs['meta_description'];
-        $data['meta']['keywords'] = $blogs['meta_key_word'];
+        $data['meta']['title'] = $blog['meta_title'];
+        $data['meta']['description'] = $blog['meta_description'];
+        $data['meta']['keywords'] = $blog['meta_key_word'];
 
         //
-        $data['blogs'] = $blogs;
-
+        $data['blog'] = $blog;
+        //
         $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
-            'v1/app/alertifyjs/css/alertify.min'
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
         ];
-
-        $data['pageJs'] = [
-            'v1/app/js/jquery-1.11.3.min',
-            'v1/app/alertifyjs/alertify.min'
-        ];
-
-
+        //
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
+            "v1/plugins/alertifyjs/css/alertify.min",
+            'v1/app/css/theme',
             'v1/app/css/resources'
-        ], $this->css, 'resources');
-
+        ], $this->css, 'resources_single', $this->disableMinifiedFiles);
+        //
         $data['appJs'] = bundleJs([
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'public/v1/js/app/resources',
-            'alertifyjs/alertify.min'
-        ], $this->js, 'home');
+            'v1/plugins/jquery/jquery-3.7.min',
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            "v1/plugins/alertifyjs/alertify.min",
+            'js/app_helper',
+            'v1/resources/main',
+        ], $this->js, 'resources_single', $this->disableMinifiedFiles);
 
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/resource_detail');
         $this->load->view($this->footer);
-    }
-
-    function watchResource($slug)
-    {
-        echo $slug;
     }
 }

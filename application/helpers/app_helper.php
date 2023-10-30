@@ -1859,3 +1859,20 @@ if (!function_exists("convertToHilited")) {
         return preg_replace("/##(.*?)##/i", '<span class="highlighted-light-blue-div">$1</span>', $str);
     }
 }
+
+if (!function_exists("makeResourceView")) {
+    function makeResourceView($file)
+    {
+        // get the file extension
+        $extension =
+        pathinfo($file, PATHINFO_EXTENSION);
+        // for video
+        if (in_array($extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) {
+            return ' <video style="width: 100%"  src="'.(AWS_S3_BUCKET_URL . $file).'" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
+        } elseif (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+            return '<img src="'.(AWS_S3_BUCKET_URL. $file).'" class="resources-card-images-adjustment-detail" alt="tablet with tea">';
+        } else {
+            return '<iframe src="'.(AWS_S3_BUCKET_URL. $file).'" width="100%" height="500px"></iframe> ';
+        }
+    }
+}

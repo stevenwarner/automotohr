@@ -72,9 +72,10 @@ $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['resources']['get'] = 'v1/Resources/index';
 $route['subscribeCommunity']['post'] = 'v1/Resources/subscribeCommunity';
 $route['searchResources']['get'] = 'v1/Resources/searchResources';
-$route['load_more/(:any)/(:num)']['get'] = 'v1/Resources/loadMore/$1/$2';
 $route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
 $route['resources/(:any)'] = 'v1/Resources/readMore/$1';
+$route['resources/blog/load']['get'] = 'v1/Resources/loadMoreBlogs';
+$route['resources/resource/load']['get'] = 'v1/Resources/loadMoreResources';
 
 
 //  Goals

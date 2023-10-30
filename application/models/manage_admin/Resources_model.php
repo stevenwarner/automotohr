@@ -14,7 +14,7 @@ class resources_model extends CI_Model
             $count = $this->db->count_all_results('cms_resources');
             return $count;
         } else {
-            $query = $this->db->get('cms_resources');
+            $query = $this->dborder_by("sid", "DESC")->get('cms_resources');
             return $query->result_array();
         }
     }
@@ -44,19 +44,19 @@ class resources_model extends CI_Model
     }
 
     //
-       //
-       public function get_subscribers($limit = null, $offset = null, $count_only = false)
-       {
-           if ($limit !== null && $offset !== null) {
-               $this->db->limit($limit, $offset);
-           }
-   
-           if ($count_only == true) {
-               $count = $this->db->count_all_results('cms_subscribers');
-               return $count;
-           } else {
-               $query = $this->db->get('cms_subscribers');
-               return $query->result_array();
-           }
-       }
+    //
+    public function get_subscribers($limit = null, $offset = null, $count_only = false)
+    {
+        if ($limit !== null && $offset !== null) {
+            $this->db->limit($limit, $offset);
+        }
+
+        if ($count_only == true) {
+            $count = $this->db->count_all_results('cms_subscribers');
+            return $count;
+        } else {
+            $query = $this->db->get('cms_subscribers');
+            return $query->result_array();
+        }
+    }
 }

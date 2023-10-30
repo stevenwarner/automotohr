@@ -87,7 +87,6 @@
 }
 
 h1 {
-  font-family: Sora;
   font-size: 30px;
   font-weight: 700;
   line-height: 58px;
@@ -96,7 +95,6 @@ h1 {
 }
 
 .highlighted-text {
-  font-family: Sora;
   font-size: 21px;
   font-weight: 500;
   line-height: 26px;
@@ -205,7 +203,6 @@ h2 {
 }
 
 .forgot-password-text {
-  font-family: Sora;
   font-size: 16px;
   font-weight: 600;
   line-height: 58px;
@@ -288,7 +285,6 @@ h2 {
 }
 
 .executive-admin-text {
-  font-family: Sora;
   font-size: 40px;
   font-weight: 700;
   line-height: 58px;
@@ -411,7 +407,6 @@ h2 {
 }
 
 .sales-support {
-  font-family: Sora;
   font-size: 32px;
   font-weight: 700;
   line-height: 80px;
@@ -420,7 +415,6 @@ h2 {
 }
 
 .number-text {
-  font-family: Sora;
   font-size: 21px;
   font-weight: 700;
   line-height: 40px;
@@ -430,7 +424,6 @@ h2 {
 }
 
 .email-text {
-  font-family: Sora;
   font-size: 21px;
   font-weight: 700;
   line-height: 40px;
@@ -491,7 +484,6 @@ h2 {
 }
 
 .send-us-text {
-  font-family: Sora;
   font-size: 28px;
   font-weight: 400;
   line-height: 36px;
@@ -562,7 +554,6 @@ h2 {
 }
 
 .service-main-div h2 {
-  font-family: Sora;
   font-size: 40px;
   font-weight: 400;
   line-height: 80px;
@@ -682,7 +673,6 @@ h2 {
 }
 
 .white-heading-product {
-  font-family: Sora;
   font-size: 40px;
   font-weight: 700;
   line-height: 80px;
@@ -759,7 +749,6 @@ h2 {
 .highlighted-div {
   background-repeat: no-repeat;
   background-position: start;
-  font-family: Sora;
   font-size: 20px;
   font-weight: 500;
   line-height: 25px;
@@ -768,7 +757,6 @@ h2 {
 }
 
 .product-screen-top-heading {
-  font-family: Sora;
   font-size: 50px;
   font-weight: 700;
   line-height: 70px;
@@ -953,7 +941,6 @@ h2 {
 }
 
 .affiliate-screen-top-heading {
-  font-family: Sora;
   font-size: 25px;
   font-weight: 600;
   line-height: 32px;
@@ -1046,7 +1033,6 @@ h2 {
 }
 
 .affiliate-sub-heading {
-  font-family: Sora;
   font-size: 23px;
   font-weight: 600;
   line-height: 35px;
@@ -1153,7 +1139,6 @@ h2 {
 }
 
 .Affiliate-title {
-  font-family: Sora;
   font-weight: 500;
   font-size: 20px;
   color: #525252;
@@ -1164,7 +1149,6 @@ h2 {
 }
 
 .Affiliate-heading {
-  font-family: Sora;
   font-weight: 700;
   font-size: 40px;
   color: #3d4250;
@@ -1173,7 +1157,6 @@ h2 {
 }
 
 .Affiliate-subtitle {
-  font-family: Sora;
   font-weight: 700;
   font-size: 40px;
   color: #3d4250;
@@ -1454,7 +1437,6 @@ ul li {
 }
 
 .Sitemap-heading h1 {
-  font-family: Sora;
   font-weight: 700;
   font-size: 50px;
   line-height: 80px;
@@ -1471,7 +1453,6 @@ ul li {
 }
 
 .home-heading {
-  font-family: Sora;
   font-weight: 700;
   font-size: 36px;
   line-height: 80px;
@@ -1480,7 +1461,6 @@ ul li {
 }
 
 .subtitle_text {
-  font-family: Sora;
   font-weight: 400;
   font-size: 30px;
   line-height: 64px;
@@ -1488,7 +1468,6 @@ ul li {
 }
 
 .subtitle_text li {
-  font-family: Sora;
   font-weight: 400;
   font-size: 30px;
   line-height: 64px;
@@ -1496,7 +1475,6 @@ ul li {
 }
 
 .Sitemap_content li {
-  font-family: Sora;
   font-weight: 400;
   font-size: 23px;
   line-height: 48px;
@@ -1683,7 +1661,7 @@ ul li {
 }
 
 .card-second-section-resources .card-text {
-  color: #3d4250;
+  color: #3d4250 ;
   font-weight: 700;
 }
 
@@ -3483,7 +3461,6 @@ button.color_light_grey {
 
 .blog-main-crumb {
   padding: 20px 20px 0px 0px;
-  font-family: Sora;
   font-size: 18px;
   font-weight: 500;
   line-height: 58px;
@@ -3494,7 +3471,6 @@ button.color_light_grey {
 
 .blog-main-title {
   padding: 0px 0px;
-  font-family: Sora;
   font-size: 50px;
   font-weight: 700;
   line-height: 80px;

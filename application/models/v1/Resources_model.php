@@ -17,7 +17,7 @@ class Resources_model extends CI_Model
             $this->db->limit($limit, $start);
         }
         //
-        $this->db->order_by("created_at", "desc");
+        $this->db->order_by("sid", "desc");
         $result = $this->db->get('cms_resources')->result_array();
         //
         if (!empty($result)) {
@@ -27,25 +27,37 @@ class Resources_model extends CI_Model
         }
     }
 
-    public function getResources($limit = null, $start = null, $keywords = null, $category = '')
+    public function getResources($limit = null, $start = null, $keywords = "", $category = '')
     {
         //
-        $this->db->select("title, slug, description, resources, resource_type");
+        $this->db->select("title, slug, description, resources, resource_type, feature_image");
         $this->db->where('status', 1);
         //
-        if (!empty($category)) {
-            $this->db->where("resource_type LIKE '%$category%'");
+        if ($category || $keywords) {
+            $this->db->group_start();
         }
-        //    
-        if (!empty($keywords)) {
-            $this->db->where("title LIKE '%$keywords%'");
+        //
+        if ($category) {
+            $categoryList = explode(",", $category);
+            foreach ($categoryList as $value) {
+
+                $this->db->or_where("FIND_IN_SET('" . ($value) . "', resource_type) > 0", null, null);
+            }
+        }
+        //
+        if ($keywords) {
+            $this->db->or_where("title LIKE '%$keywords%'");
+            $this->db->or_where("description LIKE '%$keywords%'");
+        }
+        if ($category || $keywords) {
+            $this->db->group_end();
         }
         //
         if ($limit != null) {
             $this->db->limit($limit, $start);
         }
         //
-        $this->db->order_by("sid", "asc");
+        $this->db->order_by("sid", "desc");
         $result = $this->db->get('cms_resources')->result_array();
         //
         if (!empty($result)) {

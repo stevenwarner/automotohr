@@ -164,69 +164,24 @@ class Resources extends Admin_Controller
 
     public function upload_file_ajax_handler()
     {
-
         $original_name = $_FILES['document']['name'];
-
-        $document_title = $this->input->post('document_title');
-        $original_name = $_FILES['document']['name'];
-
-        $valid_extension = array('jpg', 'jpeg', 'png', 'gif', 'pdf');
-        $valid_videow_extension = array('mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov');
-
+        $document_title = $this->input->post('document_title', true);
         //
         $file_info = pathinfo($original_name);
         $extension = strtolower($file_info['extension']);
 
-        //
-        if (in_array($extension, $valid_videow_extension)) {
+        $uploadedDocument = upload_file_to_aws('document', '0', str_replace(' ', '_', $document_title), time(), AWS_S3_BUCKET_NAME);
 
-            $target_file_name = basename($_FILES["document"]["name"]);
-            $random = generateRandomString(7);
-            $file_name = strtolower($random . '_' . $target_file_name);
-            $target_dir = "assets/uploaded_videos/resourses/";
-            $target_file = $target_dir . $file_name;
+        if (!empty($uploadedDocument) && $uploadedDocument != 'error') {
+            $return_data['upload_status'] = 'success';
+            $return_data['document_url'] = $uploadedDocument;
+            $return_data['original_name'] = $original_name;
+            $return_data['extension'] = $extension;
 
-            if (!file_exists($target_dir)) {
-                mkdir($target_dir);
-            }
-
-            if (move_uploaded_file($_FILES["document"]["tmp_name"], $target_file)) {
-
-                $return_data['upload_status'] = 'success';
-                $return_data['document_url'] = $file_name;
-                $return_data['original_name'] = '';
-                $return_data['extension'] = $extension;
-                echo json_encode($return_data);
-                exit(0);
-            } else {
-
-                $return_data['upload_status'] =  'error';
-                $return_data['reason'] =  'Something went wrong, Please try again!';
-                echo json_encode($return_data);
-                exit(0);
-            }
-        }
-
-
-        //
-        if (in_array($extension, $valid_extension)) {
-            $uploadedDocument = upload_file_to_aws('document', '0', str_replace(' ', '_', $document_title), '1', AWS_S3_BUCKET_NAME);
-
-            if (!empty($uploadedDocument) && $uploadedDocument != 'error') {
-                $return_data['upload_status'] = 'success';
-                $return_data['document_url'] = $uploadedDocument;
-                $return_data['original_name'] = $original_name;
-                $return_data['extension'] = $extension;
-
-                echo json_encode($return_data);
-            } else {
-                $return_data['upload_status'] =  'error';
-                $return_data['reason'] =  'Something went wrong, Please try again!';
-                echo json_encode($return_data);
-            }
+            echo json_encode($return_data);
         } else {
             $return_data['upload_status'] =  'error';
-            $return_data['reason'] =  'Upload document type is not valid';
+            $return_data['reason'] =  'Something went wrong, Please try again!';
             echo json_encode($return_data);
         }
     }

@@ -2020,7 +2020,7 @@ if (!function_exists('upload_file_to_aws')) {
 
     function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME, $key = NULL)
     {
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
+        // if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
 
         $CI = &get_instance();
 
