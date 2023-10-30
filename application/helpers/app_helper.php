@@ -1865,14 +1865,26 @@ if (!function_exists("makeResourceView")) {
     {
         // get the file extension
         $extension =
-        pathinfo($file, PATHINFO_EXTENSION);
+            pathinfo($file, PATHINFO_EXTENSION);
         // for video
         if (in_array($extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) {
-            return ' <video style="width: 100%"  src="'.(AWS_S3_BUCKET_URL . $file).'" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
+            return ' <video style="width: 100%"  src="' . (AWS_S3_BUCKET_URL . $file) . '" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
         } elseif (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-            return '<img src="'.(AWS_S3_BUCKET_URL. $file).'" class="resources-card-images-adjustment-detail" alt="tablet with tea">';
+            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea">';
         } else {
-            return '<iframe src="'.(AWS_S3_BUCKET_URL. $file).'" width="100%" height="500px"></iframe> ';
+            return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';
         }
+    }
+}
+
+
+if (!function_exists("load404")) {
+    function load404()
+    {
+        get_instance()->load
+            ->view("v1/app/header", [
+                "meta_title" => "404 | AutomotoHr.com"
+            ])
+            ->view("v1/app/footer");
     }
 }
