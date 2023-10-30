@@ -15,7 +15,7 @@ class Users extends CI_Controller
         //
         $this->css = "public/v1/css/app/";
         $this->js = "public/v1/js/app/";
-        $this->disableMinifiedFiles = false;
+        $this->disableMinifiedFiles = true;
     }
 
     public function login()

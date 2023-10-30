@@ -59,19 +59,18 @@ class Users extends CI_Controller
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
             'v1/app/plugins/fontawesome/css/all',
             'v1/app/css/login',
-
         ];
         //
         $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
-            'v1/app/css/app',
-        ], $this->css);
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, "executive_admin", true);
         //
         $data['appJs'] = bundleJs([
             'v1/app/js/jquery-1.11.3.min',
             'plugins/bootstrap5/js/bootstrap.bundle',
             'alertifyjs/alertify.min'
-        ], $this->js);
+        ], $this->js, "executive_admin", true);
 
 
 
@@ -87,7 +86,6 @@ class Users extends CI_Controller
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/executive_admin_login');
             $this->load->view($this->footer);
-
         } else {
             $username = $this->input->post('identity');
             $password = $this->input->post('password');
