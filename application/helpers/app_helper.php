@@ -1844,3 +1844,18 @@ if (!function_exists("convertToStrip")) {
         return preg_replace("/##(.*?)##/i", '<strong class="text-yellow">$1</strong>', $str);
     }
 }
+
+
+
+if (!function_exists("convertToHilited")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToHilited(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<span class="highlighted-light-blue-div">$1</span>', $str);
+    }
+}

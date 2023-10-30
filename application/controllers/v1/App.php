@@ -179,6 +179,7 @@ class App extends CI_Controller
         $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent($productSlug, true);
+
         // meta titles
         $data['meta'] = [];
         $data['meta']['title'] = $pageContent['page']['meta']['title'];
@@ -210,7 +211,6 @@ class App extends CI_Controller
         //
         $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
-        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('get-your-account', true);
         // meta titles

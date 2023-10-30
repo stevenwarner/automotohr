@@ -23,7 +23,7 @@
                                                 </div>
                                             </div>
 
-                                          
+
                                             <div class="hr-box" style="margin: 15px 0 0;">
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">Home</h1>
@@ -31,23 +31,23 @@
                                                 <?php
                                                 $pageContent = json_decode($page_data['content'], true);
                                                 ?>
-                                                  
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="home_title" id="home_title" value="<?php echo $pageContent['page']['home']['title']; ?>" />
-                                                        </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Title</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="home_title" id="home_title" value="<?php echo $pageContent['page']['home']['title']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                    <div class="col-xs-6">
+                                                <div class="col-xs-6">
 
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="home_slug" id="home_slug" value="<?php echo $pageContent['page']['home']['slug']; ?>" />
-                                                        </div>
+                                                    <div class="field-row">
+                                                        <label>Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="home_slug" id="home_slug" value="<?php echo $pageContent['page']['home']['slug']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                
+
                                             </div>
 
 
@@ -88,6 +88,13 @@
                                                                 <input type="text" class="invoice-fields" name="people_operations_slug" id="people_operations_slug" value="<?php echo $pageContent['page']['products']['submenu1']['slug']; ?>" />
                                                             </div>
                                                         </div>
+                                                        <div class="col-xs-12">
+                                                            <div class="field-row">
+                                                                <label>Details</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="people_operations_title_detail" id="people_operations_title_detail" value="<?php echo $pageContent['page']['products']['submenu1']['titledetail']; ?>" />
+                                                            </div>
+                                                        </div>
+
 
                                                         <div class="col-xs-6">
                                                             <div class="field-row">
@@ -101,6 +108,14 @@
                                                             <div class="field-row">
                                                                 <label>Slug</label><b class="text-danger"> *</b>
                                                                 <input type="text" class="invoice-fields" name="hr_electronic_onboarding_slug" id="hr_electronic_onboarding_slug" value="<?php echo $pageContent['page']['products']['submenu2']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="col-xs-12">
+                                                            <div class="field-row">
+                                                                <label>Detail</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="hr_electronic_onboarding_title_detail" id="hr_electronic_onboarding_title_detail" value="<?php echo $pageContent['page']['products']['submenu2']['titledetail']; ?>" />
                                                             </div>
                                                         </div>
 
@@ -119,6 +134,13 @@
                                                             </div>
                                                         </div>
 
+                                                        <div class="col-xs-12">
+                                                            <div class="field-row">
+                                                                <label>Detail</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="payroll_title_detail" id="payroll_title_detail" value="<?php echo $pageContent['page']['products']['submenu3']['titledetail']; ?>" />
+                                                            </div>
+                                                        </div>
+
                                                         <div class="col-xs-6">
                                                             <div class="field-row">
                                                                 <label>Recruitment Text</label><b class="text-danger"> *</b>
@@ -131,6 +153,12 @@
                                                             <div class="field-row">
                                                                 <label>Slug</label><b class="text-danger"> *</b>
                                                                 <input type="text" class="invoice-fields" name="recruitment_slug" id="recruitment_slug" value="<?php echo $pageContent['page']['products']['submenu4']['slug']; ?>" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12">
+                                                            <div class="field-row">
+                                                                <label>Detail</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="recruitment_title_detail" id="recruitment_title_detail" value="<?php echo $pageContent['page']['products']['submenu4']['titledetail']; ?>" />
                                                             </div>
                                                         </div>
 
@@ -148,7 +176,12 @@
                                                                 <input type="text" class="invoice-fields" name="employee_management_slug" id="employee_management_slug" value="<?php echo $pageContent['page']['products']['submenu5']['slug']; ?>" />
                                                             </div>
                                                         </div>
-
+                                                        <div class="col-xs-12">
+                                                            <div class="field-row">
+                                                                <label>Detail</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="employee_management_title_detail" id="employee_management_title_detail" value="<?php echo $pageContent['page']['products']['submenu5']['titledetail']; ?>" />
+                                                            </div>
+                                                        </div>
 
                                                         <div class="col-xs-6">
                                                             <div class="field-row">
@@ -164,6 +197,15 @@
                                                                 <input type="text" class="invoice-fields" name="compliance_slug" id="compliance_slug" value="<?php echo $pageContent['page']['products']['submenu6']['slug']; ?>" />
                                                             </div>
                                                         </div>
+
+
+                                                        <div class="col-xs-12">
+                                                            <div class="field-row">
+                                                                <label>Detail</label><b class="text-danger"> *</b>
+                                                                <input type="text" class="invoice-fields" name="compliance_title_detail" id="compliance_title_detail" value="<?php echo $pageContent['page']['products']['submenu6']['titledetail']; ?>" />
+                                                            </div>
+                                                        </div>
+
 
                                                     </div>
                                                 </div>
@@ -238,36 +280,36 @@
                                                     <h1 class="hr-registered pull-left">Buttons</h1>
                                                 </div>
 
-                                                 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Login Title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn_login_title" id="btn_login_title" value="<?php echo $pageContent['page']['btnlogin']['title']; ?>" />
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn_login_slug" id="btn_login_slug" value="<?php echo $pageContent['page']['btnlogin']['slug']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Login Title</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn_login_title" id="btn_login_title" value="<?php echo $pageContent['page']['btnlogin']['title']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Obligation Consultation Title</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn_consultation_title" id="btn_consultation_title" value="<?php echo $pageContent['page']['btnobligation']['title']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn_login_slug" id="btn_login_slug" value="<?php echo $pageContent['page']['btnlogin']['slug']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                    <div class="col-xs-6">
-                                                        <div class="field-row">
-                                                            <label>Slug</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="btn_consultation_slug" id="btn_consultation_slug" value="<?php echo $pageContent['page']['btnobligation']['slug']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Obligation Consultation Title</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn_consultation_title" id="btn_consultation_title" value="<?php echo $pageContent['page']['btnobligation']['title']; ?>" />
                                                     </div>
+                                                </div>
 
-                                                
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Slug</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="btn_consultation_slug" id="btn_consultation_slug" value="<?php echo $pageContent['page']['btnobligation']['slug']; ?>" />
+                                                    </div>
+                                                </div>
+
+
                                             </div>
                                     </div>
                                 </div>
@@ -317,11 +359,21 @@
                 people_operations_slug: {
                     required: true
                 },
+                people_operations_title_detail: {
+                    required: true
+                },
                 hr_electronic_onboarding_title: {
+                    required: true
+                },
+                hr_electronic_onboarding_title_detail: {
                     required: true
                 },
 
                 payroll_title: {
+                    required: true
+                },
+
+                payroll_title_detail: {
                     required: true
                 },
                 payroll_slug: {
@@ -333,13 +385,22 @@
                 recruitment_title: {
                     required: true
                 },
+                recruitment_title_detail: {
+                    required: true
+                },
                 hr_electronic_onboarding_slug: {
                     required: true
                 },
                 employee_management_title: {
                     required: true
                 },
+                employee_management_title_detail: {
+                    required: true
+                },
                 compliance_title: {
+                    required: true
+                },
+                compliance_title_detail: {
                     required: true
                 },
                 whyus_slug: {
@@ -412,26 +473,38 @@
             submenu1: {
                 title: $("#people_operations_title").val(),
                 slug: $("#people_operations_slug").val(),
+                titledetail: $("#people_operations_title_detail").val(),
+
             },
             submenu2: {
                 title: $("#hr_electronic_onboarding_title").val(),
                 slug: $("#hr_electronic_onboarding_slug").val(),
+                titledetail: $("#hr_electronic_onboarding_title_detail").val(),
+
             },
             submenu3: {
                 title: $("#payroll_title").val(),
                 slug: $("#payroll_slug").val(),
+                titledetail: $("#payroll_title_detail").val(),
+
             },
             submenu4: {
                 title: $("#recruitment_title").val(),
                 slug: $("#recruitment_slug").val(),
+                titledetail: $("#recruitment_title_detail").val(),
+
             },
             submenu5: {
                 title: $("#employee_management_title").val(),
                 slug: $("#employee_management_slug").val(),
+                titledetail: $("#employee_management_title_detail").val(),
+
             },
             submenu6: {
                 title: $("#compliance_title").val(),
                 slug: $("#compliance_slug").val(),
+                titledetail: $("#compliance_title_detail").val(),
+
             }
         };
         pageData.page['whyus'] = {

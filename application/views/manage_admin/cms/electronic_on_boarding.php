@@ -73,9 +73,15 @@
                                                     <h1 class="hr-registered pull-left">Section 2</h1>
                                                 </div>
 
+
+
                                                 <div class="col-xs-12">
-                                                    <label>Section 2</label>
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_main_heading" id="section2_main_heading" value="<?php echo $pageContent['page']['sections']['section2']['mainheading']; ?>" />
+                                                    </div>
                                                 </div>
+
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
@@ -120,6 +126,13 @@
 
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">Section 4</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_main_heading" id="section4_main_heading" value="<?php echo $pageContent['page']['sections']['section4']['mainheading']; ?>" />
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -182,13 +195,13 @@
                                                     <h1 class="hr-registered pull-left">Section 7</h1>
                                                 </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section7_heading" id="section7_heading" value="<?php echo $pageContent['page']['sections']['section7']['heading']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_heading" id="section7_heading" value="<?php echo $pageContent['page']['sections']['section7']['heading']; ?>" />
                                                     </div>
-                                                
+                                                </div>
+
                                             </div>
                                     </div>
                                 </div>
@@ -228,8 +241,10 @@
                 section1_heading1_detail: {
                     required: true
                 },
-
                 section2_heading: {
+                    required: true
+                },
+                section2_main_heading: {
                     required: true
                 },
                 section2_heading1: {
@@ -245,6 +260,9 @@
                     required: true
                 },
                 section4_heading: {
+                    required: true
+                },
+                section4_main_heading: {
                     required: true
                 },
                 section4_heading_detail: {
@@ -299,6 +317,7 @@
             },
             section2: {
                 heading: $("#section2_heading").val(),
+                mainheading: $("#section2_main_heading").val(),
                 heading1: $("#section2_heading1").val(),
                 heading1Detail: $("#section2_heading1_detail").val(),
             },
@@ -308,6 +327,8 @@
             },
             section4: {
                 heading: $("#section4_heading").val(),
+                mainheading: $("#section4_main_heading").val(),
+
                 headingDetail: $("#section4_heading_detail").val(),
             },
             section5: {

@@ -5,7 +5,7 @@
                 <img src="<?= base_url("public/v1/images/"); ?>Ellipse 1.png" class="blue-small-full-circle" alt="blue-small-full-circle" />
                 <div class="product-screen-text">
                     <h1 class="product-screen-top-heading">
-                        <?php echo convertToStrip($pageContent['page']['sections']['section1']['heading1']); ?> </h1>
+                     <?php echo convertToStrip($pageContent['page']['sections']['section1']['heading1']); ?> </h1>
                     <p class="product-screen-second-text opacity-80-product">
                         <?php echo convertToStrip($pageContent['page']['sections']['section1']['heading1Detail']); ?>
                     </p>
@@ -25,7 +25,7 @@
         <div class="row yellow-quarter-background" style="background-image: url('<?= base_url("public/v1/images/") ?>quarteryellow.png');">
             <div class="col-xs-12 column-flex-center">
                 <div class="text-center div-blue-section-padding-product column-flex-center">
-                    <p class="highlighted-div text-white opacity-90-product  margin-top-60"><span class="highlighted-light-blue-div">Up to 20%</span>Lifetime Commissions On Your Referrals for as long as they remain our client</p>
+                    <p class="highlighted-div text-white opacity-90-product  margin-top-60"><?php echo convertToHilited($pageContent['page']['sections']['section2']['mainheading']); ?></p>
                     <h2 class="white-heading-product text-white"><?php echo convertToStrip($pageContent['page']['sections']['section2']['heading']); ?>
                     </h2>
                 </div>
@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="image-section-text opacity-90-product ">
                                     <p>
-                                        <?= ($value['headingDetail']); ?>
+                                        <?= (convertToStrip($value['headingDetail'])); ?>
                                     </p>
                                 </div>
                             </div>

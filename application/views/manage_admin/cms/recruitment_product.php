@@ -75,6 +75,13 @@
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_main_heading" id="section2_main_heading" value="<?php echo $pageContent['page']['sections']['section2']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="section2_heading" id="section2_heading" value="<?php echo $pageContent['page']['sections']['section2']['heading']; ?>" />
                                                     </div>
@@ -210,13 +217,13 @@
                                                     <h1 class="hr-registered pull-left">Section 9</h1>
                                                 </div>
 
-                                                    <div class="col-xs-12">
-                                                        <div class="field-row">
-                                                            <label>Heading</label><b class="text-danger"> *</b>
-                                                            <input type="text" class="invoice-fields" name="section9_heading" id="section9_heading" value="<?php echo $pageContent['page']['sections']['section9']['heading']; ?>" />
-                                                        </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_heading" id="section9_heading" value="<?php echo $pageContent['page']['sections']['section9']['heading']; ?>" />
                                                     </div>
-                                                
+                                                </div>
+
                                             </div>
                                     </div>
                                 </div>
@@ -258,6 +265,10 @@
                 },
 
                 section2_heading: {
+                    required: true
+                },
+
+                section2_main_heading: {
                     required: true
                 },
                 section2_heading1: {
@@ -339,6 +350,7 @@
             },
             section2: {
                 heading: $("#section2_heading").val(),
+                mainheading: $("#section2_main_heading").val(),
                 heading1: $("#section2_heading1").val(),
                 heading1Detail: $("#section2_heading1_detail").val(),
             },

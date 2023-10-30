@@ -2,7 +2,7 @@
     <div class="width_80">
         <div class="width_100 d-flex flex-column align-items-center justify-content-center py-5">
             <p class="lightgrey heading-h4-grey heading">
-                WHY SHOULD YOU SWITCH TO AUTOMOTOHR?
+            <?php echo $homeContent['page']['sections']['section2']['mainheading'] ?>
             </p>
             <h5 class="darkgrey text-center mt-3 title px-sm-5 px-2 mx-sm-3 mx-0 title">
                 <?php echo $homeContent['page']['sections']['section2']['heading'] ?>
@@ -17,7 +17,7 @@
             <div class="col-lg-6 col-12 ps-md-3 ps-md-3 ps-lg-5 order-lg-1 order-2">
                 <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                     <p class="lightgrey heading-h4-grey opacity-ninety heading">
-                        ONBOARDING AND HIRING
+                    <?php echo $homeContent['page']['sections']['section3']['mainheading'] ?>
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
                         <?php echo $homeContent['page']['sections']['section3']['heading'] ?>
@@ -68,7 +68,7 @@
         <div class="col-lg-6 col-12 d-flex justify-content-center">
             <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                 <p class="lightgrey heading-h4-grey opacity-ninety heading">
-                    TIME, PAYROLL, AND BENEFITS
+                <?php echo $homeContent['page']['sections']['section4']['mainheading'] ?>
                 </p>
                 <p class="darkgrey mt-3 title text-lg-start text-center">
                     <?php echo $homeContent['page']['sections']['section4']['heading'] ?>
@@ -96,7 +96,7 @@
             <div class="col-xl-5 col-lg-6 col-12 d-flex justify-content-center order-lg-1 order-2">
                 <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                     <p class="lightgrey heading-h4-grey opacity-eighty heading">
-                        EMPLOYEE EXPERIENCE & PERFORMANCE
+                    <?php echo $homeContent['page']['sections']['section4']['mainheading'] ?>
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
                         <?php echo $homeContent['page']['sections']['section4']['heading'] ?>
@@ -138,7 +138,7 @@
         <div class="col-lg-6 col-12 d-flex justify-content-center">
             <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                 <p class="lightgrey heading-h4-grey opacity-ninety heading">
-                    VACATION & TIME OFF MONITORING
+                <?php echo $homeContent['page']['sections']['section5']['mainheading'] ?>
                 </p>
                 <p class="darkgrey mt-3 title text-lg-start text-center">
                     <?php echo $homeContent['page']['sections']['section5']['heading'] ?>
@@ -168,7 +168,7 @@
             <div class="col-xl-5 col-lg-6 col-12 d-flex justify-content-center order-lg-1 order-2">
                 <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                     <p class="lightgrey heading-h4-grey opacity-eighty heading">
-                        TRANSFORM, EMPOWER & SUCCEED
+                    <?php echo $homeContent['page']['sections']['section6']['mainheading'] ?>
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
                         <?php echo $homeContent['page']['sections']['section6']['heading'] ?>
@@ -218,7 +218,7 @@
             <div class="col-lg-6 col-12 ps-lg-3 ps-lg-5 d-flex justify-content-center">
                 <div class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
                     <p class="lightgrey heading-h4-grey opacity-ninety heading">
-                        FULL COMPANY CAREER WEBSITE
+                    <?php echo $homeContent['page']['sections']['section7']['mainheading'] ?>
                     </p>
                     <p class="darkgrey mt-3 title text-lg-start text-center">
                         <?php echo $homeContent['page']['sections']['section7']['heading'] ?>

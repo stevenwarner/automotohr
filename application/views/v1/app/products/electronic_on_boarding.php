@@ -23,23 +23,18 @@
                             <div class="highlighted-div column-flex-center opacity-80-product">
                                 <p><span class="highlighted-light-blue-div">Want</span>the Inside Secret on People Operations?</p>
                             </div>
-
                             <h2 class="">
                                 <?php echo $productsContent['page']['sections']['section1']['heading']; ?>
                             </h2>
-
                             <input type="hidden" class="d-block " id="pagename" placeholder="Name*" name="pagename" value="<?php echo $pageSlug; ?>" />
-
                             <input type="text" class="d-block " id="name1" placeholder="Name*" name="name" required />
                             <?php echo form_error('name'); ?>
                             <input type="email" class="d-block" id="email_id1" placeholder="Email*" name="email" required />
                             <?php echo form_error('email'); ?>
                             <input type="text" class="d-block" id="phone_number1" placeholder="Phone Number*" name="phone_number" required />
                             <?php echo form_error('phone_number'); ?>
-
                             <input type="text" class="title-field" placeholder="title*" name="title" id="title1" required />
                             <?php echo form_error('title'); ?>
-
                             <select class="form-select select-form-field" aria-label="Default select example" name="company_size" id="company_size1">
                                 <option selected>Employee Count*</option>
                                 <option value="1-5">1 - 5</option>
@@ -52,7 +47,6 @@
                             </select>
 
                             <?php echo form_error('job_roles'); ?>
-
                             <input type="text" class="d-block" placeholder="Company Name*" name="company_name" id="company_name1" required />
                             <?php echo form_error('company_name'); ?><br>
 
@@ -79,7 +73,7 @@
         <div class="row yellow-quarter-background" style="background-image: url(/assets/v1/app/images/quarteryellow.png);">
             <div class="col-xs-12 column-flex-center">
                 <div class="text-center div-blue-section-padding-product column-flex-center">
-                    <p class="highlighted-div text-white opacity-90-product  margin-top-60"><span class="highlighted-light-blue-div">Up to 20%</span>Lifetime Commissions On Your Referrals for as long as they remain our client</p>
+                    <p class="highlighted-div text-white opacity-90-product  margin-top-60"><span class="highlighted-light-blue-div">Up to 20%</span><?php echo convertToHilited($productsContent['page']['sections']['section2']['mainheading']); ?></p>
                     <h2 class="white-heading-product text-white"><?php echo $productsContent['page']['sections']['section2']['heading']; ?>
                     </h2>
                 </div>

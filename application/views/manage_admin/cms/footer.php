@@ -289,6 +289,15 @@
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">Sales Support</h1>
                                                 </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="sales_heading" id="sales_heading" value="<?php echo $pageContent['page']['sales']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
+
                                                 <div class="col-xs-6">
                                                     <div class="field-row">
                                                         <label>Phone Number</label><b class="text-danger"> *</b>
@@ -310,6 +319,14 @@
                                                     <h1 class="hr-registered pull-left">Technical Support</h1>
                                                 </div>
 
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="technical_heading" id="technical_heading" value="<?php echo $pageContent['page']['technical']['heading']; ?>" />
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-xs-6">
                                                     <div class="field-row">
                                                         <label>Phone Number</label><b class="text-danger"> *</b>
@@ -321,6 +338,35 @@
                                                     <div class="field-row">
                                                         <label>Email</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="technical_email" id="technical_email" value="<?php echo $pageContent['page']['technical']['slug']; ?>" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="hr-box" style="margin: 15px 0 0;">
+                                                <div class="hr-box-header bg-header-green">
+                                                    <h1 class="hr-registered pull-left">Footer Logo</h1>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Text Under Logo</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="text_under_logo" id="text_under_logo" value="<?php echo $pageContent['page']['logo']['text_under_logo']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-6">
+                                                    <div class="field-row">
+                                                        <label>Stay Connect</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="text_stay_connect" id="text_stay_connect" value="<?php echo $pageContent['page']['logo']['text_stay_connect']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Copy Rights</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="copy_right" id="copy_right" value="<?php echo $pageContent['page']['logo']['copy_right']; ?>" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -427,10 +473,16 @@
                 sales_phone: {
                     required: true
                 },
+                sales_heading: {
+                    required: true
+                },
                 sales_email: {
                     required: true
                 },
                 technical_phone: {
+                    required: true
+                },
+                technical_heading: {
                     required: true
                 },
                 technical_email: {
@@ -453,7 +505,18 @@
                 },
                 privacy_policy_slug: {
                     required: true
+                },
+                text_under_logo: {
+                    required: true
+                },
+                text_stay_connect: {
+                    required: true
+                },
+                copy_right: {
+                    required: true
                 }
+
+                
             },
             messages: {
                 home_title: {
@@ -531,11 +594,14 @@
         };
         pageData.page['sales'] = {
             title: $("#sales_phone").val(),
-            slug: $("#sales_email").val()
+            slug: $("#sales_email").val(),
+            heading: $("#sales_heading").val()
+
         };
         pageData.page['technical'] = {
             title: $("#technical_phone").val(),
-            slug: $("#technical_email").val()
+            slug: $("#technical_email").val(),
+            heading: $("#technical_heading").val()
         };
 
         pageData.page['privacypolicy'] = {
@@ -546,6 +612,13 @@
             title: $("#affiliate_program_title").val(),
             slug: $("#affiliate_program_slug").val()
         };
+
+        pageData.page['logo'] = {
+            text_under_logo: $("#text_under_logo").val(),
+            text_stay_connect: $("#text_stay_connect").val(),
+            copy_right: $("#copy_right").val()
+        };
+     
 
         //
         url_to = "<?= base_url() ?>manage_admin/cms/update_page";

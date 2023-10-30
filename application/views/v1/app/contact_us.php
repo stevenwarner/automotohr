@@ -2,8 +2,8 @@
     <div class="row">
         <div class="col-xs-12 column-flex-center background-border-radius top-background-div" style="background-image: url('<?= base_url("public/v1/images/"); ?>frame85.png');">
             <div class="background-image-div-contact-us  ">
-                <h1 class="text-white contact-us-text">Contact Us</h1>
-                <p class="text-white margin-top-twenty contact-us-line text-center-mobile">Contact one of our talent network partners at </p>
+                <h1 class="text-white contact-us-text"><?= $pageContent["page"]["contactUs"]["mainheading"]; ?></h1>
+                <p class="text-white margin-top-twenty contact-us-line text-center-mobile"><?= $pageContent["page"]["contactUs"]["subheading"]; ?></p>
             </div>
             <div class="row margin-top-40 boxes-absolute ">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 padding-right-box">

@@ -10,7 +10,7 @@
                 <div class="col-sm-12 set-contentcenter-ontablet">
                     <div class="margin-btm">
                         <p class="heading-h4-grey heading text-white opacity-eighty">
-                            WHAT WE OFFER?
+                        <?php echo $homeContent['page']['sections']['section1']['mainheading'] ?>
                         </p>
                     </div>
                 </div>

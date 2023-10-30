@@ -57,7 +57,7 @@
                                                 </div>
                                                 <div class="col-xs-6">
                                                     <label>Main Heading</label><b class="text-danger"> *</b>
-                                                    <input type="text" class="invoice-fields" name="slider1_heading" id="slider1_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
+                                                    <input type="text" class="invoice-fields" name="slider1_main_heading" id="slider1_main_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -133,6 +133,13 @@
 
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">WHAT WE OFFER?</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_main_heading" id="section1_main_heading" value="<?php echo $pageContent['page']['sections']['section1']['mainheading']; ?>" />
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -217,6 +224,12 @@
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section2_main_heading" id="section2_main_heading" value="<?php echo $pageContent['page']['sections']['section2']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="section2_heading" id="section2_heading" value="<?php echo $pageContent['page']['sections']['section2']['heading']; ?>" />
                                                     </div>
@@ -228,6 +241,14 @@
 
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">ONBOARDING AND HIRING</h1>
+                                                </div>
+
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section3_main_heading" id="section3_main_heading" value="<?php echo $pageContent['page']['sections']['section3']['mainheading']; ?>" />
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -265,6 +286,13 @@
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section4_main_heading" id="section4_main_heading" value="<?php echo $pageContent['page']['sections']['section4']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="section4_heading" id="section4_heading" value="<?php echo $pageContent['page']['sections']['section4']['heading']; ?>" />
                                                     </div>
@@ -293,6 +321,13 @@
 
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">EMPLOYEE EXPERIENCE & PERFORMANCE</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section5_main_heading" id="section5_main_heading" value="<?php echo $pageContent['page']['sections']['section5']['mainheading']; ?>" />
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -330,6 +365,13 @@
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section6_main_heading" id="section6_main_heading" value="<?php echo $pageContent['page']['sections']['section6']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="section6_heading" id="section6_heading" value="<?php echo $pageContent['page']['sections']['section6']['heading']; ?>" />
                                                     </div>
@@ -359,6 +401,13 @@
 
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">TRANSFORM, EMPOWER & SUCCEED</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section7_main_heading" id="section7_main_heading" value="<?php echo $pageContent['page']['sections']['section7']['mainheading']; ?>" />
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -397,6 +446,13 @@
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section8_main_heading" id="section8_main_heading" value="<?php echo $pageContent['page']['sections']['section8']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="section8_heading" id="section8_heading" value="<?php echo $pageContent['page']['sections']['section8']['heading']; ?>" />
                                                     </div>
@@ -427,7 +483,12 @@
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">OUR PROCESS</h1>
                                                 </div>
-
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section9_main_heading" id="section9_main_heading" value="<?php echo $pageContent['page']['sections']['section9']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
@@ -480,6 +541,13 @@
 
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">INNOVATING HR</h1>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section10_main_heading" id="section10_main_heading" value="<?php echo $pageContent['page']['sections']['section10']['mainheading']; ?>" />
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -537,9 +605,14 @@
                                                 <div class="hr-box-header bg-header-green">
                                                     <h1 class="hr-registered pull-left">Notable Benefits</h1>
                                                 </div>
-                                                <div class="row">
-
-                                                </div>
+                                                
+                                                    <div class="col-xs-12">
+                                                        <div class="field-row">
+                                                            <label>Main Heading</label><b class="text-danger"> *</b>
+                                                            <input type="text" class="invoice-fields" name="section13_main_heading" id="section13_main_heading" value="<?php echo $pageContent['page']['sections']['section13']['mainheading']; ?>" />
+                                                        </div>
+                                                    </div>
+                                                
 
 
                                                 <div class="row">
@@ -732,6 +805,9 @@
                 section1_heading: {
                     required: true
                 },
+                section1_main_heading: {
+                    required: true
+                },
                 section1_details: {
                     required: true
                 },
@@ -762,7 +838,13 @@
                 section2_heading: {
                     required: true
                 },
+                section2_main_heading: {
+                    required: true
+                },
                 section3_heading: {
+                    required: true
+                },
+                section3_main_heading: {
                     required: true
                 },
                 section3_details: {
@@ -777,6 +859,9 @@
                 section4_heading: {
                     required: true
                 },
+                section4_main_heading: {
+                    required: true
+                },
                 section4_details: {
                     required: true
                 },
@@ -787,6 +872,9 @@
                     required: true
                 },
                 section5_heading: {
+                    required: true
+                },
+                section5_main_heading: {
                     required: true
                 },
                 section5_details: {
@@ -801,6 +889,9 @@
                 section6_heading: {
                     required: true
                 },
+                section6_main_heading: {
+                    required: true
+                },
                 section6_details: {
                     required: true
                 },
@@ -811,6 +902,9 @@
                     required: true
                 },
                 section7_heading: {
+                    required: true
+                },
+                section7_main_heading: {
                     required: true
                 },
                 section7_details: {
@@ -825,6 +919,9 @@
                 section8_heading: {
                     required: true
                 },
+                section8_main_heading: {
+                    required: true
+                },
                 section8_details: {
                     required: true
                 },
@@ -835,6 +932,9 @@
                     required: true
                 },
                 section9_heading: {
+                    required: true
+                },
+                section9_main_heading: {
                     required: true
                 },
                 section9_heading_sub1: {
@@ -858,7 +958,13 @@
                 section10_heading: {
                     required: true
                 },
+                section10_main_heading: {
+                    required: true
+                },
                 section11_heading: {
+                    required: true
+                },
+                section11_main_heading: {
                     required: true
                 },
                 section11_details: {
@@ -867,10 +973,16 @@
                 section12_heading: {
                     required: true
                 },
+                section12_main_heading: {
+                    required: true
+                },
                 section12_details: {
                     required: true
                 },
                 section13_heading: {
+                    required: true
+                },
+                section13_main_heading: {
                     required: true
                 },
                 section13_details: {
@@ -879,16 +991,25 @@
                 section14_heading: {
                     required: true
                 },
+                section14_main_heading: {
+                    required: true
+                },
                 section14_details: {
                     required: true
                 },
                 section15_heading: {
                     required: true
                 },
+                section15_main_heading: {
+                    required: true
+                },
                 section15_details: {
                     required: true
                 },
                 section16_heading: {
+                    required: true
+                },
+                section16_main_heading: {
                     required: true
                 },
                 section16_heading2: {
@@ -901,6 +1022,9 @@
                     required: true
                 },
                 section17_heading: {
+                    required: true
+                },
+                section17_main_heading: {
                     required: true
                 },
                 section17_btn_text: {
@@ -967,7 +1091,11 @@
         //
         pageData.page['sections'] = {
             section1: {
+                mainheading: $("#section1_main_heading").val(),
                 heading: $("#section1_heading").val(),
+
+                mainheading: $("#section1_main_heading").val(),
+
                 headingDetail: $("#section1_details").val(),
                 btnText: $("#section1_button_text").val(),
                 btnSlug: $("#section1_button_slug").val(),
@@ -980,9 +1108,12 @@
 
             },
             section2: {
+                mainheading: $("#section2_main_heading").val(),
                 heading: $("#section2_heading").val(),
+
             },
             section3: {
+                mainheading: $("#section3_main_heading").val(),
                 heading: $("#section3_heading").val(),
                 headingDetail: $("#section3_details").val(),
                 btnText: $("#section3_button_text").val(),
@@ -990,35 +1121,41 @@
             },
             section4: {
                 heading: $("#section4_heading").val(),
+                mainheading: $("#section4_main_heading").val(),
                 headingDetail: $("#section4_details").val(),
                 btnText: $("#section4_button_text").val(),
                 btnSlug: $("#section4_button_slug").val()
             },
             section5: {
+                mainheading: $("#section5_main_heading").val(),
                 heading: $("#section5_heading").val(),
                 headingDetail: $("#section5_details").val(),
                 btnText: $("#section5_button_text").val(),
                 btnSlug: $("#section5_button_slug").val()
             },
             section6: {
+                mainheading: $("#section6_main_heading").val(),
                 heading: $("#section6_heading").val(),
                 headingDetail: $("#section6_details").val(),
                 btnText: $("#section6_button_text").val(),
                 btnSlug: $("#section6_button_slug").val()
             },
             section7: {
+                mainheading: $("#section7_main_heading").val(),
                 heading: $("#section7_heading").val(),
                 headingDetail: $("#section7_details").val(),
                 btnText: $("#section7_button_text").val(),
                 btnSlug: $("#section7_button_slug").val()
             },
             section8: {
+                mainheading: $("#section8_main_heading").val(),
                 heading: $("#section8_heading").val(),
                 headingDetail: $("#section8_details").val(),
                 btnText: $("#section8_button_text").val(),
                 btnSlug: $("#section8_button_slug").val()
             },
             section9: {
+                mainheading: $("#section9_main_heading").val(),
                 heading: $("#section9_heading").val(),
                 headingSub1: $("#section9_heading_sub1").val(),
                 headingSub2: $("#section9_heading_sub2").val(),
@@ -1028,35 +1165,44 @@
                 btnSlug: $("#section9_btn_slug").val()
             },
             section10: {
+                mainheading: $("#section10_main_heading").val(),
                 heading: $("#section10_heading").val(),
+
             },
             section11: {
+                mainheading: $("#section11_main_heading").val(),
                 heading: $("#section11_heading").val(),
                 headingDetail: $("#section11_details").val(),
             },
             section12: {
+                mainheading: $("#section12_main_heading").val(),
                 heading: $("#section12_heading").val(),
                 headingDetail: $("#section12_details").val(),
             },
             section13: {
+                mainheading: $("#section13_main_heading").val(),
                 heading: $("#section13_heading").val(),
                 headingDetail: $("#section13_details").val(),
             },
             section14: {
+                mainheading: $("#section14_main_heading").val(),
                 heading: $("#section14_heading").val(),
                 headingDetail: $('#section14_details').val(),
             },
             section15: {
+                mainheading: $("#section15_main_heading").val(),
                 heading: $("#section15_heading").val(),
                 headingDetail: $('#section15_details').val(),
             },
             section16: {
+                mainheading: $("#section16_main_heading").val(),
                 heading: $("#section16_heading").val(),
                 heading2: $("#section16_heading2").val(),
                 btnText: $("#section16_btn_text").val(),
                 btnSlug: $("#section16_btn_slug").val()
             },
             section17: {
+                mainheading: $("#section17_main_heading").val(),
                 heading: $("#section17_heading").val(),
                 btnText: $("#section17_btn_text").val(),
                 btnSlug: $("#section17_btn_slug").val()

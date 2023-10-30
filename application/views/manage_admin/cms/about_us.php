@@ -80,9 +80,14 @@
 
                                             <div class="hr-box-header bg-header-green">
                                             </div>
-
+                                            <div class="col-xs-12">
+                                                <div class="field-row">
+                                                    <label>An Award-Winning Solution</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="award_winning_heading" id="award_winning_heading" value="<?php echo $pageContent['page']['awardWinning']['heading']; ?>" />
+                                                </div>
+                                            </div>
                                             <div class="col-xs-12"><br>
-                                                <label>An Award-Winning Solution</label><b class="text-danger"> *</b>
+                                                <label>Details</label><b class="text-danger"> *</b>
                                                 <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                 <textarea class="invoice-fields" name="award_winning_text" id="award_winning_text" rows="8" cols="60"><?php echo $pageContent['page']['awardWinning']['text']; ?></textarea>
                                             </div>
@@ -105,23 +110,45 @@
 
                                             </div>
 
+                                            <div class="col-xs-12">
+                                                <div class="field-row">
+                                                    <label>Robert Hollenshead </label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="leaderShipLeft1_heading" id="leaderShipLeft1_heading" value="<?php echo $pageContent['page']['leaderShipLeft1']['heading']; ?>" />
+                                                </div>
+                                            </div>
                                             <div class="col-xs-6">
-                                                <label>Robert Hollenshead </label><b class="text-danger"> *</b>
+                                                <label>Detail</label><b class="text-danger"> *</b>
                                                 <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                 <textarea class="invoice-fields" name="leadership_left1_text" id="leadership_left1_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipLeft1']['text']; ?></textarea>
 
                                             </div>
 
+
+                                            <div class="col-xs-6">
+                                                <div class="field-row">
+                                                    <label>Steven Warner</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="leadership_right1_heading" id="leadership_right1_heading" value="<?php echo $pageContent['page']['leaderShipRight1']['heading']; ?>" />
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-6">
                                                 <div class="col-xs-12">
-                                                    <label>Steven Warner</label><b class="text-danger"> *</b>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
                                                     <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                     <textarea class="invoice-fields" name="leadership_right1_text" id="leadership_right1_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight1']['text']; ?></textarea>
 
                                                 </div>
 
-                                                <div class="col-xs-12"><br>
+                                                <div class="col-xs-12">
+                                                <div class="field-row">
                                                     <label>E J Shelby</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="leadership_right2_heading" id="leadership_right2_heading" value="<?php echo $pageContent['page']['leaderShipRight2']['heading']; ?>" />
+                                                </div>
+                                            </div>
+
+
+                                                <div class="col-xs-12"><br>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
                                                     <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
                                                     <textarea class="invoice-fields" name="leadership_right2_text" id="leadership_right2_text" rows="8" cols="60"><?php echo $pageContent['page']['leaderShipRight2']['text']; ?></textarea>
 
@@ -177,13 +204,25 @@
                 award_winning_text: {
                     required: true
                 },
+                award_winning_heading: {
+                    required: true
+                },
                 leadership_team: {
                     required: true
                 },
                 leadership_left1_text: {
                     required: true
                 },
+                leaderShipLeft1_heading: {
+                    required: true
+                },
                 leadership_right1_text: {
+                    required: true
+                },
+                leadership_right2_heading: {
+                    required: true
+                },
+                leadership_right1_heading: {
                     required: true
                 },
                 leadership_right2_text: {
@@ -238,18 +277,26 @@
         };
         pageData.page['awardWinning'] = {
             text: $("#award_winning_text").val(), 
+            heading: $("#award_winning_heading").val(), 
+
         };
         pageData.page['leaderShip'] = {
             text: $("#leadership_team").val(),
         };
         pageData.page['leaderShipLeft1'] = {
             text: $("#leadership_left1_text").val(),
+            heading: $("#leaderShipLeft1_heading").val(),
+
         };
         pageData.page['leaderShipRight1'] = {
             text: $("#leadership_right1_text").val(),
+            heading: $("#leadership_right1_heading").val(),
+
         };
         pageData.page['leaderShipRight2'] = {
             text: $("#leadership_right2_text").val(),
+            heading: $("#leadership_right2_heading").val(),
+
         };
 
         pageData.page['meta'] = {

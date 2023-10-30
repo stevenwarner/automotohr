@@ -7,7 +7,7 @@
                         <div class="col-xs-12 col-lg-12">
                             <div class="col-xs-12">
                                 <h1 class="automotoH1 text-start why-us-heading text-center w-100">
-                                    About AutomotoHR
+                                    <?= $pageContent["page"]["mainHeading"]["text"]; ?>
                                 </h1>
                             </div>
                             <div class="col-xs-12 center-horizontally">
@@ -68,8 +68,7 @@
                             <div class="row">
                                 <div class="col-xs-12">
                                     <h2 class="automotoH1 text-start why-us-heading award-wining-heading w-100 text-white">
-                                        An Award-Winning Solution to Achieve People Operations
-                                        Excellence
+                                        <?= $pageContent["page"]["awardWinning"]["heading"]; ?>
                                     </h2>
                                 </div>
                                 <div class="col-xs-12">
@@ -90,7 +89,7 @@
                 <div class="w-75 section-two-padding-whyus">
                     <div class="row margin-bottom-30">
                         <div class="col-xs-12">
-                            <h2 class="automotoH1">Our Leadership Team</h2>
+                            <h2 class="automotoH1">Our Leadership Team dsfsd <?= $pageContent["page"]["leaderShip"]["text"]; ?></h2>
                         </div>
                     </div>
                     <div class="row">
@@ -98,8 +97,8 @@
                             <img src="<?= base_url("public/v1/") ?>images/Polygon 7.png" class="yellow-small-triangle-aboutus" alt="small forward icon tip" />
                             <div class="aboutus-grey-background">
                                 <div class="d-flex align-items-center">
-                                    <h3>Steven Warner</h3>
-                                    <span class="margin-left-10">Founder/CEO</span>
+                                    <h3><?= $pageContent["page"]["leaderShipRight1"]["heading"]; ?>
+                                    </h3>
                                 </div>
 
                                 <p class="autmotoPara aboutus-boxes-para opacity-90 margin-bottom-0">
@@ -125,8 +124,7 @@
                         <div class="col-xs-12 col-xl-6 order-2-aboutus-responsive padding-top-80">
                             <div class="aboutus-grey-background">
                                 <div class="d-flex align-items-center">
-                                    <h3>Robert Hollenshead</h3>
-                                    <span class="margin-left-10">Co Founder</span>
+                                    <h3> <?= $pageContent["page"]["leaderShipLeft1"]["heading"]; ?></h3>
                                 </div>
 
                                 <p class="autmotoPara aboutus-boxes-para opacity-90 margin-bottom-0">
@@ -154,8 +152,8 @@
                             <img src="<?= base_url("public/v1/") ?>images/Polygon 7.png" class="yellow-small-triangle-aboutus third-pointer-nose-aboutus" alt="small forward icon tip" />
                             <div class="aboutus-grey-background">
                                 <div class="d-flex align-items-center">
-                                    <h3>E J Shelby</h3>
-                                    <span class="margin-left-10">Director of Sales</span>
+                                    <h3><?= $pageContent["page"]["leaderShipRight2"]["heading"]; ?>
+                                    </h3>
                                 </div>
 
                                 <p class="autmotoPara aboutus-boxes-para opacity-90 margin-bottom-0">

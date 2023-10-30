@@ -7,7 +7,7 @@
                         <div class="col-xs-12 col-lg-6 order-2-on-mobile">
                             <div class="col-xs-12 ">
                                 <p class="Affiliate-title Opacity_80 margin-bottom-25">
-                                    <span class="highlighted-light-blue-div">Why</span> Choose AutomotoHR?
+                                    <?php echo convertToHilited($whyUsContent['page']['sections']['section1']['mainheading']); ?>
                                 </p>
                             </div>
                             <div class="col-xs-12 ">

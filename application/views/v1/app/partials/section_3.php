@@ -3,7 +3,7 @@
         <div class="col-sm-12">
             <div class="margin-btm d-flex justify-content-center">
                 <p class="lightgrey heading-h4-grey opacity-eighty heading">
-                    OUR PROCESS
+                <?php echo $homeContent['page']['sections']['section9']['mainheading'] ?>
                 </p>
             </div>
         </div>

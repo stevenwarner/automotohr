@@ -4,7 +4,7 @@
             <div class="col-sm-12 hide-on-mobile set-contentcenter-ontablet">
                 <div class="margin-btm">
                     <p class="heading-h4-grey text-white opacity-ninety margin-top-inovating">
-                        INNOVATING HR
+                    <?php echo $homeContent['page']['sections']['section10']['mainheading'] ?>
                     </p>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                         <div class="tab-pane fade show active mt-3" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
-                                    <p class="heading-h4-grey text-white">INNOVATING HR</p>
+                                    <p class="heading-h4-grey text-white"><?php echo $homeContent['page']['sections']['section11']['mainheading'] ?></p>
                                 </div>
                             </div>
                             <div class="col-sm-12 show-on-mobile">
@@ -43,7 +43,7 @@
                         <div class="tab-pane fade mt-3" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
-                                    <p class="heading-h4-grey text-white">INNOVATING HR</p>
+                                    <p class="heading-h4-grey text-white"><?php echo $homeContent['page']['sections']['section12']['mainheading'] ?></p>
                                 </div>
                             </div>
                             <div class="col-sm-12 show-on-mobile">
@@ -77,7 +77,7 @@
         <div class="col-sm-12">
             <div class="margin-btm">
                 <p class="white-text second-heading text-align-center-ontablet">
-                    Notable Benefits
+                <?php echo $homeContent['page']['sections']['section13']['mainheading'] ?>
                 </p>
             </div>
         </div>

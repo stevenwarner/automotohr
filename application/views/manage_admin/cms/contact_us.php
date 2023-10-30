@@ -43,6 +43,21 @@
                                             <div class="hr-box-header bg-header-green">
                                             </div> <input type="hidden" class="invoice-fields" name="page_id" id="page_id" value="<?php echo $page_data['sid']; ?>" />
 
+
+                                            <div class="col-xs-12">
+                                                <div class="field-row">
+                                                    <label>Main Heading</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="contactus_main_heading" id="contactus_main_heading" value="<?php echo $pageContent['page']['contactUs']['mainheading']; ?>" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12">
+                                                <div class="field-row">
+                                                    <label>Sub Heading</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="contactus_sub_heading" id="contactus_sub_heading" value="<?php echo $pageContent['page']['contactUs']['subheading']; ?>" />
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-12">
                                                 <div class="field-row">
                                                     <label>Contact Us Slug</label><b class="text-danger"> *</b>
@@ -155,6 +170,12 @@
                 contactus_slug: {
                     required: true
                 },
+                contactus_main_heading: {
+                    required: true
+                },
+                contactus_sub_heading: {
+                    required: true
+                },
                 sales_heading: {
                     required: true
                 },
@@ -214,6 +235,9 @@
         //
         pageData.page['contactUs'] = {
             slug: $("#contactus_slug").val(),
+            mainheading: $("#contactus_main_heading").val(),
+            subheading: $("#contactus_sub_heading").val(),
+
         };
         pageData.page['salesHeading'] = {
             text: $("#sales_heading").val(),

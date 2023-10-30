@@ -52,6 +52,13 @@
 
                                                 <div class="col-xs-12">
                                                     <div class="field-row">
+                                                        <label>Main Heading</label><b class="text-danger"> *</b>
+                                                        <input type="text" class="invoice-fields" name="section1_main_heading" id="section1_main_heading" value="<?php echo $pageContent['page']['sections']['section1']['mainheading']; ?>" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="field-row">
                                                         <label>Heading</label><b class="text-danger"> *</b>
                                                         <input type="text" class="invoice-fields" name="section1_heading" id="section1_heading" value="<?php echo $pageContent['page']['sections']['section1']['heading']; ?>" />
                                                     </div>
@@ -59,27 +66,20 @@
 
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
-                                                        <label>Detail</label><b class="text-danger"> *</b>
-                                                        <textarea class="invoice-fields" name="section1_heading_detail" id="section1_heading_detail"><?php echo $pageContent['page']['sections']['section1']['detailHeading']; ?></textarea>
-                                                    </div>
+                                                    <label>Detail</label><b class="text-danger"> *</b>
+                                                    <textarea class="invoice-fields" name="section1_heading_detail" id="section1_heading_detail"><?php echo $pageContent['page']['sections']['section1']['detailHeading']; ?></textarea>
                                                 </div>
 
                                                 <div class="col-xs-6">
-                                                    <div class="field-row">
-                                                        <label>Button title</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="section1_btn_text" id="section1_btn_text" value="<?php echo $pageContent['page']['sections']['section1']['btnText']; ?>" />
-                                                    </div>
+                                                    <label>Button title</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="section1_btn_text" id="section1_btn_text" value="<?php echo $pageContent['page']['sections']['section1']['btnText']; ?>" />
                                                 </div>
 
                                                 <div class="col-xs-6">
-
-                                                    <div class="field-row">
-                                                        <label>Button slug</label><b class="text-danger"> *</b>
-                                                        <input type="text" class="invoice-fields" name="section1_btn_slug" id="section1_btn_slug" value="<?php echo $pageContent['page']['sections']['section1']['btnSlug']; ?>" />
-                                                    </div>
+                                                    <label>Button slug</label><b class="text-danger"> *</b>
+                                                    <input type="text" class="invoice-fields" name="section1_btn_slug" id="section1_btn_slug" value="<?php echo $pageContent['page']['sections']['section1']['btnSlug']; ?>" />
                                                 </div>
-
+                                                <br>
 
 
                                             </div>
@@ -105,10 +105,8 @@
 
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section2_heading1_detail" id="section2_heading1_detail"><?php echo $pageContent['page']['sections']['section2']['heading1Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -119,10 +117,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section2_heading2_detail" id="section2_heading2_detail"><?php echo $pageContent['page']['sections']['section2']['heading2Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -133,10 +129,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section2_heading3_detail" id="section2_heading3_detail"><?php echo $pageContent['page']['sections']['section2']['heading3Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                             </div>
@@ -163,10 +157,8 @@
 
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section3_heading1_detail" id="section3_heading1_detail"><?php echo $pageContent['page']['sections']['section3']['heading1Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -177,10 +169,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section3_heading2_detail" id="section3_heading2_detail"><?php echo $pageContent['page']['sections']['section3']['heading2Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -191,10 +181,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section3_heading3_detail" id="section3_heading3_detail"><?php echo $pageContent['page']['sections']['section3']['heading3Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                             </div>
@@ -220,10 +208,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section4_heading1_detail" id="section4_heading1_detail"><?php echo $pageContent['page']['sections']['section4']['heading1Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -234,10 +220,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section4_heading2_detail" id="section4_heading2_detail"><?php echo $pageContent['page']['sections']['section4']['heading2Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -248,10 +232,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section4_heading3_detail" id="section4_heading3_detail"><?php echo $pageContent['page']['sections']['section4']['heading3Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                             </div>
@@ -277,10 +259,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section5_heading1_detail" id="section5_heading1_detail"><?php echo $pageContent['page']['sections']['section5']['heading1Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -291,10 +271,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section5_heading2_detail" id="section5_heading2_detail"><?php echo $pageContent['page']['sections']['section5']['heading2Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -305,10 +283,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section5_heading3_detail" id="section5_heading3_detail"><?php echo $pageContent['page']['sections']['section5']['heading3Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                             </div>
@@ -334,10 +310,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section6_heading1_detail" id="section6_heading1_detail"><?php echo $pageContent['page']['sections']['section6']['heading1Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -348,10 +322,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section6_heading2_detail" id="section6_heading2_detail"><?php echo $pageContent['page']['sections']['section6']['heading2Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -362,10 +334,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section6_heading3_detail" id="section6_heading3_detail"><?php echo $pageContent['page']['sections']['section6']['heading3Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                             </div>
@@ -390,10 +360,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section7_heading1_detail" id="section7_heading1_detail"><?php echo $pageContent['page']['sections']['section7']['heading1Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -404,10 +372,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section7_heading2_detail" id="section7_heading2_detail"><?php echo $pageContent['page']['sections']['section7']['heading2Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
@@ -418,10 +384,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail </label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section7_heading3_detail" id="section7_heading3_detail"><?php echo $pageContent['page']['sections']['section7']['heading3Detail']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                             </div>
@@ -441,10 +405,8 @@
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="field-row">
                                                         <label>Detail</label><b class="text-danger"> *</b>
                                                         <textarea class="invoice-fields" name="section8_heading_detail" id="section8_heading_detail"><?php echo $pageContent['page']['sections']['section8']['detailHeading']; ?></textarea>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-6">
@@ -494,6 +456,9 @@
             ignore: [],
             rules: {
                 section1_heading: {
+                    required: true
+                },
+                section1_main_heading: {
                     required: true
                 },
                 section1_heading_detail: {
@@ -676,6 +641,7 @@
         //
         pageData.page['sections'] = {
             section1: {
+                mainheading: $("#section1_main_heading").val(),
                 heading: $("#section1_heading").val(),
                 detailHeading: $("#section1_heading_detail").val(),
                 btnText: $("#section1_btn_text").val(),
