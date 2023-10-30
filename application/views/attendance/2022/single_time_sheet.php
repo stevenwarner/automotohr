@@ -25,7 +25,7 @@
                                     <div class="row">
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                             <div class="hr-select-dropdown">
-                                                <select name="cc_type" id="cc_type" class="invoice-fields" required>
+                                                <select name="cc_type" id="cc_type" class="invoice-fields-select" required>
                                                     <option value="">Please Select Pay Period</option>
                                                     <option value="visa">1st Oct - 31st Oct, 2023</option>
                                                 </select>
@@ -61,7 +61,7 @@
                             </div>    
                         </div>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <p class="_csMt10"><span>Reporting: <strong>Web/Mobile TimeKeeper</strong></span><span>Ststus: <strong>Not yet Approved</strong></span></p>    
+                            <p class="_csMt10"><span>Reporting: <strong>Web/Mobile TimeKeeper</strong></span>&nbsp;&nbsp;<span>Status: <strong>Not yet Approved</strong></span></p>    
                         </div>    
                     </div>
 
@@ -139,25 +139,31 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="row _tb _bb">
-                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
+                                <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
                                     <label for="date" class="_csM0 _csPtb18">Date</label>
                                 </div>
-                                <div class="col-lg-10 col-md-10 col-xs-12 col-sm-12 _lb">
+                                <div class="col-lg-11 col-md-11 col-xs-12 col-sm-12">
                                     <div class="row">
-                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                             <div class="row">
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
+                                                <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
+                                                    <label for="allSelect" class="control control--radio">
+                                                        <input id="allSelect" type="radio">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-5 col-md-5 col-xs-12 col-sm-12">
                                                     <label for="activity" class="_csM0 _csPtb18">Activity</label>
                                                 </div>
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
                                                     <label for="time_in" class="_csM0 _csPtb18">Time In</label>
                                                 </div>
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
                                                     <label for="time_out" class="_csM0 _csPtb18">Time Out</label>
                                                 </div>
                                             </div>        
                                         </div>
-                                        <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12 _lb">
+                                        <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12 _lb">
                                             <div class="row">
                                                 <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
                                                     <label for="over_night" class="_csM0 _csPtb18">Overnight</label>
@@ -187,7 +193,7 @@
                             </div> 
                             <?php for($i = 0; $i < 5; $i++) { ?>  
                                 <div class="row _bb">
-                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12 text-right">
+                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12 text-right">
                                         <p class="_csPtb24">
                                             <strong>Wed, Oct 25</strong>
                                             <br>
@@ -197,127 +203,166 @@
                                             Approve
                                         </a>
                                     </div>
-                                    <div class="col-lg-10 col-md-10 col-xs-12 col-sm-12 _lb">
+                                    <div class="col-lg-11 col-md-11 col-xs-12 col-sm-12 _lb">
                                         <div class="row _bb">
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                                 <div class="row">
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12 _csP0 text-center">
-                                                        <p>Work Hours</p>
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
+                                                        <label for="allSelect" class="control control--radio">
+                                                            <input id="allSelect" type="radio">
+                                                            <div class="control__indicator"></div>
+                                                        </label>
                                                     </div>
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p>09:00 AM</p>
+                                                    <div class="col-lg-5 col-md-5 col-xs-12 col-sm-12 _csP0 text-center">
+                                                        <p class="_csPS">Work Hours</p>
                                                     </div>
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p>10:00 AM</p>
+                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                                        <p class="_csPS">09:00 AM</p>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                                        <p class="_csPS">10:00 AM</p>
                                                     </div>
                                                 </div>        
                                             </div>
-                                            <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12 _lb">
+                                            <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12 _lb">
                                                 <div class="row">
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
-                                                        <p>No</p>
+                                                        <p class="_csPS">No</p>
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
-                                                        <p>1h 00m</p>
+                                                        <p class="_csPS">1h 00m</p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-camera"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-camera"></i></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-map"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-map"></i></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-file-text"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-file-text"></i></p>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p><?php echo substr("Last updated by test on 10/26/2023 10:52 AM",0,25) . '...'; ?></p>
+                                                        <p class="_csPS"><?php echo substr("Last updated by test on 10/26/2023 10:52 AM",0,25) . '...'; ?></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-trash"></i></label>
+                                                        <p class="_csPS"><i class="fa fa-trash"></i></label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>   
                                         <div class="row _bb">
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                                 <div class="row">
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12 _csP0 text-center">
-                                                        <p>Work Hours</p>
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
+                                                        <label for="allSelect" class="control control--radio">
+                                                            <input id="allSelect" type="radio">
+                                                            <div class="control__indicator"></div>
+                                                        </label>
                                                     </div>
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p>09:00 AM</p>
+                                                    <div class="col-lg-5 col-md-5 col-xs-12 col-sm-12 _csP0 text-center">
+                                                        <div class="hr-selectbox">
+                                                            <select name="activity_type" class="invoice-fields-select" required>
+                                                                <option value="">Select</option>
+                                                                <option value="work_hour">Work Hours</option>
+                                                                <option value="work_hour">Break In</option>
+                                                                <option value="work_hour">Break Out</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p>10:00 AM</p>
+                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                                        <p class="_csPS">09:00 AM</p>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                                        <p class="_csPS">10:00 AM</p>
                                                     </div>
                                                 </div>        
                                             </div>
-                                            <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12 _lb">
+                                            <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12 _lb">
                                                 <div class="row">
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
-                                                        <p>No</p>
+                                                        <p class="_csPS">No</p>
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
-                                                        <p>1h 00m</p>
+                                                        <p class="_csPS">1h 00m</p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-camera"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-camera"></i></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-map"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-map"></i></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-file-text"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-file-text"></i></p>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p><?php echo substr("Last updated by test on 10/26/2023 10:52 AM",0,25) . '...'; ?></p>
+                                                        <p class="_csPS"><?php echo substr("Last updated by test on 10/26/2023 10:52 AM",0,25) . '...'; ?></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-trash"></i></label>
+                                                        <p class="_csPS"><i class="fa fa-trash"></i></label>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>   
+                                        </div>    
                                         <div class="row _bb">
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                                 <div class="row">
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12 _csP0 text-center">
-                                                        <p>Work Hours</p>
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
+                                                        <label for="allSelect" class="control control--radio">
+                                                            <input id="allSelect" type="radio">
+                                                            <div class="control__indicator"></div>
+                                                        </label>
                                                     </div>
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p>09:00 AM</p>
+                                                    <div class="col-lg-5 col-md-5 col-xs-12 col-sm-12 _csP0 text-center">
+                                                        <div class="hr-selectbox">
+                                                            <select name="activity_type" class="invoice-fields-select" required>
+                                                                <option value="">Select</option>
+                                                                <option value="work_hour">Work Hours</option>
+                                                                <option value="work_hour">Break In</option>
+                                                                <option value="work_hour">Break Out</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p>10:00 AM</p>
+                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                                        <input name="eventstarttime" id="eventstarttime" readonly="readonly" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                                                        <input name="eventstarttime" id="eventstarttime" readonly="readonly" type="text" class="form-control">
                                                     </div>
                                                 </div>        
                                             </div>
-                                            <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12 _lb">
+                                            <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12 _lb">
                                                 <div class="row">
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
-                                                        <p>No</p>
+                                                        <div class="hr-selectbox">
+                                                            <select name="activity_type" class="invoice-fields-select" required>
+                                                                <option value="">Select</option>
+                                                                <option value="work_hour">Work Hours</option>
+                                                                <option value="work_hour">Break In</option>
+                                                                <option value="work_hour">Break Out</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-12">
-                                                        <p>1h 00m</p>
+                                                        <p class="_csPS">1h 00m</p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-camera"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-camera"></i></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-map"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-map"></i></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-file-text"></i></p>
+                                                        <p class="_csPS"><i class="fa fa-file-text"></i></p>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
-                                                        <p><?php echo substr("Last updated by test on 10/26/2023 10:52 AM",0,25) . '...'; ?></p>
+                                                        <p class="_csPS"><?php echo substr("Last updated by test on 10/26/2023 10:52 AM",0,25) . '...'; ?></p>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
-                                                        <p><i class="fa fa-trash"></i></label>
+                                                        <p class="_csPS"><i class="fa fa-trash"></i></label>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>        
+                                        </div>          
                                     </div>
                                 </div>  
                             <?php } ?>        
