@@ -5636,7 +5636,7 @@ class Hr_documents_management extends Public_Controller
 
                                         $assigned_sids[] = $assigned_document['document_sid'];
                                     }
-                                } else { echo "hete";
+                                } else {
                                     if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
                                         //
                                         if (!empty($assigned_document['authorized_signature'])) {
