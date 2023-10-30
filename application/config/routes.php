@@ -1974,3 +1974,4 @@ $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmi
 //
 $route['hr_documents_management/print_download_hybird_document_resource_center/(:num)'] = 'hr_documents_management/print_download_hybird_document_resource_center/$1';
 
+$route['newAttendanceSingle']['get'] = "sheet/Attendance/newEmployeeView";

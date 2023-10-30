@@ -740,10 +740,6 @@ class Attendance extends Public_Controller {
         exit(0);
     }
 
-
-
-
-
     public function mapLocation () {
         //
         $this->args['session'] = $this->ses;
@@ -815,6 +811,33 @@ class Attendance extends Public_Controller {
     }
 
 
-
+    public function newEmployeeView () {
+        //
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'attendance', 'view_employee_timesheet'); //
+            $data['title'] = 'Time Sheet';
+            //
+            //
+            $this->load->model('single/Employee_model', 'sem');
+            $data['employees'] = $this->sem->GetCompanyEmployees($this->companyId, true);
+            $data['employeeName'] = $data['employees'][15714]['name'];
+            $data['employeeImage'] = $data['employees'][15714]['image'];
+            //
+            $this->data['appCSS'] = bundleCSS([
+                "v1/app/css/2023"
+            ], 'public/v1/sa/css/', "attendance");
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('attendance/2022/single_time_sheet');
+            $this->load->view('main/footer');
+            
+        } else {
+            redirect('login', 'refresh');
+        }
+    }
 
 }
