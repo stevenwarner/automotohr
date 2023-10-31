@@ -1566,7 +1566,7 @@ if (!function_exists('bundleJs')) {
         $lockFile = false
     ) {
         // reset the destination path
-        $absolutePath = str_replace("executive_admin/", "", ROOTPATH . $destination);
+        $absolutePath = str_replace("affiliate_portal/", "", ROOTPATH . $destination);
         // check if served over production
         if (MINIFIED === '.min' || $lockFile) {
             //
@@ -1635,7 +1635,7 @@ if (!function_exists('bundleCSS')) {
         $lockFile = false
     ) {
         // reset the destination path
-        $absolutePath = str_replace("executive_admin/", "", ROOTPATH . $destination);
+        $absolutePath = str_replace("affiliate_portal/", "", ROOTPATH . $destination);
         // check if served over production
         if (MINIFIED === '.min' || $lockFile) {
             //
