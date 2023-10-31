@@ -1,4 +1,4 @@
-<form method="post" action="javascript:void(0)" class="form w-80" id="<?= $formId ?? "jsScheduleFreeDemoMain"; ?>">
+<form method="post" action="javascript:void(0)" class="form <?=$buttonClass2 ?? "w-80"?>" id="<?= $formId ?? "jsScheduleFreeDemoMain"; ?>">
     <div class="position-relative">
         <img src="<?= image_url("/"); ?>Ellipse 9.png" class="purple-half-div" alt="half-purple-circle" />
         <div class="form-div">
