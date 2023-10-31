@@ -94,7 +94,7 @@
                                                 <?php echo $headerContent['page']['products']['submenu6']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
-                                        </li>base_url
+                                        </li>
                                     </div>
                                 </ul>
                             </li>
