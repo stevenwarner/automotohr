@@ -83,7 +83,7 @@ class Dashboard extends CI_Controller
             $data['appCSS'] = bundleCSS([
                 'v1/app/css/theme',
                 'v1/app/css/pages',
-            ], $this->css, "affiliate-forgot");
+            ], $this->css, "affiliate-forgot", true);
             //
             $data['limited_menu'] = true;
             

@@ -201,6 +201,7 @@ class Dashboard extends CI_Controller
         $data['meta']['title'] = $passwordRecoveryContent['page']['meta']['title'];
         $data['meta']['description'] = $passwordRecoveryContent['page']['meta']['description'];
         $data['meta']['keywords'] = $passwordRecoveryContent['page']['meta']['keyword'];
+        $data['limited_menu'] = true;
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',

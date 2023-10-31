@@ -6,12 +6,11 @@
         <div class="row margin-bottom-20">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
                 <div>
-                    <img src="<?= image_url('Emboss-Logo.png'); ?>" alt="embose logo" />
-                    <p class="white-opacity-text">Hire & Manage Great People</p>
-                    <p class="white-opacity-text text-left">AutomotoHR.com</p>
+                    <img src="<?= image_url('/'); ?>Emboss-Logo.png" alt="embose logo" />
+                    <p class="white-opacity-text"><?= $footerContent['page']['logo']['text_under_logo']; ?></p>
                 </div>
                 <div class="margin-top-60">
-                    <p class="stay-connect">Stay Connect</p>
+                    <p class="stay-connect"><?= $footerContent['page']['logo']['text_stay_connect']; ?></p>
 
 
                     <div class="inline-flex">
@@ -110,7 +109,7 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
                 <div>
-                    <p class="footer-text-three">Sales Support</p>
+                    <p class="footer-text-three"><?php echo $footerContent['page']['sales']['heading'] ?></p>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons "><i class="fa-solid fa-phone"></i></a>
@@ -125,7 +124,7 @@
                     </div>
                 </div>
                 <div class="margin-top-40">
-                    <p class="footer-text-three">Technical Support</p>
+                    <p class="footer-text-three"><?php echo $footerContent['page']['technical']['heading'] ?></p>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-phone"></i></a>
@@ -136,7 +135,7 @@
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['technical']['slug'] ?>"><?php echo $footerContent['page']['technical']['slug'] ?> </a>
+                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['technical']['slug'] ?>"><?php echo $footerContent['page']['technical']['slug'] ?></a>
                     </div>
                 </div>
             </div>
@@ -144,20 +143,18 @@
         <hr class="footer-hr" />
         <div class="row">
             <div class="col-sm-12 col-lg-6">
-                <p class="margin-top-10">©2023 AutomotoHR.All Rights Reserved</p>
+                <p class="margin-top-10"><?= $footerContent['page']['logo']['copy_right']; ?></p>
             </div>
             <div class="col-sm-12 col-lg-6 text-right">
                 <p class="inline-block">Powered by</p>
-                <img src="<?= main_url('assets/v1/app/images/'); ?>footerlogo.png" alt="footer logo" />
+                <img src="<?= image_url('/'); ?>footerlogo.png" alt="footer logo" />
             </div>
         </div>
     </div>
 </footer>
-<?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
 </body>
 
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>
 <?= $appJs ?? ''; ?>
-
 
 </html>

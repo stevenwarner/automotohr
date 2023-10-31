@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/v1/app/images/favicon_io'); ?>/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/v1/app/images/favicon_io'); ?>/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url('assets/v1/app/images/favicon_io'); ?>/favicon-16x16.png">
-    <link rel="manifest" href="<?= base_url('assets/v1/app/images/favicon_io'); ?>/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= image_url('favicon_io'); ?>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= image_url('favicon_io'); ?>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= image_url('favicon_io'); ?>/favicon-16x16.png">
+    <link rel="manifest" href="<?= image_url('favicon_io'); ?>/site.webmanifest">
     <title><?= $meta['title']; ?></title>
     <meta name="description" content="<?= $meta['description']; ?>">
     <meta name="keywords" content="<?= $meta['keywords']; ?>">
@@ -30,7 +30,7 @@
 
         <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
             <div class="container-fluid">
-                <a class="navbar-brand" href="<?= base_url('/'); ?>"><img src="<?= base_url('assets/v1/app/images/Mask group.png'); ?>" alt="logo" /></a>
+                <a class="navbar-brand" href="<?= main_url('/'); ?>"><img src="<?= image_url('Mask group.png'); ?>" alt="logo" /></a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -38,7 +38,7 @@
                 <div class="collapse navbar-collapse" id="navbarScroll">
                     <ul class="navbar-nav mx-auto<?= $limited_menu ? '-right' : ''; ?> my-2 my-lg-0 navbar-nav-scroll">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= base_url($headerContent['page']['home']['slug']); ?>"><?php echo $headerContent['page']['home']['title']; ?></a>
+                            <a class="nav-link" aria-current="page" href="<?= main_url($headerContent['page']['home']['slug']); ?>"><?php echo $headerContent['page']['home']['title']; ?></a>
                         </li>
                         <?php if (!$limited_menu) { ?>
                             <li class="nav-item dropdown">
@@ -48,7 +48,7 @@
                                 <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
                                     <div class="display-flex">
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?></a>
                                             <p class="dropdown-item-custom">
                                                 <?php echo $headerContent['page']['products']['submenu1']['titledetail']; ?>
                                             </p>
@@ -56,7 +56,7 @@
                                         </li>
                                         <hr />
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
                                             <p class="dropdown-item-custom">
                                                 <?php echo $headerContent['page']['products']['submenu2']['titledetail']; ?>
                                             </p>
@@ -64,7 +64,7 @@
                                         </li>
                                         <hr class="dropdown-divider" />
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
                                             <p class="dropdown-item-custom">
                                                 <?php echo $headerContent['page']['products']['submenu3']['titledetail']; ?>
                                             </p>
@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="display-flex margin-top-twenty">
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
                                             </a>
                                             <p class="dropdown-item-custom">
                                                 <?php echo $headerContent['page']['products']['submenu4']['titledetail']; ?>
@@ -82,39 +82,39 @@
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
                                             <p class="dropdown-item-custom">
                                                 <?php echo $headerContent['page']['products']['submenu5']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
                                             <p class="dropdown-item-custom">
                                                 <?php echo $headerContent['page']['products']['submenu6']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
-                                        </li>
+                                        </li>base_url
                                     </div>
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= base_url($headerContent['page']['whyus']['slug']); ?>"><?php echo $headerContent['page']['whyus']['title']; ?></a>
+                                <a class="nav-link" href="<?= main_url($headerContent['page']['whyus']['slug']); ?>"><?php echo $headerContent['page']['whyus']['title']; ?></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= base_url($headerContent['page']['aboutus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['aboutus']['title']; ?></a>
+                                <a class="nav-link" href="<?= main_url($headerContent['page']['aboutus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['aboutus']['title']; ?></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= base_url($headerContent['page']['contactus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['contactus']['title']; ?></a>
+                                <a class="nav-link" href="<?= main_url($headerContent['page']['contactus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['contactus']['title']; ?></a>
                             </li>
                         <?php } ?>
                     </ul>
 
                     <div class="d-flex flex-direction-coloumn-on-mobile">
                         <?php if (!$limited_menu) { ?>
-                            <a class="btn schedule-btn" href="<?= base_url($headerContent['page']['btnobligation']['slug']); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
+                            <a class="btn schedule-btn" href="<?= main_url($headerContent['page']['btnobligation']['slug']); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
                         <?php } ?>
-                        <a class="btn login-btn" href="<?= base_url($headerContent['page']['btnlogin']['slug']) ?>"> <?php echo $headerContent['page']['btnlogin']['title']; ?> </a>
+                        <a class="btn login-btn" href="<?= main_url($headerContent['page']['btnlogin']['slug']) ?>"> <?php echo $headerContent['page']['btnlogin']['title']; ?> </a>
                     </div>
                 </div>
             </div>

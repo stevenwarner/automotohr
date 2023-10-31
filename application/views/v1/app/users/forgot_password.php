@@ -24,7 +24,7 @@
         </div>
         <div class="col-xs-12 background-image-css light-blue-background not-show-on-mob">
             <div class="first column-flex-center ">
-                <img src="<?= base_url("assets/v1/app/images/peoplewithkey.png"); ?>" alt="peoplewithkey" />
+                <img src="<?= image_url("peoplewithkey.png"); ?>" alt="peoplewithkey" />
             </div>
         </div>
     </div>

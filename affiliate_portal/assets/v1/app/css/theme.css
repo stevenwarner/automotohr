@@ -15,6 +15,13 @@ button {
 	color: white;
 	padding: 0px 35px 0px 35px;
 }
+a.button {
+	border-radius: 32px;
+	border: none;
+	height: 54px;
+	color: white;
+	padding: 0px 35px 0px 35px;
+}
 .margin-bottom-50 {
 	margin-bottom: 50px;
 }

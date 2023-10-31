@@ -28,29 +28,24 @@
  										</div>
  									<?php } ?>
 
- 									<div class="">
- 										<input name="email" value="" class="-block password-screen-inputs" placeholder="Email" type="email">
+ 									<div class="w-100">
+ 										<input name="email" value="" class="d-block password-screen-inputs" placeholder="Email" type="email">
  										<?php echo form_error('email'); ?>
- 									</div>
- 									<div class="">
- 										<div class="btn-panel">
- 											<input name="submit" value="Submit" class="btn btn-primary btn-block btn-flat" type="submit">
- 										</div>
  									</div>
 
  								</div>
  							</div>
  						</div>
  						<div class="second-div-password">
- 							<div class="first-child-password-screen position-relative column-flex-center">
- 								<button class="d-flex justify-content-center align-items-center forgot-password-buttons btn-animate">
+ 							<div class="first-child-password-screen position-relative column-flex-center w-100">
+ 								<button class="d-flex justify-content-center align-items-center forgot-password-buttons btn-animate w-100">
  									<p class="text">Submit</p>
  									<i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
  								</button>
- 								<button type="button" onclick="<?php echo base_url('login'); ?>" class="d-flex justify-content-center align-items-center margin-top-20 cancel-button forgot-password-buttons btn-animate">
+ 								<a href="<?php echo base_url('login'); ?>" class="button d-flex justify-content-center align-items-center margin-top-20 cancel-button forgot-password-buttons btn-animate w-100">
  									<p class="text">Cancel</p>
  									<i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
- 								</button>
+ 								</a>
  							</div>
  						</div>
  					</form>

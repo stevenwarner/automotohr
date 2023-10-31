@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-5 csImageAtBottom">
-                <img src="<?= base_url('assets/v1/app/images/boy.webp'); ?>" class="form_boy-pic d-lg-flex d-none" alt="man image" />
+                <img src="<?= image_url('boy.webp'); ?>" class="form_boy-pic d-lg-flex d-none" alt="man image" />
             </div>
             <div class="col-lg-7">
                 <div class="position-relative">

@@ -15,6 +15,13 @@ button {
 	color: white;
 	padding: 0px 35px 0px 35px;
 }
+a.button {
+	border-radius: 32px;
+	border: none;
+	height: 54px;
+	color: white;
+	padding: 0px 35px 0px 35px;
+}
 .margin-bottom-50 {
 	margin-bottom: 50px;
 }
@@ -189,6 +196,7 @@ textarea:focus {
 	border-radius: 32px;
 	background: #ffb72b;
 	gap: 10px;
+	transition: all .3s ease-in-out !important;
 }
 .login-btn {
 	color: #ffffff;
@@ -633,8 +641,12 @@ input[type="radio"] {
 }
 
 .schedule-btn-demo {
-	transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out !important;
 	background-color: #0000ff;
+}
+.schedule-btn-demo p,
+.schedule-btn-demo i{
+	transition: all 0.3s ease-in-out !important;
 }
 
 button.schedule-btn-demo:hover {
@@ -643,4 +655,18 @@ button.schedule-btn-demo:hover {
 
 .text-yellow {
 	color: #ffb72b;
+}
+
+
+input.form-control{
+	border-radius: 50px;
+}
+
+textarea.form-control{
+	border-radius: 20px;
+}
+
+select.form-control{
+	border-radius: 20px;
+	height: 50px;
 }

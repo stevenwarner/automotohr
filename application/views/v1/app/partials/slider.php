@@ -13,10 +13,12 @@
                 <div class="slider-one-background d-flex" style="background-image: url('<?= $slide['image'] ?>')">
                     <div class="slider d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-center my-lg-0 my-5">
                         <div class="d-flex mb-xl-5 mb-0 slider-content">
-                            <div class="px-3 ms-lg-5 me-lg-3 mx-0 d-flex flex-column align-items-lg-start align-items-center justify-content-center text-center-onmobile">
+                            <div class="px-5 ms-lg-5 me-lg-3 mx-0 d-flex flex-column align-items-lg-start align-items-center justify-content-center text-center-onmobile">
                                 <h1 class="slider_heading title w-70">
                                     <?= $slide['title']; ?>
                                 </h1>
+                                <br>
+                                <br>
                                 <p class="slider-detail mt-4 slider_detail opacity-eighty auto-mobile-slider-detail-color">
                                     <?= $slide['sub_title']; ?>
                                 </p>

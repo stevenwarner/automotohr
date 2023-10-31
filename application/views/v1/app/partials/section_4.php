@@ -4,7 +4,7 @@
             <div class="col-sm-12 hide-on-mobile set-contentcenter-ontablet">
                 <div class="margin-btm">
                     <p class="heading-h4-grey text-white opacity-ninety margin-top-inovating">
-                    <?php echo $homeContent['page']['sections']['section10']['mainheading'] ?>
+                        <?php echo $homeContent['page']['sections']['section10']['mainheading'] ?>
                     </p>
                 </div>
             </div>
@@ -65,11 +65,11 @@
 
         <div class="col-sm-12 col-md-12 col-lg-6 position-relative div-one">
             <div class="text-right text-align-center-ontablet">
-                <img class="rotate-img" src="<?= base_url('assets/v1/app/images/'); ?>girl.webp" alt="girl with glasses on face image" />
-                <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse_9.webp" class="light-green-half-circle" alt="half circle" />
-                <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse_10.webp" class="light-red-circle" alt="half circle" />
+                <img class="rotate-img" src="<?= image_url('/'); ?>girl.webp" alt="girl with glasses on face image" />
+                <img src="<?= image_url('/'); ?>/Ellipse_9.webp" class="light-green-half-circle" alt="half circle" />
+                <img src="<?= image_url('/'); ?>/Ellipse_10.webp" class="light-red-circle" alt="half circle" />
             </div>
-            <img src="<?= base_url('assets/v1/app/images/'); ?>/Ellipse_8.webp" class="yellow-half-circle" alt="half circle" />
+            <img src="<?= image_url('/'); ?>/Ellipse_8.webp" class="yellow-half-circle" alt="half circle" />
         </div>
     </div>
     <div class="row notable-benifits-row"></div>
@@ -77,7 +77,7 @@
         <div class="col-sm-12">
             <div class="margin-btm">
                 <p class="white-text second-heading text-align-center-ontablet">
-                <?php echo $homeContent['page']['sections']['section13']['mainheading'] ?>
+                    <?php echo $homeContent['page']['sections']['section13']['mainheading'] ?>
                 </p>
             </div>
         </div>

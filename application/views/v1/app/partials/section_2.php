@@ -36,7 +36,7 @@
             <div class="col-lg-6 col-12 order-lg-2 order-1">
                 <div class="position-relative d-flex justify-content-center align-items-center career_section_inner">
                     <div class="hiring_section_bg"></div>
-                    <img src="<?= base_url('assets/v1/app/images/hiring_section_img.webp'); ?>" class="width_80 margin-left-onmobile hiring_section_laptop_img section_img" alt="laptop image" />
+                    <img src="<?= image_url('hiring_section_img.webp'); ?>" class="width_80 margin-left-onmobile hiring_section_laptop_img section_img" alt="laptop image" />
                     <div class="hiring_section_bubble_1 d-lg-flex d-none"></div>
                     <div class="hiring_section_bubble_2 d-lg-flex d-none">
                         <div class="bubble_2"></div>
@@ -58,7 +58,7 @@
     <div class="row d-flex flex-lg-row flex-column align-items-center width_90">
         <div class="col-lg-6 col-12">
             <div class="position-relative d-flex justify-content-center">
-                <img src="<?= base_url('assets/v1/app/images/payroll_section_img.webp'); ?>" class="payroll_img width_100 section_img" alt="laptop with ipad image" />
+                <img src="<?= image_url('payroll_section_img.webp'); ?>" class="payroll_img width_100 section_img" alt="laptop with ipad image" />
                 <div class="payroll_section_bubble_1 d-lg-block d-none"></div>
                 <div class="payroll_section_bubble_2 d-lg-block d-none">
                     <div class="bubble_2"></div>
@@ -116,7 +116,7 @@
                     <div class="employee_experience_img_section position-relative d-lg-flex d-none">
                         <div class="employee_experience_bubble"></div>
                     </div>
-                    <img src="<?= base_url('assets/v1/app/images/employee_experience_img.webp'); ?>" class="employee_img width_100 section_img" alt="mobile and tablet image" />
+                    <img src="<?= image_url('employee_experience_img.webp'); ?>" class="employee_img width_100 section_img" alt="mobile and tablet image" />
                 </div>
             </div>
         </div>
@@ -128,7 +128,7 @@
     <div class="row d-flex flex-lg-row flex-column align-items-center width_80">
         <div class="col-lg-6 col-12">
             <div class="position-relative d-flex justify-content-center">
-                <img src="<?= base_url('assets/v1/app/images/monitoring_section_img.webp'); ?>" class="payroll_img section_img" alt="mobile and tablet image" />
+                <img src="<?= image_url('monitoring_section_img.webp'); ?>" class="payroll_img section_img" alt="mobile and tablet image" />
                 <div class="payroll_section_bubble_1 d-lg-block d-none"></div>
                 <div class="payroll_section_bubble_2 d-lg-block d-none">
                     <div class="bubble_2"></div>
@@ -189,7 +189,7 @@
                     <div class="employee_experience_img_section position-relative d-lg-flex d-none">
                         <div class="employee_experience_bubble employee_experience_bubble_bg_color"></div>
                     </div>
-                    <img src="<?= base_url('assets/v1/app/images/succeed_section_img.webp'); ?>" class="employee_img section_img" alt="mobile and tablet image" />
+                    <img src="<?= image_url('succeed_section_img.webp'); ?>" class="employee_img section_img" alt="mobile and tablet image" />
                 </div>
             </div>
         </div>
@@ -202,7 +202,7 @@
         <div class="row d-flex align-items-center justify-content-center">
             <div class="col-lg-6 col-12 d-flex justify-content-center">
                 <div class="position-relative d-flex justify-content-center career_section_inner">
-                    <img src="<?= base_url('assets/v1/app/images/career_section_img.webp'); ?>" class="width_80 margin-left-onmobile section_img" alt="mobile and tablet image with jobs search screen" />
+                    <img src="<?= image_url('career_section_img.webp'); ?>" class="width_80 margin-left-onmobile section_img" alt="mobile and tablet image with jobs search screen" />
                     <div class="career_section_bubble_1 d-lg-flex d-none"></div>
                     <div class="career_section_bubble_2 d-lg-flex d-none">
                         <div class="bubble_2"></div>

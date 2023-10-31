@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/favicon-16x16.png">
-    <link rel="manifest" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= image_url('favicon_io'); ?>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= image_url('favicon_io'); ?>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= image_url('favicon_io'); ?>/favicon-16x16.png">
+    <link rel="manifest" href="<?= image_url('favicon_io'); ?>/site.webmanifest">
     <title><?= $meta['title']; ?></title>
     <meta name="description" content="<?= $meta['description']; ?>">
     <meta name="keywords" content="<?= $meta['keywords']; ?>">
@@ -24,7 +24,7 @@
 
 <body>
     <!-- header -->
-    <header>
+    <header class="<?= $headerFixed ? 'csAbsolute' : ''; ?>">
         <?php $headerContent = getPageContent('header');  ?>
 
         <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
@@ -93,7 +93,7 @@
                                                 <?php echo $headerContent['page']['products']['submenu6']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
-                                        </li>
+                                        </li>base_url
                                     </div>
                                 </ul>
                             </li>

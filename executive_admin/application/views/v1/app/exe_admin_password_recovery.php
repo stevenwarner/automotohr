@@ -5,7 +5,6 @@
                 <div class="first column-flex-center recovery-password-div-padding ">
                     <div class="box-div  background-white flex-coloumn padding-twenty">
                         <h1 class="automotoH1 darkGreyColor sora-family  margin-bottom-30 font-size-40">
-
                             <?php echo $passwordRecoveryContent['page']['heading']; ?>
                         </h1>
 
@@ -17,12 +16,15 @@
                             </div>
                         </div>
                     <?php } ?>
-
-                    <?php echo $passwordRecoveryContent['page']['subHeading']; ?></p>
+                    <?php echo $passwordRecoveryContent['page']['subHeading']; ?>
+                    </p>
                     <input class="light-blue-border" type="email" placeholder="email" value="<?php echo set_value('email'); ?>" id="email" name="email" />
                     <?php echo form_error('email'); ?>
 
-                    <button class=" margin-bottom-20 border-none password-recovery-submit" type="submit"><?php echo $passwordRecoveryContent['page']['btnText']; ?></button>
+                    <button class=" border-none password-recovery-submit" type="submit"><?php echo $passwordRecoveryContent['page']['btnText']; ?></button>
+                    <a href="<?= base_url('login'); ?>" type="button" class="button d-flex justify-content-center align-items-center margin-top-20 cancel-button forgot-password-buttons btn-animate w-100">
+                        Cancel
+                            </a>
                     </div>
                 </div>
             </div>

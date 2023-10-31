@@ -48,12 +48,14 @@ class Users extends CI_Controller
 
         //
         $loginContent = getPageContent('executive_admin_login');
+        
 
         // meta titles
         $data['meta'] = [];
         $data['meta']['title'] = $loginContent['page']['meta']['title'];
         $data['meta']['description'] = $loginContent['page']['meta']['description'];
         $data['meta']['keywords'] = $loginContent['page']['meta']['keyword'];
+        $data['limited_menu'] = true;
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',

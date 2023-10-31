@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-12 mt-sm-0 mt-4">
-            <select class="form-select select-box" aria-label="Default select example" name="company_size">
+            <select class="form-control" aria-label="Default select example" name="company_size">
                 <option selected>Employee Count*</option>
                 <option value="1-5">1 - 5</option>
                 <option value="6-25">6 - 25</option>

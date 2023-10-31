@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/favicon-16x16.png">
-    <link rel="manifest" href="<?= main_url('assets/v1/app/images/favicon_io'); ?>/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= image_url('favicon_io'); ?>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= image_url('favicon_io'); ?>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= image_url('favicon_io'); ?>/favicon-16x16.png">
+    <link rel="manifest" href="<?= image_url('favicon_io'); ?>/site.webmanifest">
     <title><?= $meta['title']; ?></title>
     <meta name="description" content="<?= $meta['description']; ?>">
     <meta name="keywords" content="<?= $meta['keywords']; ?>">
@@ -24,7 +24,7 @@
 
 <body>
     <!-- header -->
-    <header>
+    <header class="<?= $headerFixed ? 'csAbsolute' : ''; ?>">
         <?php $headerContent = getPageContent('header');  ?>
 
         <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
@@ -47,10 +47,9 @@
                                 <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
                                     <div class="display-flex">
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?> </a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                                Performance reviews, surveys,<br />
-                                                employment info, and more.
+                                                <?php echo $headerContent['page']['products']['submenu1']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
@@ -58,8 +57,7 @@
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                                Onboarding, hiring paperwork,<br />
-                                                orientation, and compliance.
+                                                <?php echo $headerContent['page']['products']['submenu2']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
@@ -67,8 +65,7 @@
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                                Automate payroll deductions, <br />
-                                                direct deposits, and tax filing.
+                                                <?php echo $headerContent['page']['products']['submenu3']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
@@ -79,27 +76,24 @@
                                             <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
                                             </a>
                                             <p class="dropdown-item-custom">
-                                                Career website, mobile recruiting,<br />
-                                                collaborative hiring & more.
+                                                <?php echo $headerContent['page']['products']['submenu4']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                                Attendance, scheduling, PTO,<br />
-                                                leave, and overtime.
+                                                <?php echo $headerContent['page']['products']['submenu5']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                                Add compliance videos,<br />
-                                                employee handbook, and policies.
+                                                <?php echo $headerContent['page']['products']['submenu6']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
-                                        </li>
+                                        </li>base_url
                                     </div>
                                 </ul>
                             </li>

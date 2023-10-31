@@ -1,6 +1,6 @@
-<form method="post" action="javascript:void(0)" class="form" id="<?= $formId ?? "jsScheduleFreeDemoMain"; ?>">
+<form method="post" action="javascript:void(0)" class="form w-80" id="<?= $formId ?? "jsScheduleFreeDemoMain"; ?>">
     <div class="position-relative">
-        <img src="/assets/v1/app/images/Ellipse 9.png" class="purple-half-div" alt="half-purple-circle" />
+        <img src="<?= image_url("/"); ?>Ellipse 9.png" class="purple-half-div" alt="half-purple-circle" />
         <div class="form-div">
             <div class="highlighted-div column-flex-center opacity-80-product">
                 <p><span class="highlighted-light-blue-div">Want</span>the Inside Secret on People Operations?</p>
@@ -25,11 +25,10 @@
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Title*" name="job_roles" />
                         <?php echo form_error('title'); ?>
-
                     </div>
                 </div>
                 <div class="col-sm-6 col-12 mt-sm-0 mt-4">
-                    <select class="form-select select-box" aria-label="Default select example" name="company_size">
+                    <select class="form-control" aria-label="Default select example" name="company_size">
                         <option selected>Employee Count*</option>
                         <option value="1-5">1 - 5</option>
                         <option value="6-25">6 - 25</option>
@@ -79,7 +78,7 @@
                 <i class="fa-solid fa-arrow-right schedule-btn-adj top-button-icon ps-3"></i>
             </button>
         </div>
-        <img src="/assets/v1/app/images/Ellipse 2.png" class="yellow-half-circle-form" alt="half-purple-circle" />
-        <img src="/assets/v1/app/images/Ellipse 10.png" class="light-blue-half-circle-form" alt="half-purple-circle" />
+        <img src="<?= image_url("/"); ?>Ellipse 2.png" class="yellow-half-circle-form" alt="half-purple-circle" />
+        <img src="<?= image_url("/"); ?>Ellipse 10.png" class="light-blue-half-circle-form" alt="half-purple-circle" />
     </div>
 </form>

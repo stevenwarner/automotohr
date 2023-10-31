@@ -213,7 +213,7 @@ class App extends CI_Controller
         // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         //
-        $pageContent = getPageContent('get-your-account', true);
+        $pageContent = getPageContent('get-account', true);
         // meta titles
         $data['meta'] = [];
         $data['meta']['title'] = $pageContent['page']['meta']['title'];
