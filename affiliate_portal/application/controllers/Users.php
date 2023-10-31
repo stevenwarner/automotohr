@@ -10,8 +10,8 @@ class Users extends CI_Controller
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
         //
-        $this->css = "../public/v1/css/app/";
-        $this->js = "../public/v1/js/app/";
+        $this->css = "public/v1/css/app/";
+        $this->js = "public/v1/js/app/";
     }
 
     public function register()
