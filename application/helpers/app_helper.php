@@ -1794,3 +1794,74 @@ if (!function_exists("getPortalData")) {
             ->row_array();
     }
 }
+
+
+//
+if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
+
+    function updateEmployeeDepartmentToComplyNet(int $employeeId, int $companyId)
+    {
+        //
+        $CI = &get_instance();
+        //
+        $CI->load->library('Complynet/Complynet_lib', '', 'clib');
+        $CI->load->model('2022/complynet_model');
+        // fetch the old department
+        $employeeOldDepartmentId = $CI->complynet_model->getEmployeeOldComplyNetDepartment($employeeId);
+        //
+        if ($employeeOldDepartmentId == 0) {
+            return false;
+        }
+        // get name aur id
+        $employeeNewDepartment = $CI->complynet_model->getDepartmentName($employeeId);
+        //
+        if (!$employeeNewDepartment) {
+            return false;
+        }
+        // get new department id
+        $employeeNewDepartmentId = $CI->complynet_model->getEmployeeDepartmentId($employeeId);
+        // when both ids are equal
+
+        if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
+            return false;
+        }
+        
+        // Create New Department On Comply Net
+        
+        if (empty($employeeNewDepartmentId) || $employeeNewDepartmentId == 0) {
+            // $employeeNewDepartment['name']='New Department Test';
+            $employeeNewDepartmentId = $CI->complynet_model->checkAndCreateDepartmentOnComplyNet(
+                $employeeNewDepartment['sid'],
+                $employeeNewDepartment['name'],
+                $companyId
+            );
+        }
+
+        //
+        if ($employeeNewDepartmentId == 0) {
+            return false;
+        }
+        //
+        $employee = $CI->complynet_model->getemployeeComplyNetJobTitle($employeeId);
+        //
+        $complyJobRoleId = $CI->complynet_model->getAndSetJobRoleId(
+            $employeeNewDepartmentId,
+            $employee['complynet_job_title']
+        );
+        //
+        if ($complyJobRoleId === 0) {
+            return false;
+        }
+        //
+        if (empty($complyJobRoleId)) {
+            return false;
+        }
+
+        //
+       return $CI->complynet_model->updateEmployeeJobTitleOnComplyNet(
+            $employeeId,
+            $employeeNewDepartmentId,
+            $complyJobRoleId
+        );
+    }
+}

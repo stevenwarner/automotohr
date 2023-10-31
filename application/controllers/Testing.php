@@ -33,16 +33,18 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
-    public function testScript () {
+    public function testScript()
+    {
         $info = getMyDepartmentAndTeams(15717, "courses");
         // $info = getMyDepartmentAndTeams(15717);
-        _e($info,true,true);
+        _e($info, true, true);
     }
 
-    public function pendingDocument ($companySid, $employeeSid) {
+    public function pendingDocument($companySid, $employeeSid)
+    {
         $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($companySid, 'employee', $employeeSid, 0, 0);
         //
-        _e(count($assigned_documents),true);
+        _e(count($assigned_documents), true);
         //
         foreach ($assigned_documents as $key => $assigned_document) {
             if ($assigned_document['archive'] == 0) {
@@ -146,16 +148,17 @@ class Testing extends CI_Controller
                 //    } else {
                 //       unset($assigned_documents[$key]);
                 //   }
-            }    
+            }
         }
         //
-        _e(count($assigned_documents),true,true);
+        _e(count($assigned_documents), true, true);
     }
 
-    public function assignedDocument ($companySid, $employeeSid) {
+    public function assignedDocument($companySid, $employeeSid)
+    {
         $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($companySid, 'employee', $employeeSid, 0, 1, 0, 0, 1, 1);
         //
-        _e(count($assigned_documents),true);
+        _e(count($assigned_documents), true);
         //
         foreach ($assigned_documents as $key => $assigned_document) {
             if ($assigned_document['archive'] == 0) {
@@ -318,13 +321,13 @@ class Testing extends CI_Controller
                     }
                 }
             }
-            
         }
         //
-        _e(count($assigned_documents),true,true);
+        _e(count($assigned_documents), true, true);
     }
 
-    public function fixRequired () {
+    public function fixRequired()
+    {
         $this->db->select('sid');
         $this->db->where('is_required', 1);
         $this->db->where('archive', 0);
@@ -341,8 +344,7 @@ class Testing extends CI_Controller
             }
             //
             echo "End Script";
-            
-        } 
+        }
     }
 
     public function test()
@@ -366,8 +368,8 @@ class Testing extends CI_Controller
             $user_type
         );
         //
-        _e($generalDocuments,true);
-        _e($documents,true,true);
+        _e($generalDocuments, true);
+        _e($documents, true, true);
         $this->load->model("v1/payroll_model", "payroll_model");
         //
         $this->payroll_model->onboardEmployee(
@@ -376,4 +378,22 @@ class Testing extends CI_Controller
         );
     }
 
+
+
+
+
+    public  function deptest()
+    
+    {
+       
+    
+
+        $response = updateEmployeeDepartmentToComplyNet(49353,8578);
+        _e(
+            (int)$response, true, true
+        );
+        //
+    
+
+    }
 }
