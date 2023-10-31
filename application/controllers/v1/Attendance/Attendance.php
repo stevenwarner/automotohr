@@ -58,9 +58,9 @@ class Attendance extends Public_Controller
     /**
      * logged in person time sheet
      */
-    public function timeSheet()
+    public function myDashboard()
     {
-        $data = $this->loggedInEmployee;
+        $data["employee"] = $this->loggedInEmployee;
 
         $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         // get access token
@@ -73,9 +73,39 @@ class Attendance extends Public_Controller
             "js/app_helper",
             "js/common",
             // "v1/attendance/js/test"
-        ], $this->js, "my-time-sheet", $this->disableCreationOfMinifyFiles);
+        ], $this->js, "my_dashboard", $this->disableCreationOfMinifyFiles);
+        //
+        $data["load_view"] = true;
 
         $this->load->view("main/header", $data);
+        $this->load->view("v1/attendance/my_dashboard");
+        $this->load->view("main/footer",);
+    }
+
+    /**
+     * logged in person time sheet
+     */
+    public function myTimeSheet()
+    {
+        $data["employee"] = $this->loggedInEmployee;
+
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $this->loggedInEmployee["sid"],
+            $this->loggedInCompany["sid"]
+        );
+        $data['appJS'] = bundleJs([
+            "v1/plugins/moment/moment-timezone.min",
+            "js/app_helper",
+            "js/common",
+            // "v1/attendance/js/test"
+        ], $this->js, "my_dashboard", $this->disableCreationOfMinifyFiles);
+        //
+        $data["load_view"] = true;
+
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/attendance/my_timesheet");
         $this->load->view("main/footer",);
     }
 }

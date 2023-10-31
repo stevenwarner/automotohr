@@ -1483,6 +1483,8 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
 //
 // employeer routes for attendance
 $route["timesheet"]["get"] = "v1/Attendance/Attendance/timeSheet";
+$route["attendance/overview"]["get"] = "v1/Attendance/Attendance/myDashboard";
+$route["attendance/timesheet/my"]["get"] = "v1/Attendance/Attendance/myTimeSheet";
 
 /**
  * 

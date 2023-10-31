@@ -498,14 +498,36 @@ if (!function_exists('getApiAccessToken')) {
     function getApiAccessToken(int $companyId, int $employeeId)
     {
         // return the data
-        return get_instance()->db
+        $CI = &get_instance();
+        //
+        $token = $CI->db
             ->select('access_token')
             ->where([
                 'company_sid' => $companyId,
                 'user_sid' => $employeeId
             ])
             ->get('api_credentials')
-            ->row_array()['access_token'];
+            ->row_array();
+        //
+        if (!$token) {
+            // load the library
+            $CI->load->library('Api_auth');
+            // call the event
+            $CI->api_auth->checkAndLogin(
+                $companyId,
+                $employeeId
+            );
+            //
+            $token = $CI->db
+                ->select('access_token')
+                ->where([
+                    'company_sid' => $companyId,
+                    'user_sid' => $employeeId
+                ])
+                ->get('api_credentials')
+                ->row_array();
+        }
+        return $token['access_token'];
     }
 }
 
