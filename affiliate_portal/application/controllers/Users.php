@@ -63,7 +63,7 @@ class Users extends CI_Controller
         //
         $data['appCSS'] = bundleCSS([
             'v1/app/css/theme',
-        ], $this->css, "affiliate-login", false);
+        ], $this->css, "affiliate-login", true);
         //
         $data['limited_menu'] = true;
 
