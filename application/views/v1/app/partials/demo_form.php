@@ -67,6 +67,6 @@
         <p class="mb-0 btn-text">
             Schedule Your No Obligation Consultation
         </p>
-        <i class="fa-solid fa-arrow-right schedule-btn-adj top-button-icon ps-3"></i>
+        <i class="fa-solid fa-arrow-right schedule-btn-adj ps-3"></i>
     </button>
 </form>

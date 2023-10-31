@@ -57,7 +57,7 @@
                                                 </div>
                                                 <div class="col-xs-6">
                                                     <label>Main Heading</label><b class="text-danger"> *</b>
-                                                    <input type="text" class="invoice-fields" name="slider1_main_heading" id="slider1_main_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
+                                                    <input type="text" class="invoice-fields" name="slider1_heading" id="slider1_heading" value="<?php echo $pageContent['page']['slider']['slider1']['heading']; ?>" />
                                                 </div>
 
                                                 <div class="col-xs-6">

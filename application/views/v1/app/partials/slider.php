@@ -10,7 +10,7 @@
                 </div>';
             ?>
             <div class="carousel-item <?= $index === 0 ? 'active' : '' ?> position-relative">
-                <div class="slider-one-background d-flex" style="background-image: url('<?= base_url($slide['image']) ?>')">
+                <div class="slider-one-background d-flex" style="background-image: url('<?= $slide['image'] ?>')">
                     <div class="slider d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-center my-lg-0 my-5">
                         <div class="d-flex mb-xl-5 mb-0 slider-content">
                             <div class="px-3 ms-lg-5 me-lg-3 mx-0 d-flex flex-column align-items-lg-start align-items-center justify-content-center text-center-onmobile">

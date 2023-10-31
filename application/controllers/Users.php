@@ -21,7 +21,7 @@ class Users extends CI_Controller
     public function login()
     {
         //
-        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
+        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
 
         $data['session'] = $this->session->userdata('logged_in');
         if ($data['session']) {

@@ -494,13 +494,13 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	margin-bottom: 2rem;
 }
 .purple_bubble_div {
+	position: absolute;
 	width: 85px;
 	height: 85px;
 	overflow: hidden;
 	rotate: 319deg;
-	position: absolute;
-	top: 50px;
-	left: 575px;
+	top: 0;
+	left: 0;
 }
 .purple_bubble {
 	width: 100%;
@@ -510,13 +510,13 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	margin-top: 53%;
 }
 .yellow-bubble-div {
+	position: absolute;
 	width: 85px;
 	height: 85px;
 	overflow: hidden;
 	rotate: 479deg;
-	position: absolute;
-	top: 543px;
-	right: -98px;
+	top: 80%;
+	right: 0;
 	z-index: 0;
 }
 .yellow-bubble {
@@ -564,6 +564,9 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	}
 }
 @media screen and (max-width: 767px) {
+	.csAbsolute {
+		position: static !important;
+	}
 	.img-below-text br {
 		display: none;
 	}
@@ -1458,7 +1461,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 		width: 90% !important;
 	}
 	.title {
-		font-size: 27px !important;
+		font-size: 46px !important;
 	}
 	.heading {
 		font-size: 16px !important;
@@ -1602,9 +1605,9 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	}
 }
 @media screen and (max-width: 1270px) {
-	.form_boy-pic {
+	/* .form_boy-pic {
 		width: 60% !important;
-	}
+	} */
 }
 @media screen and (max-width: 1580px) {
 	.hiring_section_bubble_4 {
@@ -1896,9 +1899,10 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	right: 24%;
 }
 .form_section {
-	width: 815px;
+	width: 100%;
 	background: #f1f6f9;
 	border-radius: 20px;
+	padding-bottom: 20px;
 }
 .form-group input {
 	color: #525252;
@@ -2631,4 +2635,35 @@ input[type="radio"] {
 	width: 15px !important;
 	height: 15px !important;
 	line-height: 15px !important;
+}
+
+.csAbsolute {
+	position: absolute;
+	z-index: 1;
+	width: 100%;
+}
+
+.text-yellow {
+	color: #0000ff;
+}
+
+/* home page iframe - what we offer */
+.csVideoBox {
+	display: inline-block;
+	margin: 80px auto;
+	width: 100%;
+	padding: 20px;
+	height: 500px;
+}
+.csVideoBox iframe {
+	width: inherit;
+	height: inherit;
+	border-radius: 5px;
+	border: 0;
+}
+
+.csImageAtBottom{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end
 }

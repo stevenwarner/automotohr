@@ -89,29 +89,29 @@ class Home extends CI_Controller
             'v1/app/js/pages/schedule_demo',
         ], $this->js, 'home', $this->disableMinifiedFiles);
 
-
+        $data['headerFixed'] = true;
 
         $data['slider'] = [
             [
-                'title' => $homeContent['page']['slider']['slider1']['heading'],
-                'sub_title' => $homeContent['page']['slider']['slider1']['headingDetail'],
+                'title' => convertToStrip($homeContent['page']['slider']['slider1']['heading']),
+                'sub_title' => convertToStrip($homeContent['page']['slider']['slider1']['headingDetail']),
                 'link' => $homeContent['page']['slider']['slider1']['btnSlug'],
-                'link_text' => $homeContent['page']['slider']['slider1']['btnText'],
-                'image' => 'assets/v1/app/images/banner_1.webp'
+                'link_text' => convertToStrip($homeContent['page']['slider']['slider1']['btnText']),
+                'image' => image_url("banner_1.webp")
             ],
             [
-                'title' => $homeContent['page']['slider']['slider2']['heading'],
-                'sub_title' => $homeContent['page']['slider']['slider2']['headingDetail'],
+                'title' => convertToStrip($homeContent['page']['slider']['slider2']['heading']),
+                'sub_title' => convertToStrip($homeContent['page']['slider']['slider2']['headingDetail']),
                 'link' => $homeContent['page']['slider']['slider2']['btnSlug'],
-                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
-                'image' => 'assets/v1/app/images/banner_2.webp'
+                'link_text' => convertToStrip($homeContent['page']['slider']['slider2']['btnText']),
+                'image' => image_url("banner_2.webp")
             ],
             [
-                'title' => $homeContent['page']['slider']['slider3']['heading'],
-                'sub_title' => $homeContent['page']['slider']['slider3']['headingDetail'],
+                'title' => convertToStrip($homeContent['page']['slider']['slider3']['heading']),
+                'sub_title' => convertToStrip($homeContent['page']['slider']['slider3']['headingDetail']),
                 'link' => $homeContent['page']['slider']['slider3']['btnSlug'],
-                'link_text' => $homeContent['page']['slider']['slider2']['btnText'],
-                'image' => 'assets/v1/app/images/banner_3.webp'
+                'link_text' => convertToStrip($homeContent['page']['slider']['slider2']['btnText']),
+                'image' => image_url("banner_3.webp")
             ]
         ];
 

@@ -1,7 +1,7 @@
 <div class="row video-div auto-video-div">
-    <div class="col-12 col-md-12 col-lg-5 no-padding-right">
-        <div class="abosulte-div">
-            <iframe src="//www.youtube.com/embed/g4BsAB3PliY" class="embed-responsive-item responsive-video" style="border: 0" title="AutomotoHR Video"></iframe>
+    <div class="col-12 col-md-12 col-lg-5">
+        <div class="csVideoBox">
+            <iframe src="//www.youtube.com/embed/g4BsAB3PliY" title="AutomotoHR Video"></iframe>
         </div>
     </div>
     <div class="col-12 col-md-12 col-lg-7 col-xl-7 no-padding-left">
@@ -10,7 +10,7 @@
                 <div class="col-sm-12 set-contentcenter-ontablet">
                     <div class="margin-btm">
                         <p class="heading-h4-grey heading text-white opacity-eighty">
-                        <?php echo $homeContent['page']['sections']['section1']['mainheading'] ?>
+                            <?php echo $homeContent['page']['sections']['section1']['mainheading'] ?>
                         </p>
                     </div>
                 </div>

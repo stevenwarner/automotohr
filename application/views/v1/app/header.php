@@ -25,7 +25,7 @@
 
 <body>
     <!-- header -->
-    <header>
+    <header class="<?= $headerFixed ? 'csAbsolute' : ''; ?>">
         <?php $headerContent = getPageContent('header');  ?>
 
         <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
@@ -50,7 +50,7 @@
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                            <?php echo $headerContent['page']['products']['submenu1']['titledetail']; ?>
+                                                <?php echo $headerContent['page']['products']['submenu1']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
@@ -58,7 +58,7 @@
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                            <?php echo $headerContent['page']['products']['submenu2']['titledetail']; ?>
+                                                <?php echo $headerContent['page']['products']['submenu2']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
@@ -66,7 +66,7 @@
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                            <?php echo $headerContent['page']['products']['submenu3']['titledetail']; ?>
+                                                <?php echo $headerContent['page']['products']['submenu3']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
@@ -77,21 +77,21 @@
                                             <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
                                             </a>
                                             <p class="dropdown-item-custom">
-                                            <?php echo $headerContent['page']['products']['submenu4']['titledetail']; ?>
+                                                <?php echo $headerContent['page']['products']['submenu4']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                            <?php echo $headerContent['page']['products']['submenu5']['titledetail']; ?>
+                                                <?php echo $headerContent['page']['products']['submenu5']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
                                             <a class="dropdown-item-custom modal-anchor" href="<?= base_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
                                             <p class="dropdown-item-custom">
-                                            <?php echo $headerContent['page']['products']['submenu6']['titledetail']; ?>
+                                                <?php echo $headerContent['page']['products']['submenu6']['titledetail']; ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
