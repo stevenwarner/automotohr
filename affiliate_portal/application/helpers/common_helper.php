@@ -1549,7 +1549,6 @@ if (!function_exists('GetCss')) {
     }
 }
 
-
 if (!function_exists('bundleJs')) {
     /**
      * Make a bundle of JS files
@@ -1567,14 +1566,14 @@ if (!function_exists('bundleJs')) {
         $lockFile = false
     ) {
         // reset the destination path
-        $absolutePath = ROOTPATH . $destination;
+        $absolutePath = str_replace("executive_admin/", "", ROOTPATH . $destination);
         // check if served over production
         if (MINIFIED === '.min' || $lockFile) {
             //
             $fileName = $destination . $file;
             //
             return
-                '<script src="' . (base_url(
+                '<script src="' . (main_url(
                     $destination . $file . '.min.js?v=' . (getStaticFileVersion($fileName, 'js'))
                 )) . '"></script>';
         }
@@ -1596,7 +1595,7 @@ if (!function_exists('bundleJs')) {
         //
         foreach ($inputs as $input) {
             //
-            $input = base_url('assets/' . $input . '.js');
+            $input = main_url('assets/' . $input . '.js');
             //
             fwrite($handler, file_get_contents($input) . "\n\n");
         }
@@ -1613,7 +1612,7 @@ if (!function_exists('bundleJs')) {
         //
         @unlink($absolutePath);
         //
-        return '<script src="' . (base_url(
+        return '<script src="' . (main_url(
             $destination . $file . '.min.js?v=' . time()
         )) . '"></script>';
     }
@@ -1636,13 +1635,13 @@ if (!function_exists('bundleCSS')) {
         $lockFile = false
     ) {
         // reset the destination path
-        $absolutePath = ROOTPATH . $destination;
+        $absolutePath = str_replace("executive_admin/", "", ROOTPATH . $destination);
         // check if served over production
         if (MINIFIED === '.min' || $lockFile) {
             //
             $fileName = $destination . $file;
             //
-            return '<link rel="stylesheet" href="' . (base_url(
+            return '<link rel="stylesheet" href="' . (main_url(
                 $destination .
                     $file . '.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
             )) . '" />';
@@ -1664,7 +1663,7 @@ if (!function_exists('bundleCSS')) {
         //
         foreach ($inputs as $input) {
             //
-            $input = base_url('assets/' . $input . '.css');
+            $input = main_url('assets/' . $input . '.css');
             //
             fwrite($handler, file_get_contents($input) . "\n\n");
         }
@@ -1681,7 +1680,7 @@ if (!function_exists('bundleCSS')) {
         //
         @unlink($absolutePath);
         //
-        return '<link rel="stylesheet" href="' . (base_url(
+        return '<link rel="stylesheet" href="' . (main_url(
             $destination . $file . '.min.css?v=' . time()
         )) . '" />';
     }
