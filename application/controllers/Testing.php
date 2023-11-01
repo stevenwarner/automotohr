@@ -380,20 +380,27 @@ class Testing extends CI_Controller
 
 
 
-
-
+    //
     public  function deptest()
-    
-    {
-       
-    
 
-        $response = updateEmployeeDepartmentToComplyNet(49353,8578);
+    {
+        $response = updateEmployeeDepartmentToComplyNet(49353, 8578);
         _e(
-            (int)$response, true, true
+            (int)$response,
+            true,
+            true
         );
-        //
-    
 
     }
+
+       //
+       public  function jobtest()
+
+       {
+   
+           $response = updateEmployeeJobRoleToComplyNet(49348, 8578);
+
+           _e($response,true,true);
+       }
+
 }

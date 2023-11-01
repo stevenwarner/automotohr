@@ -315,10 +315,10 @@ if (!function_exists('getUserStartDate')) {
         // get user dates
         $employeeDetails = $CI->db
             ->select('
-            registration_date,
-            joined_at,
-            rehire_date
-        ')
+        registration_date,
+        joined_at,
+        rehire_date
+    ')
             ->where('sid', $employeeId)
             ->get('users')
             ->row_array();
@@ -1240,11 +1240,11 @@ if (!function_exists('getEmployeeDepartmentAndTeams')) {
         // get the data
         $records = get_instance()->db
             ->select("
-                departments_management.sid as department_sid,
-                departments_management.name as department_name,
-                departments_team_management.sid,
-                departments_team_management.name
-            ")
+            departments_management.sid as department_sid,
+            departments_management.name as department_name,
+            departments_team_management.sid,
+            departments_team_management.name
+        ")
             ->join(
                 "departments_team_management",
                 "departments_team_management.sid = departments_employee_2_team.team_sid",
@@ -1306,12 +1306,12 @@ if (!function_exists('getMyDepartmentAndTeams')) {
         $CI = &get_instance();
         //
         $CI->db->select("
-            departments_team_management.sid as team_sid, 
-            departments_team_management.name as team_name,
-            departments_management.sid,
-            departments_management.name,
-            departments_management.supervisor
-        ")
+        departments_team_management.sid as team_sid, 
+        departments_team_management.name as team_name,
+        departments_management.sid,
+        departments_management.name,
+        departments_management.supervisor
+    ")
             ->join(
                 "departments_management",
                 "departments_management.sid = departments_team_management.department_sid",
@@ -1359,10 +1359,10 @@ if (!function_exists('getMyDepartmentAndTeams')) {
             $teamSids = array_column($departmentAndTeams, "team_sid");
             //
             $TeamEmployees = $CI->db->select("
-                            department_sid, 
-                            team_sid, 
-                            employee_sid
-                        ")
+                        department_sid, 
+                        team_sid, 
+                        employee_sid
+                    ")
                 ->where_in('team_sid', $teamSids)
                 ->get('departments_employee_2_team')
                 ->result_array();
@@ -1375,16 +1375,16 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                 if (!in_array($employee['employee_sid'], $alreadyExist)) {
                     array_push($alreadyExist, $employee['employee_sid']);
                     $jobTitleInfo = $CI->db->select("
-                        users.job_title,
-                        users.first_name,
-                        users.last_name,
-                        users.access_level,
-                        users.timezone,
-                        users.access_level_plus,
-                        users.is_executive_admin,
-                        users.pay_plan_flag,
-                        portal_job_title_templates.sid as job_title_sid
-                    ")
+                    users.job_title,
+                    users.first_name,
+                    users.last_name,
+                    users.access_level,
+                    users.timezone,
+                    users.access_level_plus,
+                    users.is_executive_admin,
+                    users.pay_plan_flag,
+                    portal_job_title_templates.sid as job_title_sid
+                ")
                         ->join(
                             "portal_job_title_templates",
                             "portal_job_title_templates.title = users.job_title",
@@ -1431,8 +1431,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                             $companyId = getEmployeeUserParent_sid($employee['employee_sid']);
                             //
                             $companyCourses = $CI->db->select("
-                                    lms_default_courses.sid
-                                ")
+                                lms_default_courses.sid
+                            ")
                                 ->join(
                                     "lms_default_courses_job_titles",
                                     "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
@@ -1825,9 +1825,9 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
         if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
             return false;
         }
-        
+
         // Create New Department On Comply Net
-        
+
         if (empty($employeeNewDepartmentId) || $employeeNewDepartmentId == 0) {
             // $employeeNewDepartment['name']='New Department Test';
             $employeeNewDepartmentId = $CI->complynet_model->checkAndCreateDepartmentOnComplyNet(
@@ -1858,9 +1858,86 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
         }
 
         //
-       return $CI->complynet_model->updateEmployeeJobTitleOnComplyNet(
+        return $CI->complynet_model->updateEmployeeJobTitleOnComplyNet(
             $employeeId,
             $employeeNewDepartmentId,
+            $complyJobRoleId
+        );
+    }
+}
+
+//
+if (!function_exists('updateEmployeeJobRoleToComplyNet')) {
+
+    function updateEmployeeJobRoleToComplyNet(int $employeeId, int $companyId)
+    {
+        //
+        $CI = &get_instance();
+        //
+        $CI->load->library('Complynet/Complynet_lib', '', 'clib');
+        $CI->load->model('2022/complynet_model');
+
+        //
+        $employeeDepartmentId = $CI->complynet_model->getEmployeeOldComplyNetDepartment($employeeId);
+        //
+        if ($employeeDepartmentId == '') {
+            return false;
+        }
+        // Get company job roles
+        $employeeOldJobRoleId = $CI->complynet_model->getEmployeeOldComplyNetJobRole($employeeId);
+        //
+        if ($employeeOldJobRoleId == '') {
+            return false;
+        }
+
+        //
+        $employeeComplyNetJobTitle = $CI->complynet_model->getComplyNetJobTitle($employeeId);
+
+        if ($employeeComplyNetJobTitle['complynet_job_title'] == '') {
+            return false;
+        }
+
+        $employeeNewJobRoleId = $CI->complynet_model->getEmployeeNewComplyNetJobRole($employeeDepartmentId, $employeeComplyNetJobTitle['complynet_job_title']);
+
+        //
+        if ($employeeNewJobRoleId == $employeeOldJobRoleId) {
+            return false;
+        }
+
+        if ($employeeNewJobRoleId != '') {
+            // Just Bind
+            $updateData['complynet_department_sid'] = $employeeDepartmentId;
+            $updateData['complynet_job_role_sid'] = $employeeNewJobRoleId;
+            $CI->complynet_model->updateComplyNetEmployeeJobTitle(
+                $employeeId,
+                $companyId,
+                $updateData
+            );
+
+            return false;
+        }
+
+        // Create  New Job Role on Comply Net
+        $complyJobRoleId = $CI->complynet_model->getAndSetComplyNetJobRoleId(
+            $employeeDepartmentId,
+            $employeeComplyNetJobTitle['complynet_job_title'],
+            $employeeId
+
+        );
+
+        //
+        if ($complyJobRoleId === 0) {
+            return false;
+        }
+        //
+        if (empty($complyJobRoleId)) {
+            return false;
+        }
+
+        //
+        return $CI->complynet_model->updateEmployeeJobTitleOnComplyNet(
+            $employeeId,
+            $employeeDepartmentId,
             $complyJobRoleId
         );
     }
