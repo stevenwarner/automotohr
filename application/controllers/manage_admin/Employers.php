@@ -300,6 +300,7 @@ class employers extends Admin_Controller
         $this->data['security_access_levels'] = $security_access_levels;
         $this->load->library('form_validation');
 
+
         if ($employer_detail[0]['username'] != $this->input->post('username')) {
             $this->form_validation->set_rules('username', 'User Name', 'required|min_length[5]|trim|xss_clean|is_unique[users.username]');
         } else {
@@ -483,6 +484,11 @@ class employers extends Admin_Controller
             }
             //
             $this->company_model->update_user($sid, $data, 'Employer');
+
+            // Update Dwepartment and Job Role on complyNet
+            updateEmployeeDepartmentToComplyNet($sid, $company_detail[0]['sid']);
+            updateEmployeeJobRoleToComplyNet($sid, $company_detail[0]['sid']);
+
             //
             // Check and Update employee basic profile info
             $this->checkAndUpdateProfileInfo(
@@ -497,6 +503,7 @@ class employers extends Admin_Controller
                 ->where('sid', $sid)->get('users')->row_array();
 
             $this->company_model->update_user($sid, $data, 'Employer');
+
 
             // ComplyNet interjection
             if (isCompanyOnComplyNet($oldData['parent_sid'])) {
@@ -514,6 +521,9 @@ class employers extends Admin_Controller
             //
             $teamId = $this->input->post('teamId');
             handleEmployeeDepartmentAndTeam($sid, $teamId);
+
+           
+
 
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');

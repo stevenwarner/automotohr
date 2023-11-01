@@ -1809,25 +1809,25 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
         // fetch the old department
         $employeeOldDepartmentId = $CI->complynet_model->getEmployeeOldComplyNetDepartment($employeeId);
         //
-        if ($employeeOldDepartmentId == 0) {
+        if ($employeeOldDepartmentId == '') {
             return false;
         }
+
         // get name aur id
         $employeeNewDepartment = $CI->complynet_model->getDepartmentName($employeeId);
         //
         if (!$employeeNewDepartment) {
             return false;
         }
+
         // get new department id
         $employeeNewDepartmentId = $CI->complynet_model->getEmployeeDepartmentId($employeeId);
         // when both ids are equal
-
         if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
             return false;
         }
 
         // Create New Department On Comply Net
-
         if (empty($employeeNewDepartmentId) || $employeeNewDepartmentId == 0) {
             // $employeeNewDepartment['name']='New Department Test';
             $employeeNewDepartmentId = $CI->complynet_model->checkAndCreateDepartmentOnComplyNet(
@@ -1838,7 +1838,7 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
         }
 
         //
-        if ($employeeNewDepartmentId == 0) {
+        if ($employeeNewDepartmentId == '') {
             return false;
         }
         //

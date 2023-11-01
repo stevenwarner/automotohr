@@ -1876,6 +1876,10 @@ class Employee_management extends Public_Controller
 
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
+
+                    // Update Dwepartment on complyNet
+                    updateEmployeeDepartmentToComplyNet($sid, $company_id);
+
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
                         $this->load->model('timeoff_model');

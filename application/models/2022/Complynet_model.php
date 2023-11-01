@@ -317,6 +317,7 @@ class Complynet_model extends CI_Model
             ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
             ->get()
             ->row_array();
+
         //
         if ($record) {
             if ($returnComplyId) {
@@ -2047,10 +2048,7 @@ class Complynet_model extends CI_Model
             ->get('users')
             ->row_array();
     }
-
-
     //
-
 
     public function updateEmployeeJobTitleOnComplyNet(
         int $employeeId,
@@ -2121,9 +2119,6 @@ class Complynet_model extends CI_Model
         return false;
     }
 
-
-    //
-
     //
     public  function getEmployeeOldComplyNetJobRole(int $employeeId): string
     {
@@ -2163,21 +2158,13 @@ class Complynet_model extends CI_Model
 
                 $employeeJobTitleslug = preg_replace('/[^a-zA-Z]/', '', strtolower($JobTitleRow['complynet_job_role_name']));
                 if ($employeeJobTitleslug == $employeeComplyNetJobTitleslug) {
-
-
-
-
-
                     return $JobTitleRow['complynet_job_role_sid'];
                 }
             }
         }
 
         return '';
-        //
     }
-
-
 
     //
     public function getAndSetComplyNetJobRoleId(
@@ -2238,7 +2225,7 @@ class Complynet_model extends CI_Model
             //
             if (empty($complyRoleId) || isset($complyRoleId['error'])) {
                 //
-               return $complyRoleId;
+                return $complyRoleId;
             }
             //
             $ins = [];
@@ -2252,10 +2239,7 @@ class Complynet_model extends CI_Model
             $this->db->insert('complynet_jobRole', $ins);
 
             return $complyRoleId;
-
         }
-
-
     }
 
 
