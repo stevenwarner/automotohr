@@ -67,6 +67,7 @@ $route['sitemap']['get'] = 'v1/App/siteMap';
 $route['products/(:any)']['get'] = 'v1/App/products/$1';
 $route['get-your-account']['get'] = 'v1/App/getYourAccount';
 $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
+$route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
 
 //
 $route['resources']['get'] = 'v1/Resources/index';

@@ -244,9 +244,17 @@ class App extends CI_Controller
         $data['meta']['description'] = $pageContent['page']['meta']['description'];
         $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
         //
+        $this->setCommon(
+            "v1/affiliates/main",
+            "js"
+        );
         $this->getCommon($data, "affiliate-program");
         //
         $data["pageContent"] = $pageContent;
+        //
+        $this->load->model('affiliation_model');
+        //
+        $data["countries"] = $this->affiliation_model->get_all_countries();
         //
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/affiliate');
@@ -405,6 +413,120 @@ class App extends CI_Controller
         }
         //
         return SendResponse(200, ["msg" => "<b>Success: </b>Thank you for your enquiry. We will get back to you!"]);
+    }
+
+    /**
+     * contact us process
+     */
+    public function processAffiliateProgram()
+    {
+
+        $field = array(
+            'field' => 'firstname',
+            'label' => 'First Name',
+            'rules' => 'xss_clean|trim|required'
+        );
+
+        $order_field = array(
+            'field' => 'lastname',
+            'label' => 'Last Name',
+            'rules' => 'xss_clean|trim|required'
+        );
+        $config[] = $field;
+        $config[] = $field;
+        $config[] = $order_field;
+
+        $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
+        $this->form_validation->set_rules($config);
+        $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
+        // run validation
+        if (!$this->form_validation->run()) {
+            //
+            $this->session->set_flashdata('errors', implode(',', getFormErrors()['errors']));
+            return redirect('affiliate-program', 'refresh');
+        }
+
+        $post = $this->input->post(null, true);
+
+        if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->session->set_flashdata('errors', 'Affiliate Request Have Already Been Sent!');
+            return redirect('affiliate-program', 'refresh');
+        }
+
+        //
+        $this->load->model('affiliation_model');
+        //
+        $insert_data = array();
+        $already_applied = $this->affiliation_model->check_register_affiliater($post['email']);
+
+        if ($already_applied) {
+            $this->session->set_flashdata('errors', 'Affiliate Request Have Already Been Sent!');
+            redirect('affiliate-program', 'refresh');
+        }
+
+        $insert_data['first_name'] = $post['firstname'];
+        $insert_data['last_name'] = $post['lastname'];
+        $insert_data['email'] = $post['email'];
+        $insert_data['paypal_email'] = $post['paypal_email'];
+        $insert_data['company'] = $post['company'];
+        $insert_data['street'] = $post['street'];
+        $insert_data['city'] = $post['city'];
+        $insert_data['state'] = $post['state'];
+        $insert_data['zip_code'] = $post['zip'];
+        $insert_data['country'] = $post['country'];
+        $insert_data['method_of_promotion'] = $post['MOP'];
+        $insert_data['website'] = $post['website'];
+        $insert_data['special_notes'] = $post['info'];
+        $insert_data['email_list'] = $post['no_of_names'];
+        $insert_data['contact_number'] = $post['contact_number'];
+        $insert_data['request_date'] = getSystemDate();
+        $insert_data['ip_address'] = getUserIP();
+        $insert_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+
+        if (isset($_FILES['w8_form']) && $_FILES['w8_form']['name'] != '') {
+            $w8_form = upload_file_to_aws('w8_form', generateRandomString(4), 'w8_form');
+
+            if ($w8_form != 'error') {
+                $insert_data['w8_form'] = $w8_form;
+            }
+        }
+
+        if (isset($_FILES['w9_form']) && $_FILES['w9_form']['name'] != '') {
+            $w9_form = upload_file_to_aws('w9_form', generateRandomString(4), 'w9_form');
+
+            if ($w9_form != 'error') {
+                $insert_data['w9_form'] = $w9_form;
+            }
+        }
+
+
+        $this->affiliation_model->insert_affiliation_form($insert_data);
+
+        $from = FROM_EMAIL_NOTIFICATIONS;
+        $subject = "Affiliate Program - New Request";
+        $fromName = ucwords($insert_data['first_name'] . ' ' . $insert_data['last_name']);
+        $replyTo = $insert_data['email'];
+
+        $body = EMAIL_HEADER
+            . '<h2 style="width:100%; margin:0 0 20px 0;">Affiliate Program Request!</h2>'
+            . '<br><b>Applicant Name: </b>' . $fromName
+            . '<br><b>Applicant Email: </b>' . $insert_data['email']
+            . '<br><b>Contact Number: </b>' . $insert_data['contact_number']
+            . '<br><b>Country: </b>' . $insert_data['country']
+            . '<br>Login To Your Admin Panel For More Details'
+            . EMAIL_FOOTER;
+
+        //Send Emails Through System Notifications Email - Start
+        $system_notification_emails = get_system_notification_emails('free_demo_enquiry_emails');
+
+        if (!empty($system_notification_emails)) {
+            foreach ($system_notification_emails as $system_notification_email) {
+                sendMail($from, $system_notification_email['email'], $subject, $body, $fromName, $replyTo);
+            }
+        }
+
+        $this->session->set_flashdata('success', '<strong>Success: </strong>Affiliate Request Submitted Successfully!');
+        redirect('affiliate-program', 'refresh');
     }
 
     /**

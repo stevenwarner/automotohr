@@ -6,15 +6,11 @@ class Affiliates extends CI_Controller
     {
         parent::__construct();
         $this->load->model('affiliation_model');
-        //
-        $this->header = "v1/app/header";
-        $this->footer = "v1/app/footer";
-        $this->css = "public/v1/css/app/";
-        $this->js = "public/v1/js/app/";
     }
 
     public function index()
     {
+        // die('pakistan');
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -22,10 +18,7 @@ class Affiliates extends CI_Controller
             $data['security_details'] = $security_details;
         }
 
-        $countries = $this->affiliation_model->get_all_countries();
-        $data['countries'] = $countries;
-
-
+        $data['title'] = "Affiliates";
         $data['home_page'] = array(
             'header_video_flag' => 0,
             'header_text' => 'Can we send you a check every month?',
@@ -80,49 +73,9 @@ class Affiliates extends CI_Controller
             $data['validate_body_flag'] = false;
         }
 
-
-        //
-        $pageName = $this->uri->segment(1);
-        $affiliateContent = getPageContent($pageName, true);
-
-        // meta titles
-        $data['meta'] = [];
-        $data['meta']['title'] = $affiliateContent['page']['meta']['title'];
-        $data['meta']['description'] = $affiliateContent['page']['meta']['description'];
-        $data['meta']['keywords'] = $affiliateContent['page']['meta']['keywords'];
-        //
-        $data['pageCSS'] = [
-            'v1/app/plugins/bootstrap5/css/bootstrap.min',
-            'v1/app/plugins/fontawesome/css/all',
-            'v1/app/css/affiliate_program',
-            'v1/app/alertifyjs/css/alertify.min'
-
-        ];
-        //
-        $data['appCSS'] = bundleCSS([
-            'v1/app/css/main',
-            'v1/app/css/app',
-
-
-        ], $this->css);
-        //
-        $data['appJs'] = bundleJs([
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
-        ], $this->js);
-
-        //
-        $page = getPageNameBySlug($pageName);
-
-        if (empty($page)) {
-            redirect(base_url());
-        }
-
-        $data['pageSlug'] = $pageName;
-        $data['affiliateContent'] =    $affiliateContent;
-        $this->load->view($this->header, $data);
-        $this->load->view('v1/app/' .  $page);
-        $this->load->view($this->footer);
+        $this->load->view('main/header', $data);
+        $this->load->view('affiliates/index');
+        $this->load->view('main/footer');
     }
 
     public function affiliationform()
@@ -209,42 +162,36 @@ class Affiliates extends CI_Controller
             $data['validate_body_flag'] = false;
         }
 
-
         if ($this->form_validation->run() == FALSE) {
-
-            redirect('affiliate-program', 'refresh');
+            $this->load->view('main/header', $data);
+            $this->load->view('affiliates/affiliate_form');
+            $this->load->view('main/footer');
         } else {
             $formpost = $this->input->post(NULL, TRUE);
             //
-
             if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                redirect('affiliate-program', 'refresh');
+                return redirect('can-we-send-you-a-check-every-month', 'refresh');
             }
-
             //
-
             $gr = verifyCaptcha($formpost['g-recaptcha-response']);
             //
             if (!$gr['success']) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                redirect('affiliate-program', 'refresh');
+                return redirect('can-we-send-you-a-check-every-month', 'refresh');
             }
-
-
             //
             if (!filter_var($formpost['email'], FILTER_VALIDATE_EMAIL)) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Affiliate Request Have Already Been Sent!');
-                redirect('affiliate-program', 'refresh');
+                return redirect('can-we-send-you-a-check-every-month', 'refresh');
             }
-
             //
             $insert_data = array();
             $already_applied = $this->affiliation_model->check_register_affiliater($formpost['email']);
 
             if (sizeof($already_applied) > 0) {
                 $this->session->set_flashdata('message', '<strong>Error: </strong>Affiliate Request Have Already Been Sent!');
-                redirect('affiliate-program', 'refresh');
+                redirect('can-we-send-you-a-check-every-month', 'refresh');
             }
 
             $insert_data['first_name'] = $formpost['firstname'];
@@ -300,6 +247,9 @@ class Affiliates extends CI_Controller
                 . '<br>Login To Your Admin Panel For More Details'
                 . EMAIL_FOOTER;
 
+            //            echo '<pre>';
+            //            print_r($body);
+            //            die();
             //sendMail($from, $to, $subject, $body, $fromName, $replyTo);
             //Send Emails Through System Notifications Email - Start
             $system_notification_emails = get_system_notification_emails('free_demo_enquiry_emails');
@@ -311,8 +261,7 @@ class Affiliates extends CI_Controller
             }
 
             $this->session->set_flashdata('message', '<strong>Success: </strong>Affiliate Request Submitted Successfully!');
-            redirect('affiliate-program', 'refresh');
-
+            redirect('can-we-send-you-a-check-every-month', 'refresh');
         }
     }
 }
