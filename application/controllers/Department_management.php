@@ -446,6 +446,9 @@ class Department_management extends Public_Controller
                         $data_to_insert['employee_sid'] = $employee_sid;
                         $this->department_management_model->updateDepartmentTeamForEmployee($department_sid, $team_sid, $employee_sid);
                         $this->department_management_model->assign_employee_to_team($data_to_insert);
+                        //
+                        updateEmployeeDepartmentToComplyNet($employee_sid, $company_sid);
+
                     }
                 }
 
