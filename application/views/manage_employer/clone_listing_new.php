@@ -32,6 +32,8 @@
                                                 <select class="invoice-fields" name="JobType">
                                                     <option value="Full Time" <?php if ($listing["JobType"] == "Full Time") { ?>selected<?php } ?>>Full Time</option>
                                                     <option value="Part Time" <?php if ($listing["JobType"] == "Part Time") { ?>selected<?php } ?>>Part Time </option>
+                                                    <option value="Seasonal" <?php if ($listing["JobType"] == "Seasonal") { ?>selected<?php } ?>>Seasonal </option>
+
                                                 </select>
                                             </div>
                                         </li>

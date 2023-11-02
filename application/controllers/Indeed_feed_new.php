@@ -27,7 +27,6 @@ class Indeed_feed_new extends CI_Controller {
         ]);
     }
 
-
     public function index($type = 'old') {
         $sid = $this->isActiveFeed();
         switch ($type) {
@@ -130,21 +129,22 @@ class Indeed_feed_new extends CI_Controller {
                     $salary = "";
                 }
 
-                if (isset($job['SalaryType']) && $job['SalaryType'] != NULL) {
-                    if ($job['SalaryType'] == 'per_hour') {
-                        $jobType = "Per Hour";
-                    } elseif ($job['SalaryType'] == 'per_week') {
-                        $jobType = "Per Week";
-                    } elseif ($job['SalaryType'] == 'per_month') {
-                        $jobType = "Per Month   ";
-                    } elseif ($job['SalaryType'] == 'per_year') {
-                        $jobType = "Per Year";
-                    } else {
-                        $jobType = "";
-                    }
-                } else {
-                    $jobType = "";
+              
+                $jobType = "";
+                if (isset($job['JobType']) && $job['JobType'] != NULL) {
+                    $job['JobType'] = trim($job['JobType']);
+                    if ($job['JobType'] == 'Full Time') {
+                        $jobType = "Full Time";
+                    } elseif ($job['JobType'] == 'Part Time') {
+                        $jobType = "Part Time";
+                    } elseif ($job['JobType'] == 'Seasonal') {
+                        $jobType = "Seasonal";
+                    } 
                 }
+                
+
+
+
 
                 $JobCategorys = $job['JobCategory'];
 
@@ -320,18 +320,20 @@ class Indeed_feed_new extends CI_Controller {
                     $salary = $job['Salary'];
                 }
                 //
-                if (isset($job['SalaryType']) && $job['SalaryType'] != NULL) {
-                    $job['SalaryType'] = trim($job['SalaryType']);
-                    if ($job['SalaryType'] == 'per_hour') {
-                        $jobType = "Per Hour";
-                    } elseif ($job['SalaryType'] == 'per_week') {
-                        $jobType = "Per Week";
-                    } elseif ($job['SalaryType'] == 'per_month') {
-                        $jobType = "Per Month   ";
-                    } elseif ($job['SalaryType'] == 'per_year') {
-                        $jobType = "Per Year";
-                    }
+
+
+             if (isset($job['JobType']) && $job['JobType'] != NULL) {
+                    $job['JobType'] = trim($job['JobType']);
+                    if ($job['JobType'] == 'Full Time') {
+                        $jobType = "Full Time";
+                    } elseif ($job['JobType'] == 'Part Time') {
+                        $jobType = "Part Time";
+                    } elseif ($job['JobType'] == 'Seasonal') {
+                        $jobType = "Seasonal";
+                    } 
                 }
+                
+
                 //
                 $JobCategorys = $job['JobCategory'];
                 //
@@ -450,6 +452,8 @@ class Indeed_feed_new extends CI_Controller {
                 $zipcode = "";
                 $salary = "";
                 $jobType = "";
+
+
                 //
                 if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
                     $jobDesc .= '<br><br>Job Requirements:<br>' . StripFeedTags($job['JobRequirements']);
@@ -474,19 +478,20 @@ class Indeed_feed_new extends CI_Controller {
                 if (isset($job['Salary']) && $job['Salary'] != NULL) {
                     $salary = $job['Salary'];
                 }
+
                 //
-                if (isset($job['SalaryType']) && $job['SalaryType'] != NULL) {
-                    $job['SalaryType'] = trim($job['SalaryType']);
-                    if ($job['SalaryType'] == 'per_hour') {
-                        $jobType = "Per Hour";
-                    } elseif ($job['SalaryType'] == 'per_week') {
-                        $jobType = "Per Week";
-                    } elseif ($job['SalaryType'] == 'per_month') {
-                        $jobType = "Per Month   ";
-                    } elseif ($job['SalaryType'] == 'per_year') {
-                        $jobType = "Per Year";
-                    }
+               if (isset($job['JobType']) && $job['JobType'] != NULL) {
+                    $job['JobType'] = trim($job['JobType']);
+                    if ($job['JobType'] == 'Full Time') {
+                        $jobType = "Full Time";
+                    } elseif ($job['JobType'] == 'Part Time') {
+                        $jobType = "Part Time";
+                    } elseif ($job['JobType'] == 'Seasonal') {
+                        $jobType = "Seasonal";
+                    } 
                 }
+                
+
                 //
                 $JobCategorys = $job['JobCategory'];
                 //

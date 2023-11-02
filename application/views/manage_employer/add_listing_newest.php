@@ -45,6 +45,8 @@
                                                         <select class="invoice-fields" name="JobType" id="JobType">
                                                             <option value="Full Time" <?php if (set_value('JobType') == "Full Time") { ?>selected<?php } ?>>Full Time</option>
                                                             <option value="Part Time" <?php if (set_value('JobType') == "Part Time") { ?>selected<?php } ?>>Part Time </option>
+                                                            <option value="Seasonal" <?php if (set_value('JobType') == "Seasonal") { ?>selected<?php } ?>>Seasonal </option>
+
                                                         </select>
                                                     </div>
                                                 </li>
