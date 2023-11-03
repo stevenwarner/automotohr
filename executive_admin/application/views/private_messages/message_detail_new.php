@@ -39,11 +39,13 @@
                                         <td><?php echo $contact_details["from_name"]; ?>&nbsp;
 
                                             <?php 
-                                                if ($page == 'Inbox' && $contact_details['message_type'] == 'applicant') {
-                                                    echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
-                                                } else if ($page == 'Inbox' && $contact_details['message_type'] == 'employee') {
-                                                    echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
-                                                } 
+                                                if (!empty($contact_details["from_profile_link"])) {
+                                                    if ($page == 'Inbox' && $contact_details['message_type'] == 'applicant') {
+                                                        echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
+                                                    } else if ($page == 'Inbox' && $contact_details['message_type'] == 'employee') {
+                                                        echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
+                                                    } 
+                                                }
                                             ?>
                                         </td>
                                     </tr>
