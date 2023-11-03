@@ -65,9 +65,9 @@
                     <form action="<?= base_url("affiliate_program/process") ?>" enctype="multipart/form-data" method="post" id="affiliated-form">
                         <div class=" row">
                             <div class="col-sm-12">
-                                <p class="highlighted-div text-white opacity-90-product margin-top-60">
-                                    <span class="highlighted-light-blue-div background">Up to</span>
-                                    <?= convertToStrip($sections["section3"]['heading1']); ?>
+                                <p class="highlighted-div text-white opacity-90-product margin-top-60" style="font-size: 28px;">
+                                   <strong> <span class="highlighted-light-blue-div background">Up to</span>
+                                    <?= convertToStrip($sections["section3"]['heading1']); ?></strong>
                                 </p>
                                 <h1 class="white-heading-product text-white margin-bottom-40">
                                     <?= convertToStrip($sections["section3"]['heading2']); ?>

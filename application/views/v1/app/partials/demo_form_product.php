@@ -48,7 +48,7 @@
 
             </div>
             <div class="form-group mt-4">
-                <textarea class="form-control textarea" id="client_message" rows="10" placeholder="Message" name="client_message"></textarea>
+                <textarea class="form-control textarea" id="client_message" rows="10" placeholder="Message Please let us know the types of Features that are most important to you and what you are looking for in your new system." name="client_message"></textarea>
             </div>
 
             <div class="row mt-4" style="display: none">

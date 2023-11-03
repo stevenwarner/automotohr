@@ -102,7 +102,7 @@
                                                             </label>
 
                                                             <label class="control control--checkbox">
-                                                                <input type="checkbox" name="resourcetype[]" value="Case Studies" <?php echo in_array("Case Studies", $resourceTypeArray) ? 'checked' : '' ?>> Case Studies
+                                                                <input type="checkbox" name="resourcetype[]" value="Articles" <?php echo in_array("Articles", $resourceTypeArray) ? 'checked' : '' ?>> Case Studies
                                                                 <div class="control__indicator"></div>
                                                             </label>
 
@@ -215,13 +215,9 @@
             }
 
         }
-        if ($.isEmptyObject(upload_file_2)) {
-            if (!old_upload_file_2) {
-                errorArray.push("Resources is required.");
-            } else {
-                $("#jsFileUploadInput").val(old_upload_file_2);
-            }
-        }
+
+        $("#jsFileUploadInput").val(old_upload_file_2);
+
         //
         if (errorArray.length) {
             // make the user notify of errors

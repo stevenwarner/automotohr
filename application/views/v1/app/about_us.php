@@ -89,7 +89,7 @@
                 <div class="w-75 section-two-padding-whyus">
                     <div class="row margin-bottom-30">
                         <div class="col-xs-12">
-                            <h2 class="automotoH1">Our Leadership Team dsfsd <?= $pageContent["page"]["leaderShip"]["text"]; ?></h2>
+                            <h2 class="automotoH1"><?= $pageContent["page"]["leaderShip"]["text"]; ?></h2>
                         </div>
                     </div>
                     <div class="row">

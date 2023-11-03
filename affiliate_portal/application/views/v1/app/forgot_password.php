@@ -8,16 +8,13 @@
  							<div class="high-lighted-text-div">
  								<div class="highlighted-text-upper-div">
  									<p class="forgot-password-text text-center forgot-text">
- 										Forgot Password
+ 										<?php echo $pageContent['page']['heading']; ?>
  									</p>
  								</div>
 
  								<div class="login-section forgot-section-padding column-flex-center">
  									<p class="text-center forgot-screen-text">
- 										Please, enter your email in the field below and we'll
- 										<br />
- 										send you a link to a page where you can change <br />
- 										your password:
+ 										<?php echo $pageContent['page']['subHeading']; ?>
  									</p>
  									<?php if ($this->session->flashdata('message')) { ?>
  										<div class="flash_error_message">
@@ -27,7 +24,7 @@
  											</div>
  										</div>
  									<?php } ?>
-
+									 
  									<div class="w-100">
  										<input name="email" value="" class="d-block password-screen-inputs" placeholder="Email" type="email">
  										<?php echo form_error('email'); ?>
@@ -39,11 +36,11 @@
  						<div class="second-div-password">
  							<div class="first-child-password-screen position-relative column-flex-center w-100">
  								<button class="d-flex justify-content-center align-items-center forgot-password-buttons btn-animate w-100">
- 									<p class="text">Submit</p>
+ 									<p class="text"><?php echo $pageContent['page']['btn1Text']; ?></p>
  									<i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
  								</button>
  								<a href="<?php echo base_url('login'); ?>" class="button d-flex justify-content-center align-items-center margin-top-20 cancel-button forgot-password-buttons btn-animate w-100">
- 									<p class="text">Cancel</p>
+ 									<p class="text"><?php echo $pageContent['page']['btn2Text']; ?></p>
  									<i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
  								</a>
  							</div>

@@ -75,9 +75,9 @@
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input resources-checkbox no-padding" name="resourceType" value="Case Studies" type="checkbox">
+                                        <input class="form-check-input resources-checkbox no-padding" name="resourceType" value="Articles" type="checkbox">
                                         <label class="form-check-label" for="flexCheckDefault">
-                                            Case Studies
+                                        Articles
                                         </label>
                                     </div>
                                     <div class="form-check">

@@ -67,8 +67,7 @@ class Dashboard extends CI_Controller
 
         if ($this->form_validation->run() == FALSE) {
             //
-            $loginContent = getPageContent('affiliate_forgot');
-
+            $loginContent = getPageContent('forgot_password_affiliate');
             // meta titles
             $data['meta'] = [];
             $data['meta']['title'] = $loginContent['page']['meta']['title'];
@@ -87,10 +86,10 @@ class Dashboard extends CI_Controller
             //
             $data['limited_menu'] = true;
             
+            $data['pageContent'] = $loginContent ;
             $data['page_title'] = "Forgot Password";
             $this->load->view('v1/app/header', $data);
             $this->load->view('v1/app/forgot_password');
-            $this->load->view('v1/app/footer');
         } else {
             $email = $this->input->post('email');
             $result = $this->Users_model->check_email($email);

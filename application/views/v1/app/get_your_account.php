@@ -31,8 +31,8 @@
                             </div>
                             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12 position-relative pt-5">
                                 <p class="sora-family autmotoPara automotoGreytext opacity-80">
-                                    <span class="highlighted-light-blue-div">WHAT</span> WE
-                                    OFFER?
+                                    <?= convertToHilited($pageContent["page"]["sections"]["section1"]["mainheading"]); ?>
+
                                 </p>
                                 <h3 class="automotoH3 darkGreyColor line_height pt-4">
                                     <?= convertToStrip($pageContent["page"]["sections"]["section1"]["heading"]); ?>
@@ -98,17 +98,18 @@
                                 </li>
                                 <li>
                                     <p class="inter-family autmotoPara automotoGreytext line_height_30 mb-0 text-md-start text-center">
-                                        Experience a new era of people
-                                        <span class="d-md-block">operations and HR management.</span>
+                                        <?= convertEnterToSpan($pageContent["page"]["sections"]["section1"]["bannertext"]); ?>
                                     </p>
                                 </li>
                                 <li>
                                     <img src="<?= image_url("/"); ?>layer.png" alt="Boy_with_laptop" />
                                 </li>
                                 <li>
+                                    <a href="<?= base_url("/".$pageContent["page"]["sections"]["section1"]["bannerbtnText"]); ?>">
                                     <button class="font_size_16_MOB jsScheduleDemoPopup jsButtonAnimate">
-                                        Get Your Free Demo
+                                        <?= $pageContent["page"]["sections"]["section1"]["bannerbtnText"]; ?>
                                     </button>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -122,8 +123,7 @@
                         <div class="row d-flex padding_bottom_70">
                             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12 pt-5">
                                 <p class="sora-family autmotoPara automotoGreytext opacity-80">
-                                    <span class="highlighted-light-blue-div">Finding</span>
-                                    Possible Solutions
+                                    <?= convertToHilited($pageContent["page"]["sections"]["section2"]["mainheading"]); ?>
                                 </p>
                                 <h3 class="automotoH3 darkGreyColor line_height pt-4">
                                     <?= convertToStrip($pageContent["page"]["sections"]["section2"]["heading"]); ?>
@@ -183,18 +183,18 @@
                                 </li>
                                 <li>
                                     <p class="inter-family autmotoPara automotoGreytext line_height_30 mb-0 text-md-start text-center">
-                                        Want To Simplify HR? Dive Into Excellence
-                                        <span class="d-md-block">
-                                            With AutomotoHR By Seeing It In Action.</span>
+                                            <?= convertEnterToSpan($pageContent["page"]["sections"]["section2"]["bannertext"]); ?>
                                     </p>
                                 </li>
                                 <li>
                                     <img src="<?= image_url("/"); ?>Hurry.jpg" alt="Boy_with_table" />
                                 </li>
                                 <li>
+                                <a href="<?= base_url("/".$pageContent["page"]["sections"]["section2"]["bannerbtnText"]); ?>">
                                     <button class="font_size_16_MOB color_light_grey jsScheduleDemoPopup jsButtonAnimation">
-                                        Schedule Your Free Demo
+                                    <?= $pageContent["page"]["sections"]["section2"]["bannerbtnText"]; ?>
                                     </button>
+                                </a>
                                 </li>
                             </ul>
                         </div>

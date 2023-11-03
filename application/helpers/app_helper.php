@@ -1888,3 +1888,19 @@ if (!function_exists("load404")) {
             ->view("v1/app/footer");
     }
 }
+
+
+if (!function_exists("convertEnterToSpan")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertEnterToSpan(string $str): string
+    {
+
+      return preg_replace("/[\n\r]/", '<span class="d-md-block">$1</span>', $str);
+
+    }
+}

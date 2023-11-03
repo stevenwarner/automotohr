@@ -19,6 +19,8 @@ class Affiliation_model extends CI_Model {
 
     public function get_all_countries() {
         $this->db->select('country_name');
+        $this->db->where('country_code','CA');
+        $this->db->or_where('country_code','US');
         $this->db->order_by('order', 'ASC');
         $result = $this->db->get('countries')->result_array();
         return $result;

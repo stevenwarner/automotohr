@@ -98,7 +98,7 @@
 
 
                                                         <label class="control control--checkbox">
-                                                            <input type="checkbox" name="resourcetype[]" value="Case Studies" <?php echo in_array("Case Studies", $resourceTypeArray) ? 'checked' : '' ?> disabled="true"> Case Studies
+                                                            <input type="checkbox" name="resourcetype[]" value="Articles" <?php echo in_array("Articles", $resourceTypeArray) ? 'checked' : '' ?> disabled="true"> Articles
                                                             <div class="control__indicator"></div>
                                                         </label>
 
