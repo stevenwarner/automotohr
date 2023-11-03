@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap');
+
+* {
+	font-family: 'Sora', sans-serif;
+}
+/* Buttons */
+.csBtn {
+	text-align: center;
+	vertical-align: middle;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	border: 1px solid transparent;
+	background-image: none;
+	font-size: 16px;
+	font-weight: bold;
+	border-radius: 5px;
+	outline: none;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	white-space: nowrap;
+	transition: all 0.2s ease-in-out;
+}
+.csBtn.disabled {
+	opacity: 0.9;
+	cursor: not-allowed;
+}
+.csBtn i {
+	font-size: 16px !important;
+	font-weight: bold;
+}
+
+/* Orange */
+.csBtnOrange {
+	background-color: #fd7a2a;
+	border-color: #fd7a2a;
+	color: #fff;
+}
+.csBtnOrange:hover,
+.csBtnOrange:focus,
+.csBtnOrange.active {
+	color: #f1f1f1;
+	background-color: #fd7a2acc;
+}
+
+/* Blue */
+.csBtnBlue {
+	background-color: #3554dc;
+	border-color: #3554dc;
+	color: #fff;
+}
+.csBtnBlue:hover,
+.csBtnBlue:focus,
+.csBtnBlue.active {
+	color: #f1f1f1;
+	background-color: #3554dce6;
+}
+
+/* Black */
+.csBtnBlack {
+	background-color: #333333;
+	border-color: #333333;
+	color: #fff;
+}
+.csBtnBlack:hover,
+.csBtnBlack:focus,
+.csBtnBlack.active {
+	color: #f1f1f1;
+	background-color: #555555;
+}
+
+/* Black */
+.csBtnRed {
+	background-color: #c10000;
+	border-color: #c10000;
+	color: #fff;
+}
+.csBtnRed:hover,
+.csBtnRed:focus,
+.csBtnRed.active {
+	color: #f1f1f1;
+	background-color: #c10000e6;
+}
+
+/* Texts */
+.csTextBlack {
+	color: #333333;
+}
+
+/* Range picker */
+.csRangePicker {
+	background-color: #fff;
+	border: 1px solid #ccc !important;
+}
+.csRangePicker i {
+	margin-left: 10px;
+}
+
+/* Time sheet */
+.csTimeSheetBox {
+	background-color: #f5f5f5;
+}
+.csTimeSheetBox .csTimeSheetRow {
+	display: table;
+	width: 100%;
+	min-height: 89px;
+	align-items: center;
+	border-radius: 3px;
+	transition: all 0.2s ease-in-out;
+	position: relative;
+}
+.csTimeSheetBox .csTimeSheetRow .csTimeSheetRowDate {
+	display: table-cell;
+	height: inherit;
+	width: 106px;
+	text-align: center;
+	vertical-align: middle;
+	border-right: 1px solid #ccc;
+}
+.csTimeSheetBox .csTimeSheetRow .csTimeSheetRowDate strong {
+	font-size: 22px;
+	font-weight: 600 !important;
+	margin-bottom: 0;
+}
+.csTimeSheetBox .csTimeSheetRow .csTimeSheetRowDate p {
+	font-size: 14px !important;
+	margin-bottom: 0;
+	margin-top: -5px;
+}
+
+.csTimeSheetBox .csTimeSheetRow .csTimeSheetRowDetails {
+	display: table-cell;
+	/* width: 90%; */
+	font-size: 16px;
+	padding: 0 10px;
+	vertical-align: middle;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	padding: 26px 20px 26px 26px;
+}
+
+.csTimeSheetBox .csTimeSheetRow.active {
+	transform: scale(1.005);
+}
+.csTimeSheetBox .csTimeSheetRow.active .csTimeSheetRowDate {
+	background-color: #527a00;
+	color: #fff;
+	border: 1px solid #527a00;
+	border-radius: 3px;
+}
+
+.csTimeSheetBox .csTimeSheetRow.active .csTimeSheetRowDetails {
+	border-top: 1px solid #527a00;
+	border-bottom: 1px solid #527a00;
+	border-right: 1px solid #527a00;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+.csTimeSheetBox .csTimeSheetRow:nth-child(1) {
+	border-top: 1px solid #ccc;
+}
+.csTimeSheetBox .csTimeSheetRow:last-child {
+	border-bottom: 1px solid #ccc;
+}

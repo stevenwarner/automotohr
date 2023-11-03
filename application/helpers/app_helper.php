@@ -1826,16 +1826,16 @@ if (!function_exists('findCompanyUser')) {
             'userName' => ''
         ];
         //
-        $CI = & get_instance();
+        $CI = &get_instance();
         $CI->db->select('sid, first_name, last_name');
         $CI->db->where('parent_sid', $company_sid);
         $CI->db->where('email', $email);
         $record_row = $CI->db->get('users')->row_array();
 
-        if(!empty($record_row)){
+        if (!empty($record_row)) {
             $result['profilePath'] = base_url('employee_profile') . '/' . $record_row['sid'];
             $result['userType'] = "employee";
-            $result['userName'] = $record_row['first_name'].' '.$record_row['last_name'];
+            $result['userName'] = $record_row['first_name'] . ' ' . $record_row['last_name'];
         } else {
             $CI->db->select('sid, first_name, last_name, email');
             $CI->db->where('email', $email);
@@ -1844,10 +1844,10 @@ if (!function_exists('findCompanyUser')) {
             $record_arr = $record_obj->row_array();
             $record_obj->free_result();
 
-            if(!empty($record_arr)) {
-                $result['userName'] = $record_arr['first_name'].' '.$record_arr['last_name'];
+            if (!empty($record_arr)) {
+                $result['userName'] = $record_arr['first_name'] . ' ' . $record_arr['last_name'];
                 $portal_job_applications_sid = $record_arr['sid'];
-                
+
                 $CI->db->select('sid');
                 $CI->db->order_by('sid', 'desc');
                 $CI->db->limit(1);
@@ -1855,12 +1855,12 @@ if (!function_exists('findCompanyUser')) {
                 $obj = $CI->db->get('portal_applicant_jobs_list');
                 $result_arr = $obj->row_array();
                 $obj->free_result();
-                
-                if(!empty($result_arr)) {
-                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/'.$result_arr['sid'];
+
+                if (!empty($result_arr)) {
+                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/' . $result_arr['sid'];
                     $result['userType'] = 'applicant';
                 }
-            } 
+            }
         }
 
         return $result;
@@ -1869,13 +1869,38 @@ if (!function_exists('findCompanyUser')) {
 
 //
 if (!function_exists('acceptGustoAgreement')) {
-  
+
     function acceptGustoAgreement($name)
     {
         if ($name != '' && $name != null) {
         }
-    
-        return false;
 
+        return false;
+    }
+}
+
+
+if (!function_exists("getCommonFiles")) {
+    /**
+     * get the CSS and Js defaults
+     *
+     * @param string $type
+     * @return array
+     */
+    function getCommonFiles(string $type = "css"): array
+    {
+        // set css defaults
+        $arr["css"] = [
+            "v1/plugins/daterangepicker/css/daterangepicker.min",
+        ];
+        // set js defaults
+        $arr["js"] = [
+            "v1/plugins/jquery/jquery-3.7.min",
+            "v1/plugins/moment/moment-timezone.min",
+            "v1/plugins/daterangepicker/daterangepicker.min",
+            "js/app_helper",
+        ];
+        //
+        return $arr[$type];
     }
 }

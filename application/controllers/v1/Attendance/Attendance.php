@@ -33,6 +33,11 @@ class Attendance extends Public_Controller
      */
     private $js;
     /**
+     * JS file creation path
+     * @var string
+     */
+    private $commonFiles;
+    /**
      * main entry point
      */
     public function __construct()
@@ -48,6 +53,7 @@ class Attendance extends Public_Controller
         $this->js = "public/v1/js/attendance/";
         // load the library
         $this->load->library('Api_auth');
+        $this->commonFiles = ["css" => [], "js" => []];
         //
         // $this->api_auth->checkAndLogin(
         //     $this->loggedInEmployee["sid"],
@@ -95,17 +101,41 @@ class Attendance extends Public_Controller
             $this->loggedInEmployee["sid"],
             $this->loggedInCompany["sid"]
         );
-        $data['appJS'] = bundleJs([
-            "v1/plugins/moment/moment-timezone.min",
-            "js/app_helper",
-            "js/common",
-            // "v1/attendance/js/test"
-        ], $this->js, "my_dashboard", $this->disableCreationOfMinifyFiles);
+        //
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/my_timesheet", "js");
         //
         $data["load_view"] = true;
+        //
+        $this->getCommon($data, "my_timesheet");
 
         $this->load->view("main/header", $data);
         $this->load->view("v1/attendance/my_timesheet");
         $this->load->view("main/footer",);
+    }
+
+
+    /**
+     * set the common files
+     *
+     * @param string $filePath
+     * @param string $type
+     */
+    private function setCommon(string $filePath, string $type = "css")
+    {
+        $this->commonFiles[$type][] = $filePath;
+    }
+
+    /**
+     * set the common files
+     *
+     * @param array $data passed by reference
+     */
+    private function getCommon(&$data, string $page)
+    {
+        // css bundle
+        $data['appCSS'] = bundleCSS(array_merge(getCommonFiles("css"), $this->commonFiles["css"]), $this->css, $page, $this->disableCreationOfMinifyFiles);
+        // js bundle
+        $data['appJs'] = bundleJs(array_merge(getCommonFiles("js"), $this->commonFiles["js"]), $this->js, $page, $this->disableCreationOfMinifyFiles);
     }
 }
