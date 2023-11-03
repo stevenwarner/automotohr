@@ -7023,4 +7023,134 @@ class Timeoff_model extends CI_Model
         $this->db->where('company_sid', $companyId);
         $this->db->update('timeoff_policies', $data);
     }
+
+
+    //
+
+    function getEmployeeTimeOffAmountByDate(
+        $companyId,
+        $employeeId,
+        $startDate,
+        $policyIds = []
+    ) {
+        //
+        $r = [];
+        //
+        $this->db->select('
+            ' . (getUserFields()) . '
+            joined_at,
+            registration_date,
+            rehire_date,
+            user_shift_hours,
+            user_shift_minutes,
+            employee_status,
+            employee_type
+        ')
+            ->where('parent_sid', $companyId)
+            ->where('sid', $employeeId)
+            ->where('active', 1)
+            ->where('terminated_status', 0);
+        //
+        $a = $this->db->get('users');
+        $employee = $a->row_array();
+        $a->free_result();
+        //
+        if (empty($employee)) return $r;
+        //
+        if ($employee['is_executive_admin'] == 1) {
+            return $r;
+        }
+        //
+        $settings = $this->getSettings($companyId);
+        $policies = $this->getCompanyPoliciesWithAccruals($companyId, true, $policyIds);
+        $balances = $this->getBalances($companyId);
+
+        //
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
+        $employeeId = $employee['userId'];
+        $employementStatus = $employee['employee_status'];
+        $employementType = $employee['employee_type'];
+        $employeeJoiningDate = $JoinedDate;
+        $durationInMinutes = (($employee['user_shift_hours'] * 60) + $employee['user_shift_minutes']);
+        $slug = $settings['slug'];
+        //
+        foreach ($policies as $policy) {
+
+            _e($policy,true);
+            //
+            $allowedApprovers = explode(',', $policy['allowed_approvers']);
+            //
+            if (
+                $policy['for_admin'] == 1
+                && (
+                    (!in_array('all', $allowedApprovers) &&
+                        !in_array(getCurrentLoginEmployeeDetails('sid'), $allowedApprovers)
+                    )
+                    && getCurrentLoginEmployeeDetails('access_level_plus') != 1
+                )
+            ) {
+                continue;
+            }
+            //
+            $balance = [
+                'PolicyId' => $policy['sid'],
+                'UserId' => $employeeId,
+                'Title' => $policy['title'],
+                'categoryType' => $policy['category_type'],
+                'ConsumedTime' => 0,
+                'Category' => $policy['category_name']
+
+            ];
+            //
+            if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                continue;
+            }
+            // Entitled
+            if ($policy['is_entitled_employee'] == 1) {
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            }
+            //
+            $accruals = json_decode($policy['accruals'], true);
+
+            _e( $accruals,true);
+            //
+            if (!isset($accruals['employeeTypes'])) continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            //
+            $t = getEmployeeAccrual(
+                $policy['sid'], // Policy id
+                $employeeId, // Employee id
+                $employementStatus, // Employee employement status
+                $employeeJoiningDate, // Employee joining date
+                $durationInMinutes,   // Employee worked duration
+                $accruals, // Accruals
+                isset($balances[$employeeId . '-' . $policy['sid']]) ? $balances[$employeeId . '-' . $policy['sid']] : 0, // Employee Balance against this policy
+                $startDate,
+                $slug,
+                $policy['category_type']
+            );
+            //
+            $durationInHours = $durationInMinutes / 60;
+
+            $consumedTimeInHours = $t['ConsumedTime'] / 60;
+            $perHourRate = 10;
+            $amountToPay = ($consumedTimeInHours * $perHourRate);
+
+            //
+         //   $balance['AllowedTime'] = get_array_from_minutes($t['AllowedTime'], $durationInHours, $slug);
+            //  $balance['ConsumedTime'] = $t['ConsumedTime'];//get_array_from_minutes($t['ConsumedTime'], $durationInHours, $slug);
+            $balance['ConsumedTime'] = get_array_from_minutes($t['ConsumedTime'], $durationInHours, $slug);
+            $balance['AmountToPay'] =  $amountToPay; //get_array_from_minutes($t['ConsumedTime'], $durationInHours, $slug);
+
+            //
+            $r[] = $balance;
+        }
+        //
+        return $r;
+    }
 }
