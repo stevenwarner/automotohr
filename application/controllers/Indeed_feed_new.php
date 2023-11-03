@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 ini_set('memory_limit', '50M');
-class Indeed_feed_new extends CI_Controller {
-    public function __construct() {
+class Indeed_feed_new extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('all_feed_model');
         $this->load->model('indeed_model');
@@ -11,29 +13,31 @@ class Indeed_feed_new extends CI_Controller {
     /**
      * 
      */
-    private function addLastRead($sid){
+    private function addLastRead($sid)
+    {
         $this->db
-        ->where('sid', $sid)
-        ->set([
-            'last_read' => date('Y-m-d H:i:s', strtotime('now')),
-            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
-        ])->update('job_feeds_management');
+            ->where('sid', $sid)
+            ->set([
+                'last_read' => date('Y-m-d H:i:s', strtotime('now')),
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
+            ])->update('job_feeds_management');
         //
         $this->db
-        ->insert('job_feeds_management_history', [
-            'feed_id' => $sid,
-            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
-            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-        ]);
+            ->insert('job_feeds_management_history', [
+                'feed_id' => $sid,
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
+                'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+            ]);
     }
 
-    public function index($type = 'old') {
+    public function index($type = 'old')
+    {
         $sid = $this->isActiveFeed();
         switch ($type) {
             case 'new':
                 $this->newIndex();
                 return;
-            break;
+                break;
         }
         $purchasedJobs = $this->all_feed_model->get_all_company_jobs_indeed();
         $i = 0;
@@ -68,7 +72,7 @@ class Indeed_feed_new extends CI_Controller {
                 $company_id = $job['user_sid'];
                 $companyPortal = $this->all_feed_model->get_portal_detail($company_id);
 
-                if(empty($companyPortal)) {
+                if (empty($companyPortal)) {
                     continue;
                 }
 
@@ -76,10 +80,10 @@ class Indeed_feed_new extends CI_Controller {
                 $companyName = $companydata['CompanyName'];
                 $has_job_approval_rights = $companydata['has_job_approval_rights'];
 
-                if($has_job_approval_rights ==  1) {
+                if ($has_job_approval_rights ==  1) {
                     $approval_right_status = $job['approval_status'];
 
-                    if($approval_right_status != 'approved') {
+                    if ($approval_right_status != 'approved') {
                         continue;
                     }
                 }
@@ -88,13 +92,13 @@ class Indeed_feed_new extends CI_Controller {
                 $publish_date = $job['activation_date'];
                 $feed_data = $this->all_feed_model->fetch_uid_from_job_sid($uid);
 
-                if(!empty($feed_data)){
+                if (!empty($feed_data)) {
                     $uid = $feed_data['uid'];
                     $publish_date = $feed_data['publish_date'];
                 }
 
                 if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
-                    $jobDesc ='<br><br>Job Description:<br><br>'.(StripFeedTags($job['JobDescription'])).'<br><br>Job Requirements:<br><br>' . (StripFeedTags($job['JobRequirements']));
+                    $jobDesc = '<br><br>Job Description:<br><br>' . (StripFeedTags($job['JobDescription'])) . '<br><br>Job Requirements:<br><br>' . (StripFeedTags($job['JobRequirements']));
                 } else {
                     $jobDesc = StripFeedTags($job['JobDescription']);
                 }
@@ -129,7 +133,7 @@ class Indeed_feed_new extends CI_Controller {
                     $salary = "";
                 }
 
-              
+
                 $jobType = "";
                 if (isset($job['JobType']) && $job['JobType'] != NULL) {
                     $job['JobType'] = trim($job['JobType']);
@@ -139,9 +143,9 @@ class Indeed_feed_new extends CI_Controller {
                         $jobType = "Part Time";
                     } elseif ($job['JobType'] == 'Seasonal') {
                         $jobType = "Seasonal";
-                    } 
+                    }
                 }
-                
+
 
 
 
@@ -202,7 +206,8 @@ class Indeed_feed_new extends CI_Controller {
      *
      *  @return VOID
      */
-    private function newIndex(){
+    private function newIndex()
+    {
         $sid = $this->isActiveFeed();
         $this->addLastRead(7);
         //
@@ -210,7 +215,7 @@ class Indeed_feed_new extends CI_Controller {
         // Get Indeed Paid Job Ids
         $indeedPaidJobIds = $this->indeed_model->getIndeedPaidJobIds();
         $indeedPaidJobs = [];
-        if(sizeof($indeedPaidJobIds['Ids'])){
+        if (sizeof($indeedPaidJobIds['Ids'])) {
             // Get Indeed Paid Jobs
             $jobIds = $indeedPaidJobIds['Ids'];
             $budget = $indeedPaidJobIds['Budget'];
@@ -232,19 +237,19 @@ class Indeed_feed_new extends CI_Controller {
         $totalJobsForFeed = 0;
 
         // Loop through Organic Jobs
-        if(sizeof($indeedPaidJobs)){
+        if (sizeof($indeedPaidJobs)) {
             foreach ($indeedPaidJobs as $job) {
                 // Check for active company
-                if(!in_array($job['user_sid'], $activeCompanies)) {
+                if (!in_array($job['user_sid'], $activeCompanies)) {
                     $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company In-active');
                     continue;
                 }
                 //
                 $companySid = $job['user_sid'];
                 // Check if company details exists
-                $companyPortal = $this->indeed_model->getPortalDetail( $companySid );
+                $companyPortal = $this->indeed_model->getPortalDetail($companySid);
                 //
-                if(empty($companyPortal)) {
+                if (empty($companyPortal)) {
                     $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company details not found');
                     continue;
                 }
@@ -253,10 +258,10 @@ class Indeed_feed_new extends CI_Controller {
                 $companyName = $companyData['CompanyName'];
                 $hasJobApprovalRights = $companyData['has_job_approval_rights'];
                 // Check for approval rights
-                if($hasJobApprovalRights ==  1) {
+                if ($hasJobApprovalRights ==  1) {
                     $approvalRightStatus = $job['approval_status'];
                     //
-                    if($approvalRightStatus != 'approved') {
+                    if ($approvalRightStatus != 'approved') {
                         $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Job not approved');
                         continue;
                     }
@@ -268,13 +273,13 @@ class Indeed_feed_new extends CI_Controller {
                 // Check for company indeed details
                 $indeedDetails = $this->indeed_model->GetCompanyIndeedDetails($job['user_sid'], $job['sid']);
                 //
-                if(!empty($indeedDetails['Name'])){
+                if (!empty($indeedDetails['Name'])) {
                     $contactName = $indeedDetails['Name'];
                 }
-                if(!empty($indeedDetails['Phone'])){
+                if (!empty($indeedDetails['Phone'])) {
                     $contactPhone = $indeedDetails['Phone'];
                 }
-                if(!empty($indeedDetails['Email'])){
+                if (!empty($indeedDetails['Email'])) {
                     $contactEmail = $indeedDetails['Email'];
                 }
 
@@ -283,7 +288,7 @@ class Indeed_feed_new extends CI_Controller {
                 $publishDate = $job['activation_date'];
                 $feedData = $this->indeed_model->fetchUidFromJobSid($uid);
                 //
-                if(sizeof($feedData)){
+                if (sizeof($feedData)) {
                     $uid = $feedData['uid'];
                     $publishDate = $feedData['publish_date'];
                 }
@@ -322,7 +327,7 @@ class Indeed_feed_new extends CI_Controller {
                 //
 
 
-             if (isset($job['JobType']) && $job['JobType'] != NULL) {
+                if (isset($job['JobType']) && $job['JobType'] != NULL) {
                     $job['JobType'] = trim($job['JobType']);
                     if ($job['JobType'] == 'Full Time') {
                         $jobType = "Full Time";
@@ -330,9 +335,9 @@ class Indeed_feed_new extends CI_Controller {
                         $jobType = "Part Time";
                     } elseif ($job['JobType'] == 'Seasonal') {
                         $jobType = "Seasonal";
-                    } 
+                    }
                 }
-                
+
 
                 //
                 $JobCategorys = $job['JobCategory'];
@@ -359,8 +364,8 @@ class Indeed_feed_new extends CI_Controller {
                 $rows .= "
                     <job>
                         <title><![CDATA[" . $job['Title'] . "]]></title>
-                        <sponsored><![CDATA[".($isSponsored)."]]></sponsored>
-                        <budget><![CDATA[".($hasBudget)."]]></budget>
+                        <sponsored><![CDATA[" . ($isSponsored) . "]]></sponsored>
+                        <budget><![CDATA[" . ($hasBudget) . "]]></budget>
                         <date><![CDATA[" . (DateTime::createFromFormat('Y-m-d H:i:s', $publishDate)->format('D, d M Y H:i:s')) . " PST]]></date>
                         <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
                         <requisitionid><![CDATA[" . $job['sid'] . "]]></requisitionid>
@@ -376,9 +381,9 @@ class Indeed_feed_new extends CI_Controller {
                         <category><![CDATA[" . $job_category . "]]></category>
                         <description><![CDATA[" . $jobDesc . "]]></description>
                         <metadata><![CDATA[]]></metadata>
-                        <email><![CDATA[". $contactEmail ."]]></email>
-                        <phonenumber><![CDATA[". $contactPhone ."]]></phonenumber>
-                        <contact><![CDATA[". $contactName ."]]></contact>
+                        <email><![CDATA[" . $contactEmail . "]]></email>
+                        <phonenumber><![CDATA[" . $contactPhone . "]]></phonenumber>
+                        <contact><![CDATA[" . $contactName . "]]></contact>
                         <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required]]></indeed-apply-data>
                     </job>";
 
@@ -387,22 +392,22 @@ class Indeed_feed_new extends CI_Controller {
         }
 
         // Loop through Organic Jobs
-        if(sizeof($indeedOrganicJobs)){
+        if (sizeof($indeedOrganicJobs)) {
             foreach ($indeedOrganicJobs as $job) {
-                if(in_array($job['sid'], $jobIds)){
+                if (in_array($job['sid'], $jobIds)) {
                     continue;
                 }
                 // Check for active company
-                if(!in_array($job['user_sid'], $activeCompanies)) {
+                if (!in_array($job['user_sid'], $activeCompanies)) {
                     $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company In-active');
                     continue;
                 }
                 //
                 $companySid = $job['user_sid'];
                 // Check if company details exists
-                $companyPortal = $this->indeed_model->getPortalDetail( $companySid );
+                $companyPortal = $this->indeed_model->getPortalDetail($companySid);
                 //
-                if(empty($companyPortal)) {
+                if (empty($companyPortal)) {
                     $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company details not found');
                     continue;
                 }
@@ -411,10 +416,10 @@ class Indeed_feed_new extends CI_Controller {
                 $companyName = $companyData['CompanyName'];
                 $hasJobApprovalRights = $companyData['has_job_approval_rights'];
                 // Check for approval rights
-                if($hasJobApprovalRights ==  1) {
+                if ($hasJobApprovalRights ==  1) {
                     $approvalRightStatus = $job['approval_status'];
                     //
-                    if($approvalRightStatus != 'approved') {
+                    if ($approvalRightStatus != 'approved') {
                         $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Job not approved');
                         continue;
                     }
@@ -426,13 +431,13 @@ class Indeed_feed_new extends CI_Controller {
                 // Check for company indeed details
                 $indeedDetails = $this->indeed_model->GetCompanyIndeedDetails($job['user_sid'], $job['sid']);
                 //
-                if(!empty($indeedDetails['Name'])){
+                if (!empty($indeedDetails['Name'])) {
                     $contactName = $indeedDetails['Name'];
                 }
-                if(!empty($indeedDetails['Phone'])){
+                if (!empty($indeedDetails['Phone'])) {
                     $contactPhone = $indeedDetails['Phone'];
                 }
-                if(!empty($indeedDetails['Email'])){
+                if (!empty($indeedDetails['Email'])) {
                     $contactEmail = $indeedDetails['Email'];
                 }
                 //
@@ -440,7 +445,7 @@ class Indeed_feed_new extends CI_Controller {
                 $publishDate = $job['activation_date'];
                 $feedData = $this->indeed_model->fetchUidFromJobSid($uid);
                 //
-                if(sizeof($feedData)){
+                if (sizeof($feedData)) {
                     $uid = $feedData['uid'];
                     $publishDate = $feedData['publish_date'];
                 }
@@ -480,7 +485,7 @@ class Indeed_feed_new extends CI_Controller {
                 }
 
                 //
-               if (isset($job['JobType']) && $job['JobType'] != NULL) {
+                if (isset($job['JobType']) && $job['JobType'] != NULL) {
                     $job['JobType'] = trim($job['JobType']);
                     if ($job['JobType'] == 'Full Time') {
                         $jobType = "Full Time";
@@ -488,9 +493,9 @@ class Indeed_feed_new extends CI_Controller {
                         $jobType = "Part Time";
                     } elseif ($job['JobType'] == 'Seasonal') {
                         $jobType = "Seasonal";
-                    } 
+                    }
                 }
-                
+
 
                 //
                 $JobCategorys = $job['JobCategory'];
@@ -517,8 +522,8 @@ class Indeed_feed_new extends CI_Controller {
                 $rows .= "
                     <job>
                         <title><![CDATA[" . $job['Title'] . "]]></title>
-                        <sponsored><![CDATA[".($isSponsored)."]]></sponsored>
-                        <budget><![CDATA[".($hasBudget)."]]></budget>
+                        <sponsored><![CDATA[" . ($isSponsored) . "]]></sponsored>
+                        <budget><![CDATA[" . ($hasBudget) . "]]></budget>
                         <date><![CDATA[" . (DateTime::createFromFormat('Y-m-d H:i:s', $publishDate)->format('D, d M Y H:i:s')) . " PST]]></date>
                         <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
                         <requisitionid><![CDATA[" . $job['sid'] . "]]></requisitionid>
@@ -534,9 +539,9 @@ class Indeed_feed_new extends CI_Controller {
                         <category><![CDATA[" . $job_category . "]]></category>
                         <description><![CDATA[" . $jobDesc . "]]></description>
                         <metadata><![CDATA[]]></metadata>
-                        <email><![CDATA[". $contactEmail ."]]></email>
-                        <phonenumber><![CDATA[". $contactPhone ."]]></phonenumber>
-                        <contact><![CDATA[". $contactName ."]]></contact>
+                        <email><![CDATA[" . $contactEmail . "]]></email>
+                        <phonenumber><![CDATA[" . $contactPhone . "]]></phonenumber>
+                        <contact><![CDATA[" . $contactName . "]]></contact>
                         <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required]]></indeed-apply-data>
                     </job>";
 
@@ -565,10 +570,11 @@ class Indeed_feed_new extends CI_Controller {
         exit;
     }
 
-    private function isActiveFeed(){
+    private function isActiveFeed()
+    {
         $this->load->model('all_job_feed_model');
         $validSlug = $this->all_job_feed_model->check_for_slug('indeed_new');
-        if(!$validSlug){
+        if (!$validSlug) {
             echo '<h1>404. Feed Not Found!</h1>';
             die();
         }
@@ -577,23 +583,24 @@ class Indeed_feed_new extends CI_Controller {
     }
 }
 
-if(!function_exists('remakeSalary')){
-    function remakeSalary($salary, $jobType){
-        $salary = trim(str_replace([',','k','K'], ['','000','000'], $salary));
+if (!function_exists('remakeSalary')) {
+    function remakeSalary($salary, $jobType)
+    {
+        $salary = trim(str_replace([',', 'k', 'K'], ['', '000', '000'], $salary));
         $jobType = strtolower($jobType);
         //
-        if(preg_match('/year|yearly/', $jobType)) $jobType = 'per year';
-        else if(preg_match('/month|monthly/', $jobType)) $jobType = 'per month';
-        else if(preg_match('/week|weekly/', $jobType)) $jobType = 'per week';
-        else if(preg_match('/hour|hourly/', $jobType)) $jobType = 'per hour';
+        if (preg_match('/year|yearly/', $jobType)) $jobType = 'per year';
+        else if (preg_match('/month|monthly/', $jobType)) $jobType = 'per month';
+        else if (preg_match('/week|weekly/', $jobType)) $jobType = 'per week';
+        else if (preg_match('/hour|hourly/', $jobType)) $jobType = 'per hour';
         else $jobType = 'per year';
         //
-        if($salary == '') return $salary;
+        if ($salary == '') return $salary;
         //
-        if(strpos($salary, '$') === FALSE)
-        $salary = preg_replace('/(?<![^ ])(?=[^ ])(?![^0-9])/', '$', $salary);
+        if (strpos($salary, '$') === FALSE)
+            $salary = preg_replace('/(?<![^ ])(?=[^ ])(?![^0-9])/', '$', $salary);
         //
-        $salary = $salary.' '.$jobType;
+        $salary = $salary . ' ' . $jobType;
         //
         return $salary;
     }
