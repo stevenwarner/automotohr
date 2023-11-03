@@ -13,14 +13,15 @@
                             <!-- Title -->
                             <div class="heading-title page-title">
                                 <h1 class="page-title">
-                                    <i class="fa fa-book"></i>
-                                    Benefits Management
+                                    <i class="fa fa-clipboard"></i>
+                                    Plans Management (<?php echo $benefitName; ?>) [<?php echo $categoryName; ?>]
                                 </h1>
-
-                                <a href="<?php echo base_url("sa/benefits/carrier_management") ?>" class="csW btn btn-success csF16 float-right">
-                                    <i class="fa fa-briefcase" aria-hidden="true"></i>
-                                    Carrier Management
-                                </a>
+                                <div class="text-right">
+                                    <a href="<?php echo base_url('sa/benefits'); ?>" class="btn black-btn csF16 pull-right">
+                                        <i class="fa fa-long-arrow-left csF16" aria-hidden="true"></i>
+                                        &nbsp;Back to Benefits
+                                    </a>
+                                </div>
                             </div>
 
                             <br />
@@ -28,8 +29,7 @@
                             <br />
 
                             <!--  -->
-                            <div id="jsBenefitCategoryBox"></div>
-                            <div id="jsBenefitBox"></div>
+                            <div id="jsBenefitPlansBox"></div>
 
                             <?php $this->load->view('v1/loader', ['id' => 'jsPageLoader']); ?>
                         </div>
@@ -39,3 +39,7 @@
         </div>
     </div>
 </div>
+<script>
+    var benefitId = '<?php echo $benefitId; ?>';
+    var categoryId = '<?php echo $categoryId; ?>';
+</script>

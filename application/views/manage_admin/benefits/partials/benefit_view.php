@@ -65,6 +65,10 @@
                                     <?= $category['yearly_limit'] ? 'Yes' : 'No'; ?>
                                 </td>
                                 <td class="vam text-right">
+                                    <a href="<?php echo base_url("sa/benefits/plans_management/".$category['sid']) ?>" class="csW btn btn-success csF16">
+                                        <i class="fa fa-clipboard" aria-hidden="true"></i>
+                                        Plans Management
+                                    </a>
                                     <button class="btn btn-warning csF16 jsEditBenefit">
                                         <i class="fa fa-edit csF16" aria-hidden="true"></i>
                                         &nbsp;Edit

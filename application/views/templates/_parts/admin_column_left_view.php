@@ -789,7 +789,7 @@ if (
                                     if ($this->uri->segment(2) == 'benefits') {
                                         echo 'class="active"';
                                     }
-                                    ?> href="<?php echo site_url('sa/benefits'); ?>">Benefits</a>
+                                    ?> href="<?php echo site_url('sa/benefits'); ?>">Benefits management</a>
                             </div>
                         <?php } ?>
                     </div>

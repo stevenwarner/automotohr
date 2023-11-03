@@ -32,6 +32,14 @@ class Benefits extends Admin_Controller
         // set the admin id
         $this->loggedInId =
             $this->ion_auth->user()->row()->id;
+        // load the library
+        $this->load->library('Api_auth');
+        // call the event
+        $this->api_auth->checkAndLogin(
+            0,
+            $this->loggedInId
+        );
+        //  
     }
 
     /**
@@ -342,4 +350,336 @@ class Benefits extends Admin_Controller
             $response
         );
     }
+
+    public function carrierManagement () {
+        // check and set the security group
+        $this->data['security_details'] = db_get_admin_access_level_details($this->loggedInId);
+        // make sure the system is redirecting
+        check_access_permissions($this->data['security_details'], 'manage_admin', 'benefits');
+        // set the title
+        $this->data['title'] = "Carrier Benefits :: " . STORE_NAME;
+        $this->data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        // get access token
+        $this->data['apiAccessToken'] = getApiAccessToken(
+            0,
+            $this->loggedInId
+        );
+        //
+        // load CSS
+        $this->data['PageCSS'] = [
+            'css/theme-2021',
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            'v1/app/css/loader'
+        ];
+        // load JS
+        $this->data['PageScripts'] = [
+            'js/app_helper',
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            'v1/benefits/js/carrier'
+        ];
+        // render the view
+        $this->render('manage_admin/benefits/carrier_management', 'admin_master');
+    }
+
+    // API routes
+    /**
+     * generate carrier view
+     */
+    public function generateCarrierView()
+    {
+        //
+        $carriers = $this
+            ->benefits_model
+            ->getBenefitCarriers();
+        //
+        return SendResponse(
+            200,
+            [
+                'carrierView' => $this->load->view(
+                    'manage_admin/benefits/partials/carrier_view',
+                    ['carriers' => $carriers],
+                    true
+                )
+            ]
+        );
+    }
+
+    /**
+     * generate carrier add view
+     */
+    public function generateAddBenefitCarrierView()
+    {
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'manage_admin/benefits/partials/carrier_add',
+                    [],
+                    true
+                )
+            ]
+        );
+    }
+
+    /**
+     * save carrier
+     */
+    public function saveBenefitCarrier()
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $errorArray = [];
+        // validation
+        if (!$post) {
+            $errorArray[] = '"Data" is missing.';
+        }
+        if (!$post['ein']) {
+            $errorArray[] = '"EIN" is missing.';
+        }
+        //
+        if (!$post['name']) {
+            $errorArray[] = '"Name" is missing.';
+        }
+        //
+        if (!$post['code']) {
+            $errorArray[] = '"Code" is missing.';
+        }
+        //
+        if (!$post['logo']) {
+            $errorArray[] = '"Logo" is missing.';
+        }
+        //
+        if ($errorArray) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => $errorArray
+                ]
+            );
+        }
+        //
+        $response = $this
+            ->benefits_model
+            ->saveBenefitCarrier(
+                $post
+            );
+        //
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    /**
+     * generate carrier edit view
+     *
+     * @param int $carrierId
+     */
+   public function generateEditBenefitCarrierView(int $carrierId)
+   {
+        $carrier = $this
+            ->benefits_model
+            ->getBenefitCarrierById(
+                $carrierId
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'manage_admin/benefits/partials/carrier_edit',
+                    ['carrier' => $carrier],
+                    true
+                )
+            ]
+        );
+   }
+
+    /**
+     * updates carrier
+     *
+     * @param int $carrierId
+     */
+    public function updateBenefitCarrier(int $carrierId)
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $errorArray = [];
+        // validation
+        if (!$post) {
+            $errorArray[] = '"Data" is missing.';
+        }
+        if (!$post['ein']) {
+            $errorArray[] = '"EIN" is missing.';
+        }
+        //
+        if (!$post['name']) {
+            $errorArray[] = '"Name" is missing.';
+        }
+        //
+        if (!$post['code']) {
+            $errorArray[] = '"Code" is missing.';
+        }
+        //
+        if ($errorArray) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => $errorArray
+                ]
+            );
+        }
+        //
+        $response = $this
+            ->benefits_model
+            ->updateBenefitCarrier(
+                $post,
+                $carrierId
+            );
+        //
+        return SendResponse(
+            $response['errors'] ? 400 : 200,
+            $response
+        );
+    }
+
+    public function plansManagement (int $benefitId) {
+        // check and set the security group
+        $this->data['security_details'] = db_get_admin_access_level_details($this->loggedInId);
+        // make sure the system is redirecting
+        check_access_permissions($this->data['security_details'], 'manage_admin', 'benefits');
+        // set the title
+        $this->data['title'] = "Carrier Plans :: " . STORE_NAME;
+        $this->data['benefitId'] = $benefitId;
+        //
+        $benefit = $this
+            ->benefits_model
+            ->getBenefitById(
+                $benefitId
+            );
+        //    
+        $this->data['benefitName'] = $benefit['name'];
+        $this->data['categoryId'] = $benefit['benefit_categories_sid'];    
+        //
+        $this->data['categoryName'] = $this
+        ->benefits_model
+        ->getBenefitCategoryById(
+            $benefit['benefit_categories_sid']
+        )['name'];    
+        //
+        // load CSS
+        $this->data['PageCSS'] = [
+            'css/theme-2021',
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            'v1/app/css/loader'
+        ];
+        // load JS
+        $this->data['PageScripts'] = [
+            'js/app_helper',
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            'v1/benefits/js/plans'
+        ];
+        // render the view
+        $this->render('manage_admin/benefits/plans_management', 'admin_master');
+    }
+
+    public function generatePlansView (int $categoryId) {
+        //
+        $plans = $this
+            ->benefits_model
+            ->getBenefitCategoryPlans($categoryId);
+        //
+        return SendResponse(
+            200,
+            [
+                'plansView' => $this->load->view(
+                    'manage_admin/benefits/partials/plans/plans_view',
+                    ['plans' => $plans],
+                    true
+                )
+            ]
+        );
+    }
+
+    /**
+    * generate plan add view
+    */
+    public function generateAddBenefitPlanView()
+    {
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                   'manage_admin/benefits/partials/plans/plan_add',
+                   [],
+                   true
+                )
+            ]
+        );
+    }
+
+    /**
+    * generate plan partial
+    */
+    public function generateAddBenefitPlanPartial ($step) {
+        //
+        $page = '';
+        $data = [];
+        //
+        switch ($step) {
+            case 1:
+                $carriers = $this->benefits_model->getBenefitCarriers();
+                $data['carriers'] = $carriers;
+                $page = 'manage_admin/benefits/partials/plans/plan_detail';
+                break;
+            case 2:
+                $page = 'manage_admin/benefits/partials/plans/plan_coverage';
+                break;
+            case 3;
+                $page = 'manage_admin/benefits/partials/plans/plan_eligibility';
+                break;
+            case 4:
+                $page = 'manage_admin/benefits/partials/plans/plan_enrollment';
+                break;
+            case 5;
+                $page = 'manage_admin/benefits/partials/plans/plan_payroll';
+                break;    
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                'partialView' => $this->load->view(
+                    $page,
+                    $data,
+                    true
+                )
+            ]
+        );
+    }
+
+    public function getCarrierCode ($carrierId) {
+        $carrier = $this
+            ->benefits_model
+            ->getBenefitCarrierById(
+                $carrierId
+            );
+
+            return SendResponse(
+                200,
+                ['carrierCode' => $carrier['code']]
+            );    
+    }
+
+
+    
 }

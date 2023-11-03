@@ -13,14 +13,16 @@
                             <!-- Title -->
                             <div class="heading-title page-title">
                                 <h1 class="page-title">
-                                    <i class="fa fa-book"></i>
-                                    Benefits Management
-                                </h1>
-
-                                <a href="<?php echo base_url("sa/benefits/carrier_management") ?>" class="csW btn btn-success csF16 float-right">
-                                    <i class="fa fa-briefcase" aria-hidden="true"></i>
+                                    <i class="fa fa-briefcase"></i>
                                     Carrier Management
-                                </a>
+                                </h1>
+                                <div class="text-right">
+                                    <a href="<?php echo base_url('sa/benefits'); ?>" class="btn black-btn csF16 pull-right">
+                                        <i class="fa fa-long-arrow-left csF16" aria-hidden="true"></i>
+                                        &nbsp;Back to Benefits
+                                    </a>
+                                </div>
+                                
                             </div>
 
                             <br />
@@ -28,8 +30,7 @@
                             <br />
 
                             <!--  -->
-                            <div id="jsBenefitCategoryBox"></div>
-                            <div id="jsBenefitBox"></div>
+                            <div id="jsBenefitCarrierBox"></div>
 
                             <?php $this->load->view('v1/loader', ['id' => 'jsPageLoader']); ?>
                         </div>

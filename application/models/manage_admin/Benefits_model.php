@@ -254,4 +254,159 @@ class Benefits_model extends CI_Model
         //
         return ['success' => true, 'msg' => 'You have successfully updated a benefit.'];
     }
+
+    /**
+     * get all benefit categories
+     *
+     * @param bool $makeIndex
+     * @return array
+     */
+    public function getBenefitCarriers(bool $makeIndex = false): array
+    {
+        $records = $this->db
+            ->select('
+                sid,
+                name,
+                code,
+                created_at
+            ')
+            ->order_by('sid', 'DESC')
+            ->get('benefits_carrier')
+            ->result_array();
+        //
+        if (!$records) {
+            return $records;
+        }
+        //
+        if ($makeIndex) {
+            //
+            $tmp = [];
+            //
+            foreach ($records as $record) {
+                $tmp[$record['sid']] = $record;
+            }
+            //
+            $records = $tmp;
+            //
+            unset($tmp);
+        }
+        //
+        return $records;
+    }
+
+    /**
+     * saves the benefit carrier
+     *
+     * @param array $data
+     * @return array
+     */
+   public function saveBenefitCarrier(array $data): array
+   {
+       // check if already exists
+       if ($this->db->where('ein', $data['ein'])->count_all_results('benefits_carrier')) {
+           return ['errors' => ['"' . ($data['ein']) . '" already exists']];
+       }
+       //
+       $ins = $data;
+       //
+       $ins['created_at']
+           = $ins['updated_at'] =
+           getSystemDate();
+       //
+       $this->db->insert(
+           'benefits_carrier',
+           $ins
+       );
+       //
+       return ['success' => true, 'msg' => 'You have successfully added the benefit carrier.'];
+   }
+
+    /**
+     * get benefit carrier by id
+     *
+     * @param int $carrierId
+     * @return array
+     */
+    public function getBenefitCarrierById(int $carrierId): array
+    {
+        return $this->db
+            ->select('
+                sid,
+                name,
+                ein,
+                code,
+                logo
+            ')
+            ->where('sid', $carrierId)
+            ->get('benefits_carrier')
+            ->row_array();
+    }
+
+    /**
+     * updates the benefit carrier
+     *
+     * @param array $data
+     * @param int $carrierId
+     * @return array
+     */
+    public function updateBenefitCarrier(array $data, int $carrierId): array
+    {
+        // check if already exists
+        if ($this->db->where('ein', $data['ein'])->where('sid <> ', $carrierId)->count_all_results('benefits_carrier')) {
+            return ['errors' => ['"' . ($data['ein']) . '" already exists']];
+        }
+        //
+        $ins = $data;
+        //
+        $ins['updated_at'] =
+            getSystemDate();
+        //
+        $this->db
+            ->where('sid', $carrierId)
+            ->update(
+                'benefits_carrier',
+                $ins
+            );
+        //
+        return ['success' => true, 'msg' => 'You have successfully updated the benefit carrier.'];
+    }
+
+    /**
+    * get all benefit categories
+    *
+    * @param int $categoryId
+    * @return array
+    */
+   public function getBenefitCategoryPlans(int $categoryId): array
+   {
+       $records = $this->db
+           ->select('
+               sid,
+               name,
+               code,
+               created_at
+           ')
+           ->order_by('sid', 'DESC')
+           ->get('benefits_carrier')
+           ->result_array();
+       //
+       if (!$records) {
+           return $records;
+       }
+       //
+       if ($makeIndex) {
+           //
+           $tmp = [];
+           //
+           foreach ($records as $record) {
+               $tmp[$record['sid']] = $record;
+           }
+           //
+           $records = $tmp;
+           //
+           unset($tmp);
+       }
+       //
+       return $records;
+   }
 }

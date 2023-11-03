@@ -1896,6 +1896,22 @@ $route['sa/benefits/add']['post'] = "manage_admin/Benefits/saveBenefit";
 // edit benefit
 $route['sa/benefits/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitView/$1";
 $route['sa/benefits/(:num)']['post'] = "manage_admin/Benefits/updateBenefit/$1";
+// Benefits carrier 
+$route['sa/benefits/carrier_management']['get'] = "manage_admin/Benefits/carrierManagement";
+$route['sa/benefits/carrier/view']['get'] = "manage_admin/Benefits/generateCarrierView";
+$route['sa/benefits/carrier/add/view']['get'] = "manage_admin/Benefits/generateAddBenefitCarrierView";
+$route['sa/benefits/carrier']['post'] = "manage_admin/Benefits/saveBenefitCarrier";
+$route['sa/benefits/carrier/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitCarrierView/$1";
+$route['sa/benefits/carrier/(:num)']['post'] = "manage_admin/Benefits/updateBenefitCarrier/$1";
+// Benefits plans
+$route['sa/benefits/plans_management/(:num)']['get'] = "manage_admin/Benefits/plansManagement/$1";
+$route['sa/benefits/plans/view/(:num)']['get'] = "manage_admin/Benefits/generatePlansView/$1";
+$route['sa/benefits/plan/add/view']['get'] = "manage_admin/Benefits/generateAddBenefitPlanView";
+$route['sa/benefits/plans/add/partial/(:num)']['get'] = "manage_admin/Benefits/generateAddBenefitPlanPartial/$1";
+$route['sa/benefits/plan/get_carrier_code/(:num)']['get'] = "manage_admin/Benefits/getCarrierCode/$1";
+// $route['sa/benefits/carrier']['post'] = "manage_admin/Benefits/saveBenefitCarrier";
+// $route['sa/benefits/carrier/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitCarrierView/$1";
+// $route['sa/benefits/carrier/(:num)']['post'] = "manage_admin/Benefits/updateBenefitCarrier/$1";
 
 // Company benefits
 $route['benefits']['get'] = "v1/Company_benefits/index";

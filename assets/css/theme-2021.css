@@ -883,6 +883,10 @@
   margin-left: 10px !important;
 }
 
+.ml24 {
+  margin-left: 24px !important;
+}
+
 .mr10 {
   margin-right: 10px !important;
 }
@@ -2252,4 +2256,8 @@ nav.navigation ul li a:hover {
 .csActiveTab a {
   background-color: #fd7a2a !important;
   color: #fff !important ;
+}
+
+.cs_full_width {
+  width: 100%;
 }
