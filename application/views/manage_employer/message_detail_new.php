@@ -48,7 +48,7 @@
                                             <td><?php echo $contact_details['to_name']; ?>&nbsp;
                                             <?php if (!empty($contact_details['from_profile_link'])) { ?>
                                                 <?php if ($page != 'Inbox' && $contact_details['message_type'] == 'applicant') { echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . $contact_details['to_profile_link'] . '" target="_blank">View Profile</a>'; } ?>
-                                                <?php if ($page == 'Inbox' && $contact_details['message_type'] == 'employee') { echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . $contact_details['from_profile_link'] . '" target="_blank">View Profile</a>'; } ?>
+                                                <?php if ($page == 'Inbox' && $contact_details['message_type'] == 'employee' && $employee['access_level_plus'] == 1) { echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . $contact_details['from_profile_link'] . '" target="_blank">View Profile</a>'; } ?>
                                             <?php } ?> 
                                             </td>
                                         </tr>
