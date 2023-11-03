@@ -366,7 +366,7 @@ class message_model extends CI_Model {
                 $from_name = 'Notifications Auto Responder';
                 $from_email = 'notifications@automotohr.com';
             } else {
-                $this->db->select('first_name, last_name, email');
+                $this->db->select('sid, first_name, last_name, email');
             
                 if(is_numeric($from_id) && ($from_id > 1 || $from_id != '1')) {
                     $this->db->where('sid', $from_id);
@@ -382,6 +382,7 @@ class message_model extends CI_Model {
                     $from_name = $records_arr[0]['first_name'].' '.$records_arr[0]['last_name'];
                     $from_email = $records_arr[0]['email'];
                     $message_type = 'employee';
+                    $from_profile_link = base_url('employee_profile') . '/' . $records_arr[0]['sid'];
                 }
             }
         }
