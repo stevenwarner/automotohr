@@ -127,7 +127,7 @@
                                             <?php } ?>
                                         <?php } ?>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
-                                            <?php $this->load->view('attendance/2022/clock_green_display'); ?>
+                                            
                                             <?php if ($task_management_module_status == 1) { ?>
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">
@@ -1018,7 +1018,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php } ?> 
+                                        <?php } ?>
                                         <!--  -->
                                         <?php if ($haveSubordinate == "yes") { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
@@ -1041,7 +1041,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php } ?> 
+                                        <?php } ?>
                                         <!--  -->
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
@@ -1055,7 +1055,7 @@
                                                         <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">Show</a>  
+                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">Show</a>
                                                     </div>
                                                 </div>
                                             </div>

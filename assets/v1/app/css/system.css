@@ -1,8 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap');
-
-* {
-	font-family: 'Sora', sans-serif;
-}
 /* Buttons */
 .csBtn {
 	text-align: center;
@@ -103,6 +98,7 @@
 /* Time sheet */
 .csTimeSheetBox {
 	background-color: #f5f5f5;
+	position: relative;
 }
 .csTimeSheetBox .csTimeSheetRow {
 	display: table;
@@ -166,4 +162,107 @@
 }
 .csTimeSheetBox .csTimeSheetRow:last-child {
 	border-bottom: 1px solid #ccc;
+}
+
+/* side bar */
+/* make sidebar nav vertical */
+.csAdminSideBar {
+	border: 1px solid #ababab;
+	background-color: #f3f3f3;
+	border-radius: 5px;
+	margin: 0 0 30px 0;
+}
+
+.csAdminSideBar .navbar {
+	margin-bottom: 0;
+}
+
+.csAdminSideBar .navbar ul {
+	float: none;
+}
+
+.csAdminSideBar .navbar .navbar-collapse {
+	padding: 0;
+	max-height: none;
+}
+
+.csAdminSideBar .navbar li {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	border-bottom: 1px solid #ababab;
+}
+
+.csAdminSideBar .navbar li a {
+	display: block;
+	padding: 15px 20px;
+	font-size: 15px;
+	color: #000;
+	font-weight: 600;
+	font-style: italic;
+	text-transform: capitalize;
+}
+
+.csAdminSideBar ul li figure {
+	display: inline-block;
+	width: 35px;
+	text-align: center;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.csAdminSideBar ul li figure i {
+	font-size: 22px;
+	color: #4d4d4d;
+}
+
+.csAdminSideBar .navbar ul:not {
+	display: block;
+}
+
+.csAdminSideBar .navbar li a:hover {
+	background-color: #81b431;
+	color: #fff;
+}
+
+.csAdminSideBar .navbar li a:hover figure i {
+	color: #fff;
+}
+
+.csAdminSideBar .navbar-nav a.active,
+.csAdminSideBar .navbar-nav a.active:hover,
+.csAdminSideBar .navbar-nav a.active:focus {
+	background-color: #81b431;
+	color: #fff;
+}
+
+.csAdminSideBar .navbar-nav a.active figure i,
+.csAdminSideBar .navbar-nav a.active:hover figure i,
+.csAdminSideBar a.active:focus figure i {
+	color: #fff;
+}
+
+/* employee box */
+.csEmployeeBox {
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	text-align: center;
+	margin-right: 20px;
+	margin-top: 20px;
+	cursor: pointer;
+}
+.csEmployeeBox img {
+	border-radius: 50%;
+	height: 100%;
+	width: 100%;
+}
+.csEmployeeBox p {
+	padding-top: 5px;
+	font-size: 14px;
+	font-weight: 400;
+	color: #3554dc;
+}
+.csEmployeeBox:hover img{
+	outline: 5px solid #333333;
 }

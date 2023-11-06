@@ -33,10 +33,15 @@ class Attendance extends Public_Controller
      */
     private $js;
     /**
-     * JS file creation path
+     * common files holder
      * @var string
      */
     private $commonFiles;
+    /**
+     * holds sidebar path
+     * @var string
+     */
+    private $sidebarPath;
     /**
      * main entry point
      */
@@ -54,6 +59,8 @@ class Attendance extends Public_Controller
         // load the library
         $this->load->library('Api_auth');
         $this->commonFiles = ["css" => [], "js" => []];
+        //
+        $this->sidebarPath = "v1/attendance/sidebar";
         //
         // $this->api_auth->checkAndLogin(
         //     $this->loggedInEmployee["sid"],
@@ -111,6 +118,46 @@ class Attendance extends Public_Controller
 
         $this->load->view("main/header", $data);
         $this->load->view("v1/attendance/my_timesheet");
+        $this->load->view("main/footer",);
+    }
+
+    // Employer
+
+    /**
+     * logged in person time sheet
+     */
+    public function dashboard()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $this->loggedInEmployee["sid"],
+            $this->loggedInCompany["sid"]
+        );
+        //
+        $this->setCommon("v1/app/plugins/select2/select2.min", "css");
+        $this->setCommon("v1/app/plugins/select2/select2.min", "js");
+        //
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/dashboard", "js");
+        //
+        $data["load_view"] = false;
+        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        //
+        $this->getCommon($data, "dashboard");
+        //
+        // $data["pageJs"] = ["https://code.highcharts.com/highcharts.js"];
+        //
+        $data["sidebarPath"] = $this->sidebarPath;
+        $data["mainContentPath"] = "v1/attendance/dashboard";
+
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/employer/main");
         $this->load->view("main/footer",);
     }
 

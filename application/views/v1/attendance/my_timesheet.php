@@ -82,7 +82,46 @@
                         <p>Oct 29</p>
                     </div>
                     <div class="csTimeSheetRowDetails">
-                        0h 00m
+                        <p>
+                            <strong>10h 00m</strong>
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <caption></caption>
+                                <tbody>
+                                    <tr>
+                                        <td class="vam">
+                                            09:00 AM - 06:00 PM
+                                        </td>
+                                        <td class="vam">
+                                            9h 0m
+                                        </td>
+                                        <td class="vam">
+                                            <button class="csBtn csBtnOrange">
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="vam">
+                                            06:00 PM - 07:00 PM
+                                        </td>
+                                        <td class="vam">
+                                            91 0m
+                                        </td>
+                                        <td class="vam">
+                                            <button class="csBtn csBtnOrange">
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-link csF14">
+                            <i class="fa fa-plus-circle csF14" aria-hidden="true"></i>
+                            &nbsp;Add time entry
+                        </button>
                     </div>
                 </div>
 

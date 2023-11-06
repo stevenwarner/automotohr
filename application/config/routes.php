@@ -1481,10 +1481,14 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
 // $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
 //
-// employeer routes for attendance
+// employee routes for attendance
 $route["timesheet"]["get"] = "v1/Attendance/Attendance/timeSheet";
 $route["attendance/overview"]["get"] = "v1/Attendance/Attendance/myDashboard";
 $route["attendance/timesheet/my"]["get"] = "v1/Attendance/Attendance/myTimeSheet";
+// employer
+$route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
+$route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
+$route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
 
 /**
  * 

@@ -1904,3 +1904,13 @@ if (!function_exists("getCommonFiles")) {
         return $arr[$type];
     }
 }
+
+if (!function_exists("onlyPlusAndPayPlanCanAccess")) {
+    function onlyPlusAndPayPlanCanAccess()
+    {
+        if (!isPayrollOrPlus()) {
+            get_instance()->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+    }
+}
