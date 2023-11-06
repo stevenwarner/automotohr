@@ -381,93 +381,24 @@ class Testing extends CI_Controller
 
 
     //
-    public function payRollTimeCalculation($startDate = '', $endDate = '', $employeeId = '')
+    public function employeeAmountToPay($startDate = '', $endDate = '', $employeeId = '')
     {
-
-        $startDate = '';
-        $endDate = '';
-        $employeeId = '49345';
-
-
-        /*
-
-        $policiesDetail  = $this->timeoff_model->getEmployeeTimeOffAmountByDate(
-            $request['company_sid'],
-            $request['userId'],
-            $request['request_from_date'],
-            [$request['timeoff_policy_sid']]
-         );
-*/
 
         $this->load->helper('timeoff');
         //
         $this->load->model('timeoff_model');
-        // Get request
-        // $employeeId = '49290';
 
-        //  $requests = $this->timeoff_model->getRequestByEmployeeId($employeeId);
+        $fromDate = '2023-11-03';
+        $toDate = '2023-12-03';
+        $employeeId = 3;
 
-        //   $request = $this->timeoff_model->getRequestById(85);
-
-        //   _e($request,true);
-
-        // $post['employerId']='49290';
-        //  $post['level'] =1;
-        //   $post['filter']['employees']='49290';
-        //  $post['companyId']='8578';
-
-        //  ction: get_requests
-        /*
-        $post['companyId'] = 8578;
-        $post['employerId'] = 8579;
-        $post['employeeId'] = 8579;
-        $post['level'] = 1;
-        $post['type'] = 'approved';
-        $post['filter']['employees'] = 49290;
-        $post['filter']['policies'] = 'all';
-        $post['filter']['status'] = 'all';
-        $post['filter']['order'] = 'upcoming';
-        $post['filter']['startDate'] = '10-27-2023';
-        $post['filter']['endDate'] = '11-03-2023';
-        $post['public'] = '0';
-*/
-
-
-        // $requests = $this->timeoff_model->getRequests($post);
-
-        // _e($requests, true, true);
-
-        //foreach($requests as $request ){
-
-        // _e($request,true);
-
-        //
-
-        $employeeId = 49290;
-        $companyId = 8578;
-        $startDate = '10-27-2023';
-
-        $policiesDetail  = $this->timeoff_model->getEmployeeTimeOffAmountByDate(
-            $companyId,
+        $consumedTimeInMinutes = $this->timeoff_model->getEmployeeAmountTopay(
             $employeeId,
-            $startDate
+            $fromDate,
+            $toDate
         );
-
-        _e($policiesDetail, true);
-
-        //}
-
-
-
-        //
-        //     $policiesDetail  = $this->timeoff_model->getEmployeePoliciesByDate(
-        //        $request['company_sid'],
-        //        $request['userId'],
-        //        $request['request_from_date'],
-        //        [$request['timeoff_policy_sid']]
-        //    );
-
-
+      
+        echo round($consumedTimeInMinutes,2);
 
     }
 }
