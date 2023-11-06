@@ -1260,3 +1260,53 @@ if (!function_exists('replace_magic_quotes')) {
         }
     }
 }
+
+if (!function_exists('findCompanyUser')) {
+    function findCompanyUser($email, $company_sid)
+    {
+        $result = [
+            'userType' => '',
+            'profilePath' => '',
+            'userName' => ''
+        ];
+        //
+        $CI = & get_instance();
+        $CI->db->select('sid, first_name, last_name');
+        $CI->db->where('parent_sid', $company_sid);
+        $CI->db->where('email', $email);
+        $record_row = $CI->db->get('users')->row_array();
+
+        if(!empty($record_row)){
+            $result['profilePath'] = base_url('employee_profile') . '/' . $record_row['sid'];
+            $result['userType'] = "employee";
+            $result['userName'] = $record_row['first_name'].' '.$record_row['last_name'];
+        } else {
+            $CI->db->select('sid, first_name, last_name, email');
+            $CI->db->where('email', $email);
+            $CI->db->where('employer_sid', $company_sid);
+            $record_obj = $CI->db->get('portal_job_applications');
+            $record_arr = $record_obj->row_array();
+            $record_obj->free_result();
+
+            if(!empty($record_arr)) {
+                $result['userName'] = $record_arr['first_name'].' '.$record_arr['last_name'];
+                $portal_job_applications_sid = $record_arr['sid'];
+                
+                $CI->db->select('sid');
+                $CI->db->order_by('sid', 'desc');
+                $CI->db->limit(1);
+                $CI->db->where('portal_job_applications_sid', $portal_job_applications_sid);
+                $obj = $CI->db->get('portal_applicant_jobs_list');
+                $result_arr = $obj->row_array();
+                $obj->free_result();
+                
+                if(!empty($result_arr)) {
+                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/'.$result_arr['sid'];
+                    $result['userType'] = 'applicant';
+                }
+            } 
+        }
+
+        return $result;
+    }
+}

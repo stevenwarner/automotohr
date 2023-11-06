@@ -397,13 +397,24 @@ class Private_messages extends CI_Controller
                 $to_type                                                        = $message_data[0]['to_type'];
                 $this->load->helper('email');
                 $contact_details                                                = $this->message_model->get_contact_name($msg_id, $to_id, $from_id, $from_type, $to_type);
-                //                echo '<pre>'; print_r($contact_details); echo '</pre>';
+               
+                // echo '<pre>'; print_r($contact_details); echo '</pre>';
                 if (valid_email(trim($from_id))) {
                     $name_only                                                  = $this->message_model->fetch_name($from_id, $company_id);
                     $contact_details['from_email']                              = $from_id;
                     $contact_details['from_name']                               = $name_only;
                 }
-
+                //
+                if (!is_numeric($contact_details['from_email'])) {
+                    $userInfo = findCompanyUser($contact_details['from_email'], $data['company_id']);
+                    //
+                    if (!empty($userInfo['profilePath'])) {
+                        $contact_details['from_profile_link'] = $userInfo['profilePath'];
+                        $contact_details['message_type'] = $userInfo['userType'];
+                        $contact_details['from_name'] = $userInfo['userName'];
+                    }
+                }
+                //
                 $data['contact_details']                                        = $contact_details;
                 $data['message']                                                = $message_data[0];
                 $this->message_model->mark_read($edit_id);
@@ -455,11 +466,23 @@ class Private_messages extends CI_Controller
                 } else {
                     $contact_details                                            = $this->message_model->get_contact_name($msg_id, $to_id, $from_id, $from_type, $to_type);
                 }
-
+              
+                if (!is_numeric($message_data[0]['to_id'])) {
+                    $userInfo = findCompanyUser($message_data[0]['to_id'], $data['company_id']);
+                    //
+                    if (!empty($userInfo['profilePath'])) {
+                        $contact_details['to_profile_link'] = $userInfo['profilePath'];
+                        $contact_details['message_type'] = $userInfo['userType'];
+                        $contact_details['to_name'] = $userInfo['userName'];
+                        $contact_details['to_email'] = $message_data[0]['to_id'];
+                    }
+                }
+                //
                 $data['contact_details']                                        = $contact_details;
                 $data['message']                                                = $message_data[0];
                 $data['total_messages']                                         = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
                 $data['company_name']                                           = $company_name;
+                //
                 $this->load->view('main/header', $data);
                 $this->load->view('private_messages/message_detail_new');
                 $this->load->view('main/footer');
@@ -1121,8 +1144,7 @@ class Private_messages extends CI_Controller
                 $this->load->view('private_messages/compose_message_new');
                 $this->load->view('main/footer');
             } else {
-                $message                                                        = $this->message_model->get_message($edit_id);
-
+                $message = $this->message_model->get_message($edit_id);
 
                 $formpost = $this->input->post(NULL, TRUE);
 

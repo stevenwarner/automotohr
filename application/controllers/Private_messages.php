@@ -359,7 +359,17 @@ class Private_messages extends Public_Controller
                     $contact_details['from_email'] = $from_id;
                     $contact_details['from_name'] = $name_only;
                 }
-
+                //
+                if (!is_numeric($contact_details['from_email'])) {
+                    $userInfo = findCompanyUser($contact_details['from_email'], $company_id);
+                    //
+                    if (!empty($userInfo['profilePath'])) {
+                        $contact_details['from_profile_link'] = $userInfo['profilePath'];
+                        $contact_details['message_type'] = $userInfo['userType'];
+                        $contact_details['from_name'] = $userInfo['userName'];
+                    }
+                }
+                //
                 $data['contact_details'] = $contact_details;
                 $data['message'] = $message_data[0];
                 $this->message_model->mark_read($edit_id);
@@ -413,7 +423,18 @@ class Private_messages extends Public_Controller
                     $contact_details['from_name'] = $name_only;
                 }
 
-                //              echo $this->db->last_query().'<pre>'; print_r($contact_details); echo '</pre>';
+                // echo $this->db->last_query().'<pre>'; print_r($contact_details); echo '</pre>';
+                if (!is_numeric($message_data[0]['to_id'])) {
+                    $userInfo = findCompanyUser($message_data[0]['to_id'], $company_id);
+                    //
+                    if (!empty($userInfo['profilePath'])) {
+                        $contact_details['to_profile_link'] = $userInfo['profilePath'];
+                        $contact_details['message_type'] = $userInfo['userType'];
+                        $contact_details['to_name'] = $userInfo['userName'];
+                        $contact_details['to_email'] = $message_data[0]['to_id'];
+                    }
+                }
+                //
                 $data['contact_details'] = $contact_details;
                 $data['message'] = $message_data[0];
                 $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
@@ -1261,10 +1282,6 @@ class Private_messages extends Public_Controller
             }
         }
     }
-
-
-
-
 
     function message_task()
     {
