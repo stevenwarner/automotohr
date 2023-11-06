@@ -121,6 +121,13 @@ class Regular extends Public_controller
                 $data['loggedInPersonCompanyId']
             );
         //
+
+        if ($payrollStatus === 'prepare' && in_array($step, ['hours_and_earnings', 'timeoff'])) {
+
+            $this->regular_payroll_model->setRegularPayrollsVersionToNull($payrollId);
+        }
+
+
         $data['title'] = "Regular Payrolls";
         // mismatch
         if ($payrollStatus === 'not_found') {

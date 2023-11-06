@@ -1056,4 +1056,21 @@ class Regular_payroll_model extends Payroll_model
         return
             ['success' => true];
     }
+
+        //
+        public function setRegularPayrollsVersionToNull(int $payrollId)
+        {
+    
+            $versionUpdate = [];
+            $versionUpdate['version'] = null;
+            $versionUpdate['updated_at'] = getSystemDate();
+            //
+            $this->db
+                ->where('sid', $payrollId)
+                ->update(
+                    'payrolls.regular_payrolls',
+                    $versionUpdate
+                );
+        }
+        
 }
