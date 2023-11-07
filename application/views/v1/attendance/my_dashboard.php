@@ -80,8 +80,11 @@
                         </strong>
                     </h2>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" style="position: relative">
                     <div style="height: 400px;" id="container"></div>
+                    <?php $this->load->view("v1/loader", [
+                        "id" =>"jsWeekGraph"
+                    ]); ?>
                 </div>
             </div>
 
@@ -148,37 +151,3 @@
         </div>
     </div>
 </div>
-
-<script src="https://code.highcharts.com/highcharts.js"></script>
-
-<script>
-    Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: "22h 50m",
-            align: 'left'
-        },
-        xAxis: {
-            categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            crosshair: true,
-            accessibility: {
-                description: 'Week days'
-            }
-        },
-        tooltip: {
-            valueSuffix: ''
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
-        series: [{
-            name: 'Worked time',
-            data: [4, 5, 10, 0, 0, 0, 0]
-        }, ]
-    });
-</script>

@@ -81,14 +81,14 @@ class Attendance extends Public_Controller
             $this->loggedInEmployee["sid"],
             $this->loggedInCompany["sid"]
         );
-        $data['appJS'] = bundleJs([
-            "v1/plugins/moment/moment-timezone.min",
-            "js/app_helper",
-            "js/common",
-            // "v1/attendance/js/test"
-        ], $this->js, "my_dashboard", $this->disableCreationOfMinifyFiles);
+        //
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/app/css/loader", "css");
+        $this->setCommon("v1/attendance/js/my_dashboard", "js");
         //
         $data["load_view"] = true;
+        $data["PageScripts"] = ["https://code.highcharts.com/highcharts.js"];
+        $this->getCommon($data, "my_dashboard");
 
         $this->load->view("main/header", $data);
         $this->load->view("v1/attendance/my_dashboard");

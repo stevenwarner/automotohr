@@ -25,6 +25,6 @@
     echo '<!-- Dynamic Scripts -->';
     echo GetScripts($PageScripts);
 } ?>
-<?= $appJs ?? ''; ?>
 
 <?php $this->load->view("v1/attendance/footer_scripts"); ?>
+<?= $appJs ?? ''; ?>
