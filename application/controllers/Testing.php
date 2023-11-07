@@ -388,8 +388,8 @@ class Testing extends CI_Controller
         //
         $this->load->model('timeoff_model');
 
-        $fromDate = '2023-11-03';
-        $toDate = '2023-12-03';
+        $fromDate = '2023-11-06';
+        $toDate = '2023-11-10';
         $employeeId = 3;
 
         $consumedTimeInMinutes = $this->timeoff_model->getEmployeeAmountTopay(

@@ -7033,30 +7033,33 @@ class Timeoff_model extends CI_Model
         $toDate
 
     ) {
-
-        //
-        $this->db
-            ->select('
-            SUM(requested_time) as requested_time
-        ')
-            ->from('timeoff_requests')
-            ->where('employee_sid', $employeeId)
-            ->where('status', 'approved')
-            ->where('is_draft', 0)
-            ->where('archive', 0);
-        //
+     
+        $this->db->select('SUM(requested_time) as requested_time');
+        $this->db->from('timeoff_requests');
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('status', 'approved');
+        $this->db->where('is_draft', 0);
+        $this->db->where('archive', 0);
+        
         $this->db->group_start();
-        $this->db->where("request_from_date >=", $fromDate);
-        $this->db->where("request_from_date <=", $toDate);
+        $this->db->where('request_from_date BETWEEN \'' . $fromDate . '\' AND \'' . $toDate . '\'');
+        $this->db->or_where('request_to_date BETWEEN \'' . $fromDate . '\' AND \'' . $toDate . '\'');
         $this->db->group_end();
-        //
+
+        $this->db->or_group_start();
+        $this->db->where('request_from_date <=', $fromDate);
+        $this->db->where('request_to_date >=', $fromDate);
+        $this->db->where('employee_sid', $employeeId);
+
+        $this->db->group_end();
+
         $result = $this->db->get();
         //
-        $record = $result->row_array();
+        $record = $result->result_array();
         $result->free_result();
 
-        //
-        $consumedTimeInMinutes = $record['requested_time'] == null ? 0 : $record['requested_time'];
+       //
+        $consumedTimeInMinutes = $record[0]['requested_time'] == null ? 0 : $record[0]['requested_time'];
 
         $amountTpPay = 0;
         if ($consumedTimeInMinutes > 0) {
