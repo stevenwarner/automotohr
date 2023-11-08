@@ -1909,7 +1909,9 @@ $route['sa/benefits/plans/view/(:num)']['get'] = "manage_admin/Benefits/generate
 $route['sa/benefits/plan/add/view']['get'] = "manage_admin/Benefits/generateAddBenefitPlanView";
 $route['sa/benefits/plans/add/partial/(:num)']['get'] = "manage_admin/Benefits/generateAddBenefitPlanPartial/$1";
 $route['sa/benefits/plan/get_carrier_code/(:num)']['get'] = "manage_admin/Benefits/getCarrierCode/$1";
-// $route['sa/benefits/carrier']['post'] = "manage_admin/Benefits/saveBenefitCarrier";
+
+$route['sa/benefits/savePlanData']['post'] = "manage_admin/Benefits/saveBenefitPlanData";
+// 
 // $route['sa/benefits/carrier/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitCarrierView/$1";
 // $route['sa/benefits/carrier/(:num)']['post'] = "manage_admin/Benefits/updateBenefitCarrier/$1";
 

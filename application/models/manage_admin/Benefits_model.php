@@ -300,26 +300,26 @@ class Benefits_model extends CI_Model
      * @param array $data
      * @return array
      */
-   public function saveBenefitCarrier(array $data): array
-   {
-       // check if already exists
-       if ($this->db->where('ein', $data['ein'])->count_all_results('benefits_carrier')) {
-           return ['errors' => ['"' . ($data['ein']) . '" already exists']];
-       }
-       //
-       $ins = $data;
-       //
-       $ins['created_at']
-           = $ins['updated_at'] =
-           getSystemDate();
-       //
-       $this->db->insert(
-           'benefits_carrier',
-           $ins
-       );
-       //
-       return ['success' => true, 'msg' => 'You have successfully added the benefit carrier.'];
-   }
+    public function saveBenefitCarrier(array $data): array
+    {
+            // check if already exists
+            if ($this->db->where('ein', $data['ein'])->count_all_results('benefits_carrier')) {
+                return ['errors' => ['"' . ($data['ein']) . '" already exists']];
+            }
+            //
+            $ins = $data;
+            //
+            $ins['created_at']
+                = $ins['updated_at'] =
+                getSystemDate();
+            //
+            $this->db->insert(
+                'benefits_carrier',
+                $ins
+            );
+            //
+            return ['success' => true, 'msg' => 'You have successfully added the benefit carrier.'];
+    }
 
     /**
      * get benefit carrier by id
@@ -372,41 +372,71 @@ class Benefits_model extends CI_Model
     }
 
     /**
-    * get all benefit categories
-    *
-    * @param int $categoryId
-    * @return array
-    */
-   public function getBenefitCategoryPlans(int $categoryId): array
-   {
-       $records = $this->db
-           ->select('
-               sid,
-               name,
-               code,
-               created_at
-           ')
-           ->order_by('sid', 'DESC')
-           ->get('benefits_carrier')
-           ->result_array();
-       //
-       if (!$records) {
-           return $records;
-       }
-       //
-       if ($makeIndex) {
-           //
-           $tmp = [];
-           //
-           foreach ($records as $record) {
-               $tmp[$record['sid']] = $record;
-           }
-           //
-           $records = $tmp;
-           //
-           unset($tmp);
-       }
-       //
-       return $records;
-   }
+        * get all benefit categories
+        *
+        * @param int $categoryId
+        * @return array
+        */
+    public function getBenefitPlans(int $benefitId, bool $makeIndex = false): array
+    {
+        $records = $this->db
+            ->select('
+                sid,
+                name,
+                end_date
+            ')
+            ->where('benefit_sid', $benefitId)
+            ->get('benefits_plans_details')
+            ->result_array();
+        //
+        if (!$records) {
+            return $records;
+        }
+        //
+        if ($makeIndex) {
+            //
+            $tmp = [];
+            //
+            foreach ($records as $record) {
+                $tmp[$record['sid']] = $record;
+            }
+            //
+            $records = $tmp;
+            //
+            unset($tmp);
+        }
+        //
+        return $records;
+    }
+
+    /**
+     * saves the benefit carrier
+     *
+     * @param array $data
+     * @return array
+     */
+    public function savePlanDetail(array $data): array
+    {
+            // check if already exists
+            if ($this->db->where('name', $data['name'])->where('benefit_sid', $data['benefit_sid'])->count_all_results('benefits_plans_details')) {
+                return ['errors' => ['Plan "' . ($data['name']) . '" already exists']];
+            }
+            //
+            $ins = $data;
+            //
+            $ins['created_at']
+                = $ins['updated_at'] =
+                getSystemDate();
+            //
+            $this->db->insert(
+                'benefits_plans_details',
+                $ins
+            );
+            //
+            return [
+                'success' => true,
+                'msg' => 'You have successfully added the benefit plan.',
+                'id' => $this->db->insert_id()
+            ];
+    }
 }

@@ -4,6 +4,7 @@ $(function plans() {
 	 */
 	let XHR = null;
 	let step = 0;
+	let planId = 0;
 
 	/**
 	 * add event
@@ -275,7 +276,7 @@ $(function plans() {
 		event.preventDefault();
 		//
 		if (step == 1) {
-			savePlanDetails();
+			validatePlanDetails();
 		}
 	});
 
@@ -331,79 +332,84 @@ $(function plans() {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$("#jsBenefitPlanSection").html(resp.partialView);
-				//
-				if (step == 1) {
-					$("#jsPlanAttachmentUpload").msFileUploader({
-						fileLimit: "10mb",
-						allowedTypes: ['jpg', 'jpeg', 'png', 'gif'],
-					});
+		.success(function (resp) {
+			$("#jsBenefitPlanSection").html(resp.partialView);
+			//
+			if (step == 1) {
+				$("#jsPlanAttachmentUpload").msFileUploader({
+					fileLimit: "10mb",
+					allowedTypes: ['jpg', 'jpeg', 'png', 'gif'],
+				});
 
-					// Datepickers
-					
+				$("#jsPlanStartDate")
+				.datepicker({
+					dateFormat: "mm/dd/yy",
+					changeYear: true,
+					changeMonth: true,
+					onSelect: function (value) {
+						$("#jsPlanEndDate").datepicker(
+							"option",
+							"minDate",
+							value
+						);
+					},
+				})
+				.datepicker(
+					"option",
+					"maxDate",
+					$("#jsPlanEndDate").val()
+				);
 
-					$("#jsPlanStartDate")
+				$("#jsPlanEndDate")
 					.datepicker({
 						dateFormat: "mm/dd/yy",
 						changeYear: true,
 						changeMonth: true,
 						onSelect: function (value) {
-							$("#jsPlanEndDate").datepicker(
+							$("#jsPlanStartDate").datepicker(
 								"option",
-								"minDate",
+								"maxDate",
 								value
 							);
+							//
+							$('.jsAddIndefiniteCourse').prop('checked', false);
+							$(".jsRecurringCourses").show();
 						},
 					})
 					.datepicker(
 						"option",
-						"maxDate",
-						$("#jsPlanEndDate").val()
+						"minDate",
+						$("#jsPlanStartDate").val()
 					);
-
-					$("#jsPlanEndDate")
-						.datepicker({
-							dateFormat: "mm/dd/yy",
-							changeYear: true,
-							changeMonth: true,
-							onSelect: function (value) {
-								$("#jsPlanStartDate").datepicker(
-									"option",
-									"maxDate",
-									value
-								);
-								//
-								$('.jsAddIndefiniteCourse').prop('checked', false);
-								$(".jsRecurringCourses").show();
-							},
-						})
-						.datepicker(
-							"option",
-							"minDate",
-							$("#jsPlanStartDate").val()
-						);
-				}
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				XHR = null;
-				ml(false, "jsPageLoader");
-			});
+			}
+		})
+		.fail(handleErrorResponse)
+		.always(function () {
+			XHR = null;
+			ml(false, "jsPageLoader");
+		});
 
 	}
 
-	async function savePlanDetails () {
+	async function validatePlanDetails () {
 		//
 		let obj = {};
 		//
 		obj = {
+			action: "save_basic_detail",
+			benefitId,
 			planName: $(".jsPlanName").val().trim(),
 			planCarrier: $(".jsCarrier").val(),
 			planType: $(".jsPlanType").val(),
-			planStart: $(".jsPlanStartDate").val(),
-			planEnd: $(".jsPlanEndDate").val(),
+			planTypeId: $(".jsPlanTypeId").val(),
+			planSummary: $(".jsPlanSummary").val(),
+			planDescription: $(".jsDescription").val(),
+			planStart: $("#jsPlanStartDate").val(),
+			planEnd: $("#jsPlanEndDate").val(),
 			planRate: $(".jsRate").val(),
+			planMainURL: $(".jsMainPlanURL").val(),
+			planOtherLink: [],
+			planAttachment: ''
 		};
 		//
 		const errorsArray = [];
@@ -421,6 +427,14 @@ $(function plans() {
 			errorsArray.push('"Plan Type" is required.');
 		}
 		//
+		if (!obj.planTypeId) {
+			errorsArray.push('"Plan Type ID" is required.');
+		}
+		//
+		if (!obj.planSummary) {
+			errorsArray.push('"Plan Summary" is required.');
+		}
+		//
 		if (!obj.planStart) {
 			errorsArray.push('"Plan Start Date" is required.');
 		}
@@ -433,12 +447,22 @@ $(function plans() {
 			errorsArray.push('"Plan Rate" is required.');
 		}
 		//
+		if (!obj.planMainURL) {
+			errorsArray.push('"Plan Main URL" is required.');
+		}
+		//
 		$.each($('.jsAdditionalLink'), function(i) {
-			let link = $(this).closest('.jsLink').val();
-			let linkName = $(this).closest('.jsLinkName').val();
+			let link = $(this).children().find('.jsLink').val();
+			let linkName = $(this).children().find('.jsLinkName').val();
 			//
 			if (!link || !linkName) {
 				errorsArray.push(`"Additional Link ${i+1}" is required.`);
+			} else {
+				var linkObj = {};
+                linkObj.link = link;
+                linkObj.link_name = linkName;
+
+                obj.planOtherLink.push(linkObj);
 			}
 		});
 		//
@@ -446,12 +470,38 @@ $(function plans() {
 			return _error(getErrorsStringFromArray(errorsArray));
 		}
 		//
+		fileObject = $("#jsPlanAttachmentUpload").msFileUploader("get");
+		//
+		if (Object.keys(fileObject).length && !fileObject.errorCode) {
+			// let uploadedFileObject = {};
+			// //
+			// uploadedFileObject = await uploadFile(fileObject);
+			// //
+			// if (typeof uploadedFileObject === "string") {
+			// 	// parse json
+			// 	uploadedFileObject = JSON.parse(uploadedFileObject);
+			// }
+			// //
+			// //file upload failed
+			// if (!Object.keys(uploadedFileObject).length) {
+			// 	// hide the loader
+			// 	ml(false, "jsAddBenefitCarrierModalLoader");
+			// 	// show error
+			// 	return alertify.alert("ERROR!", "Failed to upload attachment.", CB);
+			// }
+			// // saves the file name
+			// obj.planAttachment = uploadedFileObject.data;
+			obj.planAttachment = 'jay-antol-Xbf_4e7YDII-unsplash-8fyy1G.jpg';
+		}
+		//
+		savePlanData(obj);
 	}
 
 	/**
 	 * save carrier details
 	 */
-	async function saveCarrier(obj, fileObject) {
+	async function savePlanData(obj) {
+		console.log("save data")
 		//
 		if (XHR !== null) {
 			return;
@@ -459,47 +509,27 @@ $(function plans() {
 		//
 		ml(
 			true,
-			"jsAddBenefitCarrierModalLoader",
-			"Please wait while we are saving the carrier."
+			"jsAddBenefitPlanModalLoader",
+			"Please wait while we are saving the plan data."
 		);
 		//
-		// let uploadedFileObject = {};
-		// //
-		// uploadedFileObject = await uploadFile(fileObject);
-		// //
-		// if (typeof uploadedFileObject === "string") {
-		// 	// parse json
-		// 	uploadedFileObject = JSON.parse(uploadedFileObject);
-		// }
-		// //
-		// //file upload failed
-		// if (!Object.keys(uploadedFileObject).length) {
-		// 	// hide the loader
-		// 	ml(false, "jsAddBenefitCarrierModalLoader");
-		// 	// show error
-		// 	return alertify.alert("ERROR!", "Failed to upload logo.", CB);
-		// }
-		// // saves the file name
-		// obj.logo = uploadedFileObject.data;
-		obj.logo = 'https://automotohrattachments.s3.amazonaws.com/jay-antol-Xbf_4e7YDII-unsplash-8fyy1G.jpg';
-		//
 		XHR = $.ajax({
-			url: baseUrl("sa/benefits/carrier"),
+			url: baseUrl("sa/benefits/savePlanData"),
 			method: "POST",
 			data: obj,
 			cache: false,
 		})
-			.success(function (resp) {
-				return _success(resp.msg, function () {
-					loadViews();
-					$(".jsModalCancel").trigger("click");
-				});
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				XHR = null;
-				ml(false, "jsAddBenefitCarrierModalLoader");
+		.success(function (resp) {
+			return _success(resp.msg, function () {
+				step = 2;
+				getAddPlanPartialView();
 			});
+		})
+		.fail(handleErrorResponse)
+		.always(function () {
+			XHR = null;
+			ml(false, "jsAddBenefitPlanModalLoader");
+		});
 	}
 
 	/**

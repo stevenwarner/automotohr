@@ -40,7 +40,7 @@
                                     <?= $plan['name']; ?>
                                 </td>
                                 <td class="vam">
-                                    <?= $plan['code']; ?>
+                                    <?= $plan['end_date']; ?>
                                 </td>
                                 <td class="vam">
                                     -

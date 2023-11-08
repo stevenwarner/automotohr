@@ -591,18 +591,20 @@ class Benefits extends Admin_Controller
         $this->render('manage_admin/benefits/plans_management', 'admin_master');
     }
 
-    public function generatePlansView (int $categoryId) {
+    public function generatePlansView (int $benefitId) {
         //
         $plans = $this
             ->benefits_model
-            ->getBenefitCategoryPlans($categoryId);
+            ->getBenefitPlans($benefitId);
         //
         return SendResponse(
             200,
             [
                 'plansView' => $this->load->view(
                     'manage_admin/benefits/partials/plans/plans_view',
-                    ['plans' => $plans],
+                    [
+                        'plans' => $plans
+                    ],
                     true
                 )
             ]
@@ -680,6 +682,60 @@ class Benefits extends Admin_Controller
             );    
     }
 
-
+    public function saveBenefitPlanData () {
+        //
+        $post = $this->input->post(null, true);
+        $response = [];
+        //
+        switch ($post['action']) {
+            case 'save_basic_detail':
+                $carrierInfo = $this
+                    ->benefits_model
+                    ->getBenefitCarrierById(
+                        $post['planCarrier']
+                    );
+                //  
+                // echo $post['planStart']; die();
+                $startDate = empty($post['planStart']) ? null : DateTime::createFromFormat('m/d/Y', $post['planStart'])->format('Y-m-d');  
+                $endDate = empty($post['planEnd']) ? null : DateTime::createFromFormat('m/d/Y', $post['planEnd'])->format('Y-m-d'); 
+                //
+                $dataToInsert = [];
+                $dataToInsert['benefit_sid'] = $post['benefitId'];
+                $dataToInsert['name'] = $post['planName'];
+                $dataToInsert['carrier_sid'] = $post['planCarrier'];
+                $dataToInsert['group_number'] = $carrierInfo['code'];
+                $dataToInsert['type'] = $post['planType'];
+                $dataToInsert['type_id'] = $post['planTypeId'];
+                $dataToInsert['summary'] = $post['planSummary'];
+                $dataToInsert['description'] = $post['planDescription'];
+                $dataToInsert['start_date'] = $startDate;
+                $dataToInsert['end_date'] = $endDate;
+                $dataToInsert['rate'] = $post['planRate'];
+                $dataToInsert['main_url'] = $post['planMainURL'];
+                $dataToInsert['attachment_path'] = $post['planAttachment'];
+                $dataToInsert['other_link'] = serialize($post['planOtherLink']);
+                //
+                $response = $this->benefits_model->savePlanDetail($dataToInsert);
+                //
+                break;
+            case 2:
+                $page = 'manage_admin/benefits/partials/plans/plan_coverage';
+                break;
+            case 3;
+                $page = 'manage_admin/benefits/partials/plans/plan_eligibility';
+                break;
+            case 4:
+                $page = 'manage_admin/benefits/partials/plans/plan_enrollment';
+                break;
+            case 5;
+                $page = 'manage_admin/benefits/partials/plans/plan_payroll';
+                break;    
+        }
+        //
+        return SendResponse(
+            200,
+            $response
+        ); 
+    }
     
 }

@@ -61,7 +61,7 @@
             <!--  -->
             <div class="form-group">
                 <label class="csF16">Summary <strong class="text-danger">*</strong></label>
-                <input type="text" class="form-control jsSummary" />
+                <input type="text" class="form-control jsPlanSummary" />
             </div>
 
             <!--  -->
