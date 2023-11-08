@@ -461,7 +461,16 @@ class Dashboard extends Public_Controller
                 }
             }
 
-            $documents_count = $documents_count + sizeof($assigned_documents) + +$this->hr_documents_management_model->getGeneralDocumentCount(
+            $CDCount = $this->hr_documents_management_model->getGeneralDocumentCount(
+                $data['session']['employer_detail']['sid'],
+                'employee',
+                $data['session']['company_detail']['sid']
+            );
+            _e($documents_count,true);
+            _e(sizeof($assigned_documents),true);
+            _e($CDCount,true);
+            _e($assigned_documents,true);
+            $documents_count = $documents_count + sizeof($assigned_documents) + $this->hr_documents_management_model->getGeneralDocumentCount(
                 $data['session']['employer_detail']['sid'],
                 'employee',
                 $data['session']['company_detail']['sid']
