@@ -55,20 +55,28 @@ class Testing extends CI_Controller
             $documents_count++;
         }
 
+        _e($documents_count."w4",true);
+
         if (!empty($is_w9_assign)) {
             _e($is_w9_assign,true);
             $documents_count++;
         }
+
+        _e($documents_count."w9",true);
 
         if (!empty($is_i9_assign)) {
             _e($is_i9_assign,true);
             $documents_count++;
         }
 
+        _e($documents_count."i9",true);
+
         if (!empty($assigned_offer_letter)) {
             _e($assigned_offer_letter,true);
             $documents_count++;
         }
+
+        _e($documents_count."OL",true);
 
         $this->load->model('hr_documents_management_model');
         //
@@ -195,6 +203,13 @@ class Testing extends CI_Controller
             }
         }
         //
+        $documents_count = $documents_count + sizeof($assigned_documents) + $this->hr_documents_management_model->getGeneralDocumentCount(
+            $employeeSid,
+            'employee',
+            $companySid
+        );
+        //
+        _e($documents_count,true);
         _e(count($assigned_documents),true,true);
     }
 
