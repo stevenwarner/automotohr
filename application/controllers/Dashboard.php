@@ -326,7 +326,7 @@ class Dashboard extends Public_Controller
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
-                $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
+                $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
                 //
                 if ($assigned_document['archive'] == 1) {
                     unset($assigned_documents[$key]);
