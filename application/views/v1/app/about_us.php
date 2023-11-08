@@ -163,7 +163,7 @@
                         </div>
                         <div class="col-xs-12 col-xl-6 padding-top-80 order-1-aboutus order-2-aboutus">
                             <div class="center-horizontally">
-                                <img src="<?= base_url("public/v1/") ?>images/Group 6984.png" alt="person image" />
+                                <img src="<?= image_url("/") ?>ej_aboutus.png" alt="person image" />
                             </div>
                         </div>
                     </div>
