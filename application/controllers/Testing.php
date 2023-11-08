@@ -41,7 +41,44 @@ class Testing extends CI_Controller
 
     public function pendingDocument ($companySid, $employeeSid) {
         $this->load->model('dashboard_model');
-        $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id, 'employee', $employer_id, 0);
+        $assigned_documents = $this->dashboard_model->get_assigned_documents($companySid, 'employee', $employeeSid, 0);
+        $assigned_offer_letter = $this->dashboard_model->get_assigned_offer_letter($companySid, 'employee', $employeeSid);
+        $is_w4_assign = $this->dashboard_model->check_w4_form_exist('employee', $employeeSid);
+        $is_w9_assign = $this->dashboard_model->check_w9_form_exist('employee', $employeeSid);
+        $is_i9_assign = $this->dashboard_model->check_i9_exist('employee', $employeeSid);
+        //
+        $documents_count = 0;
+
+
+        if (!empty($is_w4_assign)) {
+            _e($is_w4_assign,true);
+            $documents_count++;
+        }
+
+        if (!empty($is_w9_assign)) {
+            _e($is_w9_assign,true);
+            $documents_count++;
+        }
+
+        if (!empty($is_i9_assign)) {
+            _e($is_i9_assign,true);
+            $documents_count++;
+        }
+
+        if (!empty($assigned_offer_letter)) {
+            _e($assigned_offer_letter,true);
+            $documents_count++;
+        }
+
+        $this->load->model('hr_documents_management_model');
+        //
+        if ($this->hr_documents_management_model->hasEEOCPermission($companySid, 'eeo_on_employee_document_center')) {
+            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employeeSid, 'employee');
+
+            if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
+                $documents_count++;
+            }
+        }
         // $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($companySid, 'employee', $employeeSid, 0, 0);
         //
         _e(count($assigned_documents),true);
