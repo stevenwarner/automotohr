@@ -301,27 +301,19 @@ class Dashboard extends Public_Controller
 
             if (!empty($is_w4_assign)) {
                 $documents_count++;
-                _e($is_w4_assign." w4",true);
             }
-            _e($documents_count."w4",true);
 
             if (!empty($is_w9_assign)) {
                 $documents_count++;
-                _e($is_w9_assign." w9",true);
             }
-            _e($documents_count."w9",true);
 
             if (!empty($is_i9_assign)) {
                 $documents_count++;
-                _e($is_i9_assign." i9",true);
             }
-            _e($documents_count."i9",true);
 
             if (!empty($assigned_offer_letter)) {
                 $documents_count++;
-                _e($assigned_offer_letter." OL",true);
             }
-            _e($documents_count."ol",true);
 
             //
             $this->load->model('hr_documents_management_model');
@@ -329,10 +321,8 @@ class Dashboard extends Public_Controller
                 $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_id, 'employee');
                 if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
                     $documents_count++;
-                    _e($eeoc_form." EEO",true);
                 }
             }
-            _e($documents_count."eeo",true);
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
@@ -476,7 +466,6 @@ class Dashboard extends Public_Controller
                 'employee',
                 $data['session']['company_detail']['sid']
             );
-            _e($documents_count."GD",true);
 
             // For Time off
             $pto_user_access = get_pto_user_access($employer_detail['parent_sid'], $employer_detail['sid']);

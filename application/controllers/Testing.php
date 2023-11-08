@@ -208,7 +208,13 @@ class Testing extends CI_Controller
             'employee',
             $companySid
         );
+        $GDCount = $this->hr_documents_management_model->getGeneralDocumentCount(
+            $employeeSid,
+            'employee',
+            $companySid
+        );
         //
+        _e($GDCount,true);
         _e($documents_count,true);
         _e(count($assigned_documents),true,true);
     }
