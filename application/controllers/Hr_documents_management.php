@@ -13135,6 +13135,9 @@ class Hr_documents_management extends Public_Controller
             $completedTitles = [];
 
             foreach ($assigned_documents as $key => $assigned_document) {
+                //
+                $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
+                //
                 if ($assigned_document['archive'] == 0) {
                     $is_magic_tag_exist = 0;
                     $is_document_completed = 0;
@@ -13264,7 +13267,9 @@ class Hr_documents_management extends Public_Controller
                             $revoked_sids[] = $assigned_document['document_sid'];
                         }
                     }
-                }
+                } else if ($assigned_document['archive'] == 1) {
+                    unset($assigned_documents[$key]);
+                } 
             }
 
             $uncomplete_documents_count = $uncomplete_documents_count + sizeof($assigned_documents);

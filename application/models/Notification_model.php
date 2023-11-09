@@ -131,7 +131,11 @@ class Notification_model extends CI_Model {
         $assigned_offer_letter = $this->get_assigned_offer_letter($company_sid, 'employee', $employee_id);
 
         foreach ($assigned_documents as $key => $assigned_document) {
-            $is_magic_tag_exist = 0;
+            //
+            $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
+            //
+            if ($assigned_document['archive'] == 0) {
+                $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
 
                 if (!empty($assigned_document['document_description']) && $assigned_document['document_type'] == 'generated') {
@@ -237,7 +241,10 @@ class Notification_model extends CI_Model {
                     }
                 } else {
                     unset($assigned_documents[$key]);
-                }     
+                }  
+            } else if ($assigned_document['archive'] == 1) {
+                unset($assigned_documents[$key]);
+            }        
         }
 
         // Fetch General Documents
@@ -272,7 +279,13 @@ class Notification_model extends CI_Model {
         // $documents_management_sids = $payroll_sids['documents_management_sids'];
         // $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
 
-        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll');
+        $this->db->select('
+            documents_assigned.*,
+            documents_management.acknowledgment_required,
+            documents_management.download_required,
+            documents_management.signature_required,
+            documents_management.archive as company_archive,
+            documents_management.visible_to_payroll');
         $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
