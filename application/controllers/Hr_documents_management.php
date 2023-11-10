@@ -6743,7 +6743,7 @@ class Hr_documents_management extends Public_Controller
         }
     }
 
-    public function people_with_pending_federal_fillable(
+    public function people_with_pending_federal_fillable_old(
         $employees = 'all',
         $documents = 'all',
         $type = FALSE
@@ -6856,6 +6856,146 @@ class Hr_documents_management extends Public_Controller
                                     if ($v['Status'] == "pending" || $v['Status'] == "completed") {
                                         if ($v['Status'] == "pending") {
                                             $i9_status = 'Pending';;
+                                        } else {
+                                            $i9_status = 'Completed';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        $d = array(remakeEmployeeName($employee));
+
+                        if (in_array('w4', $data['selectedDocumentList']) || in_array('all', $data['selectedDocumentList'])) {
+                            array_push($d, $w4_status);
+                        }
+
+                        if (in_array('i9', $data['selectedDocumentList']) || in_array('all', $data['selectedDocumentList'])) {
+                            array_push($d, $i9_status);
+                        }
+
+                        fputcsv($fp, $d);
+                    }
+                    header('Content-type: application/csv');
+                    header('Content-Disposition: attachment; filename=' . $filename);
+                    ob_flush();
+                    exit;
+                } else if ($type == 'print') {
+                    $this->load->view('hr_documents_management/print_people_with_pending_federal_fillable', $data);
+                    return;
+                } else if ($type == 'return') {
+                    header('Content-Type: application/json');
+                    echo json_encode($data['employees']);
+                    exit(0);
+                }
+
+                $this->load->view('main/header', $data);
+                $this->load->view('hr_documents_management/people_with_pending_federal_fillable');
+                $this->load->view('main/footer');
+            } else {
+                //nothing
+            }
+        } else {
+            redirect('login', "refresh");
+        }
+    }
+
+    public function people_with_pending_federal_fillable(
+        $employees = 'all',
+        $documents = 'all',
+        $type = FALSE
+    ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'appearance', 'pending_document'); // no need to check in this Module as Dashboard will be available to all
+            $company_sid = $data["session"]["company_detail"]["sid"];
+            $employer_sid = $data["session"]["employer_detail"]["sid"];
+            $data['title'] = 'Employees With Pending Federal Fillable Documents';
+            $data['company_sid'] = $company_sid;
+            $data['company_name'] = $data["session"]["company_detail"]["CompanyName"];
+            $data['employer_sid'] = $employer_sid;
+            $data['user_type'] = 'employee';
+            $emp_ids = array();
+
+            // Get employees list
+            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees($company_sid, false);
+            //
+            $data['selectedEmployeeList'] = explode(':', $employees);
+            $data['selectedDocumentList'] = explode(':', $documents);
+
+            // Only get documents for active and non executive employees
+            if ($employees == 'all') {
+                $employees = implode(':', array_column($data['employeesList'], 'sid'));
+            }
+
+            //
+            $data['selectedEmployeeList'] = array_flip($data['selectedEmployeeList']);
+            //
+
+            $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
+
+            if ($this->form_validation->run() == false) {
+
+                $data['employees'] = $this->hr_documents_management_model->getEmployeesWithPendingFederalFillable(
+                    $company_sid,
+                    $employees,
+                    $documents
+                );
+                _e($data['employees'],true);
+                //
+                if ($type == 'export') {
+                    ob_start();
+
+                    $h = array('Employee Name');
+
+                    if (in_array('w4', $data['selectedDocumentList']) || in_array('all', $data['selectedDocumentList'])) {
+                        array_push($h, "W4 Status");
+                    }
+
+
+                    if (in_array('i9', $data['selectedDocumentList']) || in_array('all', $data['selectedDocumentList'])) {
+                        array_push($h, "I9 Status");
+                    }
+
+                    //
+                    $filename = date('m_d_Y_H_i_s', strtotime('now')) . "_employee_with_pending_documents.csv";
+                    $fp = fopen('php://output', 'w');
+                    fputcsv($fp, $h);
+                    //
+                    foreach ($data['employees'] as $employee) {
+                        $iText = '';
+
+                        if (sizeof($employee['Documents'])) {
+
+                            usort($employee['Documents'], 'dateSorter');
+
+                            $w4_status = 'Not Assigned';
+                            $i9_status = 'Not Assigned';
+
+
+                            foreach ($employee['Documents'] as $ke => $v) {
+
+                                //
+                                if ($v['Title'] == "W4 Fillable") {
+                                    if ($v['Status'] == "pending" || $v['Status'] == "completed") {
+                                        if ($v['Status'] == "pending") {
+                                            $w4_status = 'Pending';
+                                        } else {
+                                            $w4_status = 'Completed';
+                                        }
+                                    }
+                                }
+
+
+                                //
+                                if ($v['Title'] == "I9 Fillable") {
+                                    if ($v['Status'] == "pending" || $v['Status'] == "completed") {
+                                        if ($v['Status'] == "pending") {
+                                            $i9_status = 'Pending';
                                         } else {
                                             $i9_status = 'Completed';
                                         }

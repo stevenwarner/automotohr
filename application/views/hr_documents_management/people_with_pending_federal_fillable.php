@@ -579,7 +579,12 @@
             var senderList = [];
             //
             if(selectedEmployees[-1] !== undefined){
-                senderList = employeeWithDocuments;
+                employeeWithDocuments.map(function(employee){
+                    if (employee.any_pending == 'yes') {
+                        senderList.push(employee);
+                    }
+                })
+                console.log(senderList)
             } else{
                 ids.map(function(id){
                     senderList.push(getSingleEmployee(id));
