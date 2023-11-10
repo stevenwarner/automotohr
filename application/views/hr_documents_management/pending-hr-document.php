@@ -19,7 +19,7 @@
                     </span>
                     </div>
                     <div class="create-job-wrap">
-                        <?php if (!sizeof($documents) && !sizeof($w4_form) && !sizeof($w9_form) && !sizeof($i9_form)) { ?>
+                        <?php if (!sizeof($documents) && !sizeof($w4_form) && !sizeof($w9_form) && !sizeof($i9_form) && !sizeof($eeoc_form) && !sizeof($NotCompletedGeneralDocuments)) { ?>
                             <div class="archived-document-area">
                                 <div class="cloud-icon"><i class="fa fa-cloud-upload"></i></div>
                                 <div class="archived-heading-area">

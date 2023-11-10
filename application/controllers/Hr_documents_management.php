@@ -6583,6 +6583,12 @@ class Hr_documents_management extends Public_Controller
 
             if ($this->form_validation->run() == false) {
 
+                // $result = $this->hr_documents_management_model->getEmployeesWithPendingDoc_old(
+                //     $company_sid,
+                //     $employees,
+                //     $documents
+                // );
+
                 $result = $this->hr_documents_management_model->getEmployeesWithPendingDoc(
                     $company_sid,
                     $employees,
@@ -6590,10 +6596,6 @@ class Hr_documents_management extends Public_Controller
                 );
                 //
                 $emp_ids = array_keys($result);
-                // foreach ($result as $id) {
-                //     $emp_ids[] = $id['user_sid'];
-                // }
-
 
                 if ($employees != 'all') {
                     $emp_ids = explode(':', $employees);
@@ -6828,7 +6830,6 @@ class Hr_documents_management extends Public_Controller
                 $employer_id = $data['session']['employer_detail']['sid'];
                 $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employee_id, 0, 0);
 
-
                 foreach ($assigned_documents as $key => $assigned_document) {
                     //
                     $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -6939,7 +6940,13 @@ class Hr_documents_management extends Public_Controller
                     }
                 }
 
-
+                $offer_letter = $this->hr_documents_management_model->getEmployeeOfferLetter($employee_id, 'employee');
+                $isCompletedOL = $this->hr_documents_management_model->checkDocumentCompletionStatus($offer_letter);
+                //
+                if ($isCompletedOL == 0) {
+                    $assigned_documents[] = $offer_letter;
+                }
+                //
                 $w4_form = $this->hr_documents_management_model->is_w4_form_assign('employee', $employee_id);
                 $w9_form = $this->hr_documents_management_model->is_w9_form_assign('employee', $employee_id);
                 $i9_form = $this->hr_documents_management_model->is_i9_form_assign('employee', $employee_id);
@@ -6951,6 +6958,7 @@ class Hr_documents_management extends Public_Controller
                 $data['w4_form'] = $w4_form;
                 $data['w9_form'] = $w9_form;
                 $data['i9_form'] = $i9_form;
+
                 $data['eeoc_form'] = $eeoc_form;
                 $data['documents'] = $assigned_documents;
                 $data['userDetail'] = $this->hr_documents_management_model->getEmployerDetail($employee_id);

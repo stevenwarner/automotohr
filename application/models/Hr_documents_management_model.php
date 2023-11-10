@@ -1440,7 +1440,10 @@ class Hr_documents_management_model extends CI_Model
     {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
+        $this->db->group_start();
         $this->db->where('user_consent ', 0);
+        $this->db->or_where('user_consent', NULL);
+        $this->db->group_end();
         $this->db->where('status', 1);
 
         $this->db->from('form_w4_original');
@@ -1460,7 +1463,10 @@ class Hr_documents_management_model extends CI_Model
     {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        $this->db->where('user_consent', NULL);
+        $this->db->group_start();
+        $this->db->where('user_consent ', 0);
+        $this->db->or_where('user_consent', NULL);
+        $this->db->group_end();
         $this->db->where('status', 1);
 
         $this->db->from('applicant_w9form');
@@ -1480,7 +1486,10 @@ class Hr_documents_management_model extends CI_Model
     {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        $this->db->where('user_consent', NULL);
+        $this->db->group_start();
+        $this->db->where('user_consent ', 0);
+        $this->db->or_where('user_consent', NULL);
+        $this->db->group_end();
         $this->db->where('status', 1);
         $this->db->from('applicant_i9form');
 
@@ -1853,7 +1862,7 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    function getEmployeesWithPendingDoc(
+    function getEmployeesWithPendingDoc_old(
         $company_sid,
         $employeeList = 'all',
         $documentList = 'all'
@@ -1873,8 +1882,6 @@ class Hr_documents_management_model extends CI_Model
         $employee_sids = $this->db->get('documents_assigned')->result_array();
 
         $r = [];
-
-      //  _e($employee_sids);
 
         foreach ($employee_sids as $emp_key => $employee) {
 
@@ -2145,6 +2152,329 @@ class Hr_documents_management_model extends CI_Model
         }
 
         return $r;
+    }
+
+    function getEmployeesWithPendingDoc(
+        $company_sid,
+        $employeeList = 'all',
+        $documentList = 'all'
+    ) {
+        //
+        $pendingDocuments = [];
+        //
+        $activeEmployees = explode(':', $employeeList);
+        //
+        if (!empty($activeEmployees)) {
+            //
+            foreach ($activeEmployees as $employee) {
+                $pendingDocuments[$employee]['Documents'] = [];
+            }
+            //
+            $now = time();
+            //
+            // Get all company assigned documents
+            $this->db->select('
+                documents_assigned.sid,
+                documents_assigned.user_sid, 
+                documents_assigned.assigned_by, 
+                documents_assigned.document_description, 
+                documents_assigned.document_title, 
+                documents_assigned.document_type, 
+                documents_assigned.acknowledgment_required, 
+                documents_assigned.download_required, 
+                documents_assigned.signature_required, 
+                documents_assigned.uploaded,
+                documents_assigned.acknowledged, 
+                documents_assigned.downloaded, 
+                documents_assigned.user_consent, 
+                documents_assigned.document_sid, 
+                documents_assigned.assigned_date
+            ');
+            //
+            $this->db->where_in('documents_assigned.user_sid', $activeEmployees);
+            $this->db->where('documents_assigned.user_consent', 0);
+            $this->db->where('documents_assigned.status', 1);
+            $this->db->where('documents_assigned.user_type', 'employee');
+            $this->db->where('documents_assigned.archive', 0);
+            $this->db->where('documents_management.archive', 0);
+            $this->db->join('documents_management', 'documents_management.sid = documents_assigned.document_sid', 'left');
+            //
+            $employees_assigned_documents = $this->db->get('documents_assigned')->result_array();
+            //
+            if (!empty($employees_assigned_documents)) {
+                foreach ($employees_assigned_documents as $assigned_document) {
+                    //
+                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_document); 
+                    //
+                    if ($is_document_completed == 0) {
+                        //
+                        $employeeId = $assigned_document['user_sid'];
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
+                        //
+                        $datediff = $now - strtotime($assigned_document['assigned_date']);
+                        $days = round($datediff / (60 * 60 * 24));
+        
+                        $pendingDocuments[$employeeId]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+                    }
+                }
+            }
+            //
+            // Get all company assigned offer letter
+            $this->db->select('
+                documents_assigned.sid,
+                documents_assigned.user_sid, 
+                documents_assigned.assigned_by, 
+                documents_assigned.document_description, 
+                documents_assigned.document_title, 
+                documents_assigned.offer_letter_type as document_type,
+                documents_assigned.acknowledgment_required, 
+                documents_assigned.download_required, 
+                documents_assigned.signature_required, 
+                documents_assigned.uploaded,
+                documents_assigned.acknowledged, 
+                documents_assigned.downloaded, 
+                documents_assigned.user_consent, 
+                documents_assigned.document_sid, 
+                documents_assigned.assigned_date
+            ');
+            //
+            $this->db->where('documents_assigned.document_type', 'offer_letter');
+            $this->db->where_in('documents_assigned.user_sid', $activeEmployees);
+            $this->db->where('documents_assigned.user_consent', 0);
+            $this->db->where('documents_assigned.status', 1);
+            $this->db->where('documents_assigned.user_type', 'employee');
+            $this->db->where('documents_assigned.archive', 0);
+            $this->db->where('offer_letter.archive', 0);
+            $this->db->join('offer_letter', 'offer_letter.sid = documents_assigned.document_sid', 'left');
+            //
+            $employees_assigned_offer_letters = $this->db->get('documents_assigned')->result_array();
+            //
+            if (!empty($employees_assigned_offer_letters)) {
+                //
+                foreach ($employees_assigned_offer_letters as $assigned_offer_letter) {
+                    //
+                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_offer_letter); 
+                    //
+                    if ($is_document_completed == 0) {
+                        //
+                        $employeeId = $assigned_offer_letter['user_sid'];
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_offer_letter['assigned_date']));
+                        //
+                        $datediff = $now - strtotime($assigned_offer_letter['assigned_date']);
+                        $days = round($datediff / (60 * 60 * 24));
+        
+                        $pendingDocuments[$employeeId]['Documents'][] = array('ID' => $assigned_offer_letter['document_sid'], 'Title' => $assigned_offer_letter['document_title'], 'Type' => ucwords($assigned_offer_letter['document_type']).' Offer Letter', 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_offer_letter['assigned_by']);
+                    }
+                }    
+            }
+            //
+            // Get employees W4
+            $this->db->select('sent_date, employer_sid');
+            $this->db->where('user_type', 'employee');
+            $this->db->where_in('employer_sid', $activeEmployees);
+            $this->db->where('status', 1);
+            $this->db->where('user_consent', 0);
+            $employees_w4_documents = $this->db->get('form_w4_original')->result_array();
+            //
+            if (!empty($employees_w4_documents)) {
+                foreach ($employees_w4_documents as $employee_w4) {
+                    //
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($employee_w4['sent_date']));
+                    //
+                    $datediff = $now - strtotime($employee_w4['sent_date']);
+                    $days = round($datediff / (60 * 60 * 24));
+                    //
+                    $result['assigned_on'] = $assigned_on;
+                    $result['days'] = $days;
+                    //
+                    $pendingDocuments[$employee_w4['employer_sid']]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'W4 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $assigned_on,
+                        'Days' => $days
+                    );
+                }
+                
+            }
+            //
+            // Get employees W9
+            $this->db->select('sent_date, user_sid');
+            $this->db->where('user_type', 'employee');
+            $this->db->where_in('user_sid', $activeEmployees);
+            $this->db->where('status', 1);
+            $this->db->group_start();
+            $this->db->where('user_consent ', 0);
+            $this->db->or_where('user_consent', NULL);
+            $this->db->group_end();
+        
+            $employees_w9_documents = $this->db->get('applicant_w9form')->result_array();
+            //
+            if (!empty($employees_w9_documents)) {
+                foreach ($employees_w9_documents as $employee_w9) {
+                    //
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($employee_w9['sent_date']));
+                    //
+                    $datediff = $now - strtotime($employee_w9['sent_date']);
+                    $days = round($datediff / (60 * 60 * 24));
+                    //
+                    $result['assigned_on'] = $assigned_on;
+                    $result['days'] = $days;
+                    //
+                    $pendingDocuments[$employee_w9['user_sid']]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'W9 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $assigned_on,
+                        'Days' => $days
+                    );
+                }
+                
+            }
+            //
+            // Get employees I9
+            $this->db->select('sent_date, user_sid');
+            $this->db->where('user_type', 'employee');
+            $this->db->where_in('user_sid', $activeEmployees);
+            $this->db->where('status', 1);
+            $this->db->group_start();
+            $this->db->where('user_consent ', 0);
+            $this->db->or_where('user_consent', NULL);
+            $this->db->group_end();
+            //
+            $employees_i9_documents = $this->db->get('applicant_i9form')->result_array();
+            //
+            if (!empty($employees_i9_documents)) {
+                foreach ($employees_i9_documents as $employee_i9) {
+                    //
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($employee_i9['sent_date']));
+                    //
+                    $datediff = $now - strtotime($employee_i9['sent_date']);
+                    $days = round($datediff / (60 * 60 * 24));
+                    //
+                    $result['assigned_on'] = $assigned_on;
+                    $result['days'] = $days;
+                    //
+                    $pendingDocuments[$employee_i9['user_sid']]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'I9 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $assigned_on,
+                        'Days' => $days
+                    );
+                }
+                
+            }
+            //
+            // Get EEOC
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
+                //
+                $this->db->select('last_sent_at, last_assigned_by, application_sid');
+                $this->db->where('users_type', 'employee');
+                $this->db->where_in('application_sid ', $activeEmployees);
+                $this->db->where('is_expired', 0);
+                $this->db->where('status', 1);
+                //
+                $employees_eeoc_documents = $this->db->get('portal_eeo_form')->result_array();
+                //
+                if (!empty($employees_eeoc_documents)) {
+                    foreach ($employees_eeoc_documents as $employee_eeoc) {
+                        //
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($employee_eeoc['last_sent_at']));
+                        //
+                        $datediff = $now - strtotime($employee_eeoc['last_sent_at']);
+                        $days = round($datediff / (60 * 60 * 24));
+                        //
+                        $pendingDocuments[$employee_eeoc['application_sid']]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'EEOC Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $assigned_on,
+                            'AssignedBy' => $employee_eeoc['last_assigned_by'],
+                            'Days' => $days
+                        );
+                    }
+                }
+            } 
+            //
+            // Get employees General Documents
+            $this->db->select('sid, user_sid, assigned_at, document_type');
+            $this->db->where_in('user_sid', $activeEmployees);
+            $this->db->where('user_type', 'employee');
+            $this->db->where('status', 1);
+            $this->db->where('is_completed', 0);
+            //
+            $employees_general_documents = $this->db->get('documents_assigned_general')->result_array();
+            //
+            if (!empty($employees_general_documents)) {
+                foreach ($employees_general_documents as $employee_general) {
+                    $this->db->select('user_sid');
+                    $this->db->where('documents_assigned_general_sid', $employee_general['sid']);
+                    $this->db->where('action', 'assign');
+                    $this->db->limit(1);
+                    $this->db->order_by('sid', 'desc');
+                    //
+                    $document_assign_by = $this->db->get('documents_assigned_general_assigners')->row_array();
+                    $assign_by = 0;
+                    //
+                    if (!empty($document_assign_by)) {
+                        $assign_by = $document_assign_by['user_sid'];
+                    }
+                    //
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($employee_general['assigned_at']));
+                    //
+                    $datediff = $now - strtotime($employee_general['assigned_at']);
+                    $days = round($datediff / (60 * 60 * 24));
+                    //
+                    $pendingDocuments[$employee_general['user_sid']]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => ucwords(str_replace('_', ' ', $employee_general['document_type'])),
+                        'Type' => 'General',
+                        'AssignedOn' => $assigned_on,
+                        'Days' => $days,
+                        'AssignedBy' => $assign_by
+                    );
+                }
+            }
+        }
+        //
+        // remove all those active company employees from list with no pending documents
+        foreach ($pendingDocuments as $p_key => $pendingEmployeeDocuments) {
+            if (empty($pendingEmployeeDocuments['Documents'])) {
+                unset($pendingDocuments[$p_key]);
+            }
+        }
+        //
+        return $pendingDocuments;
+    }
+
+    public function getEmployeeOfferLetter ($user_sid, $user_type) {
+        $this->db->select('
+            documents_assigned.sid,
+            documents_assigned.user_sid, 
+            documents_assigned.assigned_by, 
+            documents_assigned.document_description, 
+            documents_assigned.document_title, 
+            documents_assigned.offer_letter_type as document_type,
+            documents_assigned.acknowledgment_required, 
+            documents_assigned.download_required, 
+            documents_assigned.signature_required, 
+            documents_assigned.uploaded,
+            documents_assigned.acknowledged, 
+            documents_assigned.downloaded, 
+            documents_assigned.user_consent, 
+            documents_assigned.document_sid, 
+            documents_assigned.assigned_date
+        ');
+        //
+        $this->db->where('documents_assigned.document_type', 'offer_letter');
+        $this->db->where('documents_assigned.status', 1);
+        $this->db->where('documents_assigned.user_type', $user_type);
+        $this->db->where('documents_assigned.user_sid', $user_sid);
+        $this->db->where('documents_assigned.archive', 0);
+        $this->db->where('offer_letter.archive', 0);
+        $this->db->join('offer_letter', 'offer_letter.sid = documents_assigned.document_sid', 'left');
+        return $this->db->get('documents_assigned')->row_array();
     }
 
     function getEmployeesWithPendingFederalFillable(
@@ -9729,18 +10059,103 @@ class Hr_documents_management_model extends CI_Model
     }
 
 
+    //
+    function getDocumentByIdResourceDocuments($documentId)
+    {
+        $a = $this->db
+            ->where('sid', $documentId)
+            ->get('document_library_files');
         //
-        function getDocumentByIdResourceDocuments($documentId)
-        {
-            $a = $this->db
-                ->where('sid', $documentId)
-                ->get('document_library_files');
+        $b = $a->row_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+    public function checkDocumentCompletionStatus ($assigned_document) {
+        //
+        $is_magic_tag_exist = 0;
+        $is_document_completed = 0;
+        //
+        if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
             //
-            $b = $a->row_array();
-            $a->free_result();
+            $document_body = $assigned_document['document_description'];
+            $magic_codes = array('{{signature}}', '{{inital}}');
             //
-            return $b;
+            if (str_replace($magic_codes, '', $document_body) != $document_body) {
+                $is_magic_tag_exist = 1;
+            }
         }
+        //
+        if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist)) {
+            //
+            if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                if ($assigned_document['uploaded'] == 1) {
+                    $is_document_completed = 1;
+                }
+            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                if ($is_magic_tag_exist == 1) {
+                    if ($assigned_document['uploaded'] == 1) {
+                        $is_document_completed = 1;
+                    } else {
+                        $is_document_completed = 0;
+                    }
+                } else if ($assigned_document['uploaded'] == 1) {
+                    $is_document_completed = 1;
+                } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                    $is_document_completed = 1;
+                } else {
+                    $is_document_completed = 0;
+                }
+            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                if ($assigned_document['uploaded'] == 1) {
+                    $is_document_completed = 1;
+                } else {
+                    $is_document_completed = 0;
+                }
+            } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                if ($assigned_document['uploaded'] == 1) {
+                    $is_document_completed = 1;
+                } else {
+                    $is_document_completed = 0;
+                }
+            } else if ($assigned_document['acknowledgment_required'] == 1) {
+                if ($assigned_document['acknowledged'] == 1) {
+                    $is_document_completed = 1;
+                } else if ($assigned_document['uploaded'] == 1) {
+                    $is_document_completed = 1;
+                } else {
+                    $is_document_completed = 0;
+                }
+            } else if ($assigned_document['download_required'] == 1) {
+                if ($assigned_document['downloaded'] == 1) {
+                    $is_document_completed = 1;
+                } else if ($assigned_document['uploaded'] == 1) {
+                    $is_document_completed = 1;
+                } else {
+                    $is_document_completed = 0;
+                }
+            } else if ($assigned_document['signature_required'] == 1) {
+                if ($assigned_document['uploaded'] == 1) {
+                    $is_document_completed = 1;
+                } else {
+                    $is_document_completed = 0;
+                }
+            } else if ($is_magic_tag_exist == 1) {
+                if ($assigned_document['user_consent'] == 1) {
+                    $is_document_completed = 1;
+                } else {
+                    $is_document_completed = 0;
+                }
+            }
+
+            
+        } else {
+            $is_document_completed = 1;
+        }
+        //
+        return $is_document_completed;
+    }
 
 
 }
