@@ -762,9 +762,11 @@ class Form_full_employment_application extends CI_Controller
                 //$this->form_validation->set_rules('TextBoxNameMiddle', 'Middle Name', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('suffix', 'Suffix', 'trim|xss_clean');
+                // convert both the emails to lower
+                $postEmail = $_POST["email"] ?  strtolower($_POST["email"]) : "";
+                $applicant_info['email'] = strtolower($applicant_info['email']);
 
-
-                if (isset($_POST['email']) && $_POST['email'] == $applicant_info['email']) {
+                if ($postEmail && $postEmail == $applicant_info['email']) {
                     $this->form_validation->set_rules('email', 'Email Address', 'required|trim|xss_clean');
                 } else {
                     $this->form_validation->set_rules('email', 'Email Address', 'required|trim|xss_clean|unique[users.email]');
