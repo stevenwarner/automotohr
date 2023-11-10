@@ -2442,10 +2442,36 @@ class Hr_documents_management_model extends CI_Model
         foreach ($pendingDocuments as $p_key => $pendingEmployeeDocuments) {
             if (empty($pendingEmployeeDocuments['Documents'])) {
                 unset($pendingDocuments[$p_key]);
+            } else {
+                //
+                $this->db->select('
+                    sid, 
+                    first_name, 
+                    last_name,
+                    email, 
+                    is_executive_admin, 
+                    access_level, 
+                    access_level_plus,
+                    pay_plan_flag,
+                    job_title
+                ');
+                $this->db->where('sid', $p_key);
+                $employeeInfo = $this->db->get('users')->row_array();
+                //
+                $pendingDocuments[$p_key]['sid'] = $employeeInfo['sid'];
+                $pendingDocuments[$p_key]['first_name'] = $employeeInfo['first_name'];
+                $pendingDocuments[$p_key]['last_name'] = $employeeInfo['last_name'];
+                $pendingDocuments[$p_key]['email'] = $employeeInfo['email'];
+                $pendingDocuments[$p_key]['is_executive_admin'] = $employeeInfo['is_executive_admin'];
+                $pendingDocuments[$p_key]['access_level'] = $employeeInfo['access_level'];
+                $pendingDocuments[$p_key]['access_level_plus'] = $employeeInfo['access_level_plus'];
+                $pendingDocuments[$p_key]['pay_plan_flag'] = $employeeInfo['pay_plan_flag'];
+                $pendingDocuments[$p_key]['job_title'] = $employeeInfo['job_title'];
+
             }
         }
         //
-        return $pendingDocuments;
+        return array_values($pendingDocuments);
     }
 
     public function getEmployeeOfferLetter ($user_sid, $user_type) {

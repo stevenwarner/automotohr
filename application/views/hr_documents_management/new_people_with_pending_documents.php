@@ -516,7 +516,7 @@
             //
             if(selectedEmployees[-1] !== undefined){
                 senderList = employeeWithDocuments;
-            } else{
+            } else {
                 ids.map(function(id){
                     senderList.push(getSingleEmployee(id));
                 });

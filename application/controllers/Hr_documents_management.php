@@ -6539,7 +6539,7 @@ class Hr_documents_management extends Public_Controller
         }
     }
 
-    public function people_with_pending_documents(
+    public function people_with_pending_documents_old(
         $employees = 'all',
         $documents = 'all',
         $type = FALSE
@@ -6583,13 +6583,7 @@ class Hr_documents_management extends Public_Controller
 
             if ($this->form_validation->run() == false) {
 
-                // $result = $this->hr_documents_management_model->getEmployeesWithPendingDoc_old(
-                //     $company_sid,
-                //     $employees,
-                //     $documents
-                // );
-
-                $result = $this->hr_documents_management_model->getEmployeesWithPendingDoc(
+                $result = $this->hr_documents_management_model->getEmployeesWithPendingDoc_old(
                     $company_sid,
                     $employees,
                     $documents
@@ -6600,7 +6594,6 @@ class Hr_documents_management extends Public_Controller
                 if ($employees != 'all') {
                     $emp_ids = explode(':', $employees);
                 }
-
 
                 if (!empty($emp_ids)) {
                     $data['employees'] = $this->hr_documents_management_model->getEmployeesDetails($emp_ids);
@@ -6613,7 +6606,100 @@ class Hr_documents_management extends Public_Controller
                         $data['employees'][$k]['Documents'] = $result[$v['sid']]['Documents'];
                     }
                 }
+                //
+                if ($type == 'export') {
+                    ob_start();
+                    $h = array('Empoloyee Name', 'Email', 'Document Count', 'Document(s)', 'Status');
+                    //
+                    $filename = date('m_d_Y_H_i_s', strtotime('now')) . "_employee_with_pending_documents.csv";
+                    $fp = fopen('php://output', 'w');
+                    fputcsv($fp, $h);
+                    //
+                    foreach ($data['employees'] as $k => $v) {
+                        $iText = '';
+                        if (sizeof($v['Documents'])) {
+                            foreach ($v['Documents'] as $k1 => $v1) {
+                                $iText .= ($v1['Title']) . ' (' . ($v1['Type']) . ')' . "\n";
+                            }
+                        }
+                        $d = array(remakeEmployeeName($v), $v['email'], sizeof($v['Documents']), $iText, 'Pending');
+                        fputcsv($fp, $d);
+                    }
+                    header('Content-type: application/csv');
+                    header('Content-Disposition: attachment; filename=' . $filename);
+                    ob_flush();
+                    exit;
+                } else if ($type == 'print') {
+                    $this->load->view('hr_documents_management/print_new_people_with_pending_documents', $data);
+                    return;
+                } else if ($type == 'return') {
+                    header('Content-Type: application/json');
+                    echo json_encode($data['employees']);
+                    exit(0);
+                }
 
+                $this->load->view('main/header', $data);
+                $this->load->view('hr_documents_management/new_people_with_pending_documents');
+                $this->load->view('main/footer');
+            } else {
+                //nothing
+            }
+        } else {
+            redirect('login', "refresh");
+        }
+    }
+
+    public function people_with_pending_documents(
+        $employees = 'all',
+        $documents = 'all',
+        $type = FALSE
+    ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'appearance', 'pending_document'); // no need to check in this Module as Dashboard will be available to all
+            $company_sid = $data["session"]["company_detail"]["sid"];
+            $employer_sid = $data["session"]["employer_detail"]["sid"];
+            $data['title'] = 'Employees With Pending Documents';
+            $data['company_sid'] = $company_sid;
+            $data['company_name'] = $data["session"]["company_detail"]["CompanyName"];
+            $data['employer_sid'] = $employer_sid;
+            $data['user_type'] = 'employee';
+            $emp_ids = array();
+
+            // Get employees list
+            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees($company_sid, false);
+            // Get documents list
+            $data['documentsList'] = $this->hr_documents_management_model->getAllActiveDocuments($company_sid);
+
+
+            //
+            $data['selectedEmployeeList'] = explode(':', $employees);
+            $data['selectedDocumentList'] = explode(':', $documents);
+
+            // Only get documents for active and non executive employees
+            if ($employees == 'all') {
+                $employees = implode(':', array_column($data['employeesList'], 'sid'));
+            }
+
+            //
+            $data['selectedEmployeeList'] = array_flip($data['selectedEmployeeList']);
+            //
+
+            $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
+
+            if ($this->form_validation->run() == false) {
+                //
+                $data['employees'] = $this->hr_documents_management_model->getEmployeesWithPendingDoc(
+                    $company_sid,
+                    $employees,
+                    $documents
+                );
+                //
+                // _e($data['employees'],true,true);
                 //
                 if ($type == 'export') {
                     ob_start();
