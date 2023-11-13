@@ -1900,7 +1900,91 @@ if (!function_exists("convertEnterToSpan")) {
     function convertEnterToSpan(string $str): string
     {
 
-      return preg_replace("/[\n\r]/", '<span class="d-md-block">$1</span>', $str);
+        return preg_replace("/[\n\r]/", '<span class="d-md-block">$1</span>', $str);
+    }
+}
 
+if (!function_exists("getMimeByType")) {
+    /**
+     * check wether image has an error or not
+     *
+     * @param string $type
+     * @return array
+     */
+    function getMimeByType(string $type): array
+    {
+        $mime_types = [
+            "image" => [
+                'image/png',
+                'image/jpeg',
+                'image/webp',
+                'image/gif',
+                'image/bmp',
+                'image/vnd.microsoft.icon',
+                'image/tiff',
+                'image/tiff',
+                'image/svg+xml',
+                'image/svg+xml',
+            ],
+            "video" => [
+                'video/mp4',
+                'video/mov',
+            ]
+        ];
+        //
+        return $mime_types[$type] ?? [];
+    }
+}
+
+if (!function_exists("hasFileErrors")) {
+    /**
+     * check wether image has an error or not
+     *
+     * @param array $file
+     * @param string $fileName
+     * @param string $type
+     * @param int $size  Optional
+     * @return array
+     */
+    function hasFileErrors(array $file, string $fileName, string $type, int $size = 2): array
+    {
+        //
+        $types = explode("|", $type);
+        //
+        $typeArray = [];
+        //
+        foreach ($types as $value) {
+            $typeArray = array_merge($typeArray, getMimeByType($value));
+        }
+        //
+        $errors = [];
+        //
+        if (!$file[$fileName]) {
+            $errors[] = "File is empty";
+        } elseif ($file[$fileName]['error']) {
+            $errors[] = "File is corrupted.";
+        } elseif ($file[$fileName]['size'] > ($size * 1000000)) {
+            $errors[] = "File size exceeded.";
+        } elseif (!in_array($file[$fileName]['type'], $typeArray)) {
+            $errors[] = "File format is invalid.";
+        }
+        //
+        return $errors;
+    }
+}
+
+
+if (!file_exists("getSourceByType")) {
+    function getSourceByType(string $type, string $path): string
+    {
+        if ($type === "upload") {
+            if (isImage($path)) {
+                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="width: 100%;" />';
+            } else {
+                return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="width: 100%;" controls></video>';
+            }
+        } else {
+            return '<iframe src="' . $path . '" title="AutomotoHR video" ></iframe>';
+        }
     }
 }

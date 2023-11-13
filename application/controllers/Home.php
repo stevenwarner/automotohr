@@ -91,31 +91,8 @@ class Home extends CI_Controller
 
         $data['headerFixed'] = true;
 
-        $data['slider'] = [
-            [
-                'title' => convertToStrip($homeContent['page']['slider']['slider1']['heading']),
-                'sub_title' => convertToStrip($homeContent['page']['slider']['slider1']['headingDetail']),
-                'link' => $homeContent['page']['slider']['slider1']['btnSlug'],
-                'link_text' => convertToStrip($homeContent['page']['slider']['slider1']['btnText']),
-                'image' => image_url("banner_1.webp")
-            ],
-            [
-                'title' => convertToStrip($homeContent['page']['slider']['slider2']['heading']),
-                'sub_title' => convertToStrip($homeContent['page']['slider']['slider2']['headingDetail']),
-                'link' => $homeContent['page']['slider']['slider2']['btnSlug'],
-                'link_text' => convertToStrip($homeContent['page']['slider']['slider2']['btnText']),
-                'image' => image_url("banner_2.webp")
-            ],
-            [
-                'title' => convertToStrip($homeContent['page']['slider']['slider3']['heading']),
-                'sub_title' => convertToStrip($homeContent['page']['slider']['slider3']['headingDetail']),
-                'link' => $homeContent['page']['slider']['slider3']['btnSlug'],
-                'link_text' => convertToStrip($homeContent['page']['slider']['slider2']['btnText']),
-                'image' => image_url("banner_3.webp")
-            ]
-        ];
-
         $data['homeContent'] = $homeContent;
+
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/homepage');
         $this->load->view($this->footer);

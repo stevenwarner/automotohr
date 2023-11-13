@@ -402,3 +402,40 @@ if (typeof getRandomCode === "undefined") {
 		return dt.getTime() + Math.floor(Math.random() * 5000000);
 	}
 }
+
+if (typeof formArrayToObj === "undefined") {
+	/**
+	 * Converts form array to object
+	 * @returns
+	 */
+	function formArrayToObj(formArray) {
+		//
+		let formData = new FormData();
+		//
+		formArray.map(function (value) {
+			formData.append(value.name, value.value);
+		});
+		//
+		return formData;
+	}
+}
+
+if (typeof isValidFile === "undefined") {
+	/**
+	 * Check if the uploaded file is valid or not
+	 * @returns
+	 */
+	function isValidFile(fileObj) {
+		return Object.keys(fileObj).length !== 0 && fileObj.hasError === false;
+	}
+}
+
+if (window.location.refresh === undefined) {
+	/**
+	 * Check if the uploaded file is valid or not
+	 * @returns
+	 */
+	window.location.refresh = function () {
+		window.location.href = window.location.href;
+	};
+}

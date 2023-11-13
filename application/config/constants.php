@@ -706,3 +706,8 @@ define("W4_DEPENDENTS_AMOUNT", 500);
 
 // web page cache time
 define("WEB_PAGE_CACHE_TIME_IN_MINUTES", 1);
+
+
+define("META_TITLE", "AutomotoHR Helps you differentiate your business and Brand from everyone else.");
+define("META_DESCRIPTION", "AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT?");
+define("META_KEYWORDS", "AutomotoHR, People Operations platform, Business Differentiation, Brand Identity, One System Solution, Hire to Retire, Company Distinctiveness, HR Innovation, Unified HR Management, Branding Strategy, Employee Lifecycle, Streamlined Operations, Personnel Management, HR Efficiency, Competitive Advantage, Employee Experience, Seamless Integration, Organizational Uniqueness, HR Transformation, Comprehensive HR Solution, HRIS, HCM, Human Resources Software, Employee Management, Payroll Integration, Benefits Administration, Time and Attendance, Applicant Tracking System (ATS), Onboarding, Performance Management, Employee Self-Service, Compliance Management, HR Analytics, HR Automation, HR Reporting, Talent Management, Workforce Planning, HR Compliance, Employee Records Management, HR Cloud Software, HR Solutions, HR Technology, Employee Benefits, Leave Management, HRIS Integration, HR Software Solutions, HR Administration, HR Dashboard, HR Tools, HR Platform");

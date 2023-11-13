@@ -1,7 +1,10 @@
 <div class="row video-div auto-video-div">
     <div class="col-12 col-md-12 col-lg-5">
         <div class="csVideoBox">
-            <iframe src="//www.youtube.com/embed/g4BsAB3PliY" title="AutomotoHR Video"></iframe>
+            <?= getSourceByType(
+                $homeContent['page']['sections']['section1']['sourceType'],
+                $homeContent['page']['sections']['section1']['sourceFile']
+            ); ?>
         </div>
     </div>
     <div class="col-12 col-md-12 col-lg-7 col-xl-7 no-padding-left">
@@ -34,60 +37,48 @@
                     <div class="margin-btm">
 
                         <?php
-                        $bullet1Array = explode('#', $homeContent['page']['sections']['section1']['bullet1']);
-                        $bullet2Array = explode('#', $homeContent['page']['sections']['section1']['bullet2']);
-                        $bullet3Array = explode('#', $homeContent['page']['sections']['section1']['bullet3']);
-                        $bullet4Array = explode('#', $homeContent['page']['sections']['section1']['bullet4']);
-                        $bullet5Array = explode('#', $homeContent['page']['sections']['section1']['bullet5']);
-                        $bullet6Array = explode('#', $homeContent['page']['sections']['section1']['bullet6']);
+                        $bullet1Array = convertToStrip($homeContent['page']['sections']['section1']['bullet1']);
+                        $bullet2Array = convertToStrip($homeContent['page']['sections']['section1']['bullet2']);
+                        $bullet3Array = convertToStrip($homeContent['page']['sections']['section1']['bullet3']);
+                        $bullet4Array = convertToStrip($homeContent['page']['sections']['section1']['bullet4']);
+                        $bullet5Array = convertToStrip($homeContent['page']['sections']['section1']['bullet5']);
+                        $bullet6Array = convertToStrip($homeContent['page']['sections']['section1']['bullet6']);
                         ?>
 
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= image_url('Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                <?php echo $bullet1Array[0]; ?>
-                                <?php if ($bullet1Array[1]) { ?> <span class="yellow-text"><?php echo $bullet1Array[1]; ?></span> <?php } ?>
-                                <?php echo $bullet1Array[2]; ?>
+                                <?php echo $bullet1Array; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= image_url('Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                <?php echo $bullet2Array[0]; ?>
-                                <?php if ($bullet2Array[1]) { ?> <span class="yellow-text"><?php echo $bullet2Array[1]; ?></span> <?php } ?>
-                                <?php echo $bullet2Array[2]; ?>
+                                <?php echo $bullet2Array; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= image_url('Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                <?php echo $bullet3Array[0]; ?>
-                                <?php if ($bullet3Array[1]) { ?> <span class="yellow-text"><?php echo $bullet3Array[1]; ?></span> <?php } ?>
-                                <?php echo $bullet3Array[2]; ?>
+                                <?php echo $bullet3Array; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= image_url('Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                <?php echo $bullet4Array[0]; ?>
-                                <?php if ($bullet4Array[1]) { ?> <span class="yellow-text"><?php echo $bullet4Array[1]; ?></span> <?php } ?>
-                                <?php echo $bullet4Array[2]; ?>
+                                <?php echo $bullet4Array; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= image_url('Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                <?php echo $bullet5Array[0]; ?>
-                                <?php if ($bullet5Array[1]) { ?> <span class="yellow-text"><?php echo $bullet5Array[1]; ?></span> <?php } ?>
-                                <?php echo $bullet5Array[2]; ?>
+                                <?php echo $bullet5Array; ?>
                             </p>
                         </div>
                         <div class="d-flex">
-                            <img alt="tick icon" src="<?= base_url('assets/v1/app/images/Group.png'); ?>" class="me-3 yellow-icon-image" />
+                            <img alt="tick icon" src="<?= image_url('Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                <?php echo $bullet6Array[0]; ?>
-                                <?php if ($bullet6Array[1]) { ?> <span class="yellow-text"><?php echo $bullet6Array[1]; ?></span> <?php } ?>
-                                <?php echo $bullet6Array[2]; ?>
+                                <?php echo $bullet6Array; ?>
                         </div>
 
                     </div>

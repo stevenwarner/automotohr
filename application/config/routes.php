@@ -2009,3 +2009,19 @@ $route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resou
 $route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
 $route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
 
+// CMS routes
+$route["cms/(:num)/meta"]["post"] = "manage_admin/Cms/updateMeta/$1";
+$route["cms/page/banner"]["get"] = "manage_admin/Cms/getBannerAddPage";
+$route["cms/page/(:num)/banner/(:num)"]["get"] = "manage_admin/Cms/getBannerEditPage/$1/$2";
+$route["cms/(:num)/slider"]["post"] = "manage_admin/Cms/updateSlider/$1";
+$route["cms/(:num)/slider/(:num)"]["delete"] = "manage_admin/Cms/deleteSlider/$1/$2";
+$route["cms/(:num)/slider/(:num)"]["post"] = "manage_admin/Cms/updateSliderIndex/$1/$2";
+// Home section 1
+$route["cms/(:num)/home/section1"]["post"] = "manage_admin/Cms/updateHomePageSection1/$1";
+$route["cms/(:num)/home/section2"]["post"] = "manage_admin/Cms/updateHomePageSection2/$1";
+// home page Product
+$route["cms/page/home/product"]["get"] = "manage_admin/Cms/getHomeProductAddPage";
+$route["cms/page/(:num)/home/product/(:num)"]["get"] = "manage_admin/Cms/getHomeProductEditPage/$1/$2";
+$route["cms/(:num)/home/product"]["post"] = "manage_admin/Cms/addProductToHomePage/$1";
+$route["cms/(:num)/home/product/(:num)"]["delete"] = "manage_admin/Cms/deleteProductToHomePage/$1/$2";
+$route["cms/(:num)/home/product/(:num)"]["post"] = "manage_admin/Cms/updateProductToHomePage/$1/$2";

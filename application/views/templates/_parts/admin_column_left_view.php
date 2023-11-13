@@ -150,6 +150,7 @@ if (
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
     $this->uri->segment(2) == 'cms' ||
+    $this->uri->segment(2) == 'edit_page' ||
     $this->uri->segment(2) == 'resources' ||
     
     base_url(uri_string()) == site_url('sa/lms/courses') ||
@@ -798,7 +799,7 @@ if (
 
                         <div class="menu-item">
                             <a <?php
-                                if (base_url(uri_string()) == site_url('manage_admin/cms') || $this->uri->segment(2) == 'cms') {
+                                if (base_url(uri_string()) == site_url('manage_admin/cms') || $this->uri->segment(2) =='cms' || $this->uri->segment(2) == 'edit_page') {
                                     echo 'class="active"';
                                 }
                                 ?> href="<?php echo site_url('manage_admin/cms'); ?>">Content Management System</a>
