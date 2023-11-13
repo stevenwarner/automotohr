@@ -6946,8 +6946,6 @@ class Hr_documents_management extends Public_Controller
                     $documents
                 );
                 //
-                _e($data['employees'],true);
-                //
                 if ($type == 'export') {
                     ob_start();
 
