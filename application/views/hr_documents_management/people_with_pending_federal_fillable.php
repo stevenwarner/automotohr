@@ -296,10 +296,17 @@
                                                         ?>
                                                         <tr data-id="<?=$employee['sid'];?>">
                                                             <td style="vertical-align: middle;">
-                                                                <label class="control control--checkbox">
-                                                                    <input type="checkbox" class="jsSelectSingle" />
-                                                                    <div class="control__indicator" style="top: -7px;"></div>
-                                                                </label>
+                                                                <?php if ($employee['any_pending'] == 'yes') { ?>
+                                                                    <label class="control control--checkbox">
+                                                                        <input type="checkbox" class="jsSelectSingle" />
+                                                                        <div class="control__indicator" style="top: -7px;"></div>
+                                                                    </label>
+                                                                <?php } else { ?>
+                                                                    <label class="control control--checkbox">
+                                                                        <input type="checkbox" class="" disabled />
+                                                                        <div class="control__indicator" style="top: -7px;"></div>
+                                                                    </label>
+                                                                <?php } ?>
                                                             </td>
                                                             <td><?=remakeEmployeeName($employee);?><br><?php echo $employee['email']; ?></td>
                                                             <?php if (in_array('w4', $selectedDocumentList) || in_array('all', $selectedDocumentList)) { ?>
