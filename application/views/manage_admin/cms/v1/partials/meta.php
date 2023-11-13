@@ -1,13 +1,17 @@
+<?php
+$ariaExpanded = $this->input->get("page") == 'meta' ? "true" : "false";
+$collapseIn =  $this->input->get("page") == 'meta' ? "in" : "";
+?>
 <!-- Meta  -->
 <div class="panel panel-default">
-    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#jsMeta" aria-expanded="false" aria-controls="collapseOne">
+    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#jsMeta" aria-expanded="<?= $ariaExpanded;?>" aria-controls="collapseOne">
         <h4>
             <strong>
                 Meta
             </strong>
         </h4>
     </div>
-    <div id="jsMeta" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+    <div id="jsMeta" class="panel-collapse collapse <?=$collapseIn;?>" role="tabpanel" aria-labelledby="headingOne">
         <form action="javascript:void(0)" id="jsMetaForm">
             <div class="panel-body">
                 <div class=" form-group">

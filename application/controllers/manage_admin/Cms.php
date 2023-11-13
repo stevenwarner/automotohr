@@ -79,7 +79,6 @@ class Cms extends Admin_Controller
     //
     public function edit_page($sid)
     {
-
         $this->load->helper('url');
         $this->data['page_title'] = 'Page';
         $this->data['groups'] = $this->ion_auth->groups()->result();
@@ -93,16 +92,27 @@ class Cms extends Admin_Controller
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
         ], $page_data["page"], false);
-
         //
-        $files = [
-            "v1/cms/slider",
-            "v1/cms/home_section_1",
-            "v1/cms/home_section_2",
-            "v1/cms/process",
-            "v1/cms/about_section",
-        ];
+        $files = [];
 
+        if ($page_data["page"] == "home") {
+            //
+            $files = [
+                "v1/cms/slider",
+                "v1/cms/home_section_1",
+                "v1/cms/home_section_2",
+                "v1/cms/process",
+                "v1/cms/about_section",
+            ];
+        }
+
+        if (in_array($page_data["slug"], ["payroll"])) {
+            //
+            $files = [
+                "v1/cms/product",
+            ];
+        }
+        //
         $this->data["appJs"] = bundleJs(array_merge([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",

@@ -44,6 +44,8 @@ $(function () {
 			url: baseUrl("cms/" + pageId + "/meta"),
 			method: "POST",
 			data: formObj,
+			processData: false,
+			contentType: false
 		})
 			.always(function () {
 				XHR = null;
@@ -51,7 +53,13 @@ $(function () {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
-				return _success(resp.msg);
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+							getSegment(2) +
+							"/?page=meta"
+					);
+				});
 			});
 	}
 });
