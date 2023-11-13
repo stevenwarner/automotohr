@@ -33,7 +33,7 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                 <br />
                 <!--  -->
                 <?php if ($products) { ?>
-                    <?php foreach ($products as $key => $value) {?>
+                    <?php foreach ($products as $key => $value) { ?>
                         <div class="row" data-key="<?= $key; ?>">
                             <div class="col-sm-3 <?= $value["direction"] == "left_to_right" ? "col-sm-push-7" : ""; ?>">
                                 <?= getSourceByType(

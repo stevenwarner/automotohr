@@ -4,14 +4,14 @@
             <div class="col-sm-12 hide-on-mobile set-contentcenter-ontablet">
                 <div class="margin-btm">
                     <p class="heading-h4-grey text-white opacity-ninety margin-top-inovating">
-                        <?php echo $homeContent['page']['sections']['section10']['mainheading'] ?>
+                        <?= convertToStrip($homeContent['page']['sections']['about']['mainHeading']); ?>
                     </p>
                 </div>
             </div>
             <div class="col-sm-12 hide-on-mobile">
                 <div class="margin-btm">
                     <p class="second-heading white-text text-align-center-ontablet">
-                        <?php echo $homeContent['page']['sections']['section10']['heading'] ?>
+                        <?= convertToStrip($homeContent['page']['sections']['about']['subHeading']); ?>
                     </p>
                 </div>
             </div>
@@ -25,37 +25,40 @@
                         <div class="tab-pane fade show active mt-3" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
-                                    <p class="heading-h4-grey text-white"><?php echo $homeContent['page']['sections']['section11']['mainheading'] ?></p>
+                                    <p class="heading-h4-grey text-white">
+                                        <?= convertToStrip($homeContent['page']['sections']['about']['mainHeading']); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
                                     <p class="second-heading white-text">
-                                        <?php echo $homeContent['page']['sections']['section11']['heading'] ?>
+                                        <?= convertToStrip($homeContent['page']['sections']['about']['subHeading']); ?>
                                     </p>
                                 </div>
                             </div>
                             <p class="detail-text white-text opacity-ninety">
-                                <?php echo strip_tags($homeContent['page']['sections']['section11']['headingDetail']) ?>
+                                <?= convertToStrip($homeContent['page']['sections']['about']['ourMission']); ?>
 
                             </p>
                         </div>
                         <div class="tab-pane fade mt-3" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
-                                    <p class="heading-h4-grey text-white"><?php echo $homeContent['page']['sections']['section12']['mainheading'] ?></p>
+                                    <p class="heading-h4-grey text-white">
+                                        <?= convertToStrip($homeContent['page']['sections']['about']['mainHeading']); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
                                     <p class="second-heading white-text">
-                                        <?php echo $homeContent['page']['sections']['section12']['heading'] ?>
+                                        <?= convertToStrip($homeContent['page']['sections']['about']['subHeading']); ?>
                                     </p>
                                 </div>
                             </div>
                             <p class="detail-text white-text opacity-ninety">
-                                <?php echo strip_tags($homeContent['page']['sections']['section12']['headingDetail']) ?>
-
+                                <?= convertToStrip($homeContent['page']['sections']['about']['ourVision']); ?>
                             </p>
                         </div>
                     </div>
@@ -65,7 +68,11 @@
 
         <div class="col-sm-12 col-md-12 col-lg-6 position-relative div-one">
             <div class="text-right text-align-center-ontablet">
-                <img class="rotate-img" src="<?= image_url('/'); ?>girl.webp" alt="girl with glasses on face image" />
+                <?=getSourceByType(
+                    $homeContent['page']['sections']['about']['sourceType'],
+                    $homeContent['page']['sections']['about']['sourceFile'],
+                    'class="rotate-img"'
+                );?>
                 <img src="<?= image_url('/'); ?>/Ellipse_9.webp" class="light-green-half-circle" alt="half circle" />
                 <img src="<?= image_url('/'); ?>/Ellipse_10.webp" class="light-red-circle" alt="half circle" />
             </div>
@@ -77,7 +84,7 @@
         <div class="col-sm-12">
             <div class="margin-btm">
                 <p class="white-text second-heading text-align-center-ontablet">
-                    <?php echo $homeContent['page']['sections']['section13']['mainheading'] ?>
+                    Notable Benefits
                 </p>
             </div>
         </div>
@@ -91,15 +98,14 @@
                     </div>
                     <div class="col-9 col-sm-9 col-md-10 col-lg-9">
                         <p class="mid-heading grey-text">
-                            <?php echo $homeContent['page']['sections']['section13']['heading'] ?>
+                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitHeading1']); ?>
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                            <?php echo $homeContent['page']['sections']['section13']['headingDetail'] ?>
-
+                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitDetail1']); ?>
                         </p>
                     </div>
                 </div>
@@ -114,14 +120,15 @@
                         </div>
                     </div>
                     <div class="col-9 col-sm-9 col-md-10 col-lg-9">
-                        <p class="mid-heading grey-text"><?php echo $homeContent['page']['sections']['section14']['heading'] ?>
+                        <p class="mid-heading grey-text">
+                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitHeading2']); ?>
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                            <?php echo $homeContent['page']['sections']['section14']['headingDetail'] ?>
+                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitDetail2']); ?>
 
                         </p>
                     </div>
@@ -138,14 +145,14 @@
                     </div>
                     <div class="col-9 col-sm-9 col-md-10 col-lg-9">
                         <p class="mid-heading grey-text">
-                            <?php echo $homeContent['page']['sections']['section15']['heading'] ?>
+                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitHeading3']); ?>
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                            <?php echo $homeContent['page']['sections']['section15']['headingDetail'] ?>
+                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitDetail3']); ?>
                         </p>
                     </div>
                 </div>

@@ -2025,3 +2025,5 @@ $route["cms/page/(:num)/home/product/(:num)"]["get"] = "manage_admin/Cms/getHome
 $route["cms/(:num)/home/product"]["post"] = "manage_admin/Cms/addProductToHomePage/$1";
 $route["cms/(:num)/home/product/(:num)"]["delete"] = "manage_admin/Cms/deleteProductToHomePage/$1/$2";
 $route["cms/(:num)/home/product/(:num)"]["post"] = "manage_admin/Cms/updateProductToHomePage/$1/$2";
+// home process
+$route["cms/(:num)/section"]["post"] = "manage_admin/Cms/updatePageSection/$1";

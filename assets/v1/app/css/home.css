@@ -184,7 +184,7 @@ main {
 }
 .rotate-img {
 	transform: rotate(2.42deg);
-	width: 70%;
+	width: 70% !important;
 	border-radius: 33px;
 }
 .video-div {
@@ -693,7 +693,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 		display: none;
 	}
 	.rotate-img {
-		width: 100%;
+		width: 100% !important;
 	}
 	.div-two {
 		order: 2;
@@ -883,7 +883,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 		padding: 10px;
 	}
 	.rotate-img {
-		width: 80%;
+		width: 80% !important;
 	}
 	.small-img-div {
 		text-align: center;
@@ -932,7 +932,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 		padding: 20px;
 	}
 	.rotate-img {
-		width: 100%;
+		width: 100% !important;
 	}
 	.yellow-text {
 		font-size: 16px;
@@ -1129,7 +1129,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	}
 	.rotate-img {
 		margin-top: 35px;
-		width: 80%;
+		width: 80% !important;
 	}
 	.top-button:hover .top-button-icon {
 		/* transform: translate(-100px, 0); */
@@ -1222,7 +1222,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 		background-size: 300px;
 	}
 	.rotate-img {
-		width: 75%;
+		width: 75% !important;
 	}
 	.schedule-btn {
 		font-size: 18px !important;
@@ -1301,7 +1301,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	}
 	.rotate-img {
 		transform: rotate(2.42deg);
-		width: 75%;
+		width: 75% !important;
 		border-radius: 33px;
 	}
 	.form-group .form-control {
@@ -1347,7 +1347,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	}
 	.rotate-img {
 		transform: rotate(2.42deg);
-		width: 75%;
+		width: 75% !important;
 		border-radius: 33px;
 	}
 	.light-red-circle {
@@ -1540,7 +1540,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 }
 @media screen and (max-width: 1560px) {
 	.employee_experience_img_section {
-		width: 500px !important;
+		/* width: 500px !important; */
 		height: 487px !important;
 	}
 	.employee_experience_bubble {
@@ -1552,7 +1552,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 }
 @media screen and (max-width: 1200px) {
 	.employee_experience_img_section {
-		width: 450px !important;
+		/* width: 450px !important; */
 		height: 437px !important;
 	}
 	.employee_experience_bubble {
@@ -1564,7 +1564,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 }
 @media screen and (max-width: 1110px) {
 	.employee_experience_img_section {
-		width: 400px !important;
+		/* width: 400px !important; */
 		height: 387px !important;
 	}
 	.employee_experience_bubble {
@@ -1780,7 +1780,7 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	z-index: -1;
 }
 .employee_experience_img_section {
-	width: 700px;
+	/* width: 700px; */
 	height: 687px;
 	background: #315eff;
 	border-radius: 40% 0px 0 0;
@@ -1803,8 +1803,8 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 }
 .employee_img {
 	position: absolute;
-	top: 10%;
-	right: 20%;
+	top: 0%;
+	left: -10%;
 	width: 100%;
 }
 .career_section_bubble_1 {
@@ -2673,4 +2673,8 @@ input[type="radio"] {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end
+}
+
+.csSection{
+	padding: 50px 0;
 }

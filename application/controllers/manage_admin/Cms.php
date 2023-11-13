@@ -94,15 +94,21 @@ class Cms extends Admin_Controller
             "v1/plugins/ms_uploader/main",
         ], $page_data["page"], false);
 
-        $this->data["appJs"] = bundleJs([
+        //
+        $files = [
+            "v1/cms/slider",
+            "v1/cms/home_section_1",
+            "v1/cms/home_section_2",
+            "v1/cms/process",
+            "v1/cms/about_section",
+        ];
+
+        $this->data["appJs"] = bundleJs(array_merge([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
             "js/app_helper",
             "v1/cms/meta",
-            "v1/cms/slider",
-            "v1/cms/home_section_1",
-            "v1/cms/home_section_2",
-        ], $page_data["page"], false);
+        ], $files), $page_data["page"], false);
 
         $this->render('manage_admin/cms/v1/' . $page_data['page']);
     }
@@ -424,7 +430,7 @@ class Cms extends Admin_Controller
         $pageContent["page"]["sections"]["section2"] = [
             "mainheading" => $post["jsMainHeading"],
             "heading" => $post["jsSubHeading"],
-            "products" => $pageContent["products"],
+            "products" =>  $pageContent["page"]["sections"]["section2"]["products"],
         ];
         //
         $this->db
@@ -525,7 +531,6 @@ class Cms extends Admin_Controller
         //
         if ($post["source_type"] === "upload") {
             //
-            //
             if (!$_FILES['file'] && $post['source_link']) {
                 $fileLink = $post["source_link"];
             } else {
@@ -591,6 +596,59 @@ class Cms extends Admin_Controller
             ]);
         //
         return SendResponse(200, ["msg" => "You have successfully deleted the selected product section."]);
+    }
+
+    /**
+     * Update page content
+     */
+    public function updatePageSection(int $pageId)
+    {
+        $post = $this->input->post(null, true);
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+
+        if ($post["source_type"]) {
+            //
+            $fileLink = $post["source_link"];
+            //
+            if ($post["source_type"] === "upload") {
+                //
+                if (!$_FILES['file'] && $post['source_link']) {
+                    $fileLink = $post["source_link"];
+                } else {
+                    // check and run for image
+                    $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                    //
+                    if ($errors) {
+                        return SendResponse(
+                            400,
+                            ["errors" => $errors]
+                        );
+                    }
+                    $fileLink = upload_file_to_aws(
+                        "file",
+                        0,
+                        "innovating_hr",
+                    );
+                }
+            }
+            $post["sourceFile"] = $fileLink;
+            $post["sourceType"] = $post["source_type"];
+
+            unset($post["source_type"]);
+        }
+
+        $pageContent["page"]["sections"][$post["section"]] = $post;
+        //
+        $this->db
+            ->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => json_encode($pageContent)
+            ]);
+        //
+        return SendResponse(200, ["msg" => "You have successfully updated the section."]);
     }
 
 

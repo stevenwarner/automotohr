@@ -3,21 +3,21 @@
         <div class="col-sm-12">
             <div class="margin-btm d-flex justify-content-center">
                 <p class="lightgrey heading-h4-grey opacity-eighty heading">
-                <?php echo $homeContent['page']['sections']['section9']['mainheading'] ?>
+                    <?= convertToStrip($homeContent['page']['sections']['section9']['mainheading']); ?>
                 </p>
             </div>
         </div>
         <div class="col-sm-12 text-center">
             <div class="margin-btm">
                 <p class="second-heading">
-                    <?php echo $homeContent['page']['sections']['section9']['heading'] ?>
+                    <?= convertToStrip($homeContent['page']['sections']['section9']['heading']); ?>
                 </p>
             </div>
         </div>
         <div class="col-sm-12">
             <div class="margin-btm">
                 <p class="text-center simple-step-text opacity-eighty">
-                    Take these simple steps to achieve success today!
+                    <?= convertToStrip($homeContent['page']['sections']['section9']['details']); ?>
                 </p>
             </div>
         </div>
@@ -29,7 +29,7 @@
             </div>
             <div>
                 <p class="img-below-text">
-                    <?php echo $homeContent['page']['sections']['section9']['headingSub1'] ?>
+                    <?= convertToStrip($homeContent['page']['sections']['section9']['headingSub1']); ?>
 
                 </p>
             </div>
@@ -44,7 +44,7 @@
 
             <div>
                 <p class="img-below-text">
-                    <?php echo $homeContent['page']['sections']['section9']['headingSub2'] ?>
+                    <?= convertToStrip($homeContent['page']['sections']['section9']['headingSub2']); ?>
 
                 </p>
             </div>
@@ -59,7 +59,7 @@
 
             <div>
                 <p class="img-below-text">
-                    <?php echo $homeContent['page']['sections']['section9']['headingSub3'] ?>
+                    <?= convertToStrip($homeContent['page']['sections']['section9']['headingSub3']); ?>
 
                 </p>
             </div>

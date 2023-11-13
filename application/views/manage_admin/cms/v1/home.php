@@ -33,6 +33,10 @@
                             <?php $this->load->view("manage_admin/cms/v1/partials/home_section_1"); ?>
                             <!-- Products -->
                             <?php $this->load->view("manage_admin/cms/v1/partials/home_section_2"); ?>
+                            <!-- Process -->
+                            <?php $this->load->view("manage_admin/cms/v1/partials/our_process"); ?>
+                            <!-- About -->
+                            <?php $this->load->view("manage_admin/cms/v1/partials/about_section"); ?>
                         </div>
                     </div>
                 </div>
