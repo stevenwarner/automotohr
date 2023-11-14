@@ -70,11 +70,16 @@
                                              <td><b>Message</b></td>
                                             <td><?php echo $message["message"]; ?></td>
                                         </tr>
-                                        <?php if(isset($message['attachment']) && $message['attachment'] != NULL && !empty($message['attachment'])){?>
+                                        <?php
+                                            $attachments = $message["attachment"] ? explode(",", $message["attachment"]) : [];
+                                        ?>
+                                        <?php if($attachments){?>
                                             <tr>
                                                 <td><b>Attachment</b></td>
                                                 <td>
-                                                    <a class="btn btn-primary" download="Attachment" href="<?php echo AWS_S3_BUCKET_URL . $message['attachment']?>">Download Attachment</a>
+                                                    <?php foreach($attachments as $attachment) {?>
+                                                    <a class="btn btn-primary" download="Attachment" href="<?php echo AWS_S3_BUCKET_URL . $attachment;?>">Download Attachment</a>
+                                                    <?php } ?>
                                                 </td>
                                             </tr>
                                         <?php } ?>

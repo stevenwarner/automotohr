@@ -424,13 +424,13 @@ if ($_ssv) {
                                         <form method="POST" enctype="multipart/form-data" id="applicant_profile_form">
                                             <div class="form-title-section">
                                                 <h2>Personal Information</h2>
-                                                
-                                                <div class="form-btns">
-                                                <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
 
-                                                    <input type="button" value="save" class="add_edit_submit">
-                                                    <input type="submit" value="cancel" class="view_button" style="background-color: #d9534f;">
-                                                    <?php }?>
+                                                <div class="form-btns">
+                                                    <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
+
+                                                        <input type="button" value="save" class="add_edit_submit">
+                                                        <input type="submit" value="cancel" class="view_button" style="background-color: #d9534f;">
+                                                    <?php } ?>
                                                 </div>
 
                                             </div>
@@ -1523,12 +1523,17 @@ if ($_ssv) {
                                                                         </a>
                                                                     </li>-->
                                                             <?php } ?>
-                                                            <?php if ($message['attachment']) { ?>
+                                                            <?php
+                                                            $attachments = $message["attachment"] ? explode(",", $message["attachment"]) : [];
+                                                            ?>
+                                                            <?php if ($attachments) { ?>
                                                                 <li>
-                                                                    <a class="action-btn" href="<?php echo AWS_S3_BUCKET_URL . $message['attachment']; ?>">
+                                                                     <?php foreach($attachments as $attachment) {?>
+                                                                    <a class="action-btn" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">
                                                                         <i class="fa fa-download"></i>
                                                                         <span class="btn-tooltip">Download File</span>
                                                                     </a>
+                                                                    <?php } ?>
                                                                 </li>
                                                             <?php } ?>
                                                             <li>
