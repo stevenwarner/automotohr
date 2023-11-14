@@ -2020,7 +2020,7 @@ if (!function_exists('upload_file_to_aws')) {
 
     function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME, $key = NULL)
     {
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
+        // if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
 
         $CI = &get_instance();
 
@@ -2034,17 +2034,22 @@ if (!function_exists('upload_file_to_aws')) {
             //  
             $CI->load->library('aws_lib');
             //
-            $options = [
-                'Bucket' => $bucket_name,
-                'Key' => $modify_file_name,
-                'Body' => file_get_contents($_FILES[$file_input_id]["tmp_name"][$key]),
-                'ACL' => 'public-read',
-                'ContentType' => $_FILES[$file_input_id]["type"][$key]
-            ];
-            //
-            $CI->aws_lib->put_object($options);
-            //
-            return $modify_file_name;
+            try {
+                $options = [
+                    'Bucket' => $bucket_name,
+                    'Key' => $modify_file_name,
+                    'Body' => file_get_contents($_FILES[$file_input_id]["tmp_name"][$key]),
+                    'ACL' => 'public-read',
+                    'ContentType' => $_FILES[$file_input_id]["type"][$key]
+                ];
+                //
+                $CI->aws_lib->put_object($options);
+                //
+                return $modify_file_name;
+            
+            } catch (Exception $exception) {
+                return 'error';
+            }
             //
         } else if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
             $modify_file_name = modify_document_name($document_name, $_FILES[$file_input_id]["name"], $company_sid, $suffix);
@@ -2054,18 +2059,22 @@ if (!function_exists('upload_file_to_aws')) {
             //
             $CI->load->library('aws_lib');
             //
-            $options = [
-                'Bucket' => $bucket_name,
-                'Key' => $modify_file_name,
-                'Body' => file_get_contents($_FILES[$file_input_id]["tmp_name"]),
-                'ACL' => 'public-read',
-                'ContentType' => $_FILES[$file_input_id]["type"]
-            ];
-            //
-            $CI->aws_lib->put_object($options);
-            //
-            return $modify_file_name;
-            //
+            try {
+                $options = [
+                    'Bucket' => $bucket_name.,
+                    'Key' => $modify_file_name,
+                    'Body' => file_get_contents($_FILES[$file_input_id]["tmp_name"]),
+                    'ACL' => 'public-read',
+                    'ContentType' => $_FILES[$file_input_id]["type"]
+                ];
+                //
+                $CI->aws_lib->put_object($options);
+                //
+                return $modify_file_name;
+            
+            } catch (Exception $exception) {
+                return 'error';
+            }
         } else {
             return 'error';
         }
