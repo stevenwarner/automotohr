@@ -1,0 +1,157 @@
+From sarah.ndipity96@gmail.com Fri Nov 10 05:40:30 2023
+Received: from mail-qv1-f54.google.com ([209.85.219.54]:56376)
+        by smg222.automotohr.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.96.2)
+        (envelope-from <sarah.ndipity96@gmail.com>)
+        id 1r1RkP-0005P0-0b
+        for notifications@automotohr.com;
+        Fri, 10 Nov 2023 05:40:30 -0800
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-67089696545so12051476d6.0
+        for <notifications@automotohr.com>; Fri, 10 Nov 2023 05:40:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699623587; x=1700228387; darn=automotohr.com;
+        h=to:in-reply-to:references:message-id:date:subject:mime-version:from
+         :content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nn2L/xmMfw0qCz9HeoDdJTinMhVLMLlM9Il76tLGuAY=;
+        b=msJ7Vu0GJcvAZT4IZm53BQrFEbg5fh2tam8yiDA1b1uYTIVIO6Udv63wgM4xPZ07td
+         tAOT9kFHgPCaDe9QSoYnp+REOJFjXjJt7+PnfvtEtaB00e4Fl5VxKI2DussstWctoQbd
+         4q9Wi23Xz0Fu1HwvlKu+hX8kxNw2/7rHlULRAcv7BOl8X0E9Kw55ETgeOzY9N/RPc2ve
+         hTgI8tDgE6vxzrhjn5FMwI7RB6zDWMwUSZuxv6UORQUPwQgVjKBgxJe4zXuwhdAuQReK
+         anGW/gr/IG/gyldjy0o5UeQ1mLg8DZ0kXzSdgkaNTvGiVk63J5c5accsJiQGD0G2RLLi
+         fdHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699623587; x=1700228387;
+        h=to:in-reply-to:references:message-id:date:subject:mime-version:from
+         :content-transfer-encoding:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nn2L/xmMfw0qCz9HeoDdJTinMhVLMLlM9Il76tLGuAY=;
+        b=wNf4CR+dPuW8Xgx/VUFmvGvj5LBneW46IN8hEsNkRGgeMv1LtS7ZCqlMnINXOJ4AAy
+         yhiivxnfPfTP7ZAhwzkg2d713+8B2fvNWldB9/lcEX7kpqcWYktaHqwrH2dt9QIHI3ab
+         SIZq1d0hRb+89XjoPZaCT40hyFuk9gKgtvmpMUUMHcxQTeoqpgIIKU4TaqiAwmEvO9O0
+         zZL3HnArpa29WvU8WPNXcwqiga7CobpM/vQYcnv1SFYUYx/3RGrqfyGOdmWIkxTVhGaQ
+         fw9mOxywOQhC07pNyWG4UzfV330juQ0m/v9BvQevlpNvH73J+bz8DZOKPy78IOhUG9Wg
+         kOlg==
+X-Gm-Message-State: AOJu0Yx2onqBBX14jrxxt6WenCIgxZzdmZDGwvYNO5IwDAVeHJHUDDm4
+        0Een+GI/mRsdgRRP+20957J3hFsKFzY=
+X-Google-Smtp-Source: AGHT+IFjgXaaAmA/acK8F44IbHfFyI5j8kkiVHNrnv3XLDbSTW+wOChOCmt2M9f9Dg0nQkEu51XAiw==
+X-Received: by 2002:ad4:5aaa:0:b0:66d:a20f:ecfb with SMTP id u10-20020ad45aaa000000b0066da20fecfbmr9098195qvg.37.1699623587172;
+        Fri, 10 Nov 2023 05:39:47 -0800 (PST)
+Received: from smtpclient.apple ([2601:40d:4301:1170:1808:c668:36d7:61e])
+        by smtp.gmail.com with ESMTPSA id y8-20020a0ceac8000000b0066d32666a27sm2888144qvp.66.2023.11.10.05.39.46
+        for <notifications@automotohr.com>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Nov 2023 05:39:46 -0800 (PST)
+Content-Type: multipart/alternative; boundary=Apple-Mail-847DCF3D-8D34-4CE1-89CD-17AA772819BA
+Content-Transfer-Encoding: 7bit
+From: Sarah Spragg <sarah.ndipity96@gmail.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: Interview for Sales Position...
+Date: Fri, 10 Nov 2023 08:39:35 -0500
+Message-Id: <5913325D-FDE1-459B-92CF-1CF67A23B722@gmail.com>
+References: <bdcec085305ce41d8c847cb50e38ef7e@www.automotohr.com>
+In-Reply-To: <bdcec085305ce41d8c847cb50e38ef7e@www.automotohr.com>
+To: notifications@automotohr.com
+X-Mailer: iPhone Mail (21A350)
+X-Spam-Status: No, score=1.7
+X-Spam-Score: 17
+X-Spam-Bar: +
+X-Ham-Report: Spam detection software, running on the system "smg222.automotohr.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ root@localhost for details.
+ Content preview:  Hello Nicole; Thank you for reaching out! I would love to
+   interview. It’s a little far out, but do you have any availability on Friday
+    morning 11/17? Best,
+ Content analysis details:   (1.7 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+  0.8 BAYES_50               BODY: Bayes spam probability is 40 to 60%
+                             [score: 0.5000]
+  0.0 URIBL_ZEN_BLOCKED_OPENDNS ADMINISTRATOR NOTICE: The query to
+                             zen.spamhaus.org was blocked due to usage
+                             of an open resolver. See
+                             https://www.spamhaus.org/returnc/pub/
+                             [URIs: automotohr.com]
+  0.0 RCVD_IN_ZEN_BLOCKED_OPENDNS RBL: ADMINISTRATOR NOTICE: The query
+                              to zen.spamhaus.org was blocked due to
+                             usage of an open resolver. See
+                             https://www.spamhaus.org/returnc/pub/
+                             [209.85.219.54 listed in zen.spamhaus.org]
+  0.0 URIBL_DBL_BLOCKED_OPENDNS ADMINISTRATOR NOTICE: The query to
+                             dbl.spamhaus.org was blocked due to usage
+                             of an open resolver. See
+                             https://www.spamhaus.org/returnc/pub/
+                             [URIs: automotohr.com]
+  0.0 FREEMAIL_FROM          Sender email is commonly abused enduser mail
+                             provider
+                             [sarah.ndipity96[at]gmail.com]
+ -0.0 SPF_PASS               SPF: sender matches SPF record
+  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+                             in digit
+                             [sarah.ndipity96[at]gmail.com]
+  0.8 MPART_ALT_DIFF         BODY: HTML and text parts are different
+  0.0 HTML_MESSAGE           BODY: HTML included in message
+  0.0 HTML_FONT_LOW_CONTRAST BODY: HTML font color similar or
+                             identical to background
+  0.1 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
+  0.0 MIME_QP_LONG_LINE      RAW: Quoted-printable line longer than 76
+                             chars
+ -0.1 DKIM_VALID_EF          Message has a valid DKIM or DK signature from
+                             envelope-from domain
+  0.1 DKIM_SIGNED            Message has a DKIM or DK signature, not necessarily
+                             valid
+ -0.1 DKIM_VALID             Message has at least one valid DKIM or DK signature
+ -0.1 DKIM_VALID_AU          Message has a valid DKIM or DK signature from
+                             author"s domain
+ -0.0 T_SCC_BODY_TEXT_LINE   No description available.
+  0.0 MIME_HTML_ONLY_MULTI   Multipart message only has text/html MIME
+                             parts
+X-Spam-Flag: NO
+
+
+--Apple-Mail-847DCF3D-8D34-4CE1-89CD-17AA772819BA
+Content-Type: text/html;
+        charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charset=3D=
+utf-8"></head><body dir=3D"auto">Hello Nicole;<div><br></div><div>Thank you f=
+or reaching out! I would love to interview. It=E2=80=99s a little far out, b=
+ut do you have any availability on Friday morning 11/17?&nbsp;</div><div><br=
+></div><div>Best,</div><div>Sarah Spragg&nbsp;</div><div><div><div dir=3D"lt=
+r">Sent from my iPhone</div><div dir=3D"ltr"><br><blockquote type=3D"cite">O=
+n Nov 8, 2023, at 4:23=E2=80=AFPM, LaFontaine Kia &lt;notifications@automoto=
+hr.com&gt; wrote:<br><br></blockquote></div><blockquote type=3D"cite"><div d=
+ir=3D"ltr">=EF=BB=BF<div class=3D"content" style=3D"font-size: 100%; line-he=
+ight: 1.6em; display: block; max-width: 1000px; margin: 0 auto; padding: 0; p=
+osition:relative"><div style=3D"width:100%; float:left; padding:5px 20px; te=
+xt-align:center; box-sizing: border-box; background-color:#0000FF;"><h2 styl=
+e=3D"color:#fff;">LaFontaine Kia</h2></div> <div class=3D"body-content" styl=
+e=3D"width:100%; float:left; padding:20px 20px 60px 20px; box-sizing:border-=
+box; background:url(images/bg-body.jpg);"><p>Subject: Interview for Sales Po=
+sition...</p><p>Hi&nbsp;Sarah,</p>
+
+<p>I was looking over your resume and we would love to talk to you about a s=
+ales position with us.&nbsp; What day and time works best for you to come in=
+ for an in person interview?</p>
+
+<p>Best Regards,</p>
+
+<p>Nicole Welch</p>
+
+<p>LaFontaine Kia&nbsp;</p></div><div class=3D"footer" style=3D"width:100%; f=
+loat:left; background-color:#0000FF; padding:20px 30px; box-sizing:border-bo=
+x;"><div style=3D"float:left; width:100%; "><p style=3D"color:#fff; text-ali=
+gn:center; font-style:italic; line-height:normal; font-family: " open=3D"" s=
+ans",=3D"" sans-serif;=3D"" font-weight:600;=3D"" font-size:14px;"=3D""><a s=
+tyle=3D"color:#fff; text-decoration:none;" href=3D"http://lafontaine-kia.aut=
+omotohr.com">lafontaine-kia.automotohr.com</a></p></div></div></div><div sty=
+le=3D"width:100%; float:left; background-color:#000; color:#000; box-sizing:=
+border-box;">message_id:ureyZp6uoA954M99yaw8MBUx6pbgzhVfeVOo9uMnuCjshMzN__</=
+div>
+
+</div></blockquote></div></div></body></html>=
+
+--Apple-Mail-847DCF3D-8D34-4CE1-89CD-17AA772819BA--
