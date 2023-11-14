@@ -38,14 +38,14 @@
                                                                     } ?></b></th>
                                         <td><?php echo $contact_details["from_name"]; ?>&nbsp;
 
-                                            <?php 
-                                                if (!empty($contact_details["from_profile_link"])) {
-                                                    if ($page == 'Inbox' && $contact_details['message_type'] == 'applicant') {
-                                                        echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
-                                                    } else if ($page == 'Inbox' && $contact_details['message_type'] == 'employee') {
-                                                        echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
-                                                    } 
+                                            <?php
+                                            if (!empty($contact_details["from_profile_link"])) {
+                                                if ($page == 'Inbox' && $contact_details['message_type'] == 'applicant') {
+                                                    echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
+                                                } else if ($page == 'Inbox' && $contact_details['message_type'] == 'employee') {
+                                                    echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["from_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
                                                 }
+                                            }
                                             ?>
                                         </td>
                                     </tr>
@@ -61,15 +61,15 @@
                                                                     } ?></b></th>
                                         <td>
                                             <?php echo $contact_details["to_name"]; ?>&nbsp;
-                                            <?php 
-                                                if (!empty($contact_details["to_profile_link"])) {
-                                                    if ($page != 'Inbox' && $contact_details['message_type'] == 'applicant') {
-                                                        echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["to_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
-                                                    } else if ($page != 'Inbox' && $contact_details['message_type'] == 'employee') {
-                                                        echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["to_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
-                                                    } 
+                                            <?php
+                                            if (!empty($contact_details["to_profile_link"])) {
+                                                if ($page != 'Inbox' && $contact_details['message_type'] == 'applicant') {
+                                                    echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["to_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
+                                                } else if ($page != 'Inbox' && $contact_details['message_type'] == 'employee') {
+                                                    echo '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . (str_replace('executive_admin/', '', $contact_details["to_profile_link"])) . '" class="jsToCompany btn btn-info" target="_blank">View Profile</a>';
                                                 }
-                                            ?>    
+                                            }
+                                            ?>
                                         </td>
                                     </tr>
                                     <?php if ($page != 'Inbox') { ?>
@@ -86,6 +86,19 @@
                                         <th class="success"><b>Message</b></th>
                                         <td><?php echo $message['message']; ?></td>
                                     </tr>
+                                    <?php
+                                    $attachments = $message["attachment"] ? explode(",", $message["attachment"]) : [];
+                                    ?>
+                                    <?php if ($attachments) { ?>
+                                        <tr>
+                                            <td><b>Attachment</b></td>
+                                            <td>
+                                                <?php foreach ($attachments as $attachment) { ?>
+                                                    <a class="btn btn-primary" download="Attachment" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">Download Attachment</a>
+                                                <?php } ?>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
