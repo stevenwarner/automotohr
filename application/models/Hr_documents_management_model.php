@@ -2273,7 +2273,10 @@ class Hr_documents_management_model extends CI_Model
             $this->db->where('user_type', 'employee');
             $this->db->where_in('employer_sid', $activeEmployees);
             $this->db->where('status', 1);
-            $this->db->where('user_consent', 0);
+            $this->db->group_start();
+            $this->db->where('user_consent ', 0);
+            $this->db->or_where('user_consent', NULL);
+            $this->db->group_end();
             $employees_w4_documents = $this->db->get('form_w4_original')->result_array();
             //
             if (!empty($employees_w4_documents)) {
@@ -2504,6 +2507,149 @@ class Hr_documents_management_model extends CI_Model
     }
 
     function getEmployeesWithPendingFederalFillable(
+        $company_sid,
+        $employeeList = 'all',
+        $documentList = 'all'
+    ) {
+        //
+        $pendingDocuments = [];
+        //
+        $activeEmployees = explode(':', $employeeList);
+        //
+        if (!empty($activeEmployees)) {
+            //
+            foreach ($activeEmployees as $employee) {
+                $this->db->select('
+                    sid, 
+                    first_name, 
+                    last_name,
+                    email, 
+                    is_executive_admin, 
+                    access_level, 
+                    access_level_plus,
+                    pay_plan_flag,
+                    job_title
+                ');
+                $this->db->where('sid', $employee);
+                $employeeInfo = $this->db->get('users')->row_array();
+                //
+                $pendingDocuments[$employee]['sid'] = $employeeInfo['sid'];
+                $pendingDocuments[$employee]['first_name'] = $employeeInfo['first_name'];
+                $pendingDocuments[$employee]['last_name'] = $employeeInfo['last_name'];
+                $pendingDocuments[$employee]['email'] = $employeeInfo['email'];
+                $pendingDocuments[$employee]['is_executive_admin'] = $employeeInfo['is_executive_admin'];
+                $pendingDocuments[$employee]['access_level'] = $employeeInfo['access_level'];
+                $pendingDocuments[$employee]['access_level_plus'] = $employeeInfo['access_level_plus'];
+                $pendingDocuments[$employee]['pay_plan_flag'] = $employeeInfo['pay_plan_flag'];
+                $pendingDocuments[$employee]['job_title'] = $employeeInfo['job_title'];
+                $pendingDocuments[$employee]['job_title'] = $employeeInfo['job_title'];
+                $pendingDocuments[$employee]['any_pending'] = 'no';
+                $pendingDocuments[$employee]['Documents']['w4'] = array(
+                    'ID' => 0,
+                    'Title' => 'W4 Fillable',
+                    'Type' => 'Verification',
+                    'AssignedOn' => "",
+                    'Days' => "",
+                    'Status' => 'not_assigned'
+                );
+                $pendingDocuments[$employee]['Documents']['i9'] = array(
+                    'ID' => 0,
+                    'Title' => 'I9 Fillable',
+                    'Type' => 'Verification',
+                    'AssignedOn' => "",
+                    'Days' => "",
+                    'Status' => 'not_assigned'
+                );
+                
+            }
+            //
+            $now = time();
+            //
+            //
+            // Get employees W4
+            $this->db->select('sent_date, employer_sid, user_consent');
+            $this->db->where('user_type', 'employee');
+            $this->db->where_in('employer_sid', $activeEmployees);
+            $this->db->where('status', 1);
+            //
+            $employees_w4_documents = $this->db->get('form_w4_original')->result_array();
+            //
+            if (!empty($employees_w4_documents)) {
+                foreach ($employees_w4_documents as $employee_w4) {
+                    //
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($employee_w4['sent_date']));
+                    //
+                    $datediff = $now - strtotime($employee_w4['sent_date']);
+                    $days = round($datediff / (60 * 60 * 24));
+                    //
+                    $result['assigned_on'] = $assigned_on;
+                    $result['days'] = $days;
+                    //
+                    $status = 'completed';
+                    //
+                    if ($employee_w4['user_consent'] != 1) {
+                        $pendingDocuments[$employee_w4['employer_sid']]['any_pending'] = 'yes';
+                        $status = 'pending';
+                    }
+                    //
+                    $pendingDocuments[$employee_w4['employer_sid']]['Documents']['w4'] = array(
+                        'ID' => 0,
+                        'Title' => 'W4 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $assigned_on,
+                        'Days' => $days,
+                        'Status' => $status
+                    );
+                }
+                
+            }
+            //
+            // Get employees I9
+            $this->db->select('sent_date, user_sid, user_consent');
+            $this->db->where('user_type', 'employee');
+            $this->db->where_in('user_sid', $activeEmployees);
+            $this->db->where('status', 1);
+            //
+            $employees_i9_documents = $this->db->get('applicant_i9form')->result_array();
+            //
+            if (!empty($employees_i9_documents)) {
+                foreach ($employees_i9_documents as $employee_i9) {
+                    //
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($employee_i9['sent_date']));
+                    //
+                    $datediff = $now - strtotime($employee_i9['sent_date']);
+                    $days = round($datediff / (60 * 60 * 24));
+                    //
+                    $result['assigned_on'] = $assigned_on;
+                    $result['days'] = $days;
+                    //
+                    $status = 'completed';
+                    //
+                    if ($employee_i9['user_consent'] != 1) {
+                        $pendingDocuments[$employee_i9['user_sid']]['any_pending'] = 'yes';
+                        $status = 'pending';
+                    }
+                    //
+                    $pendingDocuments[$employee_i9['user_sid']]['Documents']['i9'] = array(
+                        'ID' => 0,
+                        'Title' => 'I9 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $assigned_on,
+                        'Days' => $days,
+                        'Status' => $status
+                    );
+                }
+                
+            }
+        }
+        //
+        // _e($pendingDocuments,true,true);
+        return array_values($pendingDocuments);
+        
+
+    }
+
+    function getEmployeesWithPendingFederalFillable_old(
         $company_sid,
         $employeeList = 'all',
         $documentList = 'all'
