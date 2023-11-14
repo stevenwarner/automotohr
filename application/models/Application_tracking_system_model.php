@@ -1883,8 +1883,8 @@ class Application_tracking_system_model extends CI_Model
     {
         $data['outbox'] = 1;
         $this->db->insert('private_message', $data);
-        // $data['outbox'] = 0;
-        // $this->db->insert('private_message', $data);
+        $data['outbox'] = 0;
+        $this->db->insert('private_message', $data);
     }
 
     function update_Event($sid, $data)
