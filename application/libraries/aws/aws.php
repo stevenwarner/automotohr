@@ -53,6 +53,28 @@ class AwsSdk
         }
     }
 
+    public function uploadBase64File(
+        string $key,
+        string $base64,
+        string $contentType,
+        string $bucket
+    ) {
+        ini_set('max_execution_time', 0);
+        try {
+            $result = $this->client
+                ->putObject([
+                    'ACL' => 'public-read',
+                    'Body' => $base64,
+                    'Bucket' => $bucket,
+                    'Key' => $key,
+                    'ContentType' => $contentType
+                ]);
+            return $result;
+        } catch (MultipartUploadException $e) {
+            return 0;
+        }
+    }
+
     public function deleteObj($key, $bucket)
     {
         $result = $this->client->deleteObject(array(
