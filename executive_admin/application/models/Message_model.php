@@ -178,7 +178,7 @@ class message_model extends CI_Model {
     }
 
     public function get_inbox_message_detail($message_id) {
-        $this->db->select('from_type, to_type, from_id as username, to_id, subject, date, message, private_message.id as msg_id, contact_name, job_id');
+        $this->db->select('from_type, to_type, from_id as username, to_id, subject, date, message, private_message.id as msg_id, contact_name, job_id, attachment');
         //$this->db->join('administrator_users', 'administrator_users.id = private_message.from_id');
         $this->db->where('private_message.id', $message_id);
         return $this->db->get('private_message')->result_array();
