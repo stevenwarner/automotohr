@@ -10329,5 +10329,29 @@ class Hr_documents_management_model extends CI_Model
         return $is_document_completed;
     }
 
+    function checkDocumentIsManual($document_sid)
+    {
+
+        $this->db->select('document_type, document_sid');
+        $this->db->where('sid', $document_sid);
+        
+        $this->db->where('document_sid', 0);
+        $this->db->where('document_type', 'uploaded');
+
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if ($record_arr['document_sid'] == 0 && $record_arr['document_type'] == 'uploaded') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteManualDocument ($document_sid) {
+        $this->db->where('sid', $document_sid);
+        $this->db->delete('documents_assigned');
+    }
 
 }

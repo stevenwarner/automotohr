@@ -58,6 +58,7 @@ class Assign_bulk_documents extends Public_Controller
         $return_array['Redirect'] = FALSE;
         // fetch company employers
         $employees = $this->assign_bulk_documents_model->fetchEmployeesByCompanyId($companyId);
+        //
         if (!$employees) {
             $return_array['Response'] = 'No employees found.';
             $this->response($return_array);
@@ -344,6 +345,7 @@ class Assign_bulk_documents extends Public_Controller
         $documentTitle = $this->input->get('title', true);
 
         $data['secure_documents'] = $this->assign_bulk_documents_model->getSecureDocuments($data['company_sid'], $documentTitle);
+        $data['employees'] = $this->assign_bulk_documents_model->fetchEmployeesByCompanyId($data['company_sid']);
 
         $data['documentTitle'] = $documentTitle;
 
@@ -450,5 +452,41 @@ class Assign_bulk_documents extends Public_Controller
         $this->load->view('main/header', $data);
         $this->load->view('manage_employer/edit_secure_document');
         $this->load->view('main/footer');
+    }
+
+    function copySecureDocument () {
+        $document = $this->assign_bulk_documents_model->getSecureDocumentById($_POST['document_sid']);
+        //
+        $data_to_insert = array();
+        $data_to_insert['status'] = 1;
+        $data_to_insert['user_sid'] = $_POST['employee_sid'];
+        $data_to_insert['user_type'] = 'employee';
+        $data_to_insert['company_sid'] = $document['company_sid'];
+        $data_to_insert['assigned_by'] = $document['created_by'];
+        $data_to_insert['document_sid'] = 0;
+        $data_to_insert['user_consent'] = 1;
+        $data_to_insert['document_type'] = 'uploaded';
+        $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
+        $data_to_insert['document_title'] = $document['document_title'];
+        //
+        $file_info = pathinfo($document['document_s3_name']);
+        //
+        if (isset($file_info['extension'])) {
+            $data_to_insert['document_extension'] = $file_info['extension'];
+        }
+        //
+        $data_to_insert['uploaded'] = 1;
+        $data_to_insert['uploaded_file'] = $document['document_s3_name'];
+        $data_to_insert['uploaded_date'] = date('Y-m-d H:i:s');
+        $data_to_insert['document_s3_name'] = $document['document_s3_name'];
+        $data_to_insert['document_original_name'] = $$document['document_s3_name'];
+        $data_to_insert['visible_to_payroll'] = 1;
+        $data_to_insert['is_confidential'] =  1;
+        //
+        $this->assign_bulk_documents_model->insertDocumentsAssignmentRecord($data_to_insert);
+        //
+        $return_array['Status'] = true;
+        $return_array['Response'] = 'Proceed';
+        $this->response($return_array);
     }
 }

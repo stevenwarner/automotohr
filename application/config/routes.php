@@ -1694,6 +1694,8 @@ $route['home2']['get'] = 'v1/App/index';
 // Company document listing
 $route['company/documents/secure/listing'] = 'Assign_bulk_documents/secureDocumentsListing';
 $route['company/documents/secure/add'] = 'Assign_bulk_documents/addSecureDocument';
+$route['copy_manual_secure_document'] = 'Assign_bulk_documents/copySecureDocument';
+
 
 $route['assign-bulk-documents/upload_secure_document'] = 'assign_bulk_documents/uploadSecureDocument';
 

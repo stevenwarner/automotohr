@@ -288,4 +288,19 @@ class Assign_bulk_documents_model extends CI_Model
             return array();
         }
     }
+
+    function getSecureDocumentById ($documentId) {
+        //
+        $this->db->select('company_sid, document_title, document_s3_name, created_by');
+        $this->db->where('sid', $documentId);
+        $record_obj = $this->db->get('company_secure_documents');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
 }

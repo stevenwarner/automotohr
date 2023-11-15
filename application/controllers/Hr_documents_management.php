@@ -9331,10 +9331,17 @@ class Hr_documents_management extends Public_Controller
     public function deactivate_document()
     {
         $document_sid = $_POST['document_sid'];
-        $status_to_update = array();
-        $status_to_update['status'] = 0;
-        $status_to_update['archive'] = 1;
-        $this->hr_documents_management_model->change_document_status($document_sid, $status_to_update);
+        //
+        $is_manual = $this->hr_documents_management_model->checkDocumentIsManual($document_sid);
+        //
+        if ($is_manual) {
+            $this->hr_documents_management_model->deleteManualDocument($document_sid);
+        } else {
+            $status_to_update = array();
+            $status_to_update['status'] = 0;
+            $status_to_update['archive'] = 1;
+            $this->hr_documents_management_model->change_document_status($document_sid, $status_to_update);
+        }    
     }
 
     //
