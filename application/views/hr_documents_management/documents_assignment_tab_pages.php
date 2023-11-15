@@ -2202,7 +2202,8 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php if (!empty($no_action_required_payroll_documents)) { ?>
-                                                        <?php foreach ($no_action_required_payroll_documents as $document) { ?>
+                                                        <?php foreach ($no_action_required_payroll_documents as $document) {
+                                                            if(!$document['status']){continue;} ?>
                                                         <?php $nad++; $noActionRequiredDocumentsList[] = $document; ?>
                                                             <tr>
                                                                 <td class="col-lg-6">
