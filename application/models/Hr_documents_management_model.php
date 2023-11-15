@@ -588,7 +588,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-      //  $this->db->where('documents_assigned.archive', $archive);
+        //  $this->db->where('documents_assigned.archive', $archive);
         //
         if ($adf == 1) {
             $this->db->where('approval_process', 0);
@@ -1874,7 +1874,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_type', 'employee');
         $this->db->group_by('user_sid');
         //
-       // _e($employeeList);
+        // _e($employeeList);
         if ($employeeList != 'all') $this->db->where_in('user_sid', explode(':', $employeeList));
         //
         if ($documentList != 'all') $this->db->where_in('document_sid', explode(':', $documentList));
@@ -1889,7 +1889,7 @@ class Hr_documents_management_model extends CI_Model
 
             $employee_sids[$emp_key]['Documents'] = array();
             $assigned_documents = $this->get_employee_assigned_documents($company_sid, 'employee', $employee_sid);
-           // _e($assigned_documents);
+            // _e($assigned_documents);
 
             foreach ($assigned_documents as $document_key => $assigned_document) {
                 //
@@ -2137,7 +2137,7 @@ class Hr_documents_management_model extends CI_Model
                         $generalDocuments
                     );
 
-                    
+
                     if ($pending_w4 == 0 && $pending_w9 == 0 && $pending_i9 == 0 && count($generalDocuments) == 0) {
                         unset($employee_sids[$emp_key]);
                     } else {
@@ -2204,7 +2204,7 @@ class Hr_documents_management_model extends CI_Model
             if (!empty($employees_assigned_documents)) {
                 foreach ($employees_assigned_documents as $assigned_document) {
                     //
-                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_document); 
+                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_document);
                     //
                     if ($is_document_completed == 0) {
                         //
@@ -2213,7 +2213,7 @@ class Hr_documents_management_model extends CI_Model
                         //
                         $datediff = $now - strtotime($assigned_document['assigned_date']);
                         $days = round($datediff / (60 * 60 * 24));
-        
+
                         $pendingDocuments[$employeeId]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
                     }
                 }
@@ -2253,7 +2253,7 @@ class Hr_documents_management_model extends CI_Model
                 //
                 foreach ($employees_assigned_offer_letters as $assigned_offer_letter) {
                     //
-                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_offer_letter); 
+                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_offer_letter);
                     //
                     if ($is_document_completed == 0) {
                         //
@@ -2262,10 +2262,10 @@ class Hr_documents_management_model extends CI_Model
                         //
                         $datediff = $now - strtotime($assigned_offer_letter['assigned_date']);
                         $days = round($datediff / (60 * 60 * 24));
-        
-                        $pendingDocuments[$employeeId]['Documents'][] = array('ID' => $assigned_offer_letter['document_sid'], 'Title' => $assigned_offer_letter['document_title'], 'Type' => ucwords($assigned_offer_letter['document_type']).' Offer Letter', 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_offer_letter['assigned_by']);
+
+                        $pendingDocuments[$employeeId]['Documents'][] = array('ID' => $assigned_offer_letter['document_sid'], 'Title' => $assigned_offer_letter['document_title'], 'Type' => ucwords($assigned_offer_letter['document_type']) . ' Offer Letter', 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_offer_letter['assigned_by']);
                     }
-                }    
+                }
             }
             //
             // Get employees W4
@@ -2298,7 +2298,6 @@ class Hr_documents_management_model extends CI_Model
                         'Days' => $days
                     );
                 }
-                
             }
             //
             // Get employees W9
@@ -2310,7 +2309,7 @@ class Hr_documents_management_model extends CI_Model
             $this->db->where('user_consent ', 0);
             $this->db->or_where('user_consent', NULL);
             $this->db->group_end();
-        
+
             $employees_w9_documents = $this->db->get('applicant_w9form')->result_array();
             //
             if (!empty($employees_w9_documents)) {
@@ -2332,7 +2331,6 @@ class Hr_documents_management_model extends CI_Model
                         'Days' => $days
                     );
                 }
-                
             }
             //
             // Get employees I9
@@ -2366,7 +2364,6 @@ class Hr_documents_management_model extends CI_Model
                         'Days' => $days
                     );
                 }
-                
             }
             //
             // Get EEOC
@@ -2398,7 +2395,7 @@ class Hr_documents_management_model extends CI_Model
                         );
                     }
                 }
-            } 
+            }
             //
             // Get employees General Documents
             $this->db->select('sid, user_sid, assigned_at, document_type');
@@ -2470,14 +2467,14 @@ class Hr_documents_management_model extends CI_Model
                 $pendingDocuments[$p_key]['access_level_plus'] = $employeeInfo['access_level_plus'];
                 $pendingDocuments[$p_key]['pay_plan_flag'] = $employeeInfo['pay_plan_flag'];
                 $pendingDocuments[$p_key]['job_title'] = $employeeInfo['job_title'];
-
             }
         }
         //
         return array_values($pendingDocuments);
     }
 
-    public function getEmployeeOfferLetter ($user_sid, $user_type) {
+    public function getEmployeeOfferLetter($user_sid, $user_type)
+    {
         $this->db->select('
             documents_assigned.sid,
             documents_assigned.user_sid, 
@@ -2560,7 +2557,6 @@ class Hr_documents_management_model extends CI_Model
                     'Days' => "",
                     'Status' => 'not_assigned'
                 );
-                
             }
             //
             $now = time();
@@ -2601,7 +2597,6 @@ class Hr_documents_management_model extends CI_Model
                         'Status' => $status
                     );
                 }
-                
             }
             //
             // Get employees I9
@@ -2639,14 +2634,11 @@ class Hr_documents_management_model extends CI_Model
                         'Status' => $status
                     );
                 }
-                
             }
         }
         //
         // _e($pendingDocuments,true,true);
         return array_values($pendingDocuments);
-        
-
     }
 
     function getEmployeesWithPendingFederalFillable_old(
@@ -10244,7 +10236,8 @@ class Hr_documents_management_model extends CI_Model
         return $b;
     }
 
-    public function checkDocumentCompletionStatus ($assigned_document) {
+    public function checkDocumentCompletionStatus($assigned_document)
+    {
         //
         $is_magic_tag_exist = 0;
         $is_document_completed = 0;
@@ -10320,8 +10313,6 @@ class Hr_documents_management_model extends CI_Model
                     $is_document_completed = 0;
                 }
             }
-
-            
         } else {
             $is_document_completed = 1;
         }
@@ -10329,5 +10320,29 @@ class Hr_documents_management_model extends CI_Model
         return $is_document_completed;
     }
 
+    function checkDocumentIsManual($document_sid)
+    {
 
+        $this->db->select('document_type, document_sid');
+        $this->db->where('sid', $document_sid);
+
+        $this->db->where('document_sid', 0);
+        $this->db->where('document_type', 'uploaded');
+
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if ($record_arr['document_sid'] == 0 && $record_arr['document_type'] == 'uploaded') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteManualDocument($document_sid)
+    {
+        $this->db->where('sid', $document_sid);
+        $this->db->delete('documents_assigned');
+    }
 }

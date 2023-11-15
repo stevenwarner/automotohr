@@ -1694,6 +1694,8 @@ $route['home2']['get'] = 'v1/App/index';
 // Company document listing
 $route['company/documents/secure/listing'] = 'Assign_bulk_documents/secureDocumentsListing';
 $route['company/documents/secure/add'] = 'Assign_bulk_documents/addSecureDocument';
+$route['copy_manual_secure_document'] = 'Assign_bulk_documents/copySecureDocument';
+
 
 $route['assign-bulk-documents/upload_secure_document'] = 'assign_bulk_documents/uploadSecureDocument';
 
@@ -1973,4 +1975,3 @@ $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmi
 
 //
 $route['hr_documents_management/print_download_hybird_document_resource_center/(:num)'] = 'hr_documents_management/print_download_hybird_document_resource_center/$1';
-
