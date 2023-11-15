@@ -2020,17 +2020,13 @@ if (!function_exists('upload_file_to_aws')) {
 
     function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME, $key = NULL)
     {
-        // if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
+
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
 
         $CI = &get_instance();
-
-        //require_once(APPPATH . 'libraries/aws/aws.php');
         if ($key !== NULL && isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'][$key] != '') {
             //
             $modify_file_name = modify_document_name($document_name, $_FILES[$file_input_id]["name"][$key], $company_sid, $suffix);
-            //
-            /* $aws = new AwsSdk();
-              $aws->putToBucket($new_file_name, $_FILES[$file_input_id]["tmp_name"], $bucket_name); */
             //  
             $CI->load->library('aws_lib');
             //
@@ -2046,7 +2042,6 @@ if (!function_exists('upload_file_to_aws')) {
                 $CI->aws_lib->put_object($options);
                 //
                 return $modify_file_name;
-            
             } catch (Exception $exception) {
                 return 'error';
             }
@@ -2054,14 +2049,11 @@ if (!function_exists('upload_file_to_aws')) {
         } else if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
             $modify_file_name = modify_document_name($document_name, $_FILES[$file_input_id]["name"], $company_sid, $suffix);
             //
-            /* $aws = new AwsSdk();
-              $aws->putToBucket($new_file_name, $_FILES[$file_input_id]["tmp_name"], $bucket_name); */
-            //
             $CI->load->library('aws_lib');
             //
             try {
                 $options = [
-                    'Bucket' => $bucket_name.,
+                    'Bucket' => $bucket_name,
                     'Key' => $modify_file_name,
                     'Body' => file_get_contents($_FILES[$file_input_id]["tmp_name"]),
                     'ACL' => 'public-read',
@@ -2071,7 +2063,6 @@ if (!function_exists('upload_file_to_aws')) {
                 $CI->aws_lib->put_object($options);
                 //
                 return $modify_file_name;
-            
             } catch (Exception $exception) {
                 return 'error';
             }
@@ -12122,11 +12113,11 @@ if (!function_exists('')) {
         //
         $printURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/print');
         $downloadURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/download');
-      
+
         $printURLNew = base_url('hr_documents_management/perform_action_on_document_content_new/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/print');
         $downloadURLNew = base_url('hr_documents_management/perform_action_on_document_content_new/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/download');
 
-      
+
         // For Generated
         if ($document['offer_letter_type'] == 'generated' || $document['document_type'] == 'generated') {
             //
@@ -12142,9 +12133,6 @@ if (!function_exists('')) {
             //
             $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
             $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
-
-
-
         } else if ($document['offer_letter_type'] == 'uploaded' || $document['document_type'] == 'uploaded') {
             //
             if ($type == '') {
@@ -12158,11 +12146,10 @@ if (!function_exists('')) {
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . ($awsPath) . '&embedded=true';
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
             $downloadURL = base_url("hr_documents_management/download_upload_document/" . $awsPath);
-        
+
             //
             $printURLNew = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . ($awsPath) . '&embedded=true';
             $downloadURLNew = base_url("hr_documents_management/download_upload_document_new/" . $document['document_s3_name']);
-
         } else if ($document['offer_letter_type'] == 'hybrid_document' || $document['document_type'] == 'hybrid_document') {
             //
             if ($type == '') {
@@ -12179,22 +12166,17 @@ if (!function_exists('')) {
             // $printURLNew = str_replace(array_keys($replace), $replace, $printURLNew);
             // $downloadURLNew = str_replace(array_keys($replace), $replace, $downloadURLNew);
             if (isset($document['uploaded_document_extension'])) {
-                $printURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document['sid']);
-                $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document['sid']);
+                $printURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/' . $document['sid']);
+                $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/original/print/both/' . $document['sid']);
             } else {
                 if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
-                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document['sid']);
-                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document['sid']);
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/' . $document['sid']);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/' . $document['sid']);
                 } else {
-                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document['sid']);
-                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document['sid']);
+                    $printURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/' . $document['sid']);
+                    $downloadURLNew = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/' . $document['sid']);
                 }
             }
-            
-            
-            
-
-
         }
         //_e($document, true);
         //
@@ -12203,7 +12185,7 @@ if (!function_exists('')) {
         //
         $r['dw'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
         $r['dm'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black"  target="_blank">Download</a>';
-        
+
         //
         $r['pwnew'] = '<a href="' . ($printURLNew) . '" class="btn ' . ($cls) . ' btn-orange" style="margin-right: 5px" target="_blank">Print</a>';
         $r['dwnew'] = '<a href="' . ($downloadURLNew) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
@@ -13300,7 +13282,7 @@ if (!function_exists('isDocumentCompletedCheck')) {
                     $ra['ifram_url'] = $listaction['ifram_url'];
                     $ra['image_path'] = $listaction['image_path'];
                 }
-            } else if($type === 'hybrid_document') {
+            } else if ($type === 'hybrid_document') {
                 if ($document['user_consent'] == 1) {
                     $ra['isCompleted'] = true;
                 }
@@ -14495,7 +14477,7 @@ if (!function_exists('SendResponse')) {
         }
         //
         if ($status == 400) {
-             header("Content-type: {$type}");
+            header("Content-type: {$type}");
             header("HTTP/1.0 400 Bad Request");
             if ($data) {
                 echo json_encode($data);
@@ -14690,7 +14672,7 @@ if (!function_exists('_m')) {
         //
         if ($d) {
             return
-            $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
+                $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
         }
         //
         return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
