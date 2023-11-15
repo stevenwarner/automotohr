@@ -106,7 +106,7 @@ class Cms extends Admin_Controller
             ];
         }
         // for products
-        else if (in_array($page_data["slug"], ["payroll", "compliance", "employee-management", "hr-electronic-onboarding", "people-operations", "recruitment"])) {
+        elseif (in_array($page_data["slug"], ["payroll", "compliance", "employee-management", "hr-electronic-onboarding", "people-operations", "recruitment"])) {
             //
             $files = [
                 "v1/cms/product",
@@ -660,6 +660,101 @@ class Cms extends Admin_Controller
 
             unset($post["source_type"]);
         }
+
+        // for extra points
+        if ($post["source_type_point_1"]) {
+            //
+            $fileLink = $post["source_link_point_1"];
+            //
+            if ($post["source_type_point_1"] === "upload") {
+                //
+                if (!$_FILES['file_point_1'] && $post['source_link_point_1']) {
+                    $fileLink = $post["source_link_point_1"];
+                } else {
+                    // check and run for image
+                    $errors = hasFileErrors($_FILES, "file_point_1", 'image|video', 10);
+                    //
+                    if ($errors) {
+                        return SendResponse(
+                            400,
+                            ["errors" => $errors]
+                        );
+                    }
+                    $fileLink = upload_file_to_aws(
+                        "file_point_1",
+                        0,
+                        "point_1",
+                    );
+                }
+            }
+            $post["headingPoint1File"] = $fileLink;
+            $post["headingPoint1Type"] = $post["source_type_point_1"];
+
+            unset($post["source_type_point_1"]);
+        }
+
+        if ($post["source_type_point_2"]) {
+            //
+            $fileLink = $post["source_link_point_2"];
+            //
+            if ($post["source_type_point_2"] === "upload") {
+                //
+                if (!$_FILES['file_point_2'] && $post['source_link_point_2']) {
+                    $fileLink = $post["source_link_point_2"];
+                } else {
+                    // check and run for image
+                    $errors = hasFileErrors($_FILES, "file_point_2", 'image|video', 10);
+                    //
+                    if ($errors) {
+                        return SendResponse(
+                            400,
+                            ["errors" => $errors]
+                        );
+                    }
+                    $fileLink = upload_file_to_aws(
+                        "file_point_2",
+                        0,
+                        "point_2",
+                    );
+                }
+            }
+            $post["headingPoint2File"] = $fileLink;
+            $post["headingPoint2Type"] = $post["source_type_point_2"];
+
+            unset($post["source_type_point_2"]);
+        }
+
+        if ($post["source_type_point_3"]) {
+            //
+            $fileLink = $post["source_link_point_3"];
+            //
+            if ($post["source_type_point_3"] === "upload") {
+                //
+                if (!$_FILES['file_point_3'] && $post['source_link_point_3']) {
+                    $fileLink = $post["source_link_point_3"];
+                } else {
+                    // check and run for image
+                    $errors = hasFileErrors($_FILES, "file_point_3", 'image|video', 10);
+                    //
+                    if ($errors) {
+                        return SendResponse(
+                            400,
+                            ["errors" => $errors]
+                        );
+                    }
+                    $fileLink = upload_file_to_aws(
+                        "file_point_3",
+                        0,
+                        "point_3",
+                    );
+                }
+            }
+            $post["headingPoint3File"] = $fileLink;
+            $post["headingPoint3Type"] = $post["source_type_point_3"];
+
+            unset($post["source_type_point_3"]);
+        }
+
 
         $pageContent["page"]["sections"][$post["section"]] = $post;
         //
