@@ -49,10 +49,8 @@
 
                     <div class="row">
                         <div class="col-lg-12">
-
                             <div class="col-lg-8 col-md-6 col-xs-12 col-sm-6">
                             </div>
-
                             <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">
                                 <div class="form-group">
                                     <label class="hidden-xs">&nbsp;</label>
@@ -103,7 +101,7 @@
                                             <form action="javascript:void(0)" id="js-applicant-search-form">
                                                 <div class="row">
                                                     <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10">
-                                                        <input type="text" placeholder="Search Applicant by Name or Email" name="keyword" class="invoice-fields search-job" value="">
+                                                        <input type="text" placeholder="Search Applicant by Name or Email or Phone number" name="keyword" class="invoice-fields search-job" value="">
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
                                                         <input type="submit" value="Search" class="form-btn">
@@ -316,6 +314,8 @@
                 rows += '   <td>';
                 rows += '       <p>' + (v.user_name) + '</p>';
                 rows += '       <p><strong>Email: </strong>' + (v.user_email) + '</p>';
+                rows += '       <p><strong>Primary Number: </strong>' + (v.PhoneNumber) + '</p>';
+
                 if (v.user_registration_date != null)
                     rows += '       <p><strong>Joining Date: </strong>' + (v.user_registration_date) + '</p>';
                 rows += '   </td>';

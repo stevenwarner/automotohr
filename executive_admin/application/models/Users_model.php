@@ -586,6 +586,7 @@ class Users_model extends CI_Model
             users.access_level,
             users.access_level_plus,
             users.pay_plan_flag,
+            users.PhoneNumber,
             users.is_executive_admin,
             "employee" as user_type,
             "0" as job_count
@@ -622,6 +623,7 @@ class Users_model extends CI_Model
             users.CompanyName as company_name,
             portal_job_applications.employer_sid as company_sid,
             portal_job_applications.archived as is_archived,
+            portal_job_applications.phone_number as PhoneNumber,
             "applicant" as user_type,
             "0" as job_count
         ')

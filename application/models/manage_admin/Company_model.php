@@ -209,6 +209,8 @@ class Company_model extends CI_Model
         $this->db->select('table_one.languages_speak');
 
         $this->db->select('table_one.complynet_job_title');
+        $this->db->select('table_one.PhoneNumber');
+
 
 
         $this->db->where('table_one.is_executive_admin <', 1);

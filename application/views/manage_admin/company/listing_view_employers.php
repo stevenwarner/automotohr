@@ -106,8 +106,8 @@
                                                                 $doNotHireRecords = checkDontHireText($employeeIds);
 
                                                             ?>
-                                                                <?php foreach ($employers as $key => $value) {
-
+                                                                <?php
+                                                                foreach ($employers as $key => $value) {
                                                                     $doNotHireWarning = doNotHireWarning($value['sid'], $doNotHireRecords, 14);
 
                                                                 ?>
@@ -148,7 +148,7 @@
 
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
-                                                                            <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
+                                                                            <?php echo $value['email'] . '<br>' . '<b>Primary Number: </b>'. $value['PhoneNumber'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
 
                                                                             <?php
                                                                             if (!empty($value['complynet_job_title'])) { ?>
@@ -236,10 +236,10 @@
                                                                             <?php   } ?>
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
-                                                                                <?php if (isTranferredEmployee($value['sid'])) { ?>
-                                                                            <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
-                                                                                <i class="fa fa-history" aria-hidden="true"></i>
-                                                                            </button>
+                                                                            <?php if (isTranferredEmployee($value['sid'])) { ?>
+                                                                                <button class="btn btn-success btn-sm jsEmployeeTransferLog" title="View Transfer Log" placement="top" data-id="<?php echo $value['sid']; ?>" data-original-title="View Transfer Detail">
+                                                                                    <i class="fa fa-history" aria-hidden="true"></i>
+                                                                                </button>
                                                                             <?php } ?>
                                                                         </td>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
@@ -386,6 +386,7 @@
                     url: url,
                     type: 'POST',
                     data: {
+                        Email
                         action: 'active',
                         sid: id
                     },
@@ -423,6 +424,7 @@
             e.preventDefault();
             update_url();
             window.location = $(this).attr('href').toString();
+            Email
         });
     });
 
