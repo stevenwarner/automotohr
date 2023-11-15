@@ -148,7 +148,9 @@
 
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
-                                                                            <?php echo $value['email'] . '<br>' . '<b>Primary Number: </b>'. $value['PhoneNumber'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
+                                                                            <?php echo $value['email'] . '<br>' . (
+                                                                                $value["PhoneNumber"] ? '<b>Primary Number: </b>' . $value['PhoneNumber'] . "<br />" : ''
+                                                                            ) . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
 
                                                                             <?php
                                                                             if (!empty($value['complynet_job_title'])) { ?>
@@ -386,7 +388,6 @@
                     url: url,
                     type: 'POST',
                     data: {
-                        Email
                         action: 'active',
                         sid: id
                     },
@@ -424,7 +425,6 @@
             e.preventDefault();
             update_url();
             window.location = $(this).attr('href').toString();
-            Email
         });
     });
 
