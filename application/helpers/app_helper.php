@@ -1975,16 +1975,16 @@ if (!function_exists("hasFileErrors")) {
 
 
 if (!file_exists("getSourceByType")) {
-    function getSourceByType(string $type, string $path, string $props = ''): string
+    function getSourceByType(string $type, string $path, string $props = '', $fullWidth = true): string
     {
         if ($type === "upload") {
             if (isImage($path)) {
-                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="width: 100%;" '.($props).' />';
+                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' />';
             } else {
-                return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="width: 100%;" controls ' . ($props) . '></video>';
+                return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" controls ' . ($props) . '></video>';
             }
         } else {
-            return '<iframe src="' . $path . '" title="AutomotoHR video" ' . ($props) . '></iframe>';
+            return '<iframe src="' . $path . '" title="AutomotoHR video" style="' . ($fullWidth ? "width: 100%;" : "") . ' min-height: 450px" ' . ($props) . '></iframe>';
         }
     }
 }

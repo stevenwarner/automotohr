@@ -179,25 +179,17 @@ class App extends CI_Controller
         //
         // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
-        $pageContent = getPageContent($productSlug, true);
+        $pageContent = getPageContent($productSlug, true)["page"];
 
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = $pageContent['page']['meta']['title'];
-        $data['meta']['description'] = $pageContent['page']['meta']['description'];
-        $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
+        $data['meta']['title'] = $pageContent['meta']['title'];
+        $data['meta']['description'] = $pageContent['meta']['description'];
+        $data['meta']['keywords'] = $pageContent['meta']['keyword'];
         //
         $this->getCommon($data, "products");
         //
-        $pageContent["page"]["mainHeading"]["text"] = ucwords(trim(preg_replace('/-/', ' ', $productSlug)));
-        $pageContent["page"]["sections"]["section3"]["image"] = "framewithoutshadow.png";
-        $pageContent["page"]["sections"]["section4"]["image"] = "Frame 242.png";
-        $pageContent["page"]["sections"]["section5"]["image"] = "Frame 241.png";
-        $pageContent["page"]["sections"]["section6"]["image"] = "Frame 2.png";
-        $pageContent["page"]["sections"]["section7"]["image"] = "Frame 2.png";
-        $pageContent["page"]["sections"]["section8"]["image"] = "Frame 2.png";
-        //
-        $data["pageContent"] = $pageContent;
+        $data["pageContent"] = $pageContent["sections"];
         //
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/products/main');

@@ -12,7 +12,7 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <h1 class="page-title">
                                             <i class="fa fa-edit" aria-hidden="true"></i>
-                                            &nbsp;Payroll product page
+                                            &nbsp;Employee Management page
                                         </h1>
                                     </div>
                                     <div class="col-sm-6 text-right">

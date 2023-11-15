@@ -2027,3 +2027,14 @@ $route["cms/(:num)/home/product/(:num)"]["delete"] = "manage_admin/Cms/deletePro
 $route["cms/(:num)/home/product/(:num)"]["post"] = "manage_admin/Cms/updateProductToHomePage/$1/$2";
 // home process
 $route["cms/(:num)/section"]["post"] = "manage_admin/Cms/updatePageSection/$1";
+$route["cms/page/product"]["get"] = "manage_admin/Cms/getProductAddPage";
+$route["cms/(:num)/product"]["post"] = "manage_admin/Cms/addProductSection/$1";
+$route["cms/page/(:num)/product/(:num)"]["get"] = "manage_admin/Cms/geProductEditPage/$1/$2";
+$route["cms/(:num)/product/(:num)"]["post"] = "manage_admin/Cms/updateProduct/$1/$2";
+$route["cms/(:num)/product/(:num)"]["delete"] = "manage_admin/Cms/deleteProduct/$1/$2";
+// about us
+$route["cms/page/(:any)"]["get"] = "manage_admin/Cms/getAddPage/$1";
+$route["cms/page/(:num)/add"]["post"] = "manage_admin/Cms/processAddPage/$1";
+$route["cms/page/(:num)/teams/(:num)"]["get"] = "manage_admin/Cms/getEditPage/$1/teams/$2";
+$route["cms/page/(:num)/edit/(:num)"]["post"] = "manage_admin/Cms/processEditPage/$1/$2";
+$route["cms/page/(:num)/(:any)/(:num)"]["delete"] = "manage_admin/Cms/processDeletePage/$1/$2/$3";

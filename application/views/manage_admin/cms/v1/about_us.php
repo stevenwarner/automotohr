@@ -12,7 +12,7 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <h1 class="page-title">
                                             <i class="fa fa-edit" aria-hidden="true"></i>
-                                            &nbsp;Payroll product page
+                                            &nbsp;About Us
                                         </h1>
                                     </div>
                                     <div class="col-sm-6 text-right">
@@ -27,12 +27,12 @@
                             <br />
                             <!-- Meta -->
                             <?php $this->load->view("manage_admin/cms/v1/partials/meta"); ?>
-                            <!-- Slider -->
-                            <?php $this->load->view("manage_admin/cms/v1/partials/product_slider"); ?>
-                            <!-- About section -->
-                            <?php $this->load->view("manage_admin/cms/v1/partials/product_about"); ?>
-                            <!-- About section -->
-                            <?php $this->load->view("manage_admin/cms/v1/partials/product_listing"); ?>
+                            <!-- Section 1 -->
+                            <?php $this->load->view("manage_admin/cms/v1/partials/about/section_1"); ?>
+                            <!-- Section 2 -->
+                            <?php $this->load->view("manage_admin/cms/v1/partials/about/section_2"); ?>
+                            <!-- Section 3 -->
+                            <?php $this->load->view("manage_admin/cms/v1/partials/about/section_3"); ?>
                         </div>
                     </div>
                 </div>

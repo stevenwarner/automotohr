@@ -94,7 +94,7 @@ class Cms extends Admin_Controller
         ], $page_data["page"], false);
         //
         $files = [];
-
+        // for home page
         if ($page_data["page"] == "home") {
             //
             $files = [
@@ -105,13 +105,24 @@ class Cms extends Admin_Controller
                 "v1/cms/about_section",
             ];
         }
-
-        if (in_array($page_data["slug"], ["payroll"])) {
+        // for products
+        else if (in_array($page_data["slug"], ["payroll", "compliance", "employee-management", "hr-electronic-onboarding", "people-operations", "recruitment"])) {
             //
             $files = [
                 "v1/cms/product",
             ];
         }
+        // for each page
+        else {
+            $files = [
+                "v1/cms/page/" . $page_data["slug"]
+            ];
+        }
+
+        $this->data["PageScripts"] = [
+            "v1/plugins/ckeditor5/main"
+        ];
+
         //
         $this->data["appJs"] = bundleJs(array_merge([
             "v1/plugins/ms_modal/main",
@@ -699,5 +710,365 @@ class Cms extends Admin_Controller
             "sourceFile" => $pageContent["page"]["sections"]["section2"]["products"][$index]["sourceFile"],
             "index" => $index
         ]);
+    }
+
+    /**
+     * 
+     */
+    public function getProductAddPage()
+    {
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view(
+                "manage_admin/cms/v1/partials/product/add",
+                [],
+                true
+            )
+        ]);
+    }
+    /**
+     * Home page add product
+     */
+    public function addProductSection(int $pageId)
+    {
+        $this->form_validation->set_rules("mainHeading", "Main heading", "xss_clean|required|trim");
+        $this->form_validation->set_rules("details", "Details", "xss_clean|required|trim");
+        //
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $fileLink = $post["source_link"];
+        //
+        if ($post["source_type"] === "upload") {
+            //
+            // check and run for image
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+            //
+            if ($errors) {
+                return SendResponse(
+                    400,
+                    ["errors" => $errors]
+                );
+            }
+            $fileLink = upload_file_to_aws(
+                "file",
+                0,
+                "home_page_product_",
+            );
+        }
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+        //
+        $pageContent["page"]["sections"]["products"][] = [
+            "mainHeading" => $post["mainHeading"],
+            "details" => $post["details"],
+            "direction" => $post["direction"],
+            "sourceType" => $post["source_type"],
+            "sourceFile" => $fileLink,
+        ];
+        //
+        $this->db
+            ->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => json_encode($pageContent)
+            ]);
+        //
+        return SendResponse(200, ["msg" => "You have successfully added a new product section."]);
+    }
+
+    /**
+     * 
+     */
+    public function geProductEditPage(int $pageId, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view(
+                "manage_admin/cms/v1/partials/product/edit",
+                [
+                    "data" => $pageContent["page"]["sections"]["products"][$index]
+                ],
+                true
+            ),
+            "sourceType" => $pageContent["page"]["sections"]["products"][$index]["sourceType"],
+            "sourceFile" => $pageContent["page"]["sections"]["products"][$index]["sourceFile"],
+            "index" => $index
+        ]);
+    }
+
+    /**
+     * Home page update product
+     */
+    public function updateProduct(int $pageId, int $index)
+    {
+        $this->form_validation->set_rules("mainHeading", "Main heading", "xss_clean|required|trim");
+        $this->form_validation->set_rules("details", "Details", "xss_clean|required|trim");
+        //
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $fileLink = $post["source_link"];
+        //
+        if ($post["source_type"] === "upload") {
+            //
+            if (!$_FILES['file'] && $post['source_link']) {
+                $fileLink = $post["source_link"];
+            } else {
+                // check and run for image
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                //
+                if ($errors) {
+                    return SendResponse(
+                        400,
+                        ["errors" => $errors]
+                    );
+                }
+                $fileLink = upload_file_to_aws(
+                    "file",
+                    0,
+                    "product_page_",
+                );
+            }
+        }
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+        //
+        $pageContent["page"]["sections"]["products"][$index] = [
+            "mainHeading" => $post["mainHeading"],
+            "details" => $post["details"],
+            "direction" => $post["direction"],
+            "sourceType" => $post["source_type"],
+            "sourceFile" => $fileLink,
+        ];
+        //
+        $this->db
+            ->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => json_encode($pageContent)
+            ]);
+        //
+        return SendResponse(200, ["msg" => "You have successfully updated the product section."]);
+    }
+
+    /**
+     * Home page delete product
+     */
+    public function deleteProduct(int $pageId, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+
+        unset($pageContent["page"]["sections"]["products"][$index]);
+        //
+        $this->db
+            ->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => json_encode($pageContent)
+            ]);
+        //
+        return SendResponse(200, ["msg" => "You have successfully deleted the selected product section."]);
+    }
+
+
+    /**
+     * get add page by page name
+     *
+     * @param string $page
+     */
+    public function getAddPage(string $page)
+    {
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view(
+                "manage_admin/cms/v1/partials/page/" . $page,
+                [],
+                true
+            )
+        ]);
+    }
+
+    /**
+     * Home page add product
+     */
+    public function processAddPage(int $pageId)
+    {
+        $this->form_validation->set_rules("mainHeading", "Main heading", "xss_clean|required|trim");
+        $this->form_validation->set_rules("details", "Details", "xss_clean|required|trim");
+        //
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $fileLink = $post["source_link"];
+        //
+        if ($post["source_type"] === "upload") {
+            //
+            // check and run for image
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+            //
+            if ($errors) {
+                return SendResponse(
+                    400,
+                    ["errors" => $errors]
+                );
+            }
+            $fileLink = upload_file_to_aws(
+                "file",
+                0,
+                "home_page_product_",
+            );
+        }
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+        //
+        $pageContent["page"]["sections"][$post["section"]][] = [
+            "mainHeading" => $post["mainHeading"],
+            "details" => $post["details"],
+            "sourceType" => $post["source_type"],
+            "sourceFile" => $fileLink,
+        ];
+        //
+        $this->db
+            ->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => json_encode($pageContent)
+            ]);
+        //
+        return SendResponse(200, ["msg" => "You have successfully added a new section."]);
+    }
+
+    /**
+     * get the edit page
+     */
+    public function getEditPage(int $pageId, string $page, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view(
+                "manage_admin/cms/v1/partials/page/" . $page,
+                [
+                    "data" => $pageContent["page"]["sections"][$page][$index]
+                ],
+                true
+            ),
+            "sourceType" => $pageContent["page"]["sections"][$page][$index]["sourceType"],
+            "sourceFile" => $pageContent["page"]["sections"][$page][$index]["sourceFile"],
+            "index" => $index
+        ]);
+    }
+
+    /**
+     * Home page add product
+     */
+    public function processEditPage(int $pageId, int $index)
+    {
+        $this->form_validation->set_rules("mainHeading", "Main heading", "xss_clean|required|trim");
+        $this->form_validation->set_rules("details", "Details", "xss_clean|required|trim");
+        //
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $fileLink = $post["source_link"];
+        //
+        if ($post["source_type"] === "upload") {
+            //
+            if (!$_FILES['file'] && $post['source_link']) {
+                $fileLink = $post["source_link"];
+            } else {
+                // check and run for image
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                //
+                if ($errors) {
+                    return SendResponse(
+                        400,
+                        ["errors" => $errors]
+                    );
+                }
+                $fileLink = upload_file_to_aws(
+                    "file",
+                    0,
+                    "product_page_",
+                );
+            }
+        }
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+        //
+        $pageContent["page"]["sections"][$post["section"]][$index] = [
+            "mainHeading" => $post["mainHeading"],
+            "details" => $post["details"],
+            "sourceType" => $post["source_type"],
+            "sourceFile" => $fileLink,
+        ];
+        //
+        $this->db
+            ->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => json_encode($pageContent)
+            ]);
+        //
+        return SendResponse(200, ["msg" => "You have successfully updated a section."]);
+    }
+
+    /**
+     * Home page delete product
+     */
+    public function processDeletePage(int $pageId, string $page, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+
+        unset($pageContent["page"]["sections"][$page][$index]);
+        //
+        $this->db
+            ->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => json_encode($pageContent)
+            ]);
+        //
+        return SendResponse(200, ["msg" => "You have successfully deleted the selected section."]);
     }
 }

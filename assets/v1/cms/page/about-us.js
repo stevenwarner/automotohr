@@ -1,23 +1,7 @@
 $(function () {
 	let XHR = null;
-
-	$("#jsProductSliderForm").validate({
-		rules: {
-			mainHeading: {
-				required: true,
-			},
-			details: {
-				required: true,
-			},
-		},
-		submitHandler: function (form) {
-			const formDataObj = formArrayToObj($(form).serializeArray());
-			formDataObj.append("section", "banner");
-			return processData(formDataObj, $(".jsProductSliderBtn"), "slider");
-		},
-	});
-
-	$("#jsProductAboutFile").msFileUploader({
+	// section 1
+	$("#jsSection1File").msFileUploader({
 		allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 		allowLinks: true,
 		activeLink: aboutObj.sourceType,
@@ -25,7 +9,7 @@ $(function () {
 		fileLimit: "10mb",
 	});
 
-	$("#jsProductAboutForm").validate({
+	$("#jsSection1Form").validate({
 		rules: {
 			mainHeading: {
 				required: true,
@@ -33,20 +17,21 @@ $(function () {
 			subHeading: {
 				required: true,
 			},
-			heading: {
-				required: true,
-			},
 			details: {
 				required: true,
 			},
 		},
 		submitHandler: function (form) {
-			const fileObject = $("#jsProductAboutFile").msFileUploader("get");
+			const fileObject = $("#jsSection1File").msFileUploader("get");
 			//
 			if (!isValidFile(fileObject)) {
 				return _error("Please select a valid source.");
 			}
-			const formDataObj = formArrayToObj($(form).serializeArray());
+			//
+			let formDataObj = formArrayToObj($(form).serializeArray());
+
+			formDataObj.append("section", "section_1");
+
 			//
 			if (fileObject.link !== undefined) {
 				formDataObj.append("source_type", fileObject.type);
@@ -55,12 +40,54 @@ $(function () {
 				formDataObj.append("source_type", "upload");
 				formDataObj.append("file", fileObject);
 			}
-			formDataObj.append("section", "about");
-			return processData(formDataObj, $(".jsProductAboutBtn"), "about");
+
+			return processData(formDataObj, $("#jsSection1Btn"), "section_1");
 		},
 	});
 
-	$("#jsProductPageForm").validate({
+	// section 2
+	$("#jsSection2File").msFileUploader({
+		allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
+		allowLinks: true,
+		activeLink: section2.sourceType,
+		placeholderImage: section2.sourceFile,
+		fileLimit: "10mb",
+	});
+
+	$("#jsSection2Form").validate({
+		rules: {
+			mainHeading: {
+				required: true,
+			},
+			details: {
+				required: true,
+			},
+		},
+		submitHandler: function (form) {
+			const fileObject = $("#jsSection2File").msFileUploader("get");
+			//
+			if (!isValidFile(fileObject)) {
+				return _error("Please select a valid source.");
+			}
+			//
+			let formDataObj = formArrayToObj($(form).serializeArray());
+			//
+			formDataObj.append("section", "section_2");
+			//
+			if (fileObject.link !== undefined) {
+				formDataObj.append("source_type", fileObject.type);
+				formDataObj.append("source_link", fileObject.link);
+			} else {
+				formDataObj.append("source_type", "upload");
+				formDataObj.append("file", fileObject);
+			}
+			//
+			return processData(formDataObj, $("#jsSection2Btn"), "section_2");
+		},
+	});
+
+	// section 3
+	$("#jsSection3Form").validate({
 		rules: {
 			mainHeading: {
 				required: true,
@@ -68,14 +95,17 @@ $(function () {
 		},
 		submitHandler: function (form) {
 			//
-			const formDataObj = formArrayToObj($(form).serializeArray());
-			formDataObj.append("section", "product");
-			return processData(formDataObj, $(".jsProductPageBtn"), "products");
+			let formDataObj = formArrayToObj($(form).serializeArray());
+			//
+			formDataObj.append("section", "section_3");
+
+			//
+			return processData(formDataObj, $("#jsSection3Btn"), "section_3");
 		},
 	});
 
 	//
-	$(".jsProductPageAddProductBtn").click(function (event) {
+	$("#jsSection3AddBtn").click(function (event) {
 		//
 		event.preventDefault();
 
@@ -84,14 +114,14 @@ $(function () {
 				Id: "jsAddModal",
 				Loader: "jsAddModalLoader",
 				Body: '<div id="jsAddModalBody"></div>',
-				Title: "Add a Product Section",
+				Title: "Add a Team member",
 			},
 			getAddPage
 		);
 	});
 
 	//
-	$(".jsEditHomeProduct").click(function (event) {
+	$(".jsEditPage").click(function (event) {
 		//
 		event.preventDefault();
 		//
@@ -102,7 +132,7 @@ $(function () {
 				Id: "jsEditModal",
 				Loader: "jsEditModalLoader",
 				Body: '<div id="jsEditModalBody"></div>',
-				Title: "Edit a product",
+				Title: "Edit a Team member",
 			},
 			function () {
 				getEditPage(bannerRef);
@@ -111,7 +141,7 @@ $(function () {
 	});
 
 	//
-	$(".jsDeleteHomeProduct").click(function (event) {
+	$(".jsDeletePage").click(function (event) {
 		//
 		event.preventDefault();
 		//
@@ -121,7 +151,7 @@ $(function () {
 		return _confirm(
 			"Do you really want to delete this product section?",
 			function () {
-				processDeleteBProduct(bannerRef, buttonRef);
+				processDelete(bannerRef, buttonRef, "section_3");
 			}
 		);
 	});
@@ -175,7 +205,7 @@ $(function () {
 		}
 		//
 		XHR = $.ajax({
-			url: baseUrl("cms/page/product"),
+			url: baseUrl("cms/page/add_team"),
 			method: "GET",
 		})
 			.always(function () {
@@ -187,18 +217,19 @@ $(function () {
 				//
 				$("#sourceFile").msFileUploader({
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
-					allowLinks: true,
+					allowLinks: false,
 					activeLink: "upload",
 					fileLimit: "10mb",
 				});
+
+				ClassicEditor.create(document.querySelector("#detailsAddTeam"));
 				//
-				$("#jsAdd").validate({
+				$("#jsAddTeamForm").validate({
 					ignore: [],
 					rules: {
 						mainHeading: {
 							required: true,
 						},
-
 						details: {
 							required: true,
 						},
@@ -224,7 +255,13 @@ $(function () {
 							formDataObj.append("file", fileObject);
 						}
 
-						return processAddProduct(formDataObj);
+						formDataObj.append("section", "teams");
+
+						return processAddPage(
+							formDataObj,
+							$(".jsAddTeamBtn"),
+							"section_3"
+						);
 					},
 				});
 				//
@@ -233,44 +270,7 @@ $(function () {
 	}
 
 	/**
-	 * process add product section
-	 * @param {*} formDataObj
-	 * @returns
-	 */
-	function processAddProduct(formDataObj) {
-		//
-		if (XHR !== null) {
-			return false;
-		}
-		const pageId = getSegment(2);
-		const btnHook = callButtonHook($(".jsSaveProductBtn"), true);
-		//
-		XHR = $.ajax({
-			url: baseUrl("cms/" + pageId + "/product/"),
-			method: "POST",
-			data: formDataObj,
-			processData: false,
-			contentType: false,
-		})
-			.always(function () {
-				XHR = null;
-				callButtonHook(btnHook, false);
-			})
-			.fail(handleErrorResponse)
-			.done(function (resp) {
-				return _success(resp.msg, function () {
-					window.location.href = baseUrl(
-						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=products"
-					);
-				});
-			});
-	}
-
-	/**
-	 * get product section edit page
-	 * @param {*} index
+	 * get product edit page
 	 */
 	function getEditPage(index) {
 		//
@@ -279,7 +279,7 @@ $(function () {
 		}
 		//
 		XHR = $.ajax({
-			url: baseUrl("cms/page/" + getSegment(2) + "/product/" + index),
+			url: baseUrl("cms/page/" + getSegment(2) + "/teams/" + index),
 			method: "GET",
 		})
 			.always(function () {
@@ -289,15 +289,18 @@ $(function () {
 			.done(function (resp) {
 				$("#jsEditModalBody").html(resp.view);
 				//
-				$("#sourceFileEdit").msFileUploader({
+				$("#sourceFile").msFileUploader({
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
-					allowLinks: true,
+					allowLinks: false,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
 					fileLimit: "10mb",
 				});
+				ClassicEditor.create(
+					document.querySelector("#detailsEditTeam")
+				);
 				//
-				$("#jsEditHomeProduct").validate({
+				$("#jsEditTeamForm").validate({
 					ignore: [],
 					rules: {
 						mainHeading: {
@@ -309,7 +312,7 @@ $(function () {
 					},
 					submitHandler: function (form) {
 						const fileObject =
-							$("#sourceFileEdit").msFileUploader("get");
+							$("#sourceFile").msFileUploader("get");
 						//
 						if (!isValidFile(fileObject)) {
 							return _error("Please select a valid source.");
@@ -328,7 +331,14 @@ $(function () {
 							formDataObj.append("file", fileObject);
 						}
 
-						return processEditProduct(formDataObj, resp.index);
+						formDataObj.append("section", "teams");
+
+						return processEditPage(
+							formDataObj,
+							$(".jsEditTeamBtn"),
+							"section_3",
+							resp.index
+						);
 					},
 				});
 				//
@@ -337,21 +347,20 @@ $(function () {
 	}
 
 	/**
-	 * process product section edit
+	 * process add product section
 	 * @param {*} formDataObj
-	 * @param {*} index
 	 * @returns
 	 */
-	function processEditProduct(formDataObj, index) {
+	function processAddPage(formDataObj, buttonRef, redirectTo) {
 		//
 		if (XHR !== null) {
 			return false;
 		}
 		const pageId = getSegment(2);
-		const btnHook = callButtonHook($(".jsUpdateProductBtn"), true);
+		const btnHook = callButtonHook(buttonRef, true);
 		//
 		XHR = $.ajax({
-			url: baseUrl("cms/" + pageId + "/product/" + index),
+			url: baseUrl("cms/page/" + pageId + "/add"),
 			method: "POST",
 			data: formDataObj,
 			processData: false,
@@ -367,7 +376,45 @@ $(function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
 							getSegment(2) +
-							"/?page=products"
+							"/?page=" +
+							redirectTo
+					);
+				});
+			});
+	}
+
+	/**
+	 * process edit product section
+	 * @param {*} formDataObj
+	 * @returns
+	 */
+	function processEditPage(formDataObj, buttonRef, redirectTo, index) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		const pageId = getSegment(2);
+		const btnHook = callButtonHook(buttonRef, true);
+		//
+		XHR = $.ajax({
+			url: baseUrl("cms/page/" + pageId + "/edit/" + index),
+			method: "POST",
+			data: formDataObj,
+			processData: false,
+			contentType: false,
+		})
+			.always(function () {
+				XHR = null;
+				callButtonHook(btnHook, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+							getSegment(2) +
+							"/?page=" +
+							redirectTo
 					);
 				});
 			});
@@ -378,13 +425,13 @@ $(function () {
 	 * @param {*} bannerRef
 	 * @param {*} buttonRef
 	 */
-	function processDeleteBProduct(bannerRef, buttonRef) {
+	function processDelete(bannerRef, buttonRef, redirectTo) {
 		//
 		const pageId = getSegment(2);
 		const btnHook = callButtonHook(buttonRef, true);
 		//
 		XHR = $.ajax({
-			url: baseUrl("cms/" + pageId + "/product/" + bannerRef),
+			url: baseUrl("cms/page/" + pageId + "/teams/" + bannerRef),
 			method: "DELETE",
 		})
 			.always(function () {
@@ -397,7 +444,8 @@ $(function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
 							getSegment(2) +
-							"/?page=products"
+							"/?page=" +
+							redirectTo
 					);
 				});
 			});
