@@ -272,6 +272,17 @@
                                     </li>
                                 <?php } ?>
 
+
+                                <li>
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-info"></i>
+                                        </span>
+                                        <h4>Job Info</h4>
+                                        <a href="<?php echo base_url('job_info') . '/employee/' . $employer["sid"]; ?>">Create / View<i aria-hidden="true" class="fa fa-infot"></i></a>
+                                    </li>
+
+
+
                                 <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
                                     <!-- <li>
                                         <span class="left-addon">

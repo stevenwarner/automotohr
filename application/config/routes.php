@@ -1974,3 +1974,12 @@ $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmi
 //
 $route['hr_documents_management/print_download_hybird_document_resource_center/(:num)'] = 'hr_documents_management/print_download_hybird_document_resource_center/$1';
 
+
+//
+$route['job_info/(:any)/(:any)'] = 'employee_management/JobInfo/$1/$2';
+$route['job_info_add/(:any)/(:any)'] = 'employee_management/JobInfoAdd/$1/$2';
+
+
+//$route['equipment_info/(:any)/(:any)'] = 'settings/equipment_info/$1/$2';
+
+

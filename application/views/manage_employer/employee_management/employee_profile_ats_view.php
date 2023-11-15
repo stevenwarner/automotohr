@@ -70,10 +70,15 @@ if (checkIfAppIsEnabled('timeoff')) {
                                 <li id="tab4_nav"><a href="javascript:;">Messages</a></li>
                                 <li id="tab5_nav"><a href="javascript:;">reviews</a></li>
                                 <li id="tab6_nav"><a href="javascript:;">Calendar</a></li>
+
                                 <?php if ($phone_sid != '') { ?>
                                     <li id="tab7_nav"><a href="javascript:void(0);">SMS <span class="js-sms-count"></span></a>
                                     </li>
                                 <?php } ?>
+
+                                <li id="tab8_nav"><a href="javascript:;">Job Info</a></li>
+
+
                             </ul>
                         <?php } ?>
                         <div class="resp-tabs-container hor_1">
@@ -1414,6 +1419,12 @@ if (checkIfAppIsEnabled('timeoff')) {
                                     </div>
                                 <?php } ?>
                                 <!-- #tab7 -->
+
+                                <div id="tab8" class="tabs-content">
+                                        <?php $this->load->view('manage_employer/employee_management/jobinfo_partial'); ?>
+                                </div>
+
+
                             <?php }  ?>
                         </div>
                     </div>
