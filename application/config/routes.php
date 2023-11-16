@@ -1973,5 +1973,6 @@ $route['sa/payrolls/company/(:num)/admins/manage']['get'] = 'v1/sa/Payrolls/mana
 $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmin/$1';
 
 
+
 //
 $route['hr_documents_management/print_download_hybird_document_resource_center/(:num)'] = 'hr_documents_management/print_download_hybird_document_resource_center/$1';
