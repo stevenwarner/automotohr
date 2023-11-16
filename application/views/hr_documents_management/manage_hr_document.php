@@ -60,6 +60,33 @@ if ($pp_flag == 1) {
                                         </div>
                                     <?php } ?>
 
+                                    <?php if ($document['document_type'] == 'uploaded' && $document['document_sid'] == 0) { ?>
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <strong>Manage Title and Signed date</strong>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="document-action-required" style="padding: 14px;">
+                                                    <b>Add new date for title and signed for manual uploaded document</b>
+                                                </div>
+                                                <div class="document-action-required">
+                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                        <label>Title:</label>
+                                                        <input class="invoice-fields" value="<?php echo $document['document_title']; ?>" type="text" id="jsDocumentTitle">
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                        <label>Signed Date:</label>
+                                                        <input class="invoice-fields date_time_picker" value="<?php echo !empty($document['signature_timestamp']) ? date('m-d-Y', strtotime($document['signature_timestamp'])) : date('m-d-Y'); ?>" type="text" id="jsDocumentSignedDate">
+                                                    </div>
+                                                    <input type="hidden" value="<?php echo $document['sid']; ?>" id="jsManualDocumentId">
+                                                </div>
+                                                <div class="document-action-required" style="padding: 14px;">
+                                                    <button type="button" class="btn btn-success pull-right jsSaveManualDocumentData" style="margin-top: 14px;">Update</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
                                     <div class="panel panel-success">
                                         <div class="panel-heading">
                                             <strong>Remove Document</strong>
@@ -375,13 +402,8 @@ if ($pp_flag == 1) {
 </div>
 <div id="myModal" class="full reveal" data-reveal></div>
 
-<!-- <?php
-
-        //print_r(explode(".", $document_filename, 2));
-        ?> -->
 <script>
     <?php if ($document['isdoctolibrary'] == 1) { ?>
-
         function document_visible(document_sid) {
 
             var visible_to_document_center = document.querySelector('input[name = visibletodocumentcenter]:checked').value;
@@ -585,6 +607,33 @@ if ($pp_flag == 1) {
                 contentType: false
             }).done(function(resp) {
                 var successMSG = 'Date update successfully.';
+                alertify.alert('SUCCESS!', successMSG, function() {
+
+                });
+            });
+        });
+
+        $(".jsSaveManualDocumentData").on('click', function() {
+            var baseURI = "<?= base_url('hr_documents_management/handler'); ?>";
+
+            var document_sid = $("#jsManualDocumentId").val();
+            var title = $("#jsDocumentTitle").val();
+            var signed_date = $("#jsDocumentSignedDate").val();
+
+            var formData = new FormData();
+            formData.append('document_sid', document_sid);
+            formData.append('title', title);
+            formData.append('signed_date', signed_date);
+            formData.append('action', 'modify_manual_document_data');
+
+            $.ajax({
+                url: baseURI,
+                data: formData,
+                method: 'POST',
+                processData: false,
+                contentType: false
+            }).done(function(resp) {
+                var successMSG = 'Document update successfully.';
                 alertify.alert('SUCCESS!', successMSG, function() {
 
                 });

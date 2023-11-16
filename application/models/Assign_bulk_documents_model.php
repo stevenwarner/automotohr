@@ -304,4 +304,24 @@ class Assign_bulk_documents_model extends CI_Model
             return array();
         }
     }
+
+    function deleteSecureDocument($documentId)
+    {
+        $this->db->where('sid', $documentId);
+        $this->db->delete('company_secure_documents');
+    }
+
+    function getSpecificSecureDocuments ($documentIds) {
+        $this->db->select('*');
+        $this->db->where_in('sid', $documentId);
+        $records_obj = $this->db->get('company_secure_documents');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
 }

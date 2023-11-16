@@ -10345,4 +10345,10 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('sid', $document_sid);
         $this->db->delete('documents_assigned');
     }
+
+    function updateManualDocumentData($documentId, $data)
+    {
+        $this->db->where('sid', $documentId);
+        $this->db->update('documents_assigned', $data);
+    }
 }

@@ -51,6 +51,9 @@
                                         <button class="submit-btn jsCopySecureDocuments">
                                             Copy Document(s)
                                         </button>
+                                        <button class="submit-btn jsDownloadSecureDocumentsZip">
+                                            Download Document(s)
+                                        </button>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -72,17 +75,17 @@
                                                             <div class="control__indicator" style="top: -7px;"></div>
                                                         </label>
                                                     </th>
-                                                    <th class="col-xs-5">Document Title</th>
+                                                    <th class="col-xs-4">Document Title</th>
                                                     <th class="col-xs-3">Created By</th>
                                                     <th class="col-xs-2">Created At</th>
-                                                    <th class="col-xs-2">Actions</th>
+                                                    <th class="col-xs-3">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php foreach ($secure_documents as $document) {
                                                 ?>
                                                     <tr>
-                                                        <td style="vertical-align: middle;">
+                                                        <td scope="col" style="vertical-align: middle;">
                                                             <label class="control control--checkbox">
                                                                 <input type="checkbox" name="documents_ids[]" value="<?= $document['sid']; ?>" class="jsSelectSingle" />
                                                                 <div class="control__indicator" style="top: -7px;"></div>
@@ -99,6 +102,9 @@
                                                             <a class="btn btn-success csF16" href="<?php echo base_url('download/file/' . ($document['document_s3_name']) . ''); ?>">
                                                                 <i class="fa fa-download csF16" aria-hidden="true"></i>
                                                                 &nbsp;Download
+                                                            </a>
+                                                            <a class="btn btn-danger csF16 jsDeleteSecureDocument" data-id="<?= $document['sid']; ?>" href="javascript:;">
+                                                                <i class="fa fa-trash csF16" aria-hidden="true"></i>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -269,6 +275,7 @@
             loader(false);
             //
             alertify.alert('Success!', 'You have successfully copy ' + total + ' documents', function() {
+                window.location.reload();
                 return;
             });
             //
@@ -324,4 +331,72 @@
             $('#jsCopyDocumentLoader .jsLoaderText').html('Please wait, while we are processing your request.');
         }
     }
+
+    //
+    $('.jsDeleteSecureDocument').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var documentId = $(this).data("id");
+        //
+        alertify.confirm('Do you really want to delete this document?', function() {
+            //
+            var text = '<p>Please wait, while we are delete the document</p>';
+            //
+            loader(true, text);
+            //
+            $.post("<?= base_url('delete_manual_secure_document'); ?>", {
+                document_sid: documentId
+            }).done(function() {
+                //
+                loader(false);
+                //
+                alertify.alert('Success!', 'You have successfully delete the document.', function() {
+                    window.location.reload();
+                    return;
+                });
+            });
+        });
+        
+    });
+
+    $('.jsDownloadSecureDocumentsZip').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        selectedDocuments = get_all_selected_documents();
+        //
+        if (selectedDocuments.length === 0) {
+            alertify.alert('Error!', 'Please select at least one document to download.', function() {
+                return;
+            });
+            //
+            return;
+        }
+        //
+        // var url = '<?php echo base_url('company/documents/secure/download'); ?>';
+        // window.open(url, '_blank');
+        //
+        //
+        var text = '<p>Please wait, while we are downloading documents. </p>';
+        //
+        loader(true, text);
+        //
+        var ids = [];
+        //
+        selectedDocuments.map(function (document) {
+            ids.push(document.document_sid)
+        })
+        //
+        $.post("<?= base_url('company/documents/secure/download'); ?>", {
+            documents: ids
+        }).done(function() {
+            //
+            loader(false);
+            //
+            alertify.alert('Success!', 'You have successfully downloaded documents.', function() {
+                return;
+            });
+        });
+    });
 </script>

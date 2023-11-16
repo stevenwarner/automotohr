@@ -70,7 +70,6 @@ class Assign_bulk_documents extends Public_Controller
         $this->response($return_array);
     }
 
-
     /**
      * Fetch applicants
      * Created on: 09-08-2019
@@ -133,8 +132,6 @@ class Assign_bulk_documents extends Public_Controller
         //
         $this->response($this->assign_bulk_documents_model->fetchApplicantByQuery($companyId, $query));
     }
-
-
 
     /**
      * Get applicants
@@ -272,7 +269,6 @@ class Assign_bulk_documents extends Public_Controller
         $this->response($return_array);
     }
 
-
     //
     function send_notification_email()
     {
@@ -325,7 +321,6 @@ class Assign_bulk_documents extends Public_Controller
         exit(0);
     }
 
-
     //
     public function secureDocumentsListing()
     {
@@ -363,7 +358,6 @@ class Assign_bulk_documents extends Public_Controller
         $this->load->view('main/footer');
     }
 
-
     //
     public function addSecureDocument()
     {
@@ -383,7 +377,6 @@ class Assign_bulk_documents extends Public_Controller
         $this->load->view('manage_employer/add_secure_document');
         $this->load->view('main/footer');
     }
-
 
     public function uploadSecureDocument()
     {
@@ -435,7 +428,6 @@ class Assign_bulk_documents extends Public_Controller
         $this->response($return_array);
     }
 
-
     function EditSecureDocument($document_sid)
     {
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
@@ -469,6 +461,11 @@ class Assign_bulk_documents extends Public_Controller
         $data_to_insert['document_type'] = 'uploaded';
         $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
         $data_to_insert['document_title'] = $document['document_title'];
+        $data_to_insert['uploaded'] = 1;
+        $data_to_insert['uploaded_file'] = $document['document_s3_name'];
+        $data_to_insert['uploaded_date'] = date('Y-m-d H:i:s');
+        $data_to_insert['document_s3_name'] = $document['document_s3_name'];
+        $data_to_insert['document_original_name'] = $document['document_s3_name'];
         //
         $file_info = pathinfo($document['document_s3_name']);
         //
@@ -476,15 +473,71 @@ class Assign_bulk_documents extends Public_Controller
             $data_to_insert['document_extension'] = $file_info['extension'];
         }
         //
-        $data_to_insert['uploaded'] = 1;
-        $data_to_insert['uploaded_file'] = $document['document_s3_name'];
-        $data_to_insert['uploaded_date'] = date('Y-m-d H:i:s');
-        $data_to_insert['document_s3_name'] = $document['document_s3_name'];
-        $data_to_insert['document_original_name'] = $$document['document_s3_name'];
-        $data_to_insert['visible_to_payroll'] = 1;
-        $data_to_insert['is_confidential'] =  1;
-        //
         $this->assign_bulk_documents_model->insertDocumentsAssignmentRecord($data_to_insert);
+        //
+        $return_array['Status'] = true;
+        $return_array['Response'] = 'Proceed';
+        $this->response($return_array);
+    }
+
+    function deleteSecureDocument () {
+        //
+        $this->assign_bulk_documents_model->deleteSecureDocument($_POST['document_sid']);
+        //
+        $return_array['Status'] = true;
+        $return_array['Response'] = 'Proceed';
+        $this->response($return_array);
+    }
+
+    function downloadSecureDocument () {
+        _e("I am in", true);
+        $session = $this->session->userdata('logged_in');
+        $companyId  = $session['company_detail']['sid'];
+        //
+        $documents = $this->assign_bulk_documents_model->getSpecificSecureDocuments($_POST['documents']);
+        //
+        if (!empty($documents)) {
+
+            $path = ROOTPATH . '/temp_files/secure_document/' .$companyId.'/'. time() . '/';
+            $zipath = ROOTPATH . '/temp_files/secure_document/'.$companyId.'/';
+            //
+            if (!file_exists($path)) {
+                //
+                mkdir($path, 0777, true);
+            }
+            
+            foreach ($documents as $document) {
+                $s3Path = $document['document_s3_name'];
+                $documentName = str_replace(' ', '_', $document['document_title']);
+                //
+                downloadFileFromAWS(
+                    getFileName(
+                        $path . $documentName,
+                        AWS_S3_BUCKET_URL . $s3Path
+                    ),
+                    AWS_S3_BUCKET_URL . $s3Path
+                );
+            }
+            //
+            $zipFileName = time() . '.zip';
+            $downloadZipPath = $zipath . $zipFileName;
+            //
+            $this->load->library('zip');
+            //
+            $this->zip->read_dir($path, FALSE);
+            $this->zip->archive($downloadZipPath);
+            // $this->zip->download($zipFileName);
+        }
+        //
+        header('Content-type: application/zip');
+        header('Content-Disposition: attachment; filename="' . basename($zipFileName) . '"');
+        header("Content-length: " . filesize($downloadZipPath));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        ob_clean();
+        flush();
+        readfile($downloadZipPath);
         //
         $return_array['Status'] = true;
         $return_array['Response'] = 'Proceed';
