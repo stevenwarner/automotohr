@@ -12,7 +12,7 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <h1 class="page-title">
                                             <i class="fa fa-edit" aria-hidden="true"></i>
-                                            &nbsp;Get Your Account
+                                            &nbsp;Contact Us
                                         </h1>
                                     </div>
                                     <div class="col-sm-6 text-right">
@@ -27,13 +27,8 @@
                             <br />
                             <!-- Meta -->
                             <?php $this->load->view("manage_admin/cms/v1/partials/meta"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/get_your_account/section_0"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/get_your_account/section_1"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/get_your_account/section_2"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/get_your_account/section_3"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/get_your_account/section_4"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/get_your_account/section_5"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/get_your_account/section_6"); ?>
+                            <?php $this->load->view("manage_admin/cms/v1/partials/contact_us/section_0"); ?>
+                            <?php $this->load->view("manage_admin/cms/v1/partials/contact_us/section_1"); ?>
                         </div>
                     </div>
                 </div>

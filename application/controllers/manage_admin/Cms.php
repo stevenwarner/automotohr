@@ -115,7 +115,7 @@ class Cms extends Admin_Controller
         // for each page
         else {
             $files = [
-                "v1/cms/page/" . $page_data["slug"]
+                "v1/cms/page/" . $page_data["page"]
             ];
         }
 
@@ -753,6 +753,37 @@ class Cms extends Admin_Controller
             $post["headingPoint3Type"] = $post["source_type_point_3"];
 
             unset($post["source_type_point_3"]);
+        }
+
+        if ($post["source_type_logo"]) {
+            //
+            $fileLink = $post["source_link_logo"];
+            //
+            if ($post["source_type_logo"] === "upload") {
+                //
+                if (!$_FILES['file_logo'] && $post['source_link_logo']) {
+                    $fileLink = $post["source_link_logo"];
+                } else {
+                    // check and run for image
+                    $errors = hasFileErrors($_FILES, "file_logo", 'image|video', 10);
+                    //
+                    if ($errors) {
+                        return SendResponse(
+                            400,
+                            ["errors" => $errors]
+                        );
+                    }
+                    $fileLink = upload_file_to_aws(
+                        "file_logo",
+                        0,
+                        "banner_logo",
+                    );
+                }
+            }
+            $post["logoFile"] = $fileLink;
+            $post["logoType"] = $post["source_type_logo"];
+
+            unset($post["source_type_logo"]);
         }
 
 
